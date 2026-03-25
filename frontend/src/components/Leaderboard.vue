@@ -18,6 +18,19 @@
         {{ i18n.t('lb_global') }}
       </button>
     </div>
+
+    <!-- Timeframe Selector -->
+    <div class="flex gap-1 p-1 bg-white/[0.02] border border-white/5 rounded-2xl mb-6 overflow-x-auto no-scrollbar">
+      <button 
+        v-for="tf in ['today', 'week', 'month', 'year', 'all']" 
+        :key="tf"
+        @click="timeframe = tf"
+        class="px-4 py-1.5 text-[10px] font-black uppercase tracking-tighter transition-all rounded-lg whitespace-nowrap"
+        :class="timeframe === tf ? 'text-primary-400 bg-primary-500/10' : 'text-zinc-600 hover:text-zinc-400'"
+      >
+        {{ i18n.t('tf_' + tf) }}
+      </button>
+    </div>
     
     <div class="p-4 space-y-1">
       <div 
@@ -77,6 +90,7 @@ import { useI18nStore } from '../stores/i18n';
 const authStore = useAuthStore();
 const i18n = useI18nStore();
 const type = ref('friends');
+const timeframe = ref('all');
 const users = ref([]);
 const loading = ref(false);
 const sortedUsers = ref([]);
@@ -84,7 +98,9 @@ const sortedUsers = ref([]);
 const fetchLeaderboard = async () => {
   loading.value = true;
   try {
-    const response = await axios.get(`/api/leaderboard/${type.value}`);
+    const response = await axios.get(`/api/leaderboard/${type.value}`, {
+      params: { timeframe: timeframe.value }
+    });
     users.value = response.data;
     sortedUsers.value = [...users.value].sort((a, b) => b.total_reps - a.total_reps);
   } catch (error) {
@@ -94,7 +110,7 @@ const fetchLeaderboard = async () => {
   }
 };
 
-watch(type, fetchLeaderboard);
+watch([type, timeframe], fetchLeaderboard);
 onMounted(fetchLeaderboard);
 
 defineExpose({ refresh: fetchLeaderboard });

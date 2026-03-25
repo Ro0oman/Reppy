@@ -33,6 +33,53 @@
       </div>
     </header>
 
+    <!-- Privacy & Profile Management -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Privacy -->
+      <div class="glass p-6 rounded-3xl border-white/5 flex items-center justify-between gap-6">
+        <div class="flex items-center gap-4">
+          <div class="p-3 bg-zinc-800 rounded-2xl">
+            <ShieldAlert class="w-6 h-6 text-zinc-400" />
+          </div>
+          <div>
+            <h3 class="font-bold text-white">{{ i18n.t('privacy_settings') }}</h3>
+            <p class="text-xs text-zinc-500">{{ i18n.t('private_desc') }}</p>
+          </div>
+        </div>
+        <button 
+          @click="togglePrivacy"
+          class="relative inline-flex h-8 w-14 items-center rounded-full transition-colors focus:outline-none"
+          :class="authStore.user?.is_private ? 'bg-primary-600' : 'bg-zinc-800'"
+        >
+          <span
+            class="inline-block h-6 w-6 transform rounded-full bg-white transition-transform"
+            :class="authStore.user?.is_private ? 'translate-x-[1.75rem]' : 'translate-x-1'"
+          />
+        </button>
+      </div>
+
+      <!-- Avatar & Account -->
+      <div class="glass p-6 rounded-3xl border-white/5 flex items-center justify-between gap-6">
+        <div class="flex items-center gap-4">
+          <div class="p-3 bg-zinc-800 rounded-2xl relative group cursor-pointer overflow-hidden" @click="triggerAvatarUpload">
+            <Camera class="w-6 h-6 text-zinc-400 group-hover:scale-110 transition-transform" />
+            <input type="file" ref="avatarInput" class="hidden" accept="image/*" @change="handleAvatarChange" />
+          </div>
+          <div>
+            <h3 class="font-bold text-white">{{ i18n.t('change_avatar') }}</h3>
+            <button @click="handleDeleteAccount" class="text-[10px] font-black text-red-500/50 hover:text-red-500 uppercase tracking-widest transition-colors mt-1">
+              {{ i18n.t('delete_account') }}
+            </button>
+          </div>
+        </div>
+        <div class="flex flex-col items-end gap-1">
+          <div class="w-10 h-10 rounded-full border border-white/10 overflow-hidden">
+            <img :src="authStore.user?.avatar_url" class="w-full h-full object-cover" />
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <div class="glass glass-hover relative overflow-hidden p-6 rounded-3xl shadow-xl transition-all duration-500">
@@ -151,7 +198,7 @@
               {{ i18n.t('rankings') }}
             </h3>
           </div>
-          <Leaderboard />
+          <Leaderboard ref="leaderboardRef" />
         </section>
       </div>
     </div>
@@ -163,7 +210,7 @@ import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 import { 
   Trophy, Target, Flame, Zap, Activity, History, Mail, 
-  RotateCw, LogOut, Inbox, BarChart3, Check, X 
+  RotateCw, LogOut, Inbox, BarChart3, Check, X, ShieldAlert, Camera, Trash2 
 } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
@@ -180,20 +227,72 @@ const totalReps = ref(0);
 
 const editingId = ref(null);
 const editValue = ref(0);
+const leaderboardRef = ref(null);
+const avatarInput = ref(null);
 
 const fetchData = async () => {
   try {
-    const [repsRes, heatmapRes, statsRes] = await Promise.all([
+    const statsPromises = [
       axios.get('/api/reps'),
       axios.get('/api/reps/heatmap'),
-      axios.get('/api/reps/stats')
-    ]);
+      axios.get('/api/reps/stats'),
+      authStore.fetchProfile()
+    ];
+    
+    const [repsRes, heatmapRes, statsRes] = await Promise.all(statsPromises);
+    
     reps.value = repsRes.data;
     heatmapData.value = heatmapRes.data;
     totalReps.value = statsRes.data.totalReps;
     streak.value = statsRes.data.streak;
+    
+    // Explicitly refresh leaderboard
+    if (leaderboardRef.value) {
+      leaderboardRef.value.refresh();
+    }
   } catch (error) {
     console.error('Error fetching data:', error);
+  }
+};
+
+const triggerAvatarUpload = () => {
+  avatarInput.value?.click();
+};
+
+const handleAvatarChange = async (event) => {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onloadend = async () => {
+    try {
+      await authStore.updateAvatar(reader.result);
+    } catch (error) {
+      alert('Failed to upload avatar');
+    }
+  };
+  reader.readAsDataURL(file);
+};
+
+const handleDeleteAccount = async () => {
+  if (confirm(i18n.t('delete_confirm'))) {
+    try {
+      await authStore.deleteAccount();
+    } catch (error) {
+      alert('Failed to delete account');
+    }
+  }
+};
+
+const togglePrivacy = async () => {
+  try {
+    await authStore.updateProfile({ is_private: !authStore.user?.is_private });
+    // Also refresh leaderboard to reflect privacy change
+    if (leaderboardRef.value) {
+      leaderboardRef.value.refresh();
+    }
+  } catch (error) {
+    console.error('Error toggling privacy:', error);
   }
 };
 

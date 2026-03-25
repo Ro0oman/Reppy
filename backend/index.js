@@ -7,6 +7,7 @@ import authRoutes from './auth.js';
 import repsRoutes from './reps.js';
 import socialRoutes from './social.js';
 import leaderboardRoutes from './leaderboard.js';
+import usersRoutes from './users.js';
 import { query } from './db.js';
 
 dotenv.config();
@@ -23,6 +24,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/reps', repsRoutes);
 app.use('/api/social', socialRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
+app.use('/api/users', usersRoutes);
 
 // Automated DB initialization for the user
 app.get('/api/db/init', async (req, res) => {
@@ -32,8 +34,10 @@ app.get('/api/db/init', async (req, res) => {
           id VARCHAR(255) PRIMARY KEY,
           name VARCHAR(255) NOT NULL,
           email VARCHAR(255) UNIQUE NOT NULL,
+          password_hash VARCHAR(255),
           avatar_url TEXT,
           total_reps INTEGER DEFAULT 0,
+          is_private BOOLEAN DEFAULT FALSE,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       )`,
       `CREATE TABLE IF NOT EXISTS reps (

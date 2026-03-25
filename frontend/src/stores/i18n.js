@@ -55,7 +55,32 @@ const translations = {
     lb_global: 'Global',
     lb_rank: 'Rank',
     lb_view_full: 'View Full Leaderboard',
-    lb_empty: 'No legends found yet.'
+    lb_empty: 'No legends found yet.',
+    
+    // Timeframes
+    tf_today: 'Today',
+    tf_week: 'Week',
+    tf_month: 'Month',
+    tf_year: 'Year',
+    tf_all: 'All Time',
+    
+    // Privacy
+    privacy_settings: 'Privacy Settings',
+    private_profile: 'Private Profile',
+    private_desc: 'Hide your profile from global rankings.',
+    
+    // Account Management
+    login_btn: 'Sign In',
+    signup_btn: 'Sign Up',
+    have_account: 'Already have a protocol?',
+    no_account: 'Need a new protocol?',
+    email: 'Email',
+    password: 'Password',
+    name_placeholder: 'Full Name',
+    delete_account: 'Destroy Protocol',
+    delete_confirm: 'Are you sure? This is permanent.',
+    change_avatar: 'Update Avatar',
+    btn_delete: 'Delete Forever'
   },
   es: {
     // Landing
@@ -111,7 +136,32 @@ const translations = {
     lb_global: 'Global',
     lb_rank: 'Rango',
     lb_view_full: 'Ver Tabla Completa',
-    lb_empty: 'Aún no hay leyendas.'
+    lb_empty: 'Aún no hay leyendas.',
+
+    // Timeframes
+    tf_today: 'Hoy',
+    tf_week: 'Semana',
+    tf_month: 'Mes',
+    tf_year: 'Año',
+    tf_all: 'Total',
+
+    // Privacy
+    privacy_settings: 'Ajustes de Privacidad',
+    private_profile: 'Perfil Privado',
+    private_desc: 'Oculta tu perfil de los rankings globales.',
+
+    // Account Management
+    login_btn: 'Entrar',
+    signup_btn: 'Registrarse',
+    have_account: '¿Ya tienes un protocolo?',
+    no_account: '¿Necesitas un protocolo?',
+    email: 'Email',
+    password: 'Contraseña',
+    name_placeholder: 'Nombre y Apellidos',
+    delete_account: 'Destruir Protocolo',
+    delete_confirm: '¿Estás seguro? Esto es permanente.',
+    change_avatar: 'Actualizar Avatar',
+    btn_delete: 'Borrar para siempre'
   }
 };
 
