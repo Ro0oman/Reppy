@@ -59,7 +59,12 @@ app.get('/api/db/init', async (req, res) => {
       `ALTER TABLE reps ADD COLUMN IF NOT EXISTS exercise_type VARCHAR(50) DEFAULT 'pullups'`,
       `UPDATE reps SET exercise_type = 'pullups' WHERE exercise_type IS NULL`,
       `ALTER TABLE reps DROP CONSTRAINT IF EXISTS reps_user_id_date_key`,
-      `ALTER TABLE reps ADD CONSTRAINT reps_user_id_date_exercise_type_key UNIQUE(user_id, date, exercise_type)`,
+      `DO $$ 
+       BEGIN 
+         IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'reps_user_id_date_exercise_type_key') THEN
+           ALTER TABLE reps ADD CONSTRAINT reps_user_id_date_exercise_type_key UNIQUE(user_id, date, exercise_type);
+         END IF;
+       END $$;`,
       `CREATE TABLE IF NOT EXISTS friendships (
           id SERIAL PRIMARY KEY,
           user_id_1 VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,

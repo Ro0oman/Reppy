@@ -40,7 +40,7 @@ router.post('/', authenticate, async (req, res) => {
        DO UPDATE SET count = reps.count + EXCLUDED.count,
                      added_weight = EXCLUDED.added_weight 
        RETURNING *`,
-      [userId, count, date || new Date(), exercise_type, added_weight || 0]
+      [userId, count, date || new Date().toISOString().split('T')[0], exercise_type, parseFloat(added_weight) || 0]
     );
 
     // Update user's total_reps (overall cache)
@@ -148,7 +148,7 @@ router.get('/stats', authenticate, async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching stats:', error);
-    res.status(500).json({ message: 'Error fetching stats' });
+    res.status(500).json({ message: 'Error fetching stats', error: error.message });
   }
 });
 
