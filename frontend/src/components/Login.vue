@@ -1,6 +1,10 @@
 <template>
-  <div class="flex flex-col items-center justify-center min-h-[80vh] px-4">
-    <div class="w-full max-w-md space-y-12">
+  <div class="flex flex-col items-center justify-center min-h-[80vh] px-4 relative">
+    <button @click="$emit('back')" class="absolute top-8 left-8 flex items-center gap-2 text-zinc-500 hover:text-zinc-300 text-xs font-bold uppercase tracking-widest transition-colors z-50">
+      <ChevronLeft class="w-4 h-4" />
+      Back to HQ
+    </button>
+    <div class="w-full max-w-md space-y-12 animate-fade-in-up">
       <div class="text-center space-y-4">
         <div class="inline-flex items-center justify-center w-20 h-20 glass rounded-3xl mb-4 shadow-2xl relative overflow-hidden group">
           <div class="absolute inset-0 bg-primary-500/20 blur-xl group-hover:bg-primary-500/40 transition-all duration-700"></div>
