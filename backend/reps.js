@@ -28,18 +28,19 @@ router.get('/', authenticate, async (req, res) => {
 
 // Add or update reps for a date
 router.post('/', authenticate, async (req, res) => {
-  const { count, date, exercise_type = 'pullups' } = req.body;
+  const { count, date, exercise_type = 'pullups', added_weight = 0 } = req.body;
   const userId = req.user.id;
 
   try {
     // Insert or update reps for the specific date and exercise type
     const result = await query(
-      `INSERT INTO reps (user_id, count, date, exercise_type) 
-       VALUES ($1, $2, $3, $4) 
+      `INSERT INTO reps (user_id, count, date, exercise_type, added_weight) 
+       VALUES ($1, $2, $3, $4, $5) 
        ON CONFLICT (user_id, date, exercise_type) 
-       DO UPDATE SET count = reps.count + EXCLUDED.count 
+       DO UPDATE SET count = reps.count + EXCLUDED.count,
+                     added_weight = EXCLUDED.added_weight 
        RETURNING *`,
-      [userId, count, date || new Date(), exercise_type]
+      [userId, count, date || new Date(), exercise_type, added_weight || 0]
     );
 
     // Update user's total_reps (overall cache)
@@ -84,9 +85,9 @@ router.get('/stats', authenticate, async (req, res) => {
     );
     const totalReps = parseInt(totalRes.rows[0]?.total) || 0;
 
-    // 2. Daily Goal (global for now, or we could make it per-exercise later)
-    const userRes = await query('SELECT daily_goal FROM users WHERE id = $1', [userId]);
-    const daily_goal = userRes.rows[0].daily_goal;
+    // 2. Daily Goal & Body Weight
+    const userRes = await query('SELECT daily_goal, body_weight FROM users WHERE id = $1', [userId]);
+    const { daily_goal, body_weight = 75 } = userRes.rows[0];
 
     // 3. Top Month for this exercise
     const topMonthRes = await query(
@@ -127,12 +128,23 @@ router.get('/stats', authenticate, async (req, res) => {
       }
     }
 
+    // 5. Total Volume (Kg moved) for this exercise
+    const volumeRes = await query(
+      `SELECT SUM(count * (COALESCE($2, 75.0) + added_weight)) as volume 
+       FROM reps 
+       WHERE user_id = $1 AND exercise_type = $3`,
+      [userId, body_weight, type]
+    );
+    const totalVolume = parseFloat(volumeRes.rows[0]?.volume) || 0;
+
     res.json({
       totalReps,
       streak,
       topMonth,
       topMonthCount,
-      dailyGoal: daily_goal
+      dailyGoal: daily_goal,
+      bodyWeight: body_weight,
+      totalVolume
     });
   } catch (error) {
     console.error('Error fetching stats:', error);

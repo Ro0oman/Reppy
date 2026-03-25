@@ -20,7 +20,7 @@ router.get('/me', authenticate, async (req, res) => {
 
 // Update user profile
 router.patch('/profile', authenticate, async (req, res) => {
-  const { is_private, name, daily_goal } = req.body;
+  const { is_private, name, daily_goal, body_weight } = req.body;
   
   try {
     // Dynamically build the update query
@@ -39,6 +39,10 @@ router.patch('/profile', authenticate, async (req, res) => {
     if (daily_goal !== undefined) {
       updateFields.push(`daily_goal = $${i++}`);
       params.push(daily_goal);
+    }
+    if (body_weight !== undefined) {
+      updateFields.push(`body_weight = $${i++}`);
+      params.push(body_weight);
     }
 
     if (updateFields.length === 0) return res.json({ message: 'No changes provided' });

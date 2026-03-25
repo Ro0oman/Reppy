@@ -40,6 +40,7 @@ app.get('/api/db/init', async (req, res) => {
           total_reps INTEGER DEFAULT 0,
           is_private BOOLEAN DEFAULT FALSE,
           daily_goal INTEGER DEFAULT 50,
+          body_weight DECIMAL DEFAULT 75.0,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       )`,
       `CREATE TABLE IF NOT EXISTS reps (
@@ -48,10 +49,13 @@ app.get('/api/db/init', async (req, res) => {
           count INTEGER NOT NULL DEFAULT 0,
           date DATE NOT NULL DEFAULT CURRENT_DATE,
           exercise_type VARCHAR(50) DEFAULT 'pullups',
+          added_weight DECIMAL DEFAULT 0.0,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
           UNIQUE(user_id, date, exercise_type)
       )`,
       // Migration for existing tables
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS body_weight DECIMAL DEFAULT 75.0`,
+      `ALTER TABLE reps ADD COLUMN IF NOT EXISTS added_weight DECIMAL DEFAULT 0.0`,
       `ALTER TABLE reps ADD COLUMN IF NOT EXISTS exercise_type VARCHAR(50) DEFAULT 'pullups'`,
       `UPDATE reps SET exercise_type = 'pullups' WHERE exercise_type IS NULL`,
       `ALTER TABLE reps DROP CONSTRAINT IF EXISTS reps_user_id_date_key`,

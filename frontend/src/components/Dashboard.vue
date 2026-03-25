@@ -106,6 +106,19 @@
           <span class="text-yellow-500 text-[10px] font-black uppercase tracking-widest">{{ stats.topMonthCount }} REPS</span>
         </div>
       </div>
+
+      <!-- Training Volume Card -->
+      <div class="glass glass-hover relative overflow-hidden p-6 rounded-3xl shadow-xl transition-all duration-500 md:col-span-2 lg:col-span-1 border-primary-500/10">
+        <div class="absolute top-0 right-0 p-4 opacity-10">
+          <Activity class="w-12 h-12 text-emerald-400" />
+        </div>
+        <span class="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">Volume Movido</span>
+        <div class="flex items-baseline gap-2 mt-2">
+          <span class="text-4xl font-black text-white tracking-tighter">{{ (stats.totalVolume / 1000).toFixed(1) }}</span>
+          <span class="text-emerald-500 text-[10px] font-black uppercase tracking-widest">Toneladas</span>
+        </div>
+        <div class="mt-1 text-[9px] text-zinc-600 font-bold uppercase tracking-widest">{{ stats.totalVolume.toLocaleString() }} KG</div>
+      </div>
     </div>
 
     <!-- Daily Goal Progress -->
@@ -211,6 +224,11 @@
             <input v-model.number="settingsForm.daily_goal" type="number"
               class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-primary-500/50 outline-none transition-all shadow-inner" />
           </div>
+          <div class="space-y-1.5 md:col-span-2">
+            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-500 px-1">Peso Corporal (Kg)</label>
+            <input v-model.number="settingsForm.body_weight" type="number" step="0.1"
+              class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-primary-500/50 outline-none transition-all shadow-inner" />
+          </div>
         </div>
 
         <button @click="saveSettings"
@@ -305,7 +323,9 @@ const stats = reactive({
   streak: 0,
   topMonth: 'N/A',
   topMonthCount: 0,
-  dailyGoal: 50
+  dailyGoal: 50,
+  totalVolume: 0,
+  bodyWeight: 75
 });
 
 const activeExerciseLabel = computed(() => {
@@ -321,7 +341,8 @@ const activeExerciseLabel = computed(() => {
 
 const settingsForm = reactive({
   name: authStore.user?.name || '',
-  daily_goal: authStore.user?.daily_goal || 50
+  daily_goal: authStore.user?.daily_goal || 50,
+  body_weight: authStore.user?.body_weight || 75
 });
 
 const editingId = ref(null);
@@ -357,10 +378,13 @@ const fetchData = async () => {
     stats.topMonth = statsRes.data.topMonth;
     stats.topMonthCount = statsRes.data.topMonthCount;
     stats.dailyGoal = statsRes.data.dailyGoal || 50;
+    stats.totalVolume = statsRes.data.totalVolume || 0;
+    stats.bodyWeight = statsRes.data.bodyWeight || 75;
 
     // Sync settings form
     settingsForm.name = authStore.user?.name;
     settingsForm.daily_goal = stats.dailyGoal;
+    settingsForm.body_weight = stats.bodyWeight;
 
     if (leaderboardRef.value) {
       leaderboardRef.value.refresh();

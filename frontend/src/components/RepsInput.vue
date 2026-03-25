@@ -41,6 +41,20 @@
         {{ i18n.t('btn_add') }}
       </button>
     </div>
+
+    <!-- Added Weight Input (Conditional) -->
+    <div v-if="exerciseType === 'weighted_pullups'" class="relative z-10 animate-in fade-in slide-in-from-top-4 duration-500">
+      <label class="text-[9px] font-black uppercase tracking-[0.2em] text-amber-500/50 mb-2 block px-1">Lastre Añadido (Kg)</label>
+      <div class="relative group/weight">
+        <input 
+          v-model.number="addedWeight"
+          type="number"
+          placeholder="0.0"
+          class="w-full bg-black/40 border-2 border-white/5 rounded-2xl px-6 py-4 text-white font-bold focus:outline-none focus:border-amber-500/30 transition-all text-sm shadow-inner"
+        />
+        <div class="absolute right-6 top-1/2 -translate-y-1/2 text-[10px] font-black text-zinc-600 uppercase tracking-widest pointer-events-none">KG</div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -62,6 +76,7 @@ const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
 const emit = defineEmits(['updated']);
 const customReps = ref(null);
+const addedWeight = ref(null);
 
 const activeLabel = computed(() => {
   const map = {
@@ -81,10 +96,13 @@ const addReps = async (count) => {
     await axios.post('/api/reps', {
       count,
       date: today,
-      exercise_type: props.exerciseType
+      exercise_type: props.exerciseType,
+      added_weight: addedWeight.value || 0
     });
     
-    notificationStore.notify(`+${count} ${activeLabel.value} logged!`, 'success');
+    let msg = `+${count} ${activeLabel.value} logged!`;
+    if (addedWeight.value) msg += ` (with ${addedWeight.value}kg lastre)`;
+    notificationStore.notify(msg, 'success');
     
     if (customReps.value === count) customReps.value = null;
     emit('updated');
