@@ -6,6 +6,11 @@ const translations = {
     hero_eyebrow: 'Elite Protocol 2.0',
     hero_subtitle: 'The tactical tracking platform for pull-up masters. Record reps, visualize gains, and dominate the rankings.',
     btn_start: 'Initialize Protocol',
+    
+    // Landing Leaderboard
+    landing_lb_title: 'Hall of Fame',
+    landing_lb_subtitle: 'Daily top performers in the global circuit.',
+
     feat_heatmap_title: 'Tactical Heatmap',
     feat_heatmap_desc: 'Visualize your training consistency with a professional GitHub-inspired contribution graph.',
     feat_leaderboard_title: 'Global Rankings',
@@ -95,6 +100,11 @@ const translations = {
     hero_eyebrow: 'Protocolo de Elite 2.0',
     hero_subtitle: 'La plataforma táctica para maestros de las dominadas. Registra repeticiones, visualiza tus ganancias y domina los rankings.',
     btn_start: 'Inicializar Protocolo',
+
+    // Landing Leaderboard
+    landing_lb_title: 'Muro de la Fama',
+    landing_lb_subtitle: 'Los mejores del día en el circuito global.',
+
     feat_heatmap_title: 'Heatmap Táctico',
     feat_heatmap_desc: 'Visualiza la consistencia de tu entrenamiento con un gráfico de contribución profesional inspirado en GitHub.',
     feat_leaderboard_title: 'Rankings Globales',
