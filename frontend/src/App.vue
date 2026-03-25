@@ -16,6 +16,10 @@
           <span class="text-xl font-bold tracking-tight">Reppy</span>
         </div>
         <div class="flex items-center gap-6">
+          <button @click="view = 'landing'" class="text-sm font-medium transition-colors"
+            :class="view === 'landing' ? 'text-white' : 'text-zinc-400 hover:text-white'">
+            {{ i18n.t('nav_home') }}
+          </button>
           <button @click="view = 'dashboard'" class="text-sm font-medium transition-colors"
             :class="view === 'dashboard' ? 'text-white' : 'text-zinc-400 hover:text-white'">
             {{ i18n.t('nav_dashboard') }}
@@ -32,6 +36,7 @@
       <template v-if="authStore.isAuthenticated">
         <Dashboard v-if="view === 'dashboard'" />
         <Social v-if="view === 'social'" />
+        <Landing v-if="view === 'landing'" @start="view = 'dashboard'" />
       </template>
       <template v-else>
         <Landing v-if="!showLogin" @start="showLogin = true" />

@@ -25,8 +25,10 @@ const translations = {
     login_google: 'Sign in with Google',
     
     // Dashboard
+    nav_home: 'Home',
     nav_dashboard: 'Dashboard',
     nav_social: 'Social',
+    nav_go_dashboard: 'Go to Dashboard',
     stats_total: 'Total Reps',
     stats_goal: 'Daily Goal',
     stats_streak: 'Active Streak',
@@ -129,8 +131,10 @@ const translations = {
     login_google: 'Iniciar sesión con Google',
     
     // Dashboard
+    nav_home: 'Inicio',
     nav_dashboard: 'Panel',
     nav_social: 'Social',
+    nav_go_dashboard: 'Ir al Panel',
     stats_total: 'Reps Totales',
     stats_goal: 'Objetivo Diario',
     stats_streak: 'Racha Activa',

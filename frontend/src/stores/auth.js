@@ -5,6 +5,7 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: JSON.parse(localStorage.getItem('user')) || null,
     token: localStorage.getItem('token') || null,
+    interceptorRegistered: false,
   }),
   getters: {
     isAuthenticated: (state) => !!state.token,
@@ -108,8 +109,25 @@ export const useAuthStore = defineStore('auth', {
       delete axios.defaults.headers.common['Authorization'];
     },
     init() {
+      // Setup global 401 interceptor if not already set
+      if (!this.interceptorRegistered) {
+        axios.interceptors.response.use(
+          (response) => response,
+          (error) => {
+            if (error.response?.status === 401) {
+              console.warn('Session expired or unauthorized. Logging out...');
+              this.logout();
+            }
+            return Promise.reject(error);
+          }
+        );
+        this.interceptorRegistered = true;
+      }
+
       if (this.token) {
         axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
+        // Verify session silently. Use .catch() to ignore 401 as it's handled by interceptor
+        this.fetchProfile().catch(() => {});
       }
     }
   },

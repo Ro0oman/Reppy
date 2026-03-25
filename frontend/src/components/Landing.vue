@@ -25,7 +25,7 @@
           @click="$emit('start')"
           class="px-8 py-4 bg-primary-600 hover:bg-primary-500 text-white font-black uppercase tracking-widest rounded-2xl shadow-[0_20px_40px_-10px_rgba(249,115,22,0.3)] transition-all hover:scale-105 active:scale-95"
         >
-          {{ i18n.t('btn_start') }}
+          {{ authStore.isAuthenticated ? i18n.t('nav_go_dashboard') : i18n.t('btn_start') }}
         </button>
       </div>
     </section>
@@ -73,7 +73,7 @@
           @click="$emit('start')"
           class="text-[10px] font-black text-primary-500 uppercase tracking-[0.3em] hover:text-primary-400 transition-colors"
         >
-          {{ i18n.t('btn_start') }} &rarr;
+          {{ authStore.isAuthenticated ? i18n.t('nav_go_dashboard') : i18n.t('btn_start') }} &rarr;
         </button>
       </div>
     </section>
@@ -91,9 +91,11 @@
 <script setup>
 import { Sparkles, Activity, Trophy, Users } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
+import { useAuthStore } from '../stores/auth';
 import Leaderboard from './Leaderboard.vue';
 
 const i18n = useI18nStore();
+const authStore = useAuthStore();
 defineEmits(['start']);
 </script>
 
