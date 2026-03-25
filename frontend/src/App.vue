@@ -77,6 +77,5 @@ watch(view, (newView) => {
 });
 
 onMounted(() => {
-  authStore.init();
 });
 </script>
