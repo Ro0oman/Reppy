@@ -12,7 +12,7 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async loginWithGoogle(googleToken) {
       try {
-        const response = await axios.post('http://localhost:5000/api/auth/google', {
+        const response = await axios.post('/api/auth/google', {
           token: googleToken,
         });
         
