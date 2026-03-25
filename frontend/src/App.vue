@@ -18,14 +18,14 @@
             class="text-sm font-medium transition-colors"
             :class="view === 'dashboard' ? 'text-white' : 'text-zinc-400 hover:text-white'"
           >
-            Dashboard
+            {{ i18n.t('nav_dashboard') }}
           </button>
           <button 
             @click="view = 'social'"
             class="text-sm font-medium transition-colors"
             :class="view === 'social' ? 'text-white' : 'text-zinc-400 hover:text-white'"
           >
-            Social
+            {{ i18n.t('nav_social') }}
           </button>
         </div>
       </div>
@@ -57,8 +57,10 @@ import Login from './components/Login.vue'
 import Landing from './components/Landing.vue'
 import Dashboard from './components/Dashboard.vue'
 import Social from './components/Social.vue'
+import { useI18nStore } from './stores/i18n';
 
 const authStore = useAuthStore();
+const i18n = useI18nStore();
 const view = ref('dashboard');
 const showLogin = ref(false);
 

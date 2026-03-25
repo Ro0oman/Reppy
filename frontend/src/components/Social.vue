@@ -2,8 +2,8 @@
   <div class="max-w-5xl mx-auto w-full px-4 space-y-12">
     <div class="flex items-center justify-between">
       <div>
-        <h2 class="text-3xl font-black tracking-tight text-white mb-2">Community</h2>
-        <p class="text-zinc-500 text-sm font-medium">Connect with fellow legends and track their progress.</p>
+        <h2 class="text-3xl font-black tracking-tight text-white mb-2">{{ i18n.t('community') }}</h2>
+        <p class="text-zinc-500 text-sm font-medium">{{ i18n.t('community_subtitle') }}</p>
       </div>
       <div class="p-3 bg-primary-500/10 border border-primary-500/20 rounded-2xl">
         <Users class="w-6 h-6 text-primary-400" />
@@ -15,7 +15,7 @@
       <section class="space-y-6">
         <div class="flex items-center gap-2">
           <Search class="w-4 h-4 text-zinc-500" />
-          <h3 class="text-sm font-bold uppercase tracking-widest text-zinc-500">Find Friends</h3>
+          <h3 class="text-sm font-bold uppercase tracking-widest text-zinc-500">{{ i18n.t('find_friends') }}</h3>
         </div>
         
         <div class="relative group">
@@ -23,7 +23,7 @@
             v-model="searchQuery"
             @input="searchUsers"
             type="text"
-            placeholder="Search enthusiasts..."
+            :placeholder="i18n.t('search_placeholder')"
             class="w-full glass bg-white/[0.01] rounded-2xl px-8 py-5 focus:outline-none focus:ring-2 focus:ring-primary-500/30 shadow-2xl transition-all placeholder:text-zinc-600 font-medium"
           />
           <div class="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-700"></div>
@@ -47,14 +47,14 @@
                 class="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-500 rounded-xl text-xs font-bold transition-all shadow-lg shadow-primary-600/20 active:scale-95"
               >
                 <UserPlus class="w-3.5 h-3.5" />
-                Add
+                {{ i18n.t('btn_add_friend') }}
               </button>
             </div>
           </TransitionGroup>
           
           <div v-if="searchQuery && !loadingSearch && searchResults.length === 0" class="p-12 text-center bg-zinc-900/10 border border-dashed border-zinc-800 rounded-2xl">
             <SearchX class="w-8 h-8 text-zinc-800 mx-auto mb-2" />
-            <p class="text-sm text-zinc-600 italic">No legends found matching your quest.</p>
+            <p class="text-sm text-zinc-600 italic">{{ i18n.t('no_results') }}</p>
           </div>
         </div>
       </section>
@@ -63,7 +63,7 @@
       <section class="space-y-6">
         <div class="flex items-center gap-2">
           <Heart class="w-4 h-4 text-primary-500" />
-          <h3 class="text-xs font-black uppercase tracking-[0.2em] text-zinc-500">My Inner Circle</h3>
+          <h3 class="text-xs font-black uppercase tracking-[0.2em] text-zinc-500">{{ i18n.t('inner_circle') }}</h3>
         </div>
 
         <div class="grid grid-cols-1 gap-4">
@@ -83,7 +83,7 @@
                   <p class="text-lg font-bold text-white tracking-tight">{{ friend.name }}</p>
                   <div class="flex items-center gap-2 mt-0.5">
                     <Trophy class="w-3 h-3 text-primary-400" />
-                    <p class="text-[10px] font-black uppercase text-zinc-500 tracking-tighter">{{ friend.total_reps }} REPS</p>
+                    <p class="text-[10px] font-black uppercase text-zinc-500 tracking-tighter">{{ friend.total_reps }} {{ i18n.t('stats_reps') }}</p>
                   </div>
                 </div>
               </div>
@@ -95,8 +95,8 @@
 
           <div v-if="friends.length === 0" class="p-16 text-center bg-zinc-900/20 border border-dashed border-zinc-800 rounded-2xl">
             <Users2 class="w-10 h-10 text-zinc-800 mx-auto mb-3" />
-            <p class="text-sm font-medium text-zinc-500">You're on a solo journey.</p>
-            <p class="text-xs text-zinc-600 mt-1">Add friends to compete and stay motivated.</p>
+            <p class="text-sm font-medium text-zinc-500">{{ i18n.t('solo_journey') }}</p>
+            <p class="text-xs text-zinc-600 mt-1">{{ i18n.t('solo_desc') }}</p>
           </div>
         </div>
       </section>
@@ -111,7 +111,9 @@ import {
   Users, Search, SearchX, UserPlus, Heart, Check, 
   Trophy, ChevronRight, Users2 
 } from 'lucide-vue-next';
+import { useI18nStore } from '../stores/i18n';
 
+const i18n = useI18nStore();
 const searchQuery = ref('');
 const searchResults = ref([]);
 const friends = ref([]);

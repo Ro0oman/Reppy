@@ -4,16 +4,18 @@
       <button 
         @click="type = 'friends'"
         class="flex-1 py-2.5 text-xs font-bold uppercase tracking-widest transition-all rounded-xl"
+        :label="i18n.t('lb_friends')"
         :class="type === 'friends' ? 'text-white bg-zinc-800 shadow-lg' : 'text-zinc-500 hover:text-zinc-300'"
       >
-        Friends
+        {{ i18n.t('lb_friends') }}
       </button>
       <button 
         @click="type = 'global'"
         class="flex-1 py-2.5 text-xs font-bold uppercase tracking-widest transition-all rounded-xl"
+        :label="i18n.t('lb_global')"
         :class="type === 'global' ? 'text-white bg-zinc-800 shadow-lg' : 'text-zinc-500 hover:text-zinc-300'"
       >
-        Global
+        {{ i18n.t('lb_global') }}
       </button>
     </div>
     
@@ -38,12 +40,12 @@
             <p class="text-sm font-bold text-zinc-200 group-hover:text-white transition-colors">
               {{ user.id === authStore.user?.id ? 'You' : user.name }}
             </p>
-            <p class="text-[10px] text-zinc-500 font-medium">Rank #{{ index + 1 }}</p>
+            <p class="text-[10px] text-zinc-500 font-medium">{{ i18n.t('lb_rank') }} #{{ index + 1 }}</p>
           </div>
         </div>
         <div class="text-right">
           <span class="text-lg font-black text-white tracking-tight">{{ user.total_reps }}</span>
-          <p class="text-[8px] font-bold text-zinc-600 uppercase">Reps</p>
+          <p class="text-[8px] font-bold text-zinc-600 uppercase">{{ i18n.t('stats_reps') }}</p>
         </div>
       </div>
       
@@ -53,13 +55,13 @@
       
       <div v-if="!loading && sortedUsers.length === 0" class="py-12 text-center">
         <Users class="w-8 h-8 text-zinc-800 mx-auto mb-2" />
-        <p class="text-xs text-zinc-600 italic">No legends found yet.</p>
+        <p class="text-xs text-zinc-600 italic">{{ i18n.t('lb_empty') }}</p>
       </div>
     </div>
     
     <div class="p-4 bg-zinc-950/20 border-t border-zinc-800/30">
       <button class="w-full py-2 text-[10px] font-bold text-zinc-500 hover:text-primary-400 uppercase tracking-widest transition-colors">
-        View Full Leaderboard
+        {{ i18n.t('lb_view_full') }}
       </button>
     </div>
   </div>
@@ -70,8 +72,10 @@ import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
 import { Users } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
+import { useI18nStore } from '../stores/i18n';
 
 const authStore = useAuthStore();
+const i18n = useI18nStore();
 const type = ref('friends');
 const users = ref([]);
 const loading = ref(false);

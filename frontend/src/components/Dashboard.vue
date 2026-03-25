@@ -28,7 +28,7 @@
           class="flex items-center gap-2 px-5 py-2.5 bg-zinc-900/50 hover:bg-zinc-800/80 border border-zinc-800 text-zinc-400 hover:text-white rounded-xl font-medium transition-all"
         >
           <LogOut class="w-4 h-4" />
-          <span>Sign Out</span>
+          <span>{{ i18n.t('sign_out') }}</span>
         </button>
       </div>
     </header>
@@ -39,10 +39,10 @@
         <div class="absolute top-0 right-0 p-4 opacity-10">
           <Trophy class="w-12 h-12 text-primary-400" />
         </div>
-        <span class="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">Total Reps</span>
+        <span class="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">{{ i18n.t('stats_total') }}</span>
         <div class="flex items-baseline gap-2 mt-2">
           <span class="text-5xl font-black text-white tracking-tighter">{{ totalReps }}</span>
-          <span class="text-primary-500 text-[10px] font-black uppercase tracking-widest">Gains</span>
+          <span class="text-primary-500 text-[10px] font-black uppercase tracking-widest">{{ i18n.t('stats_gains') }}</span>
         </div>
       </div>
       
@@ -50,10 +50,10 @@
         <div class="absolute top-0 right-0 p-4 opacity-10">
           <Target class="w-12 h-12 text-blue-400" />
         </div>
-        <span class="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">Daily Goal</span>
+        <span class="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">{{ i18n.t('stats_goal') }}</span>
         <div class="flex items-baseline gap-2 mt-2">
           <span class="text-5xl font-black text-white tracking-tighter">20</span>
-          <span class="text-blue-500 text-[10px] font-black uppercase tracking-widest">Reps</span>
+          <span class="text-blue-500 text-[10px] font-black uppercase tracking-widest">{{ i18n.t('stats_reps') }}</span>
         </div>
       </div>
 
@@ -61,10 +61,10 @@
         <div class="absolute top-0 right-0 p-4 opacity-10">
           <Flame class="w-12 h-12 text-orange-400" />
         </div>
-        <span class="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">Active Streak</span>
+        <span class="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">{{ i18n.t('stats_streak') }}</span>
         <div class="flex items-baseline gap-2 mt-2">
           <span class="text-5xl font-black text-white tracking-tighter">{{ streak }}</span>
-          <span class="text-orange-500 text-[10px] font-black uppercase tracking-widest">Days</span>
+          <span class="text-orange-500 text-[10px] font-black uppercase tracking-widest">{{ i18n.t('stats_days') }}</span>
         </div>
       </div>
 
@@ -72,7 +72,7 @@
         <div class="absolute top-0 right-0 p-4 opacity-10">
           <Zap class="w-12 h-12 text-yellow-400" />
         </div>
-        <span class="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">Top Month</span>
+        <span class="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">{{ i18n.t('stats_month') }}</span>
         <div class="flex items-baseline gap-2 mt-2">
           <span class="text-5xl font-black text-white tracking-tighter">142</span>
           <span class="text-yellow-500 text-[10px] font-black uppercase tracking-widest">March</span>
@@ -87,7 +87,7 @@
           <div class="flex items-center justify-between px-2">
             <h3 class="text-lg font-black uppercase tracking-widest flex items-center gap-2 text-zinc-400">
               <Activity class="w-4 h-4 text-primary-500" />
-              Activity Stream
+              {{ i18n.t('activity_stream') }}
             </h3>
           </div>
           <Heatmap :data="heatmapData" class="glass rounded-3xl" />
@@ -97,27 +97,41 @@
           <div class="flex items-center justify-between px-2">
             <h3 class="text-lg font-black uppercase tracking-widest flex items-center gap-2 text-zinc-400">
               <History class="w-4 h-4 text-primary-500" />
-              Recent Logs
+              {{ i18n.t('recent_logs') }}
             </h3>
           </div>
           <div class="glass rounded-3xl shadow-xl overflow-hidden backdrop-blur-2xl">
             <table class="w-full text-left">
               <thead class="bg-white/[0.02] text-zinc-500 text-[10px] uppercase font-black tracking-[0.2em]">
                 <tr>
-                  <th class="px-8 py-5">Date</th>
-                  <th class="px-8 py-5 text-right text-primary-500/50">Count</th>
+                  <th class="px-8 py-5">{{ i18n.t('table_date') }}</th>
+                  <th class="px-8 py-5 text-right text-primary-500/50">{{ i18n.t('table_count') }}</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-white/[0.05]">
                 <tr v-for="rep in reps" :key="rep.id" class="text-sm group hover:bg-white/[0.03] transition-all duration-300">
                   <td class="px-8 py-5 text-middle text-zinc-400 group-hover:text-white">{{ formatDate(rep.date) }}</td>
-                  <td class="px-8 py-5 text-right font-mono font-black text-white group-hover:text-primary-400">{{ rep.count }}</td>
+                  <td class="px-8 py-5 text-right font-mono font-black text-white group-hover:text-primary-400">
+                    <div v-if="editingId === rep.id" class="flex items-center justify-end gap-2">
+                      <input 
+                        v-model.number="editValue" 
+                        type="number" 
+                        class="w-16 bg-zinc-800 border border-primary-500/50 rounded px-2 py-1 text-right focus:outline-none"
+                        @keyup.enter="saveEdit(rep.id)"
+                      />
+                      <button @click="saveEdit(rep.id)" class="p-1 hover:text-green-500"><Check class="w-4 h-4" /></button>
+                      <button @click="editingId = null" class="p-1 hover:text-red-500"><X class="w-4 h-4" /></button>
+                    </div>
+                    <div v-else @click="startEdit(rep)" class="cursor-pointer group-hover:underline">
+                      {{ rep.count }}
+                    </div>
+                  </td>
                 </tr>
                 <tr v-if="reps.length === 0">
                   <td colspan="2" class="px-8 py-16 text-center">
                     <div class="flex flex-col items-center gap-2 opacity-30">
                       <Inbox class="w-10 h-10" />
-                      <p class="text-sm italic">Nothing but gains to be logged...</p>
+                      <p class="text-sm italic">{{ i18n.t('table_empty') }}</p>
                     </div>
                   </td>
                 </tr>
@@ -134,7 +148,7 @@
           <div class="flex items-center justify-between px-1">
             <h3 class="text-xl font-bold flex items-center gap-2">
               <BarChart3 class="w-5 h-5 text-primary-400" />
-              Rankings
+              {{ i18n.t('rankings') }}
             </h3>
           </div>
           <Leaderboard />
@@ -149,32 +163,52 @@ import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 import { 
   Trophy, Target, Flame, Zap, Activity, History, Mail, 
-  RotateCw, LogOut, Inbox, BarChart3 
+  RotateCw, LogOut, Inbox, BarChart3, Check, X 
 } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
+import { useI18nStore } from '../stores/i18n';
 import Heatmap from './Heatmap.vue';
 import RepsInput from './RepsInput.vue';
 import Leaderboard from './Leaderboard.vue';
 
 const authStore = useAuthStore();
+const i18n = useI18nStore();
 const reps = ref([]);
 const heatmapData = ref([]);
 const streak = ref(5); // Mock for now
+const totalReps = ref(0);
 
-const totalReps = computed(() => {
-  return reps.value.reduce((acc, curr) => acc + curr.count, 0);
-});
+const editingId = ref(null);
+const editValue = ref(0);
 
 const fetchData = async () => {
   try {
-    const [repsRes, heatmapRes] = await Promise.all([
+    const [repsRes, heatmapRes, statsRes] = await Promise.all([
       axios.get('/api/reps'),
-      axios.get('/api/reps/heatmap')
+      axios.get('/api/reps/heatmap'),
+      axios.get('/api/reps/stats')
     ]);
     reps.value = repsRes.data;
     heatmapData.value = heatmapRes.data;
+    totalReps.value = statsRes.data.totalReps;
+    streak.value = statsRes.data.streak;
   } catch (error) {
     console.error('Error fetching data:', error);
+  }
+};
+
+const startEdit = (rep) => {
+  editingId.value = rep.id;
+  editValue.value = rep.count;
+};
+
+const saveEdit = async (id) => {
+  try {
+    await axios.put(`/api/reps/${id}`, { count: editValue.value });
+    editingId.value = null;
+    fetchData();
+  } catch (error) {
+    console.error('Error saving edit:', error);
   }
 };
 

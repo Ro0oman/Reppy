@@ -9,7 +9,7 @@
 
       <div class="inline-flex items-center gap-2 px-4 py-2 glass rounded-full mb-4 border-white/10 animate-fade-in-up">
         <Sparkles class="w-4 h-4 text-primary-400" />
-        <span class="text-xs font-black uppercase tracking-[0.3em] text-zinc-400">Elite Protocol 2.0</span>
+        <span class="text-xs font-black uppercase tracking-[0.3em] text-zinc-400">{{ i18n.t('hero_eyebrow') }}</span>
       </div>
 
       <h1 class="text-7xl md:text-9xl font-black tracking-tighter text-white animate-fade-in-up delay-200">
@@ -17,8 +17,7 @@
       </h1>
       
       <p class="max-w-2xl text-xl md:text-2xl text-zinc-400 font-medium leading-relaxed animate-fade-in-up delay-300">
-        The tactical tracking platform for pull-up masters. <br class="hidden md:block" />
-        Record reps, visualize gains, and dominate the rankings.
+        {{ i18n.t('hero_subtitle') }}
       </p>
 
       <div class="flex items-center gap-4 animate-fade-in-up delay-500">
@@ -26,7 +25,7 @@
           @click="$emit('start')"
           class="px-8 py-4 bg-primary-600 hover:bg-primary-500 text-white font-black uppercase tracking-widest rounded-2xl shadow-[0_20px_40px_-10px_rgba(249,115,22,0.3)] transition-all hover:scale-105 active:scale-95"
         >
-          Initialize Protocol
+          {{ i18n.t('btn_start') }}
         </button>
       </div>
     </section>
@@ -37,24 +36,24 @@
         <div class="w-14 h-14 bg-primary-500/10 rounded-2xl flex items-center justify-center text-primary-500 group-hover:scale-110 transition-transform">
           <Activity class="w-8 h-8" />
         </div>
-        <h3 class="text-2xl font-black text-white tracking-tight">Tactical Heatmap</h3>
-        <p class="text-zinc-500 font-medium">Visualize your training consistency with a professional GitHub-inspired contribution graph.</p>
+        <h3 class="text-2xl font-black text-white tracking-tight">{{ i18n.t('feat_heatmap_title') }}</h3>
+        <p class="text-zinc-500 font-medium">{{ i18n.t('feat_heatmap_desc') }}</p>
       </div>
 
       <div class="glass p-8 rounded-[3rem] space-y-6 group hover:translate-y-[-8px] transition-all duration-500">
         <div class="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
           <Trophy class="w-8 h-8" />
         </div>
-        <h3 class="text-2xl font-black text-white tracking-tight">Global Rankings</h3>
-        <p class="text-zinc-500 font-medium">Climb the ranks and see where you stand against the world's most elite pull-up athletes.</p>
+        <h3 class="text-2xl font-black text-white tracking-tight">{{ i18n.t('feat_leaderboard_title') }}</h3>
+        <p class="text-zinc-500 font-medium">{{ i18n.t('feat_leaderboard_desc') }}</p>
       </div>
 
       <div class="glass p-8 rounded-[3rem] space-y-6 group hover:translate-y-[-8px] transition-all duration-500">
         <div class="w-14 h-14 bg-green-500/10 rounded-2xl flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform">
           <Users class="w-8 h-8" />
         </div>
-        <h3 class="text-2xl font-black text-white tracking-tight">Social Circles</h3>
-        <p class="text-zinc-500 font-medium">Add friends, track their progress, and build your own inner circle of performance.</p>
+        <h3 class="text-2xl font-black text-white tracking-tight">{{ i18n.t('feat_social_title') }}</h3>
+        <p class="text-zinc-500 font-medium">{{ i18n.t('feat_social_desc') }}</p>
       </div>
     </section>
 
@@ -70,6 +69,9 @@
 
 <script setup>
 import { Sparkles, Activity, Trophy, Users } from 'lucide-vue-next';
+import { useI18nStore } from '../stores/i18n';
+
+const i18n = useI18nStore();
 defineEmits(['start']);
 </script>
 

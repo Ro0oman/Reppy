@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center justify-center min-h-[80vh] px-4 relative">
     <button @click="$emit('back')" class="absolute top-8 left-8 flex items-center gap-2 text-zinc-500 hover:text-zinc-300 text-xs font-bold uppercase tracking-widest transition-colors z-50">
       <ChevronLeft class="w-4 h-4" />
-      Back to HQ
+      {{ i18n.t('login_back') }}
     </button>
     <div class="w-full max-w-md space-y-12 animate-fade-in-up">
       <div class="text-center space-y-4">
@@ -10,8 +10,8 @@
           <div class="absolute inset-0 bg-primary-500/20 blur-xl group-hover:bg-primary-500/40 transition-all duration-700"></div>
           <span class="text-4xl font-black italic text-white relative z-10">R</span>
         </div>
-        <h1 class="text-6xl font-black tracking-tighter text-white sm:text-7xl">Reppy</h1>
-        <p class="text-zinc-500 font-medium tracking-wide">The elite tracking protocol for pull-up masters.</p>
+        <h1 class="text-6xl font-black tracking-tighter text-white sm:text-7xl">{{ i18n.t('login_title') }}</h1>
+        <p class="text-zinc-500 font-medium tracking-wide">{{ i18n.t('login_subtitle') }}</p>
       </div>
 
       <div class="glass p-10 rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.5)] border-white/5 relative overflow-hidden group">
@@ -50,9 +50,11 @@
 <script setup>
 import { GoogleSignInButton } from 'vue3-google-signin';
 import { useAuthStore } from '../stores/auth';
+import { useI18nStore } from '../stores/i18n';
 import { ChevronLeft } from 'lucide-vue-next';
 
 const authStore = useAuthStore();
+const i18n = useI18nStore();
 const emit = defineEmits(['back']);
 
 const handleLoginSuccess = async (response) => {

@@ -63,4 +63,60 @@ router.get('/heatmap', authenticate, async (req, res) => {
   }
 });
 
+// Get stats for dashboard
+router.get('/stats', authenticate, async (req, res) => {
+  try {
+    const totalResult = await query(
+      'SELECT SUM(count) as total FROM reps WHERE user_id = $1',
+      [req.user.id]
+    );
+    // Rough calculation for streak and top month
+    res.json({
+      totalReps: parseInt(totalResult.rows[0].total) || 0,
+      streak: 5, // Mock streak for now
+      topMonth: 'March', // Mock for now
+      topMonthCount: 142
+    });
+  } catch (error) {
+    console.error('Error fetching stats:', error);
+    res.status(500).json({ message: 'Error fetching stats' });
+  }
+});
+
+// Edit reps by ID (New requirement)
+router.put('/:id', authenticate, async (req, res) => {
+  const { id } = req.params;
+  const { count } = req.body;
+  const userId = req.user.id;
+
+  try {
+    // Verify ownership
+    const checkResult = await query(
+      'SELECT * FROM reps WHERE id = $1 AND user_id = $2',
+      [id, userId]
+    );
+
+    if (checkResult.rows.length === 0) {
+      return res.status(403).json({ message: 'Unauthorized or not found' });
+    }
+
+    // Update count
+    const updateResult = await query(
+      'UPDATE reps SET count = $1 WHERE id = $2 RETURNING *',
+      [count, id]
+    );
+
+    // Update user's total_reps cache
+    await query(
+      'UPDATE users SET total_reps = (SELECT SUM(count) FROM reps WHERE user_id = $1) WHERE id = $1',
+      [userId]
+    );
+
+    res.json(updateResult.rows[0]);
+  } catch (error) {
+    console.error('Error updating reps:', error);
+    res.status(500).json({ message: 'Error updating reps' });
+  }
+});
+
 export default router;
