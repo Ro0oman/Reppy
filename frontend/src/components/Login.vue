@@ -37,6 +37,14 @@
           </button>
         </div>
 
+        <!-- Error Message -->
+        <div v-if="errorMessage" class="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center gap-3 animate-shake">
+          <AlertCircle class="w-5 h-5 text-red-500 shrink-0" />
+          <p class="text-[11px] font-bold text-red-500 uppercase tracking-tight leading-relaxed">
+            {{ i18n.t(errorMessage) }}
+          </p>
+        </div>
+
         <!-- Manual Form -->
         <form @submit.prevent="handleSubmit" class="space-y-4 mb-8">
           <div v-if="mode === 'signup'" class="space-y-1.5">
@@ -110,11 +118,11 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, watch } from 'vue';
 import { GoogleSignInButton } from 'vue3-google-signin';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
-import { ChevronLeft, Loader2 } from 'lucide-vue-next';
+import { ChevronLeft, Loader2, AlertCircle } from 'lucide-vue-next';
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();
@@ -122,14 +130,21 @@ const emit = defineEmits(['back']);
 
 const mode = ref('login');
 const loading = ref(false);
+const errorMessage = ref('');
 const form = reactive({
   name: '',
   email: '',
   password: ''
 });
 
+// Clear error when switching modes
+watch(mode, () => {
+  errorMessage.value = '';
+});
+
 const handleSubmit = async () => {
   loading.value = true;
+  errorMessage.value = '';
   try {
     if (mode.value === 'signup') {
       await authStore.signup(form);
@@ -137,7 +152,7 @@ const handleSubmit = async () => {
       await authStore.login({ email: form.email, password: form.password });
     }
   } catch (error) {
-    alert(error.response?.data?.message || 'Authentication failed');
+    errorMessage.value = error.message;
   } finally {
     loading.value = false;
   }

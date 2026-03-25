@@ -66,7 +66,11 @@ router.post('/signup', async (req, res) => {
   try {
     const existingUser = await query('SELECT * FROM users WHERE email = $1', [email]);
     if (existingUser.rows.length > 0) {
-      return res.status(400).json({ message: 'Email already exists' });
+      const user = existingUser.rows[0];
+      if (!user.password_hash) {
+        return res.status(400).json({ code: 'ERR_GOOGLE_ONLY', message: 'This account uses Google Login' });
+      }
+      return res.status(400).json({ code: 'ERR_USER_EXISTS', message: 'Email already exists' });
     }
 
     const id = `user_${crypto.randomUUID()}`;
@@ -94,7 +98,7 @@ router.post('/signup', async (req, res) => {
     });
   } catch (error) {
     console.error('Signup failed:', error);
-    res.status(500).json({ message: 'Signup failed' });
+    res.status(500).json({ code: 'ERR_SERVER', message: 'Signup failed' });
   }
 });
 
@@ -106,13 +110,17 @@ router.post('/login', async (req, res) => {
     const result = await query('SELECT * FROM users WHERE email = $1', [email]);
     const user = result.rows[0];
 
-    if (!user || !user.password_hash) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+    if (!user) {
+      return res.status(401).json({ code: 'ERR_USER_NOT_FOUND', message: 'User not found' });
+    }
+
+    if (!user.password_hash) {
+      return res.status(401).json({ code: 'ERR_GOOGLE_ONLY', message: 'This account uses Google Login' });
     }
 
     const isValid = await bcrypt.compare(password, user.password_hash);
     if (!isValid) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ code: 'ERR_WRONG_PASSWORD', message: 'Incorrect password' });
     }
 
     const token = generateToken(user.id);
@@ -130,7 +138,7 @@ router.post('/login', async (req, res) => {
     });
   } catch (error) {
     console.error('Login failed:', error);
-    res.status(500).json({ message: 'Login failed' });
+    res.status(500).json({ code: 'ERR_SERVER', message: 'Login failed' });
   }
 });
 

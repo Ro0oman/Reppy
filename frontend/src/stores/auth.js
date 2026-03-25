@@ -20,8 +20,9 @@ export const useAuthStore = defineStore('auth', {
         axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
         return this.user;
       } catch (error) {
-        console.error('Signup failed:', error);
-        throw error;
+        const errorCode = error.response?.data?.code || 'ERR_SERVER';
+        console.error('Signup failed:', errorCode);
+        throw new Error(errorCode);
       }
     },
     async login(data) {
@@ -34,8 +35,9 @@ export const useAuthStore = defineStore('auth', {
         axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
         return this.user;
       } catch (error) {
-        console.error('Login failed:', error);
-        throw error;
+        const errorCode = error.response?.data?.code || 'ERR_SERVER';
+        console.error('Login failed:', errorCode);
+        throw new Error(errorCode);
       }
     },
     async loginWithGoogle(googleToken) {

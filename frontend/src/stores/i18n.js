@@ -93,7 +93,14 @@ const translations = {
     daily_goal: 'Daily Rep Goal',
     save_settings: 'Update Protocol',
     settings_success: 'Profile Synchronized',
-    goal_progress: 'Mission Progress'
+    goal_progress: 'Mission Progress',
+    
+    // Auth Errors
+    ERR_USER_EXISTS: 'This email is already registered. Please log in.',
+    ERR_GOOGLE_ONLY: 'This account uses Google Login. Please use the Google button.',
+    ERR_USER_NOT_FOUND: 'No account found with this email.',
+    ERR_WRONG_PASSWORD: 'Incorrect password. Please try again.',
+    ERR_SERVER: 'A system error occurred. Please try again later.'
   },
   es: {
     // Landing
@@ -187,7 +194,14 @@ const translations = {
     daily_goal: 'Meta Diaria de Repeticiones',
     save_settings: 'Actualizar Protocolo',
     settings_success: 'Perfil Sincronizado',
-    goal_progress: 'Progreso de Misión'
+    goal_progress: 'Progreso de Misión',
+
+    // Auth Errors
+    ERR_USER_EXISTS: 'Este correo ya está registrado. Por favor, inicia sesión.',
+    ERR_GOOGLE_ONLY: 'Esta cuenta usa Google. Por favor, usa el botón de Google.',
+    ERR_USER_NOT_FOUND: 'No se encontró ninguna cuenta con este correo.',
+    ERR_WRONG_PASSWORD: 'Contraseña incorrecta. Inténtalo de nuevo.',
+    ERR_SERVER: 'Ocurrió un error del sistema. Reinténtalo más tarde.'
   }
 };
 
