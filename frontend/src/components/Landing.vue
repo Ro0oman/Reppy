@@ -56,6 +56,27 @@
         <p class="text-zinc-500 font-medium">{{ i18n.t('feat_social_desc') }}</p>
       </div>
     </section>
+    
+    <!-- Global Hall of Fame -->
+    <section class="max-w-4xl w-full px-4 py-24 space-y-12">
+      <div class="text-center space-y-4">
+        <h2 class="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase">{{ i18n.t('landing_lb_title') }}</h2>
+        <p class="text-zinc-500 font-medium">{{ i18n.t('landing_lb_subtitle') }}</p>
+      </div>
+      
+      <div class="animate-fade-in-up delay-700">
+        <Leaderboard />
+      </div>
+      
+      <div class="text-center">
+        <button 
+          @click="$emit('start')"
+          class="text-[10px] font-black text-primary-500 uppercase tracking-[0.3em] hover:text-primary-400 transition-colors"
+        >
+          {{ i18n.t('btn_start') }} &rarr;
+        </button>
+      </div>
+    </section>
 
     <!-- Footer -->
     <footer class="w-full py-16 border-t border-white/5 text-center space-y-4">
@@ -70,6 +91,7 @@
 <script setup>
 import { Sparkles, Activity, Trophy, Users } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
+import Leaderboard from './Leaderboard.vue';
 
 const i18n = useI18nStore();
 defineEmits(['start']);

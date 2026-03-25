@@ -1,10 +1,9 @@
 <template>
   <div class="glass glass-hover flex flex-col gap-5 p-7 rounded-3xl shadow-2xl">
-    <div class="flex items-center gap-3">
+    <div v-if="authStore.isAuthenticated" class="flex items-center gap-3">
       <button 
         @click="type = 'friends'"
         class="flex-1 py-2.5 text-xs font-bold uppercase tracking-widest transition-all rounded-xl"
-        :label="i18n.t('lb_friends')"
         :class="type === 'friends' ? 'text-white bg-zinc-800 shadow-lg' : 'text-zinc-500 hover:text-zinc-300'"
       >
         {{ i18n.t('lb_friends') }}
@@ -12,11 +11,13 @@
       <button 
         @click="type = 'global'"
         class="flex-1 py-2.5 text-xs font-bold uppercase tracking-widest transition-all rounded-xl"
-        :label="i18n.t('lb_global')"
         :class="type === 'global' ? 'text-white bg-zinc-800 shadow-lg' : 'text-zinc-500 hover:text-zinc-300'"
       >
         {{ i18n.t('lb_global') }}
       </button>
+    </div>
+    <div v-else class="text-center py-2">
+      <h4 class="text-[10px] font-black uppercase tracking-[0.3em] text-primary-500/50">{{ i18n.t('lb_global') }}</h4>
     </div>
 
     <!-- Timeframe Selector -->
@@ -89,7 +90,12 @@ import { useI18nStore } from '../stores/i18n';
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();
-const type = ref('friends');
+
+const props = defineProps({
+  limit: { type: Number, default: 20 }
+});
+
+const type = ref(authStore.isAuthenticated ? 'friends' : 'global');
 const timeframe = ref('all');
 const users = ref([]);
 const loading = ref(false);
