@@ -47,9 +47,14 @@ app.get('/api/db/init', async (req, res) => {
           user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
           count INTEGER NOT NULL DEFAULT 0,
           date DATE NOT NULL DEFAULT CURRENT_DATE,
+          exercise_type VARCHAR(50) DEFAULT 'pullups',
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-          UNIQUE(user_id, date)
+          UNIQUE(user_id, date, exercise_type)
       )`,
+      // Migration for existing tables
+      `ALTER TABLE reps ADD COLUMN IF NOT EXISTS exercise_type VARCHAR(50) DEFAULT 'pullups'`,
+      `ALTER TABLE reps DROP CONSTRAINT IF EXISTS reps_user_id_date_key`,
+      `ALTER TABLE reps ADD CONSTRAINT reps_user_id_date_exercise_type_key UNIQUE(user_id, date, exercise_type)`,
       `CREATE TABLE IF NOT EXISTS friendships (
           id SERIAL PRIMARY KEY,
           user_id_1 VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,

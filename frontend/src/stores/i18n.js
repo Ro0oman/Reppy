@@ -100,6 +100,13 @@ const translations = {
     avatar_subtitle: 'Personalize your profile',
     delete_subtitle: 'Irreversible action',
     
+    // Exercises
+    pullups: 'Pull-ups',
+    muscleups: 'Muscle Ups',
+    dips: 'Dips',
+    pushups: 'Push-ups',
+    weighted_pullups: 'Weighted Pull-ups',
+    
     // Auth Errors
     ERR_USER_EXISTS: 'This email is already registered. Please log in.',
     ERR_GOOGLE_ONLY: 'This account uses Google Login. Please use the Google button.',
@@ -203,8 +210,15 @@ const translations = {
     save_settings: 'Guardar Cambios',
     settings_success: 'Peril Actualizado',
     goal_progress: 'Progreso Diario',
-    avatar_subtitle: 'Personaliza tu perfil',
+    avatar_subtitle: 'Personalize your perfil',
     delete_subtitle: 'Acción irreversible',
+
+    // Ejercicios
+    pullups: 'Dominadas',
+    muscleups: 'Muscle Ups',
+    dips: 'Fondos',
+    pushups: 'Flexiones',
+    weighted_pullups: 'Dominadas con Lastre',
 
     // Auth Errors
     ERR_USER_EXISTS: 'Este correo ya está registrado. Por favor, inicia sesión.',

@@ -9,8 +9,8 @@
           <Zap class="w-5 h-5 text-black" />
         </div>
         <div>
-          <h3 class="text-xl font-black text-white uppercase tracking-tighter">{{ i18n.t('log_pullups') }}</h3>
-          <p class="text-[10px] font-bold text-amber-500/60 uppercase tracking-[0.2em]">{{ i18n.t('stats_gains') }} Protocol</p>
+          <h3 class="text-xl font-black text-white uppercase tracking-tighter">{{ activeLabel }}</h3>
+          <p class="text-[10px] font-bold text-amber-500/60 uppercase tracking-[0.2em]">{{ exerciseType.replace('_', ' ') }} Protocol</p>
         </div>
       </div>
     </div>
@@ -45,16 +45,34 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import axios from 'axios';
 import { Zap } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useNotificationStore } from '../stores/notification';
 
+const props = defineProps({
+  exerciseType: {
+    type: String,
+    default: 'pullups'
+  }
+});
+
 const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
 const emit = defineEmits(['updated']);
 const customReps = ref(null);
+
+const activeLabel = computed(() => {
+  const map = {
+    pullups: 'Dominadas',
+    muscleups: 'Muscle Ups',
+    dips: 'Fondos',
+    pushups: 'Flexiones',
+    weighted_pullups: 'Dominadas Lastre'
+  };
+  return map[props.exerciseType] || 'Reps';
+});
 
 const addReps = async (count) => {
   if (!count) return;
@@ -62,10 +80,11 @@ const addReps = async (count) => {
     const today = new Date().toISOString().split('T')[0];
     await axios.post('/api/reps', {
       count,
-      date: today
+      date: today,
+      exercise_type: props.exerciseType
     });
     
-    notificationStore.notify(`+${count} Reps logged for today!`, 'success');
+    notificationStore.notify(`+${count} ${activeLabel.value} logged!`, 'success');
     
     if (customReps.value === count) customReps.value = null;
     emit('updated');

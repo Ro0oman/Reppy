@@ -6,11 +6,19 @@ const router = express.Router();
 
 // Get reps for a user
 router.get('/', authenticate, async (req, res) => {
+  const { type } = req.query;
   try {
-    const repsResult = await query(
-      'SELECT id, count, date FROM reps WHERE user_id = $1 ORDER BY date DESC',
-      [req.user.id]
-    );
+    let q = 'SELECT id, count, date, exercise_type FROM reps WHERE user_id = $1';
+    let params = [req.user.id];
+    
+    if (type) {
+      q += ' AND exercise_type = $2';
+      params.push(type);
+    }
+    
+    q += ' ORDER BY date DESC';
+    
+    const repsResult = await query(q, params);
     res.json(repsResult.rows);
   } catch (error) {
     console.error('Error fetching reps:', error);
@@ -20,21 +28,21 @@ router.get('/', authenticate, async (req, res) => {
 
 // Add or update reps for a date
 router.post('/', authenticate, async (req, res) => {
-  const { count, date } = req.body;
+  const { count, date, exercise_type = 'pullups' } = req.body;
   const userId = req.user.id;
 
   try {
-    // Insert or update reps for the specific date
+    // Insert or update reps for the specific date and exercise type
     const result = await query(
-      `INSERT INTO reps (user_id, count, date) 
-       VALUES ($1, $2, $3) 
-       ON CONFLICT (user_id, date) 
+      `INSERT INTO reps (user_id, count, date, exercise_type) 
+       VALUES ($1, $2, $3, $4) 
+       ON CONFLICT (user_id, date, exercise_type) 
        DO UPDATE SET count = reps.count + EXCLUDED.count 
        RETURNING *`,
-      [userId, count, date || new Date()]
+      [userId, count, date || new Date(), exercise_type]
     );
 
-    // Update user's total_reps
+    // Update user's total_reps (overall cache)
     await query(
       'UPDATE users SET total_reps = (SELECT SUM(count) FROM reps WHERE user_id = $1) WHERE id = $1',
       [userId]
@@ -47,14 +55,15 @@ router.post('/', authenticate, async (req, res) => {
   }
 });
 
-// Get heatmap data (reps per day for the last year)
+// Get heatmap data (reps per day for the last year, filtered by type)
 router.get('/heatmap', authenticate, async (req, res) => {
+  const { type = 'pullups' } = req.query;
   try {
     const result = await query(
       `SELECT date, count FROM reps 
-       WHERE user_id = $1 AND date > CURRENT_DATE - INTERVAL '1 year'
+       WHERE user_id = $1 AND exercise_type = $2 AND date > CURRENT_DATE - INTERVAL '1 year'
        ORDER BY date ASC`,
-      [req.user.id]
+      [req.user.id, type]
     );
     res.json(result.rows);
   } catch (error) {
@@ -66,59 +75,60 @@ router.get('/heatmap', authenticate, async (req, res) => {
 // Get stats for dashboard
 router.get('/stats', authenticate, async (req, res) => {
   const userId = req.user.id;
+  const { type = 'pullups' } = req.query;
   try {
-    // 1. Total Reps & Daily Goal
-    const userRes = await query('SELECT total_reps, daily_goal FROM users WHERE id = $1', [userId]);
-    const { total_reps, daily_goal } = userRes.rows[0];
+    // 1. Total Reps for this exercise
+    const totalRes = await query(
+      'SELECT SUM(count) as total FROM reps WHERE user_id = $1 AND exercise_type = $2',
+      [userId, type]
+    );
+    const totalReps = parseInt(totalRes.rows[0]?.total) || 0;
 
-    // 2. Top Month
+    // 2. Daily Goal (global for now, or we could make it per-exercise later)
+    const userRes = await query('SELECT daily_goal FROM users WHERE id = $1', [userId]);
+    const daily_goal = userRes.rows[0].daily_goal;
+
+    // 3. Top Month for this exercise
     const topMonthRes = await query(
       `SELECT TO_CHAR(date, 'Month') as month, SUM(count) as total 
        FROM reps 
-       WHERE user_id = $1 
+       WHERE user_id = $1 AND exercise_type = $2
        GROUP BY TO_CHAR(date, 'Month'), date_trunc('month', date)
        ORDER BY total DESC, date_trunc('month', date) DESC 
        LIMIT 1`,
-      [userId]
+      [userId, type]
     );
     const topMonth = topMonthRes.rows[0]?.month?.trim() || 'N/A';
     const topMonthCount = parseInt(topMonthRes.rows[0]?.total) || 0;
 
-    // 3. Current Streak
-    // Fetch unique dates where reps were recorded, sorted descending
+    // 4. Current Streak for this exercise
     const datesRes = await query(
-      'SELECT DISTINCT date FROM reps WHERE user_id = $1 ORDER BY date DESC',
-      [userId]
+      'SELECT DISTINCT date FROM reps WHERE user_id = $1 AND exercise_type = $2 ORDER BY date DESC',
+      [userId, type]
     );
     
     let streak = 0;
     if (datesRes.rows.length > 0) {
       const today = new Date();
       today.setHours(0,0,0,0);
-      
       const lastRepDate = new Date(datesRes.rows[0].date);
       lastRepDate.setHours(0,0,0,0);
-      
       const diffDays = Math.floor((today - lastRepDate) / (1000 * 60 * 60 * 24));
       
-      // Streak continues if last rep was today or yesterday
       if (diffDays <= 1) {
         streak = 1;
         for (let i = 0; i < datesRes.rows.length - 1; i++) {
           const current = new Date(datesRes.rows[i].date);
           const next = new Date(datesRes.rows[i+1].date);
           const d = Math.floor((current - next) / (1000 * 60 * 60 * 24));
-          if (d === 1) {
-            streak++;
-          } else {
-            break;
-          }
+          if (d === 1) streak++;
+          else break;
         }
       }
     }
 
     res.json({
-      totalReps: total_reps,
+      totalReps,
       streak,
       topMonth,
       topMonthCount,

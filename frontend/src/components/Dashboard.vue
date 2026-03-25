@@ -30,11 +30,16 @@
       </div>
     </header>
 
+    <!-- Exercise Selector -->
+    <div class="flex justify-center -mb-4">
+      <ExerciseSelector v-model="activeExercise" @update:modelValue="fetchData" />
+    </div>
+
     <!-- Main Action Area: Input & Rankings -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 text-white">
       <!-- High Visibility Input -->
       <div class="lg:col-span-1">
-        <RepsInput @updated="fetchData" />
+        <RepsInput :exercise-type="activeExercise" @updated="fetchData" />
       </div>
       
       <!-- Prominent Leaderboard -->
@@ -42,9 +47,12 @@
         <section class="glass rounded-[2.5rem] p-8 border-white/5 h-full">
           <h3 class="text-base font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-500 mb-6">
             <BarChart3 class="w-4 h-4 text-primary-500" />
-            {{ i18n.t('rankings') }}
+            <span>{{ activeExerciseLabel }} {{ i18n.t('rankings') }}</span>
           </h3>
-          <Leaderboard ref="leaderboardRef" />
+          <Leaderboard 
+            ref="leaderboardRef" 
+            :exercise-type="activeExercise"
+          />
         </section>
       </div>
     </div>
@@ -283,6 +291,7 @@ import { useNotificationStore } from '../stores/notification';
 import Heatmap from './Heatmap.vue';
 import RepsInput from './RepsInput.vue';
 import Leaderboard from './Leaderboard.vue';
+import ExerciseSelector from './ExerciseSelector.vue';
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();
@@ -290,11 +299,24 @@ const notificationStore = useNotificationStore();
 const reps = ref([]);
 const heatmapData = ref([]);
 const totalReps = ref(0);
+const activeExercise = ref('pullups');
+
 const stats = reactive({
   streak: 0,
   topMonth: 'N/A',
   topMonthCount: 0,
   dailyGoal: 50
+});
+
+const activeExerciseLabel = computed(() => {
+  const map = {
+    pullups: i18n.t('pullups'),
+    muscleups: i18n.t('muscleups'),
+    dips: i18n.t('dips'),
+    pushups: i18n.t('pushups'),
+    weighted_pullups: i18n.t('weighted_pullups')
+  };
+  return map[activeExercise.value] || activeExercise.value;
 });
 
 const settingsForm = reactive({
@@ -317,10 +339,11 @@ const todayProgress = computed(() => {
 
 const fetchData = async () => {
   try {
+    const params = { type: activeExercise.value };
     const statsPromises = [
-      axios.get('/api/reps'),
-      axios.get('/api/reps/heatmap'),
-      axios.get('/api/reps/stats'),
+      axios.get('/api/reps', { params }),
+      axios.get('/api/reps/heatmap', { params }),
+      axios.get('/api/reps/stats', { params }),
       authStore.fetchProfile()
     ];
 

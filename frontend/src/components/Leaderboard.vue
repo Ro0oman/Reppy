@@ -92,7 +92,8 @@ const authStore = useAuthStore();
 const i18n = useI18nStore();
 
 const props = defineProps({
-  limit: { type: Number, default: 20 }
+  limit: { type: Number, default: 20 },
+  exerciseType: { type: String, default: 'pullups' }
 });
 
 const type = ref(authStore.isAuthenticated ? 'friends' : 'global');
@@ -105,7 +106,10 @@ const fetchLeaderboard = async () => {
   loading.value = true;
   try {
     const response = await axios.get(`/api/leaderboard/${type.value}`, {
-      params: { timeframe: timeframe.value }
+      params: { 
+        timeframe: timeframe.value,
+        type: props.exerciseType
+      }
     });
     users.value = response.data;
     sortedUsers.value = [...users.value].sort((a, b) => b.total_reps - a.total_reps);
@@ -116,7 +120,7 @@ const fetchLeaderboard = async () => {
   }
 };
 
-watch([type, timeframe], fetchLeaderboard);
+watch([type, timeframe, () => props.exerciseType], fetchLeaderboard);
 onMounted(fetchLeaderboard);
 
 defineExpose({ refresh: fetchLeaderboard });
