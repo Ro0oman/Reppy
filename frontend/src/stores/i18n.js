@@ -3,9 +3,9 @@ import { defineStore } from 'pinia';
 const translations = {
   en: {
     // Landing
-    hero_eyebrow: 'Elite Protocol 2.0',
-    hero_subtitle: 'The tactical tracking platform for pull-up masters. Record reps, visualize gains, and dominate the rankings.',
-    btn_start: 'Initialize Protocol',
+    hero_eyebrow: 'Elite Training Platform',
+    hero_subtitle: 'The premium tracking platform for pull-up enthusiasts. Record reps, visualize progress, and dominate the rankings.',
+    btn_start: 'Get Started',
     
     // Landing Leaderboard
     landing_lb_title: 'Hall of Fame',
@@ -20,8 +20,8 @@ const translations = {
     
     // Auth / Login
     login_title: 'Reppy',
-    login_subtitle: 'The elite tracking protocol for pull-up masters.',
-    login_back: 'Back to HQ',
+    login_subtitle: 'The premium tracking platform for pull-up enthusiasts.',
+    login_back: 'Back to Home',
     login_google: 'Sign in with Google',
     
     // Dashboard
@@ -77,23 +77,26 @@ const translations = {
     // Account Management
     login_btn: 'Sign In',
     signup_btn: 'Sign Up',
-    have_account: 'Already have a protocol?',
-    no_account: 'Need a new protocol?',
+    have_account: 'Already have an account?',
+    no_account: 'Need an account?',
     email: 'Email',
     password: 'Password',
     name_placeholder: 'Full Name',
-    delete_account: 'Destroy Protocol',
-    delete_confirm: 'Are you sure? This is permanent.',
+    delete_account: 'Delete Account',
+    delete_confirm_title: 'Unstoppable Deletion?',
+    delete_confirm: 'Are you sure? This action is permanent.',
     change_avatar: 'Update Avatar',
-    btn_delete: 'Delete Forever',
+    btn_delete: 'Delete Account',
 
     // Settings & Goals
-    settings_title: 'Protocol Settings',
-    profile_name: 'Hero Name',
+    settings_title: 'Profile Settings',
+    profile_name: 'Display Name',
     daily_goal: 'Daily Rep Goal',
-    save_settings: 'Update Protocol',
-    settings_success: 'Profile Synchronized',
-    goal_progress: 'Mission Progress',
+    save_settings: 'Save Changes',
+    settings_success: 'Profile Updated',
+    goal_progress: 'Daily Progress',
+    avatar_subtitle: 'Personalize your profile',
+    delete_subtitle: 'Irreversible action',
     
     // Auth Errors
     ERR_USER_EXISTS: 'This email is already registered. Please log in.',
@@ -104,9 +107,9 @@ const translations = {
   },
   es: {
     // Landing
-    hero_eyebrow: 'Protocolo de Elite 2.0',
-    hero_subtitle: 'La plataforma táctica para maestros de las dominadas. Registra repeticiones, visualiza tus ganancias y domina los rankings.',
-    btn_start: 'Inicializar Protocolo',
+    hero_eyebrow: 'Plataforma de Entrenamiento de Élite',
+    hero_subtitle: 'La plataforma premium para entusiastas de las dominadas. Registra repeticiones, visualiza tu progreso y domina los rankings.',
+    btn_start: 'Comenzar Ahora',
 
     // Landing Leaderboard
     landing_lb_title: 'Muro de la Fama',
@@ -121,8 +124,8 @@ const translations = {
     
     // Auth / Login
     login_title: 'Reppy',
-    login_subtitle: 'El protocolo de seguimiento de élite para maestros de las dominadas.',
-    login_back: 'Volver al CG',
+    login_subtitle: 'La plataforma premium para entusiastas de las dominadas.',
+    login_back: 'Volver al Inicio',
     login_google: 'Iniciar sesión con Google',
     
     // Dashboard
@@ -178,23 +181,26 @@ const translations = {
     // Account Management
     login_btn: 'Entrar',
     signup_btn: 'Registrarse',
-    have_account: '¿Ya tienes un protocolo?',
-    no_account: '¿Necesitas un protocolo?',
+    have_account: '¿Ya tienes una cuenta?',
+    no_account: '¿No tienes cuenta?',
     email: 'Email',
     password: 'Contraseña',
     name_placeholder: 'Nombre y Apellidos',
-    delete_account: 'Destruir Protocolo',
-    delete_confirm: '¿Estás seguro? Esto es permanente.',
+    delete_account: 'Borrar Cuenta',
+    delete_confirm_title: '¿Borrado Irreversible?',
+    delete_confirm: '¿Estás seguro? Esta acción es permanente.',
     change_avatar: 'Actualizar Avatar',
-    btn_delete: 'Borrar para siempre',
+    btn_delete: 'Borrar Cuenta',
 
     // Settings & Goals
-    settings_title: 'Ajustes del Protocolo',
-    profile_name: 'Nombre del Héroe',
+    settings_title: 'Ajustes de Perfil',
+    profile_name: 'Nombre de Usuario',
     daily_goal: 'Meta Diaria de Repeticiones',
-    save_settings: 'Actualizar Protocolo',
-    settings_success: 'Perfil Sincronizado',
-    goal_progress: 'Progreso de Misión',
+    save_settings: 'Guardar Cambios',
+    settings_success: 'Peril Actualizado',
+    goal_progress: 'Progreso Diario',
+    avatar_subtitle: 'Personaliza tu perfil',
+    delete_subtitle: 'Acción irreversible',
 
     // Auth Errors
     ERR_USER_EXISTS: 'Este correo ya está registrado. Por favor, inicia sesión.',
