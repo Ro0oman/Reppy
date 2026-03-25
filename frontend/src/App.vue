@@ -57,7 +57,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useAuthStore } from './stores/auth';
 import Login from './components/Login.vue'
 import Landing from './components/Landing.vue'
@@ -69,8 +69,12 @@ import { useI18nStore } from './stores/i18n';
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();
-const view = ref('dashboard');
+const view = ref(localStorage.getItem('reppy_view') || 'dashboard');
 const showLogin = ref(false);
+
+watch(view, (newView) => {
+  localStorage.setItem('reppy_view', newView);
+});
 
 onMounted(() => {
   authStore.init();
