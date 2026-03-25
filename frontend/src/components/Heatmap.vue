@@ -10,14 +10,15 @@
         <div v-for="(week, wIndex) in weeks" :key="wIndex" class="flex flex-col gap-1.5 px-0.5">
           <div 
             v-for="(day, dIndex) in week" :key="dIndex"
-            class="w-[11px] h-[11px] rounded-[2px] cursor-pointer transition-all duration-300 hover:scale-125 hover:z-10 relative"
+            class="w-[11px] h-[11px] rounded-[2px] transition-all duration-300 relative"
             :class="[
-              getColorClass(day.count),
-              activeDay?.date === day.date ? 'ring-2 ring-white shadow-[0_0_10px_rgba(255,255,255,0.3)]' : ''
+              getColorClass(day),
+              activeDay?.date === day.date ? 'ring-2 ring-white shadow-[0_0_10px_rgba(255,255,255,0.3)]' : '',
+              day.isOutsideYear ? 'opacity-0 pointer-events-none' : 'cursor-pointer hover:scale-125 hover:z-10'
             ]"
-            @mouseenter="hoveredDay = day"
+            @mouseenter="!day.isOutsideYear && (hoveredDay = day)"
             @mouseleave="hoveredDay = null"
-            @click="clickedDay = clickedDay?.date === day.date ? null : day"
+            @click="!day.isOutsideYear && (clickedDay = clickedDay?.date === day.date ? null : day)"
           >
             <!-- Tiny Active Indicator -->
             <div v-if="activeDay?.date === day.date" class="absolute -inset-1 border border-white/20 rounded-[4px] animate-pulse"></div>
@@ -40,11 +41,11 @@
 
     <div class="flex justify-between items-center text-[10px] text-zinc-600 font-black uppercase tracking-widest mt-2 px-1">
       <span>{{ i18n.t('stats_less') || 'Less' }}</span>
-      <div class="flex gap-1.5">
+      <div class="flex gap-1.5 grayscale opacity-50 contrast-125">
         <div class="w-2.5 h-2.5 rounded-[2px] bg-zinc-800/30"></div>
-        <div class="w-2.5 h-2.5 rounded-[2px] bg-primary-900/60"></div>
-        <div class="w-2.5 h-3 bg-primary-500 shadow-[0_0_10px_rgba(249,115,22,0.3)] rounded-[2px]"></div>
-        <div class="w-2.5 h-2.5 rounded-[2px] bg-primary-300/60"></div>
+        <div class="w-2.5 h-2.5 rounded-[2px] bg-primary-900/40"></div>
+        <div class="w-2.5 h-3 bg-primary-500 rounded-[2px]"></div>
+        <div class="w-2.5 h-2.5 rounded-[2px] bg-primary-400"></div>
       </div>
       <span>{{ i18n.t('stats_more') || 'More' }}</span>
     </div>
@@ -72,23 +73,35 @@ const activeDay = computed(() => hoveredDay.value || clickedDay.value);
 const weeks = computed(() => {
   const result = [];
   const today = new Date();
-  const startDate = new Date();
-  startDate.setFullYear(today.getFullYear() - 1);
+  const year = today.getFullYear();
   
-  const dayOfWeek = startDate.getDay();
-  const diff = startDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
-  startDate.setDate(diff);
+  const startDate = new Date(year, 0, 1);
+  const endDate = new Date(year, 11, 31);
+  
+  // Align start date to the beginning of the week (Monday)
+  const startDay = startDate.getDay();
+  const startDiff = startDate.getDate() - (startDay === 0 ? 6 : startDay - 1);
+  const currentDate = new Date(year, 0, startDiff);
+
+  // Align end date to the end of the week (Sunday)
+  const lastDate = new Date(year, 11, 31);
+  const lastDay = lastDate.getDay();
+  const lastDiff = lastDay === 0 ? 0 : 7 - lastDay;
+  const finalDate = new Date(year, 11, 31 + lastDiff);
 
   let currentWeek = [];
-  const currentDate = new Date(startDate);
 
-  while (currentDate <= today) {
+  while (currentDate <= finalDate) {
     const dateStr = currentDate.toISOString().split('T')[0];
     const dayData = props.data.find(d => d.date.split('T')[0] === dateStr);
+    const isWithinYear = currentDate.getFullYear() === year;
+    const isFuture = currentDate > today;
     
     currentWeek.push({
-      date: dateStr,
-      count: dayData ? dayData.count : 0
+      date: isWithinYear ? dateStr : '',
+      count: dayData ? dayData.count : 0,
+      isFuture,
+      isOutsideYear: !isWithinYear
     });
 
     if (currentWeek.length === 7) {
@@ -99,21 +112,16 @@ const weeks = computed(() => {
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
-  if (currentWeek.length > 0) {
-    while (currentWeek.length < 7) {
-      currentWeek.push({ date: '', count: 0 });
-    }
-    result.push(currentWeek);
-  }
-
   return result;
 });
 
-const getColorClass = (count) => {
-  if (count === 0) return 'bg-zinc-800/30';
-  if (count < 10) return 'bg-primary-900/40';
-  if (count < 20) return 'bg-primary-700/50';
-  if (count < 30) return 'bg-primary-500/60 shadow-[0_0_15px_rgba(249,115,22,0.1)]';
+const getColorClass = (day) => {
+  if (day.isOutsideYear) return 'bg-transparent';
+  if (day.isFuture) return 'bg-zinc-800/10 border border-white/5';
+  if (day.count === 0) return 'bg-zinc-800/30';
+  if (day.count < 10) return 'bg-primary-900/40';
+  if (day.count < 20) return 'bg-primary-700/50';
+  if (day.count < 30) return 'bg-primary-500/60 shadow-[0_0_15px_rgba(249,115,22,0.1)]';
   return 'bg-primary-400 shadow-[0_0_20px_rgba(249,115,22,0.3)]';
 };
 
