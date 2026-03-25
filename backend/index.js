@@ -53,6 +53,7 @@ app.get('/api/db/init', async (req, res) => {
       )`,
       // Migration for existing tables
       `ALTER TABLE reps ADD COLUMN IF NOT EXISTS exercise_type VARCHAR(50) DEFAULT 'pullups'`,
+      `UPDATE reps SET exercise_type = 'pullups' WHERE exercise_type IS NULL`,
       `ALTER TABLE reps DROP CONSTRAINT IF EXISTS reps_user_id_date_key`,
       `ALTER TABLE reps ADD CONSTRAINT reps_user_id_date_exercise_type_key UNIQUE(user_id, date, exercise_type)`,
       `CREATE TABLE IF NOT EXISTS friendships (
