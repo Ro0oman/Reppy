@@ -107,19 +107,29 @@ const totalYearReps = computed(() => {
   return props.data.reduce((acc, curr) => acc + curr.count, 0);
 });
 
+// Helper to get YYYY-MM-DD in local time
+const toLocalDateStr = (date) => {
+  const d = new Date(date);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
 const monthLabels = computed(() => {
   const labels = [];
   const today = new Date();
   const year = today.getFullYear();
   
+  // Find the exact start date of the grid (same logic as weeks computed)
+  const Jan1 = new Date(year, 0, 1);
+  const dayOfJan1 = Jan1.getDay();
+  // Monday as start of week: Mon=1, Sun=0
+  const startDiff = dayOfJan1 === 0 ? -6 : 1 - dayOfJan1;
+  const firstGridDate = new Date(year, 0, 1 + startDiff);
+
   for (let m = 0; m < 12; m++) {
     const startOfMonth = new Date(year, m, 1);
-    // Calculate week offset
-    const Jan1 = new Date(year, 0, 1);
-    const dayOfJan1 = Jan1.getDay();
-    const firstMonday = new Date(year, 0, 1 - (dayOfJan1 === 0 ? 6 : dayOfJan1 - 1));
-    
-    const diffWeeks = Math.floor((startOfMonth - firstMonday) / (7 * 24 * 60 * 60 * 1000));
+    // Week offset from firstGridDate
+    const diffDays = Math.floor((startOfMonth - firstGridDate) / (24 * 60 * 60 * 1000));
+    const diffWeeks = Math.floor(diffDays / 7);
     
     labels.push({
       key: m,
@@ -135,30 +145,35 @@ const weeks = computed(() => {
   const today = new Date();
   const year = today.getFullYear();
   
-  const startDate = new Date(year, 0, 1);
-  
-  // Align start date to the beginning of the week (Monday)
-  const startDay = startDate.getDay();
-  const startDiff = startDate.getDate() - (startDay === 0 ? 6 : startDay - 1);
-  const currentDate = new Date(year, 0, startDiff);
+  const Jan1 = new Date(year, 0, 1);
+  const dayOfJan1 = Jan1.getDay();
+  const startOffset = dayOfJan1 === 0 ? -6 : 1 - dayOfJan1;
+  const currentDate = new Date(year, 0, 1 + startOffset);
 
   // Align end date to the end of the week (Sunday)
   const lastDate = new Date(year, 11, 31);
   const lastDay = lastDate.getDay();
-  const lastDiff = lastDay === 0 ? 0 : 7 - lastDay;
-  const finalDate = new Date(year, 11, 31 + lastDiff);
+  const endOffset = lastDay === 0 ? 0 : 7 - lastDay;
+  const finalDate = new Date(year, 11, 31 + endOffset);
+
+  // Normalize data dates to a quick lookup map
+  const dataMap = props.data.reduce((acc, curr) => {
+    const dStr = toLocalDateStr(curr.date);
+    acc[dStr] = (acc[dStr] || 0) + curr.count;
+    return acc;
+  }, {});
 
   let currentWeek = [];
 
   while (currentDate <= finalDate) {
-    const dateStr = currentDate.toISOString().split('T')[0];
-    const dayData = props.data.find(d => d.date.split('T')[0] === dateStr);
+    const dateStr = toLocalDateStr(currentDate);
+    const count = dataMap[dateStr] || 0;
     const isWithinYear = currentDate.getFullYear() === year;
     const isFuture = currentDate > today;
     
     currentWeek.push({
       date: isWithinYear ? dateStr : '',
-      count: dayData ? dayData.count : 0,
+      count: count,
       isFuture,
       isOutsideYear: !isWithinYear
     });
