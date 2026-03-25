@@ -30,9 +30,28 @@
       </div>
     </header>
 
+    <!-- Main Action Area: Input & Rankings -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- High Visibility Input -->
+      <div class="lg:col-span-1">
+        <RepsInput @updated="fetchData" />
+      </div>
+      
+      <!-- Prominent Leaderboard -->
+      <div class="lg:col-span-2">
+        <section class="glass rounded-[2.5rem] p-8 border-white/5 h-full">
+          <h3 class="text-base font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-500 mb-6">
+            <BarChart3 class="w-4 h-4 text-primary-500" />
+            {{ i18n.t('rankings') }}
+          </h3>
+          <Leaderboard ref="leaderboardRef" />
+        </section>
+      </div>
+    </div>
+
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <!-- Total Reps -->
+      <!-- Total Reps Card -->
       <div class="glass glass-hover relative overflow-hidden p-6 rounded-3xl shadow-xl transition-all duration-500">
         <div class="absolute top-0 right-0 p-4 opacity-10">
           <Trophy class="w-12 h-12 text-primary-400" />
@@ -40,8 +59,7 @@
         <span class="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">{{ i18n.t('stats_total') }}</span>
         <div class="flex items-baseline gap-2 mt-2">
           <span class="text-5xl font-black text-white tracking-tighter">{{ totalReps }}</span>
-          <span class="text-primary-500 text-[10px] font-black uppercase tracking-widest">{{ i18n.t('stats_gains')
-            }}</span>
+          <span class="text-primary-500 text-[10px] font-black uppercase tracking-widest">{{ i18n.t('stats_gains') }}</span>
         </div>
       </div>
 
@@ -62,12 +80,10 @@
         <div class="absolute top-0 right-0 p-4 opacity-10">
           <Flame class="w-12 h-12 text-orange-400" />
         </div>
-        <span class="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">{{ i18n.t('stats_streak')
-          }}</span>
+        <span class="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">{{ i18n.t('stats_streak') }}</span>
         <div class="flex items-baseline gap-2 mt-2">
           <span class="text-5xl font-black text-white tracking-tighter">{{ stats.streak }}</span>
-          <span class="text-orange-500 text-[10px] font-black uppercase tracking-widest">{{ i18n.t('stats_days')
-            }}</span>
+          <span class="text-orange-500 text-[10px] font-black uppercase tracking-widest">{{ i18n.t('stats_days') }}</span>
         </div>
       </div>
 
@@ -76,20 +92,17 @@
         <div class="absolute top-0 right-0 p-4 opacity-10">
           <Zap class="w-12 h-12 text-yellow-400" />
         </div>
-        <span class="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">{{ i18n.t('stats_top_month')
-          }}</span>
+        <span class="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">{{ i18n.t('stats_top_month') }}</span>
         <div class="flex flex-col mt-2">
           <span class="text-2xl font-black text-white uppercase tracking-tighter">{{ stats.topMonth }}</span>
-          <span class="text-yellow-500 text-[10px] font-black uppercase tracking-widest">{{ stats.topMonthCount }}
-            REPS</span>
+          <span class="text-yellow-500 text-[10px] font-black uppercase tracking-widest">{{ stats.topMonthCount }} REPS</span>
         </div>
       </div>
     </div>
 
     <!-- Daily Goal Progress -->
     <div class="glass p-8 rounded-[2.5rem] border-white/10 relative overflow-hidden group">
-      <div class="absolute inset-0 bg-primary-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-      </div>
+      <div class="absolute inset-0 bg-primary-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
       <div class="relative z-10">
         <div class="flex items-center justify-between mb-6">
           <div>
@@ -108,7 +121,67 @@
       </div>
     </div>
 
-    <!-- Configuration Section (Settings & Management) -->
+    <!-- Secondary Context: Heatmap & Logs -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <section class="space-y-4">
+        <h3 class="text-base font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-500 px-2">
+          <Activity class="w-4 h-4 text-primary-500" />
+          {{ i18n.t('activity_stream') }}
+        </h3>
+        <Heatmap :data="heatmapData" class="glass rounded-[2rem] p-8" />
+      </section>
+
+      <section class="space-y-4">
+        <h3 class="text-base font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-500 px-2">
+          <History class="w-4 h-4 text-primary-500" />
+          {{ i18n.t('recent_logs') }}
+        </h3>
+        <div class="glass rounded-[2rem] shadow-2xl overflow-hidden max-h-[400px] overflow-y-auto scrollbar-hide">
+          <table class="w-full text-left">
+            <thead class="bg-white/[0.02] text-zinc-600 text-[10px] uppercase font-black tracking-[0.2em] border-b border-white/5 sticky top-0 bg-zinc-950/90 backdrop-blur-md z-10">
+              <tr>
+                <th class="px-8 py-6">{{ i18n.t('table_date') }}</th>
+                <th class="px-8 py-6 text-right">{{ i18n.t('table_count') }}</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/[0.03]">
+              <tr v-for="rep in reps" :key="rep.id" class="group hover:bg-white/[0.02] transition-all duration-300">
+                <td class="px-8 py-5 text-middle text-zinc-400 group-hover:text-white capitalize font-medium italic">
+                  {{ formatDate(rep.date) }}</td>
+                <td class="px-8 py-5 text-right font-mono text-xl font-black text-white group-hover:text-primary-500">
+                  <div v-if="editingId === rep.id" class="flex items-center justify-end gap-3">
+                    <input v-model.number="editValue" type="number"
+                      class="w-20 bg-zinc-900 border border-primary-500/50 rounded-lg px-2 py-1 text-right focus:outline-none shadow-inner"
+                      @keyup.enter="saveEdit(rep.id)" />
+                    <button @click="saveEdit(rep.id)"
+                      class="p-2 bg-primary-500/20 text-primary-400 rounded-lg hover:bg-primary-500 hover:text-white transition-all">
+                      <Check class="w-4 h-4" />
+                    </button>
+                    <button @click="editingId = null"
+                      class="p-2 bg-zinc-800 text-zinc-500 rounded-lg hover:bg-zinc-700 hover:text-white transition-all">
+                      <X class="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div v-else @click="startEdit(rep)" class="cursor-pointer">
+                    {{ rep.count }}
+                  </div>
+                </td>
+              </tr>
+              <tr v-if="reps.length === 0">
+                <td colspan="2" class="px-8 py-20 text-center">
+                  <div class="flex flex-col items-center gap-4 opacity-20">
+                    <Inbox class="w-12 h-12" />
+                    <p class="text-xs font-black uppercase tracking-widest">{{ i18n.t('table_empty') }}</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- Bottom Section: Settings & Privacy -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <!-- Profile Customization -->
       <div class="glass p-8 rounded-[2.5rem] border-white/10 space-y-8">
@@ -121,14 +194,12 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-1.5">
-            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-500 px-1">{{ i18n.t('profile_name')
-              }}</label>
+            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-500 px-1">{{ i18n.t('profile_name') }}</label>
             <input v-model="settingsForm.name" type="text"
               class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-primary-500/50 outline-none transition-all shadow-inner" />
           </div>
           <div class="space-y-1.5">
-            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-500 px-1">{{ i18n.t('daily_goal')
-              }}</label>
+            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-500 px-1">{{ i18n.t('daily_goal') }}</label>
             <input v-model.number="settingsForm.daily_goal" type="number"
               class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-primary-500/50 outline-none transition-all shadow-inner" />
           </div>
@@ -152,8 +223,7 @@
             </div>
             <div>
               <h4 class="font-bold text-white uppercase tracking-tight">{{ i18n.t('change_avatar') }}</h4>
-              <p class="text-[10px] text-zinc-500 uppercase font-black tracking-widest">{{ i18n.t('avatar_subtitle') }}
-              </p>
+              <p class="text-[10px] text-zinc-500 uppercase font-black tracking-widest">{{ i18n.t('avatar_subtitle') }}</p>
             </div>
           </div>
           <div class="w-12 h-12 rounded-full border border-white/10 overflow-hidden shadow-2xl">
@@ -195,83 +265,6 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Main Content Bottom -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <!-- Left Column: Activity -->
-      <div class="lg:col-span-2 space-y-10">
-        <section class="space-y-4">
-          <h3 class="text-base font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-500 px-2">
-            <Activity class="w-4 h-4 text-primary-500" />
-            {{ i18n.t('activity_stream') }}
-          </h3>
-          <Heatmap :data="heatmapData" class="glass rounded-[2rem] p-8" />
-        </section>
-
-        <section class="space-y-4">
-          <h3 class="text-base font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-500 px-2">
-            <History class="w-4 h-4 text-primary-500" />
-            {{ i18n.t('recent_logs') }}
-          </h3>
-          <div class="glass rounded-[2rem] shadow-2xl overflow-hidden">
-            <table class="w-full text-left">
-              <thead
-                class="bg-white/[0.02] text-zinc-600 text-[10px] uppercase font-black tracking-[0.2em] border-b border-white/5">
-                <tr>
-                  <th class="px-8 py-6">{{ i18n.t('table_date') }}</th>
-                  <th class="px-8 py-6 text-right">{{ i18n.t('table_count') }}</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-white/[0.03]">
-                <tr v-for="rep in reps" :key="rep.id" class="group hover:bg-white/[0.02] transition-all duration-300">
-                  <td class="px-8 py-5 text-middle text-zinc-400 group-hover:text-white capitalize font-medium italic">
-                    {{ formatDate(rep.date) }}</td>
-                  <td class="px-8 py-5 text-right font-mono text-xl font-black text-white group-hover:text-primary-500">
-                    <div v-if="editingId === rep.id" class="flex items-center justify-end gap-3">
-                      <input v-model.number="editValue" type="number"
-                        class="w-20 bg-zinc-900 border border-primary-500/50 rounded-lg px-2 py-1 text-right focus:outline-none shadow-inner"
-                        @keyup.enter="saveEdit(rep.id)" />
-                      <button @click="saveEdit(rep.id)"
-                        class="p-2 bg-primary-500/20 text-primary-400 rounded-lg hover:bg-primary-500 hover:text-white transition-all">
-                        <Check class="w-4 h-4" />
-                      </button>
-                      <button @click="editingId = null"
-                        class="p-2 bg-zinc-800 text-zinc-500 rounded-lg hover:bg-zinc-700 hover:text-white transition-all">
-                        <X class="w-4 h-4" />
-                      </button>
-                    </div>
-                    <div v-else @click="startEdit(rep)" class="cursor-pointer">
-                      {{ rep.count }}
-                    </div>
-                  </td>
-                </tr>
-                <tr v-if="reps.length === 0">
-                  <td colspan="2" class="px-8 py-20 text-center">
-                    <div class="flex flex-col items-center gap-4 opacity-20">
-                      <Inbox class="w-12 h-12" />
-                      <p class="text-xs font-black uppercase tracking-widest">{{ i18n.t('table_empty') }}</p>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-      </div>
-
-      <!-- Right Column: Input & Rankings -->
-      <div class="space-y-10">
-        <RepsInput @updated="fetchData" />
-
-        <section class="space-y-6">
-          <h3 class="text-base font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-500 px-1">
-            <BarChart3 class="w-4 h-4 text-primary-500" />
-            {{ i18n.t('rankings') }}
-          </h3>
-          <Leaderboard ref="leaderboardRef" />
-        </section>
       </div>
     </div>
   </div>
