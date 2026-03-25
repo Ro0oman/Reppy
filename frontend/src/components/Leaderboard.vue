@@ -57,9 +57,15 @@
             <p class="text-[10px] text-zinc-500 font-medium">{{ i18n.t('lb_rank') }} #{{ index + 1 }}</p>
           </div>
         </div>
-        <div class="text-right">
-          <span class="text-lg font-black text-white tracking-tight">{{ user.total_reps }}</span>
-          <p class="text-[8px] font-bold text-zinc-600 uppercase">{{ i18n.t('stats_reps') }}</p>
+        <div class="text-right flex flex-col items-end justify-center">
+          <div class="flex flex-col items-end leading-none">
+            <span class="text-lg font-black text-white tracking-tight">{{ user.total_reps }}</span>
+            <p class="text-[8px] font-bold text-zinc-600 uppercase tracking-widest">{{ i18n.t('stats_reps') }}</p>
+          </div>
+          <div v-if="user.total_volume" class="mt-1.5 px-2 py-0.5 bg-emerald-500/5 border border-emerald-500/10 rounded-md flex flex-col items-end leading-none">
+            <span class="text-[10px] font-black text-emerald-400 tracking-tighter">{{ Math.round(user.total_volume).toLocaleString() }}</span>
+            <span class="text-[6px] font-bold text-emerald-600 uppercase tracking-[0.2em]">KG VOL</span>
+          </div>
         </div>
       </div>
       

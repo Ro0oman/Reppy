@@ -18,7 +18,9 @@ router.get('/global', async (req, res) => {
     }
 
     const queryStr = `
-      SELECT u.id, u.name, u.avatar_url, COALESCE(SUM(r.count), 0) as total_reps 
+      SELECT u.id, u.name, u.avatar_url, 
+             COALESCE(SUM(r.count), 0) as total_reps,
+             COALESCE(SUM(r.count * (COALESCE(u.body_weight, 75.0) + COALESCE(r.added_weight, 0))), 0) as total_volume
       FROM users u
       LEFT JOIN reps r ON u.id = r.user_id AND r.exercise_type = $1 ${dateFilter}
       WHERE u.is_private = false
@@ -50,7 +52,9 @@ router.get('/friends', authenticate, async (req, res) => {
     }
 
     const queryStr = `
-      SELECT u.id, u.name, u.avatar_url, COALESCE(SUM(r.count), 0) as total_reps 
+      SELECT u.id, u.name, u.avatar_url, 
+             COALESCE(SUM(r.count), 0) as total_reps,
+             COALESCE(SUM(r.count * (COALESCE(u.body_weight, 75.0) + COALESCE(r.added_weight, 0))), 0) as total_volume
       FROM users u
       LEFT JOIN reps r ON u.id = r.user_id AND r.exercise_type = $2 ${dateFilter}
       WHERE u.id = $1 OR u.id IN (
