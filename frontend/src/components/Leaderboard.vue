@@ -80,7 +80,7 @@ const sortedUsers = ref([]);
 const fetchLeaderboard = async () => {
   loading.value = true;
   try {
-    const response = await axios.get(`http://localhost:5000/api/leaderboard/${type.value}`);
+    const response = await axios.get(`/api/leaderboard/${type.value}`);
     users.value = response.data;
     sortedUsers.value = [...users.value].sort((a, b) => b.total_reps - a.total_reps);
   } catch (error) {

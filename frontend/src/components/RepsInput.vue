@@ -45,7 +45,7 @@ const customReps = ref(null);
 const addReps = async (count) => {
   if (!count) return;
   try {
-    await axios.post('http://localhost:5000/api/reps', {
+    await axios.post('/api/reps', {
       count,
       date: new Date().toISOString().split('T')[0]
     });

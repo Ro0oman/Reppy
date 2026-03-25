@@ -124,7 +124,7 @@ const searchUsers = async () => {
   }
   loadingSearch.value = true;
   try {
-    const response = await axios.get(`http://localhost:5000/api/social/search?q=${searchQuery.value}`);
+    const response = await axios.get(`/api/social/search?q=${searchQuery.value}`);
     searchResults.value = response.data;
   } catch (error) {
     console.error('Error searching users:', error);
@@ -135,7 +135,7 @@ const searchUsers = async () => {
 
 const addFriend = async (friendId) => {
   try {
-    await axios.post('http://localhost:5000/api/social/add', { friendId });
+    await axios.post('/api/social/add', { friendId });
     fetchFriends();
     searchResults.value = searchResults.value.filter(u => u.id !== friendId);
   } catch (error) {
@@ -145,7 +145,7 @@ const addFriend = async (friendId) => {
 
 const fetchFriends = async () => {
   try {
-    const response = await axios.get('http://localhost:5000/api/social/list');
+    const response = await axios.get('/api/social/list');
     friends.value = response.data;
   } catch (error) {
     console.error('Error fetching friends:', error);

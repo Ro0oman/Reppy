@@ -36,7 +36,10 @@
         <Dashboard v-if="view === 'dashboard'" />
         <Social v-if="view === 'social'" />
       </template>
-      <Login v-else />
+      <template v-else>
+        <Landing v-if="!showLogin" @start="showLogin = true" />
+        <Login v-else @back="showLogin = false" />
+      </template>
     </main>
 
     <footer class="mt-auto py-8 border-t border-zinc-900">
@@ -51,11 +54,13 @@
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from './stores/auth';
 import Login from './components/Login.vue'
+import Landing from './components/Landing.vue'
 import Dashboard from './components/Dashboard.vue'
 import Social from './components/Social.vue'
 
 const authStore = useAuthStore();
 const view = ref('dashboard');
+const showLogin = ref(false);
 
 onMounted(() => {
   authStore.init();

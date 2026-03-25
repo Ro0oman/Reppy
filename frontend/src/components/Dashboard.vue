@@ -168,8 +168,8 @@ const totalReps = computed(() => {
 const fetchData = async () => {
   try {
     const [repsRes, heatmapRes] = await Promise.all([
-      axios.get('http://localhost:5000/api/reps'),
-      axios.get('http://localhost:5000/api/reps/heatmap')
+      axios.get('/api/reps'),
+      axios.get('/api/reps/heatmap')
     ]);
     reps.value = repsRes.data;
     heatmapData.value = heatmapRes.data;

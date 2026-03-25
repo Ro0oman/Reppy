@@ -46,8 +46,10 @@
 <script setup>
 import { GoogleSignInButton } from 'vue3-google-signin';
 import { useAuthStore } from '../stores/auth';
+import { ChevronLeft } from 'lucide-vue-next';
 
 const authStore = useAuthStore();
+const emit = defineEmits(['back']);
 
 const handleLoginSuccess = async (response) => {
   try {
