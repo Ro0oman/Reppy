@@ -52,7 +52,7 @@ router.post('/', authenticate, async (req, res) => {
     res.json(result.rows[0]);
   } catch (error) {
     console.error('Error adding reps:', error);
-    res.status(500).json({ message: 'Error adding reps' });
+    res.status(500).json({ message: 'Error adding reps', error: error.message });
   }
 });
 
