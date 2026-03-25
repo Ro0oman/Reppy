@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: 199 89% 48%;
+    --primary-foreground: 0 0% 100%;
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+  }
+}
+
+body {
+  @apply bg-[#030303] text-zinc-100 font-sans antialiased overflow-x-hidden;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.15) 0, transparent 50%), 
+    radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.1) 0, transparent 50%);
+}
+
+#app {
+  @apply min-h-screen flex flex-col relative;
+}
+
+/* Animated background blobs */
+.bg-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.blob {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: float 20s infinite alternate;
+}
+
+@keyframes float {
+  0% { transform: translate(-10%, -10%) scale(1); }
+  100% { transform: translate(20%, 20%) scale(1.2); }
+}
+
+/* Glassmorphism utility */
+.glass {
+  @apply bg-zinc-900/40 backdrop-blur-xl border border-white/10 shadow-2xl;
+}
+
+.glass-hover {
+  @apply hover:bg-zinc-800/50 hover:border-white/20 transition-all duration-500;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-zinc-800 rounded-full hover:bg-zinc-700 transition-colors;
+}
+
