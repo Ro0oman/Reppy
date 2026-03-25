@@ -41,11 +41,14 @@
 
     <div class="flex justify-between items-center text-[10px] text-zinc-600 font-black uppercase tracking-widest mt-2 px-1">
       <span>{{ i18n.t('stats_less') || 'Less' }}</span>
-      <div class="flex gap-1.5 grayscale opacity-50 contrast-125">
-        <div class="w-2.5 h-2.5 rounded-[2px] bg-zinc-800/30"></div>
-        <div class="w-2.5 h-2.5 rounded-[2px] bg-primary-900/40"></div>
-        <div class="w-2.5 h-3 bg-primary-500 rounded-[2px]"></div>
-        <div class="w-2.5 h-2.5 rounded-[2px] bg-primary-400"></div>
+      <div class="flex gap-1 items-center grayscale opacity-50 contrast-125">
+        <div class="w-2 h-2 rounded-[1px] bg-zinc-800/30"></div>
+        <div class="w-2 h-2 rounded-[1px] bg-primary-900/40"></div>
+        <div class="w-2 h-2 rounded-[1px] bg-primary-800/50"></div>
+        <div class="w-2 h-2 rounded-[1px] bg-primary-700/60"></div>
+        <div class="w-2 h-2 rounded-[1px] bg-primary-600/70"></div>
+        <div class="w-2 h-2 rounded-[1px] bg-primary-500/80"></div>
+        <div class="w-2 h-2 rounded-[1px] bg-primary-400"></div>
       </div>
       <span>{{ i18n.t('stats_more') || 'More' }}</span>
     </div>
@@ -120,9 +123,11 @@ const getColorClass = (day) => {
   if (day.isFuture) return 'bg-zinc-800/10 border border-white/5';
   if (day.count === 0) return 'bg-zinc-800/30';
   if (day.count < 10) return 'bg-primary-900/40';
-  if (day.count < 20) return 'bg-primary-700/50';
-  if (day.count < 30) return 'bg-primary-500/60 shadow-[0_0_15px_rgba(249,115,22,0.1)]';
-  return 'bg-primary-400 shadow-[0_0_20px_rgba(249,115,22,0.3)]';
+  if (day.count < 20) return 'bg-primary-800/50';
+  if (day.count < 30) return 'bg-primary-700/60';
+  if (day.count < 40) return 'bg-primary-600/70 shadow-[0_0_10px_rgba(249,115,22,0.1)]';
+  if (day.count < 50) return 'bg-primary-500/80 shadow-[0_0_15px_rgba(249,115,22,0.2)]';
+  return 'bg-primary-400 shadow-[0_0_20px_rgba(249,115,22,0.4)]';
 };
 
 const formatDate = (dateStr) => {
