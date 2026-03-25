@@ -65,17 +65,64 @@ router.get('/heatmap', authenticate, async (req, res) => {
 
 // Get stats for dashboard
 router.get('/stats', authenticate, async (req, res) => {
+  const userId = req.user.id;
   try {
-    const totalResult = await query(
-      'SELECT SUM(count) as total FROM reps WHERE user_id = $1',
-      [req.user.id]
+    // 1. Total Reps & Daily Goal
+    const userRes = await query('SELECT total_reps, daily_goal FROM users WHERE id = $1', [userId]);
+    const { total_reps, daily_goal } = userRes.rows[0];
+
+    // 2. Top Month
+    const topMonthRes = await query(
+      `SELECT TO_CHAR(date, 'Month') as month, SUM(count) as total 
+       FROM reps 
+       WHERE user_id = $1 
+       GROUP BY TO_CHAR(date, 'Month'), date_trunc('month', date)
+       ORDER BY total DESC, date_trunc('month', date) DESC 
+       LIMIT 1`,
+      [userId]
     );
-    // Rough calculation for streak and top month
+    const topMonth = topMonthRes.rows[0]?.month?.trim() || 'N/A';
+    const topMonthCount = parseInt(topMonthRes.rows[0]?.total) || 0;
+
+    // 3. Current Streak
+    // Fetch unique dates where reps were recorded, sorted descending
+    const datesRes = await query(
+      'SELECT DISTINCT date FROM reps WHERE user_id = $1 ORDER BY date DESC',
+      [userId]
+    );
+    
+    let streak = 0;
+    if (datesRes.rows.length > 0) {
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      
+      const lastRepDate = new Date(datesRes.rows[0].date);
+      lastRepDate.setHours(0,0,0,0);
+      
+      const diffDays = Math.floor((today - lastRepDate) / (1000 * 60 * 60 * 24));
+      
+      // Streak continues if last rep was today or yesterday
+      if (diffDays <= 1) {
+        streak = 1;
+        for (let i = 0; i < datesRes.rows.length - 1; i++) {
+          const current = new Date(datesRes.rows[i].date);
+          const next = new Date(datesRes.rows[i+1].date);
+          const d = Math.floor((current - next) / (1000 * 60 * 60 * 24));
+          if (d === 1) {
+            streak++;
+          } else {
+            break;
+          }
+        }
+      }
+    }
+
     res.json({
-      totalReps: parseInt(totalResult.rows[0].total) || 0,
-      streak: 5, // Mock streak for now
-      topMonth: 'March', // Mock for now
-      topMonthCount: 142
+      totalReps: total_reps,
+      streak,
+      topMonth,
+      topMonthCount,
+      dailyGoal: daily_goal
     });
   } catch (error) {
     console.error('Error fetching stats:', error);

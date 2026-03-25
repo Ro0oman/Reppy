@@ -38,6 +38,7 @@ app.get('/api/db/init', async (req, res) => {
           avatar_url TEXT,
           total_reps INTEGER DEFAULT 0,
           is_private BOOLEAN DEFAULT FALSE,
+          daily_goal INTEGER DEFAULT 50,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       )`,
       `CREATE TABLE IF NOT EXISTS reps (

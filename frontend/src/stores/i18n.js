@@ -80,7 +80,15 @@ const translations = {
     delete_account: 'Destroy Protocol',
     delete_confirm: 'Are you sure? This is permanent.',
     change_avatar: 'Update Avatar',
-    btn_delete: 'Delete Forever'
+    btn_delete: 'Delete Forever',
+
+    // Settings & Goals
+    settings_title: 'Protocol Settings',
+    profile_name: 'Hero Name',
+    daily_goal: 'Daily Rep Goal',
+    save_settings: 'Update Protocol',
+    settings_success: 'Profile Synchronized',
+    goal_progress: 'Mission Progress'
   },
   es: {
     // Landing
@@ -161,7 +169,15 @@ const translations = {
     delete_account: 'Destruir Protocolo',
     delete_confirm: '¿Estás seguro? Esto es permanente.',
     change_avatar: 'Actualizar Avatar',
-    btn_delete: 'Borrar para siempre'
+    btn_delete: 'Borrar para siempre',
+
+    // Settings & Goals
+    settings_title: 'Ajustes del Protocolo',
+    profile_name: 'Nombre del Héroe',
+    daily_goal: 'Meta Diaria de Repeticiones',
+    save_settings: 'Actualizar Protocolo',
+    settings_success: 'Perfil Sincronizado',
+    goal_progress: 'Progreso de Misión'
   }
 };
 

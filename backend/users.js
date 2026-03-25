@@ -18,14 +18,35 @@ router.get('/me', authenticate, async (req, res) => {
   }
 });
 
-// Update user profile (specifically privacy)
+// Update user profile
 router.patch('/profile', authenticate, async (req, res) => {
-  const { is_private } = req.body;
+  const { is_private, name, daily_goal } = req.body;
   
   try {
+    // Dynamically build the update query
+    let updateFields = [];
+    let params = [];
+    let i = 1;
+
+    if (is_private !== undefined) {
+      updateFields.push(`is_private = $${i++}`);
+      params.push(is_private);
+    }
+    if (name) {
+      updateFields.push(`name = $${i++}`);
+      params.push(name);
+    }
+    if (daily_goal !== undefined) {
+      updateFields.push(`daily_goal = $${i++}`);
+      params.push(daily_goal);
+    }
+
+    if (updateFields.length === 0) return res.json({ message: 'No changes provided' });
+
+    params.push(req.user.id);
     const result = await query(
-      'UPDATE users SET is_private = $1 WHERE id = $2 RETURNING *',
-      [is_private, req.user.id]
+      `UPDATE users SET ${updateFields.join(', ')} WHERE id = $${i} RETURNING *`,
+      params
     );
     res.json(result.rows[0]);
   } catch (error) {
