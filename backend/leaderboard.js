@@ -28,7 +28,7 @@ router.get('/global', async (req, res) => {
       LEFT JOIN cosmetics t ON u.equipped_title_id = t.id
       LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
       WHERE u.is_private = false
-      GROUP BY u.id, t.name, t.css_value, b.css_value
+      GROUP BY u.id, u.name, u.avatar_url, u.reppy_coins, t.name, t.css_value, b.css_value
       HAVING COALESCE(SUM(r.count), 0) > 0
       ORDER BY total_reps DESC
       LIMIT 20
@@ -70,7 +70,7 @@ router.get('/friends', authenticate, async (req, res) => {
         UNION
         SELECT user_id_2 FROM friendships WHERE user_id_1 = $1
       )
-      GROUP BY u.id, t.name, t.css_value, b.css_value
+      GROUP BY u.id, u.name, u.avatar_url, u.reppy_coins, t.name, t.css_value, b.css_value
       HAVING COALESCE(SUM(r.count), 0) > 0
       ORDER BY total_reps DESC
     `;

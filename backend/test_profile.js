@@ -4,7 +4,7 @@ dotenv.config();
 
 async function test() {
   try {
-    const userId = 'user_61ac7bb6-8c82-4a08-89b1-af63266a042c';
+    const userId = '104874471911797443021';
     const type = 'pullups';
     const userResult = await query(`
         SELECT u.id, u.name, u.email, u.avatar_url, u.reppy_coins, u.daily_goal,

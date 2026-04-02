@@ -6,6 +6,7 @@ const router = express.Router();
 router.get('/:id', async (req, res) => {
   const userId = req.params.id;
   const { type = 'pullups' } = req.query;
+  console.log(`[PROFILE_API] INCOMING - ID: ${userId}, TYPE: ${type}`);
 
   try {
     const userResult = await query(`
@@ -20,7 +21,8 @@ router.get('/:id', async (req, res) => {
         WHERE u.id = $1
       `, [userId]);
 
-    if (userResult.rowCount === 0) {
+    if (!userResult || userResult.rowCount === 0) {
+      console.log(`[PROFILE_API] User ${userId} not found`);
       return res.status(404).json({ message: 'User not found' });
     }
     const user = userResult.rows[0];
@@ -36,20 +38,22 @@ router.get('/:id', async (req, res) => {
       'SELECT SUM(count) as total FROM reps WHERE user_id = $1 AND exercise_type = $2',
       [userId, type]
     );
-    const totalReps = parseInt(totalRes.rows[0]?.total) || 0;
+    const totalRepsValue = totalRes.rows[0]?.total;
+    const totalReps = totalRepsValue ? parseInt(totalRepsValue) : 0;
 
     const recentLogs = await query(
       'SELECT id, date, count FROM reps WHERE user_id = $1 AND exercise_type = $2 ORDER BY date DESC LIMIT 20',
       [userId, type]
     );
 
+    console.log(`[PROFILE_API] SUCCESS - Sending data for ${user.name}`);
     res.json({
       user,
-      heatmap: heatmapResult.rows,
+      heatmap: heatmapResult.rows || [],
       stats: {
         totalReps,
       },
-      recentLogs: recentLogs.rows
+      recentLogs: recentLogs.rows || []
     });
   } catch (error) {
     console.error('CRITICAL ERROR IN /api/profile/[id]:', error.message);
