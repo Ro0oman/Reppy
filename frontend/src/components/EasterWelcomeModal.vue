@@ -16,6 +16,11 @@
 
       <!-- Modal Card -->
       <div class="glass relative max-w-lg w-full p-8 rounded-[2.5rem] border-white/20 shadow-[0_0_50px_rgba(245,158,11,0.2)] text-center space-y-8 animate-in zoom-in duration-500 scale-100">
+        <!-- Close Button (X) -->
+        <button @click="close" class="absolute top-6 right-6 p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors group z-10">
+          <X class="w-5 h-5 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white" />
+        </button>
+
         <!-- Festive Icon -->
         <div class="flex justify-center -mt-16">
           <div class="p-5 bg-amber-500 rounded-3xl shadow-xl shadow-amber-500/20 animate-bounce">
@@ -76,7 +81,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { Zap, Coins, ShoppingBag, Flame, ArrowRight } from 'lucide-vue-next';
+import { Zap, Coins, ShoppingBag, Flame, ArrowRight, X } from 'lucide-vue-next';
 import axios from 'axios';
 
 const props = defineProps({
