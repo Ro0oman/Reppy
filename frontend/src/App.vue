@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#030303] text-zinc-100 selection:bg-primary-500/30 relative">
+  <div class="min-h-screen selection:bg-primary-500/30 relative text-zinc-900 dark:text-zinc-800 dark:text-zinc-100">
     
     <!-- Easter Background Overlay -->
     <EasterBackground />
@@ -12,28 +12,28 @@
     </div>
 
     <nav v-if="authStore.isAuthenticated"
-      class="border-b border-white/5 bg-black/20 backdrop-blur-xl sticky top-0 z-50">
+      class="border-b border-zinc-200 dark:border-zinc-200 dark:border-white/5 bg-white/50 dark:bg-white/20 dark:bg-black/20 backdrop-blur-xl sticky top-0 z-50">
       <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center font-bold italic text-white">R
+          <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center font-bold italic text-zinc-900 dark:text-white">R
           </div>
           <span class="text-xl font-bold tracking-tight">Reppy</span>
         </div>
         <div class="flex items-center gap-6">
           <button @click="view = 'landing'" class="text-sm font-medium transition-colors"
-            :class="view === 'landing' ? 'text-white' : 'text-zinc-400 hover:text-white'">
+            :class="view === 'landing' ? 'text-primary-600 dark:text-white' : 'text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-900 dark:text-white'">
             {{ i18n.t('nav_home') }}
           </button>
           <button @click="view = 'dashboard'" class="text-sm font-medium transition-colors"
-            :class="view === 'dashboard' ? 'text-white' : 'text-zinc-400 hover:text-white'">
+            :class="view === 'dashboard' ? 'text-primary-600 dark:text-white' : 'text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-900 dark:text-white'">
             {{ i18n.t('nav_dashboard') }}
           </button>
           <button @click="view = 'social'" class="text-sm font-medium transition-colors"
-            :class="view === 'social' ? 'text-white' : 'text-zinc-400 hover:text-white'">
+            :class="view === 'social' ? 'text-primary-600 dark:text-white' : 'text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-900 dark:text-white'">
             {{ i18n.t('nav_social') }}
           </button>
           <button @click="view = 'shop'" class="text-sm font-medium transition-colors"
-            :class="view === 'shop' ? 'text-amber-500 drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]' : 'text-zinc-400 hover:text-amber-500/80'">
+            :class="view === 'shop' ? 'text-amber-600 dark:text-amber-500 drop-shadow-md dark:drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]' : 'text-amber-600/70 dark:text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 hover:text-amber-600 dark:hover:text-amber-500'">
             Taberna (Tienda)
           </button>
         </div>

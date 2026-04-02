@@ -3,7 +3,7 @@
     <div 
       v-for="(egg, index) in eggs" 
       :key="index"
-      class="absolute text-4xl animate-fall opacity-30 select-none"
+      class="absolute text-5xl animate-fall opacity-60 dark:opacity-40 select-none "
       :style="{
         left: `${egg.left}%`,
         animationDuration: `${egg.duration}s`,
@@ -20,15 +20,15 @@
 import { ref, onMounted } from 'vue';
 
 const eggs = ref([]);
-const emojis = ['🥚', '🐰', '🐣', '🌸', '✨'];
+const emojis = ['🥚', '🐰', '🐣', '🐇', '💪', '🏋️', ''];
 
 onMounted(() => {
-  // Generate 20 random falling eggs
-  for (let i = 0; i < 20; i++) {
+  // Generate 45 random falling eggs with greater variability
+  for (let i = 0; i < 45; i++) {
     eggs.value.push({
       left: Math.random() * 100, // random start horizontal %
-      duration: 10 + Math.random() * 15, // fall between 10s and 25s
-      delay: Math.random() * -20, // Start some mid-screen by negative delay
+      duration: 8 + Math.random() * 20, // fall between 8s and 28s
+      delay: Math.random() * -30, // Start some mid-screen by negative delay
       rotation: Math.random() * 360,
       emoji: emojis[Math.floor(Math.random() * emojis.length)]
     });

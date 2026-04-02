@@ -1,12 +1,12 @@
 <template>
-  <div class="flex flex-col gap-6 p-8 bg-zinc-950/40 backdrop-blur-xl border border-zinc-800/50 rounded-3xl shadow-2xl">
+  <div class="flex flex-col gap-6 p-8 bg-zinc-950/40 backdrop-blur-xl border border-zinc-300 dark:border-zinc-800/50 rounded-3xl shadow-2xl">
     <!-- Header: Total contributions -->
     <div class="flex items-center justify-between px-2">
       <div class="flex flex-col">
-        <h3 class="text-xl font-black text-white leading-none mb-1">{{ totalYearReps }} {{ i18n.t('stats_reps') || 'Reps' }}</h3>
-        <p class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">{{ i18n.t('in_the_last_year') || 'in the last year' }}</p>
+        <h3 class="text-xl font-black text-zinc-900 dark:text-white leading-none mb-1">{{ totalYearReps }} {{ i18n.t('stats_reps') || 'Reps' }}</h3>
+        <p class="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">{{ i18n.t('in_the_last_year') || 'in the last year' }}</p>
       </div>
-      <div class="flex items-center gap-2 px-3 py-1.5 bg-zinc-900/50 border border-white/5 rounded-full text-[10px] font-black text-zinc-400 hover:text-white transition-colors cursor-pointer">
+      <div class="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/5 rounded-full text-[10px] font-black text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:text-white transition-colors cursor-pointer">
         <span>{{ i18n.t('contribution_settings') || 'Settings' }}</span>
         <ChevronDown class="w-3 h-3" />
       </div>
@@ -14,7 +14,7 @@
 
     <div class="flex gap-4">
       <!-- Main Activity Grid Area -->
-      <div class="flex-1 min-w-0 p-8 bg-zinc-900/40 border-2 border-white/5 rounded-[2rem] relative overflow-hidden group/board">
+      <div class="flex-1 min-w-0 p-8 bg-white dark:bg-zinc-900/40 border-2 border-zinc-200 dark:border-white/5 rounded-[2rem] relative overflow-hidden group/board">
         <!-- Background Glow -->
         <div class="absolute -top-24 -left-24 w-64 h-64 bg-emerald-500/5 rounded-full blur-[80px] pointer-events-none group-hover/board:bg-emerald-500/10 transition-colors duration-700"></div>
 
@@ -22,11 +22,11 @@
           <!-- Weekday Labels -->
           <div class="flex flex-col gap-1.5 pr-6 justify-center text-[9px] font-black text-zinc-600 uppercase tracking-tighter mt-6">
             <span class="h-[11px] leading-[11px]"></span>
-            <span class="h-[11px] leading-[11px] text-zinc-400 opacity-40">Mon</span>
+            <span class="h-[11px] leading-[11px] text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 opacity-40">Mon</span>
             <span class="h-[11px] leading-[11px]"></span>
-            <span class="h-[11px] leading-[11px] text-zinc-400 opacity-40">Wed</span>
+            <span class="h-[11px] leading-[11px] text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 opacity-40">Wed</span>
             <span class="h-[11px] leading-[11px]"></span>
-            <span class="h-[11px] leading-[11px] text-zinc-400 opacity-40">Fri</span>
+            <span class="h-[11px] leading-[11px] text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 opacity-40">Fri</span>
             <span class="h-[11px] leading-[11px]"></span>
           </div>
 
@@ -35,7 +35,7 @@
             <div class="flex gap-1.5 mb-3 h-4 relative">
               <span 
                 v-for="month in monthLabels" :key="month.key" 
-                class="absolute text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] whitespace-nowrap"
+                class="absolute text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] whitespace-nowrap"
                 :style="{ left: `${month.offset * 12.5}px` }"
               >
                 {{ month.name }}
@@ -66,17 +66,17 @@
         <!-- Footer Legend -->
         <div class="flex items-center justify-between mt-8 px-4 relative z-10">
           <p class="text-[9px] font-black text-zinc-600 uppercase tracking-widest opacity-40">{{ i18n.t('progress_metrics') || 'Volume Metrics' }}</p>
-          <div class="flex items-center gap-3 bg-black/40 px-4 py-2 rounded-full border border-white/5">
-            <span class="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Less</span>
+          <div class="flex items-center gap-3 bg-black/5 dark:bg-black/40 px-4 py-2 rounded-full border border-zinc-200 dark:border-white/5">
+            <span class="text-[9px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">Less</span>
             <div class="flex gap-1.5">
-              <div class="w-2.5 h-2.5 rounded-[2px] bg-zinc-800/40"></div>
+              <div class="w-2.5 h-2.5 rounded-[2px] bg-zinc-100 dark:bg-zinc-800/40"></div>
               <div class="w-2.5 h-2.5 rounded-[2px] bg-indigo-900/60"></div>
               <div class="w-2.5 h-2.5 rounded-[2px] bg-blue-600/80"></div>
               <div class="w-2.5 h-2.5 rounded-[2px] bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]"></div>
               <div class="w-2.5 h-2.5 rounded-[2px] bg-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.5)]"></div>
               <div class="w-2.5 h-2.5 rounded-[2px] bg-white shadow-[0_0_20px_rgba(255,255,255,0.8)]"></div>
             </div>
-            <span class="text-[9px] font-black text-zinc-500 uppercase tracking-widest">More</span>
+            <span class="text-[9px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">More</span>
           </div>
         </div>
 
@@ -191,8 +191,8 @@ const weeks = computed(() => {
 
 const getColorClass = (day) => {
   if (day.isOutsideYear) return 'bg-transparent';
-  if (day.isFuture) return 'bg-zinc-800/10 border border-white/5';
-  if (day.count === 0) return 'bg-zinc-800/40';
+  if (day.isFuture) return 'bg-zinc-100 dark:bg-zinc-800/10 border border-zinc-200 dark:border-white/5';
+  if (day.count === 0) return 'bg-zinc-100 dark:bg-zinc-800/40';
   if (day.count < 10) return 'bg-indigo-900/60';
   if (day.count < 20) return 'bg-blue-600/80';
   if (day.count < 30) return 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]';

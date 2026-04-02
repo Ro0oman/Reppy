@@ -9,7 +9,7 @@
           <Zap class="w-5 h-5 text-black" />
         </div>
         <div>
-          <h3 class="text-xl font-black text-white uppercase tracking-tighter">{{ activeLabel }}</h3>
+          <h3 class="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tighter">{{ activeLabel }}</h3>
           <p class="text-[10px] font-bold text-amber-500/60 uppercase tracking-[0.2em]">{{ exerciseType.replace('_', ' ') }} Protocol</p>
         </div>
       </div>
@@ -19,7 +19,7 @@
       <button 
         v-for="val in [1, 5, 10]" :key="val"
         @click="addReps(val)"
-        class="group relative overflow-hidden py-5 px-4 bg-zinc-900 border border-white/5 rounded-2xl font-black text-xl transition-all hover:bg-amber-500 hover:text-black hover:scale-105 active:scale-95 shadow-xl hover:shadow-amber-500/20"
+        class="group relative overflow-hidden py-5 px-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl font-black text-xl transition-all hover:bg-amber-500 hover:text-black hover:scale-105 active:scale-95 shadow-xl hover:shadow-amber-500/20"
       >
         <span class="relative z-10">+{{ val }}</span>
         <div class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -30,8 +30,8 @@
       <input 
         v-model.number="customReps"
         type="number"
-        :placeholder="i18n.t('custom_amount') || 'Enter Reps...'"
-        class="w-full bg-black/60 border-2 border-white/5 rounded-2xl px-6 py-5 pr-24 text-white font-bold placeholder:text-zinc-700 focus:outline-none focus:border-amber-500/50 focus:ring-4 focus:ring-amber-500/10 transition-all text-lg shadow-inner"
+        :placeholder="i18n.t('cantidad') || 'Enter Reps...'"
+        class="w-full bg-black/60 border-2 border-zinc-200 dark:border-white/5 rounded-2xl px-6 py-5 pr-24 text-zinc-900 dark:text-white font-bold placeholder:text-zinc-700 focus:outline-none focus:border-amber-500/50 focus:ring-4 focus:ring-amber-500/10 transition-all text-lg shadow-inner"
       />
       <button 
         @click="addReps(customReps)"
@@ -50,7 +50,7 @@
           v-model.number="addedWeight"
           type="number"
           placeholder="0.0"
-          class="w-full bg-black/40 border-2 border-white/5 rounded-2xl px-6 py-4 text-white font-bold focus:outline-none focus:border-amber-500/30 transition-all text-sm shadow-inner"
+          class="w-full bg-black/5 dark:bg-black/40 border-2 border-zinc-200 dark:border-white/5 rounded-2xl px-6 py-4 text-zinc-900 dark:text-white font-bold focus:outline-none focus:border-amber-500/30 transition-all text-sm shadow-inner"
         />
         <div class="absolute right-6 top-1/2 -translate-y-1/2 text-[10px] font-black text-zinc-600 uppercase tracking-widest pointer-events-none">KG</div>
       </div>

@@ -2,8 +2,8 @@
   <div class="max-w-5xl mx-auto w-full px-4 space-y-12">
     <div class="flex items-center justify-between">
       <div>
-        <h2 class="text-3xl font-black tracking-tight text-white mb-2">{{ i18n.t('community') }}</h2>
-        <p class="text-zinc-500 text-sm font-medium">{{ i18n.t('community_subtitle') }}</p>
+        <h2 class="text-3xl font-black tracking-tight text-zinc-900 dark:text-white mb-2">{{ i18n.t('community') }}</h2>
+        <p class="text-zinc-400 dark:text-zinc-500 text-sm font-medium">{{ i18n.t('community_subtitle') }}</p>
       </div>
       <div class="p-3 bg-primary-500/10 border border-primary-500/20 rounded-2xl">
         <Users class="w-6 h-6 text-primary-400" />
@@ -14,8 +14,8 @@
       <!-- Search Users -->
       <section class="space-y-6">
         <div class="flex items-center gap-2">
-          <Search class="w-4 h-4 text-zinc-500" />
-          <h3 class="text-sm font-bold uppercase tracking-widest text-zinc-500">{{ i18n.t('find_friends') }}</h3>
+          <Search class="w-4 h-4 text-zinc-400 dark:text-zinc-500" />
+          <h3 class="text-sm font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">{{ i18n.t('find_friends') }}</h3>
         </div>
 
         <div class="relative group">
@@ -33,8 +33,8 @@
               <div class="flex items-center gap-4">
                 <img :src="user.avatar_url" class="w-12 h-12 rounded-full border border-zinc-700/50" />
                 <div>
-                  <p class="font-bold text-white">{{ user.name }}</p>
-                  <p class="text-xs text-zinc-500 font-medium">{{ user.total_reps }} reps accumulated</p>
+                  <p class="font-bold text-zinc-900 dark:text-white">{{ user.name }}</p>
+                  <p class="text-xs text-zinc-400 dark:text-zinc-500 font-medium">{{ user.total_reps }} reps accumulated</p>
                 </div>
               </div>
               <button @click="addFriend(user.id)"
@@ -46,7 +46,7 @@
           </TransitionGroup>
 
           <div v-if="searchQuery && !loadingSearch && searchResults.length === 0"
-            class="p-12 text-center bg-zinc-900/10 border border-dashed border-zinc-800 rounded-2xl">
+            class="p-12 text-center bg-white dark:bg-zinc-900/10 border border-dashed border-zinc-300 dark:border-zinc-800 rounded-2xl">
             <SearchX class="w-8 h-8 text-zinc-800 mx-auto mb-2" />
             <p class="text-sm text-zinc-600 italic">{{ i18n.t('no_results') }}</p>
           </div>
@@ -57,7 +57,7 @@
       <section class="space-y-6">
         <div class="flex items-center gap-2">
           <Heart class="w-4 h-4 text-primary-500" />
-          <h3 class="text-xs font-black uppercase tracking-[0.2em] text-zinc-500">{{ i18n.t('inner_circle') }}</h3>
+          <h3 class="text-xs font-black uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500">{{ i18n.t('inner_circle') }}</h3>
         </div>
 
         <div class="grid grid-cols-1 gap-4">
@@ -67,32 +67,32 @@
               <div class="flex items-center gap-4">
                 <div class="relative">
                   <img :src="friend.avatar_url"
-                    class="w-14 h-14 rounded-full border-2 border-zinc-800 group-hover:border-primary-500/30 transition-all p-0.5" />
+                    class="w-14 h-14 rounded-full border-2 border-zinc-300 dark:border-zinc-800 group-hover:border-primary-500/30 transition-all p-0.5" />
                   <div
-                    class="absolute -bottom-1 -right-1 w-5 h-5 bg-zinc-900 rounded-full flex items-center justify-center border border-zinc-800">
+                    class="absolute -bottom-1 -right-1 w-5 h-5 bg-white dark:bg-zinc-900 rounded-full flex items-center justify-center border border-zinc-300 dark:border-zinc-800">
                     <Check class="w-3 h-3 text-green-500" />
                   </div>
                 </div>
                 <div>
-                  <p class="text-lg font-bold text-white tracking-tight">{{ friend.name }}</p>
+                  <p class="text-lg font-bold text-zinc-900 dark:text-white tracking-tight">{{ friend.name }}</p>
                   <div class="flex items-center gap-2 mt-0.5">
                     <Trophy class="w-3 h-3 text-primary-400" />
-                    <p class="text-[10px] font-black uppercase text-zinc-500 tracking-tighter">{{ friend.total_reps }}
+                    <p class="text-[10px] font-black uppercase text-zinc-400 dark:text-zinc-500 tracking-tighter">{{ friend.total_reps }}
                       {{ i18n.t('stats_reps') }}</p>
                   </div>
                 </div>
               </div>
               <div
-                class="h-8 w-8 bg-zinc-800/50 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                class="h-8 w-8 bg-zinc-100 dark:bg-zinc-800/50 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <ChevronRight class="w-4 h-4 text-zinc-600" />
               </div>
             </div>
           </TransitionGroup>
 
           <div v-if="friends.length === 0"
-            class="p-16 text-center bg-zinc-900/20 border border-dashed border-zinc-800 rounded-2xl">
+            class="p-16 text-center bg-white dark:bg-zinc-900/20 border border-dashed border-zinc-300 dark:border-zinc-800 rounded-2xl">
             <Users2 class="w-10 h-10 text-zinc-800 mx-auto mb-3" />
-            <p class="text-sm font-medium text-zinc-500">{{ i18n.t('solo_journey') }}</p>
+            <p class="text-sm font-medium text-zinc-400 dark:text-zinc-500">{{ i18n.t('solo_journey') }}</p>
             <p class="text-xs text-zinc-600 mt-1">{{ i18n.t('solo_desc') }}</p>
           </div>
         </div>

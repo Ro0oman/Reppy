@@ -1,21 +1,21 @@
 <template>
   <div v-if="loading" class="animate-pulse bg-white/5 h-24 rounded-3xl mb-8"></div>
-  <div v-else-if="boss" class="glass p-6 rounded-[2.5rem] mb-8 border border-white/5 relative overflow-hidden group">
+  <div v-else-if="boss" class="glass p-6 rounded-[2.5rem] mb-8 border border-zinc-200 dark:border-white/5 relative overflow-hidden group">
     <!-- Easter Background subtle glow -->
     <div class="absolute -right-20 -top-20 w-64 h-64 bg-pink-500/10 rounded-full blur-[80px] pointer-events-none"></div>
 
     <div class="flex items-center justify-between mb-4 relative z-10">
       <div class="flex items-center gap-3">
-        <div class="w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center border border-white/10 text-2xl shadow-xl">
+        <div class="w-12 h-12 bg-white dark:bg-zinc-900 rounded-2xl flex items-center justify-center border border-zinc-200 dark:border-white/10 text-2xl shadow-xl">
           🐰
         </div>
         <div>
-          <h3 class="text-xl font-black italic tracking-tighter text-white">{{ boss.name }}</h3>
-          <p class="text-xs text-zinc-400 font-medium">{{ boss.description }}</p>
+          <h3 class="text-xl font-black italic tracking-tighter text-zinc-900 dark:text-white">{{ boss.name }}</h3>
+          <p class="text-xs text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 font-medium">{{ boss.description }}</p>
         </div>
       </div>
       <div class="text-right">
-        <div class="text-2xl font-black text-pink-500 tracking-tighter">{{ boss.current_hp.toLocaleString() }} <span class="text-sm text-zinc-500 uppercase tracking-widest">/ {{ boss.total_hp.toLocaleString() }} HP</span></div>
+        <div class="text-2xl font-black text-pink-500 tracking-tighter">{{ boss.current_hp.toLocaleString() }} <span class="text-sm text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">/ {{ boss.total_hp.toLocaleString() }} HP</span></div>
         <button 
           @click="shareEvent"
           class="mt-2 flex items-center gap-2 justify-end ms-auto text-xs font-bold uppercase tracking-widest text-primary-400 hover:text-primary-300 transition-colors bg-primary-500/10 px-3 py-1 rounded-lg"
@@ -26,7 +26,7 @@
     </div>
 
     <!-- Health Bar Track -->
-    <div class="relative h-6 bg-zinc-900 rounded-full overflow-hidden border border-white/5 mb-3">
+    <div class="relative h-6 bg-white dark:bg-zinc-900 rounded-full overflow-hidden border border-zinc-200 dark:border-white/5 mb-3">
       <!-- Health Bar Fill -->
       <div 
         class="absolute top-0 left-0 h-full bg-gradient-to-r from-red-500 via-pink-500 to-amber-500 transition-all duration-1000 ease-out"
@@ -42,7 +42,7 @@
 
     <!-- Chests and Milestones Info -->
     <div class="flex items-center justify-between relative z-10">
-      <p class="text-xs text-zinc-400 font-bold uppercase tracking-widest">Repeticiones para tu próximo cofre: <span class="text-pink-400">{{ repsToNextChest }}</span></p>
+      <p class="text-xs text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-widest">Repeticiones para tu próximo cofre: <span class="text-pink-400">{{ repsToNextChest }}</span></p>
       
       <div class="flex items-center gap-3">
         <!-- Chest 1 -->
@@ -75,14 +75,19 @@
       </div>
     </div>
     <!-- Block interaction if not started yet -->
-    <div v-if="!hasStarted" class="absolute inset-0 z-50 backdrop-blur-md bg-black/40 flex items-center justify-center p-6 text-center">
-      <div class="space-y-2">
-        <div class="inline-block p-4 rounded-full bg-black/50 border border-white/10 mb-2 shadow-2xl">
-          <span class="text-4xl block animate-bounce">🔒</span>
+    <div v-if="!hasStarted" class="absolute inset-0 z-50 backdrop-blur-md bg-white/40 dark:bg-black/60 flex items-center justify-center p-4 sm:p-6 text-center">
+      <div class="glass max-w-sm w-full py-8 px-6 rounded-[2rem] shadow-[0_0_40px_rgba(0,0,0,0.2)] border border-white/60 dark:border-white/10 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-pink-500/10 to-amber-500/10 pointer-events-none"></div>
+        <div class="relative z-10 space-y-3">
+          <div class="inline-block p-4 rounded-full bg-white dark:bg-black/50 border border-zinc-200 dark:border-white/10 mb-2 shadow-xl">
+            <span class="text-4xl block animate-bounce">🔒</span>
+          </div>
+          <h3 class="text-2xl font-black text-zinc-900 dark:text-white italic tracking-tighter uppercase drop-shadow-sm">Evento Bloqueado</h3>
+          <p class="text-sm font-medium text-zinc-600 dark:text-zinc-300">Las puertas se abrirán el Sábado a las 00:00 (España).<br>Repeticiones previas no cuentan.</p>
+          <div class="mt-4 p-3 bg-black/5 dark:bg-black/40 rounded-xl border border-black/5 dark:border-white/5 mx-auto max-w-fit">
+            <p class="text-xl font-mono text-pink-500 dark:text-pink-400 font-bold tracking-widest">{{ timeToStart }}</p>
+          </div>
         </div>
-        <h3 class="text-2xl font-black text-white italic tracking-tighter uppercase">Evento Bloqueado</h3>
-        <p class="text-sm font-medium text-zinc-300">Las puertas de la guarida se abrirán el Sábado a las 00:00 (España).<br>Toda repetición antes de esa fecha no le afectará.</p>
-        <p class="text-xl font-mono text-pink-400 mt-2 font-bold">{{ timeToStart }}</p>
       </div>
     </div>
   </div>
@@ -176,7 +181,7 @@ const canClaim = (chestIndex) => {
 const getChestClass = (chestIndex) => {
   if (hasClaimed(chestIndex)) return 'bg-white/5 opacity-50 grayscale';
   if (canClaim(chestIndex)) return 'bg-pink-500 animate-pulse hover:scale-110 shadow-[0_0_15px_rgba(236,72,153,0.5)] cursor-pointer';
-  return 'bg-zinc-900 border border-white/5 opacity-50 cursor-not-allowed';
+  return 'bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 opacity-50 cursor-not-allowed';
 };
 
 const claim = async (index) => {

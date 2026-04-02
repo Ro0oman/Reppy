@@ -4,14 +4,14 @@
       <button 
         @click="type = 'friends'"
         class="flex-1 py-2.5 text-xs font-bold uppercase tracking-widest transition-all rounded-xl"
-        :class="type === 'friends' ? 'text-white bg-zinc-800 shadow-lg' : 'text-zinc-500 hover:text-zinc-300'"
+        :class="type === 'friends' ? 'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800 shadow-lg' : 'text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:text-zinc-300'"
       >
         {{ i18n.t('lb_friends') }}
       </button>
       <button 
         @click="type = 'global'"
         class="flex-1 py-2.5 text-xs font-bold uppercase tracking-widest transition-all rounded-xl"
-        :class="type === 'global' ? 'text-white bg-zinc-800 shadow-lg' : 'text-zinc-500 hover:text-zinc-300'"
+        :class="type === 'global' ? 'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800 shadow-lg' : 'text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:text-zinc-300'"
       >
         {{ i18n.t('lb_global') }}
       </button>
@@ -21,13 +21,13 @@
     </div>
 
     <!-- Timeframe Selector -->
-    <div class="flex gap-1 p-1 bg-white/[0.02] border border-white/5 rounded-2xl mb-6 overflow-x-auto no-scrollbar">
+    <div class="flex gap-1 p-1 bg-white/[0.02] border border-zinc-200 dark:border-white/5 rounded-2xl mb-6 overflow-x-auto no-scrollbar">
       <button 
         v-for="tf in ['today', 'week', 'month', 'year', 'all']" 
         :key="tf"
         @click="timeframe = tf"
         class="px-4 py-1.5 text-[10px] font-black uppercase tracking-tighter transition-all rounded-lg whitespace-nowrap"
-        :class="timeframe === tf ? 'text-primary-400 bg-primary-500/10' : 'text-zinc-600 hover:text-zinc-400'"
+        :class="timeframe === tf ? 'text-primary-400 bg-primary-500/10' : 'text-zinc-600 hover:text-zinc-400 dark:text-zinc-500 dark:text-zinc-400'"
       >
         {{ i18n.t('tf_' + tf) }}
       </button>
@@ -52,19 +52,19 @@
           </div>
           <div>
             <div class="flex items-center gap-2">
-              <p class="text-sm font-bold text-zinc-200 group-hover:text-white transition-colors">
+              <p class="text-sm font-bold text-zinc-200 group-hover:text-zinc-900 dark:text-white transition-colors">
                 {{ user.id === authStore.user?.id ? 'You' : user.name }}
               </p>
-              <span v-if="user.title_name" class="text-[8px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-white/5 border border-white/10 font-bold" :class="user.title_css">
+              <span v-if="user.title_name" class="text-[8px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-white/5 border border-zinc-200 dark:border-white/10 font-bold" :class="user.title_css">
                 {{ user.title_name }}
               </span>
             </div>
-            <p class="text-[10px] text-zinc-500 font-medium">{{ i18n.t('lb_rank') }} #{{ index + 1 }}</p>
+            <p class="text-[10px] text-zinc-400 dark:text-zinc-500 font-medium">{{ i18n.t('lb_rank') }} #{{ index + 1 }}</p>
           </div>
         </div>
         <div class="text-right flex flex-col items-end justify-center">
           <div class="flex flex-col items-end leading-none">
-            <span class="text-lg font-black text-white tracking-tight">{{ user.total_reps }}</span>
+            <span class="text-lg font-black text-zinc-900 dark:text-white tracking-tight">{{ user.total_reps }}</span>
             <p class="text-[8px] font-bold text-zinc-600 uppercase tracking-widest">{{ i18n.t('stats_reps') }}</p>
           </div>
           <div v-if="user.total_volume" class="mt-1.5 px-2 py-0.5 bg-emerald-500/5 border border-emerald-500/10 rounded-md flex flex-col items-end leading-none">
