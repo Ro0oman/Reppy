@@ -145,47 +145,90 @@
           <!-- Themed Background Deco -->
           <div class="absolute -top-12 -right-12 w-48 h-48 bg-primary-500/10 rounded-full blur-3xl pointer-events-none"></div>
           
-          <div class="flex items-center justify-between">
-            <h3 class="text-2xl font-black text-white italic tracking-tighter uppercase">Furia del Guerrero</h3>
+          <div class="flex items-center justify-between mb-8">
+            <div class="flex flex-col">
+              <h3 class="text-3xl font-black text-white italic tracking-tighter uppercase leading-none">Códice de Guerra</h3>
+              <p class="text-[10px] font-bold text-primary-500 uppercase tracking-[0.3em] mt-1">Manual de Progresión RPG</p>
+            </div>
             <button @click="showInfoModal = false" class="p-2 hover:bg-white/10 rounded-xl transition-colors">
               <X class="w-6 h-6 text-zinc-400" />
             </button>
           </div>
 
-          <div class="space-y-6 text-sm">
-            <div class="flex gap-4 items-start p-4 bg-red-500/5 border border-red-500/20 rounded-2xl">
-              <div class="p-3 bg-red-500/10 rounded-xl text-red-500"><Sword class="w-5 h-5" /></div>
-              <div>
-                <h4 class="font-black text-red-500 uppercase">Fuerza (STR)</h4>
-                <p class="text-zinc-400 leading-relaxed italic">"Como Kratos moviendo los templos del Olimpo."</p>
-                <p class="text-zinc-200 mt-1">Escala con el **Volumen Total** y tu propio peso corporal. Cada kilo importa.</p>
+          <!-- Tabs Switcher -->
+          <div class="flex gap-2 p-1.5 bg-black/40 rounded-2xl border border-white/5 mb-8">
+            <button @click="infoTab = 'attributes'" 
+                    class="flex-1 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300"
+                    :class="infoTab === 'attributes' ? 'bg-primary-600 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'">
+              Atributos
+            </button>
+            <button @click="infoTab = 'ranks'" 
+                    class="flex-1 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300"
+                    :class="infoTab === 'ranks' ? 'bg-primary-600 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'">
+              Niveles de Rango
+            </button>
+          </div>
+
+          <!-- Attributes Tab -->
+          <div v-if="infoTab === 'attributes'" class="space-y-6 animate-in slide-in-from-right-4 duration-300">
+            <div class="grid grid-cols-1 gap-4">
+              <div class="flex gap-4 items-start p-5 bg-gradient-to-br from-red-500/10 to-red-950/20 border border-red-500/20 rounded-[1.5rem] group hover:border-red-500/40 transition-all">
+                <div class="p-3 bg-red-500/10 rounded-xl text-red-500 group-hover:scale-110 transition-transform"><Sword class="w-5 h-5" /></div>
+                <div>
+                  <h4 class="font-black text-red-500 uppercase text-xs tracking-widest mb-1">Fuerza (STR)</h4>
+                  <p class="text-zinc-400 text-xs leading-relaxed italic mb-1">"Kratos moviendo los templos del Olimpo."</p>
+                  <p class="text-zinc-300 text-[11px]">Sube con la **Carga Total**. Influenciada por tu peso corporal y lastre acumulado.</p>
+                </div>
+              </div>
+
+              <div class="flex gap-4 items-start p-5 bg-gradient-to-br from-orange-500/10 to-orange-950/20 border border-orange-500/20 rounded-[1.5rem] group hover:border-orange-500/40 transition-all">
+                <div class="p-3 bg-orange-500/10 rounded-xl text-orange-500 group-hover:scale-110 transition-transform"><Zap class="w-5 h-5" /></div>
+                <div>
+                  <h4 class="font-black text-orange-500 uppercase text-xs tracking-widest mb-1">Potencia (PWR)</h4>
+                  <p class="text-zinc-400 text-xs leading-relaxed italic mb-1">"Golpe crítico que rompe cualquier guardia."</p>
+                  <p class="text-zinc-300 text-[11px]">Premia la intensidad absoluta. Basada en tu **Récord de Lastre** en una serie.</p>
+                </div>
+              </div>
+
+              <div class="flex gap-4 items-start p-5 bg-gradient-to-br from-emerald-500/10 to-emerald-950/20 border border-emerald-500/20 rounded-[1.5rem] group hover:border-emerald-500/40 transition-all">
+                <div class="p-3 bg-emerald-500/10 rounded-xl text-emerald-500 group-hover:scale-110 transition-transform"><Heart class="w-5 h-5" /></div>
+                <div>
+                  <h4 class="font-black text-emerald-500 uppercase text-xs tracking-widest mb-1">Resistencia (END)</h4>
+                  <p class="text-zinc-400 text-xs leading-relaxed italic mb-1">"Tu barra de estamina de Elden Ring."</p>
+                  <p class="text-zinc-300 text-[11px]">Gasolina pura. Escala con el **Volumen Total de Repeticiones** sin descanso.</p>
+                </div>
+              </div>
+
+              <div class="flex gap-4 items-start p-5 bg-gradient-to-br from-blue-500/10 to-blue-950/20 border border-blue-500/20 rounded-[1.5rem] group hover:border-blue-500/40 transition-all">
+                <div class="p-3 bg-blue-500/10 rounded-xl text-blue-500 group-hover:scale-110 transition-transform"><Shield class="w-5 h-5" /></div>
+                <div>
+                  <h4 class="font-black text-blue-500 uppercase text-xs tracking-widest mb-1">Agilidad (AGI)</h4>
+                  <p class="text-zinc-400 text-xs leading-relaxed italic mb-1">"Escudo recargable del Jefe Maestro."</p>
+                  <p class="text-zinc-300 text-[11px]">Consistencia táctica. Subida por **Racha Diaria** y **Variedad de ejercicios**.</p>
+                </div>
               </div>
             </div>
+          </div>
 
-            <div class="flex gap-4 items-start p-4 bg-orange-500/5 border border-orange-500/20 rounded-2xl">
-              <div class="p-3 bg-orange-500/10 rounded-xl text-orange-500"><Zap class="w-5 h-5" /></div>
-              <div>
-                <h4 class="font-black text-orange-500 uppercase">Potencia (PWR)</h4>
-                <p class="text-zinc-400 leading-relaxed italic">"El golpe crítico capaz de romper la guardia de un Boss."</p>
-                <p class="text-zinc-200 mt-1">Calculado sobre tu **Lastre Máximo**. Premia la intensidad pura.</p>
-              </div>
-            </div>
-
-            <div class="flex gap-4 items-start p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl">
-              <div class="p-3 bg-emerald-500/10 rounded-xl text-emerald-500"><Heart class="w-5 h-5" /></div>
-              <div>
-                <h4 class="font-black text-emerald-500 uppercase">Resistencia (END)</h4>
-                <p class="text-zinc-400 leading-relaxed italic">"Tu barra de estamina de Elden Ring."</p>
-                <p class="text-zinc-200 mt-1">Basada en tus **Repeticiones Totales**. No dejes que se agote el aliento.</p>
-              </div>
-            </div>
-
-            <div class="flex gap-4 items-start p-4 bg-blue-500/5 border border-blue-500/20 rounded-2xl">
-              <div class="p-3 bg-blue-500/10 rounded-xl text-blue-500"><Shield class="w-5 h-5" /></div>
-              <div>
-                <h4 class="font-black text-blue-500 uppercase">Agilidad (AGI)</h4>
-                <p class="text-zinc-400 leading-relaxed italic">"Como el escudo recargable del Jefe Maestro."</p>
-                <p class="text-zinc-200 mt-1">Premia tu **Racha** y la **Variedad** de ejercicios. Consistencia es victoria.</p>
+          <!-- Ranks Tab -->
+          <div v-if="infoTab === 'ranks'" class="space-y-4 animate-in slide-in-from-left-4 duration-300">
+            <div class="space-y-2">
+              <div v-for="rank in rankLevels" :key="rank.name" 
+                   class="flex items-center gap-4 p-4 rounded-2xl border border-white/5 transition-all"
+                   :class="stats.totalXP >= rank.min ? 'bg-white/5 border-primary-500/20 ring-1 ring-primary-500/10' : 'opacity-40 grayscale blur-[1px]'">
+                <div class="w-10 h-10 flex items-center justify-center rounded-xl bg-zinc-800 text-lg shadow-inner">
+                  {{ rank.icon }}
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between">
+                    <h5 class="text-xs font-black uppercase tracking-widest" :class="stats.totalXP >= rank.min ? 'text-primary-400' : 'text-zinc-500'">{{ rank.name }}</h5>
+                    <span class="text-[9px] font-bold text-zinc-600">{{ rank.min }}+ XP</span>
+                  </div>
+                  <p class="text-[10px] text-zinc-500 italic mt-0.5">{{ rank.game }}</p>
+                </div>
+                <div v-if="stats.totalXP >= rank.min" class="text-primary-500">
+                  <Trophy class="w-4 h-4" />
+                </div>
               </div>
             </div>
           </div>
@@ -222,7 +265,17 @@ const stats = ref({});
 const heatmapData = ref([]);
 const loading = ref(true);
 const showInfoModal = ref(false);
+const infoTab = ref('attributes');
 const fileInput = ref(null);
+
+const rankLevels = [
+  { name: 'Novato de Midgard', min: 0, icon: '🛡️', game: 'Iniciado en el camino de Kratos' },
+  { name: 'Guerrero Espartano', min: 501, icon: '⚔️', game: 'Disciplina de los 300' },
+  { name: 'Asesino de Dragones', min: 1501, icon: '🐉', game: 'Sangre de Dovahkiin' },
+  { name: 'Campeón del Olimpo', min: 5001, icon: '⛰️', game: 'Favor de los Dioses' },
+  { name: 'Dios de la Guerra', min: 15001, icon: '🔥', game: 'Deidad del Dominio Físico' },
+  { name: 'Espectro de Reppy', min: 40001, icon: '💀', game: 'Mito viviente de las barras' }
+];
 
 const attributes = computed(() => [
   { key: 'STR', xp: user.value.str_xp || 0, lvl: user.value.str_lvl || 1, labelColor: 'text-red-500' },

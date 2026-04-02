@@ -38,6 +38,36 @@ router.get('/:id', async (req, res) => {
       'SELECT SUM(count) as total FROM reps WHERE user_id = $1 AND exercise_type = $2',
       [userId, type]
     );
+    const totalReps = parseInt(totalRes.rows[0]?.total) || 0;
+
+    const recentLogs = await query(
+      'SELECT id, date, count FROM reps WHERE user_id = $1 AND exercise_type = $2 ORDER BY date DESC LIMIT 20',
+      [userId, type]
+    );
+
+    // Calculate current streak (PULLUPS ONLY as requested)
+    const streakResult = await query(
+      'SELECT DISTINCT date FROM reps WHERE user_id = $1 AND exercise_type = \'pullups\' ORDER BY date DESC',
+      [userId]
+    );
+    
+    let streak = 0;
+    if (streakResult.rowCount > 0) {
+      const dates = streakResult.rows.map(r => new Date(r.date).toISOString().split('T')[0]);
+      const today = new Date().toISOString().split('T')[0];
+      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+      
+      let checkDate = dates.includes(today) ? today : (dates.includes(yesterday) ? yesterday : null);
+      
+      if (checkDate) {
+        let current = new Date(checkDate);
+        while (dates.includes(current.toISOString().split('T')[0])) {
+          streak++;
+          current.setDate(current.getDate() - 1);
+        }
+      }
+    }
+
     // Calculate favorite exercise
     const favResult = await query(
       'SELECT exercise_type, SUM(count) as total FROM reps WHERE user_id = $1 GROUP BY exercise_type ORDER BY total DESC LIMIT 1',
