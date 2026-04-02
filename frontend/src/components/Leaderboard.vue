@@ -47,13 +47,18 @@
             <span v-else class="text-[10px] font-black text-zinc-600 tracking-tighter">{{ index + 1 }}</span>
           </div>
           <div class="relative">
-            <img :src="user.avatar_url" class="w-9 h-9 rounded-full border border-zinc-700/50" />
+            <img :src="user.avatar_url" class="w-9 h-9 rounded-full border border-zinc-700/50" :class="user.border_css" />
             <div v-if="user.id === authStore.user?.id" class="absolute -top-1 -right-1 w-3 h-3 bg-primary-500 rounded-full border-2 border-[#09090b]"></div>
           </div>
           <div>
-            <p class="text-sm font-bold text-zinc-200 group-hover:text-white transition-colors">
-              {{ user.id === authStore.user?.id ? 'You' : user.name }}
-            </p>
+            <div class="flex items-center gap-2">
+              <p class="text-sm font-bold text-zinc-200 group-hover:text-white transition-colors">
+                {{ user.id === authStore.user?.id ? 'You' : user.name }}
+              </p>
+              <span v-if="user.title_name" class="text-[8px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-white/5 border border-white/10 font-bold" :class="user.title_css">
+                {{ user.title_name }}
+              </span>
+            </div>
             <p class="text-[10px] text-zinc-500 font-medium">{{ i18n.t('lb_rank') }} #{{ index + 1 }}</p>
           </div>
         </div>
@@ -77,12 +82,6 @@
         <Users class="w-8 h-8 text-zinc-800 mx-auto mb-2" />
         <p class="text-xs text-zinc-600 italic">{{ i18n.t('lb_empty') }}</p>
       </div>
-    </div>
-    
-    <div class="p-4 bg-zinc-950/20 border-t border-zinc-800/30">
-      <button class="w-full py-2 text-[10px] font-bold text-zinc-500 hover:text-primary-400 uppercase tracking-widest transition-colors">
-        {{ i18n.t('lb_view_full') }}
-      </button>
     </div>
   </div>
 </template>

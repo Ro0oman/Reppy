@@ -30,6 +30,9 @@
       </div>
     </header>
 
+    <!-- Boss Event Global Health Bar -->
+    <BossHealth ref="bossHealthRef" />
+
     <!-- Exercise Selector -->
     <div class="flex justify-center -mb-4">
       <ExerciseSelector v-model="activeExercise" @update:modelValue="fetchData" />
@@ -310,6 +313,7 @@ import Heatmap from './Heatmap.vue';
 import RepsInput from './RepsInput.vue';
 import Leaderboard from './Leaderboard.vue';
 import ExerciseSelector from './ExerciseSelector.vue';
+import BossHealth from './BossHealth.vue';
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();
@@ -348,6 +352,7 @@ const settingsForm = reactive({
 const editingId = ref(null);
 const editValue = ref(0);
 const leaderboardRef = ref(null);
+const bossHealthRef = ref(null);
 const avatarInput = ref(null);
 
 const todayProgress = computed(() => {
@@ -388,6 +393,9 @@ const fetchData = async () => {
 
     if (leaderboardRef.value) {
       leaderboardRef.value.refresh();
+    }
+    if (bossHealthRef.value) {
+      bossHealthRef.value.refresh();
     }
   } catch (error) {
     console.error('Error fetching data:', error);

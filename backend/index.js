@@ -8,6 +8,8 @@ import repsRoutes from './reps.js';
 import socialRoutes from './social.js';
 import leaderboardRoutes from './leaderboard.js';
 import usersRoutes from './users.js';
+import shopRoutes from './shop.js';
+import bossRoutes from './boss.js';
 import { query } from './db.js';
 
 dotenv.config();
@@ -26,6 +28,8 @@ app.use('/api/reps', repsRoutes);
 app.use('/api/social', socialRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/users', usersRoutes);
+app.use('/api/shop', shopRoutes);
+app.use('/api/boss', bossRoutes);
 
 // Automated DB initialization for the user
 app.get('/api/db/init', async (req, res) => {

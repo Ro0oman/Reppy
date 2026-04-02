@@ -1,0 +1,90 @@
+import express from 'express';
+import { query } from './db.js';
+import { authenticate } from './middleware.js';
+
+const router = express.Router();
+
+// Get available cosmetics
+router.get('/cosmetics', authenticate, async (req, res) => {
+  try {
+    const cosmeticsRes = await query('SELECT * FROM cosmetics ORDER BY price ASC');
+    const inventoryRes = await query('SELECT cosmetic_id FROM user_inventory WHERE user_id = $1', [req.user.id]);
+    
+    const ownedIds = inventoryRes.rows.map(row => row.cosmetic_id);
+    
+    const shopItems = cosmeticsRes.rows.map(item => ({
+      ...item,
+      owned: ownedIds.includes(item.id)
+    }));
+    
+    res.json(shopItems);
+  } catch (error) {
+    console.error('Error fetching cosmetics:', error);
+    res.status(500).json({ message: 'Error fetching cosmetics' });
+  }
+});
+
+// Buy cosmetic
+router.post('/buy/:id', authenticate, async (req, res) => {
+  const cosmeticId = parseInt(req.params.id);
+  const userId = req.user.id;
+
+  try {
+    // Determine cost and users coins
+    const cosmeticRes = await query('SELECT * FROM cosmetics WHERE id = $1', [cosmeticId]);
+    if (cosmeticRes.rows.length === 0) return res.status(404).json({ message: 'Cosmetic not found' });
+    const item = cosmeticRes.rows[0];
+
+    const userRes = await query('SELECT reppy_coins FROM users WHERE id = $1', [userId]);
+    const user = userRes.rows[0];
+
+    // Check inventory
+    const inventoryRes = await query('SELECT * FROM user_inventory WHERE user_id = $1 AND cosmetic_id = $2', [userId, cosmeticId]);
+    if (inventoryRes.rows.length > 0) {
+      return res.status(400).json({ message: 'Item already owned' });
+    }
+
+    if (user.reppy_coins < item.price) {
+      return res.status(400).json({ message: 'Not enough Reppy Coins' });
+    }
+
+    // Process Purchase
+    await query('BEGIN');
+    await query('UPDATE users SET reppy_coins = reppy_coins - $1 WHERE id = $2', [item.price, userId]);
+    await query('INSERT INTO user_inventory (user_id, cosmetic_id) VALUES ($1, $2)', [userId, cosmeticId]);
+    await query('COMMIT');
+
+    res.json({ message: 'Purchase successful', remaining_coins: user.reppy_coins - item.price });
+  } catch (error) {
+    await query('ROLLBACK');
+    console.error('Error purchasing cosmetic:', error);
+    res.status(500).json({ message: 'Error processing purchase' });
+  }
+});
+
+// Equip cosmetic
+router.post('/equip/:id', authenticate, async (req, res) => {
+  const cosmeticId = parseInt(req.params.id);
+  const userId = req.user.id;
+  try {
+    // Check ownership
+    const inventoryRes = await query('SELECT * FROM user_inventory WHERE user_id = $1 AND cosmetic_id = $2', [userId, cosmeticId]);
+    if (inventoryRes.rows.length === 0) return res.status(403).json({ message: 'You do not own this item' });
+    
+    const cosmeticRes = await query('SELECT type FROM cosmetics WHERE id = $1', [cosmeticId]);
+    const type = cosmeticRes.rows[0].type;
+    
+    if (type === 'title') {
+      await query('UPDATE users SET equipped_title_id = $1 WHERE id = $2', [cosmeticId, userId]);
+    } else if (type === 'border') {
+      await query('UPDATE users SET equipped_border_id = $1 WHERE id = $2', [cosmeticId, userId]);
+    }
+
+    res.json({ message: 'Equipped successfully' });
+  } catch (error) {
+    console.error('Error equipping cosmetic:', error);
+    res.status(500).json({ message: 'Error equipping cosmetic' });
+  }
+});
+
+export default router;

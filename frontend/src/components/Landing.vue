@@ -7,6 +7,19 @@
         <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600 rounded-full blur-[120px] animate-pulse delay-1000"></div>
       </div>
 
+      <!-- Easter Event Banner -->
+      <div v-if="hasActiveEvent" class="w-full max-w-4xl bg-gradient-to-r from-pink-500/20 via-primary-500/20 to-amber-500/20 border border-4 border-pink-500/50 p-6 rounded-3xl animate-bounce-short shadow-[0_0_30px_rgba(236,72,153,0.3)] mb-8 glass">
+        <h2 class="text-3xl font-black text-white italic tracking-tighter uppercase mb-2">🐇 ¡El Conejo de Acero ha llegado!</h2>
+        <p class="text-zinc-300 font-medium text-lg">Este Sábado arranca el Evento Global. Únete a la resistencia, haz repeticiones y gana cofres exclusivos.</p>
+        <div class="mt-4 p-4 bg-black/40 rounded-2xl border border-white/10 w-fit mx-auto">
+          <span class="block text-[10px] uppercase font-black tracking-widest text-pink-400 mb-1">El jefe se marcha en:</span>
+          <span class="text-3xl font-mono font-black text-white tracking-widest">{{ timerText }}</span>
+        </div>
+        <button @click="$emit('start')" class="mt-4 px-6 py-2 bg-pink-500 hover:bg-pink-400 text-black font-black uppercase tracking-widest rounded-xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(236,72,153,0.5)]">
+          Unirme a la Caza
+        </button>
+      </div>
+
       <div class="inline-flex items-center gap-2 px-4 py-2 glass rounded-full mb-4 border-white/10 animate-fade-in-up">
         <Sparkles class="w-4 h-4 text-primary-400" />
         <span class="text-xs font-black uppercase tracking-[0.3em] text-zinc-400">{{ i18n.t('hero_eyebrow') }}</span>
@@ -89,6 +102,8 @@
 </template>
 
 <script setup>
+import { ref, onMounted, onUnmounted } from 'vue';
+import axios from 'axios';
 import { Sparkles, Activity, Trophy, Users } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
@@ -97,6 +112,44 @@ import Leaderboard from './Leaderboard.vue';
 const i18n = useI18nStore();
 const authStore = useAuthStore();
 defineEmits(['start']);
+
+const hasActiveEvent = ref(false);
+const timerText = ref('Cargando...');
+let timerInterval = null;
+
+onMounted(async () => {
+  try {
+    const res = await axios.get('/api/boss/active');
+    if (res.data && res.data.boss) {
+      hasActiveEvent.value = true;
+      const endDate = new Date(res.data.boss.end_date);
+      
+      const updateTimer = () => {
+        const now = new Date();
+        const diff = endDate - now;
+        if (diff <= 0) {
+          timerText.value = '00:00:00';
+          clearInterval(timerInterval);
+          return;
+        }
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
+        const m = Math.floor((diff / 1000 / 60) % 60).toString().padStart(2, '0');
+        const s = Math.floor((diff / 1000) % 60).toString().padStart(2, '0');
+        timerText.value = `${d}D ${h}:${m}:${s}`;
+      };
+      
+      updateTimer();
+      timerInterval = setInterval(updateTimer, 1000);
+    }
+  } catch (e) {
+    console.error('Error fetching boss for landing:', e);
+  }
+});
+
+onUnmounted(() => {
+  if (timerInterval) clearInterval(timerInterval);
+});
 </script>
 
 <style scoped>
@@ -118,5 +171,19 @@ defineEmits(['start']);
     opacity: 1;
     transform: translateY(0);
   }
+}
+@keyframes bounceShort {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8,0,1,1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0,0,0.2,1);
+  }
+}
+.animate-bounce-short {
+  animation: bounceShort 1s;
+  animation-iteration-count: 3;
 }
 </style>

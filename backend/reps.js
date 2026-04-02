@@ -32,7 +32,7 @@ router.post('/', authenticate, async (req, res) => {
   const userId = req.user.id;
 
   try {
-    // Insert or update reps for the specific date and exercise type
+    // 1. Insert or update reps for the specific date and exercise type
     const result = await query(
       `INSERT INTO reps (user_id, count, date, exercise_type, added_weight) 
        VALUES ($1, $2, $3, $4, $5) 
@@ -43,13 +43,60 @@ router.post('/', authenticate, async (req, res) => {
       [userId, count, date || new Date().toISOString().split('T')[0], exercise_type, parseFloat(added_weight) || 0]
     );
 
-    // Update user's total_reps (overall cache)
-    await query(
-      'UPDATE users SET total_reps = (SELECT SUM(count) FROM reps WHERE user_id = $1) WHERE id = $1',
-      [userId]
+    // 2. Calcular Reppy Coins y XP ganada
+    let coinMultiplier = 1;
+    let statToUpgrade = 'str_xp';
+    let extraStatToUpgrade = null;
+
+    if (exercise_type === 'pullups') { coinMultiplier = 1; statToUpgrade = 'str_xp'; }
+    else if (exercise_type === 'pushups') { coinMultiplier = 1; statToUpgrade = 'end_xp'; }
+    else if (exercise_type === 'dips') { coinMultiplier = 2; statToUpgrade = 'str_xp'; }
+    else if (exercise_type === 'weighted_pullups') { coinMultiplier = 3; statToUpgrade = 'pwr_xp'; }
+    else if (exercise_type === 'muscleups') { coinMultiplier = 5; statToUpgrade = 'pwr_xp'; extraStatToUpgrade = 'agi_xp'; }
+
+    const earnedCoins = count * coinMultiplier;
+    
+    // Update user's total_reps, coins and xp
+    let userUpdateQuery = `
+      UPDATE users 
+      SET total_reps = total_reps + $1,
+          reppy_coins = reppy_coins + $2,
+          ${statToUpgrade} = ${statToUpgrade} + $1
+    `;
+    if (extraStatToUpgrade) {
+      userUpdateQuery += `, ${extraStatToUpgrade} = ${extraStatToUpgrade} + $1`;
+    }
+    userUpdateQuery += ` WHERE id = $3`;
+    
+    await query(userUpdateQuery, [count, earnedCoins, userId]);
+
+    // 3. Atacar al Boss Global Activo (si existe)
+    const bossRes = await query(
+      `SELECT id, current_hp FROM boss_fights WHERE status = 'active' AND start_date <= CURRENT_TIMESTAMP AND end_date >= CURRENT_TIMESTAMP LIMIT 1`
     );
 
-    res.json(result.rows[0]);
+    if (bossRes.rows.length > 0) {
+      const boss = bossRes.rows[0];
+      const damage = count;
+      const newHp = Math.max(0, boss.current_hp - damage);
+      
+      await query(`UPDATE boss_fights SET current_hp = $1 WHERE id = $2`, [newHp, boss.id]);
+      
+      // Update participant damage
+      await query(
+        `INSERT INTO event_participants (boss_fight_id, user_id, damage_dealt) 
+         VALUES ($1, $2, $3)
+         ON CONFLICT (boss_fight_id, user_id) 
+         DO UPDATE SET damage_dealt = event_participants.damage_dealt + EXCLUDED.damage_dealt`,
+        [boss.id, userId, damage]
+      );
+      
+      if (newHp === 0) {
+        await query(`UPDATE boss_fights SET status = 'defeated' WHERE id = $1`, [boss.id]);
+      }
+    }
+
+    res.json({ ...result.rows[0], earnedCoins });
   } catch (error) {
     console.error('Error adding reps:', error);
     res.status(500).json({ message: 'Error adding reps', error: error.message });

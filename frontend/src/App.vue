@@ -1,7 +1,11 @@
 <template>
-  <div class="min-h-screen bg-[#030303] text-zinc-100 selection:bg-primary-500/30">
+  <div class="min-h-screen bg-[#030303] text-zinc-100 selection:bg-primary-500/30 relative">
+    
+    <!-- Easter Background Overlay -->
+    <EasterBackground />
+
     <!-- Animated background -->
-    <div class="bg-glow">
+    <div class="bg-glow relative z-0">
       <div class="blob top-[-10%] left-[-10%]"></div>
       <div class="blob bottom-[-10%] right-[-10%] animation-delay-2000" style="animation-duration: 25s; opacity: 0.5;">
       </div>
@@ -28,6 +32,10 @@
             :class="view === 'social' ? 'text-white' : 'text-zinc-400 hover:text-white'">
             {{ i18n.t('nav_social') }}
           </button>
+          <button @click="view = 'shop'" class="text-sm font-medium transition-colors"
+            :class="view === 'shop' ? 'text-amber-500 drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]' : 'text-zinc-400 hover:text-amber-500/80'">
+            Taberna (Tienda)
+          </button>
         </div>
       </div>
     </nav>
@@ -36,6 +44,7 @@
       <template v-if="authStore.isAuthenticated">
         <Dashboard v-if="view === 'dashboard'" />
         <Social v-if="view === 'social'" />
+        <Shop v-if="view === 'shop'" />
         <Landing v-if="view === 'landing'" @start="view = 'dashboard'" />
       </template>
       <template v-else>
@@ -63,6 +72,8 @@ import Login from './components/Login.vue'
 import Landing from './components/Landing.vue'
 import Dashboard from './components/Dashboard.vue'
 import Social from './components/Social.vue'
+import Shop from './components/Shop.vue'
+import EasterBackground from './components/EasterBackground.vue'
 import NotificationToast from './components/NotificationToast.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
 import { useI18nStore } from './stores/i18n';
