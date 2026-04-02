@@ -148,10 +148,10 @@
           <div class="flex items-center justify-between mb-8">
             <div class="flex flex-col">
               <h3 class="text-3xl font-black text-white italic tracking-tighter uppercase leading-none">Códice de Guerra</h3>
-              <p class="text-[10px] font-bold text-primary-500 uppercase tracking-[0.3em] mt-1">Manual de Progresión RPG</p>
+              <p class="text-[10px] font-black text-primary-400 uppercase tracking-[0.4em] mt-2">Guía de Ascensión RPG</p>
             </div>
-            <button @click="showInfoModal = false" class="p-2 hover:bg-white/10 rounded-xl transition-colors">
-              <X class="w-6 h-6 text-zinc-400" />
+            <button @click="showInfoModal = false" class="p-2 hover:bg-white/10 rounded-xl transition-all hover:rotate-90">
+              <XIcon class="w-6 h-6 text-white" />
             </button>
           </div>
 
@@ -221,10 +221,10 @@
                 </div>
                 <div class="flex-1">
                   <div class="flex items-center justify-between">
-                    <h5 class="text-xs font-black uppercase tracking-widest" :class="stats.totalXP >= rank.min ? 'text-primary-400' : 'text-zinc-500'">{{ rank.name }}</h5>
-                    <span class="text-[9px] font-bold text-zinc-600">{{ rank.min }}+ XP</span>
+                    <h5 class="text-[11px] font-black uppercase tracking-widest transition-colors" :class="stats.totalXP >= rank.min ? 'text-white' : 'text-zinc-600'">{{ rank.name }}</h5>
+                    <span class="text-[10px] font-black" :class="stats.totalXP >= rank.min ? 'text-primary-400' : 'text-zinc-700'">{{ rank.min }}+ XP</span>
                   </div>
-                  <p class="text-[10px] text-zinc-500 italic mt-0.5">{{ rank.game }}</p>
+                  <p class="text-[10px] text-zinc-500 font-bold italic mt-0.5">{{ rank.game }}</p>
                 </div>
                 <div v-if="stats.totalXP >= rank.min" class="text-primary-500">
                   <Trophy class="w-4 h-4" />
@@ -244,7 +244,7 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
-import { Camera, Settings, LogOut, Activity, Flame, Trophy, User, HelpCircle, X, Sword, Zap, Heart, Shield } from 'lucide-vue-next';
+import { Camera, Settings, LogOut, Activity, Flame, Trophy, User, HelpCircle, X as XIcon, Sword, Zap, Heart, Shield } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import Heatmap from './Heatmap.vue';

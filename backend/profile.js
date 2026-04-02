@@ -38,7 +38,7 @@ router.get('/:id', async (req, res) => {
       'SELECT SUM(count) as total FROM reps WHERE user_id = $1 AND exercise_type = $2',
       [userId, type]
     );
-    const totalReps = parseInt(totalRes.rows[0]?.total) || 0;
+    const totalReps = parseInt(totalRes.rows[0]?.total || 0);
 
     const recentLogs = await query(
       'SELECT id, date, count FROM reps WHERE user_id = $1 AND exercise_type = $2 ORDER BY date DESC LIMIT 20',
@@ -52,7 +52,7 @@ router.get('/:id', async (req, res) => {
     );
     
     let streak = 0;
-    if (streakResult.rowCount > 0) {
+    if (streakResult && streakResult.rowCount > 0) {
       const dates = streakResult.rows.map(r => new Date(r.date).toISOString().split('T')[0]);
       const today = new Date().toISOString().split('T')[0];
       const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
@@ -75,36 +75,31 @@ router.get('/:id', async (req, res) => {
     );
     const favExercise = favResult.rows[0]?.exercise_type || 'pullups';
 
-    // RPG CALCULATIONS (God of War Edition)
-    // 1. STR (Strength) - Based on total volume and body weight influence
+    // RPG CALCULATIONS
     const volumeResult = await query(
       'SELECT SUM(count * (COALESCE(added_weight, 0) + $2)) as volume FROM reps WHERE user_id = $1',
-      [userId, user.body_weight || 75]
+      [userId, parseFloat(user.body_weight) || 75]
     );
-    const totalVolume = parseFloat(volumeResult.rows[0]?.volume) || 0;
-    const str_xp = Math.floor(totalVolume * 0.05); // 1 XP every 20kg moved
+    const totalVolume = parseFloat(volumeResult.rows[0]?.volume || 0);
+    const str_xp = Math.floor(totalVolume * 0.05);
 
-    // 2. PWR (Power) - Based on max weight intensity
     const pwrResult = await query(
       'SELECT MAX(added_weight) as max_weight FROM reps WHERE user_id = $1',
       [userId]
     );
-    const maxWeight = parseFloat(pwrResult.rows[0]?.max_weight) || 0;
-    const pwr_xp = Math.floor(maxWeight * 25); // 10kg max = 250 XP (Lvl 3)
+    const maxWeight = parseFloat(pwrResult.rows[0]?.max_weight || 0);
+    const pwr_xp = Math.floor(maxWeight * 25);
 
-    // 3. END (Endurance) - Based on total reps
-    const end_xp = Math.floor(totalReps * 5); // 100 reps = 500 XP (Lvl 6)
+    const end_xp = Math.floor(totalReps * 5);
 
-    // 4. AGI (Agility) - Based on consistency and variety
     const varietyResult = await query(
       'SELECT COUNT(DISTINCT exercise_type) as variety FROM reps WHERE user_id = $1',
       [userId]
     );
-    const varietyCount = parseInt(varietyResult.rows[0]?.variety) || 1;
+    const varietyCount = parseInt(varietyResult.rows[0]?.variety || 1);
     const agi_xp = Math.floor((streak * 40) + (varietyCount * 75));
 
-    // Calculate levels (Level 1 starts at 0 XP, each 100 XP is a new level)
-    const getLevel = (xp) => Math.floor(xp / 100) + 1;
+    const getLevel = (xp) => Math.floor((xp || 0) / 100) + 1;
 
     // Dynamic Title Selection
     const totalXP = str_xp + pwr_xp + end_xp + agi_xp;
@@ -115,31 +110,20 @@ router.get('/:id', async (req, res) => {
     else if (totalXP > 1500) dynamicTitle = 'Asesino de Dragones';
     else if (totalXP > 500) dynamicTitle = 'Guerrero Espartano';
 
-    console.log(`[PROFILE_API] SUCCESS - RPG Stats: STR:${str_xp} PWR:${pwr_xp} END:${end_xp} AGI:${agi_xp} | Title: ${dynamicTitle}`);
+    console.log(`[PROFILE_API] SUCCESS for ${userId} - Title: ${dynamicTitle} XP: ${totalXP}`);
     
-    // Merge calculated stats into user object for the response
-    const rpgUser = {
-      ...user,
-      title_name: dynamicTitle,
-      str_xp,
-      pwr_xp,
-      end_xp,
-      agi_xp,
-      str_lvl: getLevel(str_xp),
-      pwr_lvl: getLevel(pwr_xp),
-      end_lvl: getLevel(end_xp),
-      agi_lvl: getLevel(agi_xp)
-    };
-
     res.json({
-      user: rpgUser,
-      heatmap: heatmapResult.rows || [],
-      stats: {
-        totalReps,
-        streak,
-        favExercise,
-        totalXP
+      user: {
+        ...user,
+        title_name: dynamicTitle,
+        str_xp, pwr_xp, end_xp, agi_xp,
+        str_lvl: getLevel(str_xp),
+        pwr_lvl: getLevel(pwr_xp),
+        end_lvl: getLevel(end_xp),
+        agi_lvl: getLevel(agi_xp)
       },
+      heatmap: heatmapResult.rows || [],
+      stats: { totalReps, streak, favExercise, totalXP },
       recentLogs: recentLogs.rows || []
     });
   } catch (error) {

@@ -17,8 +17,8 @@
       <!-- Modal Card -->
       <div class="glass relative max-w-lg w-full p-8 rounded-[2.5rem] border-white/20 shadow-[0_0_50px_rgba(245,158,11,0.2)] text-center space-y-8 animate-in zoom-in duration-500 scale-100">
         <!-- Close Button (X) -->
-        <button @click="close" class="absolute top-6 right-6 p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors group z-10">
-          <X class="w-5 h-5 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white" />
+        <button @click="close" class="absolute top-6 right-6 p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-all hover:rotate-90 group z-10 text-white">
+          <XIcon class="w-5 h-5" />
         </button>
 
         <!-- Festive Icon -->
@@ -63,8 +63,8 @@
               <Flame class="w-5 h-5" />
             </div>
             <div>
-              <h4 class="font-bold text-zinc-900 dark:text-white uppercase tracking-widest text-xs">Próximamente: El Conejo de Acero</h4>
-              <p class="text-sm text-zinc-500 font-medium">Prepárate para el primer evento de Boss. Recompensas únicas este sábado.</p>
+              <h4 class="font-black text-zinc-900 dark:text-white uppercase tracking-widest text-xs">Próximamente: El Conejo de Acero</h4>
+              <p class="text-sm text-zinc-600 dark:text-zinc-400 font-bold">Prepárate para el primer evento de Boss. Recompensas únicas este sábado.</p>
             </div>
           </div>
         </div>
@@ -81,7 +81,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { Zap, Coins, ShoppingBag, Flame, ArrowRight, X } from 'lucide-vue-next';
+import { Zap, Coins, ShoppingBag, Flame, ArrowRight, X as XIcon } from 'lucide-vue-next';
 import axios from 'axios';
 
 const props = defineProps({
