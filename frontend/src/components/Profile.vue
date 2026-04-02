@@ -13,8 +13,11 @@
 
         <div class="relative group">
           <div class="w-32 h-32 rounded-[2rem] border-4 border-zinc-200 dark:border-white/10 overflow-hidden shadow-2xl transition-transform hover:scale-105"
-               :class="user.border_css">
-            <img :src="user.avatar_url" class="w-full h-full object-cover" />
+               :class="user.equipped_border_id ? user.border_css : ''">
+            <img v-if="user.avatar_url" :src="user.avatar_url" class="w-full h-full object-cover" />
+            <div v-else class="w-full h-full bg-gradient-to-br from-zinc-200 to-zinc-300 dark:from-zinc-800 dark:to-zinc-900 flex items-center justify-center">
+              <User class="w-12 h-12 text-zinc-400" />
+            </div>
           </div>
           <div v-if="isOwnProfile" @click="triggerAvatarUpload" class="absolute bottom-[-10px] right-[-10px] p-3 bg-primary-600 rounded-full cursor-pointer hover:bg-primary-500 shadow-xl text-white">
             <Camera class="w-5 h-5" />
@@ -31,22 +34,22 @@
             </span>
           </div>
           
-          <div class="grid grid-cols-4 gap-2 mt-4 max-w-sm">
-            <div class="text-center bg-zinc-100 dark:bg-black/30 p-2 rounded-xl border border-zinc-200 dark:border-white/5">
-              <p class="text-[10px] font-black uppercase text-red-500">STR</p>
-              <p class="font-bold text-zinc-900 dark:text-white">{{ user.str_xp || 0 }}</p>
-            </div>
-            <div class="text-center bg-zinc-100 dark:bg-black/30 p-2 rounded-xl border border-zinc-200 dark:border-white/5">
-              <p class="text-[10px] font-black uppercase text-blue-500">PWR</p>
-              <p class="font-bold text-zinc-900 dark:text-white">{{ user.pwr_xp || 0 }}</p>
-            </div>
-            <div class="text-center bg-zinc-100 dark:bg-black/30 p-2 rounded-xl border border-zinc-200 dark:border-white/5">
-              <p class="text-[10px] font-black uppercase text-green-500">END</p>
-              <p class="font-bold text-zinc-900 dark:text-white">{{ user.end_xp || 0 }}</p>
-            </div>
-            <div class="text-center bg-zinc-100 dark:bg-black/30 p-2 rounded-xl border border-zinc-200 dark:border-white/5">
-              <p class="text-[10px] font-black uppercase text-purple-500">AGI</p>
-              <p class="font-bold text-zinc-900 dark:text-white">{{ user.agi_xp || 0 }}</p>
+          <div class="flex items-center gap-2 mt-4 px-1">
+            <h4 class="text-[10px] font-black uppercase text-zinc-400 tracking-[0.2em]">Atributos RPG</h4>
+            <button @click="showInfoModal = true" class="p-1 hover:bg-zinc-100 dark:hover:bg-white/10 rounded-full transition-colors">
+              <HelpCircle class="w-3 h-3 text-zinc-400 hover:text-primary-500" />
+            </button>
+          </div>
+          <div class="grid grid-cols-4 gap-2 mt-2 max-w-sm">
+            <div v-for="attr in attributes" :key="attr.key" 
+                 class="group relative text-center p-2 rounded-xl border transition-all duration-500"
+                 :class="getAttrColor(attr.lvl)">
+              <div class="absolute inset-0 bg-white/20 dark:bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl pointer-events-none"></div>
+              <p class="text-[10px] font-black uppercase mb-0.5 tracking-tighter" :class="attr.labelColor">{{ attr.key }}</p>
+              <div class="flex flex-col leading-none">
+                <p class="text-xs font-black text-zinc-900 dark:text-white">Lvl {{ attr.lvl }}</p>
+                <p class="text-[8px] font-bold text-zinc-500 opacity-60">({{ attr.xp }})</p>
+              </div>
             </div>
           </div>
         </div>
@@ -67,22 +70,35 @@
           <h3 class="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tighter">Actividad Histórica</h3>
         </div>
         
-        <div class="grid grid-cols-2 gap-4 mb-6">
-            <div class="glass p-4 rounded-xl border border-zinc-200 dark:border-white/5 text-center">
-                <p class="text-xs font-black uppercase text-zinc-500">Repeticiones Totales</p>
-                <p class="text-3xl font-black text-primary-500">{{ stats.totalReps || 0 }}</p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="glass p-4 rounded-xl border border-zinc-200 dark:border-white/5 text-center flex flex-col items-center justify-center group overflow-hidden relative">
+                <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-primary-500/10 rounded-full blur-xl group-hover:bg-primary-500/20 transition-colors"></div>
+                <p class="text-[10px] font-black uppercase text-zinc-500 tracking-widest mb-1">Total Reps</p>
+                <p class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-zinc-900 to-zinc-600 dark:from-white dark:to-zinc-400">{{ stats.totalReps || 0 }}</p>
             </div>
-            <div class="glass p-4 rounded-xl border border-zinc-200 dark:border-white/5 text-center">
-                <p class="text-xs font-black uppercase text-zinc-500">Meta Diaria (Actual)</p>
-                <p class="text-3xl font-black text-primary-500">{{ user.daily_goal || 0 }}</p>
+            <div class="glass p-4 rounded-xl border border-zinc-200 dark:border-white/5 text-center flex flex-col items-center justify-center group overflow-hidden relative">
+                <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-orange-500/10 rounded-full blur-xl group-hover:bg-orange-500/20 transition-colors"></div>
+                <p class="text-[10px] font-black uppercase text-zinc-500 tracking-widest mb-1">Racha Actual</p>
+                <div class="flex items-center gap-2">
+                  <p class="text-3xl font-black text-orange-500">{{ stats.streak || 0 }}</p>
+                  <Flame class="w-6 h-6 text-orange-500 fill-orange-500/20 animate-pulse" />
+                </div>
+            </div>
+            <div class="glass p-4 rounded-xl border border-zinc-200 dark:border-white/5 text-center flex flex-col items-center justify-center group overflow-hidden relative">
+                <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition-colors"></div>
+                <p class="text-[10px] font-black uppercase text-zinc-500 tracking-widest mb-1">Meta Diaria</p>
+                <p class="text-3xl font-black text-emerald-500">{{ user.daily_goal || 0 }}</p>
+            </div>
+            <div class="glass p-4 rounded-xl border border-zinc-200 dark:border-white/5 text-center flex flex-col items-center justify-center group overflow-hidden relative">
+                <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-purple-500/10 rounded-full blur-xl group-hover:bg-purple-500/20 transition-colors"></div>
+                <p class="text-[10px] font-black uppercase text-zinc-500 tracking-widest mb-1">Fav Exercise</p>
+                <p class="text-sm font-black text-purple-500 uppercase tracking-tighter">{{ translateExercise(stats.favExercise) }}</p>
             </div>
         </div>
 
-        <div class="overflow-hidden h-[200px] pointer-events-none opacity-80" style="filter: grayscale(0.5);">
-            <!-- Mock heatmap display or import Heatmap component if desired. To keep it simple we show a placeholder box -->
-            <div class="h-full w-full flex items-center justify-center bg-zinc-100 dark:bg-zinc-900/50 rounded-2xl border border-zinc-200 dark:border-white/5">
-                <p class="text-xs font-bold text-zinc-500">(Heatmap Visualizer - PRÓXIMAMENTE)</p>
-            </div>
+        <div class="space-y-4">
+            <h4 class="text-xs font-black uppercase text-zinc-500 tracking-widest px-1">Distribución de Actividad</h4>
+            <Heatmap :data="heatmapData" />
         </div>
       </div>
 
@@ -120,14 +136,75 @@
       </div>
 
     </template>
+
+    <!-- RPG Info Modal -->
+    <Teleport to="body">
+      <div v-if="showInfoModal" 
+           class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-sm animate-in fade-in duration-300">
+        <div class="glass max-w-xl w-full p-8 rounded-[2.5rem] border-white/10 shadow-2xl space-y-6 relative overflow-hidden">
+          <!-- Themed Background Deco -->
+          <div class="absolute -top-12 -right-12 w-48 h-48 bg-primary-500/10 rounded-full blur-3xl pointer-events-none"></div>
+          
+          <div class="flex items-center justify-between">
+            <h3 class="text-2xl font-black text-white italic tracking-tighter uppercase">Furia del Guerrero</h3>
+            <button @click="showInfoModal = false" class="p-2 hover:bg-white/10 rounded-xl transition-colors">
+              <X class="w-6 h-6 text-zinc-400" />
+            </button>
+          </div>
+
+          <div class="space-y-6 text-sm">
+            <div class="flex gap-4 items-start p-4 bg-red-500/5 border border-red-500/20 rounded-2xl">
+              <div class="p-3 bg-red-500/10 rounded-xl text-red-500"><Sword class="w-5 h-5" /></div>
+              <div>
+                <h4 class="font-black text-red-500 uppercase">Fuerza (STR)</h4>
+                <p class="text-zinc-400 leading-relaxed italic">"Como Kratos moviendo los templos del Olimpo."</p>
+                <p class="text-zinc-200 mt-1">Escala con el **Volumen Total** y tu propio peso corporal. Cada kilo importa.</p>
+              </div>
+            </div>
+
+            <div class="flex gap-4 items-start p-4 bg-orange-500/5 border border-orange-500/20 rounded-2xl">
+              <div class="p-3 bg-orange-500/10 rounded-xl text-orange-500"><Zap class="w-5 h-5" /></div>
+              <div>
+                <h4 class="font-black text-orange-500 uppercase">Potencia (PWR)</h4>
+                <p class="text-zinc-400 leading-relaxed italic">"El golpe crítico capaz de romper la guardia de un Boss."</p>
+                <p class="text-zinc-200 mt-1">Calculado sobre tu **Lastre Máximo**. Premia la intensidad pura.</p>
+              </div>
+            </div>
+
+            <div class="flex gap-4 items-start p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl">
+              <div class="p-3 bg-emerald-500/10 rounded-xl text-emerald-500"><Heart class="w-5 h-5" /></div>
+              <div>
+                <h4 class="font-black text-emerald-500 uppercase">Resistencia (END)</h4>
+                <p class="text-zinc-400 leading-relaxed italic">"Tu barra de estamina de Elden Ring."</p>
+                <p class="text-zinc-200 mt-1">Basada en tus **Repeticiones Totales**. No dejes que se agote el aliento.</p>
+              </div>
+            </div>
+
+            <div class="flex gap-4 items-start p-4 bg-blue-500/5 border border-blue-500/20 rounded-2xl">
+              <div class="p-3 bg-blue-500/10 rounded-xl text-blue-500"><Shield class="w-5 h-5" /></div>
+              <div>
+                <h4 class="font-black text-blue-500 uppercase">Agilidad (AGI)</h4>
+                <p class="text-zinc-400 leading-relaxed italic">"Como el escudo recargable del Jefe Maestro."</p>
+                <p class="text-zinc-200 mt-1">Premia tu **Racha** y la **Variedad** de ejercicios. Consistencia es victoria.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-primary-500/10 p-4 rounded-2xl border border-primary-500/20">
+            <p class="text-[10px] font-bold text-center text-primary-400 uppercase tracking-widest">Siguiente Nivel: Cada 100 XP acumulados</p>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
-import { Camera, Settings, LogOut, Activity } from 'lucide-vue-next';
+import { Camera, Settings, LogOut, Activity, Flame, Trophy, User, HelpCircle, X, Sword, Zap, Heart, Shield } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
+import Heatmap from './Heatmap.vue';
 import axios from 'axios';
 
 const props = defineProps({
@@ -142,8 +219,34 @@ const notificationStore = useNotificationStore();
 
 const user = ref({});
 const stats = ref({});
+const heatmapData = ref([]);
 const loading = ref(true);
+const showInfoModal = ref(false);
 const fileInput = ref(null);
+
+const attributes = computed(() => [
+  { key: 'STR', xp: user.value.str_xp || 0, lvl: user.value.str_lvl || 1, labelColor: 'text-red-500' },
+  { key: 'PWR', xp: user.value.pwr_xp || 0, lvl: user.value.pwr_lvl || 1, labelColor: 'text-orange-500' },
+  { key: 'END', xp: user.value.end_xp || 0, lvl: user.value.end_lvl || 1, labelColor: 'text-emerald-500' },
+  { key: 'AGI', xp: user.value.agi_xp || 0, lvl: user.value.agi_lvl || 1, labelColor: 'text-blue-500' }
+]);
+
+const getAttrColor = (lvl) => {
+  if (lvl >= 31) return 'bg-orange-500/10 border-orange-500/40 shadow-[0_0_15px_rgba(249,115,22,0.2)] animate-pulse shadow-orange-500/20';
+  if (lvl >= 16) return 'bg-amber-500/5 border-amber-500/30';
+  if (lvl >= 6) return 'bg-blue-500/5 border-blue-500/20';
+  return 'bg-zinc-100 dark:bg-black/30 border-zinc-200 dark:border-white/5';
+};
+
+const translateExercise = (type) => {
+  const map = {
+    'pullups': 'Dominadas',
+    'pushups': 'Flexiones',
+    'dips': 'Fondos',
+    'squats': 'Sentadillas'
+  };
+  return map[type] || type;
+};
 
 const isOwnProfile = computed(() => {
   return !props.userId || props.userId === authStore.user?.id;
@@ -204,6 +307,7 @@ const fetchProfile = async () => {
     const res = await axios.get(`/api/profile/${targetId}`);
     user.value = res.data.user;
     stats.value = res.data.stats;
+    heatmapData.value = res.data.heatmap;
     
     if (isOwnProfile.value) {
         settingsForm.value = {
