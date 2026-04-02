@@ -4,12 +4,12 @@ import { authenticate } from './middleware.js';
 
 const router = express.Router();
 
-// Get active boss
+// Get active or upcoming boss
 router.get('/active', authenticate, async (req, res) => {
   try {
     const bossRes = await query(
       `SELECT * FROM boss_fights 
-       WHERE start_date <= CURRENT_TIMESTAMP 
+       WHERE status = 'active'
        AND end_date >= CURRENT_TIMESTAMP 
        ORDER BY start_date DESC LIMIT 1`
     );
@@ -49,9 +49,9 @@ router.post('/spawn-easter', async (req, res) => {
     // Dynamic HP Formula
     const totalHP = totalUsers * 10;
     
-    // Dates: Starts today, ends in 7 days
-    const startDate = new Date();
-    const endDate = new Date();
+    // Dates: Starts specific Saturday
+    const startDate = new Date('2026-04-03T22:00:00Z'); // Friday 22:00 UTC = Saturday 00:00 CEST (Spain)
+    const endDate = new Date(startDate);
     endDate.setDate(startDate.getDate() + 7);
 
     const result = await query(

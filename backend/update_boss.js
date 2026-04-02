@@ -1,0 +1,1 @@
+import('./db.js').then(db => db.query("UPDATE boss_fights SET start_date = '2026-04-03T22:00:00Z', end_date = '2026-04-10T22:00:00Z' WHERE status = 'active'")).then(res => console.log('Updated', res.rowCount)).catch(console.error).finally(() => process.exit())

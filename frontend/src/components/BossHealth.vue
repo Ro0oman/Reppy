@@ -74,11 +74,22 @@
         </button>
       </div>
     </div>
+    <!-- Block interaction if not started yet -->
+    <div v-if="!hasStarted" class="absolute inset-0 z-50 backdrop-blur-md bg-black/40 flex items-center justify-center p-6 text-center">
+      <div class="space-y-2">
+        <div class="inline-block p-4 rounded-full bg-black/50 border border-white/10 mb-2 shadow-2xl">
+          <span class="text-4xl block animate-bounce">🔒</span>
+        </div>
+        <h3 class="text-2xl font-black text-white italic tracking-tighter uppercase">Evento Bloqueado</h3>
+        <p class="text-sm font-medium text-zinc-300">Las puertas de la guarida se abrirán el Sábado a las 00:00 (España).<br>Toda repetición antes de esa fecha no le afectará.</p>
+        <p class="text-xl font-mono text-pink-400 mt-2 font-bold">{{ timeToStart }}</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 import { useNotificationStore } from '../stores/notification';
 
@@ -87,15 +98,20 @@ const loading = ref(true);
 const claiming = ref(false);
 const personalDamage = ref(0);
 const chestsClaimed = ref(0);
+const currentTime = ref(new Date());
 const notificationStore = useNotificationStore();
+
+let timerInterval = null;
 
 const fetchBoss = async () => {
   try {
     const res = await axios.get('/api/boss/active');
-    if (res.data) {
+    if (res.data && res.data.boss) {
       boss.value = res.data.boss;
       personalDamage.value = res.data.personal_damage;
       chestsClaimed.value = res.data.chests_claimed;
+    } else {
+      boss.value = null; // No active or upcoming boss
     }
   } catch (error) {
     console.error('Error fetching boss:', error);
@@ -103,6 +119,21 @@ const fetchBoss = async () => {
     loading.value = false;
   }
 };
+
+const hasStarted = computed(() => {
+  if (!boss.value) return false;
+  return currentTime.value >= new Date(boss.value.start_date);
+});
+
+const timeToStart = computed(() => {
+  if (!boss.value || hasStarted.value) return '';
+  const diff = new Date(boss.value.start_date) - currentTime.value;
+  const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const h = Math.floor((diff / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
+  const m = Math.floor((diff / 1000 / 60) % 60).toString().padStart(2, '0');
+  const s = Math.floor((diff / 1000) % 60).toString().padStart(2, '0');
+  return `${d}D ${h}:${m}:${s}`;
+});
 
 const hpPercentage = computed(() => {
   if (!boss.value) return 0;
@@ -178,6 +209,16 @@ const shareEvent = () => {
   }
 };
 
-onMounted(fetchBoss);
+onMounted(() => {
+  fetchBoss();
+  timerInterval = setInterval(() => {
+    currentTime.value = new Date();
+  }, 1000);
+});
+
+onUnmounted(() => {
+  if (timerInterval) clearInterval(timerInterval);
+});
+
 defineExpose({ refresh: fetchBoss });
 </script>
