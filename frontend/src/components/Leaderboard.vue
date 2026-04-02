@@ -36,7 +36,8 @@
     <div class="p-4 space-y-1">
       <div 
         v-for="(user, index) in sortedUsers" :key="user.id" 
-        class="group flex items-center justify-between p-3 rounded-xl hover:bg-white/[0.03] transition-all duration-300"
+        @click="$emit('viewProfile', user.id)"
+        class="group flex items-center justify-between p-3 rounded-xl hover:bg-zinc-100/50 dark:hover:bg-white/[0.03] hover:scale-[1.02] cursor-pointer transition-all duration-300"
         :class="{'bg-primary-500/10 border border-primary-500/20': user.id === authStore.user?.id}"
       >
         <div class="flex items-center gap-4">
@@ -100,6 +101,8 @@ const props = defineProps({
   limit: { type: Number, default: 20 },
   exerciseType: { type: String, default: 'pullups' }
 });
+
+const emit = defineEmits(['viewProfile']);
 
 const type = ref(authStore.isAuthenticated ? 'friends' : 'global');
 const timeframe = ref('all');

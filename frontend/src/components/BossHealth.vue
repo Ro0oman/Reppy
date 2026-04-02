@@ -1,6 +1,6 @@
 <template>
   <div v-if="loading" class="animate-pulse bg-white/5 h-24 rounded-3xl mb-8"></div>
-  <div v-else-if="boss" class="glass p-6 rounded-[2.5rem] mb-8 border border-zinc-200 dark:border-white/5 relative overflow-hidden group">
+  <div v-else-if="boss" class="glass p-5 rounded-3xl mb-8 border border-zinc-200 dark:border-white/5 relative overflow-hidden group flex flex-col justify-center">
     <!-- Easter Background subtle glow -->
     <div class="absolute -right-20 -top-20 w-64 h-64 bg-pink-500/10 rounded-full blur-[80px] pointer-events-none"></div>
 
@@ -75,17 +75,21 @@
       </div>
     </div>
     <!-- Block interaction if not started yet -->
-    <div v-if="!hasStarted" class="absolute inset-0 z-50 backdrop-blur-md bg-white/40 dark:bg-black/60 flex items-center justify-center p-4 sm:p-6 text-center">
-      <div class="glass max-w-sm w-full py-8 px-6 rounded-[2rem] shadow-[0_0_40px_rgba(0,0,0,0.2)] border border-white/60 dark:border-white/10 relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-br from-pink-500/10 to-amber-500/10 pointer-events-none"></div>
-        <div class="relative z-10 space-y-3">
-          <div class="inline-block p-4 rounded-full bg-white dark:bg-black/50 border border-zinc-200 dark:border-white/10 mb-2 shadow-xl">
-            <span class="text-4xl block animate-bounce">🔒</span>
+    <div v-if="!hasStarted" class="absolute inset-0 z-50 backdrop-blur-lg bg-zinc-100/80 dark:bg-black/80 flex items-center justify-center p-4">
+      <div class="bg-white dark:bg-zinc-950 max-w-2xl w-full py-4 px-6 rounded-3xl shadow-2xl border-2 border-zinc-300 dark:border-white/20 relative overflow-hidden flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center sm:text-left transition-all">
+        <div class="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-amber-500/5 pointer-events-none"></div>
+        <div class="relative z-10 shrink-0">
+          <div class="inline-flex p-3 rounded-full bg-zinc-100 dark:bg-black border-2 border-zinc-200 dark:border-zinc-800 shadow-sm">
+            <span class="text-3xl animate-bounce">🔒</span>
           </div>
-          <h3 class="text-2xl font-black text-zinc-900 dark:text-white italic tracking-tighter uppercase drop-shadow-sm">Evento Bloqueado</h3>
-          <p class="text-sm font-medium text-zinc-600 dark:text-zinc-300">Las puertas se abrirán el Sábado a las 00:00 (España).<br>Repeticiones previas no cuentan.</p>
-          <div class="mt-4 p-3 bg-black/5 dark:bg-black/40 rounded-xl border border-black/5 dark:border-white/5 mx-auto max-w-fit">
-            <p class="text-xl font-mono text-pink-500 dark:text-pink-400 font-bold tracking-widest">{{ timeToStart }}</p>
+        </div>
+        <div class="relative z-10 flex-1">
+          <h3 class="text-xl font-black text-black dark:text-white italic tracking-tighter uppercase">Evento Bloqueado</h3>
+          <p class="text-xs font-bold text-zinc-600 dark:text-zinc-400 mt-1">Apertura: Sábado 00:00.<br class="hidden sm:block">Las repeticiones ahora mismo se guardan, pero no afectan a la guarida.</p>
+        </div>
+        <div class="relative z-10 shrink-0">
+          <div class="p-3 bg-zinc-100 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-inner mt-2 sm:mt-0">
+            <p class="text-lg font-mono text-pink-500 dark:text-pink-400 font-bold tracking-widest">{{ timeToStart }}</p>
           </div>
         </div>
       </div>

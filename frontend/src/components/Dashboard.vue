@@ -1,34 +1,13 @@
 <template>
   <div class="max-w-6xl mx-auto w-full px-4 space-y-10 pb-20">
-    <!-- Header -->
-    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-      <div class="flex items-center gap-5">
-        <div class="relative">
-          <img :src="authStore.user?.avatar_url"
-            class="w-16 h-16 rounded-full border-2 border-primary-500/50 p-0.5 shadow-lg shadow-primary-500/10" />
-          <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-4 border-[#09090b] rounded-full"></div>
-        </div>
-        <div>
-          <h2 class="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">{{ authStore.user?.name }}</h2>
-          <div class="flex items-center gap-2 text-zinc-400 dark:text-zinc-500">
-            <Mail class="w-3.5 h-3.5" />
-            <span class="text-sm font-medium">{{ authStore.user?.email }}</span>
-          </div>
-        </div>
-      </div>
-      <div class="flex gap-3">
-        <button @click="fetchData"
-          class="p-2.5 bg-white dark:bg-white/50 dark:bg-zinc-900/50 hover:bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-800 rounded-xl transition-all"
-          title="Refresh data">
-          <RotateCw class="w-5 h-5 text-zinc-400 dark:text-zinc-500 dark:text-zinc-400" />
-        </button>
-        <button @click="authStore.logout()"
-          class="flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-white/50 dark:bg-zinc-900/50 hover:bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-300 dark:border-zinc-800 text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:text-white rounded-xl font-medium transition-all">
-          <LogOut class="w-4 h-4" />
-          <span>{{ i18n.t('sign_out') }}</span>
-        </button>
-      </div>
-    </header>
+    <!-- Dashboard Tools -->
+    <div class="flex justify-end gap-3 mt-4">
+      <button @click="fetchData"
+        class="p-2.5 bg-white dark:bg-zinc-900/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-300 dark:border-zinc-800 rounded-xl transition-all"
+        title="Refresh data">
+        <RotateCw class="w-5 h-5 text-zinc-400 dark:text-zinc-500" />
+      </button>
+    </div>
 
     <!-- Boss Event Global Health Bar -->
     <BossHealth ref="bossHealthRef" />
@@ -55,6 +34,7 @@
           <Leaderboard 
             ref="leaderboardRef" 
             :exercise-type="activeExercise"
+            @viewProfile="$emit('viewProfile', $event)"
           />
         </section>
       </div>
@@ -205,97 +185,7 @@
       </section>
     </div>
 
-    <!-- Bottom Section: Settings & Privacy -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <!-- Profile Customization -->
-      <div class="glass p-8 rounded-[2.5rem] border-zinc-200 dark:border-white/10 space-y-8">
-        <div class="flex items-center gap-4 mb-2">
-          <div class="p-3 bg-zinc-100 dark:bg-zinc-800 rounded-2xl">
-            <Settings class="w-6 h-6 text-zinc-400 dark:text-zinc-500 dark:text-zinc-400" />
-          </div>
-          <h3 class="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tighter">{{ i18n.t('settings_title') }}</h3>
-        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="space-y-1.5">
-            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-400 dark:text-zinc-500 px-1">{{ i18n.t('profile_name') }}</label>
-            <input v-model="settingsForm.name" type="text"
-              class="w-full bg-black/5 dark:bg-black/40 border border-zinc-200 dark:border-white/10 rounded-xl px-4 py-3 text-zinc-900 dark:text-white text-sm focus:border-primary-500/50 outline-none transition-all shadow-inner" />
-          </div>
-          <div class="space-y-1.5">
-            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-400 dark:text-zinc-500 px-1">{{ i18n.t('daily_goal') }}</label>
-            <input v-model.number="settingsForm.daily_goal" type="number"
-              class="w-full bg-black/5 dark:bg-black/40 border border-zinc-200 dark:border-white/10 rounded-xl px-4 py-3 text-zinc-900 dark:text-white text-sm focus:border-primary-500/50 outline-none transition-all shadow-inner" />
-          </div>
-          <div class="space-y-1.5 md:col-span-2">
-            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-400 dark:text-zinc-500 px-1">Peso Corporal (Kg)</label>
-            <input v-model.number="settingsForm.body_weight" type="number" step="0.1"
-              class="w-full bg-black/5 dark:bg-black/40 border border-zinc-200 dark:border-white/10 rounded-xl px-4 py-3 text-zinc-900 dark:text-white text-sm focus:border-primary-500/50 outline-none transition-all shadow-inner" />
-          </div>
-        </div>
-
-        <button @click="saveSettings"
-          class="w-full bg-primary-600 hover:bg-primary-500 text-zinc-900 dark:text-white font-black uppercase tracking-widest py-4 rounded-xl transition-all shadow-lg shadow-primary-900/20 active:scale-[0.98]">
-          {{ i18n.t('save_settings') }}
-        </button>
-      </div>
-
-      <!-- Identity & Privacy -->
-      <div class="space-y-6">
-        <!-- Avatar Change -->
-        <div class="glass p-6 rounded-3xl border-zinc-200 dark:border-white/5 flex items-center justify-between group">
-          <div class="flex items-center gap-4">
-            <div @click="triggerAvatarUpload"
-              class="p-4 bg-zinc-100 dark:bg-zinc-800 rounded-2xl cursor-pointer hover:bg-zinc-700 transition-colors relative overflow-hidden">
-              <Camera class="w-6 h-6 text-zinc-400 dark:text-zinc-500 dark:text-zinc-400" />
-              <input type="file" ref="avatarInput" class="hidden" accept="image/*" @change="handleAvatarChange" />
-            </div>
-            <div>
-              <h4 class="font-bold text-zinc-900 dark:text-white uppercase tracking-tight">{{ i18n.t('change_avatar') }}</h4>
-              <p class="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-black tracking-widest">{{ i18n.t('avatar_subtitle') }}</p>
-            </div>
-          </div>
-          <div class="w-12 h-12 rounded-full border border-zinc-200 dark:border-white/10 overflow-hidden shadow-2xl">
-            <img :src="authStore.user?.avatar_url" class="w-full h-full object-cover" />
-          </div>
-        </div>
-
-        <!-- Privacy Toggle -->
-        <div class="glass p-6 rounded-3xl border-zinc-200 dark:border-white/5 flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <div class="p-4 bg-zinc-100 dark:bg-zinc-800 rounded-2xl">
-              <ShieldAlert class="w-6 h-6 text-zinc-400 dark:text-zinc-500 dark:text-zinc-400" />
-            </div>
-            <div>
-              <h3 class="font-bold text-zinc-900 dark:text-white uppercase tracking-tight">{{ i18n.t('privacy_settings') }}</h3>
-              <p class="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-black tracking-widest">{{ i18n.t('private_desc') }}</p>
-            </div>
-          </div>
-          <button @click="togglePrivacy"
-            class="relative inline-flex h-8 w-14 items-center rounded-full transition-all focus:outline-none shadow-inner"
-            :class="authStore.user?.is_private ? 'bg-primary-600' : 'bg-zinc-100 dark:bg-zinc-800'">
-            <span class="inline-block h-6 w-6 transform rounded-full bg-white transition-transform shadow-lg"
-              :class="authStore.user?.is_private ? 'translate-x-[1.75rem]' : 'translate-x-1'" />
-          </button>
-        </div>
-
-        <!-- Danger Zone -->
-        <div class="glass p-6 rounded-3xl border-red-500/10 flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <div class="p-4 bg-red-500/5 rounded-2xl">
-              <Trash2 class="w-6 h-6 text-red-500/50" />
-            </div>
-            <div>
-              <h3 class="font-bold text-red-500/80 uppercase tracking-tight">{{ i18n.t('delete_account') }}</h3>
-              <button @click="handleDeleteAccount"
-                class="text-[9px] font-black text-red-500/30 hover:text-red-500 uppercase tracking-widest transition-colors">
-                {{ i18n.t('delete_subtitle') }}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -314,6 +204,8 @@ import RepsInput from './RepsInput.vue';
 import Leaderboard from './Leaderboard.vue';
 import ExerciseSelector from './ExerciseSelector.vue';
 import BossHealth from './BossHealth.vue';
+
+const emit = defineEmits(['viewProfile']);
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();
