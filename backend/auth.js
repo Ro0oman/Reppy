@@ -50,7 +50,8 @@ router.post('/google', async (req, res) => {
         email: user.email,
         avatar_url: user.avatar_url,
         total_reps: user.total_reps,
-        is_private: user.is_private
+        is_private: user.is_private,
+        has_seen_easter_modal: user.has_seen_easter_modal
       }
     });
   } catch (error) {
@@ -93,7 +94,8 @@ router.post('/signup', async (req, res) => {
         email: user.email,
         avatar_url: user.avatar_url,
         total_reps: user.total_reps,
-        is_private: user.is_private
+        is_private: user.is_private,
+        has_seen_easter_modal: user.has_seen_easter_modal
       }
     });
   } catch (error) {
@@ -133,7 +135,8 @@ router.post('/login', async (req, res) => {
         email: user.email,
         avatar_url: user.avatar_url,
         total_reps: user.total_reps,
-        is_private: user.is_private
+        is_private: user.is_private,
+        has_seen_easter_modal: user.has_seen_easter_modal
       }
     });
   } catch (error) {

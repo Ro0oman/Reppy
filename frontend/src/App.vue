@@ -41,6 +41,16 @@
 
         <!-- User Menu -->
         <div class="flex items-center gap-4">
+          <!-- GitHub Star Button -->
+          <a href="https://github.com/Ro0oman/Reppy" target="_blank"
+            class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900 dark:bg-white/10 hover:bg-zinc-800 dark:hover:bg-white/20 border border-white/10 transition-all group scale-95 hover:scale-100">
+            <Github class="w-4 h-4 text-white" />
+            <div class="flex items-center gap-1">
+              <Star class="w-3.5 h-3.5 text-amber-400 fill-amber-400 group-hover:animate-pulse" />
+              <span class="text-xs font-bold text-white uppercase tracking-wider">Star</span>
+            </div>
+          </a>
+
           <button @click="openProfile(authStore.user.id)" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <div class="text-right hidden sm:block">
               <p class="text-sm font-bold text-zinc-900 dark:text-white leading-none">{{ authStore.user?.name }}</p>
@@ -75,11 +85,13 @@
     <!-- Global Components -->
     <NotificationToast />
     <ConfirmDialog />
+    <EasterWelcomeModal :show="showEasterModal" @close="showEasterModal = false" />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
+import { Github, Star } from 'lucide-vue-next';
 import { useAuthStore } from './stores/auth';
 import Login from './components/Login.vue'
 import Landing from './components/Landing.vue'
@@ -88,6 +100,7 @@ import Social from './components/Social.vue'
 import Shop from './components/Shop.vue'
 import Profile from './components/Profile.vue'
 import EasterBackground from './components/EasterBackground.vue'
+import EasterWelcomeModal from './components/EasterWelcomeModal.vue'
 import NotificationToast from './components/NotificationToast.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
 import { useI18nStore } from './stores/i18n';
@@ -97,6 +110,7 @@ const i18n = useI18nStore();
 const view = ref(localStorage.getItem('reppy_view') || 'dashboard');
 const showLogin = ref(false);
 const currentProfileId = ref(null);
+const showEasterModal = ref(false);
 
 const openProfile = (id) => {
   currentProfileId.value = id;
@@ -107,6 +121,15 @@ watch(view, (newView) => {
   localStorage.setItem('reppy_view', newView);
 });
 
+watch(() => authStore.isAuthenticated, (val) => {
+  if (val && authStore.user && !authStore.user.has_seen_easter_modal) {
+    showEasterModal.value = true;
+  }
+}, { immediate: true });
+
 onMounted(() => {
+  if (authStore.isAuthenticated && authStore.user && !authStore.user.has_seen_easter_modal) {
+    showEasterModal.value = true;
+  }
 });
 </script>

@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/me', authenticate, async (req, res) => {
   try {
     const result = await query(
-      'SELECT id, name, email, avatar_url, total_reps, is_private FROM users WHERE id = $1',
+      'SELECT id, name, email, avatar_url, total_reps, is_private, has_seen_easter_modal, daily_goal, body_weight, reppy_coins, str_xp, pwr_xp, end_xp, agi_xp, equipped_title_id, equipped_border_id FROM users WHERE id = $1',
       [req.user.id]
     );
     res.json(result.rows[0]);
@@ -72,6 +72,20 @@ router.patch('/avatar', authenticate, async (req, res) => {
   } catch (error) {
     console.error('Error updating avatar:', error);
     res.status(500).json({ message: 'Error updating avatar' });
+  }
+});
+
+// Mark easter modal as seen
+router.patch('/seen-easter-modal', authenticate, async (req, res) => {
+  try {
+    await query(
+      'UPDATE users SET has_seen_easter_modal = true WHERE id = $1',
+      [req.user.id]
+    );
+    res.json({ message: 'Modal marked as seen' });
+  } catch (error) {
+    console.error('Error updating modal state:', error);
+    res.status(500).json({ message: 'Error updating modal state' });
   }
 });
 
