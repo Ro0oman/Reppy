@@ -4,6 +4,26 @@ import { authenticate } from './middleware.js';
 
 const router = express.Router();
 
+// Helper to calculate rewards
+const getExerciseRewards = (type, count) => {
+  let coinMultiplier = 1;
+  let statToUpgrade = 'str_xp';
+  let extraStatToUpgrade = null;
+
+  if (type === 'pullups') { coinMultiplier = 1; statToUpgrade = 'str_xp'; }
+  else if (type === 'pushups') { coinMultiplier = 1; statToUpgrade = 'end_xp'; }
+  else if (type === 'dips') { coinMultiplier = 2; statToUpgrade = 'str_xp'; }
+  else if (type === 'weighted_pullups') { coinMultiplier = 3; statToUpgrade = 'pwr_xp'; }
+  else if (type === 'muscleups') { coinMultiplier = 5; statToUpgrade = 'pwr_xp'; extraStatToUpgrade = 'agi_xp'; }
+
+  return {
+    coins: count * coinMultiplier,
+    statToUpgrade,
+    extraStatToUpgrade
+  };
+};
+
+
 // Get reps for a user
 router.get('/', authenticate, async (req, res) => {
   const { type } = req.query;
@@ -44,31 +64,23 @@ router.post('/', authenticate, async (req, res) => {
     );
 
     // 2. Calcular Reppy Coins y XP ganada
-    let coinMultiplier = 1;
-    let statToUpgrade = 'str_xp';
-    let extraStatToUpgrade = null;
-
-    if (exercise_type === 'pullups') { coinMultiplier = 1; statToUpgrade = 'str_xp'; }
-    else if (exercise_type === 'pushups') { coinMultiplier = 1; statToUpgrade = 'end_xp'; }
-    else if (exercise_type === 'dips') { coinMultiplier = 2; statToUpgrade = 'str_xp'; }
-    else if (exercise_type === 'weighted_pullups') { coinMultiplier = 3; statToUpgrade = 'pwr_xp'; }
-    else if (exercise_type === 'muscleups') { coinMultiplier = 5; statToUpgrade = 'pwr_xp'; extraStatToUpgrade = 'agi_xp'; }
-
-    const earnedCoins = count * coinMultiplier;
+    const { coins: earnedCoins, statToUpgrade, extraStatToUpgrade } = getExerciseRewards(exercise_type, count);
     
     // Update user's total_reps, coins and xp
     let userUpdateQuery = `
       UPDATE users 
-      SET total_reps = total_reps + $1,
-          reppy_coins = reppy_coins + $2,
-          ${statToUpgrade} = ${statToUpgrade} + $1
+      SET total_reps = GREATEST(0, total_reps + $1),
+          reppy_coins = GREATEST(0, reppy_coins + $2),
+          ${statToUpgrade} = GREATEST(0, ${statToUpgrade} + $1)
     `;
     if (extraStatToUpgrade) {
-      userUpdateQuery += `, ${extraStatToUpgrade} = ${extraStatToUpgrade} + $1`;
+      userUpdateQuery += `, ${extraStatToUpgrade} = GREATEST(0, ${extraStatToUpgrade} + $1)`;
     }
     userUpdateQuery += ` WHERE id = $3`;
     
     await query(userUpdateQuery, [count, earnedCoins, userId]);
+
+
 
     // 3. Atacar al Boss Global Activo (si existe)
     const bossRes = await query(
@@ -199,34 +211,53 @@ router.get('/stats', authenticate, async (req, res) => {
   }
 });
 
-// Edit reps by ID (New requirement)
+// Edit reps by ID
 router.put('/:id', authenticate, async (req, res) => {
   const { id } = req.params;
   const { count } = req.body;
   const userId = req.user.id;
 
   try {
-    // Verify ownership
-    const checkResult = await query(
-      'SELECT * FROM reps WHERE id = $1 AND user_id = $2',
+    // 1. Get old values
+    const oldRes = await query(
+      'SELECT count, exercise_type FROM reps WHERE id = $1 AND user_id = $2',
       [id, userId]
     );
 
-    if (checkResult.rows.length === 0) {
-      return res.status(403).json({ message: 'Unauthorized or not found' });
+    if (oldRes.rows.length === 0) {
+      return res.status(404).json({ message: 'Rep not found' });
     }
 
-    // Update count
+    const oldRep = oldRes.rows[0];
+    const diffCount = count - oldRep.count;
+
+    if (diffCount === 0) return res.json(oldRep);
+
+    // 2. Calculate reward difference
+    const oldRewards = getExerciseRewards(oldRep.exercise_type, oldRep.count);
+    const newRewards = getExerciseRewards(oldRep.exercise_type, count);
+    
+    const diffCoins = newRewards.coins - oldRewards.coins;
+
+    // 3. Update reps table
     const updateResult = await query(
       'UPDATE reps SET count = $1 WHERE id = $2 RETURNING *',
       [count, id]
     );
 
-    // Update user's total_reps cache
-    await query(
-      'UPDATE users SET total_reps = (SELECT SUM(count) FROM reps WHERE user_id = $1) WHERE id = $1',
-      [userId]
-    );
+    // 4. Update user stats with capping at 0
+    let userUpdateQuery = `
+      UPDATE users 
+      SET total_reps = GREATEST(0, total_reps + $1),
+          reppy_coins = GREATEST(0, reppy_coins + $2),
+          ${oldRewards.statToUpgrade} = GREATEST(0, ${oldRewards.statToUpgrade} + $1)
+    `;
+    if (oldRewards.extraStatToUpgrade) {
+      userUpdateQuery += `, ${oldRewards.extraStatToUpgrade} = GREATEST(0, ${oldRewards.extraStatToUpgrade} + $1)`;
+    }
+    userUpdateQuery += ` WHERE id = $3`;
+
+    await query(userUpdateQuery, [diffCount, diffCoins, userId]);
 
     res.json(updateResult.rows[0]);
   } catch (error) {
@@ -234,5 +265,49 @@ router.put('/:id', authenticate, async (req, res) => {
     res.status(500).json({ message: 'Error updating reps' });
   }
 });
+
+// Delete reps by ID
+router.delete('/:id', authenticate, async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.id;
+
+  try {
+    // 1. Get old values for deduction
+    const oldRes = await query(
+      'SELECT count, exercise_type FROM reps WHERE id = $1 AND user_id = $2',
+      [id, userId]
+    );
+
+    if (oldRes.rows.length === 0) {
+      return res.status(404).json({ message: 'Rep not found' });
+    }
+
+    const oldRep = oldRes.rows[0];
+    const rewards = getExerciseRewards(oldRep.exercise_type, oldRep.count);
+
+    // 2. Delete from reps
+    await query('DELETE FROM reps WHERE id = $1 AND user_id = $2', [id, userId]);
+
+    // 3. Deduct from users
+    let userUpdateQuery = `
+      UPDATE users 
+      SET total_reps = GREATEST(0, total_reps - $1),
+          reppy_coins = GREATEST(0, reppy_coins - $2),
+          ${rewards.statToUpgrade} = GREATEST(0, ${rewards.statToUpgrade} - $1)
+    `;
+    if (rewards.extraStatToUpgrade) {
+      userUpdateQuery += `, ${rewards.extraStatToUpgrade} = GREATEST(0, ${rewards.extraStatToUpgrade} - $1)`;
+    }
+    userUpdateQuery += ` WHERE id = $3`;
+
+    await query(userUpdateQuery, [oldRep.count, rewards.coins, userId]);
+
+    res.json({ message: 'Rep deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting reps:', error);
+    res.status(500).json({ message: 'Error deleting reps' });
+  }
+});
+
 
 export default router;

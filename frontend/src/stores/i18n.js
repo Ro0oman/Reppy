@@ -96,7 +96,9 @@ const translations = {
     daily_goal: 'Daily Rep Goal',
     save_settings: 'Save Changes',
     settings_success: 'Profile Updated',
+    stats_updated: 'Log Updated',
     goal_progress: 'Daily Progress',
+
     avatar_subtitle: 'Personalize your profile',
     delete_subtitle: 'Irreversible action',
     
@@ -209,7 +211,9 @@ const translations = {
     daily_goal: 'Meta Diaria de Repeticiones',
     save_settings: 'Guardar Cambios',
     settings_success: 'Peril Actualizado',
+    stats_updated: 'Registro Actualizado',
     goal_progress: 'Progreso Diario',
+
     avatar_subtitle: 'Personalize your perfil',
     delete_subtitle: 'Acción irreversible',
 

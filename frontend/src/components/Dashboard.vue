@@ -166,9 +166,17 @@
                       <X class="w-4 h-4" />
                     </button>
                   </div>
-                  <div v-else @click="startEdit(rep)" class="cursor-pointer">
-                    {{ rep.count }}
+                  <div v-else class="flex items-center justify-end gap-3">
+                    <div @click="startEdit(rep)" class="cursor-pointer hover:text-primary-500 transition-colors">
+                      {{ rep.count }}
+                    </div>
+                    <button @click="confirmDelete(rep.id)" 
+                      class="opacity-0 group-hover:opacity-100 p-2 text-zinc-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
+                      title="Delete log">
+                      <Trash2 class="w-4 h-4" />
+                    </button>
                   </div>
+
                 </td>
               </tr>
               <tr v-if="reps.length === 0">
@@ -371,11 +379,31 @@ const saveEdit = async (id) => {
   try {
     await axios.put(`/api/reps/${id}`, { count: editValue.value });
     editingId.value = null;
+    notificationStore.notify(i18n.t('stats_updated'), 'success');
     fetchData();
   } catch (error) {
     console.error('Error saving edit:', error);
+    notificationStore.notify('Error saving edit', 'error');
   }
 };
+
+const confirmDelete = (id) => {
+  notificationStore.confirm(
+    i18n.t('delete_confirm_title'),
+    i18n.t('delete_confirm'),
+    async () => {
+      try {
+        await axios.delete(`/api/reps/${id}`);
+        notificationStore.notify('Entrada eliminada correctamente', 'success');
+        fetchData();
+      } catch (error) {
+        console.error('Error deleting rep:', error);
+        notificationStore.notify('Error al eliminar la entrada', 'error');
+      }
+    }
+  );
+};
+
 
 const formatDate = (dateStr) => {
   return new Date(dateStr).toLocaleDateString(undefined, {
