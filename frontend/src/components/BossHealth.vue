@@ -12,6 +12,10 @@
         </div>
         
         <div class="flex-1 text-center md:text-left">
+          <div class="flex items-center justify-center md:justify-start gap-2 mb-1">
+            <span class="text-[8px] font-black uppercase tracking-[0.3em] text-primary-500 bg-primary-500/10 px-2 py-0.5 rounded-md">Evento de la Comunidad</span>
+            <button @click="showHelp = true" class="w-4 h-4 rounded-full bg-zinc-200 dark:bg-white/10 flex items-center justify-center text-white text-[10px] font-bold hover:bg-primary-500 hover:text-white transition-colors">?</button>
+          </div>
           <div class="flex flex-col md:flex-row md:items-baseline gap-2 mb-2">
             <h3 class="text-3xl font-black italic tracking-tighter text-zinc-900 dark:text-white uppercase leading-none">{{ boss.name }}</h3>
             <span v-if="isDefeated" class="text-[10px] bg-emerald-500 text-black px-2 py-0.5 rounded-full font-black uppercase tracking-widest w-fit mx-auto md:mx-0">Derrotado</span>
@@ -83,6 +87,56 @@
        </div>
        <div class="text-[10px] font-black text-zinc-400 uppercase tracking-widest italic">Bloqueado 🔒</div>
     </div>
+
+    <!-- Help Modal Overlay -->
+    <div v-if="showHelp" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in" @click.self="showHelp = false">
+      <div class="glass max-w-lg w-full p-8 rounded-[2.5rem] border border-white/10 shadow-2xl space-y-6 relative animate-scale-in">
+        <button @click="showHelp = false" class="absolute top-6 right-6 text-zinc-400 hover:text-white transition-colors text-2xl">&times;</button>
+        
+        <div class="space-y-2">
+          <span class="text-[10px] font-black uppercase tracking-[0.3em] text-primary-500">Manual de Batalla</span>
+          <h2 class="text-3xl font-black italic tracking-tighter text-white uppercase italic">Evento de la Comunidad</h2>
+        </div>
+
+        <div class="space-y-4">
+          <div class="flex gap-4 items-start">
+            <div class="w-8 h-8 rounded-full bg-primary-500/20 flex items-center justify-center text-primary-500 shrink-0 font-bold">1</div>
+            <div>
+              <p class="text-sm font-bold text-white uppercase tracking-tight">Ataca con esfuerzo</p>
+              <p class="text-xs text-zinc-400">Cada repetición que registras resta 1 HP al boss global. ¡Todo cuenta!</p>
+            </div>
+          </div>
+
+          <div class="flex gap-4 items-start">
+            <div class="w-8 h-8 rounded-full bg-primary-500/20 flex items-center justify-center text-primary-500 shrink-0 font-bold">2</div>
+            <div>
+              <p class="text-sm font-bold text-white uppercase tracking-tight">Límite de Daño Diario</p>
+              <p class="text-xs text-zinc-400">Existe un límite de 100 de daño al día por usuario para que todos puedan participar.</p>
+            </div>
+          </div>
+
+          <div class="flex gap-4 items-start">
+            <div class="w-8 h-8 rounded-full bg-primary-500/20 flex items-center justify-center text-primary-500 shrink-0 font-bold">3</div>
+            <div>
+              <p class="text-sm font-bold text-white uppercase tracking-tight">Cofre de Recompensa</p>
+              <p class="text-xs text-zinc-400">Al derrotar al boss, desbloqueas un cofre con un objeto de Temporada (o Normal) garantizado.</p>
+            </div>
+          </div>
+
+          <div class="flex gap-4 items-start">
+            <div class="w-8 h-8 rounded-full bg-primary-500/20 flex items-center justify-center text-primary-500 shrink-0 font-bold">4</div>
+            <div>
+              <p class="text-sm font-bold text-white uppercase tracking-tight">Ciclo Infinito</p>
+              <p class="text-xs text-zinc-400">Cuando un jefe cae, aparece el siguiente. Si derrotan a los 10, ¡el ciclo vuelve a empezar!</p>
+            </div>
+          </div>
+        </div>
+
+        <button @click="showHelp = false" class="w-full py-4 bg-primary-600 hover:bg-primary-500 text-white font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl hover:scale-105 active:scale-95">
+          ¡Entendido!
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -99,6 +153,7 @@ const claiming = ref(false);
 const personalDamage = ref(0);
 const dailyDamage = ref(0);
 const chestsClaimed = ref(0);
+const showHelp = ref(false);
 const notificationStore = useNotificationStore();
 
 const fetchBoss = async () => {
@@ -164,3 +219,22 @@ onMounted(() => {
 
 defineExpose({ refresh: fetchBoss });
 </script>
+
+<style scoped>
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+.animate-scale-in {
+  animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+</style>

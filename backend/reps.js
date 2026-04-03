@@ -67,10 +67,12 @@ router.post('/', authenticate, async (req, res) => {
 
     // 3. Atacar al Boss Global Activo (si existe - Secuencial)
     const bossRes = await query(
-      `SELECT id, current_hp FROM boss_fights 
+      `SELECT id, current_hp, total_hp FROM boss_fights 
        WHERE status != 'defeated' 
        ORDER BY order_index ASC LIMIT 1`
     );
+
+    let actualDamageDealt = 0;
 
     if (bossRes.rows.length > 0) {
       const boss = bossRes.rows[0];
@@ -87,8 +89,8 @@ router.post('/', authenticate, async (req, res) => {
       const allowableDamage = Math.max(0, 100 - currentDailyDamage);
       
       if (allowableDamage > 0) {
-        const damage = Math.min(count, allowableDamage);
-        const newHp = Math.max(0, boss.current_hp - damage);
+        actualDamageDealt = Math.min(count, allowableDamage);
+        const newHp = Math.max(0, boss.current_hp - actualDamageDealt);
         
         await query(`UPDATE boss_fights SET current_hp = $1 WHERE id = $2`, [newHp, boss.id]);
         
@@ -98,13 +100,13 @@ router.post('/', authenticate, async (req, res) => {
            VALUES ($1, $2, $3)
            ON CONFLICT (boss_fight_id, user_id) 
            DO UPDATE SET damage_dealt = event_participants.damage_dealt + EXCLUDED.damage_dealt`,
-          [boss.id, userId, damage]
+          [boss.id, userId, actualDamageDealt]
         );
 
         // Update user's daily damage tracker
         await query(
           `UPDATE users SET daily_boss_damage = $1, last_boss_damage_date = CURRENT_DATE WHERE id = $2`,
-          [currentDailyDamage + damage, userId]
+          [currentDailyDamage + actualDamageDealt, userId]
         );
         
         if (newHp === 0) {
@@ -113,7 +115,10 @@ router.post('/', authenticate, async (req, res) => {
       }
     }
 
-    res.json({ ...result.rows[0], earnedCoins });
+    // 4. Update the actual record with boss_damage_dealt
+    await query(`UPDATE reps SET boss_damage_dealt = $1 WHERE id = $2`, [actualDamageDealt, result.rows[0].id]);
+
+    res.json({ ...result.rows[0], earnedCoins, boss_damage_dealt: actualDamageDealt });
   } catch (error) {
     console.error('Error adding reps:', error);
     res.status(500).json({ message: 'Error adding reps', error: error.message });
@@ -238,25 +243,69 @@ router.put('/:id', authenticate, async (req, res) => {
 
     if (diffCount === 0) return res.json(oldRep);
 
-    // 2. Calculate reward difference
+    // 1. Calculate Reward Difference
     const oldRewards = getExerciseRewards(oldRep.exercise_type, oldRep.count);
     const newRewards = getExerciseRewards(oldRep.exercise_type, count);
-    
     const diffCoins = newRewards.coins - oldRewards.coins;
+
+    // 2. Boss Health Adjustment
+    let newBossDamageDealt = 0;
+    const isToday = new Date(oldRep.date).toISOString().split('T')[0] === new Date().toISOString().split('T')[0];
+
+    // Find active boss
+    const bossRes = await query(
+      `SELECT id, current_hp, total_hp FROM boss_fights 
+       WHERE status != 'defeated' 
+       ORDER BY order_index ASC LIMIT 1`
+    );
+
+    if (bossRes.rows.length > 0) {
+      const boss = bossRes.rows[0];
+      
+      // Calculate daily damage excluding this entry
+      const userRes = await query('SELECT daily_boss_damage FROM users WHERE id = $1', [userId]);
+      const currentDailyTotal = isToday ? userRes.rows[0].daily_boss_damage : 0;
+      const dailyDamageWithoutThisEntry = Math.max(0, currentDailyTotal - oldRep.boss_damage_dealt);
+      
+      const allowableDamage = Math.max(0, 100 - dailyDamageWithoutThisEntry);
+      newBossDamageDealt = Math.min(count, allowableDamage);
+
+      const bossHpChange = newBossDamageDealt - oldRep.boss_damage_dealt;
+      const newBossHp = Math.min(boss.total_hp, Math.max(0, boss.current_hp - bossHpChange));
+
+      await query(`UPDATE boss_fights SET current_hp = $1 WHERE id = $2`, [newBossHp, boss.id]);
+
+      // Update historic damage in event_participants
+      await query(
+        `UPDATE event_participants 
+         SET damage_dealt = GREATEST(0, damage_dealt + $1) 
+         WHERE boss_fight_id = $2 AND user_id = $3`,
+        [bossHpChange, boss.id, userId]
+      );
+
+      // Check for defeat
+      if (newBossHp === 0) {
+        await query(`UPDATE boss_fights SET status = 'defeated' WHERE id = $1`, [boss.id]);
+      }
+    }
 
     // 3. Update reps table
     const updateResult = await query(
-      'UPDATE reps SET count = $1 WHERE id = $2 RETURNING *',
-      [count, id]
+      'UPDATE reps SET count = $1, boss_damage_dealt = $2 WHERE id = $3 RETURNING *',
+      [count, newBossDamageDealt, id]
     );
 
-    // 4. Update user stats with capping at 0
+    // 4. Update user stats
     let userUpdateQuery = `
       UPDATE users 
       SET total_reps = GREATEST(0, total_reps + $1),
           reppy_coins = GREATEST(0, reppy_coins + $2),
           ${oldRewards.statToUpgrade} = GREATEST(0, ${oldRewards.statToUpgrade} + $1)
     `;
+    if (isToday) {
+      const dailyDamageChange = newBossDamageDealt - oldRep.boss_damage_dealt;
+      userUpdateQuery += `, daily_boss_damage = GREATEST(0, daily_boss_damage + ${dailyDamageChange})`;
+    }
     if (oldRewards.extraStatToUpgrade) {
       userUpdateQuery += `, ${oldRewards.extraStatToUpgrade} = GREATEST(0, ${oldRewards.extraStatToUpgrade} + $1)`;
     }
@@ -290,10 +339,42 @@ router.delete('/:id', authenticate, async (req, res) => {
     const oldRep = oldRes.rows[0];
     const rewards = getExerciseRewards(oldRep.exercise_type, oldRep.count);
 
-    // 2. Delete from reps
+    // 2. Restore Boss HP and adjust daily cap
+    if (oldRep.boss_damage_dealt > 0) {
+      const bossRes = await query(
+        `SELECT id, current_hp, total_hp FROM boss_fights 
+         WHERE status != 'defeated' 
+         ORDER BY order_index ASC LIMIT 1`
+      );
+
+      if (bossRes.rows.length > 0) {
+        const boss = bossRes.rows[0];
+        const restoredHp = Math.min(boss.total_hp, boss.current_hp + oldRep.boss_damage_dealt);
+        await query(`UPDATE boss_fights SET current_hp = $1 WHERE id = $2`, [restoredHp, boss.id]);
+
+        // Adjust participant historic damage too? (Optional, but more consistent)
+        await query(
+          `UPDATE event_participants 
+           SET damage_dealt = GREATEST(0, damage_dealt - $1) 
+           WHERE boss_fight_id = $2 AND user_id = $3`,
+          [oldRep.boss_damage_dealt, boss.id, userId]
+        );
+      }
+
+      // Adjust daily cap if it was today
+      const isToday = new Date(oldRep.date).toISOString().split('T')[0] === new Date().toISOString().split('T')[0];
+      if (isToday) {
+        await query(
+          `UPDATE users SET daily_boss_damage = GREATEST(0, daily_boss_damage - $1) WHERE id = $2`,
+          [oldRep.boss_damage_dealt, userId]
+        );
+      }
+    }
+
+    // 3. Delete from reps
     await query('DELETE FROM reps WHERE id = $1 AND user_id = $2', [id, userId]);
 
-    // 3. Deduct from users
+    // 4. Deduct from users stats
     let userUpdateQuery = `
       UPDATE users 
       SET total_reps = GREATEST(0, total_reps - $1),
