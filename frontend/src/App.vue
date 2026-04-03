@@ -70,7 +70,7 @@
                 {{ authStore.user?.title_name }}
               </span>
             </div>
-            <img :src="authStore.user?.avatar_url" class="w-9 h-9 rounded-full shadow-sm" :class="authStore.user?.border_css || 'border border-primary-500/50'" />
+            <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :size="36" />
           </button>
 
         </div>
@@ -132,9 +132,8 @@
         <button @click="view = 'profile'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90"
 
           :class="view === 'profile' ? 'text-primary-600' : 'text-zinc-400'">
-          <img :src="authStore.user?.avatar_url" 
-               class="w-7 h-7 rounded-full transition-transform" 
-               :class="[(view === 'profile' ? 'scale-125 ring-2 ring-primary-500 ring-offset-2 ring-offset-zinc-900' : 'opacity-60'), authStore.user?.border_css || 'border-2 border-transparent']" />
+          <AvatarFrame :src="authStore.user?.avatar_url" :border-css="view === 'profile' ? authStore.user?.border_css : ''" :size="28" 
+               class="transition-transform" :class="view === 'profile' ? 'scale-110' : 'opacity-60'" />
           <span class="text-[10px] font-black uppercase tracking-tighter">Perfil</span>
         </button>
       </div>
@@ -172,6 +171,7 @@ import Shop from './components/Shop.vue'
 import Profile from './components/Profile.vue'
 import Inventory from './components/Inventory.vue'
 import LuckyWheel from './components/LuckyWheel.vue'
+import AvatarFrame from './components/AvatarFrame.vue'
 import EasterBackground from './components/EasterBackground.vue'
 
 import EasterWelcomeModal from './components/EasterWelcomeModal.vue'

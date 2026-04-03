@@ -12,14 +12,8 @@
         <div class="absolute -top-32 -right-32 w-96 h-96 bg-primary-500/20 blur-[100px] rounded-full pointer-events-none"></div>
 
         <div class="relative group">
-          <div class="w-32 h-32 rounded-[2rem] border-4 border-zinc-200 dark:border-white/10 overflow-hidden shadow-2xl transition-transform hover:scale-105"
-               :class="user.equipped_border_id ? user.border_css : ''">
-            <img v-if="user.avatar_url" :src="user.avatar_url" class="w-full h-full object-cover" />
-            <div v-else class="w-full h-full bg-gradient-to-br from-zinc-200 to-zinc-300 dark:from-zinc-800 dark:to-zinc-900 flex items-center justify-center">
-              <User class="w-12 h-12 text-zinc-400" />
-            </div>
-          </div>
-          <div v-if="isOwnProfile" @click="triggerAvatarUpload" class="absolute bottom-[-10px] right-[-10px] p-3 bg-primary-600 rounded-full cursor-pointer hover:bg-primary-500 shadow-xl text-white">
+          <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :size="128" />
+          <div v-if="isOwnProfile" @click="triggerAvatarUpload" class="absolute bottom-[-10px] right-[-10px] p-3 bg-primary-600 rounded-full cursor-pointer hover:bg-primary-500 shadow-xl text-white z-10">
             <Camera class="w-5 h-5" />
             <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/jpeg, image/png, image/webp" class="hidden" />
           </div>
@@ -248,6 +242,7 @@ import { Camera, Settings, LogOut, Activity, Flame, Trophy, User, HelpCircle, X 
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import Heatmap from './Heatmap.vue';
+import AvatarFrame from './AvatarFrame.vue';
 import axios from 'axios';
 
 const props = defineProps({

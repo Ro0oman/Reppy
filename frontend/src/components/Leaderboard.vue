@@ -48,8 +48,8 @@
             <span v-else class="text-[10px] font-black text-zinc-600 tracking-tighter">{{ index + 1 }}</span>
           </div>
           <div class="relative">
-            <img :src="user.avatar_url" class="w-9 h-9 rounded-full border border-zinc-700/50" :class="user.border_css" />
-            <div v-if="user.id === authStore.user?.id" class="absolute -top-1 -right-1 w-3 h-3 bg-primary-500 rounded-full border-2 border-[#09090b]"></div>
+            <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :size="36" />
+            <div v-if="user.id === authStore.user?.id" class="absolute -top-1 -right-1 w-3 h-3 bg-primary-500 rounded-full border-2 border-[#09090b] z-10"></div>
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -93,6 +93,7 @@ import axios from 'axios';
 import { Users } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
+import AvatarFrame from './AvatarFrame.vue';
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();

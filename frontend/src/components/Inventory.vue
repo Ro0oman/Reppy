@@ -35,8 +35,8 @@
             
             <div class="p-4 flex items-center gap-4">
               <div class="relative">
-                <img :src="authStore.user?.avatar_url" class="w-12 h-12 rounded-full border-2" :style="{ borderColor: item.color }" />
-                <div v-if="isEquipped(item)" class="absolute -top-1 -right-1 w-4 h-4 bg-primary-500 rounded-full flex items-center justify-center border-2 border-white dark:border-zinc-900">
+                <AvatarFrame :src="authStore.user?.avatar_url" :border-css="item.css_value" :size="48" />
+                <div v-if="isEquipped(item)" class="absolute -top-1 -right-1 w-4 h-4 bg-primary-500 rounded-full flex items-center justify-center border-2 border-white dark:border-zinc-900 z-10">
                   <Check class="w-2.5 h-2.5 text-white stroke-[4]" />
                 </div>
               </div>
@@ -97,6 +97,7 @@ import { ref, onMounted, computed } from 'vue';
 import { Package, Frame, Type, Check } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
+import AvatarFrame from './AvatarFrame.vue';
 import axios from 'axios';
 
 const authStore = useAuthStore();

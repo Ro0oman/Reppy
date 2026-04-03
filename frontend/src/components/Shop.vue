@@ -23,11 +23,13 @@
         :class="getCardClass(item)"
       >
         <!-- Preview -->
-        <div class="h-24 flex items-center justify-center bg-black/5 dark:bg-black/40 rounded-xl mb-4 border border-zinc-200 dark:border-white/5 relative">
+        <div class="h-28 flex items-center justify-center bg-black/5 dark:bg-black/40 rounded-xl mb-4 border border-zinc-200 dark:border-white/5 relative">
            <div v-if="item.type === 'title'" class="text-xl" :class="item.css_value">
              {{ item.name }}
            </div>
-           <div v-if="item.type === 'border'" class="w-16 h-16 rounded-full bg-zinc-100 dark:bg-zinc-800" :class="item.css_value"></div>
+           <div v-if="item.type === 'border'">
+             <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :border-css="item.css_value" :size="64" />
+           </div>
         </div>
 
         <div>
@@ -74,6 +76,7 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
+import AvatarFrame from './AvatarFrame.vue';
 
 const authStore = useAuthStore();
 const notificationStore = useNotificationStore();
