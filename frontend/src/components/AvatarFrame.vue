@@ -5,19 +5,46 @@
     <div class="avatar-frame__inner">
       <img :src="src" class="avatar-frame__img" />
     </div>
+
     <!-- Brick overlay -->
     <div v-if="frameClass === 'frame-brick'" class="frame-brick__overlay"></div>
-    <!-- Blood drips -->
+
+    <!-- Blood drops (teardrop shaped) -->
     <template v-if="frameClass === 'frame-blood'">
-      <div class="frame-blood__drip frame-blood__drip--1"></div>
-      <div class="frame-blood__drip frame-blood__drip--2"></div>
-      <div class="frame-blood__drip frame-blood__drip--3"></div>
-      <div class="frame-blood__drip frame-blood__drip--4"></div>
-      <div class="frame-blood__drip frame-blood__drip--5"></div>
+      <div class="blood-drop blood-drop--1"></div>
+      <div class="blood-drop blood-drop--2"></div>
+      <div class="blood-drop blood-drop--3"></div>
+      <div class="blood-drop blood-drop--4"></div>
+      <div class="blood-drop blood-drop--5"></div>
+      <div class="blood-drop blood-drop--6"></div>
     </template>
-    <!-- Cyber scan line -->
-    <div v-if="frameClass === 'frame-cyber'" class="frame-cyber__scanline"></div>
-    
+
+    <!-- Furia Infinita flames -->
+    <template v-if="frameClass === 'frame-furia'">
+      <div class="flame flame--1"></div>
+      <div class="flame flame--2"></div>
+      <div class="flame flame--3"></div>
+      <div class="flame flame--4"></div>
+      <div class="flame flame--5"></div>
+      <div class="flame flame--6"></div>
+      <div class="flame flame--7"></div>
+      <div class="flame flame--8"></div>
+    </template>
+
+    <!-- Cyberpunk circuits -->
+    <template v-if="frameClass === 'frame-cyber'">
+      <div class="cyber-ring"></div>
+      <div class="cyber-node cyber-node--1"></div>
+      <div class="cyber-node cyber-node--2"></div>
+      <div class="cyber-node cyber-node--3"></div>
+      <div class="cyber-node cyber-node--4"></div>
+      <div class="cyber-line cyber-line--1"></div>
+      <div class="cyber-line cyber-line--2"></div>
+      <div class="cyber-line cyber-line--3"></div>
+      <div class="cyber-line cyber-line--4"></div>
+      <div class="cyber-scanline"></div>
+      <div class="cyber-glitch"></div>
+    </template>
   </div>
 </template>
 
@@ -27,10 +54,9 @@ import { computed } from 'vue';
 const props = defineProps({
   src: { type: String, required: true },
   borderCss: { type: String, default: '' },
-  size: { type: Number, default: 40 } // px
+  size: { type: Number, default: 40 }
 });
 
-// Map stored css_value identifiers to frame classes
 const frameClass = computed(() => {
   const css = props.borderCss || '';
   if (css.includes('frame-furia')) return 'frame-furia';
@@ -92,23 +118,22 @@ const frameVars = computed(() => ({
 }
 
 /* ========================================
-   DEFAULT - Simple subtle border
+   DEFAULT
    ======================================== */
 .frame-default .avatar-frame__border {
   background: linear-gradient(135deg, rgba(139,92,246,0.3), rgba(59,130,246,0.3));
 }
 
 /* ========================================
-   FURIA INFINITA - Animated rotating flames
+   FURIA INFINITA — Real animated flames
    ======================================== */
 .frame-furia .avatar-frame__border {
   background: conic-gradient(
     from 0deg,
     #ff4500, #ff6a00, #ffa500, #ff4500,
-    #ff0000, #ff4500, #ffaa00, #ff6a00,
-    #ff4500
+    #ff0000, #ff4500, #ffaa00, #ff6a00, #ff4500
   );
-  animation: frame-rotate 2s linear infinite;
+  animation: frame-rotate 3s linear infinite;
 }
 
 .frame-furia .avatar-frame__glow {
@@ -116,8 +141,79 @@ const frameVars = computed(() => ({
   animation: frame-glow-pulse 1.5s ease-in-out infinite alternate;
 }
 
+/* Individual flame tongues */
+.flame {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+  /* Teardrop/flame shape */
+  border-radius: 0 80% 50% 80%;
+  background: linear-gradient(to top, #ff4500, #ff8c00 40%, #ffd700 80%, transparent);
+  filter: blur(1px);
+  opacity: 0;
+  transform-origin: bottom center;
+  animation: flame-dance 1.2s ease-in-out infinite;
+}
+
+.flame--1 {
+  width: 8px; height: 16px;
+  top: -8px; left: 30%;
+  transform: rotate(-15deg);
+  animation-delay: 0s;
+  animation-duration: 1s;
+}
+.flame--2 {
+  width: 10px; height: 20px;
+  top: -12px; left: 50%;
+  transform: rotate(0deg);
+  animation-delay: 0.15s;
+  animation-duration: 1.1s;
+}
+.flame--3 {
+  width: 7px; height: 14px;
+  top: -6px; right: 25%;
+  transform: rotate(12deg);
+  animation-delay: 0.3s;
+  animation-duration: 0.9s;
+}
+.flame--4 {
+  width: 9px; height: 18px;
+  top: 5%; right: -4px;
+  transform: rotate(75deg);
+  animation-delay: 0.5s;
+  animation-duration: 1.2s;
+}
+.flame--5 {
+  width: 8px; height: 15px;
+  bottom: 10%; right: -6px;
+  transform: rotate(85deg);
+  animation-delay: 0.7s;
+  animation-duration: 1s;
+}
+.flame--6 {
+  width: 7px; height: 13px;
+  bottom: -4px; right: 35%;
+  transform: rotate(170deg);
+  animation-delay: 0.2s;
+  animation-duration: 1.1s;
+}
+.flame--7 {
+  width: 9px; height: 17px;
+  bottom: 5%; left: -5px;
+  transform: rotate(-80deg);
+  animation-delay: 0.4s;
+  animation-duration: 0.95s;
+}
+.flame--8 {
+  width: 6px; height: 12px;
+  top: 15%; left: -4px;
+  transform: rotate(-70deg);
+  animation-delay: 0.6s;
+  animation-duration: 1.15s;
+}
+
 /* ========================================
-   AURA FUEGO ÁMBAR - Static flame ring
+   AURA FUEGO ÁMBAR — Static flame ring
    ======================================== */
 .frame-fuego-ambar .avatar-frame__border {
   background: conic-gradient(
@@ -132,7 +228,7 @@ const frameVars = computed(() => ({
 }
 
 /* ========================================
-   AURA NEÓN ROSA - Pulsing neon glow
+   AURA NEÓN ROSA — Pulsing neon glow
    ======================================== */
 .frame-neon-rosa .avatar-frame__border {
   background: conic-gradient(
@@ -149,7 +245,7 @@ const frameVars = computed(() => ({
 }
 
 /* ========================================
-   BLOOD PACT - Dark red ring with blood drips
+   BLOOD PACT — Teardrop blood drops
    ======================================== */
 .frame-blood .avatar-frame__border {
   background: conic-gradient(
@@ -164,53 +260,79 @@ const frameVars = computed(() => ({
   animation: frame-blood-glow 2s ease-in-out infinite alternate;
 }
 
-.frame-blood__drip {
+/* Realistic teardrop-shaped blood drops */
+.blood-drop {
   position: absolute;
-  width: 4px;
-  background: linear-gradient(to bottom, #dc2626, #7f1d1d 60%, transparent);
-  border-radius: 0 0 50% 50%;
   z-index: 3;
-  animation: frame-drip 3s ease-in infinite;
+  pointer-events: none;
+  /* Teardrop shape: pointy top, round bottom */
+  width: 6px;
+  height: 10px;
+  background: radial-gradient(ellipse at 50% 70%, #ef4444, #991b1b 60%, #7f1d1d);
+  border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
+  box-shadow: 0 0 4px rgba(220,38,38,0.6), inset 0 -2px 3px rgba(0,0,0,0.3);
+  opacity: 0;
+  animation: blood-fall 3.5s ease-in infinite;
 }
 
-.frame-blood__drip--1 {
-  height: 12px;
-  left: 15%;
-  top: 85%;
+/* Highlight/sheen on the drop */
+.blood-drop::after {
+  content: '';
+  position: absolute;
+  top: 25%;
+  left: 20%;
+  width: 2px;
+  height: 3px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 50%;
+}
+
+.blood-drop--1 {
+  left: 18%;
+  top: 82%;
+  width: 5px; height: 9px;
   animation-delay: 0s;
 }
-.frame-blood__drip--2 {
-  height: 16px;
-  left: 40%;
+.blood-drop--2 {
+  left: 38%;
   top: 90%;
-  animation-delay: 0.8s;
+  width: 7px; height: 12px;
+  animation-delay: 0.7s;
+  animation-duration: 3s;
 }
-.frame-blood__drip--3 {
-  height: 10px;
-  right: 20%;
-  top: 88%;
-  animation-delay: 1.6s;
+.blood-drop--3 {
+  right: 22%;
+  top: 84%;
+  width: 5px; height: 8px;
+  animation-delay: 1.4s;
+  animation-duration: 3.8s;
 }
-.frame-blood__drip--4 {
-  height: 14px;
-  right: 35%;
+.blood-drop--4 {
+  right: 38%;
   top: 92%;
-  animation-delay: 2.2s;
+  width: 6px; height: 11px;
+  animation-delay: 2.1s;
 }
-.frame-blood__drip--5 {
-  height: 8px;
-  left: 60%;
-  top: 86%;
+.blood-drop--5 {
+  left: 55%;
+  top: 88%;
+  width: 4px; height: 7px;
   animation-delay: 0.4s;
+  animation-duration: 4s;
+}
+.blood-drop--6 {
+  left: 8%;
+  top: 75%;
+  width: 5px; height: 9px;
+  animation-delay: 1.8s;
+  animation-duration: 3.2s;
 }
 
 /* ========================================
-   BRICK BY BRICK - Brick pattern border
+   BRICK BY BRICK
    ======================================== */
 .frame-brick .avatar-frame__border {
-  background:
-    /* Mortar lines */
-    linear-gradient(to right, #78350f 0%, #78350f 100%);
+  background: linear-gradient(to right, #78350f 0%, #78350f 100%);
   background-color: #92400e;
   overflow: hidden;
 }
@@ -220,26 +342,18 @@ const frameVars = computed(() => ({
   inset: calc(var(--border-width) * -1);
   border-radius: 50%;
   z-index: 1;
-  /* Brick pattern using repeating gradients */
   background:
-    /* Horizontal mortar lines every 6px */
     repeating-linear-gradient(
       to bottom,
-      transparent 0px,
-      transparent 5px,
-      #451a03 5px,
-      #451a03 6px
+      transparent 0px, transparent 5px,
+      #451a03 5px, #451a03 6px
     ),
-    /* Vertical mortar lines — offset every other row */
     repeating-linear-gradient(
       to right,
-      transparent 0px,
-      transparent 9px,
-      #451a03 9px,
-      #451a03 10px
+      transparent 0px, transparent 9px,
+      #451a03 9px, #451a03 10px
     );
   background-color: #92400e;
-  /* Cut out center circle for avatar */
   -webkit-mask: radial-gradient(circle, transparent calc(var(--frame-size) / 2 - 1px), black calc(var(--frame-size) / 2));
   mask: radial-gradient(circle, transparent calc(var(--frame-size) / 2 - 1px), black calc(var(--frame-size) / 2));
 }
@@ -249,33 +363,123 @@ const frameVars = computed(() => ({
 }
 
 /* ========================================
-   NEURAL OVERDRIVE - Cyberpunk circuit border
+   NEURAL OVERDRIVE — Cyberpunk circuits
    ======================================== */
 .frame-cyber .avatar-frame__border {
-  background: conic-gradient(
-    from 0deg,
-    #06b6d4, #0e7490, #155e75, #06b6d4,
-    #22d3ee, #06b6d4, #0891b2, #06b6d4
-  );
-  animation: frame-rotate 3s linear infinite;
+  background: #0c0c1a;
+  border: 2px solid #06b6d4;
+  box-shadow: 0 0 8px rgba(6,182,212,0.5), inset 0 0 8px rgba(6,182,212,0.2);
 }
 
 .frame-cyber .avatar-frame__glow {
-  background: radial-gradient(circle, rgba(6,182,212,0.5) 30%, transparent 70%);
-  animation: frame-neon-pulse 0.8s ease-in-out infinite alternate;
+  background: radial-gradient(circle, rgba(6,182,212,0.3) 30%, transparent 70%);
+  animation: frame-neon-pulse 1.5s ease-in-out infinite alternate;
 }
 
-.frame-cyber__scanline {
+/* Outer rotating ring with dashes (circuit trace) */
+.cyber-ring {
   position: absolute;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: linear-gradient(to right, transparent 10%, #22d3ee 40%, #22d3ee 60%, transparent 90%);
-  z-index: 4;
-  opacity: 0.7;
-  animation: frame-scan 2s linear infinite;
-  pointer-events: none;
+  inset: calc(var(--border-width) * -2);
   border-radius: 50%;
+  border: 1px dashed rgba(6,182,212,0.4);
+  z-index: 0;
+  animation: frame-rotate 8s linear infinite;
+}
+
+/* Glowing circuit nodes */
+.cyber-node {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: #22d3ee;
+  border-radius: 50%;
+  z-index: 4;
+  box-shadow: 0 0 6px #22d3ee, 0 0 12px rgba(34,211,238,0.4);
+  animation: cyber-blink 2s ease-in-out infinite;
+}
+
+.cyber-node--1 { top: -3px; left: 50%; transform: translateX(-50%); animation-delay: 0s; }
+.cyber-node--2 { bottom: -3px; left: 50%; transform: translateX(-50%); animation-delay: 0.5s; }
+.cyber-node--3 { left: -3px; top: 50%; transform: translateY(-50%); animation-delay: 1s; }
+.cyber-node--4 { right: -3px; top: 50%; transform: translateY(-50%); animation-delay: 1.5s; }
+
+/* Circuit lines extending from nodes */
+.cyber-line {
+  position: absolute;
+  background: linear-gradient(to right, #22d3ee, transparent);
+  height: 1px;
+  z-index: 3;
+  opacity: 0.6;
+  animation: cyber-line-pulse 2s ease-in-out infinite alternate;
+}
+
+.cyber-line--1 {
+  width: 12px;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%) rotate(0deg);
+  transform-origin: center bottom;
+  animation-delay: 0s;
+}
+.cyber-line--2 {
+  width: 10px;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%) rotate(180deg);
+  transform-origin: center top;
+  animation-delay: 0.5s;
+}
+.cyber-line--3 {
+  width: 14px;
+  left: -2px;
+  top: 50%;
+  transform: translateY(-50%) rotate(0deg);
+  transform-origin: right center;
+  animation-delay: 1s;
+}
+.cyber-line--4 {
+  width: 11px;
+  right: -2px;
+  top: 50%;
+  transform: translateY(-50%) rotate(180deg);
+  transform-origin: left center;
+  animation-delay: 1.5s;
+}
+
+/* Scanning line */
+.cyber-scanline {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  width: 90%;
+  height: 2px;
+  background: linear-gradient(to right, transparent 5%, #22d3ee 30%, #67e8f9 50%, #22d3ee 70%, transparent 95%);
+  z-index: 5;
+  opacity: 0.8;
+  animation: frame-scan 2.5s linear infinite;
+  pointer-events: none;
+  border-radius: 1px;
+  box-shadow: 0 0 6px rgba(34,211,238,0.6);
+}
+
+/* Glitch offset effect */
+.cyber-glitch {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  z-index: 6;
+  pointer-events: none;
+  opacity: 0;
+  animation: cyber-glitch-flash 4s linear infinite;
+}
+
+.cyber-glitch::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(34,211,238,0.15);
+  clip-path: polygon(0 40%, 100% 38%, 100% 45%, 0 47%);
 }
 
 /* ========================================
@@ -301,17 +505,106 @@ const frameVars = computed(() => ({
   100% { opacity: 0.7; }
 }
 
-@keyframes frame-drip {
-  0% { transform: translateY(0) scaleY(0); opacity: 0; }
-  20% { transform: translateY(0) scaleY(1); opacity: 1; }
-  80% { transform: translateY(8px) scaleY(1.2); opacity: 0.8; }
-  100% { transform: translateY(14px) scaleY(0.5); opacity: 0; }
+/* Flame tongue animation — flicker up and down */
+@keyframes flame-dance {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.3) scaleX(0.8);
+  }
+  15% {
+    opacity: 0.9;
+    transform: scaleY(1) scaleX(1);
+  }
+  30% {
+    opacity: 1;
+    transform: scaleY(1.2) scaleX(0.9);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scaleY(0.9) scaleX(1.1);
+  }
+  70% {
+    opacity: 1;
+    transform: scaleY(1.1) scaleX(0.85);
+  }
+  85% {
+    opacity: 0.6;
+    transform: scaleY(0.7) scaleX(0.9);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleY(0.2) scaleX(0.7);
+  }
 }
 
+/* Realistic blood drop falling */
+@keyframes blood-fall {
+  0% {
+    transform: translateY(-2px) scale(0.3);
+    opacity: 0;
+  }
+  8% {
+    /* Drop forms — grows from border */
+    transform: translateY(0) scale(0.7);
+    opacity: 0.8;
+  }
+  15% {
+    /* Drop is full, hanging */
+    transform: translateY(1px) scale(1);
+    opacity: 1;
+  }
+  25% {
+    /* Stretches before release */
+    transform: translateY(2px) scaleY(1.3) scaleX(0.8);
+    opacity: 1;
+  }
+  35% {
+    /* Detaches and starts falling */
+    transform: translateY(8px) scaleY(1.1) scaleX(0.9);
+    opacity: 0.9;
+  }
+  55% {
+    /* Falling */
+    transform: translateY(16px) scaleY(1) scaleX(1);
+    opacity: 0.7;
+  }
+  75% {
+    /* Getting smaller as it falls */
+    transform: translateY(22px) scale(0.6);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(28px) scale(0.2);
+    opacity: 0;
+  }
+}
+
+/* Cyberpunk node blink */
+@keyframes cyber-blink {
+  0%, 40%, 60%, 100% { opacity: 1; box-shadow: 0 0 6px #22d3ee, 0 0 12px rgba(34,211,238,0.4); }
+  50% { opacity: 0.3; box-shadow: 0 0 2px #22d3ee; }
+}
+
+/* Cyberpunk line pulse */
+@keyframes cyber-line-pulse {
+  0% { opacity: 0.3; width: 8px; }
+  100% { opacity: 0.8; width: 14px; }
+}
+
+/* Scan line moving top to bottom */
 @keyframes frame-scan {
   0% { top: -5%; opacity: 0; }
-  10% { opacity: 0.7; }
-  90% { opacity: 0.7; }
+  5% { opacity: 0.8; }
+  95% { opacity: 0.8; }
   100% { top: 105%; opacity: 0; }
+}
+
+/* Cyberpunk glitch flash */
+@keyframes cyber-glitch-flash {
+  0%, 92%, 94%, 96%, 98%, 100% { opacity: 0; }
+  93% { opacity: 1; transform: translateX(-2px); }
+  95% { opacity: 1; transform: translateX(2px); }
+  97% { opacity: 0.8; transform: translateX(-1px); }
+  99% { opacity: 1; transform: translateX(1px); }
 }
 </style>
