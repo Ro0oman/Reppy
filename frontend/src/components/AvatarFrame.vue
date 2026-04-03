@@ -17,6 +17,7 @@
     </template>
     <!-- Cyber scan line -->
     <div v-if="frameClass === 'frame-cyber'" class="frame-cyber__scanline"></div>
+    
   </div>
 </template>
 
