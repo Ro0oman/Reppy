@@ -33,7 +33,12 @@
             :class="view === 'social' ? 'text-primary-600 dark:text-white' : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'">
             {{ i18n.t('nav_social') }}
           </button>
+          <button @click="view = 'inventory'" class="text-base font-bold transition-colors"
+            :class="view === 'inventory' ? 'text-primary-600 dark:text-white' : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'">
+            {{ i18n.t('nav_inventory') }}
+          </button>
           <button @click="view = 'shop'" class="text-base font-bold transition-colors"
+
             :class="view === 'shop' ? 'text-amber-600 dark:text-amber-500 drop-shadow-md' : 'text-amber-600/70 hover:text-amber-600 dark:text-zinc-400 dark:hover:text-amber-500'">
             David Goggins Shop
           </button>
@@ -67,7 +72,9 @@
         <Dashboard v-if="view === 'dashboard'" @viewProfile="openProfile" />
         <Social v-if="view === 'social'" />
         <Shop v-if="view === 'shop'" />
+        <Inventory v-if="view === 'inventory'" />
         <Profile v-if="view === 'profile'" :userId="currentProfileId" />
+
         <Landing v-if="view === 'landing'" @start="view = 'dashboard'" />
       </template>
       <template v-else>
@@ -106,7 +113,13 @@
           <ShoppingBag class="w-6 h-6" :class="view === 'shop' ? 'fill-amber-500/10' : ''" />
           <span class="text-[10px] font-black uppercase tracking-tighter">Tienda</span>
         </button>
+        <button @click="view = 'inventory'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90"
+          :class="view === 'inventory' ? 'text-primary-600' : 'text-zinc-400'">
+          <Package class="w-6 h-6" :class="view === 'inventory' ? 'fill-primary-600/10' : ''" />
+          <span class="text-[10px] font-black uppercase tracking-tighter">Equipo</span>
+        </button>
         <button @click="view = 'profile'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90"
+
           :class="view === 'profile' ? 'text-primary-600' : 'text-zinc-400'">
           <img :src="authStore.user?.avatar_url" 
                class="w-7 h-7 rounded-full border-2 transition-transform" 
@@ -120,20 +133,36 @@
     <NotificationToast />
     <ConfirmDialog />
     <EasterWelcomeModal :show="showEasterModal" @close="showEasterModal = false" />
+    <LuckyWheel :show="showRoulette" @close="showRoulette = false" @spun="onSpun" />
+    
+    <!-- Floating Roulette Button -->
+    <button v-if="canSpinToday" @click="showRoulette = true" 
+      class="fixed bottom-24 right-6 md:bottom-8 md:right-8 z-[70] bg-gradient-to-tr from-primary-600 to-indigo-600 p-4 rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all group border-4 border-white dark:border-zinc-800">
+      <RefreshCw class="w-6 h-6 text-white group-hover:rotate-180 transition-transform duration-700" />
+
+      <div class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white animate-ping"></div>
+    </button>
+
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import { Github, Star, Home, LayoutDashboard, Users, ShoppingBag } from 'lucide-vue-next';
+import axios from 'axios';
+
+import { Github, Star, Home, LayoutDashboard, Users, ShoppingBag, Package, RefreshCw } from 'lucide-vue-next';
 import { useAuthStore } from './stores/auth';
+
 import Login from './components/Login.vue'
 import Landing from './components/Landing.vue'
 import Dashboard from './components/Dashboard.vue'
 import Social from './components/Social.vue'
 import Shop from './components/Shop.vue'
 import Profile from './components/Profile.vue'
+import Inventory from './components/Inventory.vue'
+import LuckyWheel from './components/LuckyWheel.vue'
 import EasterBackground from './components/EasterBackground.vue'
+
 import EasterWelcomeModal from './components/EasterWelcomeModal.vue'
 import NotificationToast from './components/NotificationToast.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
@@ -145,8 +174,23 @@ const view = ref(localStorage.getItem('reppy_view') || 'dashboard');
 const showLogin = ref(false);
 const currentProfileId = ref(null);
 const showEasterModal = ref(false);
+const showRoulette = ref(false);
+const canSpinToday = ref(false);
+
+const checkRoulette = async () => {
+  try {
+    const res = await axios.get('/api/roulette/status');
+    canSpinToday.value = res.data.canSpin;
+  } catch (e) {}
+};
+
+const onSpun = () => {
+  canSpinToday.value = false;
+  showRoulette.value = false;
+};
 
 const openProfile = (id) => {
+
   currentProfileId.value = id;
   view.value = 'profile';
 };
@@ -161,9 +205,13 @@ watch(() => authStore.isAuthenticated, (val) => {
   }
 }, { immediate: true });
 
-onMounted(() => {
-  if (authStore.isAuthenticated && authStore.user && !authStore.user.has_seen_easter_modal) {
-    showEasterModal.value = true;
+onMounted(async () => {
+  if (authStore.isAuthenticated) {
+    checkRoulette();
+    if (authStore.user && !authStore.user.has_seen_easter_modal) {
+      showEasterModal.value = true;
+    }
   }
 });
+
 </script>

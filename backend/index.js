@@ -11,7 +11,9 @@ import usersRoutes from './users.js';
 import shopRoutes from './shop.js';
 import bossRoutes from './boss.js';
 import profileRoutes from './profile.js';
+import rouletteRoutes from './roulette.js';
 import { query } from './db.js';
+
 
 dotenv.config();
 
@@ -32,6 +34,8 @@ app.use('/api/users', usersRoutes);
 app.use('/api/shop', shopRoutes);
 app.use('/api/boss', bossRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/roulette', rouletteRoutes);
+
 
 // Automated DB initialization for the user
 app.get('/api/db/init', async (req, res) => {

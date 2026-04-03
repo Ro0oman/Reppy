@@ -65,8 +65,19 @@ router.post('/buy/:id', authenticate, async (req, res) => {
 // Equip cosmetic
 router.post('/equip/:id', authenticate, async (req, res) => {
   const cosmeticId = parseInt(req.params.id);
+  const typeParam = req.query.type;
   const userId = req.user.id;
+
   try {
+    if (cosmeticId === 0) {
+      if (typeParam === 'title') {
+        await query('UPDATE users SET equipped_title_id = NULL WHERE id = $1', [userId]);
+      } else if (typeParam === 'border') {
+        await query('UPDATE users SET equipped_border_id = NULL WHERE id = $1', [userId]);
+      }
+      return res.json({ message: 'Un-equipped successfully' });
+    }
+
     // Check ownership
     const inventoryRes = await query('SELECT * FROM user_inventory WHERE user_id = $1 AND cosmetic_id = $2', [userId, cosmeticId]);
     if (inventoryRes.rows.length === 0) return res.status(403).json({ message: 'You do not own this item' });
@@ -86,5 +97,6 @@ router.post('/equip/:id', authenticate, async (req, res) => {
     res.status(500).json({ message: 'Error equipping cosmetic' });
   }
 });
+
 
 export default router;
