@@ -149,6 +149,49 @@ body {
   animation: title-glitch-60 500ms infinite;
 }
 
+.title-void-knight {
+  background: linear-gradient(to right, #4c1d95, #6d28d9, #4c1d95);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+  animation: title-mana-flow 4s linear infinite;
+}
+
+.title-ronin {
+  color: #ef4444;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-family: monospace;
+  letter-spacing: 0.1em;
+  text-shadow: 2px 0 0 rgba(255,0,0,0.4), -2px 0 0 rgba(0,255,255,0.4);
+  animation: title-ronin-glitch 2s infinite;
+}
+
+@keyframes title-ronin-glitch {
+  0%, 100% { transform: skew(0); }
+  20% { transform: skew(2deg); opacity: 0.8; }
+  21% { transform: skew(-5deg); opacity: 1; }
+  22% { transform: skew(0); }
+}
+
+.title-blood-god {
+  color: #7f1d1d;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  filter: drop-shadow(0 0 8px rgba(220, 38, 38, 0.6));
+  animation: title-blood-pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes title-blood-pulse {
+  from { transform: scale(1); filter: brightness(1) drop-shadow(0 0 8px rgba(220, 38, 38, 0.6)); }
+  to { transform: scale(1.05); filter: brightness(1.3) drop-shadow(0 0 20px rgba(239, 68, 68, 0.9)); }
+}
+
 @keyframes title-glitch-60 {
   0% { text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff, 0.025em 0.04em 0 #fffc00; }
   15% { text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff, 0.025em 0.04em 0 #fffc00; }
@@ -162,12 +205,25 @@ body {
 /* ========================================
    LEGENDARY BACKGROUNDS
    ======================================== */
-.bg-mana {
+.bg-mana, .bg-void {
   background: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%) !important;
   position: relative;
   overflow: hidden;
 }
-.bg-mana::before {
+
+.bg-ronin {
+  background: #0a0505 !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-blood {
+  background: linear-gradient(to bottom, #2d0000, #000) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-mana::before, .bg-void::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -184,24 +240,7 @@ body {
 .bg-lava {
   background: linear-gradient(to top, #450a0a, #0a0a0a) !important;
 }
-.bg-lava::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 120%, rgba(249, 115, 22, 0.2), transparent 70%);
-  animation: bg-lava-pulse-aura 4s ease-in-out infinite alternate;
-}
 
-@keyframes bg-lava-pulse-aura {
-  from { opacity: 0.4; }
-  to { opacity: 1; }
-}
-
-.bg-glitch {
-  background: #050505 !important;
-  position: relative;
-  overflow: hidden;
-}
 .bg-glitch::before {
   content: '';
   position: absolute;

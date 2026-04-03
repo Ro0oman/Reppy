@@ -67,6 +67,32 @@
       <div class="prismatic-glitch prismatic-glitch--2"></div>
       <div class="prismatic-ring"></div>
     </template>
+
+    <!-- Event Horizon / Void Knight (Legendary) -->
+    <template v-if="frameClass === 'frame-void'">
+      <div class="void-particle void-particle--1"></div>
+      <div class="void-particle void-particle--2"></div>
+      <div class="void-particle void-particle--3"></div>
+      <div class="void-ring"></div>
+      <div class="void-swirl"></div>
+    </template>
+
+    <!-- Digital Katana / Ronin (Legendary) -->
+    <template v-if="frameClass === 'frame-ronin'">
+      <div class="ronin-shard ronin-shard--1"></div>
+      <div class="ronin-shard ronin-shard--2"></div>
+      <div class="ronin-shard ronin-shard--3"></div>
+      <div class="ronin-glitch-layer"></div>
+    </template>
+
+    <!-- Sacrificial Altar / Blood God (Legendary) -->
+    <template v-if="frameClass === 'frame-blood-god'">
+      <div class="blood-rune blood-rune--1">ᚦ</div>
+      <div class="blood-rune blood-rune--2">ᚫ</div>
+      <div class="blood-rune blood-rune--3">ᚩ</div>
+      <div class="blood-rune blood-rune--4">ᚬ</div>
+      <div class="blood-pool"></div>
+    </template>
   </div>
 </template>
 
@@ -90,6 +116,9 @@ const frameClass = computed(() => {
   if (css.includes('frame-mana')) return 'frame-mana';
   if (css.includes('frame-lava')) return 'frame-lava';
   if (css.includes('frame-prismatic')) return 'frame-prismatic';
+  if (css.includes('frame-void')) return 'frame-void';
+  if (css.includes('frame-ronin')) return 'frame-ronin';
+  if (css.includes('frame-blood-god')) return 'frame-blood-god';
   return 'frame-default';
 });
 
@@ -616,6 +645,151 @@ const frameVars = computed(() => ({
 
 .prismatic-glitch--1 { top: 30%; left: 10%; animation-delay: 0.5s; }
 .prismatic-glitch--2 { bottom: 20%; right: 10%; animation-delay: 1.8s; }
+
+/* ========================================
+   LEGENDARY: EVENT HORIZON (VOID)
+   ======================================== */
+.frame-void .avatar-frame__border {
+  background: conic-gradient(from 0deg, #4c1d95, #6d28d9, #1e1b4b, #4c1d95);
+  animation: frame-rotate 3s linear infinite;
+}
+
+.frame-void .avatar-frame__glow {
+  background: radial-gradient(circle, rgba(109, 40, 217, 0.6) 30%, transparent 70%);
+  animation: frame-glow-pulse 2s ease-in-out infinite alternate;
+}
+
+.void-ring {
+  position: absolute;
+  inset: -15%;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  border-radius: 50%;
+  animation: frame-rotate 10s linear infinite;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+}
+
+.void-swirl {
+  position: absolute;
+  inset: -5%;
+  border-radius: 50%;
+  background: conic-gradient(from 180deg, transparent, rgba(139, 92, 246, 0.4), transparent);
+  animation: frame-rotate 1.5s linear infinite;
+}
+
+.void-particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #a78bfa;
+  border-radius: 50%;
+  z-index: 5;
+  filter: blur(1px);
+  animation: void-swallow 2.5s ease-in infinite;
+}
+
+.void-particle--1 { top: 10%; left: 10%; animation-delay: 0s; }
+.void-particle--2 { top: 80%; right: 15%; animation-delay: 0.8s; }
+.void-particle--3 { bottom: 5%; left: 45%; animation-delay: 1.5s; }
+
+@keyframes void-swallow {
+  0% { transform: rotate(0deg) translateX(40px) scale(1); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: rotate(360deg) translateX(0) scale(0); opacity: 0; }
+}
+
+/* ========================================
+   LEGENDARY: DIGITAL KATANA (RONIN)
+   ======================================== */
+.frame-ronin .avatar-frame__border {
+  background: #000;
+  border: 2px solid #ef4444;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+}
+
+.frame-ronin .avatar-frame__glow {
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.4) 30%, transparent 70%);
+  animation: frame-neon-pulse 0.5s ease-in-out infinite alternate;
+}
+
+.ronin-shard {
+  position: absolute;
+  width: 15px;
+  height: 2px;
+  background: #ef4444;
+  z-index: 5;
+  box-shadow: 0 0 8px #ef4444;
+}
+
+.ronin-shard--1 { top: -5px; left: 20%; animation: ronin-slash 0.8s linear infinite; }
+.ronin-shard--2 { bottom: -5px; right: 20%; animation: ronin-slash 1.2s linear infinite reverse; }
+.ronin-shard--3 { left: -5px; top: 40%; transform: rotate(90deg); animation: ronin-slash 1s linear infinite; }
+
+@keyframes ronin-slash {
+  0% { transform: translateX(-20px) skewX(-45deg); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateX(40px) skewX(-45deg); opacity: 0; }
+}
+
+.ronin-glitch-layer {
+  position: absolute;
+  inset: -10%;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 50%;
+  animation: ronin-glitch-border 4s steps(2) infinite;
+}
+
+@keyframes ronin-glitch-border {
+  0%, 100% { transform: translate(0); opacity: 0.5; }
+  25% { transform: translate(2px, -2px); opacity: 1; border-color: #06b6d4; }
+  50% { transform: translate(-2px, 2px); opacity: 0.5; }
+  75% { transform: translate(1px, 1px); opacity: 1; border-color: #f59e0b; }
+}
+
+/* ========================================
+   LEGENDARY: SACRIFICIAL ALTAR (BLOOD GOD)
+   ======================================== */
+.frame-blood-god .avatar-frame__border {
+  background: radial-gradient(circle, #7f1d1d 0%, #450a0a 100%);
+  border: 2px solid #991b1b;
+}
+
+.frame-blood-god .avatar-frame__glow {
+  background: radial-gradient(circle, rgba(153, 27, 27, 0.7) 40%, transparent 80%);
+  animation: frame-glow-pulse 1.2s ease-in-out infinite alternate;
+}
+
+.blood-rune {
+  position: absolute;
+  color: #ef4444;
+  font-size: 10px;
+  font-weight: bold;
+  z-index: 5;
+  text-shadow: 0 0 5px #ef4444;
+  animation: rune-glow 2s ease-in-out infinite alternate;
+}
+
+.blood-rune--1 { top: -8px; left: 50%; transform: translateX(-50%); }
+.blood-rune--2 { bottom: -8px; left: 50%; transform: translateX(-50%); }
+.blood-rune--3 { left: -8px; top: 50%; transform: translateY(-50%); }
+.blood-rune--4 { right: -8px; top: 50%; transform: translateY(-50%); }
+
+@keyframes rune-glow {
+  from { opacity: 0.4; filter: blur(1px); }
+  to { opacity: 1; filter: blur(0); }
+}
+
+.blood-pool {
+  position: absolute;
+  inset: -15%;
+  background: radial-gradient(circle, rgba(127, 29, 29, 0.4) 0%, transparent 70%);
+  z-index: -1;
+  animation: blood-pulse-large 3s ease-in-out infinite alternate;
+}
+
+@keyframes blood-pulse-large {
+  from { transform: scale(0.9); opacity: 0.5; }
+  to { transform: scale(1.2); opacity: 1; }
+}
 
 /* ========================================
    ANIMATIONS

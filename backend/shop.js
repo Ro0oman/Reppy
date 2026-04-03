@@ -6,12 +6,11 @@ const router = express.Router();
 // Get available cosmetics
 router.get('/cosmetics', authenticate, async (req, res) => {
   try {
-    // Show items that are not seasonal OR items the user already owns
+    // Show all items (seasonal included)
     const cosmeticsRes = await query(`
       SELECT c.* 
       FROM cosmetics c
       LEFT JOIN user_inventory ui ON c.id = ui.cosmetic_id AND ui.user_id = $1
-      WHERE c.is_seasonal = FALSE OR ui.cosmetic_id IS NOT NULL
       ORDER BY c.price ASC, c.id ASC
     `, [req.user.id]);
     const inventoryRes = await query('SELECT cosmetic_id, is_new FROM user_inventory WHERE user_id = $1', [req.user.id]);

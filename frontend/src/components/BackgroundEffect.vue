@@ -77,6 +77,35 @@ const matrixColumns = computed(() => {
         {{ egg.emoji }}
       </div>
     </div>
+
+    <!-- 12. bg-glitch (Digital Storm) -->
+    <div v-if="activeEffect === 'bg-glitch'" class="glitch-overlay">
+      <div class="scanline"></div>
+      <div class="glitch-chromatic"></div>
+    </div>
+
+    <!-- 13. bg-lava (Inferno) -->
+    <div v-if="activeEffect === 'bg-lava'" class="lava-embers">
+      <div v-for="i in 15" :key="i" class="ember" :style="{ left: `${Math.random() * 100}%`, animationDelay: `${Math.random() * 5}s`, animationDuration: `${3 + Math.random() * 4}s` }"></div>
+    </div>
+
+    <!-- 14. bg-void (Cosmic Nebula) -->
+    <div v-if="activeEffect === 'bg-void'" class="void-cosmos">
+      <div v-for="i in 30" :key="i" class="star" :style="{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`, animationDelay: `${Math.random() * 10}s` }"></div>
+      <div class="nebula"></div>
+    </div>
+
+    <!-- 15. bg-ronin (Neo Tokyo) -->
+    <div v-if="activeEffect === 'bg-ronin'" class="ronin-rain">
+      <div v-for="i in 20" :key="i" class="data-drop" :style="{ left: `${Math.random() * 100}%`, animationDelay: `${Math.random() * -10}s`, animationDuration: `${2 + Math.random() * 2}s` }"></div>
+      <div class="neon-city-glow"></div>
+    </div>
+
+    <!-- 16. bg-blood (Crimson Tide) -->
+    <div v-if="activeEffect === 'bg-blood'" class="blood-waves">
+      <div class="blood-wave blood-wave--1"></div>
+      <div class="blood-wave blood-wave--2"></div>
+    </div>
   </div>
 </template>
 
@@ -231,5 +260,111 @@ const matrixColumns = computed(() => {
 @keyframes fall-egg {
   0% { top: -10%; transform: translateY(0) rotate(0deg); }
   100% { top: 110%; transform: translateY(110vh) rotate(360deg); }
+}
+
+/* 12. Digital Storm Glitch */
+.scanline {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 50%, rgba(0, 255, 255, 0.05) 51%, transparent 51%);
+  background-size: 100% 4px;
+  animation: scanline-move 10s linear infinite;
+  z-index: 10;
+}
+@keyframes scanline-move {
+  from { background-position: 0 0; }
+  to { background-position: 0 100%; }
+}
+.glitch-chromatic {
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  mix-blend-mode: screen;
+  animation: chromatic-shift 2s infinite;
+  opacity: 0.15;
+}
+@keyframes chromatic-shift {
+  0% { transform: translate(0, 0); }
+  10% { transform: translate(-2px, 1px); }
+  20% { transform: translate(2px, -1px); }
+  30% { transform: translate(-1px, -2px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* 13. Inferno Embers */
+.ember {
+  position: absolute;
+  bottom: -20px;
+  width: 3px;
+  height: 3px;
+  background: #f97316;
+  border-radius: 50%;
+  filter: blur(1px);
+  box-shadow: 0 0 10px #f97316;
+  animation: ember-float linear infinite;
+}
+@keyframes ember-float {
+  0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateY(-110vh) rotate(720deg) scale(0.2); opacity: 0; }
+}
+
+/* 14. Void Cosmos */
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0;
+  animation: star-twinkle 4s infinite;
+}
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: 0.8; transform: scale(1.2); }
+}
+.nebula {
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 30% 40%, rgba(76, 29, 149, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 70% 60%, rgba(30, 27, 75, 0.2) 0%, transparent 50%);
+  filter: blur(40px);
+  animation: nebula-drift 30s infinite alternate;
+}
+@keyframes nebula-drift {
+  from { transform: scale(1); }
+  to { transform: scale(1.2) rotate(5deg); }
+}
+
+/* 15. Ronin Rain */
+.data-drop {
+  position: absolute;
+  top: -20px;
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, #ef4444);
+  animation: data-fall linear infinite;
+}
+@keyframes data-fall {
+  to { transform: translateY(110vh); }
+}
+.neon-city-glow {
+  position: absolute;
+  bottom: 0; inset: 0;
+  background: linear-gradient(to top, rgba(239, 68, 68, 0.1), transparent 50%);
+}
+
+/* 16. Blood Waves */
+.blood-wave {
+  position: absolute;
+  bottom: 0; width: 200%; height: 50%;
+  background: radial-gradient(ellipse at 50% 100%, rgba(127, 29, 29, 0.3) 0%, transparent 70%);
+  animation: blood-wave-move 10s ease-in-out infinite alternate;
+}
+.blood-wave--2 { height: 70%; opacity: 0.5; animation-duration: 15s; }
+@keyframes blood-wave-move {
+  from { transform: translateX(-25%) translateY(10%); }
+  to { transform: translateX(0%) translateY(0%); }
 }
 </style>
