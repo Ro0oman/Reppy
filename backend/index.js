@@ -169,6 +169,14 @@ app.get('/api/db/init', async (req, res) => {
       `UPDATE boss_fights SET description = 'Viene a contar tus repeticiones en el gimnasio del infierno. Si no tocas la barbilla en la barra, tu serie no cuenta para el ranking.' WHERE name = 'Diablo'`,
       `UPDATE boss_fights SET description = 'Perdió su nombre en una apuesta sobre quién aguantaba más en plancha isométrica sobre un dragón de tormenta.' WHERE name = 'The Nameless King'`,
       
+      // CS2 Titles
+      `INSERT INTO cosmetics (name, description, type, price, css_value) 
+       SELECT 'Plata 2', 'El inicio de un largo camino. Al menos no estás en Plata 1.', 'title', 150, 'color: #a0a0a0; font-weight: bold;'
+       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Plata 2')`,
+      `INSERT INTO cosmetics (name, description, type, price, css_value) 
+       SELECT 'Nova de Oro 4', 'Ya empiezas a entender cómo funciona esto. Un rango con prestigio.', 'title', 450, 'color: #ffd700; font-weight: bold; text-shadow: 0 0 5px rgba(255,215,0,0.5);'
+       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Nova de Oro 4')`,
+      
       `CREATE INDEX IF NOT EXISTS idx_reps_user_date ON reps(user_id, date)`,
       `CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(user_id_1, user_id_2)`,
       `CREATE INDEX IF NOT EXISTS idx_inventory_user ON user_inventory(user_id)`
