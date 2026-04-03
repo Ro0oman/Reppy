@@ -54,7 +54,7 @@
               <ShoppingBag class="w-5 h-5" />
             </div>
             <div>
-              <h4 class="font-bold text-zinc-900 dark:text-white uppercase tracking-widest text-xs">Tienda David Goggins</h4>
+              <h4 class="font-bold text-zinc-900 dark:text-white uppercase tracking-widest text-xs">Tienda Goggins</h4>
               <p class="text-sm text-zinc-500 font-medium">Gasta tus coins en Títulos y Bordes legendarios para tu perfil.</p>
             </div>
           </div>

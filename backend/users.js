@@ -8,7 +8,13 @@ const router = express.Router();
 router.get('/me', authenticate, async (req, res) => {
   try {
     const result = await query(
-      'SELECT id, name, email, avatar_url, total_reps, is_private, has_seen_easter_modal, daily_goal, body_weight, reppy_coins, str_xp, pwr_xp, end_xp, agi_xp, equipped_title_id, equipped_border_id FROM users WHERE id = $1',
+      `SELECT u.id, u.name, u.email, u.avatar_url, u.total_reps, u.is_private, u.has_seen_easter_modal, u.daily_goal, u.body_weight, u.reppy_coins, u.str_xp, u.pwr_xp, u.end_xp, u.agi_xp, u.equipped_title_id, u.equipped_border_id,
+              t.name as title_name, t.css_value as title_css,
+              b.css_value as border_css
+       FROM users u
+       LEFT JOIN cosmetics t ON u.equipped_title_id = t.id
+       LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
+       WHERE u.id = $1`,
       [req.user.id]
     );
     res.json(result.rows[0]);

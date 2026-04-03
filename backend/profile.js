@@ -110,12 +110,16 @@ router.get('/:id', async (req, res) => {
     else if (totalXP > 1500) dynamicTitle = 'Asesino de Dragones';
     else if (totalXP > 500) dynamicTitle = 'Guerrero Espartano';
 
-    console.log(`[PROFILE_API] SUCCESS for ${userId} - Title: ${dynamicTitle} XP: ${totalXP}`);
+    const finalTitleName = user.title_name ? user.title_name : dynamicTitle;
+    const finalTitleCss = user.title_name ? user.title_css : '';
+
+    console.log(`[PROFILE_API] SUCCESS for ${userId} - Title: ${finalTitleName} XP: ${totalXP}`);
     
     res.json({
       user: {
         ...user,
-        title_name: dynamicTitle,
+        title_name: finalTitleName,
+        title_css: finalTitleCss,
         str_xp, pwr_xp, end_xp, agi_xp,
         str_lvl: getLevel(str_xp),
         pwr_lvl: getLevel(pwr_xp),

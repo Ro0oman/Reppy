@@ -16,7 +16,7 @@
         <Package class="w-10 h-10 text-zinc-400" />
       </div>
       <h3 class="text-xl font-bold text-zinc-900 dark:text-white">Aún no tienes equipo</h3>
-      <p class="text-zinc-500 dark:text-zinc-400 mt-1">Visita la tienda de David Goggins para empezar tu colección.</p>
+      <p class="text-zinc-500 dark:text-zinc-400 mt-1">Visita la tienda de Goggins para empezar tu colección.</p>
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -144,8 +144,11 @@ const toggleEquip = async (item) => {
     // Update local authStore
     if (item.type === 'title') {
       authStore.user.equipped_title_id = alreadyEquipped ? null : item.id;
+      authStore.user.title_css = alreadyEquipped ? '' : item.css_value;
+      authStore.user.title_name = alreadyEquipped ? '' : item.name;
     } else if (item.type === 'border') {
       authStore.user.equipped_border_id = alreadyEquipped ? null : item.id;
+      authStore.user.border_css = alreadyEquipped ? '' : item.css_value;
     }
 
     notificationStore.notify(alreadyEquipped ? 'Objeto Desequipado' : 'Objeto Equipado', 'success');

@@ -2,7 +2,7 @@
   <div class="max-w-6xl mx-auto px-4 py-8 animate-in fade-in slide-in-from-bottom-4 duration-700 relative z-10">
     <div class="flex items-center justify-between mb-8">
       <div>
-        <h1 class="text-3xl font-black tracking-tight text-zinc-900 dark:text-white uppercase italic">La Tienda David Goggins</h1>
+        <h1 class="text-3xl font-black tracking-tight text-zinc-900 dark:text-white uppercase italic">La Tienda Goggins</h1>
         <p class="text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 mt-1 font-medium">Equipa tu Leyenda.</p>
       </div>
       <div class="flex items-center gap-2 bg-amber-500/10 px-4 py-2 rounded-xl border border-amber-500/30">

@@ -14,7 +14,7 @@ Your workouts translate into real character growth. Level up four core attribute
 - **END (Endurance)**: Tracks your ability to sustain volume over time.
 - **AGI (Agility)**: Rewarded for daily consistency and streaks.
 
-### 🪙 Economy & David Goggins Shop
+### 🪙 Economy & Goggins Shop
 Earn **Reppy Coins** with every set you log. Spend them in the shop to customize your identity:
 - **Legendary Titles**: "The Rabbit King", "Pull-up God", etc.
 - **Profile Borders**: Glassmorphism borders that make you stand out in the leaderboard.

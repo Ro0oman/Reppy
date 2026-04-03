@@ -64,10 +64,13 @@
                <span class="text-[10px]">🪙</span>
             </div>
             <!-- Name (Desktop only) -->
-            <div class="text-right hidden md:block">
+            <div class="text-right hidden md:flex flex-col items-end">
               <p class="text-sm font-bold text-zinc-900 dark:text-white leading-none">{{ authStore.user?.name }}</p>
+              <span v-if="authStore.user?.title_name" class="text-[8px] uppercase tracking-widest px-1.5 py-0.5 mt-1 rounded-full bg-white/5 border border-zinc-200 dark:border-white/10 font-bold" :class="authStore.user?.title_css">
+                {{ authStore.user?.title_name }}
+              </span>
             </div>
-            <img :src="authStore.user?.avatar_url" class="w-9 h-9 rounded-full border border-primary-500/50 shadow-sm" />
+            <img :src="authStore.user?.avatar_url" class="w-9 h-9 rounded-full shadow-sm" :class="authStore.user?.border_css || 'border border-primary-500/50'" />
           </button>
 
         </div>
@@ -130,8 +133,8 @@
 
           :class="view === 'profile' ? 'text-primary-600' : 'text-zinc-400'">
           <img :src="authStore.user?.avatar_url" 
-               class="w-7 h-7 rounded-full border-2 transition-transform" 
-               :class="view === 'profile' ? 'border-primary-500 scale-110' : 'border-transparent opacity-60'" />
+               class="w-7 h-7 rounded-full transition-transform" 
+               :class="[(view === 'profile' ? 'scale-125 ring-2 ring-primary-500 ring-offset-2 ring-offset-zinc-900' : 'opacity-60'), authStore.user?.border_css || 'border-2 border-transparent']" />
           <span class="text-[10px] font-black uppercase tracking-tighter">Perfil</span>
         </button>
       </div>

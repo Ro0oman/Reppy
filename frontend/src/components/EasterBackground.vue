@@ -51,7 +51,7 @@ onMounted(() => {
 }
 .animate-fall {
   animation-name: fall;
-  animation-timing-function: linear;
+  animation-timing-function: ease-in;
   animation-iteration-count: infinite;
 }
 </style>

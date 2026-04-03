@@ -47,7 +47,7 @@ const translations = {
     btn_add: 'Add',
     rankings: 'Rankings',
     sign_out: 'Sign Out',
-    nav_shop: 'David Goggins Shop',
+    nav_shop: 'Goggins Shop',
     tf_shop: 'Shop',
     
     // Heatmap Tooltips & Labels
@@ -187,7 +187,7 @@ const translations = {
     btn_add: 'Añadir',
     rankings: 'Clasificaciones',
     sign_out: 'Cerrar Sesión',
-    nav_shop: 'Tienda de David Goggins',
+    nav_shop: 'Tienda Goggins',
     tf_shop: 'Tienda',
 
     // Heatmap Tooltips & Labels
