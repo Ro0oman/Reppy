@@ -6,15 +6,25 @@
         <h3 class="text-xl font-black text-zinc-900 dark:text-white leading-none mb-1">{{ totalYearReps }} {{ i18n.t('stats_reps') }}</h3>
         <p class="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">{{ i18n.t('stats_last_year') }}</p>
       </div>
-      <div class="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/5 rounded-full text-[10px] font-black text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:text-white transition-colors cursor-pointer">
-        <span>{{ i18n.t('stats_settings') }}</span>
-        <ChevronDown class="w-3 h-3" />
-      </div>
     </div>
+
 
     <div class="flex gap-4">
       <!-- Main Activity Grid Area -->
       <div class="flex-1 min-w-0 p-8 bg-white dark:bg-zinc-900/40 border-2 border-zinc-200 dark:border-white/5 rounded-[2rem] relative overflow-visible group/board">
+        <!-- Tooltip -->
+        <transition name="tooltip">
+          <div v-if="hoveredDay" 
+            class="absolute z-[100] px-4 py-2 bg-zinc-900 dark:bg-white text-zinc-50 dark:text-zinc-900 text-[10px] font-black rounded-xl shadow-2xl pointer-events-none whitespace-nowrap -translate-x-1/2 -translate-y-full border border-white/10"
+            :style="tooltipPosition"
+          >
+            <div class="flex flex-col items-center gap-0.5 relative">
+              <span>{{ hoveredDay.count > 0 ? `${hoveredDay.count} ${i18n.t('heatmap_reps')}` : i18n.t('heatmap_no_reps') }} {{ formatDate(hoveredDay.date) }}</span>
+              <div class="w-2 h-2 bg-zinc-900 dark:bg-white rotate-45 absolute -bottom-3 left-1/2 -translate-x-1/2 border-b border-r border-white/10"></div>
+            </div>
+          </div>
+        </transition>
+
         <div class="flex relative z-10">
           <!-- Weekday Labels -->
           <div class="flex flex-col gap-1.5 pr-6 justify-center text-[9px] font-black text-zinc-600 uppercase tracking-tighter mt-6">
@@ -28,18 +38,7 @@
           </div>
 
           <div class="flex-1 overflow-x-auto scrollbar-hide relative pb-10" ref="gridContainer">
-            <!-- Tooltip (Inside scrollable container for correct movement) -->
-            <transition name="tooltip">
-              <div v-if="hoveredDay" 
-                class="absolute z-[100] px-4 py-2 bg-zinc-900 dark:bg-white text-zinc-50 dark:text-zinc-900 text-[10px] font-black rounded-xl shadow-2xl pointer-events-none whitespace-nowrap -translate-x-1/2 -translate-y-full mb-3 border border-white/10"
-                :style="tooltipPosition"
-              >
-                <div class="flex flex-col items-center gap-0.5 relative">
-                  <span>{{ hoveredDay.count > 0 ? `${hoveredDay.count} ${i18n.t('heatmap_reps')}` : i18n.t('heatmap_no_reps') }} {{ formatDate(hoveredDay.date) }}</span>
-                  <div class="w-1.5 h-1.5 bg-zinc-900 dark:bg-white rotate-45 absolute -bottom-3 left-1/2 -translate-x-1/2 border-r border-b border-white/10"></div>
-                </div>
-              </div>
-            </transition>
+
 
             <!-- Month Labels -->
             <div class="flex gap-1.5 mb-3 h-4 relative">
@@ -125,7 +124,7 @@ const handleMouseEnter = (event, day) => {
   const parentRect = event.target.closest('.group\\/board').getBoundingClientRect();
   
   tooltipPos.value = {
-    top: rect.top - parentRect.top,
+    top: rect.top - parentRect.top - 8,
     left: rect.left - parentRect.left + (rect.width / 2)
   };
 };
