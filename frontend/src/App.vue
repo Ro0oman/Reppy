@@ -57,12 +57,16 @@
             </div>
           </a>
 
-          <button @click="openProfile(authStore.user.id)" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <!-- Global Coins Badge (Visible on all screens) -->
-            <div class="flex items-center gap-1.5 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20 shadow-sm">
-               <span class="text-xs font-black text-amber-600 dark:text-amber-500 tracking-tighter">{{ authStore.user?.reppy_coins || 0 }}</span>
-               <span class="text-[10px]">🪙</span>
-            </div>
+          <div class="flex items-center gap-1.5">
+            <button @click.stop="showCoinsInfo = true" class="p-1 hover:bg-amber-500/10 rounded-full transition-colors group" title="¿Cómo funcionan?">
+              <HelpCircle class="w-3.5 h-3.5 text-zinc-400 group-hover:text-amber-500 transition-colors" />
+            </button>
+            <button @click="openProfile(authStore.user.id)" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <!-- Global Coins Badge -->
+              <div class="flex items-center gap-1.5 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20 shadow-sm">
+                 <span class="text-xs font-black text-amber-600 dark:text-amber-500 tracking-tighter">{{ authStore.user?.reppy_coins || 0 }}</span>
+                 <span class="text-[10px]">🪙</span>
+              </div>
             <!-- Name (Desktop only) -->
             <div class="text-right hidden md:flex flex-col items-end">
               <p class="text-sm font-bold text-zinc-900 dark:text-white leading-none">{{ authStore.user?.name }}</p>
@@ -72,7 +76,7 @@
             </div>
             <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :size="36" />
           </button>
-
+          </div>
         </div>
       </div>
     </nav>
@@ -144,6 +148,91 @@
     <ConfirmDialog />
     <EasterWelcomeModal :show="showEasterModal" @close="showEasterModal = false" />
     <LuckyWheel :show="showRoulette" @close="showRoulette = false" @spun="onSpun" />
+
+    <!-- Coins Info Modal -->
+    <Teleport to="body">
+      <div v-if="showCoinsInfo" 
+           class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-sm animate-in fade-in duration-300"
+           @click.self="showCoinsInfo = false">
+        <div class="glass max-w-lg w-full p-6 md:p-8 rounded-[2rem] border-white/10 shadow-2xl space-y-6 relative overflow-hidden max-h-[85vh] overflow-y-auto">
+          <div class="absolute -top-16 -right-16 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-2xl font-black text-white tracking-tighter uppercase">🪙 Reppy Coins</h3>
+              <p class="text-[10px] font-black text-amber-400 uppercase tracking-[0.3em] mt-1">Guía de Economía</p>
+            </div>
+            <button @click="showCoinsInfo = false" class="p-2 hover:bg-white/10 rounded-xl transition-all hover:rotate-90">
+              <X class="w-5 h-5 text-white" />
+            </button>
+          </div>
+
+          <!-- How to earn -->
+          <div class="space-y-3">
+            <h4 class="text-xs font-black uppercase text-amber-500 tracking-widest">💪 Cómo ganar monedas</h4>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
+                <span class="text-sm text-zinc-300">Dominadas</span>
+                <span class="text-sm font-black text-amber-400">1 coin/rep</span>
+              </div>
+              <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
+                <span class="text-sm text-zinc-300">Flexiones</span>
+                <span class="text-sm font-black text-amber-400">1 coin/rep</span>
+              </div>
+              <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
+                <span class="text-sm text-zinc-300">Fondos (Dips)</span>
+                <span class="text-sm font-black text-amber-400">2 coins/rep</span>
+              </div>
+              <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
+                <span class="text-sm text-zinc-300">Dominadas Lastradas</span>
+                <span class="text-sm font-black text-amber-400">3 coins/rep</span>
+              </div>
+              <div class="flex items-center justify-between p-3 bg-gradient-to-r from-orange-500/10 to-transparent rounded-xl border border-orange-500/20">
+                <span class="text-sm text-zinc-200 font-bold">Muscle Ups</span>
+                <span class="text-sm font-black text-orange-400">5 coins/rep ⚡</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bonus -->
+          <div class="space-y-3">
+            <h4 class="text-xs font-black uppercase text-emerald-500 tracking-widest">🎰 Bonus extra</h4>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
+                <span class="text-sm text-zinc-300">Ruleta diaria</span>
+                <span class="text-sm font-bold text-emerald-400">10–100 coins</span>
+              </div>
+              <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
+                <span class="text-sm text-zinc-300">Eventos de Boss</span>
+                <span class="text-sm font-bold text-red-400">Items exclusivos</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- What to spend on -->
+          <div class="space-y-3">
+            <h4 class="text-xs font-black uppercase text-purple-500 tracking-widest">🛒 En qué gastarlos</h4>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="p-3 bg-white/5 rounded-xl border border-white/5 text-center">
+                <p class="text-lg mb-1">🧥</p>
+                <p class="text-[10px] font-black text-zinc-300 uppercase tracking-wider">Bordes de Avatar</p>
+                <p class="text-[9px] text-zinc-500 mt-0.5">80 – 1500 coins</p>
+              </div>
+              <div class="p-3 bg-white/5 rounded-xl border border-white/5 text-center">
+                <p class="text-lg mb-1">⚔️</p>
+                <p class="text-[10px] font-black text-zinc-300 uppercase tracking-wider">Títulos</p>
+                <p class="text-[9px] text-zinc-500 mt-0.5">100 – 1500 coins</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tip -->
+          <div class="bg-amber-500/10 p-4 rounded-2xl border border-amber-500/20">
+            <p class="text-[11px] text-center text-amber-300 font-bold">💡 Un usuario activo (~40 reps/día) gana unas <span class="text-amber-400 font-black">~1200 coins/mes</span></p>
+          </div>
+        </div>
+      </div>
+    </Teleport>
     
     <!-- Floating Roulette Button -->
     <button v-if="canSpinToday" @click="showRoulette = true" 
@@ -160,7 +249,7 @@
 import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
 
-import { Github, Star, Home, LayoutDashboard, Users, ShoppingBag, Package, RefreshCw } from 'lucide-vue-next';
+import { Github, Star, Home, LayoutDashboard, Users, ShoppingBag, Package, RefreshCw, HelpCircle, X } from 'lucide-vue-next';
 import { useAuthStore } from './stores/auth';
 
 import Login from './components/Login.vue'
@@ -187,6 +276,7 @@ const currentProfileId = ref(null);
 const showEasterModal = ref(false);
 const showRoulette = ref(false);
 const canSpinToday = ref(false);
+const showCoinsInfo = ref(false);
 
 const checkRoulette = async () => {
   try {
