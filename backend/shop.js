@@ -6,15 +6,20 @@ const router = express.Router();
 // Get available cosmetics
 router.get('/cosmetics', authenticate, async (req, res) => {
   try {
-    const cosmeticsRes = await query('SELECT * FROM cosmetics WHERE price > 0 ORDER BY created_at ASC, id ASC');
-    const inventoryRes = await query('SELECT cosmetic_id FROM user_inventory WHERE user_id = $1', [req.user.id]);
+    const cosmeticsRes = await query('SELECT * FROM cosmetics WHERE price > 0 OR name IN (\'Aura de Pascua\', \'Rabbit Slayer\', \'Easter Celebration\') ORDER BY created_at ASC, id ASC');
+    const inventoryRes = await query('SELECT cosmetic_id, is_new FROM user_inventory WHERE user_id = $1', [req.user.id]);
     
-    const ownedIds = inventoryRes.rows.map(row => row.cosmetic_id);
+    const inventoryMap = {};
+    inventoryRes.rows.forEach(row => {
+      inventoryMap[row.cosmetic_id] = { owned: true, is_new: row.is_new };
+    });
     
     const shopItems = cosmeticsRes.rows.map((item, index) => {
+      const invData = inventoryMap[item.id] || { owned: false, is_new: false };
       return {
         ...item,
-        owned: ownedIds.includes(item.id),
+        owned: invData.owned,
+        is_new: invData.is_new,
         roadmap_position: index + 1,
         unlock_at: item.created_at,
         is_unlocked: true,
@@ -26,6 +31,19 @@ router.get('/cosmetics', authenticate, async (req, res) => {
   } catch (error) {
     console.error('Error fetching cosmetics:', error);
     res.status(500).json({ message: 'Error fetching cosmetics' });
+  }
+});
+
+// Mark cosmetic as seen
+router.post('/mark-seen/:id', authenticate, async (req, res) => {
+  const cosmeticId = parseInt(req.params.id);
+  const userId = req.user.id;
+  try {
+    await query('UPDATE user_inventory SET is_new = FALSE WHERE user_id = $1 AND cosmetic_id = $2', [userId, cosmeticId]);
+    res.json({ message: 'Marked as seen' });
+  } catch (error) {
+    console.error('Error marking as seen:', error);
+    res.status(500).json({ message: 'Error marking as seen' });
   }
 });
 

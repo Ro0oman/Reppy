@@ -19,19 +19,14 @@ async function seed() {
       { name: 'Stone Titan', description: 'Epic Title. Fuerza bruta.', type: 'title', price: 700, css_value: 'text-stone-400 font-black drop-shadow-md uppercase tracking-tight' },
       { name: 'Calisthenics Monk', description: 'Rare Title. Disciplina.', type: 'title', price: 300, css_value: 'text-zinc-300 font-light tracking-[0.3em] uppercase' },
       { name: 'No Excuses', description: 'Common Title. Sin excusas.', type: 'title', price: 120, css_value: 'text-white font-bold uppercase tracking-wider' },
-      { name: 'Marca del Slayer', description: '🔒 EVENT ONLY — Solo desbloqueable en eventos de Boss.', type: 'title', price: 0, css_value: 'text-red-500 font-black tracking-widest uppercase drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]' },
-      // backgrounds (The Legend Selection)
-      { name: 'Pure Black Glass', description: 'El estándar de elegancia absoluta.', type: 'background', price: 0, css_value: 'bg-pure-black' },
-      { name: 'Neural Grid', description: 'Ciberpunk puro. Líneas de circuitos animados.', type: 'background', price: 900, css_value: 'bg-neural-grid' },
-      { name: 'Deep Ocean', description: 'Ondas marinas en movimiento perpetuo.', type: 'background', price: 500, css_value: 'bg-deep-ocean' },
-      { name: 'Cyber Horizon', description: 'Horizonte retro-future 3D con sol neón.', type: 'background', price: 1500, css_value: 'bg-cyber-horizon' },
-      { name: 'Digital Rain', description: 'Efecto Matrix minimalista y tecnológico.', type: 'background', price: 1200, css_value: 'bg-digital-rain' },
+      { name: 'Rabbit Slayer', description: 'Vencedor del Conejo de Acero. Título exclusivo de temporada.', type: 'title', price: 0, css_value: 'text-pink-600 font-black tracking-widest uppercase drop-shadow-[0_0_10px_rgba(219,39,119,0.5)]' },
+      { name: 'Aura de Pascua', description: 'Borde festivo obtenido en el evento de Pascua de 2026.', type: 'border', price: 0, css_value: 'frame-easter' },
       { name: 'Easter Celebration', description: '¡Huevos y conejos! Edición limitada de Pascua.', type: 'background', price: 0, css_value: 'bg-easter' }
     ];
 
     for (const item of items) {
       await query(
-        `INSERT INTO cosmetics (name, description, type, price, css_value) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (name) DO NOTHING`,
+        `INSERT INTO cosmetics (name, description, type, price, css_value) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (name) DO UPDATE SET description = EXCLUDED.description, price = EXCLUDED.price, css_value = EXCLUDED.css_value`,
          [item.name, item.description, item.type, item.price, item.css_value]
       );
     }

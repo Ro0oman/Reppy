@@ -71,3 +71,39 @@ body {
   @apply bg-zinc-300 dark:bg-zinc-800 rounded-full hover:bg-zinc-400 dark:hover:bg-zinc-700 transition-colors;
 }
 
+/* frame-easter: Premium seasonal border */
+.frame-easter {
+  position: relative;
+  border-radius: 50%;
+  padding: 4px; /* Thickness */
+  background: linear-gradient(135deg, #fce7f3 0%, #dcfce7 33%, #fef9c3 66%, #dbeafe 100%);
+  background-size: 300% 300%;
+  animation: easter-border-flow 6s ease infinite, easter-pulse 3s ease-in-out infinite;
+  box-shadow: 0 0 15px rgba(236, 72, 153, 0.4);
+}
+
+@keyframes easter-border-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes easter-pulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(236, 72, 153, 0.4); }
+  50% { box-shadow: 0 0 25px rgba(236, 72, 153, 0.6), 0 0 10px rgba(52, 211, 153, 0.4); }
+}
+
+.frame-easter::after {
+  content: "🥚";
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 14px;
+  filter: drop-shadow(0 0 2px rgba(0,0,0,0.2));
+  animation: egg-float 4s ease-in-out infinite;
+}
+
+@keyframes egg-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-3px) rotate(10deg); }
+}

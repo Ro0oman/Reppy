@@ -102,6 +102,8 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 import { useNotificationStore } from '../stores/notification';
 
+import confetti from 'canvas-confetti';
+
 const boss = ref(null);
 const loading = ref(true);
 const claiming = ref(false);
@@ -194,7 +196,20 @@ const claim = async (index) => {
   try {
     const res = await axios.post(`/api/boss/claim-chest/${boss.value.id}`);
     chestsClaimed.value = res.data.new_chests_claimed;
-    notificationStore.notify(`¡Has conseguido ${res.data.rewardCoins} Reppy Coins!`, 'success');
+    
+    // Confetti effect
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#ec4899', '#f472b6', '#fb7185']
+    });
+
+    if (res.data.rewardItem) {
+      notificationStore.notify(`¡HAS DESBLOQUEADO: ${res.data.rewardItem.toUpperCase()}! 🎁`, 'success');
+    } else {
+      notificationStore.notify(`¡Has conseguido ${res.data.rewardCoins} Reppy Coins!`, 'success');
+    }
   } catch (error) {
     notificationStore.notify(error.response?.data?.message || 'Error al abrir cofre', 'error');
   } finally {

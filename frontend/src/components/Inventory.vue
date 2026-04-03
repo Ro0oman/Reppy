@@ -33,7 +33,13 @@
             class="group relative overflow-hidden bg-white dark:bg-zinc-900 rounded-2xl border transition-all"
             :class="isEquipped(item) ? 'border-primary-500 shadow-lg shadow-primary-500/10' : 'border-zinc-200 dark:border-white/5 hover:border-primary-500/50'">
             
-            <div class="p-4 flex items-center gap-4">
+            <div class="p-4 flex items-center gap-4 relative">
+              <!-- NEW Badge -->
+              <div v-if="item.is_new" 
+                class="absolute -top-1 -right-1 z-20 px-2 py-0.5 rounded-full bg-gradient-to-tr from-pink-500 to-rose-500 text-[8px] font-black text-white uppercase tracking-tighter shadow-lg shadow-pink-500/40 animate-pulse border border-white/20">
+                NEW
+              </div>
+
               <div class="relative">
                 <AvatarFrame :src="authStore.user?.avatar_url" :border-css="item.css_value" :size="48" />
                 <div v-if="isEquipped(item)" class="absolute -top-1 -right-1 w-4 h-4 bg-primary-500 rounded-full flex items-center justify-center border-2 border-white dark:border-zinc-900 z-10">
@@ -70,7 +76,13 @@
             class="group relative overflow-hidden bg-white dark:bg-zinc-900 rounded-2xl border transition-all"
             :class="isEquipped(item) ? 'border-primary-500 shadow-lg shadow-primary-500/10' : 'border-zinc-200 dark:border-white/5 hover:border-primary-500/50'">
             
-            <div class="p-4">
+            <div class="p-4 relative">
+              <!-- NEW Badge -->
+              <div v-if="item.is_new" 
+                class="absolute -top-1 -right-1 z-20 px-2 py-0.5 rounded-full bg-gradient-to-tr from-pink-500 to-rose-500 text-[8px] font-black text-white uppercase tracking-tighter shadow-lg shadow-pink-500/40 animate-pulse border border-white/20">
+                NEW
+              </div>
+
               <div class="flex justify-between items-start mb-2">
                 <h4 class="font-bold text-zinc-900 dark:text-white truncate">{{ item.name }}</h4>
                 <div v-if="isEquipped(item)" class="bg-primary-500/10 px-2 py-0.5 rounded-full">
@@ -102,7 +114,13 @@
             class="group relative overflow-hidden bg-white dark:bg-zinc-900 rounded-2xl border transition-all"
             :class="isEquipped(item) ? 'border-primary-500 shadow-lg shadow-primary-500/10' : 'border-zinc-200 dark:border-white/5 hover:border-primary-500/50'">
             
-            <div class="p-4">
+            <div class="p-4 relative">
+              <!-- NEW Badge -->
+              <div v-if="item.is_new" 
+                class="absolute -top-1 -right-1 z-20 px-2 py-0.5 rounded-full bg-gradient-to-tr from-pink-500 to-rose-500 text-[8px] font-black text-white uppercase tracking-tighter shadow-lg shadow-pink-500/40 animate-pulse border border-white/20">
+                NEW
+              </div>
+
               <!-- Preview Box -->
               <div class="w-full aspect-video rounded-xl mb-3 relative overflow-hidden bg-zinc-100 dark:bg-black border border-zinc-200 dark:border-white/10">
                 <BackgroundEffect :background-css="item.css_value" is-preview class="!absolute !inset-0 !w-full !h-full" />
@@ -201,5 +219,23 @@ const toggleEquip = async (item) => {
   }
 };
 
-onMounted(fetchInventory);
+const markSeen = async (item) => {
+  if (!item.is_new) return;
+  try {
+    await axios.post(`/api/shop/mark-seen/${item.id}`);
+    item.is_new = false;
+  } catch (e) {
+    console.error('Error marking as seen:', e);
+  }
+};
+
+onMounted(async () => {
+  await fetchInventory();
+  // Mark all as seen after 3 seconds of being in the inventory
+  setTimeout(() => {
+    inventory.value.forEach(item => {
+      if (item.is_new) markSeen(item);
+    });
+  }, 3000);
+});
 </script>

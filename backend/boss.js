@@ -92,15 +92,41 @@ router.post('/claim-chest/:bossId', authenticate, async (req, res) => {
       return res.status(400).json({ message: 'No chests available to claim right now' });
     }
 
-    // Process claiming 1 chest (give random coins or cosmetic)
-    const bonusCoins = 50 + Math.floor(Math.random() * 100);
+    // Determine reward based on chests_claimed
+    const rewardsMap = {
+      0: 'Aura de Pascua',
+      1: 'Rabbit Slayer',
+      2: 'Easter Celebration'
+    };
+    const itemName = rewardsMap[claimed];
     
     await query('BEGIN');
+    
+    // 1. Get cosmetic ID
+    const cosRes = await query('SELECT id, type FROM cosmetics WHERE name = $1', [itemName]);
+    if (cosRes.rows.length > 0) {
+      const cosmetic = cosRes.rows[0];
+      // 2. Award item (ignore if already owned, though unlikely here)
+      await query(
+        `INSERT INTO user_inventory (user_id, cosmetic_id, is_new) 
+         VALUES ($1, $2, TRUE) 
+         ON CONFLICT (user_id, cosmetic_id) DO UPDATE SET is_new = TRUE`, 
+        [userId, cosmetic.id]
+      );
+    }
+
+    const bonusCoins = 50 + Math.floor(Math.random() * 100);
     await query('UPDATE event_participants SET chests_claimed = chests_claimed + 1 WHERE boss_fight_id = $1 AND user_id = $2', [bossId, userId]);
     await query('UPDATE users SET reppy_coins = reppy_coins + $1 WHERE id = $2', [bonusCoins, userId]);
     await query('COMMIT');
 
-    res.json({ message: 'Cofre abierto!', rewardCoins: bonusCoins, new_chests_claimed: claimed + 1 });
+    res.json({ 
+      message: '¡Cofre abierto!', 
+      rewardCoins: bonusCoins, 
+      rewardItem: itemName,
+      rewardType: cosRes.rows[0]?.type,
+      new_chests_claimed: claimed + 1 
+    });
   } catch (error) {
     await query('ROLLBACK');
     console.error('Error claiming chest:', error);

@@ -63,18 +63,42 @@ app.get('/api/db/init', async (req, res) => {
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
           UNIQUE(user_id, date, exercise_type)
       )`,
-      // Migration for existing tables
-      `ALTER TABLE users ADD COLUMN IF NOT EXISTS body_weight DECIMAL DEFAULT 75.0`,
-      `ALTER TABLE reps ADD COLUMN IF NOT EXISTS added_weight DECIMAL DEFAULT 0.0`,
-      `ALTER TABLE reps ADD COLUMN IF NOT EXISTS exercise_type VARCHAR(50) DEFAULT 'pullups'`,
-      `UPDATE reps SET exercise_type = 'pullups' WHERE exercise_type IS NULL`,
-      `ALTER TABLE reps DROP CONSTRAINT IF EXISTS reps_user_id_date_key`,
-      `DO $$ 
-       BEGIN 
-         IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'reps_user_id_date_exercise_type_key') THEN
-           ALTER TABLE reps ADD CONSTRAINT reps_user_id_date_exercise_type_key UNIQUE(user_id, date, exercise_type);
-         END IF;
-       END $$;`,
+      `CREATE TABLE IF NOT EXISTS cosmetics (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) UNIQUE NOT NULL,
+          description TEXT,
+          type VARCHAR(50) NOT NULL,
+          price INTEGER NOT NULL,
+          css_value VARCHAR(255),
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )`,
+      `CREATE TABLE IF NOT EXISTS user_inventory (
+          id SERIAL PRIMARY KEY,
+          user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+          cosmetic_id INTEGER REFERENCES cosmetics(id) ON DELETE CASCADE,
+          is_new BOOLEAN DEFAULT TRUE,
+          acquired_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE(user_id, cosmetic_id)
+      )`,
+      `ALTER TABLE user_inventory ADD COLUMN IF NOT EXISTS is_new BOOLEAN DEFAULT TRUE`,
+      `CREATE TABLE IF NOT EXISTS boss_fights (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          description TEXT,
+          total_hp INTEGER NOT NULL,
+          current_hp INTEGER NOT NULL,
+          start_date TIMESTAMP WITH TIME ZONE NOT NULL,
+          end_date TIMESTAMP WITH TIME ZONE NOT NULL,
+          status VARCHAR(50) DEFAULT 'active'
+      )`,
+      `CREATE TABLE IF NOT EXISTS event_participants (
+          id SERIAL PRIMARY KEY,
+          boss_fight_id INTEGER REFERENCES boss_fights(id) ON DELETE CASCADE,
+          user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+          damage_dealt INTEGER DEFAULT 0,
+          chests_claimed INTEGER DEFAULT 0,
+          UNIQUE(boss_fight_id, user_id)
+      )`,
       `CREATE TABLE IF NOT EXISTS friendships (
           id SERIAL PRIMARY KEY,
           user_id_1 VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
@@ -84,7 +108,8 @@ app.get('/api/db/init', async (req, res) => {
           UNIQUE(user_id_1, user_id_2)
       )`,
       `CREATE INDEX IF NOT EXISTS idx_reps_user_date ON reps(user_id, date)`,
-      `CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(user_id_1, user_id_2)`
+      `CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(user_id_1, user_id_2)`,
+      `CREATE INDEX IF NOT EXISTS idx_inventory_user ON user_inventory(user_id)`
     ];
     
     for (const q of queries) {
