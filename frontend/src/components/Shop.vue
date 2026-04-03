@@ -100,13 +100,16 @@
           <div v-if="item.owned" class="text-emerald-500 font-black text-sm uppercase tracking-wide">
             En Propiedad
           </div>
-          <div v-else class="flex items-center gap-1">
+          <div v-else-if="item.price > 0" class="flex items-center gap-1">
             <span class="font-black" :class="canAfford(item) ? 'text-amber-500' : 'text-zinc-600'">{{ item.price }}</span>
             <span class="text-[10px] uppercase font-bold text-zinc-400 dark:text-zinc-500">Coins</span>
           </div>
+          <div v-else class="text-pink-500 font-bold text-[10px] uppercase tracking-widest">
+            Recompensa de Evento
+          </div>
 
           <button 
-            v-if="!item.owned"
+            v-if="!item.owned && item.price > 0"
             @click="buyItem(item)"
             :disabled="!canAfford(item) || buying || !item.is_unlocked"
             class="px-4 py-2 rounded-lg text-sm font-bold uppercase tracking-wide transition-all"
