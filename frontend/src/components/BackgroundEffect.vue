@@ -25,28 +25,43 @@ const eggs = [
   { left: 66, duration: 19, delay: -3, rotation: 240, emoji: '🐰' },
   { left: 95, duration: 24, delay: -12, rotation: 60, emoji: '🐣' }
 ];
+
+const matrixChars = "01ABCDEFGHIJKLMNOPQRSTUVWXYZｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎ";
+const matrixColumns = computed(() => {
+  return Array.from({ length: 20 }, (_, i) => ({
+    left: i * 5,
+    delay: Math.random() * -20,
+    duration: 5 + Math.random() * 10,
+    char: matrixChars[Math.floor(Math.random() * matrixChars.length)]
+  }));
+});
 </script>
 
 <template>
   <div v-if="activeEffect" class="background-effect-container" :class="[activeEffect, { 'is-preview': isPreview }]">
-    <!-- Specific elements -->
-    <div v-if="activeEffect === 'bg-matrix-fade'" class="matrix-grid"></div>
+    <!-- 1. Neural Grid -->
+    <div v-if="activeEffect === 'bg-neural-grid'" class="neural-lines"></div>
+
+    <!-- 2. Deep Ocean -->
     <div v-if="activeEffect === 'bg-deep-ocean'" class="ocean-waves">
       <div class="wave"></div>
       <div class="wave"></div>
     </div>
-    <div v-if="activeEffect === 'bg-mist-void'" class="mist-blobs">
-      <div class="blob"></div>
-      <div class="blob"></div>
-      <div class="blob"></div>
+
+    <!-- 3. Cyber Horizon (NEW PREMIUM) -->
+    <div v-if="activeEffect === 'bg-cyber-horizon'" class="cyber-horizon">
+      <div class="sun"></div>
+      <div class="grid-floor"></div>
+      <div class="glow-overlay"></div>
     </div>
-    <div v-if="activeEffect === 'bg-neural-grid'" class="neural-lines"></div>
-    <div v-if="activeEffect === 'bg-inferno-flow'" class="fire-particles">
-      <div v-for="n in 9" :key="n" class="particle"></div>
-    </div>
-    <div v-if="activeEffect === 'bg-cosmic-drift'" class="cosmic-scene">
-      <div class="stars"></div>
-      <div class="nebula"></div>
+
+    <!-- 4. Digital Rain (NEW PREMIUM) -->
+    <div v-if="activeEffect === 'bg-digital-rain'" class="digital-rain">
+      <div v-for="(col, i) in matrixColumns" :key="i" 
+        class="matrix-column"
+        :style="{ left: `${col.left}%`, animationDelay: `${col.delay}s`, animationDuration: `${col.duration}s` }">
+        {{ col.char }}
+      </div>
     </div>
     
     <!-- 11. bg-easter -->
@@ -92,41 +107,25 @@ const eggs = [
   background: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
 }
 
-/* 2. Amber Gradient */
-.bg-amber-gradient {
-  background: radial-gradient(circle at 50% 10%, rgba(245, 158, 11, 0.15) 0%, #000 70%);
+/* 2. Neural Grid */
+.bg-neural-grid {
+  background: #050505;
 }
-
-/* 3. Blue Frost */
-.bg-blue-frost {
-  background: radial-gradient(circle at 50% 90%, rgba(59, 130, 246, 0.15) 0%, #000000 80%);
-}
-
-/* 4. Matrix Fade */
-.bg-matrix-fade {
-  background: #000;
-}
-.matrix-grid {
+.neural-lines {
   position: absolute;
   inset: 0;
   background-image: 
-    linear-gradient(rgba(0, 200, 0, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 200, 0, 0.1) 1px, transparent 1px);
-  background-size: 30px 30px;
-  mask-image: radial-gradient(circle, black, transparent 80%);
+    linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px),
+    linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px);
+  background-size: 100px 100px;
+  animation: grid-shift 60s linear infinite;
+}
+@keyframes grid-shift {
+  from { transform: perspective(500px) rotateX(60deg) translateY(0); }
+  to { transform: perspective(500px) rotateX(60deg) translateY(100px); }
 }
 
-/* 5. Night Pulse */
-.bg-night-pulse {
-  background: #000;
-  animation: pulse-bg 8s infinite alternate;
-}
-@keyframes pulse-bg {
-  0% { background: radial-gradient(circle, #0a0a0a 0%, #000 100%); }
-  100% { background: radial-gradient(circle, #1a1a2e 0%, #000 100%); }
-}
-
-/* 6. Deep Ocean */
+/* 3. Deep Ocean */
 .bg-deep-ocean {
   background: linear-gradient(180deg, #000 0%, #001f3f 100%);
 }
@@ -157,96 +156,64 @@ const eggs = [
   to { transform: translateX(-50%); }
 }
 
-/* 7. Mist Void */
-.bg-mist-void {
+/* 4. Cyber Horizon (PREMIUM) */
+.bg-cyber-horizon {
   background: #000;
 }
-.blob {
+.sun {
   position: absolute;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
-  filter: blur(80px);
-  animation: blob-float 25s infinite alternate;
-}
-.blob:nth-child(1) { top: -100px; left: -100px; }
-.blob:nth-child(2) { bottom: -100px; right: -100px; animation-delay: -5s; }
-.blob:nth-child(3) { top: 50%; left: 50%; width: 400px; animation-delay: -10s; }
-@keyframes blob-float {
-  0% { transform: translate(0, 0); }
-  100% { transform: translate(100px, 50px); }
-}
-
-/* 8. Neural Grid */
-.bg-neural-grid {
-  background: #050505;
-}
-.neural-lines {
-  position: absolute;
-  inset: 0;
-  background-image: 
-    linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px),
-    linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px);
-  background-size: 100px 100px;
-  animation: grid-shift 60s linear infinite;
-}
-@keyframes grid-shift {
-  from { transform: perspective(500px) rotateX(60deg) translateY(0); }
-  to { transform: perspective(500px) rotateX(60deg) translateY(100px); }
-}
-
-/* 9. Inferno Flow */
-.bg-inferno-flow {
-  background: linear-gradient(to top, #1a0500, #000);
-}
-.fire-particles .particle {
-  position: absolute;
-  bottom: -20px;
-  width: 4px;
-  height: 4px;
-  background: #f97316;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(to bottom, #ff007f, #ff8c00);
   border-radius: 50%;
-  filter: blur(2px);
-  animation: fire-rise 5s infinite ease-out;
+  filter: blur(20px);
+  box-shadow: 0 0 100px #ff007f;
+  opacity: 0.6;
 }
-.particle:nth-child(1) { left: 10%; animation-duration: 4.2s; animation-delay: 0.1s; }
-.particle:nth-child(2) { left: 25%; animation-duration: 5.8s; animation-delay: 1.2s; }
-.particle:nth-child(3) { left: 40%; animation-duration: 4.5s; animation-delay: 2.3s; }
-.particle:nth-child(4) { left: 55%; animation-duration: 6.7s; animation-delay: 0.5s; }
-.particle:nth-child(5) { left: 70%; animation-duration: 3.9s; animation-delay: 1.8s; }
-.particle:nth-child(6) { left: 85%; animation-duration: 5.5s; animation-delay: 0.9s; }
-.particle:nth-child(7) { left: 15%; animation-duration: 4.8s; animation-delay: 3.1s; }
-.particle:nth-child(8) { left: 45%; animation-duration: 6.2s; animation-delay: 1.5s; }
-.particle:nth-child(9) { left: 80%; animation-duration: 5.1s; animation-delay: 2.7s; }
-
-@keyframes fire-rise {
-  0% { transform: translateY(0) scale(1); opacity: 1; }
-  100% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
+.grid-floor {
+  position: absolute;
+  bottom: 0;
+  width: 200%;
+  height: 60%;
+  left: -50%;
+  background-image: 
+    linear-gradient(rgba(255, 0, 127, 0.4) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 0, 127, 0.4) 1px, transparent 1px);
+  background-size: 60px 60px;
+  transform: perspective(300px) rotateX(60deg);
+  animation: grid-move-forward 5s linear infinite;
+}
+@keyframes grid-move-forward {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 60px; }
+}
+.glow-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(255, 0, 127, 0.15) 0%, transparent 40%);
 }
 
-/* 10. Cosmic Drift */
-.bg-cosmic-drift {
+/* 5. Digital Rain (PREMIUM) */
+.bg-digital-rain {
   background: #000;
 }
-.stars {
+.matrix-column {
   position: absolute;
-  inset: 0;
-  background-image: radial-gradient(1px 1px at 20px 30px, #eee, rgba(0,0,0,0)),
-                    radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
-                    radial-gradient(2px 1px at 50px 160px, #ddd, rgba(0,0,0,0));
-  background-repeat: repeat;
-  background-size: 200px 200px;
-  opacity: 0.3;
+  top: -20px;
+  color: #00ff41;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.2rem;
+  line-height: 1;
+  text-shadow: 0 0 10px #00ff41;
+  animation: matrix-fall linear infinite;
 }
-.nebula {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.1), transparent 60%);
-  animation: nebula-drift 20s infinite alternate;
-}
-@keyframes nebula-drift {
-  from { transform: scale(1) translate(0, 0); }
-  to { transform: scale(1.2) translate(5%, 5%); }
+@keyframes matrix-fall {
+  0% { transform: translateY(-100%); opacity: 1; }
+  90% { opacity: 0.8; }
+  100% { transform: translateY(110vh); opacity: 0; }
 }
 
 /* 11. Easter Celebration */
@@ -263,6 +230,6 @@ const eggs = [
 }
 @keyframes fall-egg {
   0% { top: -10%; transform: translateY(0) rotate(0deg); }
-  100% { top: 110%; transform: translateY(100vh) rotate(360deg); }
+  100% { top: 110%; transform: translateY(110vh) rotate(360deg); }
 }
 </style>
