@@ -47,6 +47,29 @@ const translations = {
     btn_add: 'Add',
     rankings: 'Rankings',
     sign_out: 'Sign Out',
+    nav_shop: 'David Goggins Shop',
+    tf_shop: 'Shop',
+    
+    // Heatmap Tooltips & Labels
+    heatmap_reps: 'reps on',
+    heatmap_no_reps: 'No reps on',
+    stats_settings: 'Settings',
+    stats_less: 'Less',
+    stats_more: 'More',
+    stats_volume_metrics: 'Volume Metrics',
+    stats_last_year: 'in the last year',
+    stats_top_month: 'Top Month',
+
+    // Weekdays
+    day_mon: 'Mon',
+    day_tue: 'Tue',
+    day_wed: 'Wed',
+    day_thu: 'Thu',
+    day_fri: 'Fri',
+    day_sat: 'Sat',
+    day_sun: 'Sun',
+
+
     
     // Social
     community: 'Community',
@@ -164,6 +187,29 @@ const translations = {
     btn_add: 'Añadir',
     rankings: 'Clasificaciones',
     sign_out: 'Cerrar Sesión',
+    nav_shop: 'Tienda de David Goggins',
+    tf_shop: 'Tienda',
+
+    // Heatmap Tooltips & Labels
+    heatmap_reps: 'reps el',
+    heatmap_no_reps: 'Sin reps el',
+    stats_settings: 'Ajustes',
+    stats_less: 'Menos',
+    stats_more: 'Más',
+    stats_volume_metrics: 'Métricas de Volumen',
+    stats_last_year: 'en el último año',
+    stats_top_month: 'Mejor Mes',
+    
+    // Weekdays
+    day_mon: 'Lun',
+    day_tue: 'Mar',
+    day_wed: 'Mié',
+    day_thu: 'Jue',
+    day_fri: 'Vie',
+    day_sat: 'Sáb',
+    day_sun: 'Dom',
+
+
     
     // Social
     community: 'Comunidad',

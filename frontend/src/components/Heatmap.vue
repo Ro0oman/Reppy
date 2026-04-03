@@ -3,34 +3,44 @@
     <!-- Header: Total contributions -->
     <div class="flex items-center justify-between px-2">
       <div class="flex flex-col">
-        <h3 class="text-xl font-black text-zinc-900 dark:text-white leading-none mb-1">{{ totalYearReps }} {{ i18n.t('stats_reps') || 'Reps' }}</h3>
-        <p class="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">{{ i18n.t('in_the_last_year') || 'in the last year' }}</p>
+        <h3 class="text-xl font-black text-zinc-900 dark:text-white leading-none mb-1">{{ totalYearReps }} {{ i18n.t('stats_reps') }}</h3>
+        <p class="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">{{ i18n.t('stats_last_year') }}</p>
       </div>
       <div class="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-white/5 rounded-full text-[10px] font-black text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:text-white transition-colors cursor-pointer">
-        <span>{{ i18n.t('contribution_settings') || 'Settings' }}</span>
+        <span>{{ i18n.t('stats_settings') }}</span>
         <ChevronDown class="w-3 h-3" />
       </div>
     </div>
 
     <div class="flex gap-4">
       <!-- Main Activity Grid Area -->
-      <div class="flex-1 min-w-0 p-8 bg-white dark:bg-zinc-900/40 border-2 border-zinc-200 dark:border-white/5 rounded-[2rem] relative overflow-hidden group/board">
-        <!-- Background Glow -->
-        <div class="absolute -top-24 -left-24 w-64 h-64 bg-emerald-500/5 rounded-full blur-[80px] pointer-events-none group-hover/board:bg-emerald-500/10 transition-colors duration-700"></div>
-
+      <div class="flex-1 min-w-0 p-8 bg-white dark:bg-zinc-900/40 border-2 border-zinc-200 dark:border-white/5 rounded-[2rem] relative overflow-visible group/board">
         <div class="flex relative z-10">
           <!-- Weekday Labels -->
           <div class="flex flex-col gap-1.5 pr-6 justify-center text-[9px] font-black text-zinc-600 uppercase tracking-tighter mt-6">
             <span class="h-[11px] leading-[11px]"></span>
-            <span class="h-[11px] leading-[11px] text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 opacity-40">Mon</span>
+            <span class="h-[11px] leading-[11px] text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 opacity-40">{{ i18n.t('day_mon') }}</span>
             <span class="h-[11px] leading-[11px]"></span>
-            <span class="h-[11px] leading-[11px] text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 opacity-40">Wed</span>
+            <span class="h-[11px] leading-[11px] text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 opacity-40">{{ i18n.t('day_wed') }}</span>
             <span class="h-[11px] leading-[11px]"></span>
-            <span class="h-[11px] leading-[11px] text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 opacity-40">Fri</span>
+            <span class="h-[11px] leading-[11px] text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 opacity-40">{{ i18n.t('day_fri') }}</span>
             <span class="h-[11px] leading-[11px]"></span>
           </div>
 
-          <div class="flex-1 overflow-x-auto scrollbar-hide">
+          <div class="flex-1 overflow-x-auto scrollbar-hide relative pb-10" ref="gridContainer">
+            <!-- Tooltip (Inside scrollable container for correct movement) -->
+            <transition name="tooltip">
+              <div v-if="hoveredDay" 
+                class="absolute z-[100] px-4 py-2 bg-zinc-900 dark:bg-white text-zinc-50 dark:text-zinc-900 text-[10px] font-black rounded-xl shadow-2xl pointer-events-none whitespace-nowrap -translate-x-1/2 -translate-y-full mb-3 border border-white/10"
+                :style="tooltipPosition"
+              >
+                <div class="flex flex-col items-center gap-0.5 relative">
+                  <span>{{ hoveredDay.count > 0 ? `${hoveredDay.count} ${i18n.t('heatmap_reps')}` : i18n.t('heatmap_no_reps') }} {{ formatDate(hoveredDay.date) }}</span>
+                  <div class="w-1.5 h-1.5 bg-zinc-900 dark:bg-white rotate-45 absolute -bottom-3 left-1/2 -translate-x-1/2 border-r border-b border-white/10"></div>
+                </div>
+              </div>
+            </transition>
+
             <!-- Month Labels -->
             <div class="flex gap-1.5 mb-3 h-4 relative">
               <span 
@@ -47,13 +57,13 @@
               <div v-for="(week, wIndex) in weeks" :key="wIndex" class="flex flex-col gap-1.5">
                 <div 
                   v-for="(day, dIndex) in week" :key="dIndex"
-                  class="w-[11px] h-[11px] rounded-[3px] transition-all duration-500 relative group/day"
+                  class="w-[11px] h-[11px] rounded-[3px] transition-all duration-500 relative"
                   :class="[
                     getColorClass(day),
                     activeDay?.date === day.date ? 'ring-2 ring-white scale-125 z-20 shadow-[0_0_20px_rgba(255,255,255,0.5)]' : '',
                     day.isOutsideYear ? 'opacity-0 pointer-events-none' : 'cursor-pointer hover:ring-2 hover:ring-white/40 hover:scale-150 hover:z-30 hover:shadow-2xl'
                   ]"
-                  @mouseenter="!day.isOutsideYear && (hoveredDay = day)"
+                  @mouseenter="handleMouseEnter($event, day)"
                   @mouseleave="hoveredDay = null"
                   @click="!day.isOutsideYear && (clickedDay = clickedDay?.date === day.date ? null : day)"
                 >
@@ -65,9 +75,9 @@
 
         <!-- Footer Legend -->
         <div class="flex items-center justify-between mt-8 px-4 relative z-10">
-          <p class="text-[9px] font-black text-zinc-600 uppercase tracking-widest opacity-40">{{ i18n.t('progress_metrics') || 'Volume Metrics' }}</p>
+          <p class="text-[9px] font-black text-zinc-600 uppercase tracking-widest opacity-40">{{ i18n.t('stats_volume_metrics') }}</p>
           <div class="flex items-center gap-3 bg-black/5 dark:bg-black/40 px-4 py-2 rounded-full border border-zinc-200 dark:border-white/5">
-            <span class="text-[9px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">Less</span>
+            <span class="text-[9px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">{{ i18n.t('stats_less') }}</span>
             <div class="flex gap-1.5">
               <div class="w-2.5 h-2.5 rounded-[2px] bg-zinc-100 dark:bg-zinc-800/40"></div>
               <div class="w-2.5 h-2.5 rounded-[2px] bg-indigo-900/60"></div>
@@ -76,7 +86,7 @@
               <div class="w-2.5 h-2.5 rounded-[2px] bg-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.5)]"></div>
               <div class="w-2.5 h-2.5 rounded-[2px] bg-white shadow-[0_0_20px_rgba(255,255,255,0.8)]"></div>
             </div>
-            <span class="text-[9px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">More</span>
+            <span class="text-[9px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">{{ i18n.t('stats_more') }}</span>
           </div>
         </div>
 
@@ -100,8 +110,30 @@ const props = defineProps({
 const i18n = useI18nStore();
 const hoveredDay = ref(null);
 const clickedDay = ref(null);
+const gridContainer = ref(null);
+const tooltipPos = ref({ top: 0, left: 0 });
 
 const activeDay = computed(() => hoveredDay.value || clickedDay.value);
+
+const handleMouseEnter = (event, day) => {
+  if (day.isOutsideYear) return;
+  
+  hoveredDay.value = day;
+  
+  // Calculate relative position within the group/board
+  const rect = event.target.getBoundingClientRect();
+  const parentRect = event.target.closest('.group\\/board').getBoundingClientRect();
+  
+  tooltipPos.value = {
+    top: rect.top - parentRect.top,
+    left: rect.left - parentRect.left + (rect.width / 2)
+  };
+};
+
+const tooltipPosition = computed(() => ({
+  top: `${tooltipPos.value.top}px`,
+  left: `${tooltipPos.value.left}px`
+}));
 
 const totalYearReps = computed(() => {
   return props.data.reduce((acc, curr) => acc + curr.count, 0);

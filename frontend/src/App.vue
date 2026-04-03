@@ -40,7 +40,8 @@
           <button @click="view = 'shop'" class="text-base font-bold transition-colors"
 
             :class="view === 'shop' ? 'text-amber-600 dark:text-amber-500 drop-shadow-md' : 'text-amber-600/70 hover:text-amber-600 dark:text-zinc-400 dark:hover:text-amber-500'">
-            David Goggins Shop
+            {{ i18n.t('nav_shop') }}
+
           </button>
         </div>
 
@@ -117,7 +118,8 @@
         <button @click="view = 'shop'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90"
           :class="view === 'shop' ? 'text-amber-500' : 'text-zinc-400'">
           <ShoppingBag class="w-6 h-6" :class="view === 'shop' ? 'fill-amber-500/10' : ''" />
-          <span class="text-[10px] font-black uppercase tracking-tighter">Tienda</span>
+          <span class="text-[10px] font-black uppercase tracking-tighter">{{ i18n.t('tf_shop') || 'Tienda' }}</span>
+
         </button>
         <button @click="view = 'inventory'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90"
           :class="view === 'inventory' ? 'text-primary-600' : 'text-zinc-400'">
