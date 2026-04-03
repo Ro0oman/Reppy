@@ -10,6 +10,7 @@
           <svg viewBox="0 0 100 120" class="w-8 h-10 opacity-40">
             <ellipse cx="50" cy="65" rx="35" ry="50" :fill="getRandomColor()" />
             <path d="M30 45 Q50 35 70 45" fill="none" stroke="white" stroke-width="4" opacity="0.3" />
+            
           </svg>
         </div>
       </div>
