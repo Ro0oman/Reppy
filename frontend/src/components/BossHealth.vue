@@ -1,95 +1,67 @@
 <template>
   <div v-if="loading" class="animate-pulse bg-white/5 h-24 rounded-3xl mb-8"></div>
-  <div v-else-if="boss" class="glass p-5 rounded-3xl mb-8 border border-zinc-200 dark:border-white/5 relative overflow-hidden group flex flex-col justify-center">
-    <!-- Easter Background subtle glow -->
-    <div class="absolute -right-20 -top-20 w-64 h-64 bg-pink-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+  <div v-else-if="boss" class="glass p-5 rounded-3xl mb-8 border border-zinc-200 dark:border-white/5 relative overflow-hidden group flex flex-col justify-center transition-all duration-500">
+    <!-- Subtle glow based on status -->
+    <div v-if="hasStarted" class="absolute -right-20 -top-20 w-64 h-64 bg-pink-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+    <div v-else class="absolute -right-20 -top-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] pointer-events-none"></div>
 
-    <div class="flex items-center justify-between mb-4 relative z-10">
+    <div class="flex items-center justify-between mb-4 relative z-10" :class="!hasStarted ? 'opacity-40 grayscale pointer-events-none' : ''">
       <div class="flex items-center gap-3">
-        <div class="w-12 h-12 bg-white dark:bg-zinc-900 rounded-2xl flex items-center justify-center border border-zinc-200 dark:border-white/10 text-2xl shadow-xl">
-          🐰
+        <div class="w-14 h-14 bg-white dark:bg-zinc-900 rounded-2xl flex items-center justify-center border border-zinc-200 dark:border-white/10 shadow-xl overflow-hidden">
+          <img v-if="boss.image_url" :src="boss.image_url" class="w-full h-full object-contain p-1" />
+          <span v-else class="text-2xl italic font-black">?</span>
         </div>
         <div>
-          <h3 class="text-xl font-black italic tracking-tighter text-zinc-900 dark:text-white">{{ boss.name }}</h3>
-          <p class="text-xs text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 font-medium">{{ boss.description }}</p>
+          <h3 class="text-xl font-black italic tracking-tighter text-zinc-900 dark:text-white uppercase">{{ boss.name }}</h3>
+          <p class="text-xs text-zinc-400 dark:text-zinc-500 font-medium">{{ boss.description }}</p>
         </div>
       </div>
       <div class="text-right">
         <div class="text-2xl font-black text-pink-500 tracking-tighter">{{ boss.current_hp.toLocaleString() }} <span class="text-sm text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">/ {{ boss.total_hp.toLocaleString() }} HP</span></div>
-        <button 
-          @click="shareEvent"
-          class="mt-2 flex items-center gap-2 justify-end ms-auto text-xs font-bold uppercase tracking-widest text-primary-400 hover:text-primary-300 transition-colors bg-primary-500/10 px-3 py-1 rounded-lg"
-        >
-          <span>🔗 Reclutar Ayuda</span>
+        <button v-if="hasStarted" @click="shareEvent" class="mt-2 text-[10px] font-black uppercase tracking-widest text-primary-400 hover:text-primary-300 transition-colors bg-primary-500/5 px-3 py-1.5 rounded-lg border border-primary-500/10">
+          Reclutar Ayuda 🔗
         </button>
       </div>
     </div>
 
-    <!-- Health Bar Track -->
-    <div class="relative h-6 bg-white dark:bg-zinc-900 rounded-full overflow-hidden border border-zinc-200 dark:border-white/5 mb-3">
-      <!-- Health Bar Fill -->
-      <div 
-        class="absolute top-0 left-0 h-full bg-gradient-to-r from-red-500 via-pink-500 to-amber-500 transition-all duration-1000 ease-out"
-        :style="{ width: `${hpPercentage}%` }"
-      ></div>
-      
-      <!-- Milestones Indicators (33%, 66%, 100% damage = 66%, 33%, 0% HP) -->
-      <div class="absolute inset-0 w-full h-full pointer-events-none">
-        <div class="absolute top-0 bottom-0 w-px bg-white/20" style="left: 66.6%"></div>
-        <div class="absolute top-0 bottom-0 w-px bg-white/20" style="left: 33.3%"></div>
+    <!-- Main Boss Progress -->
+    <div class="relative" :class="!hasStarted ? 'opacity-20 grayscale pointer-events-none' : ''">
+      <div class="relative h-6 bg-white dark:bg-zinc-900 rounded-full overflow-hidden border border-zinc-200 dark:border-white/5 mb-3">
+        <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-red-600 via-pink-500 to-amber-500 transition-all duration-1000 ease-out" :style="{ width: `${hpPercentage}%` }"></div>
+        <div class="absolute inset-0 flex items-center justify-around pointer-events-none px-4">
+          <div class="w-px h-full bg-white/20"></div>
+          <div class="w-px h-full bg-white/20"></div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between relative z-10">
+        <p class="text-[9px] text-zinc-500 font-black uppercase tracking-widest">Próximo cofre: <span class="text-pink-500">{{ repsToNextChest }} reps</span></p>
+        <div class="flex items-center gap-2">
+          <button v-for="i in 3" :key="i" @click="claim(i)"
+            class="w-10 h-10 rounded-xl flex items-center justify-center text-lg transition-all border"
+            :class="getChestClass(i)" :disabled="!canClaim(i) || claiming">
+            {{ hasClaimed(i) ? '✅' : '🎁' }}
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- Chests and Milestones Info -->
-    <div class="flex items-center justify-between relative z-10">
-      <p class="text-xs text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-widest">Repeticiones para tu próximo cofre: <span class="text-pink-400">{{ repsToNextChest }}</span></p>
-      
-      <div class="flex items-center gap-3">
-        <!-- Chest 1 -->
-        <button 
-          @click="claim(1)"
-          class="w-10 h-10 rounded-xl flex items-center justify-center text-lg transition-all"
-          :class="getChestClass(1)"
-          :disabled="!canClaim(1) || claiming"
-        >
-          {{ hasClaimed(1) ? '✅' : '🎁' }}
-        </button>
-        <!-- Chest 2 -->
-        <button 
-          @click="claim(2)"
-          class="w-10 h-10 rounded-xl flex items-center justify-center text-lg transition-all"
-          :class="getChestClass(2)"
-          :disabled="!canClaim(2) || claiming"
-        >
-          {{ hasClaimed(2) ? '✅' : '🎁' }}
-        </button>
-        <!-- Chest 3 -->
-        <button 
-          @click="claim(3)"
-          class="w-10 h-10 rounded-xl flex items-center justify-center text-lg transition-all"
-          :class="getChestClass(3)"
-          :disabled="!canClaim(3) || claiming"
-        >
-          {{ hasClaimed(3) ? '✅' : '🎁' }}
-        </button>
-      </div>
-    </div>
-    <!-- Block interaction if not started yet -->
-    <div v-if="!hasStarted" class="absolute inset-0 z-50 backdrop-blur-lg bg-zinc-100/80 dark:bg-black/80 flex items-center justify-center p-4">
-      <div class="bg-white dark:bg-zinc-950 max-w-2xl w-full py-4 px-6 rounded-3xl shadow-2xl border-2 border-zinc-300 dark:border-white/20 relative overflow-hidden flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center sm:text-left transition-all">
-        <div class="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-amber-500/5 pointer-events-none"></div>
-        <div class="relative z-10 shrink-0">
-          <div class="inline-flex p-3 rounded-full bg-zinc-100 dark:bg-black border-2 border-zinc-200 dark:border-zinc-800 shadow-sm">
-            <span class="text-3xl animate-bounce">🔒</span>
+    <!-- Global Countdown Overlay for Upcoming Bosses -->
+    <div v-if="!hasStarted" class="absolute inset-0 z-30 flex items-center justify-center p-6 bg-zinc-50/10 dark:bg-black/10 backdrop-blur-[2px]">
+      <div class="bg-white/95 dark:bg-zinc-950/95 p-6 rounded-[2rem] border border-white/20 shadow-2xl flex flex-col sm:flex-row items-center gap-6 max-w-lg w-full transform hover:scale-[1.02] transition-transform">
+        <div class="relative shrink-0">
+          <div class="w-20 h-20 bg-zinc-100 dark:bg-black rounded-3xl flex items-center justify-center border-2 border-primary-500/20">
+             <span class="text-4xl animate-pulse">🔒</span>
           </div>
         </div>
-        <div class="relative z-10 flex-1">
-          <h3 class="text-xl font-black text-black dark:text-white italic tracking-tighter uppercase">Evento Bloqueado</h3>
-          <p class="text-xs font-bold text-zinc-600 dark:text-zinc-400 mt-1">Apertura: Sábado 00:00.<br class="hidden sm:block">Las repeticiones ahora mismo se guardan, pero no afectan a la guarida.</p>
-        </div>
-        <div class="relative z-10 shrink-0">
-          <div class="p-3 bg-zinc-100 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-inner mt-2 sm:mt-0">
-            <p class="text-lg font-mono text-pink-500 dark:text-pink-400 font-bold tracking-widest">{{ timeToStart }}</p>
+        <div class="flex-1 text-center sm:text-left">
+          <p class="text-[10px] font-black uppercase tracking-[0.3em] text-primary-500 mb-1">Próximo Evento Global</p>
+          <h3 class="text-xl font-black text-black dark:text-white uppercase italic tracking-tighter">{{ boss.name }}</h3>
+          <div class="mt-3 flex items-center justify-center sm:justify-start gap-4">
+            <div class="px-4 py-2 bg-black dark:bg-white/5 rounded-xl border border-white/10">
+              <p class="text-lg font-mono font-black text-primary-500 tracking-tighter">{{ timeToStart }}</p>
+            </div>
+            <p class="text-[10px] font-bold text-zinc-500 dark:text-zinc-400">Días, Horas, Min, Seg<br>para el despliegue.</p>
           </div>
         </div>
       </div>

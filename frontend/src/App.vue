@@ -3,7 +3,8 @@
     
     <!-- Easter Background Overlay -->
     <!-- Animated background system -->
-    <BackgroundEffect :background-css="authStore.user?.background_css" />
+    <!-- Animated background system -->
+    <BackgroundEffect v-if="authStore.isAuthenticated" :background-css="authStore.user?.background_css" />
 
     <nav v-if="authStore.isAuthenticated"
       class="border-b border-zinc-200 dark:border-white/5 bg-white/50 dark:bg-black/20 backdrop-blur-xl sticky top-0 z-50">
@@ -32,10 +33,12 @@
             {{ i18n.t('nav_inventory') }}
           </button>
           <button @click="view = 'shop'" class="text-base font-bold transition-colors"
-
             :class="view === 'shop' ? 'text-amber-600 dark:text-amber-500 drop-shadow-md' : 'text-amber-600/70 hover:text-amber-600 dark:text-zinc-400 dark:hover:text-amber-500'">
             {{ i18n.t('nav_shop') }}
-
+          </button>
+          <button v-if="authStore.user?.is_admin" @click="view = 'admin'" class="text-base font-bold transition-colors text-indigo-500 hover:text-indigo-400"
+            :class="view === 'admin' ? 'underline decoration-2 underline-offset-8' : ''">
+            Admin
           </button>
         </div>
 
@@ -82,6 +85,7 @@
         <Shop v-if="view === 'shop'" />
         <Inventory v-if="view === 'inventory'" />
         <Profile v-if="view === 'profile'" :userId="currentProfileId" />
+        <AdminPanel v-if="view === 'admin'" />
 
         <Landing v-if="view === 'landing'" @start="view = 'dashboard'" />
       </template>
@@ -253,6 +257,7 @@ import Social from './components/Social.vue'
 import Shop from './components/Shop.vue'
 import Profile from './components/Profile.vue'
 import Inventory from './components/Inventory.vue'
+import AdminPanel from './components/AdminPanel.vue'
 import LuckyWheel from './components/LuckyWheel.vue'
 import AvatarFrame from './components/AvatarFrame.vue'
 import BackgroundEffect from './components/BackgroundEffect.vue'

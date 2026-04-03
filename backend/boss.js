@@ -7,18 +7,32 @@ const router = express.Router();
 // Get active or upcoming boss
 router.get('/active', authenticate, async (req, res) => {
   try {
+    // Priority: 1. Active boss, 2. Upcoming boss starting soonest
     const bossRes = await query(
-      `SELECT * FROM boss_fights 
-       WHERE status = 'active'
-       AND end_date >= CURRENT_TIMESTAMP 
-       ORDER BY start_date DESC LIMIT 1`
+      `SELECT *, 
+       CASE 
+         WHEN status = 'active' AND start_date <= CURRENT_TIMESTAMP AND end_date >= CURRENT_TIMESTAMP THEN 1
+         WHEN status = 'active' AND start_date > CURRENT_TIMESTAMP THEN 2
+         ELSE 3
+       END as priority
+       FROM boss_fights 
+       WHERE (status = 'active' OR status = 'defeated')
+       ORDER BY priority ASC, start_date ASC LIMIT 1`
     );
 
     if (bossRes.rows.length === 0) {
-      return res.json(null); // No active event
+      return res.json(null);
     }
     
     const boss = bossRes.rows[0];
+
+    // Calculate starts_in if upcoming
+    let starts_in = null;
+    const now = new Date();
+    const start = new Date(boss.start_date);
+    if (start > now) {
+      starts_in = Math.max(0, Math.floor((start - now) / 1000));
+    }
 
     // Get user's personal participation and chest status
     const participantRes = await query(
@@ -29,7 +43,7 @@ router.get('/active', authenticate, async (req, res) => {
     const participant = participantRes.rows[0] || { damage_dealt: 0, chests_claimed: 0 };
 
     res.json({
-      boss,
+      boss: { ...boss, starts_in },
       personal_damage: participant.damage_dealt,
       chests_claimed: participant.chests_claimed
     });
@@ -39,36 +53,8 @@ router.get('/active', authenticate, async (req, res) => {
   }
 });
 
-// Admin/System trigger to spawn Easter Boss
-router.post('/spawn-easter', async (req, res) => {
-  try {
-    // 1. Calculate Total Active Users
-    const usersRes = await query('SELECT COUNT(*) as count FROM users');
-    const totalUsers = parseInt(usersRes.rows[0].count);
-    
-    // Dynamic HP Formula
-    const totalHP = totalUsers * 10;
-    
-    // Dates: Starts specific Saturday
-    const startDate = new Date('2026-04-03T22:00:00Z'); // Friday 22:00 UTC = Saturday 00:00 CEST (Spain)
-    const endDate = new Date(startDate);
-    endDate.setDate(startDate.getDate() + 7);
 
-    const result = await query(
-      `INSERT INTO boss_fights (name, description, total_hp, current_hp, start_date, end_date)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       RETURNING *`,
-      ['El Conejo de Acero', 'Evento de Pascua Comunitario de 7 Días', totalHP, totalHP, startDate, endDate]
-    );
-
-    res.json(result.rows[0]);
-  } catch (error) {
-    console.error('Error spawning boss:', error);
-    res.status(500).json({ message: 'Error spawning boss' });
-  }
-});
-
-// Claim milestone chest
+// ... inside claim-chest
 router.post('/claim-chest/:bossId', authenticate, async (req, res) => {
   const bossId = parseInt(req.params.bossId);
   const userId = req.user.id;
@@ -79,16 +65,21 @@ router.post('/claim-chest/:bossId', authenticate, async (req, res) => {
     const boss = bossRes.rows[0];
 
     const damagePercent = ((boss.total_hp - boss.current_hp) / boss.total_hp) * 100;
+    const isDefeated = boss.current_hp <= 0 || boss.status === 'defeated';
+    
     let unlockedChests = 0;
     if (damagePercent >= 33.3) unlockedChests = 1;
     if (damagePercent >= 66.6) unlockedChests = 2;
-    if (damagePercent >= 100) unlockedChests = 3;
+    if (isDefeated) unlockedChests = 3;
 
-    const partRes = await query('SELECT chests_claimed FROM event_participants WHERE boss_fight_id = $1 AND user_id = $2', [bossId, userId]);
+    const partRes = await query('SELECT chests_claimed, damage_dealt FROM event_participants WHERE boss_fight_id = $1 AND user_id = $2', [bossId, userId]);
     if (partRes.rows.length === 0) return res.status(403).json({ message: 'No participation recorded' });
     
-    const claimed = partRes.rows[0].chests_claimed;
-    if (claimed >= unlockedChests || claimed >= 3) {
+    const participant = partRes.rows[0];
+    const claimed = participant.chests_claimed;
+    
+    // Chest 3 is available to all participants if boss is defeated
+    if (claimed >= unlockedChests) {
       return res.status(400).json({ message: 'No chests available to claim right now' });
     }
 

@@ -8,8 +8,8 @@ import { query } from './db.js';
 const router = express.Router();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-const generateToken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
+const generateToken = (userId, isAdmin) => {
+  return jwt.sign({ id: userId, is_admin: isAdmin }, process.env.JWT_SECRET, { expiresIn: '7d' });
 };
 
 // Google Login
@@ -40,7 +40,7 @@ router.post('/google', async (req, res) => {
       user = userResult.rows[0];
     }
 
-    const sessionToken = generateToken(user.id);
+    const sessionToken = generateToken(user.id, user.is_admin);
 
     res.json({
       token: sessionToken,
@@ -51,7 +51,8 @@ router.post('/google', async (req, res) => {
         avatar_url: user.avatar_url,
         total_reps: user.total_reps,
         is_private: user.is_private,
-        has_seen_easter_modal: user.has_seen_easter_modal
+        has_seen_easter_modal: user.has_seen_easter_modal,
+        is_admin: user.is_admin
       }
     });
   } catch (error) {
@@ -84,7 +85,7 @@ router.post('/signup', async (req, res) => {
     );
 
     const user = result.rows[0];
-    const token = generateToken(user.id);
+    const token = generateToken(user.id, user.is_admin);
 
     res.json({
       token,
@@ -95,7 +96,8 @@ router.post('/signup', async (req, res) => {
         avatar_url: user.avatar_url,
         total_reps: user.total_reps,
         is_private: user.is_private,
-        has_seen_easter_modal: user.has_seen_easter_modal
+        has_seen_easter_modal: user.has_seen_easter_modal,
+        is_admin: user.is_admin
       }
     });
   } catch (error) {
@@ -125,7 +127,7 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ code: 'ERR_WRONG_PASSWORD', message: 'Incorrect password' });
     }
 
-    const token = generateToken(user.id);
+    const token = generateToken(user.id, user.is_admin);
 
     res.json({
       token,
@@ -136,7 +138,8 @@ router.post('/login', async (req, res) => {
         avatar_url: user.avatar_url,
         total_reps: user.total_reps,
         is_private: user.is_private,
-        has_seen_easter_modal: user.has_seen_easter_modal
+        has_seen_easter_modal: user.has_seen_easter_modal,
+        is_admin: user.is_admin
       }
     });
   } catch (error) {

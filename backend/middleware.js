@@ -17,3 +17,10 @@ export const authenticate = (req, res, next) => {
     res.status(400).json({ message: 'Invalid token.' });
   }
 };
+
+export const isAdmin = (req, res, next) => {
+  if (!req.user || !req.user.is_admin) {
+    return res.status(403).json({ message: 'Access denied. Admin privileges required.' });
+  }
+  next();
+};

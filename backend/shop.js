@@ -6,7 +6,14 @@ const router = express.Router();
 // Get available cosmetics
 router.get('/cosmetics', authenticate, async (req, res) => {
   try {
-    const cosmeticsRes = await query('SELECT * FROM cosmetics WHERE price > 0 OR name IN (\'Aura de Pascua\', \'Rabbit Slayer\', \'Easter Celebration\') ORDER BY created_at ASC, id ASC');
+    // Show items that are not seasonal OR items the user already owns
+    const cosmeticsRes = await query(`
+      SELECT c.* 
+      FROM cosmetics c
+      LEFT JOIN user_inventory ui ON c.id = ui.cosmetic_id AND ui.user_id = $1
+      WHERE c.is_seasonal = FALSE OR ui.cosmetic_id IS NOT NULL
+      ORDER BY c.price ASC, c.id ASC
+    `, [req.user.id]);
     const inventoryRes = await query('SELECT cosmetic_id, is_new FROM user_inventory WHERE user_id = $1', [req.user.id]);
     
     const inventoryMap = {};
@@ -67,8 +74,8 @@ router.post('/buy/:id', authenticate, async (req, res) => {
       return res.status(400).json({ message: 'Item already owned' });
     }
 
-    if (item.price === 0) {
-      return res.status(400).json({ message: 'Este item solo se obtiene en eventos' });
+    if (item.is_seasonal) {
+      return res.status(400).json({ message: 'Este objeto es especial y solo se obtiene en eventos' });
     }
 
     if (user.reppy_coins < item.price) {

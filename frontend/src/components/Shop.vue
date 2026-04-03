@@ -51,6 +51,9 @@
             :class="getRarityBadge(item).classes">
             {{ getRarityBadge(item).label }}
           </span>
+          <span v-if="item.is_seasonal" class="ml-2 text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-full border text-amber-500 bg-amber-500/10 border-amber-500/30">
+            Temporada
+          </span>
         </div>
 
         <div class="absolute top-3 left-3 z-10">
@@ -109,7 +112,7 @@
           </div>
 
           <button 
-            v-if="!item.owned && item.price > 0"
+            v-if="!item.owned && item.price > 0 && !item.is_seasonal"
             @click="buyItem(item)"
             :disabled="!canAfford(item) || buying || !item.is_unlocked"
             class="px-4 py-2 rounded-lg text-sm font-bold uppercase tracking-wide transition-all"
@@ -117,6 +120,10 @@
           >
             {{ item.is_unlocked ? 'Comprar' : 'Bloqueado' }}
           </button>
+          
+          <div v-else-if="!item.owned && item.is_seasonal" class="text-xs font-black text-amber-500 uppercase tracking-widest bg-amber-500/10 px-4 py-2 rounded-lg border border-amber-500/20">
+            Recompensa Boss
+          </div>
           
           <button 
             v-if="item.owned"
@@ -273,10 +280,13 @@ const isEquipped = (item) => {
 };
 
 const getRarityBadge = (item) => {
-  if (item.price >= 1200) return { label: 'Legendary', classes: 'text-orange-400 bg-orange-500/10 border-orange-500/30' };
-  if (item.price >= 600) return { label: 'Epic', classes: 'text-purple-400 bg-purple-500/10 border-purple-500/30' };
-  if (item.price >= 200) return { label: 'Rare', classes: 'text-blue-400 bg-blue-500/10 border-blue-500/30' };
-  return { label: 'Common', classes: 'text-zinc-400 bg-zinc-500/10 border-zinc-500/30' };
+  const rarity = item.rarity || 'common';
+  switch (rarity) {
+    case 'legendary': return { label: 'Legendary', classes: 'text-orange-400 bg-orange-500/10 border-orange-500/30' };
+    case 'epic': return { label: 'Epic', classes: 'text-purple-400 bg-purple-500/10 border-purple-500/30' };
+    case 'rare': return { label: 'Rare', classes: 'text-blue-400 bg-blue-500/10 border-blue-500/30' };
+    default: return { label: 'Common', classes: 'text-zinc-400 bg-zinc-500/10 border-zinc-500/30' };
+  }
 };
 
 const getCardClass = (item) => {

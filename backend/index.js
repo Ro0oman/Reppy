@@ -15,6 +15,8 @@ import rouletteRoutes from './roulette.js';
 import { query } from './db.js';
 
 
+import adminRoutes from './admin.js';
+
 dotenv.config();
 
 const app = express();
@@ -35,6 +37,7 @@ app.use('/api/shop', shopRoutes);
 app.use('/api/boss', bossRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/roulette', rouletteRoutes);
+app.use('/api/admin', adminRoutes);
 
 
 // Automated DB initialization for the user
@@ -107,6 +110,15 @@ app.get('/api/db/init', async (req, res) => {
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
           UNIQUE(user_id_1, user_id_2)
       )`,
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE`,
+      `UPDATE users SET is_admin = TRUE WHERE email = 'romainot99@gmail.com'`,
+      `ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS image_url TEXT`,
+      `ALTER TABLE cosmetics ADD COLUMN IF NOT EXISTS is_seasonal BOOLEAN DEFAULT FALSE`,
+      `UPDATE cosmetics SET is_seasonal = TRUE WHERE name IN ('Aura de Pascua', 'Rabbit Slayer', 'Easter Celebration')`,
+      `ALTER TABLE cosmetics ADD COLUMN IF NOT EXISTS rarity VARCHAR(50) DEFAULT 'common'`,
+      `UPDATE cosmetics SET rarity = 'legendary' WHERE price >= 1200`,
+      `UPDATE cosmetics SET rarity = 'epic' WHERE price < 1200 AND price >= 600`,
+      `UPDATE cosmetics SET rarity = 'rare' WHERE price < 600 AND price >= 200`,
       `CREATE INDEX IF NOT EXISTS idx_reps_user_date ON reps(user_id, date)`,
       `CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(user_id_1, user_id_2)`,
       `CREATE INDEX IF NOT EXISTS idx_inventory_user ON user_inventory(user_id)`
