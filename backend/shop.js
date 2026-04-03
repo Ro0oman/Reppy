@@ -7,7 +7,7 @@ const router = express.Router();
 // Get available cosmetics
 router.get('/cosmetics', authenticate, async (req, res) => {
   try {
-    const cosmeticsRes = await query('SELECT * FROM cosmetics ORDER BY price ASC');
+    const cosmeticsRes = await query('SELECT * FROM cosmetics WHERE price > 0 ORDER BY price ASC');
     const inventoryRes = await query('SELECT cosmetic_id FROM user_inventory WHERE user_id = $1', [req.user.id]);
     
     const ownedIds = inventoryRes.rows.map(row => row.cosmetic_id);
@@ -42,6 +42,10 @@ router.post('/buy/:id', authenticate, async (req, res) => {
     const inventoryRes = await query('SELECT * FROM user_inventory WHERE user_id = $1 AND cosmetic_id = $2', [userId, cosmeticId]);
     if (inventoryRes.rows.length > 0) {
       return res.status(400).json({ message: 'Item already owned' });
+    }
+
+    if (item.price === 0) {
+      return res.status(400).json({ message: 'Este item solo se obtiene en eventos' });
     }
 
     if (user.reppy_coins < item.price) {

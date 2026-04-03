@@ -7,19 +7,19 @@ async function seed() {
     const items = [
       { name: 'Conejo Veloz', description: 'Título festivo de Pascua', type: 'title', price: 100, css_value: 'text-pink-500' },
       { name: 'El Inquebrantable', description: 'Título legendario', type: 'title', price: 500, css_value: 'text-amber-500 font-black' },
-      { name: 'Guardián del Tubo', description: 'Título épico', type: 'title', price: 250, css_value: 'text-emerald-500' },
-      { name: 'Aura Neón Rosa', description: 'Borde de avatar festivo', type: 'border', price: 150, css_value: 'frame-neon-rosa' },
-      { name: 'Aura Fuego Ámbar', description: 'Borde legendario', type: 'border', price: 600, css_value: 'frame-fuego-ambar' },
+      { name: 'Guardián del Tubo', description: 'Epic Title. Guardián de la barra.', type: 'title', price: 400, css_value: 'text-emerald-500' },
+      { name: 'Aura Neón Rosa', description: 'Rare Border. Neón rosa pulsante.', type: 'border', price: 250, css_value: 'frame-neon-rosa' },
+      { name: 'Aura Fuego Ámbar', description: 'Epic Border. Anillo de fuego estático.', type: 'border', price: 800, css_value: 'frame-fuego-ambar' },
       { name: 'Furia Infinita', description: 'Legendary Border. Llamas animadas.', type: 'border', price: 1500, css_value: 'frame-furia' },
       { name: 'Neural Overdrive', description: 'Epic Border. Vibe cyberpunk.', type: 'border', price: 800, css_value: 'frame-cyber' },
       { name: 'Blood Pact', description: 'Rare Border. Constancia tipo latido.', type: 'border', price: 300, css_value: 'frame-blood' },
-      { name: 'Brick by Brick', description: 'Common Border. Constancia diaria.', type: 'border', price: 100, css_value: 'frame-brick' },
+      { name: 'Brick by Brick', description: 'Common Border. Constancia diaria.', type: 'border', price: 80, css_value: 'frame-brick' },
       { name: 'Built Different', description: 'Legendary Title. Puro status.', type: 'title', price: 1500, css_value: 'text-orange-500 font-black tracking-[0.2em] drop-shadow-[0_0_10px_rgba(249,115,22,0.6)] uppercase' },
       { name: 'Cyber Athlete', description: 'Epic Title. Luces neon, vibe gamer.', type: 'title', price: 800, css_value: 'text-cyan-400 font-mono tracking-tighter drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]' },
-      { name: 'Stone Titan', description: 'Epic Title. Fuerza bruta.', type: 'title', price: 600, css_value: 'text-stone-400 font-black drop-shadow-md uppercase tracking-tight' },
+      { name: 'Stone Titan', description: 'Epic Title. Fuerza bruta.', type: 'title', price: 700, css_value: 'text-stone-400 font-black drop-shadow-md uppercase tracking-tight' },
       { name: 'Calisthenics Monk', description: 'Rare Title. Disciplina.', type: 'title', price: 300, css_value: 'text-zinc-300 font-light tracking-[0.3em] uppercase' },
-      { name: 'No Excuses', description: 'Common Title.', type: 'title', price: 150, css_value: 'text-white font-bold uppercase tracking-wider' },
-      { name: 'Marca del Slayer', description: 'Epic Title. Constancia en eventos.', type: 'title', price: 1000, css_value: 'text-red-500 font-black tracking-widest uppercase drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]' }
+      { name: 'No Excuses', description: 'Common Title. Sin excusas.', type: 'title', price: 120, css_value: 'text-white font-bold uppercase tracking-wider' },
+      { name: 'Marca del Slayer', description: '🔒 EVENT ONLY — Solo desbloqueable en eventos de Boss.', type: 'title', price: 0, css_value: 'text-red-500 font-black tracking-widest uppercase drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]' }
     ];
 
     for (const item of items) {

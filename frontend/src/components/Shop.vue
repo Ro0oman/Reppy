@@ -22,10 +22,25 @@
         class="bg-white dark:bg-zinc-900 border-2 rounded-2xl p-6 transition-all relative overflow-hidden"
         :class="getCardClass(item)"
       >
+        <!-- Rarity Badge -->
+        <div class="absolute top-3 right-3 z-10">
+          <span class="text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-full border"
+            :class="getRarityBadge(item).classes">
+            {{ getRarityBadge(item).label }}
+          </span>
+        </div>
+
+        <!-- Legendary/Epic glow effect -->
+        <div v-if="item.price >= 1200" class="absolute -top-12 -right-12 w-32 h-32 rounded-full blur-3xl pointer-events-none animate-pulse"
+          :class="item.price >= 1500 ? 'bg-orange-500/20' : 'bg-purple-500/15'"></div>
+        <div v-else-if="item.price >= 700" class="absolute -top-8 -right-8 w-24 h-24 rounded-full blur-2xl pointer-events-none"
+          :class="'bg-blue-500/10'"></div>
+
         <!-- Preview -->
         <div class="h-28 flex items-center justify-center bg-black/5 dark:bg-black/40 rounded-xl mb-4 border border-zinc-200 dark:border-white/5 relative">
-           <div v-if="item.type === 'title'" class="text-xl" :class="item.css_value">
+           <div v-if="item.type === 'title'" class="text-xl text-center px-4 leading-tight" :class="item.css_value">
              {{ item.name }}
+             <span v-if="item.price >= 1200" class="ml-1 inline-block">🔥</span>
            </div>
            <div v-if="item.type === 'border'">
              <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :border-css="item.css_value" :size="64" />
@@ -109,9 +124,18 @@ const isEquipped = (item) => {
   return false;
 };
 
+const getRarityBadge = (item) => {
+  if (item.price >= 1200) return { label: 'Legendary', classes: 'text-orange-400 bg-orange-500/10 border-orange-500/30' };
+  if (item.price >= 600) return { label: 'Epic', classes: 'text-purple-400 bg-purple-500/10 border-purple-500/30' };
+  if (item.price >= 200) return { label: 'Rare', classes: 'text-blue-400 bg-blue-500/10 border-blue-500/30' };
+  return { label: 'Common', classes: 'text-zinc-400 bg-zinc-500/10 border-zinc-500/30' };
+};
+
 const getCardClass = (item) => {
   if (isEquipped(item)) return 'border-emerald-500/50 shadow-[0_0_30px_rgba(16,185,129,0.1)]';
   if (item.owned) return 'border-white/20';
+  if (item.price >= 1200) return 'border-orange-500/40 hover:border-orange-500/70 shadow-[0_0_20px_rgba(249,115,22,0.05)]';
+  if (item.price >= 600) return 'border-purple-500/30 hover:border-purple-500/60';
   if (canAfford(item)) return 'border-amber-500/30 hover:border-amber-500/60';
   return 'border-zinc-200 dark:border-white/5 opacity-80 mix-blend-luminosity hover:mix-blend-normal hover:opacity-100 grayscale hover:grayscale-0';
 };
