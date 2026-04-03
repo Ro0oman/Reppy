@@ -179,6 +179,40 @@ app.get('/api/db/init', async (req, res) => {
        SELECT 'Nova de Oro 4', 'Ya empiezas a entender cómo funciona esto. Un rango con prestigio.', 'title', 450, 'color: #ffd700; font-weight: bold; text-shadow: 0 0 5px rgba(255,215,0,0.5);'
        WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Nova de Oro 4')`,
       
+      // SEASONAL LEGENDARY SETS
+      // 1. Void Mana
+      `INSERT INTO cosmetics (name, description, type, price, css_value, is_seasonal, rarity) 
+       SELECT 'Arcane Master', 'Portador del flujo eterno del mana.', 'title', 2500, 'title-mana', true, 'legendary'
+       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Arcane Master')`,
+      `INSERT INTO cosmetics (name, description, type, price, css_value, is_seasonal, rarity) 
+       SELECT 'Mana Surge', 'Energía arcana fluyendo por tu avatar.', 'border', 2500, 'frame-mana', true, 'legendary'
+       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Mana Surge')`,
+      `INSERT INTO cosmetics (name, description, type, price, css_value, is_seasonal, rarity) 
+       SELECT 'Abyssal Portal', 'Un vistazo al abismo infinito.', 'background', 2500, 'bg-mana', true, 'legendary'
+       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Abyssal Portal')`,
+
+      // 2. Infernal Soul
+      `INSERT INTO cosmetics (name, description, type, price, css_value, is_seasonal, rarity) 
+       SELECT 'Dragonborn', 'Sangre de dragón corre por tus venas.', 'title', 2500, 'title-lava', true, 'legendary'
+       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Dragonborn')`,
+      `INSERT INTO cosmetics (name, description, type, price, css_value, is_seasonal, rarity) 
+       SELECT 'Lava Core', 'Forjado en el corazón de un volcán.', 'border', 2500, 'frame-lava', true, 'legendary'
+       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Lava Core')`,
+      `INSERT INTO cosmetics (name, description, type, price, css_value, is_seasonal, rarity) 
+       SELECT 'Inferno', 'El mundo arde a tu alrededor.', 'background', 2500, 'bg-lava', true, 'legendary'
+       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Inferno')`,
+
+      // 3. Chronos Glitch
+      `INSERT INTO cosmetics (name, description, type, price, css_value, is_seasonal, rarity) 
+       SELECT 'Synthetix', 'Tu realidad se está fragmentando.', 'title', 2500, 'title-glitch', true, 'legendary'
+       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Synthetix')`,
+      `INSERT INTO cosmetics (name, description, type, price, css_value, is_seasonal, rarity) 
+       SELECT 'Prismatic Aura', 'Distorsión cromática de alta velocidad.', 'border', 2500, 'frame-prismatic', true, 'legendary'
+       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Prismatic Aura')`,
+      `INSERT INTO cosmetics (name, description, type, price, css_value, is_seasonal, rarity) 
+       SELECT 'Digital Storm', 'Tormenta de datos encriptados.', 'background', 2500, 'bg-glitch', true, 'legendary'
+       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Digital Storm')`,
+      
       `CREATE INDEX IF NOT EXISTS idx_reps_user_date ON reps(user_id, date)`,
       `CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(user_id_1, user_id_2)`,
       `CREATE INDEX IF NOT EXISTS idx_inventory_user ON user_inventory(user_id)`

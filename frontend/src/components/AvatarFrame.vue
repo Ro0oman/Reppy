@@ -45,6 +45,28 @@
       <div class="cyber-scanline"></div>
       <div class="cyber-glitch"></div>
     </template>
+
+    <!-- Mana Surge (Legendary) -->
+    <template v-if="frameClass === 'frame-mana'">
+      <div class="mana-bubble mana-bubble--1"></div>
+      <div class="mana-bubble mana-bubble--2"></div>
+      <div class="mana-bubble mana-bubble--3"></div>
+      <div class="mana-arc"></div>
+    </template>
+
+    <!-- Lava Core (Legendary) -->
+    <template v-if="frameClass === 'frame-lava'">
+      <div class="lava-spark lava-spark--1"></div>
+      <div class="lava-spark lava-spark--2"></div>
+      <div class="lava-smoke"></div>
+    </template>
+
+    <!-- Prismatic Aura (Legendary) -->
+    <template v-if="frameClass === 'frame-prismatic'">
+      <div class="prismatic-glitch prismatic-glitch--1"></div>
+      <div class="prismatic-glitch prismatic-glitch--2"></div>
+      <div class="prismatic-ring"></div>
+    </template>
   </div>
 </template>
 
@@ -65,6 +87,9 @@ const frameClass = computed(() => {
   if (css.includes('frame-brick')) return 'frame-brick';
   if (css.includes('frame-neon-rosa')) return 'frame-neon-rosa';
   if (css.includes('frame-fuego-ambar')) return 'frame-fuego-ambar';
+  if (css.includes('frame-mana')) return 'frame-mana';
+  if (css.includes('frame-lava')) return 'frame-lava';
+  if (css.includes('frame-prismatic')) return 'frame-prismatic';
   return 'frame-default';
 });
 
@@ -483,6 +508,116 @@ const frameVars = computed(() => ({
 }
 
 /* ========================================
+   LEGENDARY: MANA SURGE
+   ======================================== */
+.frame-mana .avatar-frame__border {
+  background: conic-gradient(from 0deg, #3b82f6, #8b5cf6, #06b6d4, #3b82f6);
+  animation: frame-rotate 2s linear infinite;
+}
+
+.frame-mana .avatar-frame__glow {
+  background: radial-gradient(circle, rgba(59,130,246,0.6) 30%, transparent 70%);
+  animation: frame-neon-pulse 1.2s ease-in-out infinite alternate;
+}
+
+.mana-bubble {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  z-index: 5;
+  opacity: 0;
+  animation: mana-float 2s ease-out infinite;
+}
+
+.mana-bubble--1 { width: 4px; height: 4px; left: 20%; top: 80%; animation-delay: 0s; }
+.mana-bubble--2 { width: 3px; height: 3px; right: 25%; bottom: 15%; animation-delay: 0.7s; }
+.mana-bubble--3 { width: 5px; height: 5px; left: 50%; bottom: -5px; animation-delay: 1.3s; }
+
+.mana-arc {
+  position: absolute;
+  inset: -10%;
+  border-radius: 50%;
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  z-index: 1;
+  animation: frame-rotate 4s reverse linear infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 30%, 0 30%);
+}
+
+/* ========================================
+   LEGENDARY: LAVA CORE
+   ======================================== */
+.frame-lava .avatar-frame__border {
+  background: radial-gradient(circle, #f97316 20%, #ef4444 80%);
+  border: 2px solid #7c2d12;
+  animation: lava-pulse 2s ease-in-out infinite alternate;
+}
+
+.frame-lava .avatar-frame__glow {
+  background: radial-gradient(circle, rgba(239,68,68,0.5) 40%, transparent 70%);
+  animation: frame-glow-pulse 0.8s ease-in-out infinite alternate;
+}
+
+.lava-spark {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #fbbf24;
+  border-radius: 50%;
+  z-index: 4;
+  filter: blur(1px);
+  animation: lava-fly 1.5s ease-out infinite;
+}
+
+.lava-spark--1 { left: 15%; bottom: 20%; animation-delay: 0s; }
+.lava-spark--2 { right: 15%; bottom: 25%; animation-delay: 0.5s; }
+
+.lava-smoke {
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, transparent 60%);
+  z-index: -1;
+  animation: frame-glow-pulse 3s infinite alternate;
+}
+
+/* ========================================
+   LEGENDARY: PRISMATIC AURA
+   ======================================== */
+.frame-prismatic .avatar-frame__border {
+  background: conic-gradient(from 0deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+  animation: frame-rotate 1s linear infinite;
+}
+
+.frame-prismatic .avatar-frame__glow {
+  background: conic-gradient(from 0deg, rgba(255,0,0,0.4), rgba(0,255,0,0.4), rgba(0,0,255,0.4), rgba(255,0,0,0.4));
+  filter: blur(15px);
+  animation: frame-rotate 2s linear infinite;
+}
+
+.prismatic-ring {
+  position: absolute;
+  inset: -15%;
+  border: 2px solid white;
+  border-radius: 50%;
+  opacity: 0.3;
+  z-index: 0;
+  animation: frame-rotate 5s reverse linear infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 5%, 0 5%, 0 95%, 100% 95%, 100% 100%, 0 100%);
+}
+
+.prismatic-glitch {
+  position: absolute;
+  background: white;
+  height: 1px;
+  width: 40%;
+  z-index: 10;
+  opacity: 0;
+  animation: prismatic-glitch-anim 3s steps(1) infinite;
+}
+
+.prismatic-glitch--1 { top: 30%; left: 10%; animation-delay: 0.5s; }
+.prismatic-glitch--2 { bottom: 20%; right: 10%; animation-delay: 1.8s; }
+
+/* ========================================
    ANIMATIONS
    ======================================== */
 @keyframes frame-rotate {
@@ -606,5 +741,28 @@ const frameVars = computed(() => ({
   95% { opacity: 1; transform: translateX(2px); }
   97% { opacity: 0.8; transform: translateX(-1px); }
   99% { opacity: 1; transform: translateX(1px); }
+}
+
+@keyframes mana-float {
+  0% { transform: translateY(0); opacity: 0; }
+  20% { opacity: 0.8; }
+  80% { opacity: 0.8; }
+  100% { transform: translateY(-30px); opacity: 0; }
+}
+
+@keyframes lava-pulse {
+  0% { transform: scale(1); filter: brightness(1); }
+  100% { transform: scale(1.05); filter: brightness(1.3); }
+}
+
+@keyframes lava-fly {
+  0% { transform: translate(0, 0) scale(1); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translate(5px, -40px) scale(0.2); opacity: 0; }
+}
+
+@keyframes prismatic-glitch-anim {
+  0%, 10%, 15%, 25%, 30%, 40%, 45%, 55%, 60%, 70%, 75%, 85%, 90%, 100% { opacity: 0; transform: scaleX(0); }
+  12%, 27%, 42%, 57%, 72%, 87% { opacity: 0.8; transform: scaleX(1.2); }
 }
 </style>

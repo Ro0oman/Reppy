@@ -67,21 +67,27 @@ router.patch('/profile', authenticate, async (req, res) => {
   }
 });
 
-// Update avatar (specifically)
-router.patch('/avatar', authenticate, async (req, res) => {
-  const { avatar_url } = req.body;
+// Update avatar (specifically) - Supporting both PATCH and POST
+const updateAvatar = async (req, res) => {
+  const { avatar_url, avatarBase64 } = req.body;
+  const finalUrl = avatarBase64 || avatar_url;
   
+  if (!finalUrl) return res.status(400).json({ message: 'No avatar provided' });
+
   try {
     const result = await query(
       'UPDATE users SET avatar_url = $1 WHERE id = $2 RETURNING *',
-      [avatar_url, req.user.id]
+      [finalUrl, req.user.id]
     );
     res.json(result.rows[0]);
   } catch (error) {
     console.error('Error updating avatar:', error);
     res.status(500).json({ message: 'Error updating avatar' });
   }
-});
+};
+
+router.patch('/avatar', authenticate, updateAvatar);
+router.post('/avatar', authenticate, updateAvatar);
 
 // Mark easter modal as seen
 router.patch('/seen-easter-modal', authenticate, async (req, res) => {
