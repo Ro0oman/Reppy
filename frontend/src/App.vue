@@ -56,13 +56,19 @@
             </div>
           </a>
 
-          <button @click="openProfile(authStore.user.id)" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div class="text-right hidden sm:block">
-              <p class="text-sm font-bold text-zinc-900 dark:text-white leading-none">{{ authStore.user?.name }}</p>
-              <p class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">{{ authStore.user?.reppy_coins || 0 }} 🪙</p>
+          <button @click="openProfile(authStore.user.id)" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <!-- Global Coins Badge (Visible on all screens) -->
+            <div class="flex items-center gap-1.5 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20 shadow-sm">
+               <span class="text-xs font-black text-amber-600 dark:text-amber-500 tracking-tighter">{{ authStore.user?.reppy_coins || 0 }}</span>
+               <span class="text-[10px]">🪙</span>
             </div>
-            <img :src="authStore.user?.avatar_url" class="w-10 h-10 rounded-full border border-primary-500/50 shadow-sm" />
+            <!-- Name (Desktop only) -->
+            <div class="text-right hidden md:block">
+              <p class="text-sm font-bold text-zinc-900 dark:text-white leading-none">{{ authStore.user?.name }}</p>
+            </div>
+            <img :src="authStore.user?.avatar_url" class="w-9 h-9 rounded-full border border-primary-500/50 shadow-sm" />
           </button>
+
         </div>
       </div>
     </nav>
