@@ -7,17 +7,19 @@
         <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600 rounded-full blur-[120px] animate-pulse delay-1000"></div>
       </div>
 
-      <!-- Easter Event Banner -->
-      <div v-if="hasActiveEvent" class="w-full max-w-4xl bg-gradient-to-r from-pink-500/20 via-primary-500/20 to-amber-500/20 border-y-4 md:border-4 border-pink-500/50 p-4 md:p-6 rounded-none md:rounded-3xl animate-bounce-short shadow-[0_0_30px_rgba(236,72,153,0.3)] mb-8 glass">
-        <h2 class="text-xl md:text-3xl font-black text-zinc-900 dark:text-white italic tracking-tighter uppercase mb-2">🐇 ¡El Conejo de Acero ha llegado!</h2>
-        <p class="text-zinc-600 dark:text-zinc-300 font-medium text-sm md:text-lg">Este Sábado arranca el Evento Global. Únete a la resistencia.</p>
-        <div class="mt-4 p-3 md:p-4 bg-black/5 dark:bg-black/40 rounded-2xl border border-zinc-200 dark:border-white/10 w-fit mx-auto">
-          <span class="block text-[8px] md:text-[10px] uppercase font-black tracking-widest text-pink-400 mb-1">El jefe se marcha en:</span>
-          <span class="text-xl md:text-3xl font-mono font-black text-zinc-900 dark:text-white tracking-widest">{{ timerText }}</span>
+      <!-- Active Boss Banner -->
+      <div v-if="hasActiveEvent && activeBoss" class="w-full max-w-4xl bg-gradient-to-r from-primary-500/20 via-pink-500/20 to-amber-500/20 border-y-4 md:border-4 border-primary-500/50 p-4 md:p-6 rounded-none md:rounded-3xl animate-bounce-short shadow-[0_0_30px_rgba(249,115,22,0.3)] mb-8 glass text-center">
+        <h2 class="text-xl md:text-4xl font-black text-zinc-900 dark:text-white italic tracking-tighter uppercase mb-2">⚔️ ¡{{ activeBoss.name }} ha llegado!</h2>
+        <p class="text-zinc-600 dark:text-zinc-300 font-medium text-sm md:text-xl">{{ activeBoss.description.split('.')[0] }}.</p>
+        
+        <div class="mt-6 flex flex-col items-center gap-4">
+          <div class="px-6 py-2 bg-black/10 dark:bg-white/5 rounded-full border border-zinc-200 dark:border-white/10 text-[10px] font-black uppercase tracking-[0.3em] text-primary-500">
+            Evento Global Activo
+          </div>
+          <button @click="$emit('start')" class="px-10 py-4 bg-primary-600 hover:bg-primary-500 text-white font-black uppercase tracking-widest rounded-2xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(249,115,22,0.4)]">
+            Unirme a la Caza
+          </button>
         </div>
-        <button @click="$emit('start')" class="mt-4 px-6 py-2 bg-pink-500 hover:bg-pink-400 text-black font-black uppercase tracking-widest rounded-xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(236,72,153,0.5)]">
-          Unirme a la Caza
-        </button>
       </div>
 
       <div class="inline-flex items-center gap-2 px-4 py-2 glass rounded-full mb-4 border-zinc-200 dark:border-white/10 animate-fade-in-up">
@@ -114,41 +116,18 @@ const authStore = useAuthStore();
 defineEmits(['start']);
 
 const hasActiveEvent = ref(false);
-const timerText = ref('Cargando...');
-let timerInterval = null;
+const activeBoss = ref(null);
 
 onMounted(async () => {
   try {
     const res = await axios.get('/api/boss/active');
     if (res.data && res.data.boss) {
       hasActiveEvent.value = true;
-      const endDate = new Date(res.data.boss.end_date);
-      
-      const updateTimer = () => {
-        const now = new Date();
-        const diff = endDate - now;
-        if (diff <= 0) {
-          timerText.value = '00:00:00';
-          clearInterval(timerInterval);
-          return;
-        }
-        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const h = Math.floor((diff / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
-        const m = Math.floor((diff / 1000 / 60) % 60).toString().padStart(2, '0');
-        const s = Math.floor((diff / 1000) % 60).toString().padStart(2, '0');
-        timerText.value = `${d}D ${h}:${m}:${s}`;
-      };
-      
-      updateTimer();
-      timerInterval = setInterval(updateTimer, 1000);
+      activeBoss.value = res.data.boss;
     }
   } catch (e) {
     console.error('Error fetching boss for landing:', e);
   }
-});
-
-onUnmounted(() => {
-  if (timerInterval) clearInterval(timerInterval);
 });
 </script>
 
