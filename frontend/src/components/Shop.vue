@@ -308,7 +308,7 @@ const getItemTypeLabel = (item) => {
 };
 
 const getUnlockTypeLabel = (item) => {
-  if (item.price === 0) return 'Evento';
+  if (item.is_seasonal || item.price === 0) return 'Evento';
   if (!item.is_unlocked) return 'Roadmap temporal';
   return 'Compra directa';
 };
