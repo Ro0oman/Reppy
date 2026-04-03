@@ -2,14 +2,8 @@
   <div class="min-h-screen selection:bg-primary-500/30 relative text-zinc-900 dark:text-zinc-800 dark:text-zinc-100">
     
     <!-- Easter Background Overlay -->
-    <EasterBackground />
-
-    <!-- Animated background -->
-    <div class="bg-glow relative z-0">
-      <div class="blob top-[-10%] left-[-10%]"></div>
-      <div class="blob bottom-[-10%] right-[-10%] animation-delay-2000" style="animation-duration: 25s; opacity: 0.5;">
-      </div>
-    </div>
+    <!-- Animated background system -->
+    <BackgroundEffect :background-css="authStore.user?.background_css" />
 
     <nav v-if="authStore.isAuthenticated"
       class="border-b border-zinc-200 dark:border-white/5 bg-white/50 dark:bg-black/20 backdrop-blur-xl sticky top-0 z-50">
@@ -261,7 +255,7 @@ import Profile from './components/Profile.vue'
 import Inventory from './components/Inventory.vue'
 import LuckyWheel from './components/LuckyWheel.vue'
 import AvatarFrame from './components/AvatarFrame.vue'
-import EasterBackground from './components/EasterBackground.vue'
+import BackgroundEffect from './components/BackgroundEffect.vue'
 
 import EasterWelcomeModal from './components/EasterWelcomeModal.vue'
 import NotificationToast from './components/NotificationToast.vue'

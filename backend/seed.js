@@ -19,12 +19,24 @@ async function seed() {
       { name: 'Stone Titan', description: 'Epic Title. Fuerza bruta.', type: 'title', price: 700, css_value: 'text-stone-400 font-black drop-shadow-md uppercase tracking-tight' },
       { name: 'Calisthenics Monk', description: 'Rare Title. Disciplina.', type: 'title', price: 300, css_value: 'text-zinc-300 font-light tracking-[0.3em] uppercase' },
       { name: 'No Excuses', description: 'Common Title. Sin excusas.', type: 'title', price: 120, css_value: 'text-white font-bold uppercase tracking-wider' },
-      { name: 'Marca del Slayer', description: '🔒 EVENT ONLY — Solo desbloqueable en eventos de Boss.', type: 'title', price: 0, css_value: 'text-red-500 font-black tracking-widest uppercase drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]' }
+      { name: 'Marca del Slayer', description: '🔒 EVENT ONLY — Solo desbloqueable en eventos de Boss.', type: 'title', price: 0, css_value: 'text-red-500 font-black tracking-widest uppercase drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]' },
+      // backgrounds
+      { name: 'Pure Black Glass', description: 'Fondo negro profundo con un toque de elegancia.', type: 'background', price: 100, css_value: 'bg-pure-black' },
+      { name: 'Amber Gradient', description: 'Gradiente ámbar cálido para un look sofisticado.', type: 'background', price: 150, css_value: 'bg-amber-gradient' },
+      { name: 'Blue Frost', description: 'Fondo azul glacial refrescante.', type: 'background', price: 200, css_value: 'bg-blue-frost' },
+      { name: 'Matrix Fade', description: 'Estilo cyber-green minimalista.', type: 'background', price: 200, css_value: 'bg-matrix-fade' },
+      { name: 'Night Pulse', description: 'Pulsaciones lentas y relajantes.', type: 'background', price: 400, css_value: 'bg-night-pulse' },
+      { name: 'Deep Ocean', description: 'Ondas marinas en movimiento perpetuo.', type: 'background', price: 500, css_value: 'bg-deep-ocean' },
+      { name: 'Mist Void', description: 'Niebla misteriosa que fluye lentamente.', type: 'background', price: 600, css_value: 'bg-mist-void' },
+      { name: 'Neural Grid', description: 'Líneas de circuitos eléctricos animados.', type: 'background', price: 900, css_value: 'bg-neural-grid' },
+      { name: 'Inferno Flow', description: 'Flujo constante de lava y fuego.', type: 'background', price: 1200, css_value: 'bg-inferno-flow' },
+      { name: 'Cosmic Drift', description: 'Viaje estelar a través de nebulosas.', type: 'background', price: 1100, css_value: 'bg-cosmic-drift' },
+      { name: 'Easter Celebration', description: '¡Huevos y conejos cayendo por doquier! Edición limitada.', type: 'background', price: 0, css_value: 'bg-easter' }
     ];
 
     for (const item of items) {
       await query(
-        `INSERT INTO cosmetics (name, description, type, price, css_value) VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`,
+        `INSERT INTO cosmetics (name, description, type, price, css_value) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (name) DO NOTHING`,
          [item.name, item.description, item.type, item.price, item.css_value]
       );
     }

@@ -168,7 +168,7 @@ const translations = {
     nav_home: 'Inicio',
     nav_dashboard: 'Panel',
     nav_social: 'Social',
-    nav_inventory: 'Equipo',
+    nav_inventory: 'Inventario',
     nav_go_dashboard: 'Ir al Panel',
 
     stats_total: 'Reps Totales',

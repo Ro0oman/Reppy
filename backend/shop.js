@@ -3,19 +3,24 @@ import { query } from './db.js';
 import { authenticate } from './middleware.js';
 
 const router = express.Router();
-
 // Get available cosmetics
 router.get('/cosmetics', authenticate, async (req, res) => {
   try {
-    const cosmeticsRes = await query('SELECT * FROM cosmetics WHERE price > 0 ORDER BY price ASC');
+    const cosmeticsRes = await query('SELECT * FROM cosmetics WHERE price > 0 ORDER BY created_at ASC, id ASC');
     const inventoryRes = await query('SELECT cosmetic_id FROM user_inventory WHERE user_id = $1', [req.user.id]);
     
     const ownedIds = inventoryRes.rows.map(row => row.cosmetic_id);
     
-    const shopItems = cosmeticsRes.rows.map(item => ({
-      ...item,
-      owned: ownedIds.includes(item.id)
-    }));
+    const shopItems = cosmeticsRes.rows.map((item, index) => {
+      return {
+        ...item,
+        owned: ownedIds.includes(item.id),
+        roadmap_position: index + 1,
+        unlock_at: item.created_at,
+        is_unlocked: true,
+        seconds_until_unlock: 0
+      };
+    });
     
     res.json(shopItems);
   } catch (error) {
@@ -78,6 +83,8 @@ router.post('/equip/:id', authenticate, async (req, res) => {
         await query('UPDATE users SET equipped_title_id = NULL WHERE id = $1', [userId]);
       } else if (typeParam === 'border') {
         await query('UPDATE users SET equipped_border_id = NULL WHERE id = $1', [userId]);
+      } else if (typeParam === 'background') {
+        await query('UPDATE users SET equipped_background_id = NULL WHERE id = $1', [userId]);
       }
       return res.json({ message: 'Un-equipped successfully' });
     }
@@ -93,6 +100,8 @@ router.post('/equip/:id', authenticate, async (req, res) => {
       await query('UPDATE users SET equipped_title_id = $1 WHERE id = $2', [cosmeticId, userId]);
     } else if (type === 'border') {
       await query('UPDATE users SET equipped_border_id = $1 WHERE id = $2', [cosmeticId, userId]);
+    } else if (type === 'background') {
+      await query('UPDATE users SET equipped_background_id = $1 WHERE id = $2', [cosmeticId, userId]);
     }
 
     res.json({ message: 'Equipped successfully' });

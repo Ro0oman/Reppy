@@ -51,7 +51,8 @@ CREATE TABLE IF NOT EXISTS cosmetics (
     type VARCHAR(50) NOT NULL, -- 'title', 'border', 'avatar'
     price INTEGER NOT NULL,
     css_value VARCHAR(255), -- Helper for frontend styling
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(name)
 );
 
 -- User Inventory
@@ -104,5 +105,6 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS agi_xp INTEGER DEFAULT 0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS last_seen_version VARCHAR(50) DEFAULT '1.0.0';
 ALTER TABLE users ADD COLUMN IF NOT EXISTS equipped_title_id INTEGER;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS equipped_border_id INTEGER;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS equipped_background_id INTEGER;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_easter_modal BOOLEAN DEFAULT false;
 
