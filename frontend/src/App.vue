@@ -20,7 +20,7 @@
           <span class="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">Reppy</span>
         </div>
         
-        <div class="flex flex-1 items-center justify-center gap-6">
+        <div class="hidden md:flex flex-1 items-center justify-center gap-6">
           <button @click="view = 'landing'" class="text-base font-bold transition-colors"
             :class="view === 'landing' ? 'text-primary-600 dark:text-white' : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'">
             {{ i18n.t('nav_home') }}
@@ -76,11 +76,45 @@
       </template>
     </main>
 
-    <footer class="mt-auto py-8 border-t border-zinc-900">
+    <footer class="mt-auto py-8 pb-32 md:pb-8 border-t border-zinc-200 dark:border-white/5">
       <div class="max-w-6xl mx-auto px-4 text-center text-zinc-600 text-sm">
         &copy; 2026 Reppy - Modern Pull-up Tracking
       </div>
     </footer>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav v-if="authStore.isAuthenticated" 
+      class="md:hidden fixed bottom-0 left-0 right-0 z-[60] bg-white/80 dark:bg-zinc-900/80 backdrop-blur-2xl border-t border-zinc-200 dark:border-white/5 pb-safe-area">
+      <div class="flex items-center justify-around h-20 px-2">
+        <button @click="view = 'landing'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90"
+          :class="view === 'landing' ? 'text-primary-600' : 'text-zinc-400'">
+          <Home class="w-6 h-6" :class="view === 'landing' ? 'fill-primary-600/10' : ''" />
+          <span class="text-[10px] font-black uppercase tracking-tighter">Inicio</span>
+        </button>
+        <button @click="view = 'dashboard'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90"
+          :class="view === 'dashboard' ? 'text-primary-600' : 'text-zinc-400'">
+          <LayoutDashboard class="w-6 h-6" :class="view === 'dashboard' ? 'fill-primary-600/10' : ''" />
+          <span class="text-[10px] font-black uppercase tracking-tighter">Panel</span>
+        </button>
+        <button @click="view = 'social'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90"
+          :class="view === 'social' ? 'text-primary-600' : 'text-zinc-400'">
+          <Users class="w-6 h-6" :class="view === 'social' ? 'fill-primary-600/10' : ''" />
+          <span class="text-[10px] font-black uppercase tracking-tighter">Social</span>
+        </button>
+        <button @click="view = 'shop'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90"
+          :class="view === 'shop' ? 'text-amber-500' : 'text-zinc-400'">
+          <ShoppingBag class="w-6 h-6" :class="view === 'shop' ? 'fill-amber-500/10' : ''" />
+          <span class="text-[10px] font-black uppercase tracking-tighter">Tienda</span>
+        </button>
+        <button @click="view = 'profile'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90"
+          :class="view === 'profile' ? 'text-primary-600' : 'text-zinc-400'">
+          <img :src="authStore.user?.avatar_url" 
+               class="w-7 h-7 rounded-full border-2 transition-transform" 
+               :class="view === 'profile' ? 'border-primary-500 scale-110' : 'border-transparent opacity-60'" />
+          <span class="text-[10px] font-black uppercase tracking-tighter">Perfil</span>
+        </button>
+      </div>
+    </nav>
 
     <!-- Global Components -->
     <NotificationToast />
@@ -91,7 +125,7 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import { Github, Star } from 'lucide-vue-next';
+import { Github, Star, Home, LayoutDashboard, Users, ShoppingBag } from 'lucide-vue-next';
 import { useAuthStore } from './stores/auth';
 import Login from './components/Login.vue'
 import Landing from './components/Landing.vue'

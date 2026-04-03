@@ -15,10 +15,10 @@
       </div>
 
       <!-- Modal Card -->
-      <div class="glass relative max-w-lg w-full p-8 rounded-[2.5rem] border-white/20 shadow-[0_0_50px_rgba(245,158,11,0.2)] text-center space-y-8 animate-in zoom-in duration-500 scale-100">
+      <div class="glass relative max-w-lg w-full p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border-white/20 shadow-[0_0_50px_rgba(245,158,11,0.2)] text-center space-y-6 md:space-y-8 animate-in zoom-in duration-500 scale-100">
         <!-- Close Button (X) -->
-        <button @click="close" class="absolute top-6 right-6 p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-all hover:rotate-90 group z-10 text-white">
-          <XIcon class="w-5 h-5" />
+        <button @click="close" class="absolute top-4 right-4 md:top-6 md:right-6 p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-all hover:rotate-90 group z-10 text-white">
+          <XIcon class="w-4 h-4 md:w-5 md:h-5" />
         </button>
 
         <!-- Festive Icon -->
@@ -29,10 +29,10 @@
         </div>
 
         <div class="space-y-2">
-          <h2 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-red-500 uppercase tracking-tighter italic">
+          <h2 class="text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-red-500 uppercase tracking-tighter italic">
             ¡La Pascua ha llegado!
           </h2>
-          <p class="text-xl font-bold text-zinc-900 dark:text-white tracking-tight">
+          <p class="text-lg md:text-xl font-bold text-zinc-900 dark:text-white tracking-tight">
             Vigila esos huevos... ¡y tus repeticiones! 🥚🔨
           </p>
         </div>

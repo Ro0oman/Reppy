@@ -8,12 +8,12 @@
       </div>
 
       <!-- Easter Event Banner -->
-      <div v-if="hasActiveEvent" class="w-full max-w-4xl bg-gradient-to-r from-pink-500/20 via-primary-500/20 to-amber-500/20 border border-4 border-pink-500/50 p-6 rounded-3xl animate-bounce-short shadow-[0_0_30px_rgba(236,72,153,0.3)] mb-8 glass">
-        <h2 class="text-3xl font-black text-zinc-900 dark:text-white italic tracking-tighter uppercase mb-2">🐇 ¡El Conejo de Acero ha llegado!</h2>
-        <p class="text-zinc-600 dark:text-zinc-300 font-medium text-lg">Este Sábado arranca el Evento Global. Únete a la resistencia, haz repeticiones y gana cofres exclusivos.</p>
-        <div class="mt-4 p-4 bg-black/5 dark:bg-black/40 rounded-2xl border border-zinc-200 dark:border-white/10 w-fit mx-auto">
-          <span class="block text-[10px] uppercase font-black tracking-widest text-pink-400 mb-1">El jefe se marcha en:</span>
-          <span class="text-3xl font-mono font-black text-zinc-900 dark:text-white tracking-widest">{{ timerText }}</span>
+      <div v-if="hasActiveEvent" class="w-full max-w-4xl bg-gradient-to-r from-pink-500/20 via-primary-500/20 to-amber-500/20 border-y-4 md:border-4 border-pink-500/50 p-4 md:p-6 rounded-none md:rounded-3xl animate-bounce-short shadow-[0_0_30px_rgba(236,72,153,0.3)] mb-8 glass">
+        <h2 class="text-xl md:text-3xl font-black text-zinc-900 dark:text-white italic tracking-tighter uppercase mb-2">🐇 ¡El Conejo de Acero ha llegado!</h2>
+        <p class="text-zinc-600 dark:text-zinc-300 font-medium text-sm md:text-lg">Este Sábado arranca el Evento Global. Únete a la resistencia.</p>
+        <div class="mt-4 p-3 md:p-4 bg-black/5 dark:bg-black/40 rounded-2xl border border-zinc-200 dark:border-white/10 w-fit mx-auto">
+          <span class="block text-[8px] md:text-[10px] uppercase font-black tracking-widest text-pink-400 mb-1">El jefe se marcha en:</span>
+          <span class="text-xl md:text-3xl font-mono font-black text-zinc-900 dark:text-white tracking-widest">{{ timerText }}</span>
         </div>
         <button @click="$emit('start')" class="mt-4 px-6 py-2 bg-pink-500 hover:bg-pink-400 text-black font-black uppercase tracking-widest rounded-xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(236,72,153,0.5)]">
           Unirme a la Caza
@@ -25,7 +25,7 @@
         <span class="text-xs font-black uppercase tracking-[0.3em] text-zinc-400 dark:text-zinc-500 dark:text-zinc-400">{{ i18n.t('hero_eyebrow') }}</span>
       </div>
 
-      <h1 class="text-7xl md:text-9xl font-black tracking-tighter text-zinc-900 dark:text-white animate-fade-in-up delay-200">
+      <h1 class="text-6xl md:text-9xl font-black tracking-tighter text-zinc-900 dark:text-white animate-fade-in-up delay-200">
         REPPY<span class="text-primary-500">.</span>
       </h1>
       
@@ -44,8 +44,8 @@
     </section>
 
     <!-- Features Bento Grid -->
-    <section class="max-w-6xl w-full px-4 py-24 grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="glass p-8 rounded-[3rem] space-y-6 group hover:translate-y-[-8px] transition-all duration-500">
+    <section class="max-w-6xl w-full px-4 py-12 md:py-24 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+      <div class="glass p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] space-y-6 group hover:translate-y-[-8px] transition-all duration-500">
         <div class="w-14 h-14 bg-primary-500/10 rounded-2xl flex items-center justify-center text-primary-500 group-hover:scale-110 transition-transform">
           <Activity class="w-8 h-8" />
         </div>

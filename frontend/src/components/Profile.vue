@@ -7,7 +7,7 @@
     
     <template v-else>
       <!-- Profile Header Showcase -->
-      <div class="glass relative p-8 rounded-[2.5rem] border-zinc-200 dark:border-white/10 overflow-hidden flex flex-col md:flex-row items-center md:items-start gap-8 text-center md:text-left">
+      <div class="glass relative p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border-zinc-200 dark:border-white/10 overflow-hidden flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8 text-center md:text-left">
         <!-- Magic Glow -->
         <div class="absolute -top-32 -right-32 w-96 h-96 bg-primary-500/20 blur-[100px] rounded-full pointer-events-none"></div>
 
@@ -26,7 +26,7 @@
         </div>
 
         <div class="flex-1 space-y-2">
-          <h2 class="text-4xl font-black tracking-tighter text-zinc-900 dark:text-white" :class="user.title_css">{{ user.name }}</h2>
+          <h2 class="text-3xl md:text-4xl font-black tracking-tighter text-zinc-900 dark:text-white" :class="user.title_css">{{ user.name }}</h2>
           <p class="text-sm font-bold text-zinc-500 uppercase tracking-widest">{{ user.title_name || 'Novato' }}</p>
           <div class="flex items-center justify-center md:justify-start gap-4 mt-2">
             <span class="px-3 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-500 font-bold rounded-lg text-sm border border-amber-500/20">
@@ -62,7 +62,7 @@
       </div>
 
       <!-- User Stats & Heatmap -->
-      <div class="glass p-8 rounded-[2.5rem] border-zinc-200 dark:border-white/10 space-y-6">
+      <div class="glass p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border-zinc-200 dark:border-white/10 space-y-6">
         <div class="flex items-center gap-4 mb-4">
           <div class="p-3 bg-zinc-100 dark:bg-zinc-800 rounded-2xl">
             <Activity class="w-6 h-6 text-zinc-500" />
@@ -141,7 +141,7 @@
     <Teleport to="body">
       <div v-if="showInfoModal" 
            class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-sm animate-in fade-in duration-300">
-        <div class="glass max-w-xl w-full p-8 rounded-[2.5rem] border-white/10 shadow-2xl space-y-6 relative overflow-hidden">
+        <div class="glass max-w-xl w-full p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border-white/10 shadow-2xl space-y-6 relative overflow-hidden">
           <!-- Themed Background Deco -->
           <div class="absolute -top-12 -right-12 w-48 h-48 bg-primary-500/10 rounded-full blur-3xl pointer-events-none"></div>
           

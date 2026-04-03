@@ -23,8 +23,10 @@ const eggs = ref([]);
 const emojis = ['🥚', '🐰', '🐣', '🐇', '💪', '🏋️', ''];
 
 onMounted(() => {
-  // Generate 45 random falling eggs with greater variability
-  for (let i = 0; i < 45; i++) {
+  // Generate 45 random falling eggs with greater variability (fewer on mobile)
+  const isMobile = window.innerWidth < 768;
+  const eggCount = isMobile ? 15 : 45;
+  for (let i = 0; i < eggCount; i++) {
     eggs.value.push({
       left: Math.random() * 100, // random start horizontal %
       duration: 8 + Math.random() * 20, // fall between 8s and 28s
