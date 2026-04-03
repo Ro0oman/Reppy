@@ -112,13 +112,63 @@ app.get('/api/db/init', async (req, res) => {
       )`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE`,
       `UPDATE users SET is_admin = TRUE WHERE email = 'romainot99@gmail.com'`,
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS daily_boss_damage INTEGER DEFAULT 0`,
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_boss_damage_date DATE DEFAULT CURRENT_DATE`,
       `ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS image_url TEXT`,
+      `ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS order_index INTEGER DEFAULT 0`,
       `ALTER TABLE cosmetics ADD COLUMN IF NOT EXISTS is_seasonal BOOLEAN DEFAULT FALSE`,
       `UPDATE cosmetics SET is_seasonal = TRUE WHERE name IN ('Aura de Pascua', 'Rabbit Slayer', 'Easter Celebration')`,
       `ALTER TABLE cosmetics ADD COLUMN IF NOT EXISTS rarity VARCHAR(50) DEFAULT 'common'`,
       `UPDATE cosmetics SET rarity = 'legendary' WHERE price >= 1200`,
       `UPDATE cosmetics SET rarity = 'epic' WHERE price < 1200 AND price >= 600`,
       `UPDATE cosmetics SET rarity = 'rare' WHERE price < 600 AND price >= 200`,
+      // Mark old bosses as inactive to avoid overlapping
+      `UPDATE boss_fights SET status = 'defeated' WHERE order_index = 0 AND status = 'active'`,
+      
+      // Boss Backlog
+      `INSERT INTO boss_fights (name, description, total_hp, current_hp, start_date, end_date, status, image_url, order_index) 
+       SELECT 'Artorias the Abysswalker', 'Se saltó tantos "días de pierna" que acabó caminando por el abismo. Su brazo izquierdo está roto de intentar muscle-ups sin calentar.', (SELECT COUNT(*) * 25 FROM users), (SELECT COUNT(*) * 25 FROM users), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '100 years', 'active', 'https://static.wikia.nocookie.net/darksouls/images/4/45/Artorias_the_Abysswalker_Render.png', 1
+       WHERE NOT EXISTS (SELECT 1 FROM boss_fights WHERE name = 'Artorias the Abysswalker')`,
+      `INSERT INTO boss_fights (name, description, total_hp, current_hp, start_date, end_date, status, image_url, order_index) 
+       SELECT 'The Ender Dragon', 'Soberana del Fin y de las dominadas con lastre. Si no haces el rango completo, te lanza un aliento que huele a batido de proteínas caducado.', (SELECT COUNT(*) * 25 FROM users), (SELECT COUNT(*) * 25 FROM users), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '100 years', 'active', 'https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/be/Ender_Dragon.png', 2
+       WHERE NOT EXISTS (SELECT 1 FROM boss_fights WHERE name = 'The Ender Dragon')`,
+      `INSERT INTO boss_fights (name, description, total_hp, current_hp, start_date, end_date, status, image_url, order_index) 
+       SELECT 'Rathalos', 'El Rey de los Cielos... y de las dominadas explosivas. Vuela porque no aguanta el peso de su propio ego en la barra.', (SELECT COUNT(*) * 25 FROM users), (SELECT COUNT(*) * 25 FROM users), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '100 years', 'active', 'https://static.wikia.nocookie.net/monsterhunter/images/d/df/Rathalos-Render.png', 3
+       WHERE NOT EXISTS (SELECT 1 FROM boss_fights WHERE name = 'Rathalos')`,
+      `INSERT INTO boss_fights (name, description, total_hp, current_hp, start_date, end_date, status, image_url, order_index) 
+       SELECT 'Baldur', 'Bendecido con la invulnerabilidad y maldito con un porcentaje de grasa tan bajo que no siente las agujetas. "No siento nada, ni siquiera el bombeo".', (SELECT COUNT(*) * 25 FROM users), (SELECT COUNT(*) * 25 FROM users), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '100 years', 'active', 'https://static.wikia.nocookie.net/godofwar/images/6/68/Baldur_GOW.png', 4
+       WHERE NOT EXISTS (SELECT 1 FROM boss_fights WHERE name = 'Baldur')`,
+      `INSERT INTO boss_fights (name, description, total_hp, current_hp, start_date, end_date, status, image_url, order_index) 
+       SELECT 'Arthas, El Rey Exánime', 'Empuña la Agonía de Escarcha para mantener sus batidos fríos. Su ejército de no-muertos son solo gente que intentó seguir su rutina de 1000 pull-ups.', (SELECT COUNT(*) * 25 FROM users), (SELECT COUNT(*) * 25 FROM users), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '100 years', 'active', 'https://static.wikia.nocookie.net/wowwiki/images/5/52/Arthas_the_Lich_King.png', 5
+       WHERE NOT EXISTS (SELECT 1 FROM boss_fights WHERE name = 'Arthas, El Rey Exánime')`,
+      `INSERT INTO boss_fights (name, description, total_hp, current_hp, start_date, end_date, status, image_url, order_index) 
+       SELECT 'Malenia, Espada de Miquella', 'Nunca ha conocido la derrota, ni el descanso entre series. Su técnica secreta es beber creatina pura durante los descansos.', (SELECT COUNT(*) * 25 FROM users), (SELECT COUNT(*) * 25 FROM users), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '100 years', 'active', 'https://static.wikia.nocookie.net/eldenring/images/3/3b/Malenia_-_Artwork.png', 6
+       WHERE NOT EXISTS (SELECT 1 FROM boss_fights WHERE name = 'Malenia, Espada de Miquella')`,
+      `INSERT INTO boss_fights (name, description, total_hp, current_hp, start_date, end_date, status, image_url, order_index) 
+       SELECT 'Sephiroth', 'Lleva el pelo tan largo para ocultar que no tiene trapecios. El "Ángel de una Sola Ala" porque el otro dorsal se le desgarró haciendo un Front Lever.', (SELECT COUNT(*) * 25 FROM users), (SELECT COUNT(*) * 25 FROM users), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '100 years', 'active', 'https://static.wikia.nocookie.net/finalfantasy/images/1/1d/Sephiroth_-_Remake.png', 7
+       WHERE NOT EXISTS (SELECT 1 FROM boss_fights WHERE name = 'Sephiroth')`,
+      `INSERT INTO boss_fights (name, description, total_hp, current_hp, start_date, end_date, status, image_url, order_index) 
+       SELECT 'Calamity Ganon', 'La maldad pura que asoló Hyrule porque alguien usó su rack de potencia para hacer curls de bíceps.', (SELECT COUNT(*) * 25 FROM users), (SELECT COUNT(*) * 25 FROM users), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '100 years', 'active', 'https://static.wikia.nocookie.net/zelda_gamepedia/images/4/44/BotW_Calamity_Ganon_Artwork.png', 8
+       WHERE NOT EXISTS (SELECT 1 FROM boss_fights WHERE name = 'Calamity Ganon')`,
+      `INSERT INTO boss_fights (name, description, total_hp, current_hp, start_date, end_date, status, image_url, order_index) 
+       SELECT 'Diablo', 'Viene a contar tus repeticiones en el gimnasio del infierno. Si no tocas la barbilla en la barra, tu serie no cuenta para el ranking.', (SELECT COUNT(*) * 25 FROM users), (SELECT COUNT(*) * 25 FROM users), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '100 years', 'active', 'https://static.wikia.nocookie.net/diablo/images/0/05/Diablo_III_Render.png', 9
+       WHERE NOT EXISTS (SELECT 1 FROM boss_fights WHERE name = 'Diablo')`,
+      `INSERT INTO boss_fights (name, description, total_hp, current_hp, start_date, end_date, status, image_url, order_index) 
+       SELECT 'The Nameless King', 'Perdió su nombre en una apuesta sobre quién aguantaba más en plancha isométrica sobre un dragón de tormenta.', (SELECT COUNT(*) * 25 FROM users), (SELECT COUNT(*) * 25 FROM users), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '100 years', 'active', 'https://static.wikia.nocookie.net/darksouls/images/d/d4/The_Nameless_King_Render.png', 10
+       WHERE NOT EXISTS (SELECT 1 FROM boss_fights WHERE name = 'The Nameless King')`,
+      
+      // Update descriptions in case they already exist
+      `UPDATE boss_fights SET description = 'Se saltó tantos "días de pierna" que acabó caminando por el abismo. Su brazo izquierdo está roto de intentar muscle-ups sin calentar.' WHERE name = 'Artorias the Abysswalker'`,
+      `UPDATE boss_fights SET description = 'Soberana del Fin y de las dominadas con lastre. Si no haces el rango completo, te lanza un aliento que huele a batido de proteínas caducado.' WHERE name = 'The Ender Dragon'`,
+      `UPDATE boss_fights SET description = 'El Rey de los Cielos... y de las dominadas explosivas. Vuela porque no aguanta el peso de su propio ego en la barra.' WHERE name = 'Rathalos'`,
+      `UPDATE boss_fights SET description = 'Bendecido con la invulnerabilidad y maldito con un porcentaje de grasa tan bajo que no siente las agujetas. "No siento nada, ni siquiera el bombeo".' WHERE name = 'Baldur'`,
+      `UPDATE boss_fights SET description = 'Empuña la Agonía de Escarcha para mantener sus batidos fríos. Su ejército de no-muertos son solo gente que intentó seguir su rutina de 1000 pull-ups.' WHERE name = 'Arthas, El Rey Exánime'`,
+      `UPDATE boss_fights SET description = 'Nunca ha conocido la derrota, ni el descanso entre series. Su técnica secreta es beber creatina pura durante los descansos.' WHERE name = 'Malenia, Espada de Miquella'`,
+      `UPDATE boss_fights SET description = 'Lleva el pelo tan largo para ocultar que no tiene trapecios. El "Ángel de una Sola Ala" porque el otro dorsal se le desgarró haciendo un Front Lever.' WHERE name = 'Sephiroth'`,
+      `UPDATE boss_fights SET description = 'La maldad pura que asoló Hyrule porque alguien usó su rack de potencia para hacer curls de bíceps.' WHERE name = 'Calamity Ganon'`,
+      `UPDATE boss_fights SET description = 'Viene a contar tus repeticiones en el gimnasio del infierno. Si no tocas la barbilla en la barra, tu serie no cuenta para el ranking.' WHERE name = 'Diablo'`,
+      `UPDATE boss_fights SET description = 'Perdió su nombre en una apuesta sobre quién aguantaba más en plancha isométrica sobre un dragón de tormenta.' WHERE name = 'The Nameless King'`,
+      
       `CREATE INDEX IF NOT EXISTS idx_reps_user_date ON reps(user_id, date)`,
       `CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(user_id_1, user_id_2)`,
       `CREATE INDEX IF NOT EXISTS idx_inventory_user ON user_inventory(user_id)`

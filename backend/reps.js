@@ -65,29 +65,51 @@ router.post('/', authenticate, async (req, res) => {
 
 
 
-    // 3. Atacar al Boss Global Activo (si existe)
+    // 3. Atacar al Boss Global Activo (si existe - Secuencial)
     const bossRes = await query(
-      `SELECT id, current_hp FROM boss_fights WHERE status = 'active' AND start_date <= CURRENT_TIMESTAMP AND end_date >= CURRENT_TIMESTAMP LIMIT 1`
+      `SELECT id, current_hp FROM boss_fights 
+       WHERE status != 'defeated' 
+       ORDER BY order_index ASC LIMIT 1`
     );
 
     if (bossRes.rows.length > 0) {
       const boss = bossRes.rows[0];
-      const damage = count;
-      const newHp = Math.max(0, boss.current_hp - damage);
       
-      await query(`UPDATE boss_fights SET current_hp = $1 WHERE id = $2`, [newHp, boss.id]);
-      
-      // Update participant damage
-      await query(
-        `INSERT INTO event_participants (boss_fight_id, user_id, damage_dealt) 
-         VALUES ($1, $2, $3)
-         ON CONFLICT (boss_fight_id, user_id) 
-         DO UPDATE SET damage_dealt = event_participants.damage_dealt + EXCLUDED.damage_dealt`,
-        [boss.id, userId, damage]
+      // Check for daily damage cap (100)
+      const userDamageRes = await query(
+        `SELECT daily_boss_damage, last_boss_damage_date FROM users WHERE id = $1`,
+        [userId]
       );
+      const userDamageInfo = userDamageRes.rows[0];
+      const isToday = new Date(userDamageInfo.last_boss_damage_date).toISOString().split('T')[0] === new Date().toISOString().split('T')[0];
       
-      if (newHp === 0) {
-        await query(`UPDATE boss_fights SET status = 'defeated' WHERE id = $1`, [boss.id]);
+      const currentDailyDamage = isToday ? userDamageInfo.daily_boss_damage : 0;
+      const allowableDamage = Math.max(0, 100 - currentDailyDamage);
+      
+      if (allowableDamage > 0) {
+        const damage = Math.min(count, allowableDamage);
+        const newHp = Math.max(0, boss.current_hp - damage);
+        
+        await query(`UPDATE boss_fights SET current_hp = $1 WHERE id = $2`, [newHp, boss.id]);
+        
+        // Update participant damage
+        await query(
+          `INSERT INTO event_participants (boss_fight_id, user_id, damage_dealt) 
+           VALUES ($1, $2, $3)
+           ON CONFLICT (boss_fight_id, user_id) 
+           DO UPDATE SET damage_dealt = event_participants.damage_dealt + EXCLUDED.damage_dealt`,
+          [boss.id, userId, damage]
+        );
+
+        // Update user's daily damage tracker
+        await query(
+          `UPDATE users SET daily_boss_damage = $1, last_boss_damage_date = CURRENT_DATE WHERE id = $2`,
+          [currentDailyDamage + damage, userId]
+        );
+        
+        if (newHp === 0) {
+          await query(`UPDATE boss_fights SET status = 'defeated' WHERE id = $1`, [boss.id]);
+        }
       }
     }
 

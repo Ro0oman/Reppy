@@ -1,100 +1,117 @@
 <template>
   <div v-if="loading" class="animate-pulse bg-white/5 h-24 rounded-3xl mb-8"></div>
-  <div v-else-if="boss" class="glass p-5 rounded-3xl mb-8 border border-zinc-200 dark:border-white/5 relative overflow-hidden group flex flex-col justify-center transition-all duration-500">
-    <!-- Subtle glow based on status -->
-    <div v-if="hasStarted" class="absolute -right-20 -top-20 w-64 h-64 bg-pink-500/10 rounded-full blur-[80px] pointer-events-none"></div>
-    <div v-else class="absolute -right-20 -top-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] pointer-events-none"></div>
-
-    <div class="flex items-center justify-between mb-4 relative z-10" :class="!hasStarted ? 'opacity-40 grayscale pointer-events-none' : ''">
-      <div class="flex items-center gap-3">
-        <div class="w-14 h-14 bg-white dark:bg-zinc-900 rounded-2xl flex items-center justify-center border border-zinc-200 dark:border-white/10 shadow-xl overflow-hidden">
-          <img v-if="boss.image_url" :src="boss.image_url" class="w-full h-full object-contain p-1" />
-          <span v-else class="text-2xl italic font-black">?</span>
+  <div v-else-if="boss" class="space-y-6 mb-8">
+    <!-- Active Boss Card -->
+    <div class="glass p-6 rounded-[2.5rem] border border-zinc-200 dark:border-white/5 relative overflow-hidden group transition-all duration-500 shadow-xl">
+      <div class="absolute -right-20 -top-20 w-64 h-64 bg-primary-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+      
+      <div class="flex flex-col md:flex-row items-center gap-6 relative z-10 mb-8">
+        <div class="w-32 h-32 bg-white dark:bg-zinc-900 rounded-[2rem] flex items-center justify-center border-2 border-zinc-200 dark:border-white/10 shadow-2xl overflow-hidden group-hover:scale-105 transition-transform duration-500">
+          <img v-if="boss.image_url" :src="boss.image_url" class="w-full h-full object-contain p-2" :class="isDefeated ? 'grayscale opacity-50' : ''" />
+          <span v-else class="text-4xl italic font-black">?</span>
         </div>
-        <div>
-          <h3 class="text-xl font-black italic tracking-tighter text-zinc-900 dark:text-white uppercase">{{ boss.name }}</h3>
-          <p class="text-xs text-zinc-400 dark:text-zinc-500 font-medium">{{ boss.description }}</p>
-        </div>
-      </div>
-      <div class="text-right">
-        <div class="text-2xl font-black text-pink-500 tracking-tighter">{{ boss.current_hp.toLocaleString() }} <span class="text-sm text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">/ {{ boss.total_hp.toLocaleString() }} HP</span></div>
-        <button v-if="hasStarted" @click="shareEvent" class="mt-2 text-[10px] font-black uppercase tracking-widest text-primary-400 hover:text-primary-300 transition-colors bg-primary-500/5 px-3 py-1.5 rounded-lg border border-primary-500/10">
-          Reclutar Ayuda 🔗
-        </button>
-      </div>
-    </div>
-
-    <!-- Main Boss Progress -->
-    <div class="relative" :class="!hasStarted ? 'opacity-20 grayscale pointer-events-none' : ''">
-      <div class="relative h-6 bg-white dark:bg-zinc-900 rounded-full overflow-hidden border border-zinc-200 dark:border-white/5 mb-3">
-        <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-red-600 via-pink-500 to-amber-500 transition-all duration-1000 ease-out" :style="{ width: `${hpPercentage}%` }"></div>
-        <div class="absolute inset-0 flex items-center justify-around pointer-events-none px-4">
-          <div class="w-px h-full bg-white/20"></div>
-          <div class="w-px h-full bg-white/20"></div>
-        </div>
-      </div>
-
-      <div class="flex items-center justify-between relative z-10">
-        <p class="text-[9px] text-zinc-500 font-black uppercase tracking-widest">Próximo cofre: <span class="text-pink-500">{{ repsToNextChest }} reps</span></p>
-        <div class="flex items-center gap-2">
-          <button v-for="i in 3" :key="i" @click="claim(i)"
-            class="w-10 h-10 rounded-xl flex items-center justify-center text-lg transition-all border"
-            :class="getChestClass(i)" :disabled="!canClaim(i) || claiming">
-            {{ hasClaimed(i) ? '✅' : '🎁' }}
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Global Countdown Overlay for Upcoming Bosses -->
-    <div v-if="!hasStarted" class="absolute inset-0 z-30 flex items-center justify-center p-6 bg-zinc-50/10 dark:bg-black/10 backdrop-blur-[2px]">
-      <div class="bg-white/95 dark:bg-zinc-950/95 p-6 rounded-[2rem] border border-white/20 shadow-2xl flex flex-col sm:flex-row items-center gap-6 max-w-lg w-full transform hover:scale-[1.02] transition-transform">
-        <div class="relative shrink-0">
-          <div class="w-20 h-20 bg-zinc-100 dark:bg-black rounded-3xl flex items-center justify-center border-2 border-primary-500/20">
-             <span class="text-4xl animate-pulse">🔒</span>
+        
+        <div class="flex-1 text-center md:text-left">
+          <div class="flex flex-col md:flex-row md:items-baseline gap-2 mb-2">
+            <h3 class="text-3xl font-black italic tracking-tighter text-zinc-900 dark:text-white uppercase leading-none">{{ boss.name }}</h3>
+            <span v-if="isDefeated" class="text-[10px] bg-emerald-500 text-black px-2 py-0.5 rounded-full font-black uppercase tracking-widest w-fit mx-auto md:mx-0">Derrotado</span>
           </div>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400 font-medium max-w-xl">{{ boss.description }}</p>
         </div>
-        <div class="flex-1 text-center sm:text-left">
-          <p class="text-[10px] font-black uppercase tracking-[0.3em] text-primary-500 mb-1">Próximo Evento Global</p>
-          <h3 class="text-xl font-black text-black dark:text-white uppercase italic tracking-tighter">{{ boss.name }}</h3>
-          <div class="mt-3 flex items-center justify-center sm:justify-start gap-4">
-            <div class="px-4 py-2 bg-black dark:bg-white/5 rounded-xl border border-white/10">
-              <p class="text-lg font-mono font-black text-primary-500 tracking-tighter">{{ timeToStart }}</p>
+
+        <div class="text-center md:text-right">
+          <div class="text-3xl font-black text-primary-500 tracking-tighter tabular-nums">{{ boss.current_hp.toLocaleString() }}</div>
+          <div class="text-[10px] text-zinc-400 dark:text-zinc-500 font-black uppercase tracking-widest">/ {{ boss.total_hp.toLocaleString() }} HP</div>
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="space-y-4">
+        <div class="relative h-4 bg-zinc-100 dark:bg-zinc-900 rounded-full overflow-hidden border border-zinc-200 dark:border-white/5 shadow-inner">
+          <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-primary-600 via-primary-400 to-amber-400 transition-all duration-1000 ease-out shadow-[0_0_20px_rgba(236,72,153,0.3)]" :style="{ width: `${hpPercentage}%` }"></div>
+        </div>
+
+        <div v-if="!isDefeated" class="text-center">
+           <p class="text-[10px] font-black uppercase tracking-[0.1em] text-zinc-500 dark:text-zinc-400">
+             Faltan <span class="text-primary-500">{{ boss.current_hp.toLocaleString() }}</span> de daño total para desbloquear el cofre 🎁
+           </p>
+        </div>
+
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div class="flex flex-col sm:flex-row items-center gap-2 md:gap-4 mt-2 md:mt-0">
+             <div class="flex items-center gap-2">
+                <div class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></div>
+                <p class="text-[9px] text-zinc-500 font-black uppercase tracking-[0.2em]">Total: <span class="text-zinc-900 dark:text-white">{{ personalDamage }} reps</span></p>
+             </div>
+             <div class="flex items-center gap-2 bg-primary-500/5 px-2 py-1 rounded-lg border border-primary-500/10" :class="dailyDamage >= 100 ? 'border-amber-500/30 bg-amber-500/5' : ''">
+                <p class="text-[9px] font-black uppercase tracking-[0.2em]" :class="dailyDamage >= 100 ? 'text-amber-500' : 'text-primary-500'">
+                  Día: {{ dailyDamage }} / 100 🛡️
+                </p>
+             </div>
+          </div>
+
+          <!-- Sequential Reward Logic -->
+          <div v-if="isDefeated" class="flex items-center gap-4">
+            <template v-if="chestsClaimed < 1">
+               <p class="text-[10px] font-black uppercase tracking-widest text-emerald-500 animate-bounce">¡Boss derrotado! Reclama tu recompensa</p>
+               <button @click="claim" :disabled="claiming" 
+                class="px-8 py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest rounded-2xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:scale-105 active:scale-95 flex items-center gap-2">
+                 <span class="text-xl">🎁</span> Abrir Cofre
+               </button>
+            </template>
+            <div v-else class="flex items-center gap-2 text-zinc-400 font-black uppercase text-[10px] tracking-widest px-4 py-2 bg-white/5 rounded-xl border border-white/5">
+              <span>✅ Recompensa Reclamada</span>
             </div>
-            <p class="text-[10px] font-bold text-zinc-500 dark:text-zinc-400">Días, Horas, Min, Seg<br>para el despliegue.</p>
+          </div>
+          <div v-else class="text-[10px] font-black uppercase tracking-widest text-zinc-400 bg-zinc-100 dark:bg-white/5 px-4 py-2 rounded-xl">
+             Continúa entrenando para derrotarlo
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Next Boss Preview -->
+    <div v-if="nextBoss" class="glass p-5 rounded-3xl border border-dashed border-zinc-300 dark:border-white/10 opacity-60 hover:opacity-100 transition-opacity flex items-center justify-between group">
+       <div class="flex items-center gap-4">
+         <div class="w-12 h-12 bg-zinc-200 dark:bg-black rounded-xl p-1 flex items-center justify-center grayscale group-hover:grayscale-0 transition-all">
+            <img :src="nextBoss.image_url" class="w-full h-full object-contain opacity-50 group-hover:opacity-100" />
+         </div>
+         <div>
+           <p class="text-[8px] font-black uppercase tracking-widest text-zinc-400">Siguiente Desafío</p>
+           <h4 class="text-sm font-bold text-zinc-600 dark:text-zinc-300 uppercase tracking-tight">{{ nextBoss.name }}</h4>
+         </div>
+       </div>
+       <div class="text-[10px] font-black text-zinc-400 uppercase tracking-widest italic">Bloqueado 🔒</div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { useNotificationStore } from '../stores/notification';
-
 import confetti from 'canvas-confetti';
 
 const boss = ref(null);
+const nextBoss = ref(null);
 const loading = ref(true);
 const claiming = ref(false);
 const personalDamage = ref(0);
+const dailyDamage = ref(0);
 const chestsClaimed = ref(0);
-const currentTime = ref(new Date());
 const notificationStore = useNotificationStore();
-
-let timerInterval = null;
 
 const fetchBoss = async () => {
   try {
     const res = await axios.get('/api/boss/active');
     if (res.data && res.data.boss) {
       boss.value = res.data.boss;
+      nextBoss.value = res.data.next_boss;
       personalDamage.value = res.data.personal_damage;
+      dailyDamage.value = res.data.daily_damage || 0;
       chestsClaimed.value = res.data.chests_claimed;
     } else {
-      boss.value = null; // No active or upcoming boss
+      boss.value = null;
     }
   } catch (error) {
     console.error('Error fetching boss:', error);
@@ -103,19 +120,9 @@ const fetchBoss = async () => {
   }
 };
 
-const hasStarted = computed(() => {
+const isDefeated = computed(() => {
   if (!boss.value) return false;
-  return currentTime.value >= new Date(boss.value.start_date);
-});
-
-const timeToStart = computed(() => {
-  if (!boss.value || hasStarted.value) return '';
-  const diff = new Date(boss.value.start_date) - currentTime.value;
-  const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const h = Math.floor((diff / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
-  const m = Math.floor((diff / 1000 / 60) % 60).toString().padStart(2, '0');
-  const s = Math.floor((diff / 1000) % 60).toString().padStart(2, '0');
-  return `${d}D ${h}:${m}:${s}`;
+  return boss.value.current_hp <= 0 || boss.value.status === 'defeated';
 });
 
 const hpPercentage = computed(() => {
@@ -123,65 +130,27 @@ const hpPercentage = computed(() => {
   return (boss.value.current_hp / boss.value.total_hp) * 100;
 });
 
-const damagePercentage = computed(() => {
-  if (!boss.value) return 0;
-  return ((boss.value.total_hp - boss.value.current_hp) / boss.value.total_hp) * 100;
-});
-
-const unlockedChests = computed(() => {
-  if (damagePercentage.value >= 100) return 3;
-  if (damagePercentage.value >= 66.6) return 2;
-  if (damagePercentage.value >= 33.3) return 1;
-  return 0;
-});
-
-const repsToNextChest = computed(() => {
-  if (!boss.value) return 0;
-  if (unlockedChests.value === 3) return 0;
-  
-  let targetPercentage = 33.3;
-  if (unlockedChests.value === 1) targetPercentage = 66.6;
-  if (unlockedChests.value === 2) targetPercentage = 100;
-
-  const targetDamage = boss.value.total_hp * (targetPercentage / 100);
-  const currentDamage = boss.value.total_hp - boss.value.current_hp;
-  return Math.ceil(Math.max(0, targetDamage - currentDamage));
-});
-
-const hasClaimed = (chestIndex) => {
-  return chestsClaimed.value >= chestIndex;
-};
-
-const canClaim = (chestIndex) => {
-  return unlockedChests.value >= chestIndex && !hasClaimed(chestIndex);
-};
-
-const getChestClass = (chestIndex) => {
-  if (hasClaimed(chestIndex)) return 'bg-white/5 opacity-50 grayscale';
-  if (canClaim(chestIndex)) return 'bg-pink-500 animate-pulse hover:scale-110 shadow-[0_0_15px_rgba(236,72,153,0.5)] cursor-pointer';
-  return 'bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 opacity-50 cursor-not-allowed';
-};
-
-const claim = async (index) => {
-  if (!canClaim(index) || claiming.value) return;
+const claim = async () => {
+  if (!isDefeated.value || claiming.value || chestsClaimed.value >= 1) return;
   claiming.value = true;
   try {
     const res = await axios.post(`/api/boss/claim-chest/${boss.value.id}`);
-    chestsClaimed.value = res.data.new_chests_claimed;
+    chestsClaimed.value = 1;
     
-    // Confetti effect
     confetti({
-      particleCount: 150,
-      spread: 70,
+      particleCount: 200,
+      spread: 90,
       origin: { y: 0.6 },
-      colors: ['#ec4899', '#f472b6', '#fb7185']
+      colors: ['#10b981', '#34d399', '#facc15']
     });
 
-    if (res.data.rewardItem) {
-      notificationStore.notify(`¡HAS DESBLOQUEADO: ${res.data.rewardItem.toUpperCase()}! 🎁`, 'success');
-    } else {
-      notificationStore.notify(`¡Has conseguido ${res.data.rewardCoins} Reppy Coins!`, 'success');
-    }
+    notificationStore.notify(res.data.message, 'success');
+    
+    // Refresh to see if we moved to the next boss
+    setTimeout(() => {
+      fetchBoss();
+    }, 3000);
+
   } catch (error) {
     notificationStore.notify(error.response?.data?.message || 'Error al abrir cofre', 'error');
   } finally {
@@ -189,31 +158,8 @@ const claim = async (index) => {
   }
 };
 
-const shareEvent = () => {
-  const url = `${window.location.origin}/`;
-  const text = `🐇 ¡El Conejo de Acero ha llegado a Reppy! Ayúdame a conseguir repeticiones para quitarle vida al jefe global. Únete: ${url}`;
-  
-  if (navigator.share) {
-    navigator.share({
-      title: 'Global Boss: El Conejo de Acero',
-      text: text,
-      url: url,
-    }).catch(console.error);
-  } else {
-    navigator.clipboard.writeText(text);
-    notificationStore.notify('Enlace de invitación copiado al portapapeles', 'success');
-  }
-};
-
 onMounted(() => {
   fetchBoss();
-  timerInterval = setInterval(() => {
-    currentTime.value = new Date();
-  }, 1000);
-});
-
-onUnmounted(() => {
-  if (timerInterval) clearInterval(timerInterval);
 });
 
 defineExpose({ refresh: fetchBoss });
