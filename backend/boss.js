@@ -9,11 +9,33 @@ const router = express.Router();
 router.get('/active', authenticate, async (req, res) => {
   try {
     // Current boss is the one with the lowest order_index that is not defeated
-    const bossRes = await query(
+    let bossRes = await query(
       `SELECT * FROM boss_fights 
        WHERE status != 'defeated' 
        ORDER BY order_index ASC LIMIT 1`
     );
+
+    // AUTO-RESET LOOP: If all bosses are defeated, reset them all to active
+    if (bossRes.rows.length === 0) {
+      await query('BEGIN');
+      try {
+        // Reset all bosses to active and full HP
+        await query(`UPDATE boss_fights SET status = 'active', current_hp = total_hp`);
+        // Reset all participants damage and claims for the new loop
+        await query(`UPDATE event_participants SET damage_dealt = 0, chests_claimed = 0`);
+        await query('COMMIT');
+        
+        // Re-fetch the first boss
+        bossRes = await query(
+          `SELECT * FROM boss_fights 
+           WHERE status != 'defeated' 
+           ORDER BY order_index ASC LIMIT 1`
+        );
+      } catch (err) {
+        await query('ROLLBACK');
+        throw err;
+      }
+    }
 
     if (bossRes.rows.length === 0) {
       return res.json(null);
