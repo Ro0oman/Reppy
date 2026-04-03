@@ -230,7 +230,7 @@ router.put('/:id', authenticate, async (req, res) => {
   try {
     // 1. Get old values
     const oldRes = await query(
-      'SELECT count, exercise_type FROM reps WHERE id = $1 AND user_id = $2',
+      'SELECT count, exercise_type, boss_damage_dealt, date FROM reps WHERE id = $1 AND user_id = $2',
       [id, userId]
     );
 
@@ -328,7 +328,7 @@ router.delete('/:id', authenticate, async (req, res) => {
   try {
     // 1. Get old values for deduction
     const oldRes = await query(
-      'SELECT count, exercise_type FROM reps WHERE id = $1 AND user_id = $2',
+      'SELECT count, exercise_type, boss_damage_dealt, date FROM reps WHERE id = $1 AND user_id = $2',
       [id, userId]
     );
 
