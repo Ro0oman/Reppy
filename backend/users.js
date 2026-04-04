@@ -60,7 +60,7 @@ router.patch('/profile', authenticate, async (req, res) => {
       `UPDATE users SET ${updateFields.join(', ')} WHERE id = $${i} RETURNING *`,
       params
     );
-    res.json(result.rows[0]);
+    res.json({ user: result.rows[0] });
   } catch (error) {
     console.error('Error updating profile:', error);
     res.status(500).json({ message: 'Error updating profile' });

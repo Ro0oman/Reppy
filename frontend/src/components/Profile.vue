@@ -335,7 +335,7 @@ const handleFileUpload = async (event) => {
 
 const saveSettings = async () => {
   try {
-    const res = await axios.put('/api/users/settings', settingsForm.value);
+    const res = await axios.patch('/api/users/profile', settingsForm.value);
     authStore.user.name = res.data.user.name;
     authStore.user.daily_goal = res.data.user.daily_goal;
     authStore.user.body_weight = res.data.user.body_weight;
