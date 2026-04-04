@@ -1,7 +1,7 @@
 import express from 'express';
 import { query } from './db.js';
 import { authenticate } from './middleware.js';
-import { getExerciseRewards } from './utils/rewards.js';
+import { getExerciseRewards, getBossDamageMultiplier } from './utils/rewards.js';
 
 
 const router = express.Router();
@@ -89,7 +89,8 @@ router.post('/', authenticate, async (req, res) => {
       const allowableDamage = Math.max(0, 100 - currentDailyDamage);
       
       if (allowableDamage > 0) {
-        actualDamageDealt = Math.min(count, allowableDamage);
+        const damageMultiplier = getBossDamageMultiplier(exercise_type);
+        actualDamageDealt = Math.min(count * damageMultiplier, allowableDamage);
         const newHp = Math.max(0, boss.current_hp - actualDamageDealt);
         
         await query(`UPDATE boss_fights SET current_hp = $1 WHERE id = $2`, [newHp, boss.id]);
@@ -268,7 +269,8 @@ router.put('/:id', authenticate, async (req, res) => {
       const dailyDamageWithoutThisEntry = Math.max(0, currentDailyTotal - oldRep.boss_damage_dealt);
       
       const allowableDamage = Math.max(0, 100 - dailyDamageWithoutThisEntry);
-      newBossDamageDealt = Math.min(count, allowableDamage);
+      const damageMultiplier = getBossDamageMultiplier(oldRep.exercise_type);
+      newBossDamageDealt = Math.min(count * damageMultiplier, allowableDamage);
 
       const bossHpChange = newBossDamageDealt - oldRep.boss_damage_dealt;
       const newBossHp = Math.min(boss.total_hp, Math.max(0, boss.current_hp - bossHpChange));

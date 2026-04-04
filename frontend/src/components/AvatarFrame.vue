@@ -3,7 +3,7 @@
     <div class="avatar-frame__glow"></div>
     <div class="avatar-frame__border"></div>
     <div class="avatar-frame__inner">
-      <img :src="src" class="avatar-frame__img" :class="avatarCss" />
+      <div class="avatar-frame__avatar" :class="avatarCss" :style="{ '--avatar-url': `url(${src})` }"></div>
     </div>
 
     <!-- Brick overlay -->
@@ -142,19 +142,33 @@ const frameVars = computed(() => ({
 }
 
 .avatar-frame__inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: 12%; 
   border-radius: 50%;
   overflow: hidden;
   z-index: 2;
+  background: #000;
 }
 
-.avatar-frame__img {
+.avatar-frame__avatar {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  display: block;
+  background-image: var(--avatar-url);
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.avatar-frame__avatar::before,
+.avatar-frame__avatar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  display: none;
+  background-image: var(--avatar-url);
+  background-size: cover;
+  background-position: center;
 }
 
 .avatar-frame__border {
@@ -801,48 +815,119 @@ const frameVars = computed(() => ({
 }
 
 /* ========================================
-   AVATAR ANIMATIONS (INTERNAL IMG)
+   PREMIUM AVATAR ANIMATIONS (v2)
    ======================================== */
 
-/* Cyber Pulse (Rare) */
+/* 1. Cyber Neon (Rare) - Scanlines & Liquid Glow */
 .avatar-pulse {
-  animation: avatar-pulse-anim 2s infinite ease-in-out;
+  box-shadow: inset 0 0 10px rgba(34, 211, 238, 0.5);
+  animation: cyber-neon-pulse 2s infinite ease-in-out;
 }
-@keyframes avatar-pulse-anim {
-  0%, 100% { filter: brightness(1) drop-shadow(0 0 0px rgba(34, 211, 238, 0)); }
-  50% { filter: brightness(1.2) drop-shadow(0 0 8px rgba(34, 211, 238, 0.8)); }
+.avatar-pulse::after {
+  display: block;
+  background: linear-gradient(to bottom, transparent 40%, rgba(34, 211, 238, 0.4) 50%, transparent 60%);
+  background-size: 100% 200%;
+  animation: scanline 3s linear infinite;
+  mix-blend-mode: overlay;
+}
+@keyframes cyber-neon-pulse {
+  0%, 100% { filter: drop-shadow(0 0 2px cyan) brightness(1); }
+  50% { filter: drop-shadow(0 0 8px cyan) brightness(1.2); }
+}
+@keyframes scanline {
+  from { background-position: 0 100%; }
+  to { background-position: 0 -100%; }
 }
 
-/* Glitch Master (Legendary) */
+/* 2. Glitch Overdrive (Legendary) - Chromatic Aberration & Tearing */
 .avatar-glitch {
-  animation: avatar-glitch-anim 3s infinite linear;
+  animation: glitch-main 4s infinite step-end;
 }
-@keyframes avatar-glitch-anim {
-  0% { filter: none; transform: translate(0); }
-  7% { filter: hue-rotate(90deg) saturate(2); transform: translate(2px, -1px); }
-  8% { filter: none; transform: translate(0); }
-  15% { filter: contrast(1.5) brightness(1.5); transform: translate(-2px, 1px); }
-  16% { filter: none; transform: translate(0); }
-  100% { filter: none; transform: translate(0); }
+.avatar-glitch::before, .avatar-glitch::after {
+  display: block;
+  mix-blend-mode: screen;
+}
+.avatar-glitch::before {
+  animation: glitch-cyan 2s infinite linear alternate-reverse;
+  filter: hue-rotate(90deg) brightness(1.5);
+  transform: translateX(2px);
+}
+.avatar-glitch::after {
+  animation: glitch-red 1.5s infinite linear alternate;
+  filter: hue-rotate(-90deg) contrast(1.5);
+  transform: translateX(-2px);
+}
+@keyframes glitch-main {
+  0%, 90%, 100% { transform: scale(1); filter: none; }
+  92% { transform: skew(5deg); filter: contrast(2); }
+  94% { transform: skew(-5deg); filter: invert(0.1); }
+  96% { transform: scale(1.1); filter: hue-rotate(45deg); }
+}
+@keyframes glitch-cyan {
+  0% { clip-path: inset(80% 0 0 0); }
+  20% { clip-path: inset(20% 0 60% 0); }
+  40% { clip-path: inset(50% 0 10% 0); }
+  60% { clip-path: inset(10% 0 70% 0); }
+  100% { clip-path: inset(0 0 0 0); }
+}
+@keyframes glitch-red {
+  0% { clip-path: inset(0 0 80% 0); }
+  30% { clip-path: inset(60% 0 20% 0); }
+  70% { clip-path: inset(10% 0 40% 0); }
+  100% { clip-path: inset(0 0 0 0); }
 }
 
-/* Spectral Soul (Legendary) */
-.avatar-spectral {
-  animation: avatar-spectral-anim 4s infinite ease-in-out;
-  opacity: 0.8;
-}
-@keyframes avatar-spectral-anim {
-  0%, 100% { filter: grayscale(0.5) contrast(1.2) opacity(0.7); transform: scale(1) translateY(0); }
-  50% { filter: grayscale(0) contrast(1.5) opacity(1); transform: scale(1.05) translateY(-2px); }
-}
-
-/* Infernal Spirit (Legendary) */
+/* 3. Eternal Flame (Legendary) - Heat Distortion & Embers */
 .avatar-infernal {
-  animation: avatar-infernal-anim 2s infinite ease-in-out;
+  filter: sepia(0.3) saturate(1.5) contrast(1.1);
+  animation: heat-distort 3s infinite ease-in-out;
 }
-@keyframes avatar-infernal-anim {
-  0%, 100% { filter: sepia(0.5) saturate(2) brightness(1); }
-  50% { filter: sepia(0.8) saturate(3) brightness(1.3); }
+.avatar-infernal::before {
+  display: block;
+  background: radial-gradient(circle at center, #f97316 10%, transparent 20%);
+  background-size: 8px 8px;
+  animation: embers 4s linear infinite;
+  opacity: 0.6;
+  mix-blend-mode: screen;
+}
+.avatar-infernal::after {
+  display: block;
+  box-shadow: inset 0 -20px 30px -10px #ef4444;
+  animation: fire-flicker 0.5s infinite alternate;
+}
+@keyframes heat-distort {
+  0%, 100% { border-radius: 50% 48% 52% 50% / 50% 52% 48% 50%; }
+  50% { border-radius: 48% 52% 50% 48% / 52% 48% 52% 50%; transform: scale(1.02) skew(1deg); }
+}
+@keyframes embers {
+  from { background-position: 0 0; transform: translateY(0) scale(1); }
+  to { background-position: -20px -100px; transform: translateY(-20px) scale(0.5); }
+}
+@keyframes fire-flicker {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.3) contrast(1.2); }
+}
+
+/* 4. Phantom Echo (Legendary) - Ghostly Trail */
+.avatar-spectral {
+  filter: grayscale(0.2) contrast(1.2);
+  animation: phantom-float 5s infinite ease-in-out;
+}
+.avatar-spectral::after {
+  display: block;
+  opacity: 0.3;
+  filter: blur(2px) grayscale(1) invert(0.2);
+  transform: scale(1.1);
+  animation: ghost-trail 3s infinite ease-out;
+  mix-blend-mode: lighten;
+}
+@keyframes phantom-float {
+  0%, 100% { transform: translateY(0); filter: brightness(1); }
+  50% { transform: translateY(-4px); filter: brightness(1.4) drop-shadow(0 0 10px rgba(168, 85, 247, 0.4)); }
+}
+@keyframes ghost-trail {
+  0% { transform: scale(1); opacity: 0.4; }
+  100% { transform: scale(1.5); opacity: 0; filter: blur(10px); }
 }
 
 

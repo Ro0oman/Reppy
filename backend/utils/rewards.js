@@ -31,3 +31,15 @@ export const getExerciseRewards = (type, count) => {
     extraStatToUpgrade
   };
 };
+
+/**
+ * Calculates the boss damage multiplier based on exercise type.
+ * Pullups/Dips/Pushups = 1x
+ * Muscle-ups = 2x
+ * Weighted Pullups = 3x
+ */
+export const getBossDamageMultiplier = (type) => {
+  if (type === 'muscleups') return 2;
+  if (type === 'weighted_pullups') return 3;
+  return 1; // Default for pullups, dips, pushups
+};
