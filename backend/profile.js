@@ -15,10 +15,12 @@ router.get('/:id', async (req, res) => {
                u.equipped_title_id, u.equipped_border_id, u.equipped_background_id,
                cTitle.name as title_name, cTitle.css_value as title_css,
                cBorder.name as border_name, cBorder.css_value as border_css,
+               cAvatar.css_value as avatar_css,
                cBackground.css_value as background_css
         FROM users u
         LEFT JOIN cosmetics cTitle ON u.equipped_title_id = cTitle.id AND cTitle.type = 'title'
         LEFT JOIN cosmetics cBorder ON u.equipped_border_id = cBorder.id AND cBorder.type = 'border'
+        LEFT JOIN cosmetics cAvatar ON u.equipped_avatar_id = cAvatar.id AND cAvatar.type = 'avatar'
         LEFT JOIN cosmetics cBackground ON u.equipped_background_id = cBackground.id AND cBackground.type = 'background'
         WHERE u.id = $1
       `, [userId]);

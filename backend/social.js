@@ -11,7 +11,13 @@ router.get('/search', authenticate, async (req, res) => {
 
   try {
     const result = await query(
-      'SELECT id, name, avatar_url, total_reps FROM users WHERE (name ILIKE $1 OR email ILIKE $1) AND id != $2 LIMIT 10',
+      `SELECT u.id, u.name, u.avatar_url, u.total_reps,
+              b.css_value as border_css,
+              a.css_value as avatar_css
+       FROM users u
+       LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
+       LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
+       WHERE (u.name ILIKE $1 OR u.email ILIKE $1) AND u.id != $2 LIMIT 10`,
       [`%${q}%`, req.user.id]
     );
     res.json(result.rows);
@@ -55,9 +61,13 @@ router.post('/add', authenticate, async (req, res) => {
 router.get('/list', authenticate, async (req, res) => {
   try {
     const result = await query(
-      `SELECT u.id, u.name, u.avatar_url, u.total_reps 
+      `SELECT u.id, u.name, u.avatar_url, u.total_reps,
+              b.css_value as border_css,
+              a.css_value as avatar_css
        FROM users u
        JOIN friendships f ON (f.user_id_1 = u.id OR f.user_id_2 = u.id)
+       LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
+       LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
        WHERE (f.user_id_1 = $1 OR f.user_id_2 = $1) AND u.id != $1`,
       [req.user.id]
     );

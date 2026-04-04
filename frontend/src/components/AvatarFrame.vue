@@ -3,7 +3,7 @@
     <div class="avatar-frame__glow"></div>
     <div class="avatar-frame__border"></div>
     <div class="avatar-frame__inner">
-      <img :src="src" class="avatar-frame__img" />
+      <img :src="src" class="avatar-frame__img" :class="avatarCss" />
     </div>
 
     <!-- Brick overlay -->
@@ -102,6 +102,7 @@ import { computed } from 'vue';
 const props = defineProps({
   src: { type: String, required: true },
   borderCss: { type: String, default: '' },
+  avatarCss: { type: String, default: '' },
   size: { type: Number, default: 40 }
 });
 
@@ -798,6 +799,52 @@ const frameVars = computed(() => ({
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* ========================================
+   AVATAR ANIMATIONS (INTERNAL IMG)
+   ======================================== */
+
+/* Cyber Pulse (Rare) */
+.avatar-pulse {
+  animation: avatar-pulse-anim 2s infinite ease-in-out;
+}
+@keyframes avatar-pulse-anim {
+  0%, 100% { filter: brightness(1) drop-shadow(0 0 0px rgba(34, 211, 238, 0)); }
+  50% { filter: brightness(1.2) drop-shadow(0 0 8px rgba(34, 211, 238, 0.8)); }
+}
+
+/* Glitch Master (Legendary) */
+.avatar-glitch {
+  animation: avatar-glitch-anim 3s infinite linear;
+}
+@keyframes avatar-glitch-anim {
+  0% { filter: none; transform: translate(0); }
+  7% { filter: hue-rotate(90deg) saturate(2); transform: translate(2px, -1px); }
+  8% { filter: none; transform: translate(0); }
+  15% { filter: contrast(1.5) brightness(1.5); transform: translate(-2px, 1px); }
+  16% { filter: none; transform: translate(0); }
+  100% { filter: none; transform: translate(0); }
+}
+
+/* Spectral Soul (Legendary) */
+.avatar-spectral {
+  animation: avatar-spectral-anim 4s infinite ease-in-out;
+  opacity: 0.8;
+}
+@keyframes avatar-spectral-anim {
+  0%, 100% { filter: grayscale(0.5) contrast(1.2) opacity(0.7); transform: scale(1) translateY(0); }
+  50% { filter: grayscale(0) contrast(1.5) opacity(1); transform: scale(1.05) translateY(-2px); }
+}
+
+/* Infernal Spirit (Legendary) */
+.avatar-infernal {
+  animation: avatar-infernal-anim 2s infinite ease-in-out;
+}
+@keyframes avatar-infernal-anim {
+  0%, 100% { filter: sepia(0.5) saturate(2) brightness(1); }
+  50% { filter: sepia(0.8) saturate(3) brightness(1.3); }
+}
+
 
 @keyframes frame-glow-pulse {
   0% { opacity: 0.6; transform: scale(1); }

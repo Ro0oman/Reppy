@@ -31,7 +31,7 @@
             <div v-for="user in searchResults" :key="user.id"
               class="glass glass-hover p-4 rounded-3xl flex items-center justify-between">
               <div class="flex items-center gap-4">
-                <AvatarFrame :src="user.avatar_url" border-css="" :size="48" />
+                <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :avatar-css="user.avatar_css" :size="48" />
                 <div>
                   <p class="font-bold text-zinc-900 dark:text-white">{{ user.name }}</p>
                   <p class="text-xs text-zinc-400 dark:text-zinc-500 font-medium">{{ user.total_reps }} reps accumulated</p>
@@ -66,7 +66,7 @@
               class="glass glass-hover group p-5 rounded-3xl flex items-center justify-between shadow-xl">
               <div class="flex items-center gap-4">
                 <div class="relative">
-                  <AvatarFrame :src="friend.avatar_url" border-css="" :size="56" />
+                  <AvatarFrame :src="friend.avatar_url" :border-css="friend.border_css" :avatar-css="friend.avatar_css" :size="56" />
                   <div
                     class="absolute -bottom-1 -right-1 w-5 h-5 bg-white dark:bg-zinc-900 rounded-full flex items-center justify-center border border-zinc-300 dark:border-zinc-800">
                     <Check class="w-3 h-3 text-green-500" />

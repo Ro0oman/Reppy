@@ -48,7 +48,7 @@
             <span v-else class="text-[10px] font-black text-zinc-600 tracking-tighter">{{ index + 1 }}</span>
           </div>
           <div class="relative">
-            <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :size="36" />
+            <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :avatar-css="user.avatar_css" :size="36" />
             <div v-if="user.id === authStore.user?.id" class="absolute -top-1 -right-1 w-3 h-3 bg-primary-500 rounded-full border-2 border-[#09090b] z-10"></div>
           </div>
           <div>

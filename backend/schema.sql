@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS users (
     last_seen_version VARCHAR(50) DEFAULT '1.0.0',
     equipped_title_id INTEGER,
     equipped_border_id INTEGER,
+    equipped_avatar_id INTEGER,
     is_private BOOLEAN DEFAULT false,
     body_weight DECIMAL DEFAULT 75.0,
     daily_goal INTEGER DEFAULT 50,

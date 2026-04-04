@@ -71,7 +71,7 @@
                 {{ authStore.user?.title_name }}
               </span>
             </div>
-            <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :size="36" />
+            <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :avatar-css="authStore.user?.avatar_css" :size="36" />
           </button>
           </div>
         </div>
@@ -134,7 +134,7 @@
         <button @click="view = 'profile'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90"
 
           :class="view === 'profile' ? 'text-primary-600' : 'text-zinc-400'">
-          <AvatarFrame :src="authStore.user?.avatar_url" :border-css="view === 'profile' ? authStore.user?.border_css : ''" :size="28" 
+          <AvatarFrame :src="authStore.user?.avatar_url" :border-css="view === 'profile' ? authStore.user?.border_css : ''" :avatar-css="view === 'profile' ? authStore.user?.avatar_css : ''" :size="28" 
                class="transition-transform" :class="view === 'profile' ? 'scale-110' : 'opacity-60'" />
           <span class="text-[10px] font-black uppercase tracking-tighter">Perfil</span>
         </button>

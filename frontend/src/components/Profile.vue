@@ -12,7 +12,7 @@
         <div class="absolute -top-32 -right-32 w-96 h-96 bg-primary-500/20 blur-[100px] rounded-full pointer-events-none"></div>
 
         <div class="relative group">
-          <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :size="128" />
+          <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :avatar-css="user.avatar_css" :size="128" />
           <div v-if="isOwnProfile" @click="triggerAvatarUpload" class="absolute bottom-[-10px] right-[-10px] p-3 bg-primary-600 rounded-full cursor-pointer hover:bg-primary-500 shadow-xl text-white z-10">
             <Camera class="w-5 h-5" />
             <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/jpeg, image/png, image/webp" class="hidden" />

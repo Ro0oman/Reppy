@@ -107,6 +107,8 @@ router.post('/equip/:id', authenticate, async (req, res) => {
         await query('UPDATE users SET equipped_title_id = NULL WHERE id = $1', [userId]);
       } else if (typeParam === 'border') {
         await query('UPDATE users SET equipped_border_id = NULL WHERE id = $1', [userId]);
+      } else if (typeParam === 'avatar') {
+        await query('UPDATE users SET equipped_avatar_id = NULL WHERE id = $1', [userId]);
       } else if (typeParam === 'background') {
         await query('UPDATE users SET equipped_background_id = NULL WHERE id = $1', [userId]);
       }
@@ -124,6 +126,8 @@ router.post('/equip/:id', authenticate, async (req, res) => {
       await query('UPDATE users SET equipped_title_id = $1 WHERE id = $2', [cosmeticId, userId]);
     } else if (type === 'border') {
       await query('UPDATE users SET equipped_border_id = $1 WHERE id = $2', [cosmeticId, userId]);
+    } else if (type === 'avatar') {
+      await query('UPDATE users SET equipped_avatar_id = $1 WHERE id = $2', [cosmeticId, userId]);
     } else if (type === 'background') {
       await query('UPDATE users SET equipped_background_id = $1 WHERE id = $2', [cosmeticId, userId]);
     }
