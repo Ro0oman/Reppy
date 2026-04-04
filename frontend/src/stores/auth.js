@@ -18,6 +18,7 @@ export const useAuthStore = defineStore('auth', {
         this.user = response.data.user;
         localStorage.setItem('token', this.token);
         localStorage.setItem('user', JSON.stringify(this.user));
+        localStorage.setItem('reppy_last_visit', Date.now().toString());
         axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
         return this.user;
       } catch (error) {
@@ -33,6 +34,7 @@ export const useAuthStore = defineStore('auth', {
         this.user = response.data.user;
         localStorage.setItem('token', this.token);
         localStorage.setItem('user', JSON.stringify(this.user));
+        localStorage.setItem('reppy_last_visit', Date.now().toString());
         axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
         return this.user;
       } catch (error) {
@@ -52,6 +54,7 @@ export const useAuthStore = defineStore('auth', {
         
         localStorage.setItem('token', this.token);
         localStorage.setItem('user', JSON.stringify(this.user));
+        localStorage.setItem('reppy_last_visit', Date.now().toString());
         
         axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
         return this.user;
@@ -109,6 +112,24 @@ export const useAuthStore = defineStore('auth', {
       delete axios.defaults.headers.common['Authorization'];
     },
     init() {
+      // 1. Check for stale session (> 48h) to avoid cached component errors
+      const lastVisit = localStorage.getItem('reppy_last_visit');
+      const now = Date.now();
+      const FORTY_EIGHT_HOURS = 48 * 60 * 60 * 1000;
+
+      if (lastVisit && this.token) {
+        const diff = now - parseInt(lastVisit);
+        if (diff > FORTY_EIGHT_HOURS) {
+          console.warn('[AUTH_STORE] Stale session detected (>48h). Forcing logout and refresh...');
+          this.logout();
+          window.location.reload(); // Hard reload to clear component cache
+          return;
+        }
+      }
+
+      // Update visit timestamp
+      localStorage.setItem('reppy_last_visit', now.toString());
+
       // Setup global 401 interceptor if not already set
       if (!this.interceptorRegistered) {
         axios.interceptors.response.use(
