@@ -10,7 +10,7 @@ export const useAuthStore = defineStore('auth', {
   getters: {
     isAuthenticated: (state) => !!state.token,
   },
-  actions: {
+  actions: { 
     async signup(data) {
       try {
         const response = await axios.post('/api/auth/signup', data);
