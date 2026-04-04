@@ -233,12 +233,26 @@
     </Teleport>
     
     <!-- Floating Roulette Button -->
-    <button v-if="canSpinToday" @click="showRoulette = true" 
-      class="fixed bottom-24 right-6 md:bottom-8 md:right-8 z-[70] bg-gradient-to-tr from-primary-600 to-indigo-600 p-4 rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all group border-4 border-white dark:border-zinc-800">
-      <RefreshCw class="w-6 h-6 text-white group-hover:rotate-180 transition-transform duration-700" />
-
-      <div class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white animate-ping"></div>
-    </button>
+    <div v-if="canSpinToday" 
+         class="fixed bottom-24 right-6 md:bottom-8 md:right-8 z-[70] flex flex-col items-end gap-3 group">
+      <!-- Interactive Tooltip -->
+      <div class="bg-amber-500 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg animate-bounce border-2 border-white/20 whitespace-nowrap">
+        ¡Gira la ruleta! 🎰
+      </div>
+      
+      <button @click="showRoulette = true" 
+        class="relative bg-gradient-to-tr from-amber-400 via-amber-500 to-yellow-600 p-5 rounded-[2rem] shadow-[0_20px_50px_rgba(245,158,11,0.4)] hover:shadow-[0_20px_60px_rgba(245,158,11,0.6)] hover:scale-110 active:scale-95 transition-all duration-500 border-4 border-white/30 dark:border-zinc-800/50 overflow-hidden">
+        
+        <!-- Magic shine animation -->
+        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-shimmer pointer-events-none"></div>
+        
+        <Star class="w-8 h-8 text-white drop-shadow-md animate-spin-slow" />
+        
+        <!-- Notification dot -->
+        <div class="absolute top-2 right-2 w-4 h-4 bg-red-500 rounded-full border-2 border-white animate-ping"></div>
+        <div class="absolute top-2 right-2 w-4 h-4 bg-red-500 rounded-full border-2 border-white"></div>
+      </button>
+    </div>
 
   </div>
 </template>
