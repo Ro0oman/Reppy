@@ -4,7 +4,7 @@
     <!-- Active Boss Card -->
     <div class="glass p-6 rounded-[2.5rem] border border-zinc-200 dark:border-white/5 relative overflow-hidden group transition-all duration-500 shadow-xl">
       <div class="absolute -right-20 -top-20 w-64 h-64 bg-primary-500/10 rounded-full blur-[80px] pointer-events-none"></div>
-      
+       
       <div class="flex flex-col md:flex-row items-center gap-6 relative z-10 mb-8">
         <div class="w-32 h-32 bg-white dark:bg-zinc-900 rounded-[2rem] flex items-center justify-center border-2 border-zinc-200 dark:border-white/10 shadow-2xl overflow-hidden group-hover:scale-105 transition-transform duration-500">
           <img v-if="boss.image_url" :src="boss.image_url" class="w-full h-full object-contain p-2" :class="isDefeated ? 'grayscale opacity-50' : ''" />
