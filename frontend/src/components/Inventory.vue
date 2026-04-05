@@ -355,7 +355,10 @@ const markSeen = async (item) => {
 };
 
 onMounted(async () => {
-  await fetchInventory();
+  await Promise.all([
+    fetchInventory(),
+    authStore.fetchProfile()
+  ]);
   // Mark all as seen after 3 seconds of being in the inventory
   setTimeout(() => {
     inventory.value.forEach(item => {

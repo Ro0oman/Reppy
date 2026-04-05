@@ -1,6 +1,7 @@
 import express from 'express';
 import { query } from './db.js';
 import { authenticate } from './middleware.js';
+import { autoGrantPendingChests } from './utils/bossRewards.js';
 
 const router = express.Router();
 
@@ -79,32 +80,7 @@ router.get('/active', authenticate, async (req, res) => {
     const dailyDamage = isToday ? participant.daily_boss_damage : 0;
 
     // AUTO-GRANT CHESTS FOR PREVIOUS DEFEATED BOSSES
-    const pendingChestsRes = await query(
-      `SELECT b.id FROM boss_fights b
-       JOIN event_participants p ON p.boss_fight_id = b.id
-       WHERE b.status = 'defeated' AND p.user_id = $1 AND p.damage_dealt > 0 AND p.chests_claimed = 0`,
-      [req.user.id]
-    );
-
-    if (pendingChestsRes.rows.length > 0) {
-      const pendingCount = pendingChestsRes.rows.length;
-      await query('BEGIN');
-      try {
-        await query('UPDATE users SET boss_chests = boss_chests + $1 WHERE id = $2', [pendingCount, req.user.id]);
-        await query(
-          `UPDATE event_participants SET chests_claimed = 1 
-           WHERE user_id = $1 AND boss_fight_id IN (
-             SELECT id FROM boss_fights WHERE status = 'defeated'
-           ) AND damage_dealt > 0 AND chests_claimed = 0`,
-          [req.user.id]
-        );
-        await query('COMMIT');
-        // Refresh player data logic might be needed, but usually the next request will have it
-      } catch (err) {
-        await query('ROLLBACK');
-        console.error('Error auto-claiming chests:', err);
-      }
-    }
+    await autoGrantPendingChests(req.user.id);
 
     // Refresh user chest count
     const finalUserRes = await query('SELECT boss_chests FROM users WHERE id = $1', [req.user.id]);
