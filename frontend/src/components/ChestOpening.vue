@@ -27,7 +27,7 @@
         <!-- Reel Items -->
         <div 
           ref="reelRef"
-          class="flex transition-transform duration-[6s] cubic-bezier(0.15, 0, 0.05, 1)"
+          class="flex transition-transform duration-[6s] chest-reel-transition"
           :style="{ transform: `translateX(${translateX}px)` }">
           
           <div v-for="(item, index) in localReel" :key="index" 
@@ -166,7 +166,7 @@ const close = () => {
 </script>
 
 <style scoped>
-.cubic-bezier(0.15, 0, 0.05, 1) {
+.chest-reel-transition {
   transition-timing-function: cubic-bezier(0.15, 0, 0.05, 1);
 }
 </style>
