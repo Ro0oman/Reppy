@@ -110,28 +110,6 @@
       </div>
     </div>
 
-    <!-- Phase 2: Live Rankings -->
-    <div class="space-y-4">
-      <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-500 px-2">
-        <BarChart3 class="w-4 h-4 text-primary-500" />
-        {{ activeExerciseLabel }} <span class="text-zinc-600">Protocol Leaderboard</span>
-      </h3>
-      <div class="card-stats !p-0 overflow-hidden">
-        <div class="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
-          <div class="flex items-center gap-3">
-             <BarChart3 class="w-5 h-5 text-primary-500" />
-             <h3 class="text-lg font-black text-industrial uppercase text-white tracking-tight">
-               Ranking <span class="text-zinc-600">Protocolo</span>
-             </h3>
-          </div>
-        </div>
-        <Leaderboard 
-          ref="leaderboardRef" 
-          :exercise-type="activeExercise"
-          @viewProfile="$emit('viewProfile', $event)"
-        />
-      </div>
-    </div>
 
     <!-- Phase 3: Historical Stream -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -201,7 +179,6 @@ import { useI18nStore } from '../stores/i18n';
 import { useNotificationStore } from '../stores/notification';
 import Heatmap from './Heatmap.vue';
 import RepsInput from './RepsInput.vue';
-import Leaderboard from './Leaderboard.vue';
 import ExerciseSelector from './ExerciseSelector.vue';
 import BossHealth from './BossHealth.vue';
 import RadialProgress from './RadialProgress.vue';
@@ -217,7 +194,6 @@ const totalReps = ref(0);
 const activeExercise = ref('all');
 const editingId = ref(null);
 const editValue = ref(0);
-const leaderboardRef = ref(null);
 const bossHealthRef = ref(null);
 const isLoading = ref(false);
 const activeYear = ref(2026);
@@ -274,7 +250,6 @@ const fetchData = async () => {
     stats.totalVolume = statsRes.data.totalVolume || 0;
     stats.bodyWeight = statsRes.data.bodyWeight || 75;
 
-    if (leaderboardRef.value) leaderboardRef.value.refresh();
     if (bossHealthRef.value) bossHealthRef.value.refresh();
   } catch (error) {
     console.error('Error fetching data:', error);

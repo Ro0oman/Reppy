@@ -1,12 +1,46 @@
 <template>
   <div class="max-w-5xl mx-auto w-full px-4 space-y-12">
-    <div class="flex items-center justify-between">
-      <div>
-        <h2 class="text-3xl font-black tracking-tight text-zinc-900 dark:text-white mb-2">{{ i18n.t('community') }}</h2>
-        <p class="text-zinc-400 dark:text-zinc-500 text-sm font-medium">{{ i18n.t('community_subtitle') }}</p>
+    <div class="space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-4xl font-black tracking-tighter text-white uppercase italic truncate drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+            {{ i18n.t('community') }}<span class="text-primary-500">.</span>CORE
+          </h2>
+          <p class="text-zinc-400 text-[10px] font-black uppercase tracking-[0.4em] mt-2 opacity-80">{{ i18n.t('community_subtitle') }}</p>
+        </div>
+        <div class="p-4 bg-primary-500/10 border border-primary-500/20 rounded-2xl shadow-[0_0_30px_rgba(255,69,0,0.1)]">
+          <Users class="w-6 h-6 text-primary-500" />
+        </div>
       </div>
-      <div class="p-3 bg-primary-500/10 border border-primary-500/20 rounded-2xl">
-        <Users class="w-6 h-6 text-primary-400" />
+
+      <!-- Rankings Section -->
+      <div class="space-y-6 pt-4">
+        <div class="flex items-center gap-3 px-2">
+          <Trophy class="w-4 h-4 text-primary-500" />
+          <h3 class="text-xs font-black uppercase tracking-[0.4em] text-zinc-400">GLOBAL.RANKINGS</h3>
+        </div>
+        
+        <div class="card-stats !p-0 overflow-hidden border-white/5 bg-black/20 backdrop-blur-sm">
+          <div class="p-6 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/[0.02]">
+            <div class="flex items-center gap-4">
+               <div class="w-10 h-10 bg-primary-500/10 rounded-xl flex items-center justify-center">
+                 <BarChart3 class="w-5 h-5 text-primary-500" />
+               </div>
+               <div>
+                 <h3 class="text-lg font-black text-industrial uppercase text-white tracking-tight leading-none">
+                   {{ activeExerciseLabel }} <span class="text-zinc-600">Protocol</span>
+                 </h3>
+                 <p class="text-[9px] font-black text-zinc-500 uppercase tracking-widest mt-1">Live ranking synchronization</p>
+               </div>
+            </div>
+            <ExerciseSelector v-model="activeExercise" class="!bg-transparent !p-0 w-full md:w-auto" />
+          </div>
+          <Leaderboard 
+            :exercise-type="activeExercise"
+            @viewProfile="$emit('viewProfile', $event)"
+            class="min-h-[400px]"
+          />
+        </div>
       </div>
     </div>
 
@@ -14,31 +48,31 @@
       <!-- Search Users -->
       <section class="space-y-6">
         <div class="flex items-center gap-2">
-          <Search class="w-4 h-4 text-zinc-400 dark:text-zinc-500" />
-          <h3 class="text-sm font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">{{ i18n.t('find_friends') }}</h3>
+          <Search class="w-4 h-4 text-primary-500" />
+          <h3 class="text-xs font-black uppercase tracking-[0.4em] text-zinc-400">FIND_OPERATIVES</h3>
         </div>
 
         <div class="relative group">
           <input v-model="searchQuery" @input="searchUsers" type="text" :placeholder="i18n.t('search_placeholder')"
-            class="w-full glass bg-white/[0.01] rounded-2xl px-8 py-5 focus:outline-none focus:ring-2 focus:ring-primary-500/30 shadow-2xl transition-all placeholder:text-zinc-600 font-medium" />
+            class="w-full bg-white/[0.04] border border-white/10 rounded-2xl px-8 py-5 focus:outline-none focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/10 shadow-2xl transition-all placeholder:text-zinc-600 font-black text-white uppercase tracking-[0.2em] text-[10px]" />
           <div
-            class="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-700">
+            class="absolute inset-0 bg-gradient-to-r from-primary-500/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-700">
           </div>
         </div>
 
         <div class="space-y-4">
           <TransitionGroup name="list">
             <div v-for="user in searchResults" :key="user.id"
-              class="glass glass-hover p-4 rounded-3xl flex items-center justify-between">
+              class="bg-white/[0.02] border border-white/5 p-5 rounded-3xl flex items-center justify-between hover:bg-white/[0.04] transition-all group">
               <div class="flex items-center gap-4">
                 <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :avatar-css="user.avatar_css" :size="48" />
                 <div>
-                  <p class="font-bold text-zinc-900 dark:text-white">{{ user.name }}</p>
-                  <p class="text-xs text-zinc-400 dark:text-zinc-500 font-medium">{{ user.total_reps }} reps accumulated</p>
+                  <p class="font-black text-white uppercase tracking-tight group-hover:text-primary-500 transition-colors text-sm">{{ user.name }}</p>
+                  <p class="text-[9px] text-zinc-400 font-black uppercase tracking-[0.2em] mt-1.5 opacity-70">{{ user.total_reps }} REPS COLLECTED</p>
                 </div>
               </div>
               <button @click="addFriend(user.id)"
-                class="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-500 rounded-xl text-xs font-bold transition-all shadow-lg shadow-primary-600/20 active:scale-95">
+                class="flex items-center gap-3 px-5 py-2.5 bg-primary-500 hover:bg-primary-600 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-primary-500/20 active:scale-95 text-white">
                 <UserPlus class="w-3.5 h-3.5" />
                 {{ i18n.t('btn_add_friend') }}
               </button>
@@ -56,34 +90,34 @@
       <!-- Friends List -->
       <section class="space-y-6">
         <div class="flex items-center gap-2">
-          <Heart class="w-4 h-4 text-primary-500" />
-          <h3 class="text-xs font-black uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500">{{ i18n.t('inner_circle') }}</h3>
+          <Heart class="w-4 h-4 text-primary-500 fill-primary-500/20" />
+          <h3 class="text-xs font-black uppercase tracking-[0.4em] text-zinc-400">INNER_CIRCLE</h3>
         </div>
 
         <div class="grid grid-cols-1 gap-4">
           <TransitionGroup name="list">
             <div v-for="friend in friends" :key="friend.id"
-              class="glass glass-hover group p-5 rounded-3xl flex items-center justify-between shadow-xl">
-              <div class="flex items-center gap-4">
+              @click="$emit('viewProfile', friend.id)"
+              class="bg-white/[0.02] border border-white/5 hover:border-primary-500/30 group p-6 rounded-[2rem] flex items-center justify-between transition-all cursor-pointer">
+              <div class="flex items-center gap-5">
                 <div class="relative">
-                  <AvatarFrame :src="friend.avatar_url" :border-css="friend.border_css" :avatar-css="friend.avatar_css" :size="56" />
+                  <AvatarFrame :src="friend.avatar_url" :border-css="friend.border_css" :avatar-css="friend.avatar_css" :size="64" class="group-hover:scale-110 transition-transform" />
                   <div
-                    class="absolute -bottom-1 -right-1 w-5 h-5 bg-white dark:bg-zinc-900 rounded-full flex items-center justify-center border border-zinc-300 dark:border-zinc-800">
-                    <Check class="w-3 h-3 text-green-500" />
+                    class="absolute -bottom-1 -right-1 w-6 h-6 bg-primary-500 rounded-full flex items-center justify-center border-4 border-deep-abyss shadow-xl">
+                    <Check class="w-3 h-3 text-white" />
                   </div>
                 </div>
                 <div>
-                  <p class="text-lg font-bold text-zinc-900 dark:text-white tracking-tight">{{ friend.name }}</p>
-                  <div class="flex items-center gap-2 mt-0.5">
-                    <Trophy class="w-3 h-3 text-primary-400" />
-                    <p class="text-[10px] font-black uppercase text-zinc-400 dark:text-zinc-500 tracking-tighter">{{ friend.total_reps }}
-                      {{ i18n.t('stats_reps') }}</p>
+                  <p class="text-xl font-black text-white tracking-tight group-hover:text-primary-500 transition-colors uppercase italic font-industrial drop-shadow-sm">{{ friend.name }}</p>
+                  <div class="flex items-center gap-3 mt-1.5">
+                    <Trophy class="w-3 h-3 text-primary-500 drop-shadow-[0_0_5px_rgba(255,69,0,0.5)]" />
+                    <p class="text-[10px] font-black uppercase text-zinc-400 tracking-[0.2em] opacity-80">{{ friend.total_reps }} REPS SCALED</p>
                   </div>
                 </div>
               </div>
               <div
-                class="h-8 w-8 bg-zinc-100 dark:bg-zinc-800/50 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <ChevronRight class="w-4 h-4 text-zinc-600" />
+                class="h-10 w-10 bg-white/5 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
+                <ChevronRight class="w-5 h-5 text-primary-500" />
               </div>
             </div>
           </TransitionGroup>
@@ -105,11 +139,16 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import {
   Users, Search, SearchX, UserPlus, Heart, Check,
-  Trophy, ChevronRight, Users2
+  Trophy, ChevronRight, Users2, BarChart3
 } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useNotificationStore } from '../stores/notification';
 import AvatarFrame from './AvatarFrame.vue';
+import Leaderboard from './Leaderboard.vue';
+import ExerciseSelector from './ExerciseSelector.vue';
+import { computed } from 'vue';
+
+const emit = defineEmits(['viewProfile']);
 
 const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
@@ -117,6 +156,19 @@ const searchQuery = ref('');
 const searchResults = ref([]);
 const friends = ref([]);
 const loadingSearch = ref(false);
+const activeExercise = ref('all');
+
+const activeExerciseLabel = computed(() => {
+  const map = {
+    all: 'Global',
+    pullups: 'Pullups',
+    muscleups: 'Muscle Ups',
+    dips: 'Dips',
+    pushups: 'Pushups',
+    weighted_pullups: 'Weighted'
+  };
+  return map[activeExercise.value] || activeExercise.value;
+});
 
 const searchUsers = async () => {
   if (!searchQuery.value) {
