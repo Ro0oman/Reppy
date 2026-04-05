@@ -3,9 +3,6 @@
     <!-- Top Header: Tools & Boss -->
     <div class="flex flex-col gap-6">
       <div class="flex items-center justify-between">
-        <h1 class="text-3xl font-black text-industrial tracking-tighter text-white">
-          DASHBOARD<span class="text-primary-500">.</span>
-        </h1>
         <button @click="fetchData"
           class="p-3 bg-steel-grey/40 hover:bg-steel-grey/60 border border-white/5 rounded-xl transition-all group"
           title="Refresh protocol">
@@ -13,13 +10,19 @@
         </button>
       </div>
 
-      <!-- Boss Event Global Health Bar -->
-      <BossHealth ref="bossHealthRef" />
-
       <!-- Exercise Selector (The Dock) -->
       <div class="flex justify-center">
         <ExerciseSelector v-model="activeExercise" @update:modelValue="fetchData" />
       </div>
+    </div>
+
+    <!-- Phase 0: Tactical Heatmap (Priority View) -->
+    <div class="space-y-4">
+      <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-500 px-2">
+        <Activity class="w-4 h-4 text-primary-500" />
+        {{ i18n.t('activity_stream') }}
+      </h3>
+      <Heatmap :data="heatmapData" class="card-stats !p-8" />
     </div>
 
     <!-- Phase 1: The Bento Analytics -->
@@ -104,6 +107,9 @@
       </div>
     </div>
 
+    <!-- Phase 1.5: Community Boss Battle -->
+    <BossHealth ref="bossHealthRef" />
+
     <!-- Phase 2: Action & Competition -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Input Center -->
@@ -138,15 +144,6 @@
 
     <!-- Phase 3: Historical Stream -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <!-- Heatmap -->
-      <div class="space-y-4">
-        <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-500 px-2">
-          <Activity class="w-4 h-4 text-primary-500" />
-          ACTIVITY STREAM
-        </h3>
-        <Heatmap :data="heatmapData" class="card-stats !p-8" />
-      </div>
-
       <!-- Recent Logs -->
       <div class="space-y-4">
         <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-500 px-2">

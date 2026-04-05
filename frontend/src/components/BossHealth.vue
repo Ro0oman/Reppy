@@ -1,13 +1,13 @@
 <template>
   <div v-if="loading" class="animate-pulse bg-white/5 h-24 rounded-3xl mb-8"></div>
-  <div v-else-if="boss" class="space-y-6 mb-8">
+  <div v-else-if="boss" class="space-y-4">
     <!-- Active Boss Card -->
-    <div class="glass p-6 rounded-[2.5rem] border border-zinc-200 dark:border-white/5 relative overflow-hidden group transition-all duration-500 shadow-xl">
+    <div class="glass p-5 rounded-[2rem] border border-zinc-200 dark:border-white/5 relative overflow-hidden group transition-all duration-500 shadow-xl">
       <div class="absolute -right-20 -top-20 w-64 h-64 bg-primary-500/10 rounded-full blur-[80px] pointer-events-none"></div>
        
-      <div class="flex flex-col md:flex-row items-center gap-6 relative z-10 mb-8">
-        <div class="w-32 h-32 bg-white dark:bg-zinc-900 rounded-[2rem] flex items-center justify-center border-2 border-zinc-200 dark:border-white/10 shadow-2xl overflow-hidden group-hover:scale-105 transition-transform duration-500">
-          <img v-if="boss.image_url" :src="boss.image_url" class="w-full h-full object-contain p-2" :class="isDefeated ? 'grayscale opacity-50' : ''" />
+      <div class="flex flex-col md:flex-row items-center gap-6 relative z-10 mb-6">
+        <div class="w-24 h-24 bg-white dark:bg-zinc-900 rounded-[1.5rem] flex items-center justify-center border border-zinc-200 dark:border-white/10 shadow-2xl overflow-hidden group-hover:scale-105 transition-transform duration-500">
+          <img v-if="boss.image_url" :src="boss.image_url" class="w-full h-full object-contain p-1.5" :class="isDefeated ? 'grayscale opacity-50' : ''" />
           <span v-else class="text-4xl italic font-black">?</span>
         </div>
         
@@ -17,8 +17,8 @@
             <button @click="showHelp = true" class="w-4 h-4 rounded-full bg-zinc-200 dark:bg-white/10 flex items-center justify-center text-white text-[10px] font-bold hover:bg-primary-500 hover:text-white transition-colors">?</button>
           </div>
           <div class="flex flex-col md:flex-row md:items-baseline gap-2 mb-2">
-            <h3 class="text-3xl font-black italic tracking-tighter text-white uppercase leading-none">{{ boss.name }}</h3>
-            <span v-if="isDefeated" class="text-[10px] bg-emerald-500 text-black px-2 py-0.5 rounded-full font-black uppercase tracking-widest w-fit mx-auto md:mx-0">Derrotado</span>
+            <h3 class="text-2xl font-black italic tracking-tighter text-white uppercase leading-none">{{ boss.name }}</h3>
+            <span v-if="isDefeated" class="text-[9px] bg-emerald-500 text-black px-2 py-0.5 rounded-full font-black uppercase tracking-widest w-fit mx-auto md:mx-0">Derrotado</span>
           </div>
           <p class="text-sm text-zinc-500 dark:text-zinc-400 font-medium max-w-xl">{{ boss.description }}</p>
         </div>
@@ -77,8 +77,9 @@
     <!-- Next Boss Preview -->
     <div v-if="nextBoss" class="glass p-5 rounded-3xl border border-dashed border-zinc-300 dark:border-white/10 opacity-60 hover:opacity-100 transition-opacity flex items-center justify-between group">
        <div class="flex items-center gap-4">
-         <div class="w-12 h-12 bg-zinc-200 dark:bg-black rounded-xl p-1 flex items-center justify-center grayscale group-hover:grayscale-0 transition-all">
-            <img :src="nextBoss.image_url" class="w-full h-full object-contain opacity-50 group-hover:opacity-100" />
+         <div class="w-10 h-10 bg-zinc-200 dark:bg-black rounded-lg p-1 flex items-center justify-center grayscale group-hover:grayscale-0 transition-all text-xs">
+            <img v-if="nextBoss.image_url" :src="nextBoss.image_url" class="w-full h-full object-contain opacity-50 group-hover:opacity-100" />
+            <span v-else>?</span>
          </div>
          <div>
            <p class="text-[8px] font-black uppercase tracking-widest text-zinc-400">Siguiente Desafío</p>
