@@ -1,31 +1,11 @@
 <template>
-  <div class="relative flex flex-col gap-6">
-    <!-- Header: Total performance -->
-    <div class="flex items-end justify-between px-2">
-      <div class="flex flex-col gap-1">
-        <p class="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] leading-none">
-          {{ i18n.t('stats_last_year') }}
-        </p>
-        <h3 class="text-3xl font-black text-white leading-none tracking-tighter">
-          {{ totalYearReps }} <span class="text-primary-500">{{ i18n.t('stats_reps') }}</span>
-        </h3>
-      </div>
-      
-      <!-- Legend (Compact) -->
-      <div class="flex items-center gap-3 bg-black/20 px-3 py-1.5 rounded-lg border border-white/5">
-        <span class="text-[9px] font-black text-zinc-500 uppercase tracking-widest">{{ i18n.t('stats_less') }}</span>
-        <div class="flex gap-1">
-          <div v-for="level in 5" :key="level" 
-            class="w-2.5 h-2.5 rounded-[2px] transition-colors duration-500"
-            :class="getLevelClass(level - 1)">
-          </div>
-        </div>
-        <span class="text-[9px] font-black text-zinc-500 uppercase tracking-widest">{{ i18n.t('stats_more') }}</span>
-      </div>
-    </div>
-
-    <!-- Main Activity Grid Area -->
-    <div class="relative bg-black/20 border border-white/5 rounded-[2rem] p-8 overflow-hidden group/board">
+  <div class="relative flex flex-col gap-2 transition-opacity duration-500" :class="{ 'opacity-40 pointer-events-none': loading }">
+    <p class="text-[10px] font-black uppercase tracking-widest text-zinc-500 px-1 mb-1">
+      <span class="text-white">{{ totalYearReps }}</span> {{ exerciseLabel }} {{ i18n.locale === 'es' ? 'en' : 'in' }} {{ selectedYear }}
+    </p>
+    
+    <!-- GitHub-Style Activity Box -->
+    <div class="relative bg-[#0d1117] border border-zinc-800 rounded-md p-4 lg:p-6 group/board">
       <!-- Tooltip -->
       <transition name="tooltip">
         <div v-if="hoveredDay" 
@@ -44,38 +24,38 @@
 
       <div class="flex relative">
         <!-- Weekday Labels -->
-        <div class="flex flex-col gap-[3px] pr-4 justify-start text-[9px] font-black text-zinc-600 uppercase mt-7">
-          <span class="h-2.5 leading-[10px]">&nbsp;</span>
-          <span class="h-2.5 leading-[10px] opacity-40">{{ i18n.t('day_mon') }}</span>
-          <span class="h-2.5 leading-[10px]">&nbsp;</span>
-          <span class="h-2.5 leading-[10px] opacity-40">{{ i18n.t('day_wed') }}</span>
-          <span class="h-2.5 leading-[10px]">&nbsp;</span>
-          <span class="h-2.5 leading-[10px] opacity-40">{{ i18n.t('day_fri') }}</span>
-          <span class="h-2.5 leading-[10px]">&nbsp;</span>
+        <div class="flex flex-col gap-[3px] pr-2 text-[9px] font-medium text-zinc-500 mt-6">
+          <span class="h-[10px] leading-[10px]">&nbsp;</span>
+          <span class="h-[10px] leading-[10px]">{{ i18n.t('day_mon') }}</span>
+          <span class="h-[10px] leading-[10px]">&nbsp;</span>
+          <span class="h-[10px] leading-[10px]">{{ i18n.t('day_wed') }}</span>
+          <span class="h-[10px] leading-[10px]">&nbsp;</span>
+          <span class="h-[10px] leading-[10px]">{{ i18n.t('day_fri') }}</span>
+          <span class="h-[10px] leading-[10px]">&nbsp;</span>
         </div>
 
-        <div class="flex-1 overflow-x-auto scrollbar-hide relative min-h-[140px]" ref="gridContainer">
+        <div class="flex-1 overflow-x-auto scrollbar-custom relative pb-2" ref="gridContainer">
           <!-- Month Labels -->
-          <div class="flex h-5 mb-2 relative w-full">
+          <div class="flex h-4 mb-2 relative min-w-max">
             <span 
               v-for="month in monthLabels" :key="month.key" 
-              class="absolute text-[9px] font-black text-zinc-600 uppercase tracking-widest whitespace-nowrap"
-              :style="{ left: `${month.offset * 13}px` }"
+              class="absolute text-[9px] font-medium text-zinc-500 whitespace-nowrap"
+              :style="{ left: `${month.offset * 14}px` }"
             >
               {{ month.name }}
             </span>
           </div>
 
           <!-- The Grid -->
-          <div class="flex gap-[3px]">
-            <div v-for="(week, wIndex) in weeks" :key="wIndex" class="flex flex-col gap-[3px]">
+          <div class="flex gap-[3px] min-w-max">
+            <div v-for="(week, wIndex) in weeks" :key="wIndex" class="w-[11px] flex flex-col gap-[3px] shrink-0">
               <div 
                 v-for="(day, dIndex) in week" :key="dIndex"
-                class="w-[10px] h-[10px] rounded-[2px] transition-all duration-300 relative group/day"
+                class="w-full aspect-square rounded-[2px] transition-all duration-300 relative group/day"
                 :class="[
                   getColorClass(day),
-                  activeDay?.date === day.date ? 'ring-1 ring-white/50 scale-110 z-20' : '',
-                  day.isOutsideRange ? 'opacity-0 pointer-events-none' : 'cursor-pointer hover:ring-2 hover:ring-white/40 hover:scale-125 hover:z-30'
+                  activeDay?.date === day.date ? 'ring-1 ring-white/50 z-20' : '',
+                  day.isOutsideRange ? 'opacity-0 pointer-events-none' : 'cursor-pointer hover:ring-1 hover:ring-white/40 hover:z-30'
                 ]"
                 @mouseenter="handleMouseEnter($event, day)"
                 @mouseleave="hoveredDay = null"
@@ -86,18 +66,48 @@
           </div>
         </div>
       </div>
+
+      <!-- Footer: Legend -->
+      <div class="flex items-center justify-between mt-4 px-1">
+        <a href="#" class="text-[10px] text-zinc-500 hover:text-blue-400 transition-colors">
+          Learn how we count contributions
+        </a>
+        
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] text-zinc-500">Less</span>
+          <div class="flex gap-[3px]">
+            <div v-for="level in 5" :key="level" 
+              class="w-[10px] h-[10px] rounded-[2px]"
+              :class="getLevelClass(level - 1)">
+            </div>
+          </div>
+          <span class="text-[10px] text-zinc-500">More</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref, onMounted, watch } from 'vue';
 import { useI18nStore } from '../stores/i18n';
 
 const props = defineProps({
   data: {
     type: Array,
     default: () => []
+  },
+  loading: {
+    type: Boolean,
+    default: false
+  },
+  selectedYear: {
+    type: Number,
+    default: new Date().getFullYear()
+  },
+  exerciseLabel: {
+    type: String,
+    default: 'Reps'
   }
 });
 
@@ -129,45 +139,50 @@ const tooltipPosition = computed(() => ({
 }));
 
 const totalYearReps = computed(() => {
-  return props.data.reduce((acc, curr) => acc + curr.count, 0);
+  return props.data.reduce((acc, curr) => acc + Number(curr.count), 0);
 });
 
-// Trailing Year Calculation Logic
+// Calendar Year Calculation Logic
 const weeks = computed(() => {
   const result = [];
+  const year = props.selectedYear;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // Set the end of the grid to the end of the current week (Saturday)
-  const endOfGrid = new Date(today);
-  const dayOfWeek = endOfGrid.getDay(); // 0 is Sunday, 6 is Saturday
-  endOfGrid.setDate(today.getDate() + (6 - dayOfWeek));
+  // Start of Grid: Sunday of the week containing Jan 1st
+  const startOfYear = new Date(year, 0, 1);
+  const startOfGrid = new Date(startOfYear);
+  const startDay = startOfYear.getDay();
+  startOfGrid.setDate(startOfYear.getDate() - startDay);
 
-  // The grid spans 53 weeks to ensure we cover the 365 days fully
-  const totalDays = 53 * 7;
-  const startOfGrid = new Date(endOfGrid);
-  startOfGrid.setDate(endOfGrid.getDate() - (totalDays - 1));
+  // End of Grid: Saturday of the week containing Dec 31st
+  const endOfYear = new Date(year, 11, 31);
+  const endOfGrid = new Date(endOfYear);
+  const endDay = endOfYear.getDay();
+  endOfGrid.setDate(endOfYear.getDate() + (6 - endDay));
 
-  // Map input data for O(1) lookup
+  const totalDays = Math.round((endOfGrid - startOfGrid) / (1000 * 60 * 60 * 24)) + 1;
+
   const dataMap = props.data.reduce((acc, curr) => {
+    // Backend uses YYYY-MM-DD
     const dStr = new Date(curr.date).toISOString().split('T')[0];
-    acc[dStr] = (acc[dStr] || 0) + curr.count;
+    acc[dStr] = (acc[dStr] || 0) + Number(curr.count);
     return acc;
   }, {});
 
-  const currentDate = new Date(startOfGrid);
+  let currentDate = new Date(startOfGrid);
   let currentWeek = [];
 
   for (let i = 0; i < totalDays; i++) {
     const dateStr = currentDate.toISOString().split('T')[0];
     const isFuture = currentDate > today;
-    const isOutsideRange = currentDate < new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
+    const isOutsideYear = currentDate.getFullYear() !== year;
 
     currentWeek.push({
       date: dateStr,
       count: dataMap[dateStr] || 0,
       isFuture,
-      isOutsideRange: false // We show all days in the 53 week window
+      isOutsideRange: isOutsideYear
     });
 
     if (currentWeek.length === 7) {
@@ -213,22 +228,23 @@ const monthLabels = computed(() => {
 
 const getLevelClass = (level) => {
   const levels = {
-    0: 'bg-zinc-800/50',
-    1: 'bg-emerald-900/40',
-    2: 'bg-emerald-700/60',
-    3: 'bg-emerald-500/80',
-    4: 'bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.3)]'
+    0: 'bg-[#161b22]',
+    1: 'bg-[#0e4429]',
+    2: 'bg-[#006d32]',
+    3: 'bg-[#26a641]',
+    4: 'bg-[#39d353]'
   };
   return levels[level] || levels[0];
 };
 
 const getColorClass = (day) => {
-  if (day.isFuture) return 'bg-zinc-900/40 border border-white/5';
-  if (day.count === 0) return 'bg-zinc-800/50';
-  if (day.count < 10) return 'bg-emerald-900/40';
-  if (day.count < 30) return 'bg-emerald-700/60';
-  if (day.count < 50) return 'bg-emerald-500/80';
-  return 'bg-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.5)]';
+  if (day.isOutsideRange) return 'bg-transparent pointer-events-none opacity-0';
+  if (day.isFuture) return 'bg-[#0d1117] border border-zinc-800/50';
+  if (day.count === 0) return 'bg-[#161b22]';
+  if (day.count < 10) return 'bg-[#0e4429]';
+  if (day.count < 30) return 'bg-[#006d32]';
+  if (day.count < 50) return 'bg-[#26a641]';
+  return 'bg-[#39d353]';
 };
 
 const formatDate = (dateStr) => {
@@ -240,21 +256,42 @@ const formatDate = (dateStr) => {
   });
 };
 
-onMounted(() => {
-  // Scroll to end of grid on mount
+const scrollToToday = () => {
   if (gridContainer.value) {
-    gridContainer.value.scrollLeft = gridContainer.value.scrollWidth;
+    const today = new Date();
+    const startOfYear = new Date(props.selectedYear, 0, 1);
+    const diffDays = Math.floor((today - startOfYear) / (1000 * 60 * 60 * 24));
+    const weekIndex = Math.floor(diffDays / 7);
+    
+    // Each week is 11px wide + 3px gap = 14px
+    const scrollPos = Math.max(0, (weekIndex * 14) - 100); // 100px offset to show some context
+    gridContainer.value.scrollLeft = scrollPos;
   }
+};
+
+onMounted(() => {
+  scrollToToday();
 });
+
+// Re-scroll when data changes
+watch(() => props.data, () => {
+  scrollToToday();
+}, { deep: true });
 </script>
 
 <style scoped>
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
+.scrollbar-custom::-webkit-scrollbar {
+  height: 4px;
 }
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.scrollbar-custom::-webkit-scrollbar-track {
+  @apply bg-zinc-900 rounded-full;
+}
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  @apply bg-zinc-700 rounded-full hover:bg-primary-500 transition-colors cursor-pointer;
+}
+.scrollbar-custom {
+  scrollbar-width: thin;
+  scrollbar-color: #3f3f46 #18181b;
 }
 
 .tooltip-enter-active,

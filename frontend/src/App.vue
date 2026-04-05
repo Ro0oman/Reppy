@@ -69,7 +69,7 @@
     </nav>
 
     <!-- Main Operational View -->
-    <main class="py-12 md:py-20">
+    <main class="pt-4 pb-20">
       <template v-if="authStore.isAuthenticated">
         <div class="animate-in">
           <Dashboard v-if="view === 'dashboard'" @viewProfile="openProfile" />

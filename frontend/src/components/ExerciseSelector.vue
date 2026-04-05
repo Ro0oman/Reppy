@@ -1,11 +1,11 @@
 <template>
-  <div class="flex flex-wrap items-center justify-center gap-1.5 p-2 bg-steel-grey/40 backdrop-blur-2xl border border-white/5 rounded-2xl shadow-2xl">
+  <div class="flex flex-wrap items-center justify-between gap-1 p-1 bg-steel-grey/40 backdrop-blur-2xl border border-white/5 rounded-2xl shadow-2xl">
     <button 
       v-for="ex in exercises" :key="ex.id"
       @click="$emit('update:modelValue', ex.id)"
-      class="group relative flex items-center gap-2.5 px-5 py-3 rounded-xl transition-all duration-300 overflow-hidden"
+      class="group relative flex-1 flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl transition-all duration-300 overflow-hidden min-w-[120px]"
       :class="modelValue === ex.id 
-        ? 'bg-primary-500 text-white shadow-[0_0_20px_rgba(255,69,0,0.3)] scale-105 z-10' 
+        ? 'bg-primary-500 text-white shadow-[0_0_20px_rgba(255,69,0,0.3)] scale-[1.02] z-10' 
         : 'text-zinc-500 hover:text-white hover:bg-white/5'"
     >
       <!-- Background Shimmer on Hover -->

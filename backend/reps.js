@@ -128,19 +128,35 @@ router.post('/', authenticate, async (req, res) => {
 
 // Get heatmap data (reps per day for the last year, filtered by type)
 router.get('/heatmap', authenticate, async (req, res) => {
-  const { type = 'pullups' } = req.query;
+  const { type, year } = req.query;
+  const userId = req.user.id;
   try {
-    const typeFilter = type === 'all' ? '' : 'AND exercise_type = $2';
-    const params = type === 'all' ? [req.user.id] : [req.user.id, type];
+    const isGlobal = !type || type === 'all' || type === 'undefined';
+    
+    let q = 'SELECT date, SUM(count)::int as count FROM reps WHERE user_id = $1';
+    let params = [userId];
 
-    const result = await query(
-      `SELECT date, SUM(count) as count FROM reps 
-       WHERE user_id = $1 ${typeFilter} AND date > CURRENT_DATE - INTERVAL '1 year'
-       GROUP BY date
-       ORDER BY date ASC`,
-      params
-    );
-    res.json(result.rows);
+    if (!isGlobal) {
+      q += ' AND exercise_type = $2';
+      params.push(type);
+    }
+
+    if (year) {
+      const yearInt = parseInt(year);
+      q += ` AND date >= '${yearInt}-01-01' AND date <= '${yearInt}-12-31'`;
+    } else {
+      q += " AND date > CURRENT_DATE - INTERVAL '1 year'";
+    }
+
+    q += ' GROUP BY date ORDER BY date ASC';
+
+    const result = await query(q, params);
+    
+    const formattedRows = result.rows.map(row => ({
+      ...row,
+      count: Number(row.count)
+    }));
+    res.json(formattedRows);
   } catch (error) {
     console.error('Error fetching heatmap:', error);
     res.status(500).json({ message: 'Error fetching heatmap' });
@@ -150,14 +166,14 @@ router.get('/heatmap', authenticate, async (req, res) => {
 // Get stats for dashboard
 router.get('/stats', authenticate, async (req, res) => {
   const userId = req.user.id;
-  const { type = 'pullups' } = req.query;
+  const { type } = req.query;
   try {
-    // 1. Total Reps for this exercise (or all)
-    const typeFilter = type === 'all' ? '' : 'AND exercise_type = $2';
-    const params = type === 'all' ? [userId] : [userId, type];
+    const isGlobal = !type || type === 'all';
+    const typeFilter = isGlobal ? '' : 'AND exercise_type = $2';
+    const params = isGlobal ? [userId] : [userId, type];
 
     const totalRes = await query(
-      `SELECT SUM(count) as total FROM reps WHERE user_id = $1 ${typeFilter}`,
+      `SELECT SUM(count)::int as total FROM reps WHERE user_id = $1 ${typeFilter}`,
       params
     );
     const totalReps = parseInt(totalRes.rows[0]?.total) || 0;
@@ -206,13 +222,16 @@ router.get('/stats', authenticate, async (req, res) => {
     }
 
     // 5. Total Volume (Kg moved) for this exercise (or all)
-    const volumeParams = type === 'all' ? [userId, body_weight] : [userId, body_weight, type];
-    const volumeRes = await query(
-      `SELECT SUM(count * (COALESCE($2, 75.0) + added_weight)) as volume 
-       FROM reps 
-       WHERE user_id = $1 ${typeFilter}`,
-      volumeParams
-    );
+    // IMPORTANT: Fix parameter indices here to avoid conflicts
+    let volumeQuery = 'SELECT SUM(count * (COALESCE($2, 75.0) + added_weight))::float as volume FROM reps WHERE user_id = $1';
+    let volumeParams = [userId, body_weight];
+    
+    if (!isGlobal) {
+      volumeQuery += ' AND exercise_type = $3';
+      volumeParams.push(type);
+    }
+    
+    const volumeRes = await query(volumeQuery, volumeParams);
     const totalVolume = parseFloat(volumeRes.rows[0]?.volume) || 0;
 
     res.json({
