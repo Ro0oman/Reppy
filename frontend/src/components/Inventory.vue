@@ -7,8 +7,6 @@
       <p class="text-zinc-500 dark:text-zinc-400 mt-2 font-medium">Personaliza tu perfil con tus recompensas obtenidas.</p>
     </div>
 
-    </div>
-    
     <!-- Section: Boss Chests (New) -->
     <div v-if="authStore.user?.boss_chests > 0" 
       class="mb-12 p-8 rounded-3xl bg-gradient-to-br from-amber-500/10 via-orange-600/5 to-transparent border border-amber-500/20 backdrop-blur-xl relative overflow-hidden group">

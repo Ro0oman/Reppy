@@ -28,9 +28,12 @@
             :class="view === 'social' ? 'text-primary-600 dark:text-white' : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'">
             {{ i18n.t('nav_social') }}
           </button>
-          <button @click="view = 'inventory'" class="text-base font-bold transition-colors"
+          <button @click="view = 'inventory'" class="text-base font-bold transition-colors relative"
             :class="view === 'inventory' ? 'text-primary-600 dark:text-white' : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'">
             {{ i18n.t('nav_inventory') }}
+            <!-- Chest Badge (Desktop) -->
+            <div v-if="authStore.user?.boss_chests > 0" 
+              class="absolute -top-1 -right-2 w-2 h-2 bg-rose-500 rounded-full shadow-[0_0_8px_rgba(244,63,94,0.6)] animate-pulse"></div>
           </button>
           <button @click="view = 'shop'" class="text-base font-bold transition-colors"
             :class="view === 'shop' ? 'text-amber-600 dark:text-amber-500 drop-shadow-md' : 'text-amber-600/70 hover:text-amber-600 dark:text-zinc-400 dark:hover:text-amber-500'">
@@ -126,10 +129,14 @@
           <span class="text-[10px] font-black uppercase tracking-tighter">{{ i18n.t('tf_shop') || 'Tienda' }}</span>
 
         </button>
-        <button @click="view = 'inventory'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90"
+        <button @click="view = 'inventory'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90 relative"
           :class="view === 'inventory' ? 'text-primary-600' : 'text-zinc-400'">
           <Package class="w-6 h-6" :class="view === 'inventory' ? 'fill-primary-600/10' : ''" />
           <span class="text-[10px] font-black uppercase tracking-tighter">Equipo</span>
+          
+          <!-- Chest Badge (Mobile) -->
+          <div v-if="authStore.user?.boss_chests > 0" 
+            class="absolute top-0 right-1/4 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white dark:border-zinc-900 shadow-lg animate-pulse"></div>
         </button>
         <button @click="view = 'profile'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90"
 
