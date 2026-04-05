@@ -7,6 +7,40 @@
       <p class="text-zinc-500 dark:text-zinc-400 mt-2 font-medium">Personaliza tu perfil con tus recompensas obtenidas.</p>
     </div>
 
+    </div>
+    
+    <!-- Section: Boss Chests (New) -->
+    <div v-if="authStore.user?.boss_chests > 0" 
+      class="mb-12 p-8 rounded-3xl bg-gradient-to-br from-amber-500/10 via-orange-600/5 to-transparent border border-amber-500/20 backdrop-blur-xl relative overflow-hidden group">
+      
+      <!-- Decorative Background Icon -->
+      <Archive class="absolute -right-4 -bottom-4 w-48 h-48 text-amber-500/5 -rotate-12 transition-transform group-hover:scale-110 duration-700" />
+      
+      <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div class="flex items-center gap-6">
+          <div class="relative">
+            <div class="absolute inset-0 bg-amber-500 blur-2xl opacity-20 animate-pulse"></div>
+            <div class="relative bg-zinc-900 rounded-2xl p-4 border border-amber-500/30">
+              <Archive class="w-10 h-10 text-amber-500" />
+            </div>
+            <div class="absolute -top-2 -right-2 bg-rose-600 text-white text-xs font-black px-2 py-1 rounded-lg shadow-lg border border-white/10">
+              x{{ authStore.user.boss_chests }}
+            </div>
+          </div>
+          <div>
+            <h2 class="text-2xl font-black text-white uppercase italic tracking-tighter">Cofres de <span class="text-amber-500">Temporada</span></h2>
+            <p class="text-zinc-400 font-medium">Has obtenido estos cofres derrotando jefes. ¡Ábrelos para obtener recompensas legendarias!</p>
+          </div>
+        </div>
+        
+        <button @click="handleOpenChest" :disabled="openingChest"
+          class="w-full md:w-auto px-8 py-4 bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white font-black rounded-2xl transition-all shadow-xl shadow-amber-600/30 uppercase tracking-widest text-sm italic flex items-center justify-center gap-3">
+          <Sparkles class="w-5 h-5" />
+          {{ openingChest ? 'Abriendo...' : 'Abrir Cofre' }}
+        </button>
+      </div>
+    </div>
+
     <div v-if="loading" class="flex justify-center py-20">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
     </div>
@@ -184,22 +218,68 @@
         </div>
       </div>
     </div>
+
+    <!-- Chest Opening Modal -->
+    <ChestOpening 
+      v-if="showChestModal" 
+      :show="showChestModal" 
+      :reward="chestReward" 
+      :reel-items="reelItems" 
+      @close="closeChestModal" 
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import { Package, Frame, Type, Check, Sparkles } from 'lucide-vue-next';
+import { Package, Frame, Type, Check, Sparkles, Archive } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
+import ChestOpening from './ChestOpening.vue';
 import axios from 'axios';
 
 const authStore = useAuthStore();
 const notificationStore = useNotificationStore();
 const inventory = ref([]);
 const loading = ref(true);
+
+// Chest logic
+const showChestModal = ref(false);
+const openingChest = ref(false);
+const chestReward = ref(null);
+const reelItems = ref([]);
+
+const handleOpenChest = async () => {
+  if (openingChest.value) return;
+  openingChest.value = true;
+  
+  try {
+    const res = await axios.post('/api/boss/open-chest');
+    chestReward.value = res.data.reward;
+    reelItems.value = res.data.reel_items;
+    showChestModal.value = true;
+    
+    // Update local chest count immediately
+    if (authStore.user) {
+      authStore.user.boss_chests--;
+    }
+  } catch (error) {
+    console.error('Error opening chest:', error);
+    notificationStore.notify(error.response?.data?.message || 'Error al abrir el cofre', 'error');
+  } finally {
+    openingChest.value = false;
+  }
+};
+
+const closeChestModal = async () => {
+  showChestModal.value = false;
+  // Refresh inventory to show new item
+  await fetchInventory();
+  // Also refresh profile for coins etc
+  await authStore.fetchProfile();
+};
 
 const fetchInventory = async () => {
   try {

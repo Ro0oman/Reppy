@@ -60,7 +60,7 @@
                <p class="text-[10px] font-black uppercase tracking-widest text-emerald-500 animate-bounce">¡Boss derrotado! Reclama tu recompensa</p>
                <button @click="claim" :disabled="claiming" 
                 class="px-8 py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest rounded-2xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:scale-105 active:scale-95 flex items-center gap-2">
-                 <span class="text-xl">🎁</span> Abrir Cofre
+                 <span class="text-xl">🎁</span> Reclamar Cofre
                </button>
             </template>
             <div v-else class="flex items-center gap-2 text-zinc-400 font-black uppercase text-[10px] tracking-widest px-4 py-2 bg-white/5 rounded-xl border border-white/5">
@@ -193,21 +193,21 @@ const claim = async () => {
     chestsClaimed.value = 1;
     
     confetti({
-      particleCount: 200,
-      spread: 90,
+      particleCount: 150,
+      spread: 70,
       origin: { y: 0.6 },
-      colors: ['#10b981', '#34d399', '#facc15']
+      colors: ['#10b981', '#fbbf24', '#ffffff']
     });
 
-    notificationStore.notify(res.data.message, 'success');
+    notificationStore.notify(res.data.message || '¡Cofre enviado a tu inventario!', 'success');
     
-    // Refresh to see if we moved to the next boss
+    // Auto-refresh to see if next boss appeared
     setTimeout(() => {
       fetchBoss();
-    }, 3000);
+    }, 2000);
 
   } catch (error) {
-    notificationStore.notify(error.response?.data?.message || 'Error al abrir cofre', 'error');
+    notificationStore.notify(error.response?.data?.message || 'Error al reclamar cofre', 'error');
   } finally {
     claiming.value = false;
   }

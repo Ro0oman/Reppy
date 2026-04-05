@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS users (
     body_weight DECIMAL DEFAULT 75.0,
     daily_goal INTEGER DEFAULT 50,
     has_seen_easter_modal BOOLEAN DEFAULT false,
+    boss_chests INTEGER DEFAULT 1,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -108,4 +109,8 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS equipped_title_id INTEGER;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS equipped_border_id INTEGER;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS equipped_background_id INTEGER;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_easter_modal BOOLEAN DEFAULT false;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS boss_chests INTEGER DEFAULT 1;
+
+-- Grant 1 chest to all existing users (Safety Update)
+UPDATE users SET boss_chests = GREATEST(boss_chests, 1) WHERE boss_chests IS NULL OR boss_chests = 0;
 

@@ -78,12 +78,45 @@ router.get('/active', authenticate, async (req, res) => {
     const isToday = new Date(participant.last_boss_damage_date).toISOString().split('T')[0] === new Date().toISOString().split('T')[0];
     const dailyDamage = isToday ? participant.daily_boss_damage : 0;
 
+    // AUTO-GRANT CHESTS FOR PREVIOUS DEFEATED BOSSES
+    const pendingChestsRes = await query(
+      `SELECT b.id FROM boss_fights b
+       JOIN event_participants p ON p.boss_fight_id = b.id
+       WHERE b.status = 'defeated' AND p.user_id = $1 AND p.damage_dealt > 0 AND p.chests_claimed = 0`,
+      [req.user.id]
+    );
+
+    if (pendingChestsRes.rows.length > 0) {
+      const pendingCount = pendingChestsRes.rows.length;
+      await query('BEGIN');
+      try {
+        await query('UPDATE users SET boss_chests = boss_chests + $1 WHERE id = $2', [pendingCount, req.user.id]);
+        await query(
+          `UPDATE event_participants SET chests_claimed = 1 
+           WHERE user_id = $1 AND boss_fight_id IN (
+             SELECT id FROM boss_fights WHERE status = 'defeated'
+           ) AND damage_dealt > 0 AND chests_claimed = 0`,
+          [req.user.id]
+        );
+        await query('COMMIT');
+        // Refresh player data logic might be needed, but usually the next request will have it
+      } catch (err) {
+        await query('ROLLBACK');
+        console.error('Error auto-claiming chests:', err);
+      }
+    }
+
+    // Refresh user chest count
+    const finalUserRes = await query('SELECT boss_chests FROM users WHERE id = $1', [req.user.id]);
+    const boss_chests = finalUserRes.rows[0]?.boss_chests || 0;
+
     res.json({
       boss: { ...boss, starts_in: null },
       next_boss,
       personal_damage: participant.damage_dealt,
       daily_damage: dailyDamage,
-      chests_claimed: participant.chests_claimed
+      chests_claimed: participant.chests_claimed,
+      boss_chests
     });
   } catch (error) {
     console.error('Error fetching boss:', error);
@@ -115,9 +148,35 @@ router.post('/claim-chest/:bossId', authenticate, async (req, res) => {
     }
 
     await query('BEGIN');
+    await query('UPDATE users SET boss_chests = boss_chests + 1 WHERE id = $2', [userId]);
+    await query('UPDATE event_participants SET chests_claimed = 1 WHERE boss_fight_id = $1 AND user_id = $2', [bossId, userId]);
+    await query('COMMIT');
+
+    res.json({ 
+      message: '¡Cofre reclamado con éxito! Ve a tu inventario para abrirlo.',
+      new_chests_claimed: 1 
+    });
+  } catch (error) {
+    await query('ROLLBACK');
+    console.error('Error claiming chest:', error);
+    res.status(500).json({ message: 'Error al reclamar el cofre' });
+  }
+});
+
+// Open Chest - CS:GO Style Reward Logic
+router.post('/open-chest', authenticate, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const userRes = await query('SELECT boss_chests FROM users WHERE id = $1', [userId]);
+    if (userRes.rows.length === 0 || userRes.rows[0].boss_chests <= 0) {
+      return res.status(400).json({ message: 'No tienes cofres para abrir' });
+    }
+
+    await query('BEGIN');
 
     let rewardItem = null;
-    let rewardCoins = 500;
+    let rewardCoins = 250; // Base coins if no item
     let message = '';
 
     // 1. Try to find a random unowned Seasonal item
@@ -131,6 +190,7 @@ router.post('/claim-chest/:bossId', authenticate, async (req, res) => {
     if (seasonalRes.rows.length > 0) {
       rewardItem = seasonalRes.rows[0];
       message = `¡Increíble! Has obtenido un objeto de TEMPORADA: ${rewardItem.name}`;
+      rewardCoins = 100; // Bonus coins
     } else {
       // 2. Try to find a random unowned Normal item
       const normalRes = await query(`
@@ -143,8 +203,10 @@ router.post('/claim-chest/:bossId', authenticate, async (req, res) => {
       if (normalRes.rows.length > 0) {
         rewardItem = normalRes.rows[0];
         message = `¡Genial! Has obtenido: ${rewardItem.name}`;
+        rewardCoins = 50; // Bonus coins
       } else {
         // 3. Give coins only
+        rewardCoins = 1000;
         message = '¡Ya tienes todos los cosméticos disponibles! Has recibido Reppy Coins adicionales.';
       }
     }
@@ -159,21 +221,29 @@ router.post('/claim-chest/:bossId', authenticate, async (req, res) => {
       );
     }
 
-    await query('UPDATE event_participants SET chests_claimed = 1 WHERE boss_fight_id = $1 AND user_id = $2', [bossId, userId]);
-    await query('UPDATE users SET reppy_coins = reppy_coins + $1 WHERE id = $2', [rewardCoins, userId]);
+    await query('UPDATE users SET boss_chests = boss_chests - 1, reppy_coins = reppy_coins + $1 WHERE id = $2', [rewardCoins, userId]);
+    
+    // Get dummy items for the reel animation
+    const dummiesRes = await query(`
+      SELECT name, type, css_value, is_seasonal FROM cosmetics 
+      ORDER BY RANDOM() LIMIT 40
+    `);
+
     await query('COMMIT');
 
     res.json({ 
-      message, 
-      rewardCoins, 
-      rewardItem: rewardItem?.name,
-      rewardType: rewardItem?.type,
-      new_chests_claimed: 1 
+      success: true,
+      reward: {
+        item: rewardItem,
+        coins: rewardCoins,
+        message
+      },
+      reel_items: dummiesRes.rows // Used for CS:GO animation
     });
   } catch (error) {
     await query('ROLLBACK');
-    console.error('Error claiming chest:', error);
-    res.status(500).json({ message: 'Error al reclamar el cofre' });
+    console.error('Error opening chest:', error);
+    res.status(500).json({ message: 'Error al abrir el cofre' });
   }
 });
 
