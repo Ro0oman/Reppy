@@ -2,6 +2,8 @@
 
 **Reppy** is not just a pull-up tracker; it's a fitness RPG ecosystem designed to gamify your training. Track your reps, earn coins, level up your attributes, and join community Boss Fights in a premium, glassmorphism-driven interface.
 
+[https://reppy-weld.vercel.app/](https://reppy-weld.vercel.app/)
+
 ![Reppy Banner](https://img.shields.io/badge/Fitness-RPG-orange?style=for-the-badge&logo=vitest)
 ![Reppy Stars](https://img.shields.io/github/stars/Ro0oman/Reppy?style=for-the-badge)
 
