@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import { Dumbbell, Zap, Flame, Target, Trophy } from 'lucide-vue-next';
+import { Dumbbell, Zap, Flame, Target, Trophy, Globe } from 'lucide-vue-next';
 
 defineProps({
   modelValue: {
@@ -27,6 +27,7 @@ defineProps({
 defineEmits(['update:modelValue']);
 
 const exercises = [
+  { id: 'all', label: 'Global', icon: Globe },
   { id: 'pullups', label: 'Dominadas', icon: Dumbbell },
   { id: 'muscleups', label: 'Muscle Ups', icon: Zap },
   { id: 'dips', label: 'Fondos', icon: Target },

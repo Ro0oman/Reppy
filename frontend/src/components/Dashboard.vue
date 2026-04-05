@@ -234,6 +234,7 @@ const stats = reactive({
 
 const activeExerciseLabel = computed(() => {
   const map = {
+    all: 'Global',
     pullups: i18n.t('pullups'),
     muscleups: i18n.t('muscleups'),
     dips: i18n.t('dips'),

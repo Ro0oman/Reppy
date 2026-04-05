@@ -17,6 +17,9 @@ router.get('/global', async (req, res) => {
       case 'year': dateFilter = "AND r.date >= date_trunc('year', CURRENT_DATE)"; break;
     }
 
+    const typeFilter = type === 'all' ? '' : 'AND r.exercise_type = $1';
+    const queryParams = type === 'all' ? [] : [type];
+
     const queryStr = `
       SELECT u.id, u.name, u.avatar_url, u.reppy_coins,
              COALESCE(SUM(r.count), 0) as total_reps,
@@ -25,7 +28,7 @@ router.get('/global', async (req, res) => {
              b.css_value as border_css,
              a.css_value as avatar_css
       FROM users u
-      LEFT JOIN reps r ON u.id = r.user_id AND r.exercise_type = $1 ${dateFilter}
+      LEFT JOIN reps r ON u.id = r.user_id ${typeFilter} ${dateFilter}
       LEFT JOIN cosmetics t ON u.equipped_title_id = t.id
       LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
       LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
@@ -36,7 +39,7 @@ router.get('/global', async (req, res) => {
       LIMIT 20
     `;
 
-    const result = await query(queryStr, [type]);
+    const result = await query(queryStr, queryParams);
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching global leaderboard:', error);
@@ -57,6 +60,9 @@ router.get('/friends', authenticate, async (req, res) => {
       case 'year': dateFilter = "AND r.date >= date_trunc('year', CURRENT_DATE)"; break;
     }
 
+    const typeFilter = type === 'all' ? '' : 'AND r.exercise_type = $2';
+    const queryParams = type === 'all' ? [req.user.id] : [req.user.id, type];
+
     const queryStr = `
       SELECT u.id, u.name, u.avatar_url, u.reppy_coins,
              COALESCE(SUM(r.count), 0) as total_reps,
@@ -65,7 +71,7 @@ router.get('/friends', authenticate, async (req, res) => {
              b.css_value as border_css,
              a.css_value as avatar_css
       FROM users u
-      LEFT JOIN reps r ON u.id = r.user_id AND r.exercise_type = $2 ${dateFilter}
+      LEFT JOIN reps r ON u.id = r.user_id ${typeFilter} ${dateFilter}
       LEFT JOIN cosmetics t ON u.equipped_title_id = t.id
       LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
       LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
@@ -79,7 +85,7 @@ router.get('/friends', authenticate, async (req, res) => {
       ORDER BY total_reps DESC
     `;
 
-    const result = await query(queryStr, [req.user.id, type]);
+    const result = await query(queryStr, queryParams);
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching friends leaderboard:', error);

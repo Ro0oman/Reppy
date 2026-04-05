@@ -14,7 +14,7 @@ router.get('/', authenticate, async (req, res) => {
     let q = 'SELECT id, count, date, exercise_type FROM reps WHERE user_id = $1';
     let params = [req.user.id];
     
-    if (type) {
+    if (type && type !== 'all') {
       q += ' AND exercise_type = $2';
       params.push(type);
     }
@@ -130,11 +130,15 @@ router.post('/', authenticate, async (req, res) => {
 router.get('/heatmap', authenticate, async (req, res) => {
   const { type = 'pullups' } = req.query;
   try {
+    const typeFilter = type === 'all' ? '' : 'AND exercise_type = $2';
+    const params = type === 'all' ? [req.user.id] : [req.user.id, type];
+
     const result = await query(
-      `SELECT date, count FROM reps 
-       WHERE user_id = $1 AND exercise_type = $2 AND date > CURRENT_DATE - INTERVAL '1 year'
+      `SELECT date, SUM(count) as count FROM reps 
+       WHERE user_id = $1 ${typeFilter} AND date > CURRENT_DATE - INTERVAL '1 year'
+       GROUP BY date
        ORDER BY date ASC`,
-      [req.user.id, type]
+      params
     );
     res.json(result.rows);
   } catch (error) {
@@ -148,10 +152,13 @@ router.get('/stats', authenticate, async (req, res) => {
   const userId = req.user.id;
   const { type = 'pullups' } = req.query;
   try {
-    // 1. Total Reps for this exercise
+    // 1. Total Reps for this exercise (or all)
+    const typeFilter = type === 'all' ? '' : 'AND exercise_type = $2';
+    const params = type === 'all' ? [userId] : [userId, type];
+
     const totalRes = await query(
-      'SELECT SUM(count) as total FROM reps WHERE user_id = $1 AND exercise_type = $2',
-      [userId, type]
+      `SELECT SUM(count) as total FROM reps WHERE user_id = $1 ${typeFilter}`,
+      params
     );
     const totalReps = parseInt(totalRes.rows[0]?.total) || 0;
 
@@ -159,23 +166,23 @@ router.get('/stats', authenticate, async (req, res) => {
     const userRes = await query('SELECT daily_goal, body_weight FROM users WHERE id = $1', [userId]);
     const { daily_goal, body_weight = 75 } = userRes.rows[0];
 
-    // 3. Top Month for this exercise
+    // 3. Top Month for this exercise (or all)
     const topMonthRes = await query(
       `SELECT TO_CHAR(date, 'Month') as month, SUM(count) as total 
        FROM reps 
-       WHERE user_id = $1 AND exercise_type = $2
+       WHERE user_id = $1 ${typeFilter}
        GROUP BY TO_CHAR(date, 'Month'), date_trunc('month', date)
        ORDER BY total DESC, date_trunc('month', date) DESC 
        LIMIT 1`,
-      [userId, type]
+      params
     );
     const topMonth = topMonthRes.rows[0]?.month?.trim() || 'N/A';
     const topMonthCount = parseInt(topMonthRes.rows[0]?.total) || 0;
 
-    // 4. Current Streak for this exercise
+    // 4. Current Streak for this exercise (or all)
     const datesRes = await query(
-      'SELECT DISTINCT date FROM reps WHERE user_id = $1 AND exercise_type = $2 ORDER BY date DESC',
-      [userId, type]
+      `SELECT DISTINCT date FROM reps WHERE user_id = $1 ${typeFilter} ORDER BY date DESC`,
+      params
     );
     
     let streak = 0;
@@ -198,12 +205,13 @@ router.get('/stats', authenticate, async (req, res) => {
       }
     }
 
-    // 5. Total Volume (Kg moved) for this exercise
+    // 5. Total Volume (Kg moved) for this exercise (or all)
+    const volumeParams = type === 'all' ? [userId, body_weight] : [userId, body_weight, type];
     const volumeRes = await query(
       `SELECT SUM(count * (COALESCE($2, 75.0) + added_weight)) as volume 
        FROM reps 
-       WHERE user_id = $1 AND exercise_type = $3`,
-      [userId, body_weight, type]
+       WHERE user_id = $1 ${typeFilter}`,
+      volumeParams
     );
     const totalVolume = parseFloat(volumeRes.rows[0]?.volume) || 0;
 

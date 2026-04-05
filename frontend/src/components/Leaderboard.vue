@@ -133,7 +133,9 @@
               </span>
             </div>
             <div class="flex items-center gap-2 mt-0.5">
-               <p class="text-[8px] sm:text-[9px] text-zinc-500 dark:text-zinc-500 font-bold uppercase tracking-widest truncate">{{ timeframe === 'all' ? 'Guerrero Ancestral' : 'Atleta del Rango' }}</p>
+               <p class="text-[8px] sm:text-[9px] text-zinc-500 dark:text-zinc-500 font-bold uppercase tracking-widest truncate">
+                 {{ exerciseType === 'all' ? 'Atleta Global' : (timeframe === 'all' ? 'Guerrero Ancestral' : 'Atleta del Rango') }}
+               </p>
                <span v-if="user.total_volume" class="xs:hidden text-[8px] font-black text-emerald-400/80 bg-emerald-400/5 px-1 rounded-sm border border-emerald-400/10 tabular-nums">📦 {{ (user.total_volume/1000).toFixed(1) }}k</span>
             </div>
           </div>
