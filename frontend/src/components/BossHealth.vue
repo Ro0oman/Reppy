@@ -17,7 +17,7 @@
             <button @click="showHelp = true" class="w-4 h-4 rounded-full bg-zinc-200 dark:bg-white/10 flex items-center justify-center text-white text-[10px] font-bold hover:bg-primary-500 hover:text-white transition-colors">?</button>
           </div>
           <div class="flex flex-col md:flex-row md:items-baseline gap-2 mb-2">
-            <h3 class="text-3xl font-black italic tracking-tighter text-zinc-900 dark:text-white uppercase leading-none">{{ boss.name }}</h3>
+            <h3 class="text-3xl font-black italic tracking-tighter text-white uppercase leading-none">{{ boss.name }}</h3>
             <span v-if="isDefeated" class="text-[10px] bg-emerald-500 text-black px-2 py-0.5 rounded-full font-black uppercase tracking-widest w-fit mx-auto md:mx-0">Derrotado</span>
           </div>
           <p class="text-sm text-zinc-500 dark:text-zinc-400 font-medium max-w-xl">{{ boss.description }}</p>
@@ -36,7 +36,7 @@
         </div>
 
         <div v-if="!isDefeated" class="text-center">
-           <p class="text-[10px] font-black uppercase tracking-[0.1em] text-zinc-500 dark:text-zinc-400">
+           <p class="text-[10px] font-black uppercase tracking-[0.1em] text-zinc-300">
              Faltan <span class="text-primary-500">{{ boss.current_hp.toLocaleString() }}</span> de daño total para desbloquear el cofre 🎁
            </p>
         </div>
@@ -45,7 +45,7 @@
           <div class="flex flex-col sm:flex-row items-center gap-2 md:gap-4 mt-2 md:mt-0">
              <div class="flex items-center gap-2">
                 <div class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></div>
-                <p class="text-[9px] text-zinc-500 font-black uppercase tracking-[0.2em]">Total: <span class="text-zinc-900 dark:text-white">{{ personalDamage }} reps</span></p>
+                <p class="text-[9px] text-zinc-400 font-black uppercase tracking-[0.2em]">Total: <span class="text-white">{{ personalDamage }} reps</span></p>
              </div>
              <div class="flex items-center gap-2 bg-primary-500/5 px-2 py-1 rounded-lg border border-primary-500/10" :class="dailyDamage >= 100 ? 'border-amber-500/30 bg-amber-500/5' : ''">
                 <p class="text-[9px] font-black uppercase tracking-[0.2em]" :class="dailyDamage >= 100 ? 'text-amber-500' : 'text-primary-500'">

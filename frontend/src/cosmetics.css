@@ -1,0 +1,52 @@
+/* ========================================
+   LEGENDARY COSMETICS (Preserved)
+   ======================================== */
+.title-mana {
+  background: linear-gradient(to right, #60a5fa, #a855f7, #60a5fa);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 900;
+  text-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+  animation: title-mana-flow 3s linear infinite;
+}
+
+@keyframes title-mana-flow {
+  to { background-position: 200% center; }
+}
+
+.title-lava {
+  color: #FF4500;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-style: italic;
+  filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.6));
+  animation: title-lava-burn 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes title-lava-burn {
+  from { filter: brightness(1) drop-shadow(0 0 5px rgba(255, 69, 0, 0.6)); }
+  to { filter: brightness(1.5) drop-shadow(0 0 15px rgba(255, 69, 0, 0.8)); }
+}
+
+.title-glitch {
+  color: white;
+  font-weight: 900;
+  text-transform: uppercase;
+  position: relative;
+  text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff, 0.025em 0.04em 0 #fffc00;
+  animation: title-glitch-60 500ms infinite;
+}
+
+.title-void-knight {
+  background: linear-gradient(to right, #4c1d95, #6d28d9, #4c1d95);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+  animation: title-mana-flow 4s linear infinite;
+}

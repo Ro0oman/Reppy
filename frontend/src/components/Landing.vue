@@ -1,112 +1,142 @@
 <template>
-  <div class="min-h-screen flex flex-col items-center">
+  <div class="min-h-screen flex flex-col items-center bg-deep-abyss selection:bg-primary-500 overflow-hidden">
     <!-- Hero Section -->
-    <section class="relative w-full py-32 px-4 flex flex-col items-center text-center space-y-8 overflow-hidden">
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none opacity-20">
-        <div class="absolute top-0 left-1/4 w-96 h-96 bg-primary-600 rounded-full blur-[120px] animate-pulse"></div>
-        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600 rounded-full blur-[120px] animate-pulse delay-1000"></div>
+    <section class="relative w-full py-32 md:py-48 px-4 flex flex-col items-center text-center space-y-12">
+      <!-- Background Ambient Glow -->
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none opacity-40">
+        <div class="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary-500/10 rounded-full blur-[150px] animate-pulse"></div>
+        <div class="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-neon-lime/5 rounded-full blur-[150px] animate-pulse delay-1000"></div>
       </div>
 
-      <!-- Active Boss Banner -->
-      <div v-if="hasActiveEvent && activeBoss" class="w-full max-w-4xl bg-gradient-to-r from-primary-500/20 via-pink-500/20 to-amber-500/20 border-y-4 md:border-4 border-primary-500/50 p-4 md:p-6 rounded-none md:rounded-3xl animate-bounce-short shadow-[0_0_30px_rgba(249,115,22,0.3)] mb-8 glass text-center">
-        <h2 class="text-xl md:text-4xl font-black text-zinc-900 dark:text-white italic tracking-tighter uppercase mb-2">⚔️ ¡{{ activeBoss.name }} ha llegado!</h2>
-        <p class="text-zinc-600 dark:text-zinc-300 font-medium text-sm md:text-xl">{{ activeBoss.description.split('.')[0] }}.</p>
-        
-        <div class="mt-6 flex flex-col items-center gap-4">
-          <div class="px-6 py-2 bg-black/10 dark:bg-white/5 rounded-full border border-zinc-200 dark:border-white/10 text-[10px] font-black uppercase tracking-[0.3em] text-primary-500">
-            Evento Global Activo
-          </div>
-          <button @click="$emit('start')" class="px-10 py-4 bg-primary-600 hover:bg-primary-500 text-white font-black uppercase tracking-widest rounded-2xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(249,115,22,0.4)]">
-            Unirme a la Caza
-          </button>
+      <!-- Active Boss Banner (Industrial Urgent) -->
+      <div v-if="hasActiveEvent && activeBoss" class="w-full max-w-5xl bg-steel-grey/40 backdrop-blur-2xl border border-primary-500/30 p-8 rounded-3xl animate-in fade-in slide-in-from-top-10 duration-1000 shadow-[0_0_50px_rgba(255,69,0,0.1)] mb-12 relative overflow-hidden group">
+        <div class="absolute inset-0 bg-gradient-to-r from-primary-500/5 via-transparent to-primary-500/5 opacity-50"></div>
+        <div class="relative z-10 flex flex-col md:flex-row items-center gap-8 text-left">
+           <div class="p-5 bg-primary-500/10 rounded-2xl border border-primary-500/20 animate-pulse">
+              <Sword class="w-10 h-10 text-primary-500" />
+           </div>
+           <div class="flex-1">
+              <h2 class="text-3xl md:text-5xl font-black text-industrial text-white italic tracking-tighter uppercase leading-none mb-3">
+                {{ activeBoss.name }} <span class="text-primary-500">DETECTED</span>
+              </h2>
+              <p class="text-zinc-500 font-bold text-sm md:text-lg uppercase tracking-widest max-w-2xl">{{ activeBoss.description }}</p>
+           </div>
+           <button @click="$emit('start')" class="btn-reppy !px-12 !py-5 shadow-2xl group-hover:scale-105 transition-transform">
+             JOIN THE HUNT
+           </button>
         </div>
       </div>
 
-      <div class="inline-flex items-center gap-2 px-4 py-2 glass rounded-full mb-4 border-zinc-200 dark:border-white/10 animate-fade-in-up">
-        <Sparkles class="w-4 h-4 text-primary-400" />
-        <span class="text-xs font-black uppercase tracking-[0.3em] text-zinc-400 dark:text-zinc-500 dark:text-zinc-400">{{ i18n.t('hero_eyebrow') }}</span>
+      <!-- Branding Eyebrow -->
+      <div class="inline-flex items-center gap-3 px-6 py-2 bg-white/5 border border-white/5 rounded-full mb-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+        <div class="w-2 h-2 rounded-full bg-primary-500 animate-ping"></div>
+        <span class="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-500">{{ i18n.t('hero_eyebrow') }}</span>
       </div>
 
-      <h1 class="text-6xl md:text-9xl font-black tracking-tighter text-zinc-900 dark:text-white animate-fade-in-up delay-200">
+      <!-- Massive Industrial Logo -->
+      <h1 class="text-8xl md:text-[14rem] font-black text-industrial tracking-tighter text-white leading-none animate-in zoom-in duration-1000">
         REPPY<span class="text-primary-500">.</span>
       </h1>
       
-      <p class="max-w-2xl text-xl md:text-2xl text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed animate-fade-in-up delay-300">
+      <p class="max-w-3xl text-xl md:text-3xl text-zinc-500 font-bold uppercase tracking-tight leading-snug animate-in fade-in duration-1000 delay-300">
         {{ i18n.t('hero_subtitle') }}
       </p>
 
-      <div class="flex items-center gap-4 animate-fade-in-up delay-500">
+      <!-- Primary Action -->
+      <div class="flex flex-col items-center gap-6 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-500">
         <button 
           @click="$emit('start')"
-          class="px-8 py-4 bg-primary-600 hover:bg-primary-500 text-zinc-900 dark:text-white font-black uppercase tracking-widest rounded-2xl shadow-[0_20px_40px_-10px_rgba(249,115,22,0.3)] transition-all hover:scale-105 active:scale-95"
+          class="btn-reppy !text-xl !px-16 !py-6 shadow-[0_30px_60px_-15px_rgba(255,69,0,0.4)]"
         >
-          {{ authStore.isAuthenticated ? i18n.t('nav_go_dashboard') : i18n.t('btn_start') }}
+          {{ authStore.isAuthenticated ? 'BACK TO DASHBOARD' : 'INITIATE PROTOCOL' }}
         </button>
+        <span class="text-[9px] font-black text-zinc-700 uppercase tracking-[0.3em]">VERSION 2.0 // DEEP ABYSS CORE</span>
       </div>
     </section>
 
-    <!-- Features Bento Grid -->
-    <section class="max-w-6xl w-full px-4 py-12 md:py-24 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-      <div class="glass p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] space-y-6 group hover:translate-y-[-8px] transition-all duration-500">
-        <div class="w-14 h-14 bg-primary-500/10 rounded-2xl flex items-center justify-center text-primary-500 group-hover:scale-110 transition-transform">
+    <!-- Features Bento Grid (Industrial Modules) -->
+    <section class="max-w-7xl w-full px-6 py-24 md:py-32 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="card-stats space-y-8 group hover:border-primary-500/30">
+        <div class="w-16 h-16 bg-primary-500/10 rounded-2xl flex items-center justify-center text-primary-500 group-hover:scale-110 transition-transform">
           <Activity class="w-8 h-8" />
         </div>
-        <h3 class="text-2xl font-black text-zinc-900 dark:text-white tracking-tight">{{ i18n.t('feat_heatmap_title') }}</h3>
-        <p class="text-zinc-400 dark:text-zinc-500 font-medium">{{ i18n.t('feat_heatmap_desc') }}</p>
+        <div class="space-y-4">
+          <h3 class="text-2xl font-black text-industrial text-white tracking-tight uppercase">{{ i18n.t('feat_heatmap_title') }}</h3>
+          <p class="text-zinc-500 font-bold text-xs uppercase tracking-widest leading-relaxed">{{ i18n.t('feat_heatmap_desc') }}</p>
+        </div>
+        <div class="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+           <div class="h-full bg-primary-500 w-2/3"></div>
+        </div>
       </div>
 
-      <div class="glass p-8 rounded-[3rem] space-y-6 group hover:translate-y-[-8px] transition-all duration-500">
-        <div class="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+      <div class="card-stats space-y-8 group hover:border-primary-500/30">
+        <div class="w-16 h-16 bg-neon-lime/10 rounded-2xl flex items-center justify-center text-neon-lime group-hover:scale-110 transition-transform">
           <Trophy class="w-8 h-8" />
         </div>
-        <h3 class="text-2xl font-black text-zinc-900 dark:text-white tracking-tight">{{ i18n.t('feat_leaderboard_title') }}</h3>
-        <p class="text-zinc-400 dark:text-zinc-500 font-medium">{{ i18n.t('feat_leaderboard_desc') }}</p>
+        <div class="space-y-4">
+          <h3 class="text-2xl font-black text-industrial text-white tracking-tight uppercase">{{ i18n.t('feat_leaderboard_title') }}</h3>
+          <p class="text-zinc-500 font-bold text-xs uppercase tracking-widest leading-relaxed">{{ i18n.t('feat_leaderboard_desc') }}</p>
+        </div>
+        <div class="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+           <div class="h-full bg-neon-lime w-1/2"></div>
+        </div>
       </div>
 
-      <div class="glass p-8 rounded-[3rem] space-y-6 group hover:translate-y-[-8px] transition-all duration-500">
-        <div class="w-14 h-14 bg-green-500/10 rounded-2xl flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform">
+      <div class="card-stats space-y-8 group hover:border-primary-500/30">
+        <div class="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
           <Users class="w-8 h-8" />
         </div>
-        <h3 class="text-2xl font-black text-zinc-900 dark:text-white tracking-tight">{{ i18n.t('feat_social_title') }}</h3>
-        <p class="text-zinc-400 dark:text-zinc-500 font-medium">{{ i18n.t('feat_social_desc') }}</p>
+        <div class="space-y-4">
+          <h3 class="text-2xl font-black text-industrial text-white tracking-tight uppercase">{{ i18n.t('feat_social_title') }}</h3>
+          <p class="text-zinc-500 font-bold text-xs uppercase tracking-widest leading-relaxed">{{ i18n.t('feat_social_desc') }}</p>
+        </div>
+        <div class="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+           <div class="h-full bg-blue-500 w-3/4"></div>
+        </div>
       </div>
     </section>
     
     <!-- Global Hall of Fame -->
-    <section class="max-w-4xl w-full px-4 py-24 space-y-12">
-      <div class="text-center space-y-4">
-        <h2 class="text-4xl md:text-5xl font-black text-zinc-900 dark:text-white tracking-tighter uppercase">{{ i18n.t('landing_lb_title') }}</h2>
-        <p class="text-zinc-400 dark:text-zinc-500 font-medium">{{ i18n.t('landing_lb_subtitle') }}</p>
+    <section class="max-w-5xl w-full px-6 py-24 md:py-48 space-y-16">
+      <div class="text-center space-y-6">
+        <h2 class="text-5xl md:text-7xl font-black text-industrial text-white tracking-tighter uppercase italic leading-none">COMMUNITY RANKINGS</h2>
+        <p class="text-zinc-500 font-black uppercase tracking-[0.3em] text-xs">GLOBAL COMPETITION REAL-TIME FEED</p>
       </div>
       
-      <div class="animate-fade-in-up delay-700">
-        <Leaderboard />
+      <div class="card-stats !p-0 overflow-hidden border-white/5">
+         <div class="p-8 bg-white/5 border-b border-white/5">
+            <span class="text-[10px] font-black text-primary-500 uppercase tracking-[0.5em]">LIVE PROTOCOL STREAMING</span>
+         </div>
+         <Leaderboard />
       </div>
       
-      <div class="text-center">
+      <div class="text-center pt-8">
         <button 
           @click="$emit('start')"
-          class="text-[10px] font-black text-primary-500 uppercase tracking-[0.3em] hover:text-primary-400 transition-colors"
+          class="text-xs font-black text-primary-500 uppercase tracking-[0.5em] hover:text-white transition-all group"
         >
-          {{ authStore.isAuthenticated ? i18n.t('nav_go_dashboard') : i18n.t('btn_start') }} &rarr;
+          INITIATE FULL VIEW <span class="inline-block group-hover:translate-x-2 transition-transform">&rarr;</span>
         </button>
       </div>
     </section>
 
     <!-- Footer -->
-    <footer class="w-full py-16 border-t border-zinc-200 dark:border-white/5 text-center space-y-4">
-      <div class="flex justify-center gap-6 text-zinc-600">
-        <span class="text-[10px] font-black uppercase tracking-[0.5em]">2026 REPPY CORE</span>
-        <span class="text-[10px] font-black uppercase tracking-[0.5em]">SYSTEM ONLINE</span>
+    <footer class="w-full py-24 border-t border-white/5 text-center space-y-8">
+      <div class="flex flex-col md:flex-row justify-center items-center gap-10 text-zinc-700">
+        <span class="text-[10px] font-black uppercase tracking-[0.6em]">REPPY CORE © 2026</span>
+        <div class="w-1 h-1 bg-zinc-800 rounded-full hidden md:block"></div>
+        <span class="text-[10px] font-black uppercase tracking-[0.6em]">DEEP ABYSS DEPLOYED</span>
+        <div class="w-1 h-1 bg-zinc-800 rounded-full hidden md:block"></div>
+        <span class="text-[10px] font-black uppercase tracking-[0.6em]">STATUS: OPTIMAL</span>
       </div>
     </footer>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import { Sparkles, Activity, Trophy, Users } from 'lucide-vue-next';
+import { Activity, Trophy, Users, Sword } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
 import Leaderboard from './Leaderboard.vue';
@@ -126,43 +156,13 @@ onMounted(async () => {
       activeBoss.value = res.data.boss;
     }
   } catch (e) {
-    console.error('Error fetching boss for landing:', e);
+    console.error('Landing sync error:', e);
   }
 });
 </script>
 
 <style scoped>
-.animate-fade-in-up {
-  animation: fadeInUp 1s ease-out forwards;
-  opacity: 0;
-}
-.delay-200 { animation-delay: 200ms; }
-.delay-300 { animation-delay: 300ms; }
-.delay-500 { animation-delay: 500ms; }
-.delay-1000 { animation-delay: 1000ms; }
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes bounceShort {
-  0%, 100% {
-    transform: translateY(-25%);
-    animation-timing-function: cubic-bezier(0.8,0,1,1);
-  }
-  50% {
-    transform: translateY(0);
-    animation-timing-function: cubic-bezier(0,0,0.2,1);
-  }
-}
-.animate-bounce-short {
-  animation: bounceShort 1s;
-  animation-iteration-count: 3;
-}
+.text-industrial { font-family: 'Inter Tight', sans-serif; }
+.animate-in { animation: fadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 </style>

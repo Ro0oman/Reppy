@@ -1,199 +1,203 @@
 <template>
-  <div class="max-w-6xl mx-auto w-full px-4 space-y-10 pb-20">
-    <!-- Dashboard Tools -->
-    <div class="flex justify-end gap-3 mt-4">
-      <button @click="fetchData"
-        class="p-2.5 bg-white dark:bg-zinc-900/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-300 dark:border-zinc-800 rounded-xl transition-all"
-        title="Refresh data">
-        <RotateCw class="w-5 h-5 text-zinc-400 dark:text-zinc-500" />
-      </button>
+  <div class="max-w-7xl mx-auto w-full px-4 space-y-8 pb-32 pt-6">
+    <!-- Top Header: Tools & Boss -->
+    <div class="flex flex-col gap-6">
+      <div class="flex items-center justify-between">
+        <h1 class="text-3xl font-black text-industrial tracking-tighter text-white">
+          DASHBOARD<span class="text-primary-500">.</span>
+        </h1>
+        <button @click="fetchData"
+          class="p-3 bg-steel-grey/40 hover:bg-steel-grey/60 border border-white/5 rounded-xl transition-all group"
+          title="Refresh protocol">
+          <RotateCw class="w-5 h-5 text-zinc-500 group-hover:text-primary-500 group-hover:rotate-180 transition-all duration-700" />
+        </button>
+      </div>
+
+      <!-- Boss Event Global Health Bar -->
+      <BossHealth ref="bossHealthRef" />
+
+      <!-- Exercise Selector (The Dock) -->
+      <div class="flex justify-center">
+        <ExerciseSelector v-model="activeExercise" @update:modelValue="fetchData" />
+      </div>
     </div>
 
-    <!-- Boss Event Global Health Bar -->
-    <BossHealth ref="bossHealthRef" />
+    <!-- Phase 1: The Bento Analytics -->
+    <div class="bento-grid">
+      <!-- 1. Primary Progress (2x2) -->
+      <div class="card-stats md:col-span-2 md:row-span-2 flex flex-col items-center justify-center gap-6 group/goal">
+        <div class="absolute top-6 left-6 flex items-center gap-2">
+          <Target class="w-4 h-4 text-primary-500" />
+          <span class="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">{{ i18n.t('goal_progress') }}</span>
+        </div>
+        
+        <RadialProgress :progress="(todayProgress / stats.dailyGoal) * 100" :size="240">
+          <div class="flex flex-col items-center">
+            <span class="text-6xl font-black text-precision transition-transform group-hover/goal:scale-110 tracking-tighter">
+              {{ todayProgress }}
+            </span>
+            <span class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">/ {{ stats.dailyGoal }} REPS</span>
+          </div>
+        </RadialProgress>
 
-    <!-- Exercise Selector -->
-    <div class="flex justify-center -mb-4">
-      <ExerciseSelector v-model="activeExercise" @update:modelValue="fetchData" />
+        <div class="text-center">
+          <p class="text-xs font-bold text-zinc-400 max-w-[200px]">
+            {{ todayProgress >= stats.dailyGoal ? 'Protocol established. Goal achieved.' : 'Analyzing performance... Goal pending.' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- 2. Streak (1x1) -->
+      <div class="card-stats flex flex-col justify-between group/streak">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Streak</span>
+          <Flame class="w-5 h-5 text-primary-500 group-hover/streak:animate-bounce" />
+        </div>
+        <div class="mt-4">
+          <span class="text-6xl font-black text-precision text-white tracking-tighter">{{ stats.streak }}</span>
+          <p class="text-[10px] font-black text-primary-500 uppercase tracking-widest">Active Days</p>
+        </div>
+        <div class="mt-4 h-1 w-full bg-white/5 rounded-full overflow-hidden">
+          <div class="h-full bg-primary-500 transition-all duration-1000" :style="{ width: '80%' }"></div>
+        </div>
+      </div>
+
+      <!-- 3. Personal Best (1x1) -->
+      <div class="card-stats flex flex-col justify-between group/pb">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Peak Volume</span>
+          <Zap class="w-5 h-5 text-neon-lime group-hover/pb:scale-125 transition-transform" />
+        </div>
+        <div class="mt-4">
+          <span class="text-4xl font-black text-precision text-white tracking-tighter">{{ stats.topMonthCount }}</span>
+          <p class="text-[10px] font-black text-neon-lime uppercase tracking-widest">Month Max</p>
+        </div>
+        <p class="text-[10px] font-bold text-zinc-600 uppercase mt-2">{{ stats.topMonth }}</p>
+      </div>
+
+      <!-- 4. Weight (1x1) -->
+      <div class="card-stats flex flex-col justify-between">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Body Weight</span>
+          <Activity class="w-5 h-5 text-blue-500" />
+        </div>
+        <div class="mt-4">
+          <span class="text-5xl font-black text-precision text-white tracking-tighter">{{ stats.bodyWeight }}</span>
+          <span class="text-xs font-black text-zinc-600 ml-2">KG</span>
+        </div>
+        <div class="flex items-center gap-1 mt-2">
+          <div v-for="i in 5" :key="i" :class="['h-1 flex-1 rounded-full', i <= 3 ? 'bg-blue-500/40' : 'bg-white/5']"></div>
+        </div>
+      </div>
+
+      <!-- 5. Total Volume (1x1) -->
+      <div class="card-stats flex flex-col justify-between group/vol">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Total Volume</span>
+          <Trophy class="w-5 h-5 text-yellow-500 group-hover/vol:rotate-12 transition-transform" />
+        </div>
+        <div class="mt-4">
+          <span class="text-4xl font-black text-precision text-white tracking-tighter">{{ (stats.totalVolume / 1000).toFixed(1) }}</span>
+          <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Metric Tons</p>
+        </div>
+        <div class="mt-2 text-[10px] font-bold text-yellow-500/50 tabular-nums">{{ stats.totalVolume.toLocaleString() }} KG</div>
+      </div>
     </div>
 
-    <!-- Main Action Area: Input & Rankings -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 text-zinc-900 dark:text-white">
-      <!-- High Visibility Input -->
+    <!-- Phase 2: Action & Competition -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Input Center -->
       <div class="lg:col-span-1">
         <RepsInput :exercise-type="activeExercise" @updated="fetchData" />
       </div>
-      
-      <!-- Prominent Leaderboard -->
+
+      <!-- Live Rankings -->
       <div class="lg:col-span-2">
-        <section class="glass rounded-[2.5rem] p-8 border-zinc-200 dark:border-white/5 h-full">
-          <h3 class="text-base font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-400 dark:text-zinc-500 mb-6">
-            <BarChart3 class="w-4 h-4 text-primary-500" />
-            <span>{{ activeExerciseLabel }} {{ i18n.t('rankings') }}</span>
-          </h3>
-          <Leaderboard 
-            ref="leaderboardRef" 
-            :exercise-type="activeExercise"
-            @viewProfile="$emit('viewProfile', $event)"
-          />
-        </section>
-      </div>
-    </div>
-
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <!-- Total Reps Card -->
-      <div class="glass glass-hover relative overflow-hidden p-6 rounded-3xl shadow-xl transition-all duration-500">
-        <div class="absolute top-0 right-0 p-4 opacity-10">
-          <Trophy class="w-12 h-12 text-primary-400" />
-        </div>
-        <span class="text-zinc-400 dark:text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">{{ i18n.t('stats_total') }}</span>
-        <div class="flex items-baseline gap-2 mt-2">
-          <span class="text-5xl font-black text-zinc-900 dark:text-white tracking-tighter">{{ totalReps }}</span>
-          <span class="text-primary-500 text-[10px] font-black uppercase tracking-widest">{{ i18n.t('stats_gains') }}</span>
-        </div>
-      </div>
-
-      <!-- Daily Goal Card -->
-      <div class="glass glass-hover relative overflow-hidden p-6 rounded-3xl shadow-xl transition-all duration-500">
-        <div class="absolute top-0 right-0 p-4 opacity-10">
-          <Target class="w-12 h-12 text-blue-400" />
-        </div>
-        <span class="text-zinc-400 dark:text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">{{ i18n.t('daily_goal') }}</span>
-        <div class="flex items-baseline gap-2 mt-2">
-          <span class="text-5xl font-black text-zinc-900 dark:text-white tracking-tighter">{{ stats.dailyGoal }}</span>
-          <span class="text-blue-500 text-[10px] font-black uppercase tracking-widest">{{ i18n.t('stats_reps') }}</span>
-        </div>
-      </div>
-
-      <!-- Streak Card -->
-      <div class="glass glass-hover relative overflow-hidden p-6 rounded-3xl shadow-xl transition-all duration-500">
-        <div class="absolute top-0 right-0 p-4 opacity-10">
-          <Flame class="w-12 h-12 text-orange-400" />
-        </div>
-        <span class="text-zinc-400 dark:text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">{{ i18n.t('stats_streak') }}</span>
-        <div class="flex items-baseline gap-2 mt-2">
-          <span class="text-5xl font-black text-zinc-900 dark:text-white tracking-tighter">{{ stats.streak }}</span>
-          <span class="text-orange-500 text-[10px] font-black uppercase tracking-widest">{{ i18n.t('stats_days') }}</span>
-        </div>
-      </div>
-
-      <!-- Top Month Card -->
-      <div class="glass glass-hover relative overflow-hidden p-6 rounded-3xl shadow-xl transition-all duration-500">
-        <div class="absolute top-0 right-0 p-4 opacity-10">
-          <Zap class="w-12 h-12 text-yellow-400" />
-        </div>
-        <span class="text-zinc-400 dark:text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">{{ i18n.t('stats_top_month') }}</span>
-        <div class="flex flex-col mt-2">
-          <span class="text-2xl font-black text-zinc-900 dark:text-white uppercase tracking-tighter">{{ stats.topMonth }}</span>
-          <span class="text-yellow-500 text-[10px] font-black uppercase tracking-widest">{{ stats.topMonthCount }} REPS</span>
-        </div>
-      </div>
-
-      <!-- Training Volume Card -->
-      <div class="glass glass-hover relative overflow-hidden p-6 rounded-3xl shadow-xl transition-all duration-500 md:col-span-2 lg:col-span-1 border-primary-500/10">
-        <div class="absolute top-0 right-0 p-4 opacity-10">
-          <Activity class="w-12 h-12 text-emerald-400" />
-        </div>
-        <span class="text-zinc-400 dark:text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">Volume Movido</span>
-        <div class="flex items-baseline gap-2 mt-2">
-          <span class="text-4xl font-black text-zinc-900 dark:text-white tracking-tighter">{{ (stats.totalVolume / 1000).toFixed(1) }}</span>
-          <span class="text-emerald-500 text-[10px] font-black uppercase tracking-widest">Toneladas</span>
-        </div>
-        <div class="mt-1 text-[9px] text-zinc-600 font-bold uppercase tracking-widest">{{ stats.totalVolume.toLocaleString() }} KG</div>
-      </div>
-    </div>
-
-    <!-- Daily Goal Progress -->
-    <div class="glass p-8 rounded-[2.5rem] border-zinc-200 dark:border-white/10 relative overflow-hidden group">
-      <div class="absolute inset-0 bg-primary-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-      <div class="relative z-10">
-        <div class="flex items-center justify-between mb-6">
-          <div>
-            <h3 class="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tighter">{{ i18n.t('goal_progress') }}</h3>
-            <p class="text-xs text-zinc-400 dark:text-zinc-500">{{ todayProgress }} / {{ stats.dailyGoal }} {{ i18n.t('stats_reps') }}</p>
+        <div class="card-stats h-full !p-0">
+          <div class="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+            <div class="flex items-center gap-3">
+              <BarChart3 class="w-5 h-5 text-primary-500" />
+              <h3 class="text-lg font-black text-industrial uppercase text-white tracking-tight">
+                {{ activeExerciseLabel }} <span class="text-zinc-600">Protocol</span>
+              </h3>
+            </div>
+            <div class="px-3 py-1 bg-primary-500/10 rounded-full border border-primary-500/20">
+              <span class="text-[9px] font-black text-primary-500 uppercase tracking-widest">Live Feed</span>
+            </div>
           </div>
-          <div class="p-4 bg-primary-500/10 rounded-2xl shadow-lg border border-primary-500/20">
-            <Zap class="w-6 h-6 text-primary-500 animate-pulse" />
+          <div class="p-4 bg-black/20">
+            <Leaderboard 
+              ref="leaderboardRef" 
+              :exercise-type="activeExercise"
+              @viewProfile="$emit('viewProfile', $event)"
+            />
           </div>
         </div>
-        <div class="w-full h-5 bg-black/5 dark:bg-black/40 rounded-full overflow-hidden border border-zinc-200 dark:border-white/5 p-1 shadow-inner">
-          <div
-            class="h-full bg-gradient-to-r from-primary-600 to-primary-400 rounded-full transition-all duration-1000 ease-out shadow-[0_0_20px_rgba(249,115,22,0.4)]"
-            :style="{ width: `${Math.min((todayProgress / stats.dailyGoal) * 100, 100)}%` }"></div>
-        </div>
       </div>
     </div>
 
-    <!-- Secondary Context: Heatmap & Logs -->
+    <!-- Phase 3: Historical Stream -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <section class="space-y-4">
-        <h3 class="text-base font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-400 dark:text-zinc-500 px-2">
+      <!-- Heatmap -->
+      <div class="space-y-4">
+        <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-500 px-2">
           <Activity class="w-4 h-4 text-primary-500" />
-          {{ i18n.t('activity_stream') }}
+          ACTIVITY STREAM
         </h3>
-        <Heatmap :data="heatmapData" class="glass rounded-[2rem] p-8" />
-      </section>
+        <Heatmap :data="heatmapData" class="card-stats !p-8" />
+      </div>
 
-      <section class="space-y-4">
-        <h3 class="text-base font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-400 dark:text-zinc-500 px-2">
+      <!-- Recent Logs -->
+      <div class="space-y-4">
+        <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-500 px-2">
           <History class="w-4 h-4 text-primary-500" />
-          {{ i18n.t('recent_logs') }}
+          LOG HISTORY
         </h3>
-        <div class="glass rounded-[2rem] shadow-2xl overflow-hidden max-h-[400px] overflow-y-auto scrollbar-hide">
-          <table class="w-full text-left">
-            <thead class="bg-white/[0.02] text-zinc-600 text-[10px] uppercase font-black tracking-[0.2em] border-b border-zinc-200 dark:border-white/5 sticky top-0 bg-zinc-950/90 backdrop-blur-md z-10">
-              <tr>
-                <th class="px-8 py-6">{{ i18n.t('table_date') }}</th>
-                <th class="px-8 py-6 text-right">{{ i18n.t('table_count') }}</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-white/[0.03]">
-              <tr v-for="rep in reps" :key="rep.id" class="group hover:bg-white/[0.02] transition-all duration-300">
-                <td class="px-8 py-5 text-middle text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:text-white capitalize font-medium italic">
-                  {{ formatDate(rep.date) }}</td>
-                <td class="px-8 py-5 text-right font-mono text-xl font-black text-zinc-900 dark:text-white group-hover:text-primary-500">
-                  <div v-if="editingId === rep.id" class="flex items-center justify-end gap-3">
-                    <input v-model.number="editValue" type="number"
-                      class="w-20 bg-white dark:bg-zinc-900 border border-primary-500/50 rounded-lg px-2 py-1 text-right focus:outline-none shadow-inner"
-                      @keyup.enter="saveEdit(rep.id)" />
-                    <button @click="saveEdit(rep.id)"
-                      class="p-2 bg-primary-500/20 text-primary-400 rounded-lg hover:bg-primary-500 hover:text-zinc-900 dark:text-white transition-all">
-                      <Check class="w-4 h-4" />
-                    </button>
-                    <button @click="editingId = null"
-                      class="p-2 bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 rounded-lg hover:bg-zinc-700 hover:text-zinc-900 dark:text-white transition-all">
-                      <X class="w-4 h-4" />
-                    </button>
-                  </div>
-                  <div v-else class="flex items-center justify-end gap-3">
-                    <div @click="startEdit(rep)" class="cursor-pointer hover:text-primary-500 transition-colors">
-                      {{ rep.count }}
+        <div class="card-stats !p-0 h-[380px] overflow-hidden flex flex-col shadow-2xl">
+          <div class="overflow-y-auto scrollbar-hide flex-1">
+            <table class="w-full text-left">
+              <thead class="sticky top-0 bg-steel-grey/90 backdrop-blur-md z-10">
+                <tr class="text-zinc-600 text-[9px] uppercase font-black tracking-[0.2em] border-b border-white/5">
+                  <th class="px-8 py-5">Timestamp</th>
+                  <th class="px-8 py-5 text-right">Magnitude</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/[0.03]">
+                <tr v-for="rep in reps" :key="rep.id" class="group hover:bg-white/[0.02] transition-colors">
+                  <td class="px-8 py-4">
+                    <span class="text-xs font-bold text-zinc-500 uppercase italic group-hover:text-white transition-colors">
+                      {{ formatDate(rep.date) }}
+                    </span>
+                  </td>
+                  <td class="px-8 py-4 text-right">
+                    <div v-if="editingId === rep.id" class="flex items-center justify-end gap-3">
+                      <input v-model.number="editValue" type="number"
+                        class="w-20 bg-black/40 border border-primary-500/50 rounded-lg px-2 py-1 text-right text-precision focus:outline-none"
+                        @keyup.enter="saveEdit(rep.id)" />
+                      <button @click="saveEdit(rep.id)" class="text-primary-500"><Check class="w-4 h-4" /></button>
                     </div>
-                    <button @click="confirmDelete(rep.id)" 
-                      class="opacity-0 group-hover:opacity-100 p-2 text-zinc-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
-                      title="Delete log">
-                      <Trash2 class="w-4 h-4" />
-                    </button>
-                  </div>
-
-                </td>
-              </tr>
-              <tr v-if="reps.length === 0">
-                <td colspan="2" class="px-8 py-20 text-center">
-                  <div class="flex flex-col items-center gap-4 opacity-20">
-                    <Inbox class="w-12 h-12" />
-                    <p class="text-xs font-black uppercase tracking-widest">{{ i18n.t('table_empty') }}</p>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                    <div v-else class="flex items-center justify-end gap-4">
+                      <span @click="startEdit(rep)" class="text-xl font-black text-precision text-white cursor-pointer hover:text-primary-500">
+                        {{ rep.count }}
+                      </span>
+                      <button @click="confirmDelete(rep.id)" class="opacity-0 group-hover:opacity-100 text-zinc-600 hover:text-red-500 transition-all">
+                        <Trash2 class="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr v-if="reps.length === 0">
+                  <td colspan="2" class="py-20 text-center opacity-20">
+                    <Inbox class="w-10 h-10 mx-auto mb-4" />
+                    <span class="text-[10px] font-black uppercase tracking-widest">Protocol Null</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </section>
+      </div>
     </div>
-
-
   </div>
 </template>
 
@@ -201,8 +205,8 @@
 import { ref, onMounted, computed, reactive } from 'vue';
 import axios from 'axios';
 import {
-  Trophy, Target, Flame, Zap, Activity, History, Mail,
-  RotateCw, LogOut, Inbox, BarChart3, Check, X, ShieldAlert, Camera, Trash2, Settings
+  Trophy, Target, Flame, Zap, Activity, History, Inbox,
+  RotateCw, BarChart3, Check, X, Trash2
 } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
@@ -212,16 +216,21 @@ import RepsInput from './RepsInput.vue';
 import Leaderboard from './Leaderboard.vue';
 import ExerciseSelector from './ExerciseSelector.vue';
 import BossHealth from './BossHealth.vue';
+import RadialProgress from './RadialProgress.vue';
 
 const emit = defineEmits(['viewProfile']);
-
 const authStore = useAuthStore();
 const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
+
 const reps = ref([]);
 const heatmapData = ref([]);
 const totalReps = ref(0);
 const activeExercise = ref('pullups');
+const editingId = ref(null);
+const editValue = ref(0);
+const leaderboardRef = ref(null);
+const bossHealthRef = ref(null);
 
 const stats = reactive({
   streak: 0,
@@ -235,51 +244,34 @@ const stats = reactive({
 const activeExerciseLabel = computed(() => {
   const map = {
     all: 'Global',
-    pullups: i18n.t('pullups'),
-    muscleups: i18n.t('muscleups'),
-    dips: i18n.t('dips'),
-    pushups: i18n.t('pushups'),
-    weighted_pullups: i18n.t('weighted_pullups')
+    pullups: 'Pullups',
+    muscleups: 'Muscle Ups',
+    dips: 'Dips',
+    pushups: 'Pushups',
+    weighted_pullups: 'Weighted'
   };
   return map[activeExercise.value] || activeExercise.value;
 });
 
-const settingsForm = reactive({
-  name: authStore.user?.name || '',
-  daily_goal: authStore.user?.daily_goal || 50,
-  body_weight: authStore.user?.body_weight || 75
-});
-
-const editingId = ref(null);
-const editValue = ref(0);
-const leaderboardRef = ref(null);
-const bossHealthRef = ref(null);
-const avatarInput = ref(null);
-
 const todayProgress = computed(() => {
-  const today = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
-  const todayEntry = reps.value.find(r => {
-    return new Date(r.date).toLocaleDateString('en-CA') === today;
-  });
+  const today = new Date().toLocaleDateString('en-CA');
+  const todayEntry = reps.value.find(r => new Date(r.date).toLocaleDateString('en-CA') === today);
   return todayEntry ? todayEntry.count : 0;
 });
 
 const fetchData = async () => {
   try {
     const params = { type: activeExercise.value };
-    const statsPromises = [
+    const [repsRes, heatmapRes, statsRes] = await Promise.all([
       axios.get('/api/reps', { params }),
       axios.get('/api/reps/heatmap', { params }),
       axios.get('/api/reps/stats', { params }),
       authStore.fetchProfile()
-    ];
-
-    const [repsRes, heatmapRes, statsRes] = await Promise.all(statsPromises);
+    ]);
 
     reps.value = repsRes.data;
     heatmapData.value = heatmapRes.data;
     totalReps.value = statsRes.data.totalReps;
-
     stats.streak = statsRes.data.streak;
     stats.topMonth = statsRes.data.topMonth;
     stats.topMonthCount = statsRes.data.topMonthCount;
@@ -287,88 +279,17 @@ const fetchData = async () => {
     stats.totalVolume = statsRes.data.totalVolume || 0;
     stats.bodyWeight = statsRes.data.bodyWeight || 75;
 
-    // Sync settings form
-    settingsForm.name = authStore.user?.name;
-    settingsForm.daily_goal = stats.dailyGoal;
-    settingsForm.body_weight = stats.bodyWeight;
-
-    if (leaderboardRef.value) {
-      leaderboardRef.value.refresh();
-    }
-    if (bossHealthRef.value) {
-      bossHealthRef.value.refresh();
-    }
+    if (leaderboardRef.value) leaderboardRef.value.refresh();
+    if (bossHealthRef.value) bossHealthRef.value.refresh();
   } catch (error) {
     console.error('Error fetching data:', error);
   }
 };
 
-const saveSettings = async () => {
-  try {
-    await authStore.updateProfile(settingsForm);
-    fetchData(); // Refresh everything
-    notificationStore.notify(i18n.t('settings_success'), 'success');
-  } catch (error) {
-    notificationStore.notify('Failed to save settings', 'error');
-  }
-};
-
-const triggerAvatarUpload = () => {
-  avatarInput.value?.click();
-};
-
-const handleAvatarChange = async (event) => {
-  const file = event.target.files?.[0];
-  if (!file) return;
-
-  // Modern Validation
-  if (!file.type.startsWith('image/')) {
-    notificationStore.notify('Invalid file type. Please upload an image.', 'error');
-    return;
-  }
-  
-  if (file.size > 2 * 1024 * 1024) { // 2MB limit
-    notificationStore.notify('File too large. Max size is 2MB.', 'error');
-    return;
-  }
-
-  const reader = new FileReader();
-  reader.onloadend = async () => {
-    try {
-      await authStore.updateAvatar(reader.result);
-      notificationStore.notify('Avatar updated successfully', 'success');
-    } catch (error) {
-      notificationStore.notify('Failed to upload avatar', 'error');
-    }
-  };
-  reader.readAsDataURL(file);
-};
-
-const handleDeleteAccount = async () => {
-  notificationStore.confirm(
-    i18n.t('delete_confirm_title'),
-    i18n.t('delete_confirm'),
-    async () => {
-      try {
-        await authStore.deleteAccount();
-        notificationStore.notify('Account deleted successfully', 'success');
-      } catch (error) {
-        notificationStore.notify('Failed to delete account', 'error');
-      }
-    }
-  );
-};
-
-const togglePrivacy = async () => {
-  try {
-    await authStore.updateProfile({ is_private: !authStore.user?.is_private });
-    // Also refresh leaderboard to reflect privacy change
-    if (leaderboardRef.value) {
-      leaderboardRef.value.refresh();
-    }
-  } catch (error) {
-    console.error('Error toggling privacy:', error);
-  }
+const formatDate = (dateStr) => {
+  return new Date(dateStr).toLocaleDateString(undefined, {
+    weekday: 'short', month: 'short', day: 'numeric'
+  });
 };
 
 const startEdit = (rep) => {
@@ -380,48 +301,35 @@ const saveEdit = async (id) => {
   try {
     await axios.put(`/api/reps/${id}`, { count: editValue.value });
     editingId.value = null;
-    notificationStore.notify(i18n.t('stats_updated'), 'success');
+    notificationStore.notify('Entry updated', 'success');
     fetchData();
-  } catch (error) {
-    console.error('Error saving edit:', error);
-    notificationStore.notify('Error saving edit', 'error');
+  } catch (err) {
+    notificationStore.notify('Update failed', 'error');
   }
 };
 
 const confirmDelete = (id) => {
   notificationStore.confirm(
-    i18n.t('delete_confirm_title'),
-    i18n.t('delete_confirm'),
+    'Delete Log',
+    'Are you sure you want to delete this entry?',
     async () => {
       try {
         await axios.delete(`/api/reps/${id}`);
-        notificationStore.notify('Entrada eliminada correctamente', 'success');
+        notificationStore.notify('Entry deleted', 'success');
         fetchData();
-      } catch (error) {
-        console.error('Error deleting rep:', error);
-        notificationStore.notify('Error al eliminar la entrada', 'error');
+      } catch (err) {
+        notificationStore.notify('Delete failed', 'error');
       }
     }
   );
-};
-
-
-const formatDate = (dateStr) => {
-  return new Date(dateStr).toLocaleDateString(undefined, {
-    weekday: 'short',
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  });
 };
 
 onMounted(fetchData);
 </script>
 
 <style scoped>
-.glass-hover:hover {
-  transform: translateY(-4px);
-  background-color: rgba(255, 255, 255, 0.05);
-  border-color: rgba(249, 115, 22, 0.2);
-}
+.text-industrial { font-family: 'Inter Tight', sans-serif; }
+.text-precision { font-family: 'JetBrains Mono', monospace; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 </style>

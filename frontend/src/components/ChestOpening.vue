@@ -1,89 +1,103 @@
 <template>
-  <div v-if="show" class="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-zinc-950/95 backdrop-blur-md">
-    <div class="relative w-full max-w-4xl overflow-hidden bg-zinc-900 border border-white/10 rounded-3xl shadow-2xl animate-in fade-in zoom-in duration-300">
+  <div v-if="show" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-deep-abyss/95 backdrop-blur-xl animate-in">
+    <!-- Main Modal Container -->
+    <div class="relative w-full max-w-4xl overflow-hidden bg-steel-grey/40 border border-white/10 rounded-[2.5rem] shadow-[0_0_100px_rgba(255,69,0,0.1)] flex flex-col group">
       
-      <!-- Close Button (Only after animation finishes) -->
+      <!-- Close Button (Post-Animation) -->
       <button v-if="finished" @click="close" 
-        class="absolute top-4 right-4 sm:top-6 sm:right-6 z-50 p-2 bg-white/5 hover:bg-white/10 rounded-full transition-colors">
-        <X class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+        class="absolute top-8 right-8 z-50 p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all hover:rotate-90">
+        <X class="w-6 h-6 text-white" />
       </button>
 
-      <!-- Header -->
-      <div class="pt-8 pb-4 sm:pt-12 sm:pb-6 text-center px-4">
-        <h2 class="text-xl sm:text-3xl font-black text-white uppercase tracking-tighter italic leading-none">
-          Abriendo <span class="text-primary-500">Cofre de Boss</span>
+      <!-- Protocol Header -->
+      <div class="pt-12 pb-6 text-center px-8 z-10">
+        <div class="inline-flex items-center gap-3 px-4 py-1.5 bg-primary-500/10 border border-primary-500/20 rounded-full mb-6">
+           <Zap class="w-3.5 h-3.5 text-primary-500 animate-pulse" />
+           <span class="text-[10px] font-black text-primary-500 uppercase tracking-[0.3em] font-tight">DECRYPTION PROTOCOL ACTIVE</span>
+        </div>
+        <h2 class="text-4xl md:text-5xl font-black text-industrial text-white uppercase italic tracking-tighter leading-none mb-3">
+          ARTIFACT<span class="text-primary-500">.</span>RECOVERY
         </h2>
-        <p class="text-zinc-500 font-medium text-xs sm:text-base mt-2">¿Qué te deparará el destino?</p>
+        <p class="text-[10px] font-black text-zinc-600 uppercase tracking-[0.4em] font-tight">Extracting high-fidelity assets from encrypted drive...</p>
       </div>
 
-      <!-- CS:GO Rolling Reel -->
-      <div class="relative py-8 sm:py-12 bg-black/40 border-y border-white/5 overflow-hidden">
-        <!-- Center Indicator -->
-        <div class="absolute left-1/2 top-0 bottom-0 w-1 bg-primary-500 z-20 shadow-[0_0_20px_rgba(234,179,8,0.5)]">
-           <div class="absolute -top-1 -left-2 w-5 h-5 bg-primary-500 rotate-45"></div>
-           <div class="absolute -bottom-1 -left-2 w-5 h-5 bg-primary-500 rotate-45"></div>
+      <!-- High-Stakes Rolling Reel (CS style) -->
+      <div class="relative py-12 md:py-16 bg-black/60 border-y border-white/5 overflow-hidden">
+        <!-- Center Precision Indicator -->
+        <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-primary-500 z-20 shadow-[0_0_30px_rgba(255,69,0,0.4)]">
+           <div class="absolute -top-1 -left-1.5 w-3.5 h-3.5 bg-primary-500 rotate-45 border border-white/20"></div>
+           <div class="absolute -bottom-1 -left-1.5 w-3.5 h-3.5 bg-primary-500 rotate-45 border border-white/20"></div>
         </div>
 
-        <!-- Reel Items -->
+        <!-- Reel Items Belt -->
         <div 
           ref="reelRef"
-          class="flex transition-transform duration-[6s] chest-reel-transition"
+          class="flex transition-transform duration-[6s] reel-physics"
           :style="{ transform: `translateX(${translateX}px)` }">
           
           <div v-for="(item, index) in localReel" :key="index" 
-            class="flex-shrink-0 w-32 h-32 sm:w-40 sm:h-40 mx-1 rounded-2xl border flex flex-col items-center justify-center p-3 sm:p-4 transition-all"
+            class="flex-shrink-0 w-36 h-36 md:w-44 md:h-44 mx-1.5 rounded-3xl border flex flex-col items-center justify-center p-4 transition-all duration-700"
             :class="[
-              item.is_seasonal ? 'bg-gradient-to-br from-amber-500/20 to-orange-600/20 border-amber-500/30' : 'bg-white/5 border-white/10',
-              finished && index === winningIndex ? 'scale-105 sm:scale-110 shadow-2xl shadow-primary-500/20 border-primary-500' : 'opacity-40 grayscale-[0.5]'
+              item.is_seasonal ? 'bg-primary-500/5 border-primary-500/30' : 'bg-white/[0.02] border-white/5',
+              finished && index === winningIndex ? 'scale-110 border-primary-500 bg-primary-500/10 shadow-[0_0_40px_rgba(255,69,0,0.15)] grayscale-0' : 'opacity-20 grayscale'
             ]">
             
-            <div class="w-16 h-16 sm:w-20 sm:h-20 mb-2 sm:mb-3 relative flex items-center justify-center">
-               <!-- Placeholder or Icon based on type -->
-               <div v-if="item.type === 'title'" class="text-xl sm:text-2xl font-black text-white/20 italic select-none">TIT</div>
-               <div v-else-if="item.type === 'border'" class="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-4 border-white/20"></div>
-               <BackgroundEffect v-else-if="item.type === 'background'" :background-css="item.css_value" is-preview class="rounded-lg scale-50" />
-               <Sparkles v-if="item.is_seasonal" class="absolute top-0 right-0 w-4 h-4 sm:w-5 sm:h-5 text-amber-500 animate-pulse" />
+            <div class="w-20 h-20 md:w-24 md:h-24 mb-4 relative flex items-center justify-center overflow-hidden rounded-2xl">
+               <!-- High-Contrast Icons -->
+               <div v-if="item.type === 'title'" class="text-3xl font-black text-white/10 italic font-industrial select-none">CODE</div>
+               <div v-else-if="item.type === 'border'" class="w-16 h-16 rounded-full border-[6px] border-white/10"></div>
+               <BackgroundEffect v-else-if="item.type === 'background'" :background-css="item.css_value" is-preview class="scale-50 rounded-xl" />
+               <div v-else-if="item.type === 'coins'" class="p-4 bg-primary-500/10 rounded-2xl">
+                  <Zap class="w-10 h-10 text-primary-500" />
+               </div>
+               
+               <!-- Tier Glow -->
+               <div v-if="item.is_seasonal" class="absolute inset-0 bg-primary-500/5 animate-pulse"></div>
             </div>
             
-            <span class="text-[9px] sm:text-[10px] font-bold text-center text-white/80 line-clamp-1 uppercase tracking-tighter">{{ item.name }}</span>
-            <span v-if="item.is_seasonal" class="text-[7px] sm:text-[8px] font-black text-amber-500 mt-0.5 sm:mt-1">LEGENDARIO</span>
+            <span class="text-[10px] font-black text-center text-white/50 truncate w-full px-2 uppercase tracking-widest font-tight">{{ item.name }}</span>
+            <span v-if="item.is_seasonal" class="text-[8px] font-black text-primary-500 mt-2 tracking-[0.2em]">LEGENDARY</span>
           </div>
         </div>
       </div>
 
-      <!-- Result View -->
-      <div v-if="finished" class="p-6 sm:p-12 text-center animate-in fade-in zoom-in duration-500">
-        <div class="mb-4 sm:mb-6 inline-flex items-center gap-2 sm:gap-3 px-4 py-1.5 sm:py-2 rounded-full bg-primary-500/10 border border-primary-500/20 shadow-sm">
-          <Trophy class="w-4 h-4 sm:w-5 sm:h-5 text-primary-500" />
-          <span class="text-[10px] sm:text-sm font-black text-primary-500 uppercase tracking-[0.2em]">¡Botín Obtenido!</span>
+      <!-- Result Terminal View -->
+      <div v-if="finished" class="p-12 text-center animate-in-up flex flex-col items-center">
+        <div class="mb-8 inline-flex items-center gap-4 px-6 py-2.5 rounded-xl bg-neon-lime/10 border border-neon-lime/20 shadow-[0_0_30px_rgba(204,255,0,0.05)]">
+          <Trophy class="w-5 h-5 text-neon-lime" />
+          <span class="text-[10px] font-black text-neon-lime uppercase tracking-[0.4em] font-tight">PROTOCOL SUCCESSFUL</span>
         </div>
         
-        <h3 class="text-2xl sm:text-4xl font-black text-white mb-2 italic tracking-tighter uppercase leading-none drop-shadow-lg break-words px-2">
-          {{ reward.item ? reward.item.name : '+' + reward.coins + ' REPPY COINS' }}
-        </h3>
-        <p class="text-zinc-400 text-xs sm:text-base mb-6 sm:mb-8 max-w-sm sm:max-w-md mx-auto line-clamp-3 leading-relaxed">
-          {{ reward.message }}
-        </p>
+        <div class="space-y-4 mb-10 max-w-lg">
+           <h3 class="text-4xl md:text-5xl font-black text-industrial text-white italic tracking-tighter uppercase leading-none px-4" :class="reward.item?.css_value">
+             {{ reward.item ? reward.item.name : '+' + reward.coins + ' REPPY COINS' }}
+           </h3>
+           <p class="text-zinc-500 text-xs md:text-sm font-bold uppercase tracking-widest leading-relaxed px-8">
+             {{ reward.message }}
+           </p>
+        </div>
 
         <button @click="close" 
-          class="w-full sm:w-auto px-8 sm:px-12 py-3.5 sm:py-4 bg-primary-600 hover:bg-primary-500 text-white font-black rounded-2xl transition-all shadow-xl shadow-primary-600/30 uppercase tracking-widest text-xs sm:text-sm italic ring-1 ring-white/10 active:scale-95">
-          Coleccionar Recompensa
+          class="btn-reppy !px-16 !py-5 !text-lg shadow-2xl">
+          COLLECT ASSET
         </button>
       </div>
 
-      <!-- Footer / Loading state -->
-      <div v-else class="p-6 sm:p-8 text-center">
-        <p class="text-zinc-400 text-xs sm:text-sm font-black animate-pulse uppercase tracking-[0.3em] opacity-40 italic">Calculando botín...</p>
+      <!-- Sub-Terminal Status -->
+      <div v-else class="p-12 text-center">
+        <div class="flex items-center justify-center gap-4">
+           <div class="w-1 h-1 bg-primary-500 rounded-full animate-ping"></div>
+           <p class="text-[10px] font-black text-zinc-700 uppercase tracking-[0.6em] italic animate-pulse">SYNCING BITSTREAM...</p>
+           <div class="w-1 h-1 bg-primary-500 rounded-full animate-ping delay-300"></div>
+        </div>
       </div>
-
-      <!-- Sound effects would go here if needed -->
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, nextTick } from 'vue';
-import { X, Trophy, Sparkles } from 'lucide-vue-next';
+import { X, Trophy, Sparkles, Zap } from 'lucide-vue-next';
 import BackgroundEffect from './BackgroundEffect.vue';
 import confetti from 'canvas-confetti';
 
@@ -99,7 +113,7 @@ const reelRef = ref(null);
 const localReel = ref([]);
 const finished = ref(false);
 const translateX = ref(0);
-const winningIndex = 32; // Optimized index for reel length
+const winningIndex = 32;
 
 onMounted(async () => {
   if (props.show) {
@@ -110,76 +124,56 @@ onMounted(async () => {
 const startAnimation = async () => {
   finished.value = false;
   
-  // 1. Prepare the reel: ~50 items, with the actual reward at winningIndex
   const items = [...props.reelItems];
-  // Ensure we have enough items
   while (items.length < 60) items.push(...props.reelItems);
   
   localReel.value = items.slice(0, winningIndex);
-  // Add the actual reward at the winning position
   if (props.reward.item) {
     localReel.value.push(props.reward.item);
   } else {
-    // If no item, show a "Coins" placeholder in the reel
     localReel.value.push({ name: 'REPPY COINS', type: 'coins', is_seasonal: false });
   }
-  // Fill the rest with more items
   localReel.value.push(...items.slice(winningIndex, 65));
 
   await nextTick();
-
-  // 2. Initial position
   translateX.value = 0;
 
-  // 3. Trigger the roll
   setTimeout(() => {
-    const reelContainer = document.querySelector('.relative.py-8, .relative.py-12'); 
+    const reelContainer = document.querySelector('.relative.py-12, .relative.py-16'); 
     if (!reelContainer) return;
     
     const containerWidth = reelContainer.offsetWidth;
     const isMobile = window.innerWidth < 640;
-    const itemWidth = isMobile ? 136 : 168; // w-32 + mx-1(8px) or w-40 + mx-1(8px)
+    const itemWidth = isMobile ? 156 : 188; // w-36(144) + 12px or w-44(176) + 12px
     
-    // Add a bit of randomness to the final stop position
     const stopOffset = (Math.random() * 0.4 + 0.3) * itemWidth; 
-    
-    const finalX = (containerWidth / 2) - (winningIndex * itemWidth) - (itemWidth / 2) + (itemWidth / 2) - stopOffset;
-    // Calculation cleanup: (Center) - (Items preceding winner) - offset within winner item
-    const midX = (containerWidth / 2) - (winningIndex * itemWidth) - stopOffset;
+    const midX = (containerWidth / 2) - (winningIndex * itemWidth) - (itemWidth / 2) + (itemWidth / 2) - stopOffset;
 
     translateX.value = midX;
 
-    // 4. Mark as finished after transition (6s duration)
     setTimeout(() => {
       finished.value = true;
-      
-      // TRIGGER REWARD CEREMONY
       confetti({
-        particleCount: isMobile ? 80 : 150,
-        spread: 80,
+        particleCount: isMobile ? 100 : 200,
+        spread: 90,
         origin: { y: 0.6 },
-        colors: props.reward.item?.is_seasonal ? ['#fbbf24', '#f59e0b', '#ffffff'] : ['#3b82f6', '#ffffff']
+        colors: ['#FF4500', '#CCFF00', '#ffffff']
       });
     }, 6000);
   }, 100);
 };
 
-const close = () => {
-  emit('close');
-};
+const close = () => { emit('close'); };
 </script>
 
 <style scoped>
-.chest-reel-transition {
-  transition-timing-function: cubic-bezier(0.15, 0, 0.05, 1);
+.text-industrial { font-family: 'Inter Tight', sans-serif; }
+.font-tight { font-family: 'Inter Tight', sans-serif; }
+.reel-physics {
+  transition-timing-function: cubic-bezier(0.12, 0, 0.05, 1);
 }
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-in {
-  animation: fadeIn 0.5s ease-out;
-}
+.animate-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.animate-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 </style>

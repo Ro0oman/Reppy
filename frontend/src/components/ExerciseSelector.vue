@@ -1,15 +1,18 @@
 <template>
-  <div class="flex flex-wrap gap-2 p-1.5 bg-black/5 dark:bg-black/40 backdrop-blur-xl border border-zinc-200 dark:border-white/5 rounded-2xl">
+  <div class="flex flex-wrap items-center justify-center gap-1.5 p-2 bg-steel-grey/40 backdrop-blur-2xl border border-white/5 rounded-2xl shadow-2xl">
     <button 
       v-for="ex in exercises" :key="ex.id"
       @click="$emit('update:modelValue', ex.id)"
-      class="flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300"
+      class="group relative flex items-center gap-2.5 px-5 py-3 rounded-xl transition-all duration-300 overflow-hidden"
       :class="modelValue === ex.id 
-        ? 'bg-primary-600 text-zinc-900 dark:text-white shadow-lg shadow-primary-900/40 scale-105' 
-        : 'text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:text-zinc-300 hover:bg-white/5'"
+        ? 'bg-primary-500 text-white shadow-[0_0_20px_rgba(255,69,0,0.3)] scale-105 z-10' 
+        : 'text-zinc-500 hover:text-white hover:bg-white/5'"
     >
-      <component :is="ex.icon" class="w-3.5 h-3.5" />
-      <span>{{ ex.label }}</span>
+      <!-- Background Shimmer on Hover -->
+      <div v-if="modelValue !== ex.id" class="absolute inset-x-0 bottom-0 h-0.5 bg-primary-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+      
+      <component :is="ex.icon" :class="['w-4 h-4 transition-transform duration-500', modelValue === ex.id ? 'scale-110' : 'group-hover:rotate-12']" />
+      <span class="text-[11px] font-black uppercase tracking-[0.15em] font-tight">{{ ex.label }}</span>
     </button>
   </div>
 </template>
@@ -28,10 +31,14 @@ defineEmits(['update:modelValue']);
 
 const exercises = [
   { id: 'all', label: 'Global', icon: Globe },
-  { id: 'pullups', label: 'Dominadas', icon: Dumbbell },
+  { id: 'pullups', label: 'Pullups', icon: Dumbbell },
   { id: 'muscleups', label: 'Muscle Ups', icon: Zap },
-  { id: 'dips', label: 'Fondos', icon: Target },
-  { id: 'pushups', label: 'Flexiones', icon: Flame },
-  { id: 'weighted_pullups', label: 'Dominadas Lastre', icon: Trophy },
+  { id: 'dips', label: 'Dips', icon: Target },
+  { id: 'pushups', label: 'Pushups', icon: Flame },
+  { id: 'weighted_pullups', label: 'Weighted', icon: Trophy },
 ];
 </script>
+
+<style scoped>
+.font-tight { font-family: 'Inter Tight', sans-serif; }
+</style>

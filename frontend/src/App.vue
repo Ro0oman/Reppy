@@ -1,96 +1,85 @@
 <template>
-  <div class="min-h-screen selection:bg-primary-500/30 relative text-zinc-900 dark:text-zinc-800 dark:text-zinc-100">
+  <div class="min-h-screen selection:bg-primary-500/30 relative text-white bg-deep-abyss">
     
-    <!-- Easter Background Overlay -->
-    <!-- Animated background system -->
     <!-- Animated background system -->
     <BackgroundEffect v-if="authStore.isAuthenticated" :background-css="authStore.user?.background_css" />
 
+    <!-- Industrial Navigation Bar -->
     <nav v-if="authStore.isAuthenticated"
-      class="border-b border-zinc-200 dark:border-white/5 bg-white/50 dark:bg-black/20 backdrop-blur-xl sticky top-0 z-50">
-      <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center font-bold italic text-white">R
-          </div>
-          <span class="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">Reppy</span>
+      class="border-b border-white/5 bg-black/40 backdrop-blur-2xl sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        <!-- Logo Core -->
+        <div class="flex items-center gap-4 group cursor-pointer" @click="view = 'dashboard'">
+          <div class="w-10 h-10 bg-primary-500 rounded-xl flex items-center justify-center font-black italic text-white shadow-[0_0_20px_rgba(255,69,0,0.3)] transform group-hover:scale-110 transition-transform font-industrial">R</div>
+          <span class="text-2xl font-black tracking-tighter text-white font-industrial uppercase italic">REPPY<span class="text-primary-500">.</span></span>
         </div>
         
-        <div class="hidden md:flex flex-1 items-center justify-center gap-6">
-          <button @click="view = 'landing'" class="text-base font-bold transition-colors"
-            :class="view === 'landing' ? 'text-primary-600 dark:text-white' : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'">
-            {{ i18n.t('nav_home') }}
+        <!-- Desktop Navigation (Industrial Links) -->
+        <div class="hidden lg:flex items-center gap-2">
+          <button v-for="nav in navLinks" :key="nav.id"
+            @click="view = nav.id" 
+            class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all relative group"
+            :class="view === nav.id ? 'text-white bg-white/5' : 'text-zinc-500 hover:text-white'">
+            <div v-if="view === nav.id" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary-500 rounded-full"></div>
+            {{ i18n.t(nav.label) || nav.fallback }}
+            
+            <!-- Red Notification Dot for Inventory (Chests) -->
+            <div v-if="nav.id === 'inventory' && authStore.user?.boss_chests > 0" 
+              class="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full animate-ping"></div>
           </button>
-          <button @click="view = 'dashboard'" class="text-base font-bold transition-colors"
-            :class="view === 'dashboard' ? 'text-primary-600 dark:text-white' : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'">
-            {{ i18n.t('nav_dashboard') }}
-          </button>
-          <button @click="view = 'social'" class="text-base font-bold transition-colors"
-            :class="view === 'social' ? 'text-primary-600 dark:text-white' : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'">
-            {{ i18n.t('nav_social') }}
-          </button>
-          <button @click="view = 'inventory'" class="text-base font-bold transition-colors relative"
-            :class="view === 'inventory' ? 'text-primary-600 dark:text-white' : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'">
-            {{ i18n.t('nav_inventory') }}
-            <!-- Chest Badge (Desktop) -->
-            <div v-if="authStore.user?.boss_chests > 0" 
-              class="absolute -top-1 -right-2 w-2 h-2 bg-rose-500 rounded-full shadow-[0_0_8px_rgba(244,63,94,0.6)] animate-pulse"></div>
-          </button>
-          <button @click="view = 'shop'" class="text-base font-bold transition-colors"
-            :class="view === 'shop' ? 'text-amber-600 dark:text-amber-500 drop-shadow-md' : 'text-amber-600/70 hover:text-amber-600 dark:text-zinc-400 dark:hover:text-amber-500'">
-            {{ i18n.t('nav_shop') }}
-          </button>
-          <button v-if="authStore.user?.is_admin" @click="view = 'admin'" class="text-base font-bold transition-colors text-indigo-500 hover:text-indigo-400"
-            :class="view === 'admin' ? 'underline decoration-2 underline-offset-8' : ''">
-            Admin
+          
+          <button v-if="authStore.user?.is_admin" @click="view = 'admin'" 
+            class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500 hover:bg-indigo-500/10 transition-all">
+            ADMIN.CMD
           </button>
         </div>
 
-        <!-- User Menu -->
-        <div class="flex items-center gap-4">
-          <!-- GitHub Star Button -->
+        <!-- System Status & User Profile -->
+        <div class="flex items-center gap-6">
+          <!-- Desktop GitHub Module -->
           <a href="https://github.com/Ro0oman/Reppy" target="_blank"
-            class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900 dark:bg-white/10 hover:bg-zinc-800 dark:hover:bg-white/20 border border-white/10 transition-all group scale-95 hover:scale-100">
-            <Github class="w-4 h-4 text-white" />
-            <div class="flex items-center gap-1">
-              <Star class="w-3.5 h-3.5 text-amber-400 fill-amber-400 group-hover:animate-pulse" />
-              <span class="text-xs font-bold text-white uppercase tracking-wider">Star</span>
+            class="hidden xl:flex items-center gap-3 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all group">
+            <Github class="w-4 h-4 text-zinc-500 group-hover:text-white" />
+            <div class="flex items-center gap-2">
+              <Star class="w-3.5 h-3.5 text-primary-500 fill-primary-500 animate-pulse" />
+              <span class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">SOURCE</span>
             </div>
           </a>
 
-          <div class="flex items-center gap-1.5">
-            <button @click.stop="showCoinsInfo = true" class="p-1 hover:bg-amber-500/10 rounded-full transition-colors group" title="¿Cómo funcionan?">
-              <HelpCircle class="w-3.5 h-3.5 text-zinc-400 group-hover:text-amber-500 transition-colors" />
-            </button>
-            <button @click="openProfile(authStore.user.id)" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <!-- Global Coins Badge -->
-              <div class="flex items-center gap-1.5 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20 shadow-sm">
-                 <span class="text-xs font-black text-amber-600 dark:text-amber-500 tracking-tighter">{{ authStore.user?.reppy_coins || 0 }}</span>
-                 <span class="text-[10px]">🪙</span>
-              </div>
-            <!-- Name (Desktop only) -->
-            <div class="text-right hidden md:flex flex-col items-end">
-              <p class="text-sm font-bold text-zinc-900 dark:text-white leading-none">{{ authStore.user?.name }}</p>
-              <span v-if="authStore.user?.title_name" class="text-[8px] uppercase tracking-widest px-1.5 py-0.5 mt-1 rounded-full bg-white/5 border border-zinc-200 dark:border-white/10 font-bold" :class="authStore.user?.title_css">
-                {{ authStore.user?.title_name }}
-              </span>
+          <div class="flex items-center gap-4">
+            <!-- Currency Module -->
+            <div @click="showCoinsInfo = true" class="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-xl border border-white/5 hover:border-primary-500/30 cursor-pointer transition-all group">
+               <Zap class="w-3.5 h-3.5 text-primary-500 group-hover:scale-125 transition-transform" />
+               <span class="text-sm font-black text-precision text-white">{{ authStore.user?.reppy_coins || 0 }}</span>
             </div>
-            <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :avatar-css="authStore.user?.avatar_css" :size="36" />
-          </button>
+
+            <!-- Profile Entry -->
+            <button @click="openProfile(authStore.user.id)" class="flex items-center gap-4 hover:opacity-80 transition-all p-1 rounded-2xl">
+              <div class="text-right hidden md:flex flex-col items-end">
+                <p class="text-[10px] font-black text-white uppercase tracking-widest leading-none">{{ authStore.user?.name }}</p>
+                <span v-if="authStore.user?.title_name" class="text-[7px] uppercase tracking-[0.3em] font-black text-primary-500 mt-1">
+                  {{ authStore.user?.title_name }}
+                </span>
+              </div>
+              <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :avatar-css="authStore.user?.avatar_css" :size="44" />
+            </button>
           </div>
         </div>
       </div>
     </nav>
 
-    <main class="py-12">
+    <!-- Main Operational View -->
+    <main class="py-12 md:py-20">
       <template v-if="authStore.isAuthenticated">
-        <Dashboard v-if="view === 'dashboard'" @viewProfile="openProfile" />
-        <Social v-if="view === 'social'" />
-        <Shop v-if="view === 'shop'" />
-        <Inventory v-if="view === 'inventory'" />
-        <Profile v-if="view === 'profile'" :userId="currentProfileId" />
-        <AdminPanel v-if="view === 'admin'" />
-
-        <Landing v-if="view === 'landing'" @start="view = 'dashboard'" />
+        <div class="animate-in">
+          <Dashboard v-if="view === 'dashboard'" @viewProfile="openProfile" />
+          <Social v-if="view === 'social'" />
+          <Shop v-if="view === 'shop'" />
+          <Inventory v-if="view === 'inventory'" />
+          <Profile v-if="view === 'profile'" :userId="currentProfileId" />
+          <AdminPanel v-if="view === 'admin'" />
+          <Landing v-if="view === 'landing'" @start="view = 'dashboard'" />
+        </div>
       </template>
       <template v-else>
         <Landing v-if="!showLogin" @start="showLogin = true" />
@@ -98,166 +87,122 @@
       </template>
     </main>
 
-    <footer class="mt-auto py-8 pb-32 md:pb-8 border-t border-zinc-200 dark:border-white/5">
-      <div class="max-w-6xl mx-auto px-4 text-center text-zinc-600 text-sm">
-        &copy; 2026 Reppy - Modern Pull-up Tracking
+    <footer class="mt-auto py-16 pb-40 md:pb-16 border-t border-white/5">
+      <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-center items-center gap-8 text-zinc-700">
+        <span class="text-[9px] font-black uppercase tracking-[0.6em]">REPPY CORE © 2026</span>
+        <div class="hidden md:block w-1.5 h-1.5 bg-zinc-900 rounded-full"></div>
+        <span class="text-[9px] font-black uppercase tracking-[0.6em]">DEEP ABYSS DEPLOYED</span>
       </div>
     </footer>
 
-    <!-- Mobile Bottom Navigation -->
+    <!-- Mobile Bottom Operational Dock -->
     <nav v-if="authStore.isAuthenticated" 
-      class="md:hidden fixed bottom-0 left-0 right-0 z-[60] bg-white/80 dark:bg-zinc-900/80 backdrop-blur-2xl border-t border-zinc-200 dark:border-white/5 pb-safe-area">
-      <div class="flex items-center justify-around h-20 px-2">
-        <button @click="view = 'landing'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90"
-          :class="view === 'landing' ? 'text-primary-600' : 'text-zinc-400'">
-          <Home class="w-6 h-6" :class="view === 'landing' ? 'fill-primary-600/10' : ''" />
-          <span class="text-[10px] font-black uppercase tracking-tighter">Inicio</span>
-        </button>
-        <button @click="view = 'dashboard'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90"
-          :class="view === 'dashboard' ? 'text-primary-600' : 'text-zinc-400'">
-          <LayoutDashboard class="w-6 h-6" :class="view === 'dashboard' ? 'fill-primary-600/10' : ''" />
-          <span class="text-[10px] font-black uppercase tracking-tighter">Panel</span>
-        </button>
-        <button @click="view = 'social'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90"
-          :class="view === 'social' ? 'text-primary-600' : 'text-zinc-400'">
-          <Users class="w-6 h-6" :class="view === 'social' ? 'fill-primary-600/10' : ''" />
-          <span class="text-[10px] font-black uppercase tracking-tighter">Social</span>
-        </button>
-        <button @click="view = 'shop'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90"
-          :class="view === 'shop' ? 'text-amber-500' : 'text-zinc-400'">
-          <ShoppingBag class="w-6 h-6" :class="view === 'shop' ? 'fill-amber-500/10' : ''" />
-          <span class="text-[10px] font-black uppercase tracking-tighter">{{ i18n.t('tf_shop') || 'Tienda' }}</span>
-
-        </button>
-        <button @click="view = 'inventory'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90 relative"
-          :class="view === 'inventory' ? 'text-primary-600' : 'text-zinc-400'">
-          <Package class="w-6 h-6" :class="view === 'inventory' ? 'fill-primary-600/10' : ''" />
-          <span class="text-[10px] font-black uppercase tracking-tighter">Equipo</span>
+      class="lg:hidden fixed bottom-6 left-4 right-4 z-[60] bg-steel-grey/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] shadow-2xl p-2 transition-transform duration-500">
+      <div class="flex items-center justify-around h-16">
+        <button v-for="nav in mobileNavLinks" :key="nav.id"
+          @click="view = nav.id" 
+          class="flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all active:scale-75"
+          :class="view === nav.id ? 'text-primary-500' : 'text-zinc-600'">
+          <component :is="nav.icon" class="w-5 h-5" :class="view === nav.id ? 'fill-primary-500/10' : ''" />
+          <span class="text-[8px] font-black uppercase tracking-widest font-tight">{{ nav.short || nav.id }}</span>
           
-          <!-- Chest Badge (Mobile) -->
-          <div v-if="authStore.user?.boss_chests > 0" 
-            class="absolute top-0 right-1/4 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white dark:border-zinc-900 shadow-lg animate-pulse"></div>
+          <!-- Inventory Notification -->
+          <div v-if="nav.id === 'inventory' && authStore.user?.boss_chests > 0" 
+            class="absolute top-2 right-1/4 w-2 h-2 bg-primary-500 rounded-full border-2 border-deep-abyss animate-pulse"></div>
         </button>
-        <button @click="view = 'profile'" class="flex flex-col items-center gap-1.5 transition-all active:scale-90"
 
-          :class="view === 'profile' ? 'text-primary-600' : 'text-zinc-400'">
-          <AvatarFrame :src="authStore.user?.avatar_url" :border-css="view === 'profile' ? authStore.user?.border_css : ''" :avatar-css="view === 'profile' ? authStore.user?.avatar_css : ''" :size="28" 
-               class="transition-transform" :class="view === 'profile' ? 'scale-110' : 'opacity-60'" />
-          <span class="text-[10px] font-black uppercase tracking-tighter">Perfil</span>
+        <!-- Mobile Profile -->
+        <button @click="view = 'profile'" class="flex-1 flex flex-col items-center justify-center gap-1 active:scale-75 transition-all">
+          <AvatarFrame :src="authStore.user?.avatar_url" :border-css="view === 'profile' ? authStore.user?.border_css : ''" :size="24" 
+               class="transition-all" :class="view === 'profile' ? 'scale-110' : 'opacity-40 grayscale'" />
+          <span class="text-[8px] font-black uppercase tracking-widest font-tight" :class="view === 'profile' ? 'text-primary-500' : 'text-zinc-600'">PROFILE</span>
         </button>
       </div>
     </nav>
 
-    <!-- Global Components -->
+    <!-- Global Interface Components -->
     <NotificationToast />
     <ConfirmDialog />
     <EasterWelcomeModal :show="showEasterModal" @close="showEasterModal = false" />
     <LuckyWheel :show="showRoulette" @close="showRoulette = false" @spun="onSpun" />
 
-    <!-- Coins Info Modal -->
+    <!-- Economy Codex Modal -->
     <Teleport to="body">
       <div v-if="showCoinsInfo" 
-           class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-sm animate-in fade-in duration-300"
+           class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-deep-abyss/90 backdrop-blur-md animate-in"
            @click.self="showCoinsInfo = false">
-        <div class="glass max-w-lg w-full p-6 md:p-8 rounded-[2rem] border-white/10 shadow-2xl space-y-6 relative overflow-hidden max-h-[85vh] overflow-y-auto">
-          <div class="absolute -top-16 -right-16 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="card-stats max-w-xl w-full p-8 md:p-12 border-white/5 space-y-10 relative overflow-hidden overflow-y-auto max-h-[90vh]">
+          <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
           <div class="flex items-center justify-between">
-            <div>
-              <h3 class="text-2xl font-black text-white tracking-tighter uppercase">🪙 Reppy Coins</h3>
-              <p class="text-[10px] font-black text-amber-400 uppercase tracking-[0.3em] mt-1">Guía de Economía</p>
+            <div class="space-y-1">
+              <h3 class="text-3xl font-black text-industrial text-white uppercase italic tracking-tighter">ECONOMY<span class="text-primary-500">.</span>CODEX</h3>
+              <p class="text-[10px] font-black text-zinc-600 uppercase tracking-[0.4em]">Resource allocation protocol</p>
             </div>
-            <button @click="showCoinsInfo = false" class="p-2 hover:bg-white/10 rounded-xl transition-all hover:rotate-90">
-              <X class="w-5 h-5 text-white" />
+            <button @click="showCoinsInfo = false" class="p-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl transition-all">
+              <X class="w-6 h-6 text-white" />
             </button>
           </div>
 
-          <!-- How to earn -->
-          <div class="space-y-3">
-            <h4 class="text-xs font-black uppercase text-amber-500 tracking-widest">💪 Cómo ganar monedas</h4>
-            <div class="space-y-2">
-              <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
-                <span class="text-sm text-zinc-300">Dominadas</span>
-                <span class="text-sm font-black text-amber-400">1 coin/rep</span>
-              </div>
-              <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
-                <span class="text-sm text-zinc-300">Flexiones</span>
-                <span class="text-sm font-black text-amber-400">1 coin/rep</span>
-              </div>
-              <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
-                <span class="text-sm text-zinc-300">Fondos (Dips)</span>
-                <span class="text-sm font-black text-amber-400">2 coins/rep</span>
-              </div>
-              <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
-                <span class="text-sm text-zinc-300">Dominadas Lastradas</span>
-                <span class="text-sm font-black text-amber-400">3 coins/rep</span>
-              </div>
-              <div class="flex items-center justify-between p-3 bg-gradient-to-r from-orange-500/10 to-transparent rounded-xl border border-orange-500/20">
-                <span class="text-sm text-zinc-200 font-bold">Muscle Ups</span>
-                <span class="text-sm font-black text-orange-400">5 coins/rep ⚡</span>
+          <!-- Generation Protocol -->
+          <div class="space-y-6">
+            <h4 class="text-[10px] font-black uppercase text-primary-500 tracking-[0.3em]">REVENUE GENERATION</h4>
+            <div class="grid grid-cols-1 gap-3">
+              <div v-for="earn in earnings" :key="earn.name" class="flex items-center justify-between p-5 bg-white/[0.02] rounded-2xl border border-white/5">
+                <span class="text-xs font-black text-zinc-400 uppercase tracking-widest">{{ earn.name }}</span>
+                <div class="flex items-baseline gap-2">
+                   <span class="text-lg font-black text-precision text-white">{{ earn.amount }}</span>
+                   <span class="text-[8px] font-black text-zinc-600 uppercase tracking-widest">RC / REP</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Bonus -->
-          <div class="space-y-3">
-            <h4 class="text-xs font-black uppercase text-emerald-500 tracking-widest">🎰 Bonus extra</h4>
-            <div class="space-y-2">
-              <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
-                <span class="text-sm text-zinc-300">Ruleta diaria</span>
-                <span class="text-sm font-bold text-emerald-400">10–100 coins</span>
-              </div>
-              <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
-                <span class="text-sm text-zinc-300">Eventos de Boss</span>
-                <span class="text-sm font-bold text-red-400">Items exclusivos</span>
-              </div>
+          <!-- Bonus Events -->
+          <div class="space-y-6">
+            <h4 class="text-[10px] font-black uppercase text-neon-lime tracking-[0.3em]">EXCEPTIONAL YIELD</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+               <div class="p-5 bg-neon-lime/5 border border-neon-lime/10 rounded-2xl space-y-2">
+                  <p class="text-[9px] font-black text-neon-lime uppercase tracking-widest">DAILY ROULETTE</p>
+                  <p class="text-sm font-black text-white text-precision">10 – 100 RC</p>
+               </div>
+               <div class="p-5 bg-primary-500/5 border border-primary-500/10 rounded-2xl space-y-2">
+                  <p class="text-[9px] font-black text-primary-500 uppercase tracking-widest">BOSS ANOMALIES</p>
+                  <p class="text-sm font-black text-white text-precision">LEGENDARY DROPS</p>
+               </div>
             </div>
           </div>
 
-          <!-- What to spend on -->
-          <div class="space-y-3">
-            <h4 class="text-xs font-black uppercase text-purple-500 tracking-widest">🛒 En qué gastarlos</h4>
-            <div class="grid grid-cols-2 gap-2">
-              <div class="p-3 bg-white/5 rounded-xl border border-white/5 text-center">
-                <p class="text-lg mb-1">🧥</p>
-                <p class="text-[10px] font-black text-zinc-300 uppercase tracking-wider">Bordes de Avatar</p>
-                <p class="text-[9px] text-zinc-500 mt-0.5">80 – 1500 coins</p>
-              </div>
-              <div class="p-3 bg-white/5 rounded-xl border border-white/5 text-center">
-                <p class="text-lg mb-1">⚔️</p>
-                <p class="text-[10px] font-black text-zinc-300 uppercase tracking-wider">Títulos</p>
-                <p class="text-[9px] text-zinc-500 mt-0.5">100 – 1500 coins</p>
-              </div>
+          <!-- Economic Projection -->
+          <div class="bg-white/5 p-6 rounded-3xl border border-white/5 flex items-center gap-6">
+            <div class="p-3 bg-primary-500/10 rounded-2xl"><Zap class="w-6 h-6 text-primary-500" /></div>
+            <div>
+               <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest">MONTHLY PROJECTION</p>
+               <p class="text-sm font-black text-white font-tight">ACTIVE OPERATIVES YIELD <span class="text-primary-500 text-precision">~1200 RC</span></p>
             </div>
-          </div>
-
-          <!-- Tip -->
-          <div class="bg-amber-500/10 p-4 rounded-2xl border border-amber-500/20">
-            <p class="text-[11px] text-center text-amber-300 font-bold">💡 Un usuario activo (~40 reps/día) gana unas <span class="text-amber-400 font-black">~1200 coins/mes</span></p>
           </div>
         </div>
       </div>
     </Teleport>
     
-    <!-- Floating Roulette Button -->
+    <!-- Floating Roulette Module -->
     <div v-if="canSpinToday" 
-         class="fixed bottom-24 right-6 md:bottom-8 md:right-8 z-[70] flex flex-col items-end gap-3 group">
-      <!-- Interactive Tooltip -->
-      <div class="bg-amber-500 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg animate-bounce border-2 border-white/20 whitespace-nowrap">
-        ¡Gira la ruleta! 🎰
+         class="fixed bottom-32 right-8 md:bottom-12 md:right-12 z-[70] flex flex-col items-end gap-5 group">
+      <!-- Logic Tooltip -->
+      <div class="bg-primary-500 text-white text-[9px] font-black uppercase tracking-[0.3em] px-5 py-2.5 rounded-full shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity border border-white/20">
+        ROULETTE.EXE AVAILABLE
       </div>
       
       <button @click="showRoulette = true" 
-        class="relative bg-gradient-to-tr from-amber-400 via-amber-500 to-yellow-600 p-5 rounded-[2rem] shadow-[0_20px_50px_rgba(245,158,11,0.4)] hover:shadow-[0_20px_60px_rgba(245,158,11,0.6)] hover:scale-110 active:scale-95 transition-all duration-500 border-4 border-white/30 dark:border-zinc-800/50 overflow-hidden">
+        class="relative bg-steel-grey/60 backdrop-blur-xl p-6 rounded-3xl shadow-2xl hover:scale-110 active:scale-95 transition-all duration-500 border border-white/10 group overflow-hidden">
         
-        <!-- Magic shine animation -->
-        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-shimmer pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer pointer-events-none"></div>
         
-        <Star class="w-8 h-8 text-white drop-shadow-md animate-spin-slow" />
+        <Star class="w-8 h-8 text-white relative z-10 animate-spin-slow" />
         
-        <!-- Notification dot -->
-        <div class="absolute top-2 right-2 w-4 h-4 bg-red-500 rounded-full border-2 border-white animate-ping"></div>
-        <div class="absolute top-2 right-2 w-4 h-4 bg-red-500 rounded-full border-2 border-white"></div>
+        <!-- Urgent Alert Dot -->
+        <div class="absolute top-4 right-4 w-3 h-3 bg-primary-500 rounded-full border-2 border-deep-abyss animate-ping shadow-[0_0_15px_rgba(255,69,0,0.5)]"></div>
       </button>
     </div>
 
@@ -265,12 +210,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import axios from 'axios';
-
-import { Github, Star, Home, LayoutDashboard, Users, ShoppingBag, Package, RefreshCw, HelpCircle, X } from 'lucide-vue-next';
+import { Github, Star, Home, LayoutDashboard, Users, ShoppingBag, Package, RefreshCw, HelpCircle, X, Zap } from 'lucide-vue-next';
 import { useAuthStore } from './stores/auth';
+import { useI18nStore } from './stores/i18n';
 
+// Components
 import Login from './components/Login.vue'
 import Landing from './components/Landing.vue'
 import Dashboard from './components/Dashboard.vue'
@@ -282,14 +228,13 @@ import AdminPanel from './components/AdminPanel.vue'
 import LuckyWheel from './components/LuckyWheel.vue'
 import AvatarFrame from './components/AvatarFrame.vue'
 import BackgroundEffect from './components/BackgroundEffect.vue'
-
 import EasterWelcomeModal from './components/EasterWelcomeModal.vue'
 import NotificationToast from './components/NotificationToast.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
-import { useI18nStore } from './stores/i18n';
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();
+
 const view = ref(localStorage.getItem('reppy_view') || 'dashboard');
 const showLogin = ref(false);
 const currentProfileId = ref(null);
@@ -298,6 +243,30 @@ const showRoulette = ref(false);
 const canSpinToday = ref(false);
 const showCoinsInfo = ref(false);
 
+const navLinks = [
+  { id: 'landing', label: 'nav_home', fallback: 'HOME' },
+  { id: 'dashboard', label: 'nav_dashboard', fallback: 'DASHBOARD' },
+  { id: 'social', label: 'nav_social', fallback: 'RANKINGS' },
+  { id: 'inventory', label: 'nav_inventory', fallback: 'GEAR' },
+  { id: 'shop', label: 'nav_shop', fallback: 'ARMORY' },
+];
+
+const mobileNavLinks = [
+  { id: 'landing', icon: Home, short: 'CORE' },
+  { id: 'dashboard', icon: LayoutDashboard, short: 'PANEL' },
+  { id: 'social', icon: Users, short: 'REPS' },
+  { id: 'shop', icon: ShoppingBag, short: 'ARMORY' },
+  { id: 'inventory', icon: Package, short: 'GEAR' },
+];
+
+const earnings = [
+  { name: 'Pullups (Standard)', amount: '1' },
+  { name: 'Pushups (Standard)', amount: '1' },
+  { name: 'Dips (Standard)', amount: '2' },
+  { name: 'Weighted Pullups', amount: '3' },
+  { name: 'Muscle Ups', amount: '5' },
+];
+
 const checkRoulette = async () => {
   try {
     const res = await axios.get('/api/roulette/status');
@@ -305,34 +274,30 @@ const checkRoulette = async () => {
   } catch (e) {}
 };
 
-const onSpun = () => {
-  canSpinToday.value = false;
-  showRoulette.value = false;
-};
+const onSpun = () => { canSpinToday.value = false; showRoulette.value = false; };
 
-const openProfile = (id) => {
+const openProfile = (id) => { currentProfileId.value = id; view.value = 'profile'; };
 
-  currentProfileId.value = id;
-  view.value = 'profile';
-};
-
-watch(view, (newView) => {
-  localStorage.setItem('reppy_view', newView);
-});
+watch(view, (newView) => localStorage.setItem('reppy_view', newView));
 
 watch(() => authStore.isAuthenticated, (val) => {
-  if (val && authStore.user && !authStore.user.has_seen_easter_modal) {
-    showEasterModal.value = true;
-  }
+  if (val && authStore.user && !authStore.user.has_seen_easter_modal) showEasterModal.value = true;
 }, { immediate: true });
 
 onMounted(async () => {
   if (authStore.isAuthenticated) {
     checkRoulette();
-    if (authStore.user && !authStore.user.has_seen_easter_modal) {
-      showEasterModal.value = true;
-    }
+    if (authStore.user && !authStore.user.has_seen_easter_modal) showEasterModal.value = true;
   }
 });
-
 </script>
+
+<style scoped>
+.font-industrial { font-family: 'Inter Tight', sans-serif; }
+.font-tight { font-family: 'Inter Tight', sans-serif; }
+.text-precision { font-family: 'JetBrains Mono', monospace; }
+.animate-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-spin-slow { animation: spin 8s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+</style>

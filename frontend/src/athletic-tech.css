@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: 15 100% 50%; /* Bolt Orange #FF4500 */
+    --background: 240 10% 4%; /* Deep Abyss #0D0D0D */
+    --surface: 0 0% 10%; /* Steel Grey #1A1A1A */
+    --foreground: 0 0% 98%;
+    --accent: 72 100% 50%; /* Neon Lime #CCFF00 */
+  }
+
+  body {
+    @apply bg-deep-abyss text-zinc-100 font-sans antialiased overflow-x-hidden selection:bg-bolt-orange selection:text-white;
+    /* Premium Dark Background Layer */
+    background: 
+      radial-gradient(circle at 100% 0%, rgba(255, 69, 0, 0.08) 0, transparent 40%),
+      radial-gradient(circle at 0% 100%, rgba(204, 255, 0, 0.05) 0, transparent 40%),
+      #0D0D0D;
+  }
+
+  #app {
+    @apply min-h-screen flex flex-col relative;
+  }
+
+  /* Custom scrollbar (Athletic style) */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-deep-abyss;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-steel-grey rounded-full hover:bg-bolt-orange/50 transition-colors;
+  }
+}
+
+@layer components {
+  .btn-reppy {
+    background: linear-gradient(135deg, #FF4500 0%, #FF8C00 100%);
+    border-radius: 12px;
+    padding: 0.8rem 1.6rem;
+    color: white;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Inter Tight', sans-serif;
+    box-shadow: 0 4px 15px rgba(255, 69, 0, 0.3);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-reppy:hover {
+    transform: scale(1.05) rotate(-1deg);
+    box-shadow: 0 8px 25px rgba(255, 69, 0, 0.5);
+    background: linear-gradient(135deg, #FF571A 0%, #FFA133 100%);
+  }
+
+  .btn-reppy:active {
+    transform: scale(0.95);
+  }
+
+  .card-stats {
+    background: rgba(26, 26, 26, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    padding: 24px;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .card-stats::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 69, 0, 0.3), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
+  }
+
+  .card-stats:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 69, 0, 0.2);
+    background: rgba(26, 26, 26, 0.8);
+  }
+
+  .card-stats:hover::before {
+    transform: translateX(100%);
+  }
+
+  .glass {
+    @apply bg-steel-grey/60 backdrop-blur-xl border border-white/5 shadow-2xl;
+  }
+}
+
+@layer utilities {
+  .text-industrial {
+    font-family: 'Inter Tight', sans-serif;
+    @apply font-black uppercase tracking-tight;
+  }
+
+  .text-precision {
+    font-family: 'JetBrains Mono', monospace;
+    @apply tracking-tighter;
+  }
+
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: minmax(180px, auto);
+    gap: 24px;
+  }
+
+  @media (max-width: 1024px) {
+    .bento-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .bento-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+}
+
+/* Animated background blobs (Refined) */
+.bg-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.blob {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(255, 69, 0, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(100px);
+  animation: float 25s infinite alternate ease-in-out;
+}
+
+@keyframes float {
+  0% { transform: translate(-20%, -20%) scale(1); }
+  100% { transform: translate(30%, 30%) scale(1.3); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
