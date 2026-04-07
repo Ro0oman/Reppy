@@ -9,29 +9,29 @@
       class="border-b border-border bg-surface/40 backdrop-blur-3xl sticky top-0 z-50 transition-all">
       <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <!-- Logo Core -->
-        <div class="flex items-center gap-4 group cursor-pointer" @click="view = 'dashboard'">
+        <div class="flex items-center gap-4 group cursor-pointer" @click="router.push('/dashboard')">
           <div class="w-10 h-10 bg-primary-500 rounded-2xl flex items-center justify-center font-bold text-white shadow-xl shadow-primary-500/20 transition-transform">R</div>
           <span class="text-2xl font-bold tracking-tight text-foreground font-industrial">Reppy<span class="text-primary-500">.</span></span>
         </div>
         
         <!-- Desktop Navigation (Clean Links) -->
         <div class="hidden lg:flex items-center gap-1">
-          <button v-for="nav in navLinks" :key="nav.id"
-            @click="view = nav.id" 
+          <router-link v-for="nav in navLinks" :key="nav.id"
+            :to="'/' + nav.id" 
             class="px-4 py-2 rounded-2xl text-[13px] font-semibold transition-all relative group flex items-center gap-2.5"
-            :class="view === nav.id ? 'text-foreground bg-primary-500/5' : 'text-muted hover:text-foreground hover:bg-surface/10'">
-            <component :is="nav.icon" class="w-4 h-4" :class="view === nav.id ? 'text-primary-500' : ''" />
+            :class="$route.name === nav.id ? 'text-foreground bg-primary-500/5' : 'text-muted hover:text-foreground hover:bg-surface/10'">
+            <component :is="nav.icon" class="w-4 h-4" :class="$route.name === nav.id ? 'text-primary-500' : ''" />
             {{ i18n.t(nav.label) || nav.fallback }}
             
             <!-- Notification Dot -->
             <div v-if="nav.id === 'inventory' && authStore.user?.boss_chests > 0" 
               class="absolute top-1.5 right-2 w-2 h-2 bg-primary-500 rounded-full border-2 border-surface"></div>
-          </button>
+          </router-link>
           
-          <button v-if="authStore.user?.is_admin" @click="view = 'admin'" 
+          <router-link v-if="authStore.user?.is_admin" to="/admin" 
             class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500 hover:bg-indigo-500/10 transition-all">
             ADMIN.CMD
-          </button>
+          </router-link>
         </div>
 
         <!-- System Status & User Profile -->
@@ -70,21 +70,11 @@
 
     <!-- Main Operational View -->
     <main class="pt-4 pb-20">
-      <template v-if="authStore.isAuthenticated">
-        <div class="animate-in">
-          <Dashboard v-if="view === 'dashboard'" @viewProfile="openProfile" />
-          <Social v-if="view === 'social'" @viewProfile="openProfile" />
-          <Shop v-if="view === 'shop'" />
-          <Inventory v-if="view === 'inventory'" />
-          <Profile v-if="view === 'profile'" :userId="currentProfileId" />
-          <AdminPanel v-if="view === 'admin'" />
-          <Landing v-if="view === 'landing'" @start="view = 'dashboard'" />
-        </div>
-      </template>
-      <template v-else>
-        <Landing v-if="!showLogin" @start="showLogin = true" />
-        <Login v-else @back="showLogin = false" />
-      </template>
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" @start="onStartAction" @viewProfile="openProfile" />
+        </transition>
+      </router-view>
     </main>
 
     <footer class="mt-auto py-12 pb-32 md:pb-12 border-t border-border/5">
@@ -101,27 +91,27 @@
     <nav v-if="authStore.isAuthenticated" 
       class="lg:hidden fixed bottom-6 left-6 right-6 z-[60] bg-surface/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-2xl p-1.5 transition-transform duration-500">
       <div class="flex items-center justify-around h-14">
-        <button v-for="nav in mobileNavLinks" :key="nav.id"
-          @click="view = nav.id" 
+        <router-link v-for="nav in mobileNavLinks" :key="nav.id"
+          :to="'/' + nav.id" 
           class="flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all relative"
-          :class="view === nav.id ? 'text-primary-500' : 'text-muted hover:text-foreground'">
+          :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted hover:text-foreground'">
           
-          <div v-if="view === nav.id" class="absolute -top-1 w-8 h-1 bg-primary-500 rounded-full blur-[2px]"></div>
+          <div v-if="$route.name === nav.id" class="absolute -top-1 w-8 h-1 bg-primary-500 rounded-full blur-[2px]"></div>
           
-          <component :is="nav.icon" class="w-5 h-5" :class="view === nav.id ? 'fill-primary-500/10' : ''" />
+          <component :is="nav.icon" class="w-5 h-5" :class="$route.name === nav.id ? 'fill-primary-500/10' : ''" />
           <span class="text-[9px] font-bold tracking-tight">{{ i18n.t(nav.label) }}</span>
           
           <!-- Inventory Notification -->
           <div v-if="nav.id === 'inventory' && authStore.user?.boss_chests > 0" 
             class="absolute top-1 right-1/4 w-2 h-2 bg-primary-500 rounded-full border-2 border-background"></div>
-        </button>
+        </router-link>
 
         <!-- Mobile Profile -->
-        <button @click="view = 'profile'" class="flex-1 flex flex-col items-center justify-center gap-1 transition-all">
-          <AvatarFrame :src="authStore.user?.avatar_url" :border-css="view === 'profile' ? authStore.user?.border_css : ''" :size="26" 
-               class="transition-all" :class="view === 'profile' ? 'ring-2 ring-primary-500/20' : 'opacity-60 grayscale'" />
-          <span class="text-[9px] font-bold tracking-tight" :class="view === 'profile' ? 'text-primary-500' : 'text-muted'">{{ i18n.t('nav_profile') }}</span>
-        </button>
+        <router-link to="/profile" class="flex-1 flex flex-col items-center justify-center gap-1 transition-all">
+          <AvatarFrame :src="authStore.user?.avatar_url" :border-css="$route.name === 'profile' ? authStore.user?.border_css : ''" :size="26" 
+               class="transition-all" :class="$route.name === 'profile' ? 'ring-2 ring-primary-500/20' : 'opacity-60 grayscale'" />
+          <span class="text-[9px] font-bold tracking-tight" :class="$route.name === 'profile' ? 'text-primary-500' : 'text-muted'">{{ i18n.t('nav_profile') }}</span>
+        </router-link>
       </div>
     </nav>
 
@@ -134,7 +124,7 @@
     <!-- Economy Codex Modal -->
     <Teleport to="body">
       <div v-if="showCoinsInfo" 
-           class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/90 backdrop-blur-md animate-in"
+           class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/90 backdrop-blur-md"
            @click.self="showCoinsInfo = false">
         <div class="card-stats max-w-xl w-full p-8 md:p-12 border-border space-y-10 relative overflow-hidden overflow-y-auto max-h-[90vh]">
           <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary-500/10 rounded-full blur-[100px] pointer-events-none"></div>
@@ -215,48 +205,30 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
-import { Github, Star, Home, LayoutDashboard, Users, Swords, Package, RefreshCw, HelpCircle, X, Coins } from 'lucide-vue-next';
+import { useRouter, useRoute } from 'vue-router';
+import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins } from 'lucide-vue-next';
 import { useAuthStore } from './stores/auth';
 import { useI18nStore } from './stores/i18n';
 
 // Components
-import Login from './components/Login.vue'
-import Landing from './components/Landing.vue'
-import Dashboard from './components/Dashboard.vue'
-import Social from './components/Social.vue'
-import Shop from './components/Shop.vue'
-import Profile from './components/Profile.vue'
-import Inventory from './components/Inventory.vue'
-import AdminPanel from './components/AdminPanel.vue'
-import LuckyWheel from './components/LuckyWheel.vue'
 import AvatarFrame from './components/AvatarFrame.vue'
 import BackgroundEffect from './components/BackgroundEffect.vue'
 import WelcomeModal from './components/WelcomeModal.vue'
+import LuckyWheel from './components/LuckyWheel.vue'
 import NotificationToast from './components/NotificationToast.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();
+const router = useRouter();
+const route = useRoute();
 
-const view = ref(localStorage.getItem('reppy_view') || 'dashboard');
-const showLogin = ref(false);
-const currentProfileId = ref(null);
 const showEasterModal = ref(false);
 const showRoulette = ref(false);
 const canSpinToday = ref(false);
 const showCoinsInfo = ref(false);
-const isHistoryNav = ref(false);
-
-// Handle browser back/forward buttons
-window.addEventListener('popstate', (event) => {
-  if (event.state && event.state.view) {
-    isHistoryNav.value = true;
-    view.value = event.state.view;
-    currentProfileId.value = event.state.profileId || null;
-  }
-});
 
 const navLinks = [
   { id: 'dashboard', label: 'nav_dashboard', fallback: 'DASHBOARD', icon: LayoutDashboard },
@@ -289,26 +261,23 @@ const checkRoulette = async () => {
 
 const onSpun = () => { canSpinToday.value = false; showRoulette.value = false; };
 
-const openProfile = (id) => { currentProfileId.value = id; view.value = 'profile'; };
+const openProfile = (id) => { 
+  router.push({ name: 'profile', params: { userId: id } });
+};
 
-// Synchronize state with history and storage
-watch([view, currentProfileId], ([newView, newProfileId]) => {
-  localStorage.setItem('reppy_view', newView);
-  
-  if (!isHistoryNav.value) {
-    window.history.pushState({ view: newView, profileId: newProfileId }, '', '');
+const onStartAction = () => {
+  if (authStore.isAuthenticated) {
+    router.push('/dashboard');
+  } else {
+    router.push('/login');
   }
-  isHistoryNav.value = false;
-});
+};
 
 watch(() => authStore.isAuthenticated, (val) => {
   if (val && authStore.user && !authStore.user.has_seen_easter_modal) showEasterModal.value = true;
 }, { immediate: true });
 
 onMounted(async () => {
-  // Initialize history state on load
-  window.history.replaceState({ view: view.value, profileId: currentProfileId.value }, '', '');
-
   if (authStore.isAuthenticated) {
     checkRoulette();
     if (authStore.user && !authStore.user.has_seen_easter_modal) showEasterModal.value = true;
@@ -320,8 +289,19 @@ onMounted(async () => {
 .font-industrial { font-family: 'Inter Tight', sans-serif; }
 .font-tight { font-family: 'Inter Tight', sans-serif; }
 .text-precision { font-family: 'JetBrains Mono', monospace; }
-.animate-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Transition for route changes */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 .animate-spin-slow { animation: spin 8s linear infinite; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 </style>
+>

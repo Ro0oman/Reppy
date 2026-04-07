@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import GoogleSignInPlugin from 'vue3-google-signin'
 import './style.css'
 import App from './App.vue'
+import router from './router'
 import { useAuthStore } from './stores/auth'
 import { useThemeStore } from './stores/theme'
 
@@ -20,4 +21,5 @@ const themeStore = useThemeStore(pinia)
 authStore.init()
 themeStore.init()
 
+app.use(router) // Router should be used BEFORE mounting
 app.mount('#app')
