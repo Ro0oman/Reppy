@@ -49,8 +49,20 @@
     --white-to-gray: 0 0% 100%;
   }
 
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    overflow-x: hidden;
+    max-width: 100dvw;
+  }
+
   body {
     @apply antialiased overflow-x-hidden font-sans;
+    max-width: 100dvw;
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     
