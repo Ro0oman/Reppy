@@ -13,7 +13,8 @@
   ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "backend/index.js" },
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    { "source": "/((?!api/|assets/|src/|favicon|og-image|manifest|robots|sitemap).*)", "destination": "frontend/index.html" },
+    { "source": "/(.*)", "destination": "frontend/$1" }
   ],
   "headers": [
     {
