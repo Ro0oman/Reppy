@@ -5,6 +5,21 @@
 
     <!-- Phase 0: Central Operations (60/40 Split) -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      <!-- Action Center (Reps Input) -->
+      <div class="space-y-4">
+        <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-muted px-2">
+          <Zap class="w-4 h-4 text-primary-500" />
+          {{ i18n.t('log_pullups').toUpperCase() }}
+        </h3>
+        <div v-if="activeExercise === 'all'" class="card-stats p-8 flex flex-col items-center justify-center text-center space-y-4 opacity-50 border-dashed border-border min-h-[360px]">
+          <Globe class="w-12 h-12 text-muted" />
+          <p class="text-[10px] font-black text-muted uppercase tracking-widest leading-relaxed">
+            Global view active. <br /> Select a protocol to log volume.
+          </p>
+        </div>
+        <RepsInput v-else :exercise-type="activeExercise" @updated="fetchData" class="min-h-[360px]" />
+      </div>
+
       <!-- Activity Stream (Heatmap) -->
       <div class="lg:col-span-2 space-y-4">
         <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-muted px-2">
@@ -20,21 +35,6 @@
           class="bg-surface/30 backdrop-blur-3xl border border-white/5 rounded-3xl p-8 h-full transition-opacity duration-300" 
           :class="isLoading ? 'opacity-50' : 'opacity-100'"
         />
-      </div>
-
-      <!-- Action Center (Reps Input) -->
-      <div class="space-y-4">
-        <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-muted px-2">
-          <Zap class="w-4 h-4 text-primary-500" />
-          {{ i18n.t('log_pullups').toUpperCase() }}
-        </h3>
-        <div v-if="activeExercise === 'all'" class="card-stats p-8 flex flex-col items-center justify-center text-center space-y-4 opacity-50 border-dashed border-border min-h-[360px]">
-          <Globe class="w-12 h-12 text-muted" />
-          <p class="text-[10px] font-black text-muted uppercase tracking-widest leading-relaxed">
-            Global view active. <br /> Select a protocol to log volume.
-          </p>
-        </div>
-        <RepsInput v-else :exercise-type="activeExercise" @updated="fetchData" class="min-h-[360px]" />
       </div>
     </div>
 

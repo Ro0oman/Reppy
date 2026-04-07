@@ -29,6 +29,9 @@ const translations = {
     nav_dashboard: 'Dashboard',
     nav_social: 'Social',
     nav_inventory: 'Inventory',
+    nav_armory: 'Armory',
+    nav_gear: 'Gear',
+    nav_profile: 'Profile',
     nav_go_dashboard: 'Go to Dashboard',
 
     stats_total: 'Total Reps',
@@ -183,6 +186,9 @@ const translations = {
     nav_dashboard: 'Panel',
     nav_social: 'Social',
     nav_inventory: 'Inventario',
+    nav_armory: 'Armería',
+    nav_gear: 'Equipo',
+    nav_profile: 'Perfil',
     nav_go_dashboard: 'Ir al Panel',
 
     stats_total: 'Reps Totales',

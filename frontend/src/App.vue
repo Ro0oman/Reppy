@@ -104,7 +104,7 @@
           class="flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all"
           :class="view === nav.id ? 'text-primary-500' : 'text-zinc-600'">
           <component :is="nav.icon" class="w-5 h-5" :class="view === nav.id ? 'fill-primary-500/10' : ''" />
-          <span class="text-[8px] font-black uppercase tracking-widest font-tight">{{ nav.short || nav.id }}</span>
+          <span class="text-[8px] font-black uppercase tracking-widest font-tight">{{ i18n.t(nav.label) }}</span>
           
           <!-- Inventory Notification -->
           <div v-if="nav.id === 'inventory' && authStore.user?.boss_chests > 0" 
@@ -115,7 +115,7 @@
         <button @click="view = 'profile'" class="flex-1 flex flex-col items-center justify-center gap-1 transition-all">
           <AvatarFrame :src="authStore.user?.avatar_url" :border-css="view === 'profile' ? authStore.user?.border_css : ''" :size="24" 
                class="transition-all" :class="view === 'profile' ? '' : 'opacity-40 grayscale'" />
-          <span class="text-[8px] font-black uppercase tracking-widest font-tight" :class="view === 'profile' ? 'text-primary-500' : 'text-zinc-600'">PROFILE</span>
+          <span class="text-[8px] font-black uppercase tracking-widest font-tight" :class="view === 'profile' ? 'text-primary-500' : 'text-zinc-600'">{{ i18n.t('nav_profile').toUpperCase() }}</span>
         </button>
       </div>
     </nav>
@@ -252,11 +252,11 @@ const navLinks = [
 ];
 
 const mobileNavLinks = [
-  { id: 'landing', icon: Home, short: 'CORE' },
-  { id: 'dashboard', icon: LayoutDashboard, short: 'PANEL' },
-  { id: 'social', icon: Users, short: 'REPS' },
-  { id: 'shop', icon: ShoppingBag, short: 'ARMORY' },
-  { id: 'inventory', icon: Package, short: 'GEAR' },
+  { id: 'landing', icon: Home, label: 'nav_home' },
+  { id: 'dashboard', icon: LayoutDashboard, label: 'nav_dashboard' },
+  { id: 'social', icon: Users, label: 'nav_social' },
+  { id: 'shop', icon: ShoppingBag, label: 'nav_armory' },
+  { id: 'inventory', icon: Package, label: 'nav_gear' },
 ];
 
 const earnings = [
