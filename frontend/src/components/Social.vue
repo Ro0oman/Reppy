@@ -62,9 +62,10 @@
 
         <div class="space-y-4">
           <TransitionGroup name="list">
-            <div v-for="user in searchResults" :key="user.id"
+            <button v-for="user in searchResults" :key="user.id"
               @click="$emit('viewProfile', user.id)"
-              class="bg-foreground/[0.02] border border-border p-5 rounded-3xl flex items-center justify-between hover:bg-foreground/[0.04] transition-all group cursor-pointer">
+              :title="i18n.locale === 'es' ? `Ver perfil de ${user.name}` : `View ${user.name}'s profile`"
+              class="w-full text-left bg-foreground/[0.02] border border-border p-5 rounded-3xl flex items-center justify-between hover:bg-foreground/[0.04] transition-all group cursor-pointer active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-primary-500/50 outline-none">
               <div class="flex items-center gap-4">
                 <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :avatar-css="user.avatar_css" :size="48" />
                 <div>
@@ -78,12 +79,12 @@
                   <p class="text-[9px] text-muted font-black uppercase tracking-[0.2em] mt-1.5 opacity-70">{{ user.total_reps }} REPS COLLECTED</p>
                 </div>
               </div>
-              <button @click="addFriend(user.id)"
+              <button @click.stop="addFriend(user.id)"
                 class="flex items-center gap-3 px-5 py-2.5 bg-primary-500 hover:bg-primary-600 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-primary-500/20 text-white">
                 <UserPlus class="w-3.5 h-3.5" />
                 {{ i18n.t('btn_add_friend') }}
               </button>
-            </div>
+            </button>
           </TransitionGroup>
 
           <div v-if="searchQuery && !loadingSearch && searchResults.length === 0"
@@ -103,9 +104,10 @@
 
         <div class="grid grid-cols-1 gap-4">
           <TransitionGroup name="list">
-            <div v-for="friend in friends" :key="friend.id"
+            <button v-for="friend in friends" :key="friend.id"
               @click="$emit('viewProfile', friend.id)"
-              class="bg-foreground/[0.02] border border-border hover:border-primary-500/30 group p-6 rounded-[2rem] flex items-center justify-between transition-all cursor-pointer">
+              :title="i18n.locale === 'es' ? `Ver perfil de ${friend.name}` : `View ${friend.name}'s profile`"
+              class="w-full text-left bg-foreground/[0.02] border border-border hover:border-primary-500/30 group p-6 rounded-[2rem] flex items-center justify-between transition-all cursor-pointer active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-primary-500/50 outline-none">
               <div class="flex items-center gap-5">
                 <div class="relative">
                   <AvatarFrame :src="friend.avatar_url" :border-css="friend.border_css" :avatar-css="friend.avatar_css" :size="64" class="transition-transform" />
@@ -132,7 +134,7 @@
                 class="h-10 w-10 bg-foreground/5 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
                 <ChevronRight class="w-5 h-5 text-primary-500" />
               </div>
-            </div>
+            </button>
           </TransitionGroup>
 
           <div v-if="friends.length === 0"

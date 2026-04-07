@@ -1,8 +1,15 @@
 <template>
   <Transition name="fade">
-    <div v-if="show" class="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-hidden">
+    <div v-if="show" 
+         class="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-hidden"
+         role="dialog"
+         aria-modal="true"
+    >
       <!-- Backdrop -->
-      <div class="absolute inset-0 bg-background/80 backdrop-blur-xl" @click="close"></div>
+      <button class="absolute inset-0 bg-background/80 backdrop-blur-xl cursor-default outline-none" 
+              aria-hidden="true" 
+              tabindex="-1"
+              @click="close"></button>
 
       <!-- Content Card -->
       <div class="relative max-w-2xl w-full bg-surface/40 backdrop-blur-3xl border border-border rounded-[2.5rem] shadow-[0_0_100px_rgba(255,69,0,0.1)] p-8 md:p-12 overflow-hidden animate-in">
@@ -110,7 +117,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onBeforeUnmount, watch } from 'vue';
 import { Zap, Flame, ShoppingBag, ArrowRight, X as XIcon } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import axios from 'axios';
@@ -123,6 +130,24 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['close']);
+
+const handleKeydown = (e) => {
+  if (e.key === 'Escape' && props.show) {
+    close();
+  }
+};
+
+watch(() => props.show, (visible) => {
+  if (visible) {
+    window.addEventListener('keydown', handleKeydown);
+  } else {
+    window.removeEventListener('keydown', handleKeydown);
+  }
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeydown);
+});
 
 const next = () => {
   if (currentStep.value < 2) {

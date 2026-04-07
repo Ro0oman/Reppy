@@ -1,8 +1,16 @@
 <template>
   <Transition name="modal">
-    <div v-if="store.confirmVisible" class="fixed inset-0 z-[110] flex items-center justify-center px-4">
+    <div v-if="store.confirmVisible" 
+         class="fixed inset-0 z-[110] flex items-center justify-center px-4"
+         role="alertdialog"
+         aria-modal="true"
+         :aria-labelledby="store.confirmTitle"
+    >
       <!-- Backdrop -->
-      <div class="absolute inset-0 bg-[#030303]/80 backdrop-blur-sm" @click="store.handleCancel"></div>
+      <button class="absolute inset-0 bg-[#030303]/80 backdrop-blur-sm cursor-default outline-none" 
+              aria-hidden="true"
+              tabindex="-1"
+              @click="store.handleCancel"></button>
       
       <!-- Dialog -->
       <div class="glass w-full max-w-sm rounded-[2.5rem] p-8 border border-border relative z-10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden group">
@@ -39,12 +47,30 @@
     </div>
   </Transition>
 </template>
-
 <script setup>
 import { useNotificationStore } from '../stores/notification';
 import { HelpCircle } from 'lucide-vue-next';
+import { onMounted, onBeforeUnmount, watch } from 'vue';
 
 const store = useNotificationStore();
+
+const handleKeydown = (e) => {
+  if (e.key === 'Escape' && store.confirmVisible) {
+    store.handleCancel();
+  }
+};
+
+watch(() => store.confirmVisible, (visible) => {
+  if (visible) {
+    window.addEventListener('keydown', handleKeydown);
+  } else {
+    window.removeEventListener('keydown', handleKeydown);
+  }
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeydown);
+});
 </script>
 
 <style scoped>

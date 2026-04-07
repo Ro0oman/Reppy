@@ -41,9 +41,10 @@
     <!-- Podium Section (Top 3) -->
     <div v-if="!loading && podiumUsers.length > 0" class="flex items-end justify-center gap-2 sm:gap-8 mt-12 mb-16 relative z-10">
       <!-- 2nd Place -->
-      <div v-if="podiumUsers[1]" 
+      <button v-if="podiumUsers[1]" 
         @click="$emit('viewProfile', podiumUsers[1].id)"
-        class="flex flex-col items-center group cursor-pointer transition-all">
+        :title="i18n.locale === 'es' ? `Ver perfil de ${podiumUsers[1].name}` : `View ${podiumUsers[1].name}'s profile`"
+        class="flex flex-col items-center group cursor-pointer transition-all active:scale-95 outline-none focus:ring-2 focus:ring-primary-500/50 rounded-2xl p-2">
         <div class="relative mb-3">
           <div class="p-1 rounded-full bg-gradient-to-b from-zinc-300 to-zinc-600 shadow-xl ring-2 ring-zinc-500/20">
             <AvatarFrame :src="podiumUsers[1].avatar_url" :border-css="podiumUsers[1].border_css" :avatar-css="podiumUsers[1].avatar_css" :size="72" />
@@ -58,12 +59,13 @@
            <span class="text-[9px] font-black text-foreground italic">{{ podiumUsers[1].current_level }}</span>
         </div>
         <span class="text-sm font-black text-foreground italic text-precision">{{ podiumUsers[1].total_reps }}</span>
-      </div>
+      </button>
 
       <!-- 1st Place (Center) -->
-      <div v-if="podiumUsers[0]" 
+      <button v-if="podiumUsers[0]" 
         @click="$emit('viewProfile', podiumUsers[0].id)"
-        class="flex flex-col items-center group cursor-pointer transition-all -mt-8">
+        :title="i18n.locale === 'es' ? `Ver perfil de ${podiumUsers[0].name}` : `View ${podiumUsers[0].name}'s profile`"
+        class="flex flex-col items-center group cursor-pointer transition-all -mt-8 active:scale-95 outline-none focus:ring-2 focus:ring-primary-500/50 rounded-2xl p-2 px-6">
         <div class="relative mb-4">
           <div class="absolute -top-10 left-1/2 -translate-x-1/2 text-4xl animate-bounce duration-[2000ms]">👑</div>
           <div class="p-1.5 rounded-full bg-gradient-to-br from-primary-400 via-primary-500 to-primary-700 shadow-[0_0_40px_rgba(255,69,0,0.2)] ring-4 ring-primary-500/20">
@@ -79,12 +81,13 @@
            <span class="text-xs font-black text-foreground italic leading-none">{{ podiumUsers[0].current_level }}</span>
         </div>
         <span class="text-2xl font-black text-primary-500 italic text-precision drop-shadow-lg">{{ podiumUsers[0].total_reps }}</span>
-      </div>
+      </button>
 
       <!-- 3rd Place -->
-      <div v-if="podiumUsers[2]" 
+      <button v-if="podiumUsers[2]" 
         @click="$emit('viewProfile', podiumUsers[2].id)"
-        class="flex flex-col items-center group cursor-pointer transition-all">
+        :title="i18n.locale === 'es' ? `Ver perfil de ${podiumUsers[2].name}` : `View ${podiumUsers[2].name}'s profile`"
+        class="flex flex-col items-center group cursor-pointer transition-all active:scale-95 outline-none focus:ring-2 focus:ring-primary-500/50 rounded-2xl p-2">
         <div class="relative mb-3">
           <div class="p-1 rounded-full bg-gradient-to-b from-orange-400 to-orange-900 shadow-xl ring-2 ring-orange-500/20">
             <AvatarFrame :src="podiumUsers[2].avatar_url" :border-css="podiumUsers[2].border_css" :avatar-css="podiumUsers[2].avatar_css" :size="72" />
@@ -99,15 +102,16 @@
            <span class="text-[9px] font-black text-foreground italic">{{ podiumUsers[2].current_level }}</span>
         </div>
         <span class="text-sm font-black text-foreground italic text-precision">{{ podiumUsers[2].total_reps }}</span>
-      </div>
+      </button>
     </div>
     
     <!-- Regular List (Ranks 4+) -->
     <div class="space-y-1 overflow-y-auto no-scrollbar scroll-smooth relative z-10 px-2 max-h-[500px]">
-      <div 
+      <button 
         v-for="(user, index) in regularUsers" :key="user.id" 
         @click="$emit('viewProfile', user.id)"
-        class="group flex items-center justify-between p-3 rounded-xl bg-foreground/[0.01] hover:bg-foreground/[0.03] transition-all duration-300 border border-transparent hover:border-border"
+        :title="i18n.locale === 'es' ? `Ver perfil de ${user.name}` : `View ${user.name}'s profile`"
+        class="w-full group flex items-center justify-between p-3 rounded-xl bg-foreground/[0.01] hover:bg-foreground/[0.03] transition-all duration-300 border border-transparent hover:border-border active:scale-[0.99] outline-none focus:ring-2 focus:ring-primary-500/30"
         :class="{'!bg-primary-500/5 !border-primary-500/20' : user.id === authStore.user?.id}"
       >
         <div class="flex items-center gap-4 min-w-0 flex-1">
@@ -125,7 +129,7 @@
           <!-- User Info -->
           <div class="min-w-0 flex-1">
             <div class="flex items-center gap-2">
-              <h4 class="text-sm font-black text-foreground truncate group-hover:text-primary-400 transition-colors tracking-tight uppercase italic leading-none font-tight">
+              <h4 class="text-sm font-black text-foreground truncate group-hover:text-primary-400 transition-colors tracking-tight uppercase italic leading-none font-tight text-left">
                 {{ user.id === authStore.user?.id ? 'YOU' : user.name }}
               </h4>
               <div class="flex items-center gap-1 bg-foreground/5 px-1.5 py-0.5 rounded border border-border/30">
@@ -136,7 +140,7 @@
                 {{ user.title_name }}
               </span>
             </div>
-            <p class="text-[8px] text-muted font-bold uppercase tracking-widest mt-1">
+            <p class="text-[8px] text-muted font-bold uppercase tracking-widest mt-1 text-left">
               PRO ATLETA
             </p>
           </div>
@@ -149,7 +153,7 @@
           </span>
           <p class="text-[7px] font-black text-muted uppercase tracking-widest mt-1 opacity-60 leading-none">REPS</p>
         </div>
-      </div>
+      </button>
       
       <!-- Loading & Empty States -->
       <div v-if="loading" class="py-24 flex flex-col items-center gap-4">

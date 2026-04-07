@@ -114,15 +114,16 @@
 
       <!-- Days Grid -->
       <div class="grid grid-cols-7 gap-1.5 sm:gap-2 lg:gap-3 rounded-2xl ">
-        <div 
+        <button 
           v-for="(day, index) in calendarDays" 
           :key="day.date || index"
-          class="aspect-square relative flex items-center justify-center rounded-xl transition-all duration-300 group/day"
+          class="aspect-square relative flex items-center justify-center rounded-xl transition-all duration-400 group/day hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary/50"
           :class="[
             day.isCurrentMonth ? 'cursor-pointer' : 'opacity-20 pointer-events-none grayscale',
             day.isToday ? 'ring-2 ring-primary/50 bg-primary/5' : ''
           ]"
           @click="day.isCurrentMonth && (selectedDay = day)"
+          :title="day.isCurrentMonth ? `${day.dayNumber} ${currentMonthName}: ${day.count} reps` : ''"
         >
           <!-- Activity Indicator (Background Circle) -->
           <div 
@@ -141,7 +142,7 @@
           >
             {{ day.dayNumber }}
           </span>
-        </div>
+        </button>
       </div>
     </div>
   </div>

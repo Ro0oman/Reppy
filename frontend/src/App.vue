@@ -9,10 +9,10 @@
       class="border-b border-border bg-surface/40 backdrop-blur-3xl sticky top-0 z-50 transition-all">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
         <!-- Logo Core -->
-        <div class="flex items-center gap-4 group cursor-pointer" @click="router.push('/dashboard')" title="Dashboard / Inicio">
-          <div class="w-10 h-10 bg-primary-500 rounded-2xl flex items-center justify-center font-bold text-white shadow-xl shadow-primary-500/20 transition-transform">R</div>
+        <router-link to="/dashboard" class="flex items-center gap-4 group cursor-pointer outline-none" title="Dashboard / Inicio">
+          <div class="w-10 h-10 bg-primary-500 rounded-2xl flex items-center justify-center font-bold text-white shadow-xl shadow-primary-500/20 transition-transform group-hover:scale-110 group-focus:scale-110 group-focus:ring-2 group-focus:ring-primary-500/50">R</div>
           <span class="text-2xl font-bold tracking-tight text-foreground font-industrial">Reppy<span class="text-primary-500">.</span></span>
-        </div>
+        </router-link>
         
         <!-- Desktop Navigation (Clean Links) -->
         <div class="hidden lg:flex items-center gap-1">
@@ -50,12 +50,12 @@
 
           <div class="flex items-center gap-4">
             <!-- Currency Module -->
-             <div @click="showCoinsInfo = true" 
-                  title="Protocol Coins History / Historial de Monedas"
-                  class="flex items-center gap-3 bg-surface/5 px-4 py-2 rounded-xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group">
-               <Coins class="w-3.5 h-3.5 text-primary-500 transition-transform" />
+             <button @click="showCoinsInfo = true" 
+                  :title="i18n.locale === 'es' ? 'Historial de Monedas' : 'Protocol Coins History'"
+                  class="flex items-center gap-3 bg-surface/5 px-4 py-2 rounded-xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-primary-500/50">
+               <Coins class="w-3.5 h-3.5 text-primary-500 transition-transform group-hover:scale-110" />
                <span class="text-sm font-black text-precision text-foreground">{{ authStore.user?.reppy_coins || 0 }}</span>
-            </div>
+            </button>
 
             <!-- Level Module (Responsive) -->
             <div class="flex items-center gap-3">
