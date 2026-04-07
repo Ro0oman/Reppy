@@ -14,10 +14,13 @@
         <!-- Avatar Core -->
         <div class="relative group/avatar">
           <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :avatar-css="user.avatar_css" :size="160" />
-          <div v-if="isOwnProfile" @click="triggerAvatarUpload" class="absolute -bottom-2 -right-2 p-4 bg-primary-500 rounded-2xl cursor-pointer hover:bg-primary-600 shadow-[0_0_20px_rgba(255,69,0,0.3)] text-white z-10 transition-all">
+          <button v-if="isOwnProfile" 
+                  @click="triggerAvatarUpload" 
+                  :title="i18nStore.locale === 'es' ? 'Editar Avatar / Bio-Link' : 'Edit Avatar / Bio-Link'"
+                  class="absolute -bottom-2 -right-2 p-4 bg-primary-500 rounded-2xl cursor-pointer hover:bg-primary-600 shadow-[0_0_20px_rgba(255,69,0,0.3)] text-white z-10 transition-all active:scale-90 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-4 focus:ring-offset-background">
             <Camera class="w-5 h-5" />
             <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/jpeg, image/png, image/webp" class="hidden" />
-          </div>
+          </button>
         </div>
 
         <!-- Identity & Status -->
@@ -82,7 +85,7 @@
               </div>
             </div>
             <button @click="showInfoModal = true" 
-                   title="Evolution Protocol Guide"
+                   :title="i18nStore.locale === 'es' ? 'Guía del Protocolo de Evolución' : 'Evolution Protocol Guide'"
                    class="flex items-center gap-3 bg-surface/5 px-5 py-3 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[8px] font-black tracking-widest">
               <HelpCircle class="w-4 h-4" />
               CODEX INFO
@@ -93,8 +96,8 @@
         <!-- Emergency Exit (Logout) -->
         <div v-if="isOwnProfile" class="md:absolute top-8 right-8">
           <button @click="authStore.logout()" 
-                  title="Abandono de puesto / Log Out"
-                  class="p-4 bg-red-500/5 text-red-500/60 hover:bg-red-500 hover:text-white border border-red-500/10 rounded-2xl transition-all group/logout">
+                  :title="i18nStore.locale === 'es' ? 'Cerrar sesión / Salir de Reppy' : 'Log out / Exit Reppy'"
+                  class="p-4 bg-red-500/5 text-red-500/60 hover:bg-red-500 hover:text-white border border-red-500/10 rounded-2xl transition-all group/logout active:scale-90 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-4 focus:ring-offset-background">
             <LogOut class="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
@@ -284,6 +287,7 @@
         </div>
 
         <button @click="saveSettings"
+          :title="i18nStore.locale === 'es' ? 'Guardar Cambios de Perfil' : 'Save Profile Changes'"
           class="btn-reppy w-full !py-5 shadow-2xl text-lg">
           SAVE PROTOCOL OVERRIDE
         </button>
@@ -303,7 +307,7 @@
               <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em] mt-3">RPG EVOLUTION GUIDE</p>
             </div>
             <button @click="showInfoModal = false" 
-                   title="Close Protocol"
+                   :title="i18nStore.locale === 'es' ? 'Cerrar Guía' : 'Close Guide'"
                    class="p-3 bg-surface/10 hover:bg-surface/20 rounded-2xl transition-all hover:rotate-90">
               <XIcon class="w-6 h-6 text-foreground" />
             </button>

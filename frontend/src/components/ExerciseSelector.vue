@@ -3,6 +3,7 @@
     <button 
       v-for="ex in exercises" :key="ex.id"
       @click="$emit('update:modelValue', ex.id)"
+      :title="i18n.locale === 'es' ? `Filtrar por ${i18n.t(ex.id)}` : `Filter by ${i18n.t(ex.id)}`"
       class="group relative flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-5 py-3 rounded-2xl transition-all duration-400 overflow-hidden min-w-[100px] sm:min-w-[130px]"
       :class="modelValue === ex.id 
         ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20 z-10' 

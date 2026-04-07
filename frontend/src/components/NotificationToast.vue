@@ -32,7 +32,9 @@
             </p>
           </div>
           
-          <button @click="store.hide" class="text-muted hover:text-foreground transition-colors p-1">
+          <button @click="store.hide" 
+                  :title="i18n.locale === 'es' ? 'Cerrar Notificación' : 'Close Notification'"
+                  class="text-muted hover:text-foreground transition-colors p-1">
             <X class="w-4 h-4" />
           </button>
         </div>
@@ -46,9 +48,11 @@
 
 <script setup>
 import { useNotificationStore } from '../stores/notification';
+import { useI18nStore } from '../stores/i18n';
 import { AlertCircle, CheckCircle, Info, X } from 'lucide-vue-next';
 
 const store = useNotificationStore();
+const i18n = useI18nStore();
 </script>
 
 <style scoped>

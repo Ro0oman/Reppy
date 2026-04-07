@@ -172,6 +172,8 @@
             <button 
               @click="currentPage > 1 && (currentPage--)"
               :disabled="currentPage === 1"
+              :title="i18n.locale === 'es' ? 'Página Anterior' : 'Previous Page'"
+              :aria-label="i18n.locale === 'es' ? 'Página Anterior' : 'Previous Page'"
               class="p-5 bg-surface/60 border border-border rounded-2xl hover:border-primary-500/30 disabled:opacity-20 transition-all group/prev shadow-xl active:scale-95"
             >
               <ChevronLeft class="w-5 h-5 group-hover/prev:-translate-x-1 transition-transform" />
@@ -182,6 +184,7 @@
                 v-for="p in totalPages" 
                 :key="p"
                 @click="currentPage = p"
+                :title="i18n.locale === 'es' ? `Ir a la página ${p}` : `Go to page ${p}`"
                 class="w-12 h-12 flex items-center justify-center rounded-2xl text-[11px] font-black tracking-widest transition-all border-2"
                 :class="currentPage === p ? 'bg-primary-500 text-white border-primary-500 shadow-[0_0_25px_rgba(255,69,0,0.3)]' : 'bg-surface/40 text-muted border-border hover:border-primary-500/40 hover:text-foreground active:scale-90'"
               >
@@ -192,6 +195,8 @@
             <button 
               @click="currentPage < totalPages && (currentPage++)"
               :disabled="currentPage === totalPages"
+              :title="i18n.locale === 'es' ? 'Siguiente Página' : 'Next Page'"
+              :aria-label="i18n.locale === 'es' ? 'Siguiente Página' : 'Next Page'"
               class="p-5 bg-surface/60 border border-border rounded-2xl hover:border-primary-500/30 disabled:opacity-20 transition-all group/next shadow-xl active:scale-95"
             >
               <ChevronRight class="w-5 h-5 group-hover/next:translate-x-1 transition-transform" />

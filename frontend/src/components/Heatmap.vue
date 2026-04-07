@@ -10,13 +10,21 @@
       </div>
       
       <div class="flex items-center gap-2 bg-surface/50 p-1 rounded-xl border border-white/5">
-        <button @click="prevMonth" class="p-2 transition-colors text-zinc-400">
+        <button @click="prevMonth" 
+                :title="i18n.locale === 'es' ? 'Mes Anterior' : 'Previous Month'"
+                :aria-label="i18n.locale === 'es' ? 'Mes Anterior' : 'Previous Month'"
+                class="p-2 transition-colors text-zinc-400 hover:text-white">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
         </button>
-        <button @click="goToToday" class="px-3 py-1 text-[10px] font-black uppercase tracking-tight bg-white/5 rounded-md transition-colors  border border-white/10">
+        <button @click="goToToday" 
+                :title="i18n.locale === 'es' ? 'Ir a hoy' : 'Go to today'"
+                class="px-3 py-1 text-[10px] font-black uppercase tracking-tight bg-white/5 rounded-md transition-colors  border border-white/10 hover:bg-white/10">
           {{ i18n.locale === 'es' ? 'Hoy' : 'Today' }}
         </button>
-        <button @click="nextMonth" class="p-2 rounded-lg transition-colors text-zinc-400">
+        <button @click="nextMonth" 
+                :title="i18n.locale === 'es' ? 'Siguiente Mes' : 'Next Month'"
+                :aria-label="i18n.locale === 'es' ? 'Siguiente Mes' : 'Next Month'"
+                class="p-2 rounded-lg transition-colors text-zinc-400 hover:text-white">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
         </button>
       </div>
@@ -86,6 +94,7 @@
 
               <button 
                 @click="selectedDay = null"
+                :title="i18n.locale === 'es' ? 'Cerrar Detalle' : 'Close Detail'"
                 class="w-full py-5 text-[10px] font-black uppercase tracking-widest bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 rounded-2xl transition-all border border-white/5 mt-2"
               >
                 {{ i18n.locale === 'es' ? 'Cerrar' : 'Close' }}
