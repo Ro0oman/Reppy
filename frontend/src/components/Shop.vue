@@ -74,7 +74,7 @@
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           <div 
-            v-for="item in regularItems" 
+            v-for="item in paginatedItems" 
             :key="item.id"
             class="card-stats p-0 flex flex-col group/item border-white/10"
             :class="getCardClass(item)"
@@ -162,6 +162,53 @@
             </div>
           </div>
         </div>
+        
+        <!-- Pagination Metadata & Controls -->
+        <div v-if="totalPages > 1" class="flex flex-col items-center gap-6 mt-16 p-10 bg-surface/20 rounded-[2.5rem] border border-white/5 relative overflow-hidden group/pagination">
+          <!-- Background Detail -->
+          <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-primary-500/5 blur-[100px] rounded-full pointer-events-none group-hover/pagination:bg-primary-500/10 transition-colors duration-1000"></div>
+
+          <div class="flex items-center gap-4 relative z-10">
+            <button 
+              @click="currentPage > 1 && (currentPage--)"
+              :disabled="currentPage === 1"
+              class="p-5 bg-surface/60 border border-border rounded-2xl hover:border-primary-500/30 disabled:opacity-20 transition-all group/prev shadow-xl active:scale-95"
+            >
+              <ChevronLeft class="w-5 h-5 group-hover/prev:-translate-x-1 transition-transform" />
+            </button>
+            
+            <div class="flex items-center gap-2.5">
+              <button 
+                v-for="p in totalPages" 
+                :key="p"
+                @click="currentPage = p"
+                class="w-12 h-12 flex items-center justify-center rounded-2xl text-[11px] font-black tracking-widest transition-all border-2"
+                :class="currentPage === p ? 'bg-primary-500 text-white border-primary-500 shadow-[0_0_25px_rgba(255,69,0,0.3)]' : 'bg-surface/40 text-muted border-border hover:border-primary-500/40 hover:text-foreground active:scale-90'"
+              >
+                {{ String(p).padStart(2, '0') }}
+              </button>
+            </div>
+
+            <button 
+              @click="currentPage < totalPages && (currentPage++)"
+              :disabled="currentPage === totalPages"
+              class="p-5 bg-surface/60 border border-border rounded-2xl hover:border-primary-500/30 disabled:opacity-20 transition-all group/next shadow-xl active:scale-95"
+            >
+              <ChevronRight class="w-5 h-5 group-hover/next:translate-x-1 transition-transform" />
+            </button>
+          </div>
+          
+          <div class="flex flex-col items-center gap-2 relative z-10">
+            <p class="text-[10px] font-black text-industrial text-foreground/40 uppercase tracking-[0.5em] italic">
+              UNIT_PAGE <span class="text-primary-500">{{ currentPage }}</span> // TOTAL_CHUNKS: {{ totalPages }}
+            </p>
+            <div class="flex gap-1">
+              <div v-for="d in totalPages" :key="d" 
+                   class="h-1 rounded-full transition-all duration-500"
+                   :class="currentPage === d ? 'w-8 bg-primary-500' : 'w-2 bg-border'"></div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- Seasonal Section (Collapsed) -->
@@ -239,12 +286,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
+import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue';
 import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
-import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, Coins, Check, Swords } from 'lucide-vue-next';
+import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Check, Swords } from 'lucide-vue-next';
 import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
 
@@ -261,6 +308,8 @@ const showDropdown = ref(false);
 let countdownTimer = null;
 
 const selectedCategory = ref('all');
+const currentPage = ref(1);
+const itemsPerPage = ref(15);
 
 const categories = [
   { id: 'all', label: 'cat_all', icon: Swords },
@@ -280,6 +329,17 @@ const filteredItems = computed(() => {
 
 const seasonalItems = computed(() => filteredItems.value.filter(item => item.is_seasonal));
 const regularItems = computed(() => filteredItems.value.filter(item => !item.is_seasonal));
+
+const totalPages = computed(() => Math.ceil(regularItems.value.length / itemsPerPage.value));
+
+const paginatedItems = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  return regularItems.value.slice(start, start + itemsPerPage.value);
+});
+
+watch(selectedCategory, () => {
+  currentPage.value = 1;
+});
 
 const checkShop = async () => {
   try {
