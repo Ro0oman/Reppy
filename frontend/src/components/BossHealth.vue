@@ -52,6 +52,11 @@
                   Día: {{ dailyDamage }} / 100 🛡️
                 </p>
              </div>
+             <div v-if="topDamageDealer" class="flex items-center gap-2 bg-amber-500/10 px-2 py-1 rounded-lg border border-amber-500/20">
+                <p class="text-[9px] font-black uppercase tracking-[0.2em] text-amber-500">
+                  TOP Daño: <span class="text-foreground">{{ topDamageDealer.name }}</span> ({{ topDamageDealer.damage_dealt }}) 👑
+                </p>
+             </div>
           </div>
 
           <!-- Sequential Reward Logic -->
@@ -156,6 +161,7 @@ const dailyDamage = ref(0);
 const chestsClaimed = ref(0);
 const showHelp = ref(false);
 const notificationStore = useNotificationStore();
+const topDamageDealer = ref(null);
 
 const fetchBoss = async () => {
   try {
@@ -166,6 +172,7 @@ const fetchBoss = async () => {
       personalDamage.value = res.data.personal_damage;
       dailyDamage.value = res.data.daily_damage || 0;
       chestsClaimed.value = res.data.chests_claimed;
+      topDamageDealer.value = res.data.top_damage_dealer;
     } else {
       boss.value = null;
     }

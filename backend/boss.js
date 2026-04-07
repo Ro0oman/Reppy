@@ -86,13 +86,26 @@ router.get('/active', authenticate, async (req, res) => {
     const finalUserRes = await query('SELECT boss_chests FROM users WHERE id = $1', [req.user.id]);
     const boss_chests = finalUserRes.rows[0]?.boss_chests || 0;
 
+    // Get Top Damage Dealer for this boss
+    const topParticipantRes = await query(
+      `SELECT u.name, u.avatar_url, p.damage_dealt
+       FROM event_participants p
+       JOIN users u ON p.user_id = u.id
+       WHERE p.boss_fight_id = $1
+       ORDER BY p.damage_dealt DESC
+       LIMIT 1`,
+      [boss.id]
+    );
+    const top_damage_dealer = topParticipantRes.rows[0] || null;
+
     res.json({
       boss: { ...boss, starts_in: null },
       next_boss,
       personal_damage: participant.damage_dealt,
       daily_damage: dailyDamage,
       chests_claimed: participant.chests_claimed,
-      boss_chests
+      boss_chests,
+      top_damage_dealer
     });
   } catch (error) {
     console.error('Error fetching boss:', error);
