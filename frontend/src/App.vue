@@ -7,7 +7,7 @@
     <!-- Industrial Navigation Bar -->
     <nav v-if="authStore.isAuthenticated"
       class="border-b border-border bg-surface/40 backdrop-blur-3xl sticky top-0 z-50 transition-all">
-      <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
         <!-- Logo Core -->
         <div class="flex items-center gap-4 group cursor-pointer" @click="router.push('/dashboard')">
           <div class="w-10 h-10 bg-primary-500 rounded-2xl flex items-center justify-center font-bold text-white shadow-xl shadow-primary-500/20 transition-transform">R</div>

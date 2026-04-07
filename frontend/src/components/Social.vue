@@ -3,7 +3,7 @@
     <div class="space-y-6">
       <div class="flex items-center justify-between">
         <div>
-          <h2 class="text-4xl font-black tracking-tighter text-foreground uppercase italic truncate drop-shadow-[0_0_15px_rgba(255,255,255,0.05)]">
+          <h2 class="text-2xl sm:text-4xl font-black tracking-tighter text-foreground uppercase italic truncate drop-shadow-[0_0_15px_rgba(255,255,255,0.05)]">
             {{ i18n.t('community') }}<span class="text-primary-500">.</span>CORE
           </h2>
           <p class="text-muted text-[10px] font-black uppercase tracking-[0.4em] mt-2 opacity-80">{{ i18n.t('community_subtitle') }}</p>
@@ -21,7 +21,7 @@
         </div>
         
         <div class="card-stats !p-0 overflow-hidden border-border bg-surface/20 backdrop-blur-sm">
-          <div class="p-6 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-6 bg-foreground/[0.02]">
+          <div class="p-4 sm:p-6 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-6 bg-foreground/[0.02]">
             <div class="flex items-center gap-4">
                <div class="w-10 h-10 bg-primary-500/10 rounded-xl flex items-center justify-center">
                  <BarChart3 class="w-5 h-5 text-primary-500" />
