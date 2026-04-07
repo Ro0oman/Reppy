@@ -14,7 +14,7 @@
         <!-- Avatar Core -->
         <div class="relative group/avatar">
           <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :avatar-css="user.avatar_css" :size="160" />
-          <div v-if="isOwnProfile" @click="triggerAvatarUpload" class="absolute -bottom-2 -right-2 p-4 bg-primary-500 rounded-2xl cursor-pointer hover:bg-primary-600 shadow-[0_0_20px_rgba(255,69,0,0.3)] text-white z-10 hover:scale-110 active:scale-95 transition-all">
+          <div v-if="isOwnProfile" @click="triggerAvatarUpload" class="absolute -bottom-2 -right-2 p-4 bg-primary-500 rounded-2xl cursor-pointer hover:bg-primary-600 shadow-[0_0_20px_rgba(255,69,0,0.3)] text-white z-10 transition-all">
             <Camera class="w-5 h-5" />
             <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/jpeg, image/png, image/webp" class="hidden" />
           </div>
@@ -34,7 +34,7 @@
 
           <div class="flex flex-wrap items-center justify-center md:justify-start gap-4">
             <div class="flex items-center gap-3 bg-surface/5 px-5 py-3 rounded-xl border border-border group/coins">
-              <Zap class="w-4 h-4 text-primary-500 group-hover/coins:scale-125 transition-transform" />
+              <Zap class="w-4 h-4 text-primary-500 transition-transform" />
               <div class="flex items-baseline gap-1.5">
                 <span class="text-2xl font-black text-precision text-foreground leading-none">{{ user.reppy_coins || 0 }}</span>
                 <span class="text-[8px] font-black text-muted uppercase tracking-widest">COINS</span>
@@ -193,7 +193,7 @@
               <div v-for="desc in attributeDescriptions" :key="desc.key" 
                    class="flex gap-6 items-start p-6 bg-white/[0.02] border border-white/5 rounded-2xl group transition-all"
                    :class="desc.borderColor">
-                <div class="p-4 bg-white/5 rounded-2xl group-hover:scale-110 transition-transform" :class="desc.iconColor">
+                <div class="p-4 bg-white/5 rounded-2xl transition-transform" :class="desc.iconColor">
                    <component :is="desc.icon" class="w-6 h-6" />
                 </div>
                 <div class="flex-1">

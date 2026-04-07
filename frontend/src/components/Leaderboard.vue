@@ -10,7 +10,7 @@
           class="flex-1 py-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all rounded-lg relative z-10"
           :class="type === 'friends' ? 'text-foreground' : 'text-muted hover:text-foreground'"
         >
-          <span v-if="type === 'friends'" class="absolute inset-0 bg-foreground/5 border border-border rounded-lg animate-scale-in"></span>
+          <span v-if="type === 'friends'" class="absolute inset-0 bg-foreground/5 border border-border rounded-lg"></span>
           FRIENDS
         </button>
         <button 
@@ -18,7 +18,7 @@
           class="flex-1 py-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all rounded-lg relative z-10"
           :class="type === 'global' ? 'text-foreground' : 'text-muted hover:text-foreground'"
         >
-          <span v-if="type === 'global'" class="absolute inset-0 bg-foreground/5 border border-border rounded-lg animate-scale-in"></span>
+          <span v-if="type === 'global'" class="absolute inset-0 bg-foreground/5 border border-border rounded-lg"></span>
           GLOBAL
         </button>
       </div>
@@ -32,7 +32,7 @@
           class="flex-shrink-0 min-w-[70px] py-1.5 text-[9px] font-black uppercase tracking-widest transition-all rounded-lg relative z-10"
           :class="timeframe === tf ? 'text-primary-500' : 'text-muted hover:text-foreground'"
         >
-          <span v-if="timeframe === tf" class="absolute inset-0 bg-foreground/5 border border-border rounded-lg animate-scale-in"></span>
+          <span v-if="timeframe === tf" class="absolute inset-0 bg-foreground/5 border border-border rounded-lg"></span>
           {{ tf }}
         </button>
       </div>
@@ -43,7 +43,7 @@
       <!-- 2nd Place -->
       <div v-if="podiumUsers[1]" 
         @click="$emit('viewProfile', podiumUsers[1].id)"
-        class="flex flex-col items-center group cursor-pointer transition-all hover:scale-105">
+        class="flex flex-col items-center group cursor-pointer transition-all">
         <div class="relative mb-3">
           <div class="p-1 rounded-full bg-gradient-to-b from-zinc-300 to-zinc-600 shadow-xl ring-2 ring-zinc-500/20">
             <AvatarFrame :src="podiumUsers[1].avatar_url" :border-css="podiumUsers[1].border_css" :avatar-css="podiumUsers[1].avatar_css" :size="72" />
@@ -59,7 +59,7 @@
       <!-- 1st Place (Center) -->
       <div v-if="podiumUsers[0]" 
         @click="$emit('viewProfile', podiumUsers[0].id)"
-        class="flex flex-col items-center group cursor-pointer transition-all hover:scale-110 -mt-8">
+        class="flex flex-col items-center group cursor-pointer transition-all -mt-8">
         <div class="relative mb-4">
           <div class="absolute -top-10 left-1/2 -translate-x-1/2 text-4xl animate-bounce duration-[2000ms]">👑</div>
           <div class="p-1.5 rounded-full bg-gradient-to-br from-primary-400 via-primary-500 to-primary-700 shadow-[0_0_40px_rgba(255,69,0,0.2)] ring-4 ring-primary-500/20">
@@ -76,7 +76,7 @@
       <!-- 3rd Place -->
       <div v-if="podiumUsers[2]" 
         @click="$emit('viewProfile', podiumUsers[2].id)"
-        class="flex flex-col items-center group cursor-pointer transition-all hover:scale-105">
+        class="flex flex-col items-center group cursor-pointer transition-all">
         <div class="relative mb-3">
           <div class="p-1 rounded-full bg-gradient-to-b from-orange-400 to-orange-900 shadow-xl ring-2 ring-orange-500/20">
             <AvatarFrame :src="podiumUsers[2].avatar_url" :border-css="podiumUsers[2].border_css" :avatar-css="podiumUsers[2].avatar_css" :size="72" />
@@ -105,7 +105,7 @@
           </div>
 
           <!-- Avatar -->
-          <div class="relative flex-shrink-0 group-hover:scale-110 transition-transform">
+          <div class="relative flex-shrink-0 transition-transform">
             <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :avatar-css="user.avatar_css" :size="42" />
             <div v-if="user.id === authStore.user?.id" class="absolute -top-1 -right-1 w-3 h-3 bg-primary-500 rounded-full border-2 border-background z-10 animate-pulse"></div>
           </div>

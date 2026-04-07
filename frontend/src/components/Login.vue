@@ -30,7 +30,7 @@
             class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg relative z-10"
             :class="mode === 'login' ? 'text-white' : 'text-zinc-600 hover:text-zinc-400'"
           >
-            <span v-if="mode === 'login'" class="absolute inset-0 bg-white/5 border border-white/10 rounded-lg animate-scale-in"></span>
+            <span v-if="mode === 'login'" class="absolute inset-0 bg-white/5 border border-white/10 rounded-lg"></span>
             AUTHORIZE
           </button>
           <button 
@@ -38,7 +38,7 @@
             class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg relative z-10"
             :class="mode === 'signup' ? 'text-white' : 'text-zinc-600 hover:text-zinc-400'"
           >
-            <span v-if="mode === 'signup'" class="absolute inset-0 bg-white/5 border border-white/10 rounded-lg animate-scale-in"></span>
+            <span v-if="mode === 'signup'" class="absolute inset-0 bg-white/5 border border-white/10 rounded-lg"></span>
             RECRUIT
           </button>
         </div>
@@ -104,7 +104,7 @@
         </div>
         
         <!-- Google Button (Refined Scale) -->
-        <div class="flex justify-center py-2 group-hover:scale-105 transition-transform">
+        <div class="flex justify-center py-2 transition-transform">
           <GoogleSignInButton
             @success="handleLoginSuccess"
             @error="handleLoginError"

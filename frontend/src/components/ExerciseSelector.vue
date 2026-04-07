@@ -5,20 +5,23 @@
       @click="$emit('update:modelValue', ex.id)"
       class="group relative flex-1 flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl transition-all duration-300 overflow-hidden min-w-[120px]"
       :class="modelValue === ex.id 
-        ? 'bg-primary-500 text-white shadow-[0_0_20px_rgba(255,69,0,0.3)] scale-[1.02] z-10' 
+        ? 'bg-primary-500 text-white shadow-[0_0_20px_rgba(255,69,0,0.3)] z-10' 
         : 'text-muted hover:text-foreground hover:bg-foreground/5'"
     >
       <!-- Background Shimmer on Hover -->
       <div v-if="modelValue !== ex.id" class="absolute inset-x-0 bottom-0 h-0.5 bg-primary-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
       
-      <component :is="ex.icon" :class="['w-4 h-4 transition-transform duration-500', modelValue === ex.id ? 'scale-110' : 'group-hover:rotate-12']" />
-      <span class="text-[11px] font-black uppercase tracking-[0.15em] font-tight">{{ ex.label }}</span>
+       <component :is="ex.icon" :class="['w-4 h-4 transition-transform duration-500', modelValue === ex.id ? '' : 'group-hover:rotate-12']" />
+      <span class="text-[11px] font-black uppercase tracking-[0.15em] font-tight">{{ i18n.t(ex.id) }}</span>
     </button>
   </div>
 </template>
 
 <script setup>
 import { Dumbbell, Zap, Flame, Target, Trophy, Globe } from 'lucide-vue-next';
+import { useI18nStore } from '../stores/i18n';
+ 
+const i18n = useI18nStore();
 
 defineProps({
   modelValue: {

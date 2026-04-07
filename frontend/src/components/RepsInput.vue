@@ -23,7 +23,7 @@
       <button 
         v-for="val in [1, 5, 10]" :key="val"
         @click="addReps(val)"
-        class="group relative overflow-hidden py-6 px-4 bg-foreground/5 border border-border rounded-2xl transition-all hover:bg-primary-500 hover:scale-105 active:scale-95 shadow-xl"
+        class="group relative overflow-hidden py-6 px-4 bg-foreground/5 border border-border rounded-2xl transition-all hover:bg-primary-500 shadow-xl"
       >
         <span class="relative z-10 text-2xl font-black text-precision transition-colors group-hover:text-white text-foreground">+{{ val }}</span>
         <div class="absolute inset-0 bg-gradient-to-tr from-foreground/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -91,14 +91,7 @@ const customReps = ref(null);
 const addedWeight = ref(null);
 
 const activeLabel = computed(() => {
-  const map = {
-    pullups: 'Pullups',
-    muscleups: 'Muscle Ups',
-    dips: 'Dips',
-    pushups: 'Pushups',
-    weighted_pullups: 'Weighted'
-  };
-  return map[props.exerciseType] || 'Reps';
+  return i18n.t(props.exerciseType);
 });
 
 const addReps = async (count) => {

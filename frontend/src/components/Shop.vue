@@ -11,7 +11,7 @@
       
       <!-- Currency Display (Precision Pill) -->
       <div class="flex items-center gap-4 bg-surface/40 px-6 py-4 rounded-2xl border border-border shadow-2xl backdrop-blur-xl group hover:border-primary-500/30 transition-all">
-        <div class="p-2 bg-primary-500/10 rounded-lg group-hover:scale-110 transition-transform">
+        <div class="p-2 bg-primary-500/10 rounded-lg transition-transform">
           <Zap class="w-5 h-5 text-primary-500" />
         </div>
         <div class="flex flex-col">
@@ -130,7 +130,7 @@
                   @click="equipItem(item)"
                   :disabled="isEquipped(item)"
                   class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
-                  :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-neon-lime text-black hover:scale-105 active:scale-95 shadow-lg shadow-neon-lime/20'"
+                  :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-neon-lime text-black shadow-lg shadow-neon-lime/20'"
                 >
                   {{ isEquipped(item) ? 'ACTIVE' : 'EQUIP' }}
                 </button>
@@ -147,7 +147,7 @@
           class="w-full flex items-center justify-between p-8 bg-surface/40 rounded-3xl border border-border hover:border-primary-500/20 transition-all group"
         >
           <div class="flex items-center gap-6">
-            <div class="p-4 bg-primary-500/10 rounded-2xl group-hover:scale-110 transition-transform">
+            <div class="p-4 bg-primary-500/10 rounded-2xl transition-transform">
               <Sparkles class="w-7 h-7 text-primary-500" />
             </div>
             <div class="text-left">
@@ -198,7 +198,7 @@
                 <div class="flex items-center justify-between mt-6">
                   <div v-if="item.owned" class="flex items-center gap-2 text-neon-lime"><Check class="w-4 h-4" /><span class="text-[10px] font-black uppercase tracking-widest leading-none">ACQUIRED</span></div>
                   <div v-else class="text-[9px] font-black uppercase tracking-widest text-primary-500/60 leading-none">SPECIAL REWARD</div>
-                  <button v-if="item.owned" @click="equipItem(item)" :disabled="isEquipped(item)" class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all" :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-neon-lime text-black hover:scale-105 active:scale-95 shadow-lg shadow-neon-lime/20'">{{ isEquipped(item) ? 'ACTIVE' : 'EQUIP' }}</button>
+                  <button v-if="item.owned" @click="equipItem(item)" :disabled="isEquipped(item)" class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all" :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-neon-lime text-black shadow-lg shadow-neon-lime/20'">{{ isEquipped(item) ? 'ACTIVE' : 'EQUIP' }}</button>
                 </div>
               </div>
             </div>

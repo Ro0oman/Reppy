@@ -12,7 +12,7 @@
       class="card-stats p-10 bg-gradient-radial from-primary-500/10 via-transparent to-transparent border-primary-500/20 group relative overflow-hidden">
       
       <!-- Decorative Background Icon -->
-      <Archive class="absolute -right-8 -bottom-8 w-64 h-64 text-primary-500/5 -rotate-12 group-hover:scale-110 transition-transform duration-1000" />
+      <Archive class="absolute -right-8 -bottom-8 w-64 h-64 text-primary-500/5 -rotate-12 transition-transform duration-1000" />
       
       <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
         <div class="flex items-center gap-8">
@@ -32,7 +32,7 @@
         </div>
         
         <button @click="handleOpenChest" :disabled="openingChest"
-          class="btn-reppy !px-12 !py-6 !text-lg !rounded-3xl shadow-[0_20px_50px_rgba(255,69,0,0.3)] hover:scale-105 active:scale-95 disabled:opacity-20 disabled:grayscale transition-all">
+          class="btn-reppy !px-12 !py-6 !text-lg !rounded-3xl shadow-[0_20px_50px_rgba(255,69,0,0.3)] disabled:opacity-20 disabled:grayscale transition-all">
           <Sparkles class="w-6 h-6" />
           {{ openingChest ? 'DECRYPTING...' : 'OPEN CHEST' }}
         </button>
@@ -114,7 +114,7 @@
               </div>
               <button @click="toggleEquip(item)" 
                 class="w-full py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all"
-                :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-primary-500 text-white hover:scale-105 active:scale-95 shadow-lg shadow-primary-500/20'">
+                :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-primary-500 text-white shadow-lg shadow-primary-500/20'">
                 {{ isEquipped(item) ? 'DEACTIVATE' : 'ACTIVATE' }}
               </button>
             </div>
@@ -152,7 +152,7 @@
               </div>
               <button @click="toggleEquip(item)" 
                 class="w-full py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all"
-                :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-primary-500 text-white hover:scale-105 active:scale-95 shadow-lg shadow-primary-500/20'">
+                :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-primary-500 text-white shadow-lg shadow-primary-500/20'">
                 {{ isEquipped(item) ? 'DEACTIVATE' : 'ACTIVATE' }}
               </button>
             </div>

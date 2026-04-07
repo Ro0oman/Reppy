@@ -10,7 +10,7 @@
       <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <!-- Logo Core -->
         <div class="flex items-center gap-4 group cursor-pointer" @click="view = 'dashboard'">
-          <div class="w-10 h-10 bg-primary-500 rounded-xl flex items-center justify-center font-black italic text-white shadow-[0_0_20px_rgba(255,69,0,0.3)] transform group-hover:scale-110 transition-transform font-industrial">R</div>
+          <div class="w-10 h-10 bg-primary-500 rounded-xl flex items-center justify-center font-black italic text-white shadow-[0_0_20px_rgba(255,69,0,0.3)] transition-transform font-industrial">R</div>
           <span class="text-2xl font-black tracking-tighter text-foreground font-industrial uppercase italic">REPPY<span class="text-primary-500">.</span></span>
         </div>
         
@@ -101,7 +101,7 @@
       <div class="flex items-center justify-around h-16">
         <button v-for="nav in mobileNavLinks" :key="nav.id"
           @click="view = nav.id" 
-          class="flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all active:scale-75"
+          class="flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all"
           :class="view === nav.id ? 'text-primary-500' : 'text-zinc-600'">
           <component :is="nav.icon" class="w-5 h-5" :class="view === nav.id ? 'fill-primary-500/10' : ''" />
           <span class="text-[8px] font-black uppercase tracking-widest font-tight">{{ nav.short || nav.id }}</span>
@@ -112,9 +112,9 @@
         </button>
 
         <!-- Mobile Profile -->
-        <button @click="view = 'profile'" class="flex-1 flex flex-col items-center justify-center gap-1 active:scale-75 transition-all">
+        <button @click="view = 'profile'" class="flex-1 flex flex-col items-center justify-center gap-1 transition-all">
           <AvatarFrame :src="authStore.user?.avatar_url" :border-css="view === 'profile' ? authStore.user?.border_css : ''" :size="24" 
-               class="transition-all" :class="view === 'profile' ? 'scale-110' : 'opacity-40 grayscale'" />
+               class="transition-all" :class="view === 'profile' ? '' : 'opacity-40 grayscale'" />
           <span class="text-[8px] font-black uppercase tracking-widest font-tight" :class="view === 'profile' ? 'text-primary-500' : 'text-zinc-600'">PROFILE</span>
         </button>
       </div>
@@ -194,7 +194,7 @@
       </div>
       
       <button @click="showRoulette = true" 
-        class="relative bg-steel-grey/60 backdrop-blur-xl p-6 rounded-3xl shadow-2xl hover:scale-110 active:scale-95 transition-all duration-500 border border-white/10 group overflow-hidden">
+        class="relative bg-steel-grey/60 backdrop-blur-xl p-6 rounded-3xl shadow-2xl transition-all duration-500 border border-white/10 group overflow-hidden">
         
         <div class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-transparent"></div>
         <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer pointer-events-none"></div>

@@ -72,7 +72,7 @@
                 </div>
               </div>
               <button @click="addFriend(user.id)"
-                class="flex items-center gap-3 px-5 py-2.5 bg-primary-500 hover:bg-primary-600 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-primary-500/20 active:scale-95 text-white">
+                class="flex items-center gap-3 px-5 py-2.5 bg-primary-500 hover:bg-primary-600 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-primary-500/20 text-white">
                 <UserPlus class="w-3.5 h-3.5" />
                 {{ i18n.t('btn_add_friend') }}
               </button>
@@ -101,7 +101,7 @@
               class="bg-foreground/[0.02] border border-border hover:border-primary-500/30 group p-6 rounded-[2rem] flex items-center justify-between transition-all cursor-pointer">
               <div class="flex items-center gap-5">
                 <div class="relative">
-                  <AvatarFrame :src="friend.avatar_url" :border-css="friend.border_css" :avatar-css="friend.avatar_css" :size="64" class="group-hover:scale-110 transition-transform" />
+                  <AvatarFrame :src="friend.avatar_url" :border-css="friend.border_css" :avatar-css="friend.avatar_css" :size="64" class="transition-transform" />
                   <div
                     class="absolute -bottom-1 -right-1 w-6 h-6 bg-primary-500 rounded-full flex items-center justify-center border-4 border-background shadow-xl">
                     <Check class="w-3 h-3 text-white" />
@@ -116,7 +116,7 @@
                 </div>
               </div>
               <div
-                class="h-10 w-10 bg-foreground/5 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
+                class="h-10 w-10 bg-foreground/5 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
                 <ChevronRight class="w-5 h-5 text-primary-500" />
               </div>
             </div>
@@ -159,15 +159,7 @@ const loadingSearch = ref(false);
 const activeExercise = ref('all');
 
 const activeExerciseLabel = computed(() => {
-  const map = {
-    all: 'Global',
-    pullups: 'Pullups',
-    muscleups: 'Muscle Ups',
-    dips: 'Dips',
-    pushups: 'Pushups',
-    weighted_pullups: 'Weighted'
-  };
-  return map[activeExercise.value] || activeExercise.value;
+  return i18n.t(activeExercise.value);
 });
 
 const searchUsers = async () => {

@@ -21,7 +21,7 @@
               </h2>
               <p class="text-zinc-500 font-bold text-sm md:text-lg uppercase tracking-widest max-w-2xl">{{ activeBoss.description }}</p>
            </div>
-           <button @click="$emit('start')" class="btn-reppy !px-12 !py-5 shadow-2xl group-hover:scale-105 transition-transform">
+           <button @click="$emit('start')" class="btn-reppy !px-12 !py-5 shadow-2xl transition-transform">
              JOIN THE HUNT
            </button>
         </div>
@@ -57,7 +57,7 @@
     <!-- Features Bento Grid (Industrial Modules) -->
     <section class="max-w-7xl w-full px-6 py-24 md:py-32 grid grid-cols-1 md:grid-cols-3 gap-8">
       <div class="card-stats space-y-8 group hover:border-primary-500/30">
-        <div class="w-16 h-16 bg-primary-500/10 rounded-2xl flex items-center justify-center text-primary-500 group-hover:scale-110 transition-transform">
+        <div class="w-16 h-16 bg-primary-500/10 rounded-2xl flex items-center justify-center text-primary-500 transition-transform">
           <Activity class="w-8 h-8" />
         </div>
         <div class="space-y-4">
@@ -70,7 +70,7 @@
       </div>
 
       <div class="card-stats space-y-8 group hover:border-primary-500/30">
-        <div class="w-16 h-16 bg-neon-lime/10 rounded-2xl flex items-center justify-center text-neon-lime group-hover:scale-110 transition-transform">
+        <div class="w-16 h-16 bg-neon-lime/10 rounded-2xl flex items-center justify-center text-neon-lime transition-transform">
           <Trophy class="w-8 h-8" />
         </div>
         <div class="space-y-4">
@@ -83,7 +83,7 @@
       </div>
 
       <div class="card-stats space-y-8 group hover:border-primary-500/30">
-        <div class="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+        <div class="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 transition-transform">
           <Users class="w-8 h-8" />
         </div>
         <div class="space-y-4">
