@@ -243,6 +243,16 @@ const showEasterModal = ref(false);
 const showRoulette = ref(false);
 const canSpinToday = ref(false);
 const showCoinsInfo = ref(false);
+const isHistoryNav = ref(false);
+
+// Handle browser back/forward buttons
+window.addEventListener('popstate', (event) => {
+  if (event.state && event.state.view) {
+    isHistoryNav.value = true;
+    view.value = event.state.view;
+    currentProfileId.value = event.state.profileId || null;
+  }
+});
 
 const navLinks = [
   { id: 'dashboard', label: 'nav_dashboard', fallback: 'DASHBOARD', icon: LayoutDashboard },
@@ -277,13 +287,24 @@ const onSpun = () => { canSpinToday.value = false; showRoulette.value = false; }
 
 const openProfile = (id) => { currentProfileId.value = id; view.value = 'profile'; };
 
-watch(view, (newView) => localStorage.setItem('reppy_view', newView));
+// Synchronize state with history and storage
+watch([view, currentProfileId], ([newView, newProfileId]) => {
+  localStorage.setItem('reppy_view', newView);
+  
+  if (!isHistoryNav.value) {
+    window.history.pushState({ view: newView, profileId: newProfileId }, '', '');
+  }
+  isHistoryNav.value = false;
+});
 
 watch(() => authStore.isAuthenticated, (val) => {
   if (val && authStore.user && !authStore.user.has_seen_easter_modal) showEasterModal.value = true;
 }, { immediate: true });
 
 onMounted(async () => {
+  // Initialize history state on load
+  window.history.replaceState({ view: view.value, profileId: currentProfileId.value }, '', '');
+
   if (authStore.isAuthenticated) {
     checkRoulette();
     if (authStore.user && !authStore.user.has_seen_easter_modal) showEasterModal.value = true;
