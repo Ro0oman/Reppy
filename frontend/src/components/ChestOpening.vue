@@ -49,7 +49,7 @@
                  <div v-else-if="item.type === 'border'" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-[4px] md:border-[6px] border-white/10"></div>
                  <BackgroundEffect v-else-if="item.type === 'background'" :background-css="item.css_value" is-preview class="scale-50 rounded-xl" />
                  <div v-else-if="item.type === 'coins'" class="p-3 md:p-4 bg-primary-500/10 rounded-2xl">
-                    <Zap class="w-8 h-8 md:w-10 md:h-10 text-primary-500" />
+                    <Coins class="w-8 h-8 md:w-10 md:h-10 text-primary-500" />
                  </div>
                  
                  <!-- Tier Glow -->
@@ -99,7 +99,7 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from 'vue';
-import { X, Trophy, Sparkles, Zap } from 'lucide-vue-next';
+import { X, Trophy, Sparkles, Zap, Coins } from 'lucide-vue-next';
 import BackgroundEffect from './BackgroundEffect.vue';
 import confetti from 'canvas-confetti';
 

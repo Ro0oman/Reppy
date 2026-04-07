@@ -12,7 +12,7 @@
       <!-- Currency Display (Precision Pill) -->
       <div class="flex items-center gap-4 bg-surface/40 px-6 py-4 rounded-2xl border border-border shadow-2xl backdrop-blur-xl group hover:border-primary-500/30 transition-all">
         <div class="p-2 bg-primary-500/10 rounded-lg transition-transform">
-          <Zap class="w-5 h-5 text-primary-500" />
+          <Coins class="w-5 h-5 text-primary-500" />
         </div>
         <div class="flex flex-col">
           <span class="text-3xl font-black text-precision text-foreground tracking-tighter leading-none">{{ authStore.user?.reppy_coins || 0 }}</span>
@@ -214,7 +214,7 @@ import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
-import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, Zap, Check } from 'lucide-vue-next';
+import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, Coins, Check } from 'lucide-vue-next';
 import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
 

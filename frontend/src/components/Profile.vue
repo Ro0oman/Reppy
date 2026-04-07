@@ -34,7 +34,7 @@
 
           <div class="flex flex-wrap items-center justify-center md:justify-start gap-4">
             <div class="flex items-center gap-3 bg-surface/5 px-5 py-3 rounded-xl border border-border group/coins">
-              <Zap class="w-4 h-4 text-primary-500 transition-transform" />
+              <Coins class="w-4 h-4 text-primary-500 transition-transform" />
               <div class="flex items-baseline gap-1.5">
                 <span class="text-2xl font-black text-precision text-foreground leading-none">{{ user.reppy_coins || 0 }}</span>
                 <span class="text-[8px] font-black text-muted uppercase tracking-widest">COINS</span>
@@ -216,7 +216,7 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
-import { Camera, Settings, LogOut, Activity, Flame, Trophy, HelpCircle, X as XIcon, Sword, Zap, Heart, Shield } from 'lucide-vue-next';
+import { Camera, Settings, LogOut, Activity, Flame, Trophy, HelpCircle, X as XIcon, Sword, Zap, Heart, Shield, Coins } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { useThemeStore } from '../stores/theme';

@@ -48,8 +48,8 @@
 
           <div class="flex items-center gap-4">
             <!-- Currency Module -->
-            <div @click="showCoinsInfo = true" class="flex items-center gap-3 bg-surface/5 px-4 py-2 rounded-xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group">
-               <Zap class="w-3.5 h-3.5 text-primary-500 transition-transform" />
+             <div @click="showCoinsInfo = true" class="flex items-center gap-3 bg-surface/5 px-4 py-2 rounded-xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group">
+               <Coins class="w-3.5 h-3.5 text-primary-500 transition-transform" />
                <span class="text-sm font-black text-precision text-foreground">{{ authStore.user?.reppy_coins || 0 }}</span>
             </div>
 
@@ -175,7 +175,7 @@
 
           <!-- Economic Projection -->
           <div class="bg-white/5 p-6 rounded-3xl border border-white/5 flex items-center gap-6">
-            <div class="p-3 bg-primary-500/10 rounded-2xl"><Zap class="w-6 h-6 text-primary-500" /></div>
+            <div class="p-3 bg-primary-500/10 rounded-2xl"><Coins class="w-6 h-6 text-primary-500" /></div>
             <div>
                <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest">MONTHLY PROJECTION</p>
                <p class="text-sm font-black text-white font-tight">ACTIVE OPERATIVES YIELD <span class="text-primary-500 text-precision">~1200 RC</span></p>
@@ -212,7 +212,7 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue';
 import axios from 'axios';
-import { Github, Star, Home, LayoutDashboard, Users, ShoppingBag, Package, RefreshCw, HelpCircle, X, Zap } from 'lucide-vue-next';
+import { Github, Star, Home, LayoutDashboard, Users, ShoppingBag, Package, RefreshCw, HelpCircle, X, Coins } from 'lucide-vue-next';
 import { useAuthStore } from './stores/auth';
 import { useI18nStore } from './stores/i18n';
 
