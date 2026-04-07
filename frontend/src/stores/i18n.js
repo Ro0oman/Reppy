@@ -140,7 +140,20 @@ const translations = {
     ERR_GOOGLE_ONLY: 'This account uses Google Login. Please use the Google button.',
     ERR_USER_NOT_FOUND: 'No account found with this email.',
     ERR_WRONG_PASSWORD: 'Incorrect password. Please try again.',
-    ERR_SERVER: 'A system error occurred. Please try again later.'
+    ERR_SERVER: 'A system error occurred. Please try again later.',
+
+    // Onboarding
+    onboarding_title: 'Welcome to Reppy',
+    onboarding_subtitle: 'The elite training protocol for athletes.',
+    onboarding_mission_title: 'The Mission',
+    onboarding_mission_desc: 'Log your reps and earn Reppy Coins (RC). Every set counts towards your progression and status in the global circuit.',
+    onboarding_damage_title: 'Universal Impact',
+    onboarding_damage_desc: 'Your reps deal damage to active Boss Anomalies. Defeat them with the community to unlock legendary loot.',
+    onboarding_rewards_title: 'The Armory',
+    onboarding_rewards_desc: 'Spend RC in the shop for exclusive titles, borders, and effects. Claim chests from fallen bosses to grow your collection.',
+    onboarding_btn_next: 'Next Phase',
+    onboarding_btn_back: 'Previous',
+    onboarding_btn_finish: 'Begin Operation'
   },
   es: {
     // Landing
@@ -281,7 +294,20 @@ const translations = {
     ERR_GOOGLE_ONLY: 'Esta cuenta usa Google. Por favor, usa el botón de Google.',
     ERR_USER_NOT_FOUND: 'No se encontró ninguna cuenta con este correo.',
     ERR_WRONG_PASSWORD: 'Contraseña incorrecta. Inténtalo de nuevo.',
-    ERR_SERVER: 'Ocurrió un error del sistema. Reinténtalo más tarde.'
+    ERR_SERVER: 'Ocurrió un error del sistema. Reinténtalo más tarde.',
+
+    // Onboarding
+    onboarding_title: 'Bienvenido a Reppy',
+    onboarding_subtitle: 'El protocolo de entrenamiento de élite.',
+    onboarding_mission_title: 'La Misión',
+    onboarding_mission_desc: 'Registra tus reps y gana Reppy Coins (RC). Cada serie cuenta para tu progreso y estatus en el circuito global.',
+    onboarding_damage_title: 'Impacto Universal',
+    onboarding_damage_desc: 'Tus repeticiones infligen daño a los Boss activos. Derrótalos con la comunidad para desbloquear botín legendario.',
+    onboarding_rewards_title: 'La Armería',
+    onboarding_rewards_desc: 'Gasta tus RC en la tienda en títulos, bordes y efectos exclusivos. Reclama cofres de bosses caídos para aumentar tu colección.',
+    onboarding_btn_next: 'Siguiente Fase',
+    onboarding_btn_back: 'Anterior',
+    onboarding_btn_finish: 'Iniciar Operación'
   }
 };
 

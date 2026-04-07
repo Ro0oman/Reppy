@@ -123,7 +123,7 @@
     <!-- Global Interface Components -->
     <NotificationToast />
     <ConfirmDialog />
-    <EasterWelcomeModal :show="showEasterModal" @close="showEasterModal = false" />
+    <WelcomeModal :show="showEasterModal" @close="showEasterModal = false" />
     <LuckyWheel :show="showRoulette" @close="showRoulette = false" @spun="onSpun" />
 
     <!-- Economy Codex Modal -->
@@ -228,7 +228,7 @@ import AdminPanel from './components/AdminPanel.vue'
 import LuckyWheel from './components/LuckyWheel.vue'
 import AvatarFrame from './components/AvatarFrame.vue'
 import BackgroundEffect from './components/BackgroundEffect.vue'
-import EasterWelcomeModal from './components/EasterWelcomeModal.vue'
+import WelcomeModal from './components/WelcomeModal.vue'
 import NotificationToast from './components/NotificationToast.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
 
