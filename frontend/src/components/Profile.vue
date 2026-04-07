@@ -76,34 +76,34 @@
            <div class="card-stats border-white/5 h-full space-y-8">
               <div class="flex items-center gap-3">
                 <Activity class="w-5 h-5 text-primary-500" />
-                <h3 class="text-sm font-black text-industrial text-white tracking-widest uppercase">STATISTICS</h3>
+                <h3 class="text-sm font-black text-industrial text-foreground tracking-widest uppercase">STATISTICS</h3>
               </div>
               
               <div class="space-y-6">
                 <!-- Total Reps Pill -->
                 <div class="group/stat">
-                   <p class="text-[9px] font-black text-zinc-600 uppercase tracking-widest mb-1">Total Magnitude</p>
+                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Total Magnitude</p>
                    <div class="flex items-baseline gap-2">
-                      <span class="text-5xl font-black text-precision text-white tracking-tighter">{{ stats.totalReps || 0 }}</span>
+                      <span class="text-5xl font-black text-precision text-foreground tracking-tighter">{{ stats.totalReps || 0 }}</span>
                       <span class="text-[10px] font-black text-primary-500 uppercase tracking-widest">REPS</span>
                    </div>
                 </div>
-
+ 
                 <!-- Streak Pill -->
                 <div class="group/stat">
-                   <p class="text-[9px] font-black text-zinc-600 uppercase tracking-widest mb-1">Consistency Streak</p>
+                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Consistency Streak</p>
                    <div class="flex items-center gap-3">
                       <span class="text-4xl font-black text-precision text-orange-500 tracking-tighter">{{ stats.streak || 0 }}</span>
                       <Flame class="w-6 h-6 text-orange-500 animate-pulse" />
                    </div>
                 </div>
-
+ 
                 <!-- Goal Pill -->
                 <div class="group/stat">
-                   <p class="text-[9px] font-black text-zinc-600 uppercase tracking-widest mb-1">Protocol Goal</p>
+                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Protocol Goal</p>
                    <div class="flex items-baseline gap-2">
                       <span class="text-4xl font-black text-precision text-neon-lime tracking-tighter">{{ user.daily_goal || 0 }}</span>
-                      <span class="text-[10px] font-black text-zinc-500 uppercase tracking-widest">PER DAY</span>
+                      <span class="text-[10px] font-black text-muted uppercase tracking-widest">PER DAY</span>
                    </div>
                 </div>
               </div>
@@ -114,7 +114,7 @@
         <div class="md:col-span-2">
            <div class="card-stats border-white/5 space-y-6 h-full flex flex-col justify-center">
               <div class="flex items-center justify-between mb-2">
-                <h3 class="text-[10px] font-black text-zinc-500 tracking-[0.3em] uppercase">DISTRIBUTION HEATMAP</h3>
+                <h3 class="text-[10px] font-black text-muted tracking-[0.3em] uppercase">DISTRIBUTION HEATMAP</h3>
                 <span class="text-[10px] font-black text-neon-lime tabular-nums uppercase tracking-widest">Active 365 Days</span>
               </div>
               <Heatmap :data="heatmapData" class="flex-1 min-h-[180px]" />
@@ -135,17 +135,17 @@
           <div class="space-y-2">
             <label class="text-[10px] font-black uppercase tracking-widest text-muted px-1">IDENTIFIER</label>
             <input v-model="settingsForm.name" type="text"
-              class="w-full bg-surface/40 border border-border rounded-xl px-5 py-4 text-foreground text-precision focus:border-primary-500/50 outline-none transition-all shadow-inner" />
+              class="input-tactical" />
           </div>
           <div class="space-y-2">
             <label class="text-[10px] font-black uppercase tracking-widest text-muted px-1">DAILY TARGET</label>
             <input v-model.number="settingsForm.daily_goal" type="number"
-              class="w-full bg-surface/40 border border-border rounded-xl px-5 py-4 text-foreground text-precision focus:border-primary-500/50 outline-none transition-all shadow-inner" />
+              class="input-tactical" />
           </div>
           <div class="space-y-2">
             <label class="text-[10px] font-black uppercase tracking-widest text-muted px-1">BODY MASS (KG)</label>
             <input v-model.number="settingsForm.body_weight" type="number" step="0.1"
-              class="w-full bg-surface/40 border border-border rounded-xl px-5 py-4 text-foreground text-precision focus:border-primary-500/50 outline-none transition-all shadow-inner" />
+              class="input-tactical" />
           </div>
           
           <!-- Theme Protocol Toggle -->

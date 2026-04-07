@@ -29,24 +29,24 @@
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="space-y-1.5">
-            <label class="text-[10px] uppercase font-black text-zinc-500 tracking-widest">Nombre</label>
-            <input v-model="newCosmetic.name" type="text" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary-500/50 outline-none transition-all" placeholder="Ej: Aura de Fuego">
+            <label class="text-[10px] uppercase font-black text-muted tracking-widest px-1">Nombre</label>
+            <input v-model="newCosmetic.name" type="text" class="input-tactical" placeholder="Ej: Aura de Fuego">
           </div>
           <div class="space-y-1.5">
-            <label class="text-[10px] uppercase font-black text-zinc-500 tracking-widest">Tipo</label>
-            <select v-model="newCosmetic.type" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary-500/50 outline-none transition-all">
+            <label class="text-[10px] uppercase font-black text-muted tracking-widest px-1">Tipo</label>
+            <select v-model="newCosmetic.type" class="select-tactical">
               <option value="title">Título</option>
               <option value="border">Marco</option>
               <option value="background">Fondo</option>
             </select>
           </div>
           <div class="space-y-1.5">
-            <label class="text-[10px] uppercase font-black text-zinc-500 tracking-widest">Precio (Coins)</label>
-            <input v-model.number="newCosmetic.price" type="number" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary-500/50 outline-none transition-all">
+            <label class="text-[10px] uppercase font-black text-muted tracking-widest px-1">Precio (Coins)</label>
+            <input v-model.number="newCosmetic.price" type="number" class="input-tactical">
           </div>
           <div class="space-y-1.5">
-            <label class="text-[10px] uppercase font-black text-zinc-500 tracking-widest">Rareza</label>
-            <select v-model="newCosmetic.rarity" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary-500/50 outline-none transition-all">
+            <label class="text-[10px] uppercase font-black text-muted tracking-widest px-1">Rareza</label>
+            <select v-model="newCosmetic.rarity" class="select-tactical">
               <option value="common">Común</option>
               <option value="rare">Raro</option>
               <option value="epic">Épico</option>
@@ -54,12 +54,12 @@
             </select>
           </div>
           <div class="md:col-span-2 space-y-1.5">
-            <label class="text-[10px] uppercase font-black text-zinc-500 tracking-widest">Descripción</label>
-            <input v-model="newCosmetic.description" type="text" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary-500/50 outline-none transition-all" placeholder="Descripción breve...">
+            <label class="text-[10px] uppercase font-black text-muted tracking-widest px-1">Descripción</label>
+            <input v-model="newCosmetic.description" type="text" class="input-tactical" placeholder="Descripción breve...">
           </div>
           <div class="space-y-1.5">
-            <label class="text-[10px] uppercase font-black text-zinc-500 tracking-widest">CSS / Estilo</label>
-            <input v-model="newCosmetic.css_value" type="text" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary-500/50 outline-none transition-all" placeholder="Ej: text-pink-500 frame-neon">
+            <label class="text-[10px] uppercase font-black text-muted tracking-widest px-1">CSS / Estilo</label>
+            <input v-model="newCosmetic.css_value" type="text" class="input-tactical" placeholder="Ej: text-pink-500 frame-neon">
           </div>
           <div class="flex items-center gap-3 pt-6">
             <input v-model="newCosmetic.is_seasonal" type="checkbox" id="is_seasonal" class="w-5 h-5 rounded border-white/10 bg-white/5 text-primary-600 focus:ring-primary-500/50">
@@ -114,28 +114,28 @@
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-1.5">
-            <label class="text-[10px] uppercase font-black text-zinc-500 tracking-widest">Nombre del Boss</label>
-            <input v-model="newBoss.name" type="text" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary-500/50 outline-none transition-all" placeholder="Ej: Titán del Acero">
+            <label class="text-[10px] uppercase font-black text-muted tracking-widest px-1">Nombre del Boss</label>
+            <input v-model="newBoss.name" type="text" class="input-tactical" placeholder="Ej: Titán del Acero">
           </div>
           <div class="space-y-1.5">
-            <label class="text-[10px] uppercase font-black text-zinc-500 tracking-widest">HP Total</label>
-            <input v-model.number="newBoss.total_hp" type="number" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary-500/50 outline-none transition-all">
+            <label class="text-[10px] uppercase font-black text-muted tracking-widest px-1">HP Total</label>
+            <input v-model.number="newBoss.total_hp" type="number" class="input-tactical">
           </div>
           <div class="md:col-span-2 space-y-1.5">
-            <label class="text-[10px] uppercase font-black text-zinc-500 tracking-widest">Descripción / Lore</label>
-            <textarea v-model="newBoss.description" rows="2" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary-500/50 outline-none transition-all" placeholder="Historia del boss..."></textarea>
+            <label class="text-[10px] uppercase font-black text-muted tracking-widest px-1">Descripción / Lore</label>
+            <textarea v-model="newBoss.description" rows="2" class="input-tactical" placeholder="Historia del boss..."></textarea>
           </div>
           <div class="space-y-1.5">
-            <label class="text-[10px] uppercase font-black text-zinc-500 tracking-widest">Fecha Inicio</label>
-            <input v-model="newBoss.start_date" type="datetime-local" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary-500/50 outline-none transition-all">
+            <label class="text-[10px] uppercase font-black text-muted tracking-widest px-1">Fecha Inicio</label>
+            <input v-model="newBoss.start_date" type="datetime-local" class="input-tactical">
           </div>
           <div class="space-y-1.5">
-            <label class="text-[10px] uppercase font-black text-zinc-500 tracking-widest">Fecha Fin</label>
-            <input v-model="newBoss.end_date" type="datetime-local" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary-500/50 outline-none transition-all">
+            <label class="text-[10px] uppercase font-black text-muted tracking-widest px-1">Fecha Fin</label>
+            <input v-model="newBoss.end_date" type="datetime-local" class="input-tactical">
           </div>
           <div class="md:col-span-2 space-y-1.5">
-            <label class="text-[10px] uppercase font-black text-zinc-500 tracking-widest">URL Imagen (.png transparente)</label>
-            <input v-model="newBoss.image_url" type="text" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary-500/50 outline-none transition-all" placeholder="https://...">
+            <label class="text-[10px] uppercase font-black text-muted tracking-widest px-1">URL Imagen (.png transparente)</label>
+            <input v-model="newBoss.image_url" type="text" class="input-tactical" placeholder="https://...">
           </div>
         </div>
         <button @click="createBoss" class="mt-8 bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest px-8 py-4 rounded-2xl w-full md:w-auto transition-all shadow-xl shadow-indigo-600/20">

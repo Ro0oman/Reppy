@@ -1,87 +1,117 @@
 <template>
-  <div class="relative flex flex-col gap-2 transition-opacity duration-500" :class="{ 'opacity-40 pointer-events-none': loading }">
-    <p class="text-[10px] font-black uppercase tracking-widest text-zinc-500 px-1 mb-1">
-      <span class="text-white">{{ totalYearReps }}</span> {{ exerciseLabel }} {{ i18n.locale === 'es' ? 'en' : 'in' }} {{ selectedYear }}
-    </p>
-    
-    <!-- GitHub-Style Activity Box -->
-    <div class="relative bg-surface border border-border rounded-md p-4 lg:p-6 group/board">
-      <!-- Tooltip -->
-      <transition name="tooltip">
-        <div v-if="hoveredDay" 
-          class="absolute z-[100] px-4 py-2 bg-surface text-foreground text-[10px] font-black rounded-xl shadow-2xl pointer-events-none whitespace-nowrap -translate-x-1/2 -translate-y-[calc(100%+12px)] border border-border"
-          :style="tooltipPosition"
-        >
-          <div class="flex flex-col items-center gap-0.5 relative">
-            <span class="text-muted font-bold mb-0.5">{{ formatDate(hoveredDay.date) }}</span>
-            <span class="text-emerald-500">
-              {{ hoveredDay.count > 0 ? `${hoveredDay.count} ${i18n.t('heatmap_reps')}` : i18n.t('heatmap_no_reps') }}
-            </span>
-            <div class="w-2 h-2 bg-surface rotate-45 absolute -bottom-3 left-1/2 -translate-x-1/2 border-b border-r border-border"></div>
+  <div class="relative flex flex-col gap-4 transition-opacity duration-500" :class="{ 'opacity-40 pointer-events-none': loading }">
+    <!-- Calendar Header -->
+    <div class="flex items-center justify-between px-1">
+      <div class="flex flex-col">
+        <h3 class="text-xl font-black uppercase tracking-tighter text-white">{{ currentMonthName }} {{ displayYear }}</h3>
+        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+          <span class="text-primary">{{ monthReps }}</span> {{ i18n.t('stats_reps') }} {{ i18n.locale === 'es' ? 'este mes' : 'this month' }}
+        </p>
+      </div>
+      
+      <div class="flex items-center gap-2 bg-surface/50 p-1 rounded-xl border border-white/5">
+        <button @click="prevMonth" class="p-2 transition-colors text-zinc-400">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <button @click="goToToday" class="px-3 py-1 text-[10px] font-black uppercase tracking-tight bg-white/5 rounded-md transition-colors text-white border border-white/10">
+          {{ i18n.locale === 'es' ? 'Hoy' : 'Today' }}
+        </button>
+        <button @click="nextMonth" class="p-2 rounded-lg transition-colors text-zinc-400">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div class="relative bg-surface/30 border border-white/5 rounded-2xl p-4 group/board backdrop-blur-md">
+      <!-- Day Detail Modal (Centered) -->
+      <transition name="modal">
+        <div v-if="selectedDay" class="fixed inset-0 z-[200] flex items-center justify-center p-4">
+          <!-- Backdrop -->
+          <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="selectedDay = null"></div>
+          
+          <!-- Modal Card -->
+          <div class="relative w-full max-w-[280px] bg-surface border border-white/10 rounded-2xl shadow-2xl p-6 overflow-hidden animate-in fade-in zoom-in duration-300">
+            <!-- Glow Effect -->
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/20 blur-[50px] rounded-full"></div>
+            
+            <div class="relative flex flex-col items-center gap-4">
+              <div class="flex flex-col items-center">
+                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 mb-1">
+                  {{ formatDate(selectedDay.date, true) }}
+                </span>
+                <h4 class="text-2xl font-black uppercase tracking-tighter text-white">
+                  {{ formatDate(selectedDay.date, false) }}
+                </h4>
+              </div>
+
+              <div class="w-full flex flex-col items-center gap-1 bg-white/[0.03] p-6 rounded-xl border border-white/5">
+                <span class="text-4xl font-black text-primary leading-none">
+                  {{ selectedDay.count }}
+                </span>
+                <span class="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                  {{ i18n.t('stats_reps') }}
+                </span>
+              </div>
+
+              <button 
+                @click="selectedDay = null"
+                class="w-full py-3 text-[10px] font-black uppercase tracking-widest bg-white/5 text-white rounded-xl transition-all border border-white/10"
+              >
+                {{ i18n.locale === 'es' ? 'Cerrar' : 'Close' }}
+              </button>
+            </div>
           </div>
         </div>
       </transition>
 
-      <div class="flex relative">
-        <!-- Weekday Labels -->
-        <div class="flex flex-col gap-[3px] pr-2 text-[9px] font-medium text-zinc-500 mt-6">
-          <span class="h-[10px] leading-[10px]">&nbsp;</span>
-          <span class="h-[10px] leading-[10px]">{{ i18n.t('day_mon') }}</span>
-          <span class="h-[10px] leading-[10px]">&nbsp;</span>
-          <span class="h-[10px] leading-[10px]">{{ i18n.t('day_wed') }}</span>
-          <span class="h-[10px] leading-[10px]">&nbsp;</span>
-          <span class="h-[10px] leading-[10px]">{{ i18n.t('day_fri') }}</span>
-          <span class="h-[10px] leading-[10px]">&nbsp;</span>
-        </div>
-
-        <div class="flex-1 overflow-x-auto scrollbar-custom relative pb-2" ref="gridContainer">
-          <!-- Month Labels -->
-          <div class="flex h-4 mb-2 relative min-w-max">
-            <span 
-              v-for="month in monthLabels" :key="month.key" 
-              class="absolute text-[9px] font-medium text-zinc-500 whitespace-nowrap"
-              :style="{ left: `${month.offset * 14}px` }"
-            >
-              {{ month.name }}
-            </span>
-          </div>
-
-          <!-- The Grid -->
-          <div class="flex gap-[3px] min-w-max">
-            <div v-for="(week, wIndex) in weeks" :key="wIndex" class="w-[11px] flex flex-col gap-[3px] shrink-0">
-              <div 
-                v-for="(day, dIndex) in week" :key="dIndex"
-                class="w-full aspect-square rounded-[2px] transition-all duration-300 relative group/day"
-                :class="[
-                  getColorClass(day),
-                  activeDay?.date === day.date ? 'ring-1 ring-white/50 z-20' : '',
-                  day.isOutsideRange ? 'opacity-0 pointer-events-none' : 'cursor-pointer hover:ring-1 hover:ring-white/40 hover:z-30'
-                ]"
-                @mouseenter="handleMouseEnter($event, day)"
-                @mouseleave="hoveredDay = null"
-                @click="!day.isOutsideRange && (clickedDay = clickedDay?.date === day.date ? null : day)"
-              >
-              </div>
-            </div>
-          </div>
+      <!-- Weekday Headers -->
+      <div class="grid grid-cols-7 mb-4">
+        <div v-for="day in weekdays" :key="day" class="text-center text-[10px] font-black uppercase tracking-widest text-zinc-500 pb-2">
+          {{ day }}
         </div>
       </div>
 
-      <!-- Footer: Legend -->
-      <div class="flex items-center justify-between mt-4 px-1">
-        <a href="#" class="text-[10px] text-zinc-500 hover:text-blue-400 transition-colors">
-          Learn how we count contributions
-        </a>
-        
-        <div class="flex items-center gap-2">
-          <span class="text-[10px] text-zinc-500">Less</span>
-          <div class="flex gap-[3px]">
-            <div v-for="level in 5" :key="level" 
-              class="w-[10px] h-[10px] rounded-[2px]"
-              :class="getLevelClass(level - 1)">
-            </div>
-          </div>
-          <span class="text-[10px] text-zinc-500">More</span>
+      <!-- Days Grid -->
+      <div class="grid grid-cols-7 gap-2 lg:gap-3">
+        <div 
+          v-for="(day, index) in calendarDays" 
+          :key="day.date || index"
+          class="aspect-square relative flex items-center justify-center rounded-xl transition-all duration-300 group/day"
+          :class="[
+            day.isCurrentMonth ? 'cursor-pointer' : 'opacity-20 pointer-events-none grayscale',
+            day.isToday ? 'ring-2 ring-primary/50 bg-primary/5' : ''
+          ]"
+          @click="day.isCurrentMonth && (selectedDay = day)"
+        >
+          <!-- Activity Indicator (Background Circle) -->
+          <div 
+            v-if="day.isCurrentMonth"
+            class="absolute inset-1 rounded-lg transition-transform duration-500"
+            :class="getColorClass(day)"
+          ></div>
+
+          <!-- Day Number -->
+          <span 
+            class="relative z-10 text-[11px] lg:text-sm font-black transition-colors"
+            :class="[
+              day.count > 0 ? 'text-white' : 'text-zinc-500',
+              day.isToday ? 'text-primary' : ''
+            ]"
+          >
+            {{ day.dayNumber }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mini Legend -->
+    <div class="flex items-center justify-end gap-3 px-1 opacity-60 hover:opacity-100 transition-opacity">
+      <span class="text-[9px] font-black uppercase tracking-widest text-zinc-500">Intensidad</span>
+      <div class="flex gap-1.5">
+        <div v-for="level in 4" :key="level" 
+          class="w-2.5 h-2.5 rounded-full"
+          :class="getLevelClass(level)">
         </div>
       </div>
     </div>
@@ -89,7 +119,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18nStore } from '../stores/i18n';
 
 const props = defineProps({
@@ -100,200 +130,151 @@ const props = defineProps({
   loading: {
     type: Boolean,
     default: false
-  },
-  selectedYear: {
-    type: Number,
-    default: new Date().getFullYear()
-  },
-  exerciseLabel: {
-    type: String,
-    default: 'Reps'
   }
 });
 
 const i18n = useI18nStore();
-const hoveredDay = ref(null);
-const clickedDay = ref(null);
-const gridContainer = ref(null);
-const tooltipPos = ref({ top: 0, left: 0 });
+const selectedDay = ref(null);
 
-const activeDay = computed(() => hoveredDay.value || clickedDay.value);
+// State for navigation
+const today = new Date();
+const currentMonth = ref(today.getMonth());
+const displayYear = ref(today.getFullYear());
 
-const handleMouseEnter = (event, day) => {
-  if (day.isOutsideRange || day.isFuture) return;
-  
-  hoveredDay.value = day;
-  
-  const rect = event.target.getBoundingClientRect();
-  const parentRect = event.target.closest('.group\\/board').getBoundingClientRect();
-  
-  tooltipPos.value = {
-    top: rect.top - parentRect.top,
-    left: rect.left - parentRect.left + (rect.width / 2)
-  };
-};
+const weekdays = computed(() => [
+  i18n.t('day_mon'), i18n.t('day_tue'), i18n.t('day_wed'), 
+  i18n.t('day_thu'), i18n.t('day_fri'), i18n.t('day_sat'), i18n.t('day_sun')
+]);
 
-const tooltipPosition = computed(() => ({
-  top: `${tooltipPos.value.top}px`,
-  left: `${tooltipPos.value.left}px`
-}));
-
-const totalYearReps = computed(() => {
-  return props.data.reduce((acc, curr) => acc + Number(curr.count), 0);
+const currentMonthName = computed(() => {
+  const months = i18n.locale === 'es' 
+    ? ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+    : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  return months[currentMonth.value];
 });
 
-// Calendar Year Calculation Logic
-const weeks = computed(() => {
-  const result = [];
-  const year = props.selectedYear;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+const prevMonth = () => {
+  if (currentMonth.value === 0) {
+    currentMonth.value = 11;
+    displayYear.value--;
+  } else {
+    currentMonth.value--;
+  }
+};
 
-  // Start of Grid: Sunday of the week containing Jan 1st
-  const startOfYear = new Date(year, 0, 1);
-  const startOfGrid = new Date(startOfYear);
-  const startDay = startOfYear.getDay();
-  startOfGrid.setDate(startOfYear.getDate() - startDay);
+const nextMonth = () => {
+  if (currentMonth.value === 11) {
+    currentMonth.value = 0;
+    displayYear.value++;
+  } else {
+    currentMonth.value++;
+  }
+};
 
-  // End of Grid: Saturday of the week containing Dec 31st
-  const endOfYear = new Date(year, 11, 31);
-  const endOfGrid = new Date(endOfYear);
-  const endDay = endOfYear.getDay();
-  endOfGrid.setDate(endOfYear.getDate() + (6 - endDay));
+const goToToday = () => {
+  currentMonth.value = today.getMonth();
+  displayYear.value = today.getFullYear();
+};
 
-  const totalDays = Math.round((endOfGrid - startOfGrid) / (1000 * 60 * 60 * 24)) + 1;
-
-  const dataMap = props.data.reduce((acc, curr) => {
-    // Backend uses YYYY-MM-DD
+const dataMap = computed(() => {
+  return props.data.reduce((acc, curr) => {
     const dStr = new Date(curr.date).toISOString().split('T')[0];
     acc[dStr] = (acc[dStr] || 0) + Number(curr.count);
     return acc;
   }, {});
-
-  let currentDate = new Date(startOfGrid);
-  let currentWeek = [];
-
-  for (let i = 0; i < totalDays; i++) {
-    const dateStr = currentDate.toISOString().split('T')[0];
-    const isFuture = currentDate > today;
-    const isOutsideYear = currentDate.getFullYear() !== year;
-
-    currentWeek.push({
-      date: dateStr,
-      count: dataMap[dateStr] || 0,
-      isFuture,
-      isOutsideRange: isOutsideYear
-    });
-
-    if (currentWeek.length === 7) {
-      result.push(currentWeek);
-      currentWeek = [];
-    }
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-
-  return result;
 });
 
-const monthLabels = computed(() => {
-  const labels = [];
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const monthReps = computed(() => {
+  return calendarDays.value
+    .filter(d => d.isCurrentMonth)
+    .reduce((acc, curr) => acc + curr.count, 0);
+});
+
+const calendarDays = computed(() => {
+  const days = [];
+  const startOfMonth = new Date(displayYear.value, currentMonth.value, 1);
+  const endOfMonth = new Date(displayYear.value, currentMonth.value + 1, 0);
   
-  if (weeks.value.length === 0) return [];
+  // Get Mon-Sun padding (Mon is 1 in JS, but 1 is Monday, 0 is Sunday)
+  let firstDayIdx = startOfMonth.getDay() - 1;
+  if (firstDayIdx === -1) firstDayIdx = 6; // Sunday fix
 
-  weeks.value.forEach((week, index) => {
-    // Check if the first day of this week is the beginning of a month
-    const date = new Date(week[0].date);
-    const dayOfMonth = date.getDate();
-    
-    // If we're at the start of a month, or it's the first week and we want a label
-    if (dayOfMonth <= 7) {
-      const monthIndex = date.getMonth();
-      const monthName = months[monthIndex];
-      
-      // Don't repeat labels if they are too close
-      const lastLabel = labels[labels.length - 1];
-      if (!lastLabel || index - lastLabel.offset > 3) {
-        labels.push({
-          key: `${monthName}-${index}`,
-          name: monthName,
-          offset: index
-        });
-      }
-    }
-  });
+  // Padding days from prev month
+  const prevMonthEnd = new Date(displayYear.value, currentMonth.value, 0);
+  for (let i = firstDayIdx - 1; i >= 0; i--) {
+    const d = new Date(prevMonthEnd);
+    d.setDate(prevMonthEnd.getDate() - i);
+    days.push({
+      date: d.toISOString().split('T')[0],
+      dayNumber: d.getDate(),
+      isCurrentMonth: false,
+      count: 0
+    });
+  }
 
-  return labels;
+  // Days of current month
+  for (let i = 1; i <= endOfMonth.getDate(); i++) {
+    const d = new Date(displayYear.value, currentMonth.value, i);
+    const dStr = d.toISOString().split('T')[0];
+    days.push({
+      date: dStr,
+      dayNumber: i,
+      isCurrentMonth: true,
+      count: dataMap.value[dStr] || 0,
+      isToday: dStr === today.toISOString().split('T')[0]
+    });
+  }
+
+  // Fill end of grid
+  const remainingCells = 42 - days.length; // Standard 6 weeks grid
+  for (let i = 1; i <= remainingCells; i++) {
+    const d = new Date(displayYear.value, currentMonth.value + 1, i);
+    days.push({
+      date: d.toISOString().split('T')[0],
+      dayNumber: d.getDate(),
+      isCurrentMonth: false,
+      count: 0
+    });
+  }
+
+  return days;
 });
 
 const getLevelClass = (level) => {
   const levels = {
-    0: 'bg-[hsl(var(--heatmap-l0))]',
-    1: 'bg-[hsl(var(--heatmap-l1))]',
-    2: 'bg-[hsl(var(--heatmap-l2))]',
-    3: 'bg-[hsl(var(--heatmap-l3))]',
-    4: 'bg-[hsl(var(--heatmap-l4))]'
+    1: 'bg-primary/10 border border-primary/20',
+    2: 'bg-primary/30 border border-primary/40',
+    3: 'bg-primary/60 border border-primary/80 shadow-[0_0_15px_hsla(var(--primary)/0.3)]',
+    4: 'bg-primary border border-white/20 shadow-[0_0_20px_hsla(var(--primary)/0.5)]'
   };
-  return levels[level] || levels[0];
+  return levels[level] || 'bg-white/5 border border-white/5';
 };
 
 const getColorClass = (day) => {
-  if (day.isOutsideRange) return 'bg-transparent pointer-events-none opacity-0';
-  if (day.isFuture) return 'bg-[hsl(var(--heatmap-bg))] border border-border/50';
-  if (day.count === 0) return 'bg-[hsl(var(--heatmap-l0))]';
-  if (day.count < 10) return 'bg-[hsl(var(--heatmap-l1))]';
-  if (day.count < 30) return 'bg-[hsl(var(--heatmap-l2))]';
-  if (day.count < 50) return 'bg-[hsl(var(--heatmap-l3))]';
-  return 'bg-[hsl(var(--heatmap-l4))]';
+  if (day.count === 0) return 'bg-white/[0.03] border border-white/[0.05]';
+  if (day.count < 10) return getLevelClass(1);
+  if (day.count < 30) return getLevelClass(2);
+  if (day.count < 50) return getLevelClass(3);
+  return getLevelClass(4);
 };
 
-const formatDate = (dateStr) => {
+const formatDate = (dateStr, isSecondary = false) => {
   if (!dateStr) return '';
-  return new Date(dateStr).toLocaleDateString(undefined, { 
-    weekday: 'short', 
-    month: 'short', 
+  const d = new Date(dateStr);
+  if (isSecondary) {
+    return d.toLocaleDateString(undefined, { 
+      weekday: 'long', 
+      year: 'numeric'
+    });
+  }
+  return d.toLocaleDateString(undefined, { 
+    month: 'long', 
     day: 'numeric' 
   });
 };
-
-const scrollToToday = () => {
-  if (gridContainer.value) {
-    const today = new Date();
-    const startOfYear = new Date(props.selectedYear, 0, 1);
-    const diffDays = Math.floor((today - startOfYear) / (1000 * 60 * 60 * 24));
-    const weekIndex = Math.floor(diffDays / 7);
-    
-    // Each week is 11px wide + 3px gap = 14px
-    const scrollPos = Math.max(0, (weekIndex * 14) - 100); // 100px offset to show some context
-    gridContainer.value.scrollLeft = scrollPos;
-  }
-};
-
-onMounted(() => {
-  scrollToToday();
-});
-
-// Re-scroll when data changes
-watch(() => props.data, () => {
-  scrollToToday();
-}, { deep: true });
 </script>
 
 <style scoped>
-.scrollbar-custom::-webkit-scrollbar {
-  height: 4px;
-}
-.scrollbar-custom::-webkit-scrollbar-track {
-  @apply bg-zinc-900 rounded-full;
-}
-.scrollbar-custom::-webkit-scrollbar-thumb {
-  @apply bg-zinc-700 rounded-full hover:bg-primary-500 transition-colors cursor-pointer;
-}
-.scrollbar-custom {
-  scrollbar-width: thin;
-  scrollbar-color: #3f3f46 #18181b;
-}
-
 .tooltip-enter-active,
 .tooltip-leave-active {
   transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
@@ -305,3 +286,4 @@ watch(() => props.data, () => {
   transform: translate(-50%, 4px) scale(0.9);
 }
 </style>
+

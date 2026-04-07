@@ -3,10 +3,10 @@
     <!-- Top Header: Tools & Boss -->
     <ExerciseSelector v-model="activeExercise" class="w-full" />
 
-    <!-- Dashboard Core Strategy (50/50 Split) -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-      <!-- Phase 0: Tactical Heatmap (Priority View) -->
-      <div class="space-y-4">
+    <!-- Phase 0: Central Operations (60/40 Split) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      <!-- Activity Stream (Heatmap) -->
+      <div class="lg:col-span-2 space-y-4">
         <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-muted px-2">
           <Activity class="w-4 h-4 text-primary-500" />
           {{ i18n.t('activity_stream') }}
@@ -17,28 +17,16 @@
           :loading="isLoading"
           :selected-year="activeYear"
           :exercise-label="activeExerciseLabel"
-          class="card-stats !p-8 h-full transition-opacity duration-300" 
+          class="bg-surface/30 backdrop-blur-3xl border border-white/5 rounded-3xl p-8 h-full transition-opacity duration-300" 
           :class="isLoading ? 'opacity-50' : 'opacity-100'"
         />
       </div>
 
-      <!-- Tactical Status (Community Boss) -->
+      <!-- Action Center (Reps Input) -->
       <div class="space-y-4">
         <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-muted px-2">
           <Zap class="w-4 h-4 text-primary-500" />
-          ESTADO DEL BOSS
-        </h3>
-        <BossHealth ref="bossHealthRef" />
-      </div>
-    </div>
-
-    <!-- Core Operational Layer (50/50 Action/Stats Grid) -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-      <!-- 1. Action Center (Reps Input) -->
-      <div class="space-y-4">
-        <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-500 px-2">
-          <Zap class="w-4 h-4 text-primary-500" />
-          REGISTRO DE VOLUMEN
+          {{ i18n.t('log_pullups').toUpperCase() }}
         </h3>
         <div v-if="activeExercise === 'all'" class="card-stats p-8 flex flex-col items-center justify-center text-center space-y-4 opacity-50 border-dashed border-border min-h-[360px]">
           <Globe class="w-12 h-12 text-muted" />
@@ -47,32 +35,32 @@
           </p>
         </div>
         <RepsInput v-else :exercise-type="activeExercise" @updated="fetchData" class="min-h-[360px]" />
+      </div>
+    </div>
 
-        <!-- Supporting Stats (Optional row for balance) -->
-        <div class="grid grid-cols-2 gap-4">
-           <div class="card-stats p-4 flex flex-col justify-between">
-              <span class="text-[8px] font-black text-zinc-500 uppercase tracking-widest">Global Vol</span>
-              <p class="text-xl font-black text-white italic text-precision">{{ (stats.totalVolume / 1000).toFixed(1) }} <span class="text-[10px]">TONS</span></p>
-           </div>
-           <div class="card-stats p-4 flex flex-col justify-between">
-              <span class="text-[8px] font-black text-zinc-500 uppercase tracking-widest">Weight</span>
-              <p class="text-xl font-black text-white italic text-precision">{{ stats.bodyWeight }} <span class="text-[10px]">KG</span></p>
-           </div>
-        </div>
+    <!-- Secondary Layer: Boss & Analytics -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+      <!-- Tactical Status (Community Boss) -->
+      <div class="space-y-4">
+        <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-muted px-2">
+          <Zap class="w-4 h-4 text-primary-500" />
+          ESTADO DEL BOSS
+        </h3>
+        <BossHealth ref="bossHealthRef" />
       </div>
 
-      <!-- 2. The Bento Analytics (Stats) -->
+      <!-- Daily Progress & Bento -->
       <div class="space-y-4">
         <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-muted px-2">
           <Target class="w-4 h-4 text-primary-500" />
-          PROGRESO DIARIO
+          {{ i18n.t('goal_progress').toUpperCase() }}
         </h3>
         <div class="bento-grid !grid-cols-1 xl:!grid-cols-2">
-          <!-- 1. Primary Progress (Full wide in its container) -->
+          <!-- 1. Primary Progress -->
           <div class="card-stats xl:col-span-2 xl:row-span-2 flex flex-col items-center justify-center gap-6 group/goal min-h-[360px]">
             <RadialProgress :progress="(todayProgress / stats.dailyGoal) * 100" :size="200">
               <div class="flex flex-col items-center">
-                <span class="text-5xl font-black text-precision transition-transform group-hover/goal:scale-110 tracking-tighter text-foreground">
+                <span class="text-5xl font-black text-precision transition-transform tracking-tighter text-foreground">
                   {{ todayProgress }}
                 </span>
                 <span class="text-[9px] font-black text-muted uppercase tracking-widest">/ {{ stats.dailyGoal }} REPS</span>
@@ -85,14 +73,14 @@
 
           <!-- 2. Streak -->
           <div class="card-stats flex flex-col justify-between group/streak min-h-[160px]">
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] font-black uppercase tracking-[0.2em] text-muted">Streak</span>
-              <Flame class="w-4 h-4 text-primary-500" />
-            </div>
-            <div class="mt-4">
-              <span class="text-5xl font-black text-precision text-foreground tracking-tighter">{{ stats.streak }}</span>
-              <p class="text-[10px] font-black text-primary-500 uppercase tracking-widest">Active Days</p>
-            </div>
+             <div class="flex items-center justify-between">
+               <span class="text-[10px] font-black uppercase tracking-[0.2em] text-muted">Streak</span>
+               <Flame class="w-4 h-4 text-primary-500" />
+             </div>
+             <div class="mt-4">
+               <span class="text-5xl font-black text-precision text-foreground tracking-tighter">{{ stats.streak }}</span>
+               <p class="text-[10px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('stats_days') }}</p>
+             </div>
           </div>
 
           <!-- 3. Peak Volume -->
@@ -191,7 +179,7 @@ const notificationStore = useNotificationStore();
 const reps = ref([]);
 const heatmapData = ref([]);
 const totalReps = ref(0);
-const activeExercise = ref('all');
+const activeExercise = ref('pullups');
 const editingId = ref(null);
 const editValue = ref(0);
 const bossHealthRef = ref(null);
@@ -208,15 +196,7 @@ const stats = reactive({
 });
 
 const activeExerciseLabel = computed(() => {
-  const map = {
-    all: 'Global',
-    pullups: 'Pullups',
-    muscleups: 'Muscle Ups',
-    dips: 'Dips',
-    pushups: 'Pushups',
-    weighted_pullups: 'Weighted'
-  };
-  return map[activeExercise.value] || activeExercise.value;
+  return i18n.t(activeExercise.value);
 });
 
 const todayProgress = computed(() => {

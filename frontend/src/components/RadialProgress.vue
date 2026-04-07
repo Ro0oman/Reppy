@@ -1,6 +1,6 @@
 <template>
   <div class="relative flex items-center justify-center" :style="{ width: size + 'px', height: size + 'px' }">
-    <svg :width="size" :height="size" class="transform -rotate-90">
+    <svg :width="size" :height="size" class="transform -rotate-90 drop-shadow-xl">
       <!-- Background Circle -->
       <circle
         :cx="size / 2"
@@ -9,7 +9,7 @@
         stroke="currentColor"
         stroke-width="12"
         fill="transparent"
-        class="text-foreground/10"
+        class="text-foreground/5"
       />
       <!-- Progress Circle -->
       <circle
@@ -22,7 +22,7 @@
         stroke-linecap="round"
         :stroke-dasharray="circumference"
         :stroke-dashoffset="dashoffset"
-        class="transition-all duration-1000 ease-out"
+        class="transition-all duration-1000 ease-out filter drop-shadow-[0_0_8px_rgba(255,69,0,0.3)]"
       />
       <!-- Gradient Definition -->
       <defs>

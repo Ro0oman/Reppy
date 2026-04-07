@@ -8,18 +8,18 @@
     --primary: 15 100% 50%; /* Bolt Orange #FF4500 */
     --accent: 72 100% 50%;  /* Neon Lime #CCFF00 */
     
-    /* Dark Theme (YouTube Style) - Default */
-    --background: 0 0% 6%;      /* #101010 */
-    --surface: 0 0% 12%;         /* #1F1F1F */
-    --card: 0 0% 12% / 0.6;
-    --foreground: 0 0% 98%;
-    --muted: 0 0% 60%;
-    --border: 0 0% 20% / 0.5;
-    --ring: 15 100% 50% / 0.3;
+    /* Dark Theme (Premium Studio Style) - Default */
+    --background: 220 15% 10%;      /* #16181D (Deeper Charcoal) */
+    --surface: 220 15% 15%;         /* #1F232B */
+    --card: 220 15% 18% / 0.45;
+    --foreground: 220 10% 98%;
+    --muted: 220 10% 65%;
+    --border: 220 20% 30% / 0.3;
+    --ring: 15 100% 50% / 0.35;
 
     /* Heatmap Levels (Dark) */
-    --heatmap-bg: 0 0% 6%;
-    --heatmap-l0: 0 0% 9%;
+    --heatmap-bg: 220 15% 10%;
+    --heatmap-l0: 220 15% 13%;
     --heatmap-l1: 144 66% 16%;
     --heatmap-l2: 147 100% 21%;
     --heatmap-l3: 142 62% 40%;
@@ -49,11 +49,16 @@
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     
-    /* Premium Dynamic Background Layer */
+    /* Premium Dynamic Background (Studio Lighting) */
     background-image: 
-      radial-gradient(circle at 100% 0%, hsla(var(--primary) / 0.08) 0, transparent 40%),
-      radial-gradient(circle at 0% 100%, hsla(var(--accent) / 0.05) 0, transparent 40%);
+      radial-gradient(circle at 0% 0%, hsla(var(--primary) / 0.12) 0%, transparent 50%),
+      radial-gradient(circle at 100% 0%, hsla(var(--accent) / 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 50% 100%, hsla(var(--primary) / 0.05) 0%, transparent 50%),
+      linear-gradient(to bottom, transparent, hsla(var(--background) / 0.5)),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     background-attachment: fixed;
+    background-blend-mode: overlay, screen, screen, normal, soft-light;
+    opacity: 0.98;
   }
 
   #app {
@@ -96,24 +101,27 @@
   }
 
   .btn-reppy:hover {
-    transform: scale(1.05) rotate(-1deg);
+    transform: rotate(-1deg);
     box-shadow: 0 8px 25px rgba(255, 69, 0, 0.5);
     background: linear-gradient(135deg, #FF571A 0%, #FFA133 100%);
   }
 
   .btn-reppy:active {
-    transform: scale(0.95);
+    transform: translateY(1px);
   }
 
   .card-stats {
     background: hsla(var(--card));
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(24px) saturate(180%);
     border: 1px solid hsla(var(--border));
     border-radius: 24px;
     padding: 24px;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
     overflow: hidden;
     position: relative;
+    box-shadow: 
+      0 4px 20px -5px rgba(0, 0, 0, 0.3),
+      inset 0 0 0 1px hsla(var(--foreground) / 0.03);
   }
 
   .card-stats::before {
@@ -122,27 +130,43 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(255, 69, 0, 0.3), transparent);
+    height: 1px;
+    background: linear-gradient(90deg, 
+      transparent, 
+      hsla(var(--primary) / 0.4), 
+      hsla(var(--accent) / 0.4), 
+      transparent
+    );
     transform: translateX(-100%);
-    transition: transform 0.5s ease;
+    transition: transform 0.6s ease;
   }
 
   .card-stats:hover {
-    transform: translateY(-5px);
-    border-color: hsla(var(--primary) / 0.2);
-    background: hsla(var(--card));
+    transform: translateY(-8px);
+    border-color: hsla(var(--primary) / 0.3);
+    background: hsla(var(--surface) / 0.6);
+    box-shadow: 
+      0 20px 40px -15px rgba(0, 0, 0, 0.5),
+      0 0 20px hsla(var(--primary) / 0.1);
   }
 
   .card-stats:hover::before {
     transform: translateX(100%);
   }
 
-  .glass {
-    background: hsla(var(--surface) / 0.6);
-    backdrop-filter: blur(24px);
-    border: 1px solid hsla(var(--border));
-    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.2);
+  /* Tactical Elements */
+  .input-tactical {
+    @apply w-full bg-black/40 border border-white/5 rounded-xl px-5 py-4 
+           text-foreground font-medium outline-none transition-all duration-300
+           placeholder:text-muted/30 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 
+           shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)];
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .select-tactical {
+    @apply w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 
+           text-foreground font-medium outline-none transition-all duration-300
+           focus:border-primary/50 focus:ring-4 focus:ring-primary/10;
   }
 }
 

@@ -59,6 +59,7 @@ const translations = {
     stats_volume_metrics: 'Volume Metrics',
     stats_last_year: 'in the last year',
     stats_top_month: 'Top Month',
+    heatmap_reps_last_30: 'Reps in the last 30 days',
 
     // Weekdays
     day_mon: 'Mon',
@@ -199,6 +200,7 @@ const translations = {
     stats_volume_metrics: 'Métricas de Volumen',
     stats_last_year: 'en el último año',
     stats_top_month: 'Mejor Mes',
+    heatmap_reps_last_30: 'Reps en los últimos 30 días',
     
     // Weekdays
     day_mon: 'Lun',
