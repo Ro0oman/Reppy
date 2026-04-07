@@ -1,7 +1,7 @@
 <template>
-  <div class="relative flex flex-col gap-4 shadow transition-opacity duration-500" :class="{ 'opacity-40 pointer-events-none': loading }">
+  <div class="relative flex flex-col gap-4 shadow transition-opacity duration-500 " :class="{ 'opacity-40 pointer-events-none': loading }">
     <!-- Calendar Header -->
-    <div class="flex items-center justify-between px-1">
+    <div class="flex items-center justify-between px-1 ">
       <div class="flex flex-col">
         <h3 class="text-xl font-black uppercase tracking-tighter text-white">{{ currentMonthName }} {{ displayYear }}</h3>
         <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
@@ -23,12 +23,12 @@
     </div>
 
     <!-- Calendar Grid -->
-    <div class="relative bg-surface/30 border border-white/5 rounded-2xl p-4 group/board backdrop-blur-md">
+    <div class="relative bg-surface/30 border border-white/5 rounded-2xl p-4 group/board backdrop-blur-md overflow-hidden">
       <!-- Day Detail Modal (Centered) -->
       <transition name="modal">
-        <div v-if="selectedDay" class="fixed inset-0 z-[200] flex items-center justify-center p-4">
+        <div v-if="selectedDay" class="absolute inset-0 z-[200] flex items-center justify-center p-4">
           <!-- Backdrop -->
-          <div class="absolute inset-0 bg-black/80 backdrop-blur-md" @click="selectedDay = null"></div>
+          <div class="absolute inset-0 bg-black/80 backdrop-blur-md rounded-2xl" @click="selectedDay = null"></div>
           
           <!-- Modal Card -->
           <div class="relative w-full max-w-[280px] bg-zinc-950 border border-white/10 rounded-3xl shadow-2xl p-8 overflow-hidden animate-in zoom-in duration-300">
@@ -81,14 +81,14 @@
       </transition>
 
       <!-- Weekday Headers -->
-      <div class="grid grid-cols-7 mb-4">
+      <div class="grid grid-cols-7 mb-4 ">
         <div v-for="day in weekdays" :key="day" class="text-center text-[10px] font-black uppercase tracking-widest text-zinc-500 pb-2">
           {{ day }}
         </div>
       </div>
 
       <!-- Days Grid -->
-      <div class="grid grid-cols-7 gap-2 lg:gap-3">
+      <div class="grid grid-cols-7 gap-2 lg:gap-3 rounded-2xl ">
         <div 
           v-for="(day, index) in calendarDays" 
           :key="day.date || index"
