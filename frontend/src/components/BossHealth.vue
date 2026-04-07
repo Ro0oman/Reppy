@@ -2,8 +2,13 @@
   <div v-if="loading" class="animate-pulse bg-foreground/5 h-24 rounded-3xl mb-8"></div>
   <div v-else-if="boss" class="space-y-4">
     <!-- Active Boss Card -->
-    <div class="glass p-5 rounded-[2rem] border border-border relative overflow-hidden group transition-all duration-500 shadow-xl">
+    <div @click="showHistory = true" class="glass p-5 rounded-[2rem] border border-border relative overflow-hidden group transition-all duration-500 shadow-xl cursor-pointer hover:border-primary-500/50">
       <div class="absolute -right-20 -top-20 w-64 h-64 bg-primary-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+      
+      <!-- History Icon Hint -->
+      <div class="absolute top-4 right-4 text-muted/20 group-hover:text-primary-500 transition-colors">
+          <History class="w-5 h-5" />
+      </div>
        
       <div class="flex flex-col md:flex-row items-center gap-6 relative z-10 mb-6">
         <div class="w-24 h-24 bg-surface rounded-[1.5rem] flex items-center justify-center border border-border shadow-2xl overflow-hidden transition-transform duration-500">
@@ -144,13 +149,18 @@
       </div>
     </div>
   </div>
+  
+  <!-- Boss History Modal -->
+  <BossHistoryModal v-if="boss" :show="showHistory" :boss-id="boss.id" @close="showHistory = false" />
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { useNotificationStore } from '../stores/notification';
+import { History } from 'lucide-vue-next';
 import confetti from 'canvas-confetti';
+import BossHistoryModal from './BossHistoryModal.vue';
 
 const boss = ref(null);
 const nextBoss = ref(null);
@@ -160,6 +170,7 @@ const personalDamage = ref(0);
 const dailyDamage = ref(0);
 const chestsClaimed = ref(0);
 const showHelp = ref(false);
+const showHistory = ref(false);
 const notificationStore = useNotificationStore();
 const topDamageDealer = ref(null);
 

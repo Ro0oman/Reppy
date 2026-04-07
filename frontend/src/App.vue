@@ -120,6 +120,7 @@
     <ConfirmDialog />
     <WelcomeModal :show="showEasterModal" @close="showEasterModal = false" />
     <LuckyWheel :show="showRoulette" @close="showRoulette = false" @spun="onSpun" />
+    <DamageNumbers />
 
     <!-- Economy Codex Modal -->
     <Teleport to="body">
@@ -219,6 +220,7 @@ import WelcomeModal from './components/WelcomeModal.vue'
 import LuckyWheel from './components/LuckyWheel.vue'
 import NotificationToast from './components/NotificationToast.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
+import DamageNumbers from './components/DamageNumbers.vue'
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();

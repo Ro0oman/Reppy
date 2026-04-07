@@ -236,4 +236,33 @@ router.post('/open-chest', authenticate, async (req, res) => {
   }
 });
 
+// Get history of contributors for a specific boss
+router.get('/history/:bossId', authenticate, async (req, res) => {
+  const bossId = parseInt(req.params.bossId);
+  try {
+    const historyRes = await query(
+      `SELECT u.id, u.name, u.avatar_url, p.damage_dealt, u.equipped_title_id, u.equipped_border_id, u.equipped_avatar_id
+       FROM event_participants p
+       JOIN users u ON p.user_id = u.id
+       WHERE p.boss_fight_id = $1
+       ORDER BY p.damage_dealt DESC`,
+      [bossId]
+    );
+
+    // Get the boss name/info for the header
+    const bossInfoRes = await query(
+      `SELECT name, image_url, total_hp, current_hp FROM boss_fights WHERE id = $1`,
+      [bossId]
+    );
+
+    res.json({
+      boss: bossInfoRes.rows[0] || null,
+      contributors: historyRes.rows
+    });
+  } catch (error) {
+    console.error('Error fetching boss history:', error);
+    res.status(500).json({ message: 'Error fetching boss history' });
+  }
+});
+
 export default router;

@@ -76,6 +76,7 @@ import axios from 'axios';
 import { Zap } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useNotificationStore } from '../stores/notification';
+import { useDamageStore } from '../stores/damage';
 
 const props = defineProps({
   exerciseType: {
@@ -98,7 +99,7 @@ const addReps = async (count) => {
   if (!count) return;
   try {
     const today = new Date().toISOString().split('T')[0];
-    await axios.post('/api/reps', {
+    const res = await axios.post('/api/reps', {
       count,
       date: today,
       exercise_type: props.exerciseType,
@@ -107,6 +108,12 @@ const addReps = async (count) => {
     
     let msg = `+${count} logged`;
     notificationStore.notify(msg, 'success');
+    
+    // Trigger JRPG damage animation if boss damage was dealt
+    if (res.data.boss_damage_dealt > 0) {
+      const damageStore = useDamageStore();
+      damageStore.addDamage(res.data.boss_damage_dealt, props.exerciseType);
+    }
     
     if (customReps.value === count) customReps.value = null;
     emit('updated');
