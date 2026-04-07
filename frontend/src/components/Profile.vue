@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-5xl mx-auto px-4 py-12 space-y-12 animate-in relative z-10">
+  <div class="max-w-5xl mx-auto px-4 pt-12 pb-32 space-y-16 animate-in relative z-10">
     <div v-if="loading" class="flex flex-col items-center justify-center py-32">
       <div class="w-12 h-12 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
       <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em] mt-8">DECRYPTING PROFILE...</p>
@@ -185,7 +185,7 @@
         </div>
 
         <!-- Heatmap Deck -->
-        <div class="md:col-span-2 space-y-6">
+        <div class="md:col-span-2 space-y-6 my-8 ">
            <!-- Exercise Protocol Selector -->
            <ExerciseSelector v-model="activeExercise" class="w-full" />
 
@@ -202,14 +202,14 @@
 
 
       <!-- Historial de Monedas (Transaction Log) -->
-      <div class="card-stats border-border space-y-8 bg-gradient-to-br from-surface/20 to-surface/5">
+      <div class="  card-stats border-border space-y- bg-gradient-to-br from-surface/20 to-surface/5">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-4">
             <div class="p-3 bg-cyan-500/10 rounded-2xl border border-cyan-500/20">
               <Coins class="w-6 h-6 text-cyan-500" />
             </div>
             <div>
-              <h3 class="text-xl font-black text-industrial text-foreground tracking-tight uppercase">HISTORIAL.DE.TRANSACCIONES</h3>
+              <h4 class="text-m font-black text-industrial text-foreground tracking-tight uppercase">HISTORIAL.DE.TRANSACCIONES</h4>
               <p class="text-[9px] font-black text-muted uppercase tracking-[0.3em] font-tight">AUDITORÍA DEL PROTOCOLO REPPY COIN</p>
             </div>
           </div>

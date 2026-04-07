@@ -106,7 +106,7 @@
     </div>
     
     <!-- Regular List (Ranks 4+) -->
-    <div class="space-y-1 overflow-y-auto no-scrollbar scroll-smooth relative z-10 px-2 max-h-[500px]">
+    <div class="space-y-1 overflow-y-auto no-scrollbar scroll-smooth relative z-10 px-2 max-h-[400px] lg:max-h-[600px]">
       <button 
         v-for="(user, index) in regularUsers" :key="user.id" 
         @click="$emit('viewProfile', user.id)"
