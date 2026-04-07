@@ -7,9 +7,9 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
       <!-- Action Center (Reps Input) -->
       <div class="space-y-4">
-        <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-muted px-2">
+        <h3 class="text-[13px] font-bold flex items-center gap-2.5 text-foreground/70 px-2 tracking-tight">
           <Zap class="w-4 h-4 text-primary-500" />
-          {{ i18n.t('log_pullups').toUpperCase() }}
+          {{ i18n.t('log_pullups') }}
         </h3>
         <div v-if="activeExercise === 'all'" class="card-stats p-8 flex flex-col items-center justify-center text-center space-y-4 opacity-50 border-dashed border-border min-h-[360px]">
           <Globe class="w-12 h-12 text-muted" />
@@ -22,7 +22,7 @@
 
       <!-- Activity Stream (Heatmap) -->
       <div class="lg:col-span-2 space-y-4">
-        <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-muted px-2">
+        <h3 class="text-[13px] font-bold flex items-center gap-2.5 text-foreground/70 px-2 tracking-tight">
           <Activity class="w-4 h-4 text-primary-500" />
           {{ i18n.t('activity_stream') }}
         </h3>
@@ -32,7 +32,7 @@
           :loading="isLoading"
           :selected-year="activeYear"
           :exercise-label="activeExerciseLabel"
-          class="bg-surface/30 backdrop-blur-3xl border border-white/5 rounded-3xl p-8 h-full transition-opacity duration-300" 
+          class="bg-surface/20 backdrop-blur-3xl border border-white/5 rounded-[2rem] p-8 h-full transition-opacity duration-300" 
           :class="isLoading ? 'opacity-50' : 'opacity-100'"
         />
       </div>
@@ -42,28 +42,28 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
       <!-- Tactical Status (Community Boss) -->
       <div class="space-y-4">
-        <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-muted px-2">
+        <h3 class="text-[13px] font-bold flex items-center gap-2.5 text-foreground/70 px-2 tracking-tight">
           <Zap class="w-4 h-4 text-primary-500" />
-          ESTADO DEL BOSS
+          Estado del Boss
         </h3>
         <BossHealth ref="bossHealthRef" />
       </div>
 
       <!-- Daily Progress & Bento -->
       <div class="space-y-4">
-        <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-muted px-2">
+        <h3 class="text-[13px] font-bold flex items-center gap-2.5 text-foreground/70 px-2 tracking-tight">
           <Target class="w-4 h-4 text-primary-500" />
-          {{ i18n.t('goal_progress').toUpperCase() }}
+          {{ i18n.t('goal_progress') }}
         </h3>
         <div class="bento-grid !grid-cols-1 xl:!grid-cols-2">
           <!-- 1. Primary Progress -->
-          <div class="card-stats xl:col-span-2 xl:row-span-2 flex flex-col items-center justify-center gap-6 group/goal min-h-[360px]">
-            <RadialProgress :progress="(todayProgress / stats.dailyGoal) * 100" :size="200">
+          <div class="card-stats xl:col-span-2 xl:row-span-2 flex flex-col items-center justify-center gap-8 group/goal min-h-[380px]">
+            <RadialProgress :progress="(todayProgress / stats.dailyGoal) * 100" :size="220">
               <div class="flex flex-col items-center">
-                <span class="text-5xl font-black text-precision transition-transform tracking-tighter text-foreground">
+                <span class="text-6xl font-bold tracking-tighter text-foreground">
                   {{ todayProgress }}
                 </span>
-                <span class="text-[9px] font-black text-muted uppercase tracking-widest">/ {{ stats.dailyGoal }} REPS</span>
+                <span class="text-[11px] font-bold text-muted/60 tracking-wider">/ {{ stats.dailyGoal }} REPS</span>
               </div>
             </RadialProgress>
             <p class="text-[10px] font-bold text-muted text-center px-4">
@@ -74,24 +74,24 @@
           <!-- 2. Streak -->
           <div class="card-stats flex flex-col justify-between group/streak min-h-[160px]">
              <div class="flex items-center justify-between">
-               <span class="text-[10px] font-black uppercase tracking-[0.2em] text-muted">Streak</span>
+               <span class="text-[11px] font-bold tracking-tight text-muted/60">Racha</span>
                <Flame class="w-4 h-4 text-primary-500" />
              </div>
              <div class="mt-4">
-               <span class="text-5xl font-black text-precision text-foreground tracking-tighter">{{ stats.streak }}</span>
-               <p class="text-[10px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('stats_days') }}</p>
+               <span class="text-5xl font-bold text-foreground tracking-tighter leading-none">{{ stats.streak }}</span>
+               <p class="text-[11px] font-bold text-primary-500 tracking-tight mt-1">{{ i18n.t('stats_days') }}</p>
              </div>
           </div>
 
           <!-- 3. Peak Volume -->
           <div class="card-stats flex flex-col justify-between group/pb min-h-[160px]">
             <div class="flex items-center justify-between">
-              <span class="text-[10px] font-black uppercase tracking-[0.2em] text-muted">Peak Vol</span>
-              <Zap class="w-4 h-4 text-neon-lime" />
+              <span class="text-[11px] font-bold tracking-tight text-muted/60">Volumen Pico</span>
+              <Zap class="w-4 h-4 text-accent" />
             </div>
             <div class="mt-4">
-              <span class="text-4xl font-black text-precision text-foreground tracking-tighter">{{ stats.topMonthCount }}</span>
-              <p class="text-[10px] font-black text-neon-lime uppercase tracking-widest">Month Max</p>
+              <span class="text-5xl font-bold text-foreground tracking-tighter leading-none">{{ stats.topMonthCount }}</span>
+              <p class="text-[11px] font-bold text-accent tracking-tight mt-1">Máximo Mes</p>
             </div>
           </div>
         </div>
@@ -103,9 +103,9 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <!-- Recent Logs -->
       <div class="space-y-4">
-        <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-500 px-2">
+        <h3 class="text-[13px] font-bold flex items-center gap-2.5 text-foreground/70 px-2 tracking-tight">
           <History class="w-4 h-4 text-primary-500" />
-          LOG HISTORY
+          Historial de actividad
         </h3>
         <div class="card-stats !p-0 h-[380px] overflow-hidden flex flex-col shadow-2xl">
           <div class="overflow-y-auto scrollbar-hide flex-1">
@@ -117,25 +117,25 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-border/5">
-                <tr v-for="rep in reps" :key="rep.id" class="group hover:bg-foreground/5 transition-colors">
-                  <td class="px-8 py-4">
-                    <span class="text-xs font-bold text-muted uppercase italic group-hover:text-foreground transition-colors">
+                <tr v-for="rep in reps" :key="rep.id" class="group hover:bg-primary-500/5 transition-colors">
+                  <td class="px-8 py-5">
+                    <span class="text-[13px] font-medium text-muted/80 group-hover:text-foreground transition-colors">
                       {{ formatDate(rep.date) }}
                     </span>
                   </td>
-                  <td class="px-8 py-4 text-right">
+                  <td class="px-8 py-5 text-right">
                     <div v-if="editingId === rep.id" class="flex items-center justify-end gap-3">
                       <input v-model.number="editValue" type="number"
-                        class="w-20 bg-surface/40 border border-primary-500/50 rounded-lg px-2 py-1 text-right text-precision focus:outline-none text-foreground"
+                        class="w-20 bg-surface/60 border border-primary-500/30 rounded-xl px-2 py-1.5 text-right font-bold focus:outline-none text-foreground"
                         @keyup.enter="saveEdit(rep.id)" />
                       <button @click="saveEdit(rep.id)" class="text-primary-500"><Check class="w-4 h-4" /></button>
                     </div>
-                    <div v-else class="flex items-center justify-end gap-4">
-                      <span @click="startEdit(rep)" class="text-xl font-black text-precision text-foreground cursor-pointer hover:text-primary-500">
+                    <div v-else class="flex items-center justify-end gap-5">
+                      <span @click="startEdit(rep)" class="text-2xl font-bold tracking-tight text-foreground cursor-pointer hover:text-primary-500 transition-colors">
                         {{ rep.count }}
                       </span>
-                      <button @click="confirmDelete(rep.id)" class="opacity-0 group-hover:opacity-100 text-muted hover:text-red-500 transition-all">
-                        <Trash2 class="w-4 h-4" />
+                      <button @click="confirmDelete(rep.id)" class="opacity-0 group-hover:opacity-100 text-muted/40 hover:text-red-500 transition-all">
+                        <Trash2 class="w-4.5 h-4.5" />
                       </button>
                     </div>
                   </td>

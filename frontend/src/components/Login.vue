@@ -1,45 +1,45 @@
 <template>
   <div class="flex flex-col items-center justify-center min-h-[90vh] px-4 relative pb-10 bg-deep-abyss">
     <!-- Back Button -->
-    <button @click="$emit('back')" class="absolute top-8 left-8 flex items-center gap-3 text-zinc-600 hover:text-primary-500 transition-colors z-50 group">
+    <button @click="$emit('back')" class="absolute top-8 left-8 flex items-center gap-2.5 text-muted hover:text-primary-500 transition-colors z-50 group">
       <ChevronLeft class="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-      <span class="text-[10px] font-black uppercase tracking-[0.3em] font-tight">ABORT PROTOCOL</span>
+      <span class="text-[11px] font-bold tracking-tight">Volver</span>
     </button>
 
     <div class="w-full max-w-md mt-10 space-y-12 animate-in">
       <!-- Logo & Title -->
-      <div class="text-center space-y-6">
-        <div class="inline-flex items-center justify-center w-20 h-20 bg-steel-grey/40 border border-white/5 rounded-2xl mb-4 shadow-2xl relative overflow-hidden group">
-          <div class="absolute inset-0 bg-primary-500/10 blur-2xl group-hover:bg-primary-500/20 transition-all duration-700"></div>
-          <span class="text-4xl font-black italic text-white relative z-10 font-tight">R</span>
+      <div class="text-center space-y-4">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-surface border border-border/40 rounded-[1.5rem] mb-4 shadow-xl relative overflow-hidden group">
+          <div class="absolute inset-0 bg-primary-500/5 blur-2xl group-hover:bg-primary-500/10 transition-all duration-700"></div>
+          <span class="text-4xl font-bold text-foreground relative z-10">R</span>
         </div>
         <div class="space-y-1">
-          <h1 class="text-5xl font-black tracking-tighter text-white font-industrial uppercase italic">
-            INITIATE<span class="text-primary-500">.</span>
+          <h1 class="text-4xl font-bold tracking-tight text-foreground">
+            Bienvenido a Reppy<span class="text-primary-500">.</span>
           </h1>
-          <p class="text-[10px] font-black text-zinc-600 uppercase tracking-[0.4em] font-tight">REPPY ACCESS PROTOCOL</p>
+          <p class="text-[11px] font-bold text-muted/60 tracking-tight">ACCESO AL SISTEMA DE ENTRENAMIENTO</p>
         </div>
       </div>
 
       <!-- Main Auth Card -->
-      <div class="card-stats p-8 md:p-10 border-white/10 relative overflow-hidden w-full shadow-[0_30px_100px_-20px_rgba(255,69,0,0.1)]">
-        <!-- Toggle (Industrial Segmented) -->
-        <div class="flex p-1.5 bg-black/60 rounded-xl mb-10 border border-white/5">
+      <div class="card-stats p-8 md:p-10 border-border/40 relative overflow-hidden w-full shadow-2xl">
+        <!-- Toggle (Clean Segmented) -->
+        <div class="flex p-1 bg-surface border border-border/40 rounded-2xl mb-8">
           <button 
             @click="mode = 'login'" 
-            class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg relative z-10"
-            :class="mode === 'login' ? 'text-white' : 'text-zinc-600 hover:text-zinc-400'"
+            class="flex-1 py-3 text-[11px] font-bold tracking-tight transition-all rounded-xl relative z-10"
+            :class="mode === 'login' ? 'text-foreground' : 'text-muted hover:text-foreground'"
           >
-            <span v-if="mode === 'login'" class="absolute inset-0 bg-white/5 border border-white/10 rounded-lg"></span>
-            AUTHORIZE
+            <span v-if="mode === 'login'" class="absolute inset-0 bg-surface border border-border/40 rounded-xl shadow-sm"></span>
+            Iniciar Sesión
           </button>
           <button 
             @click="mode = 'signup'" 
-            class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg relative z-10"
-            :class="mode === 'signup' ? 'text-white' : 'text-zinc-600 hover:text-zinc-400'"
+            class="flex-1 py-3 text-[11px] font-bold tracking-tight transition-all rounded-xl relative z-10"
+            :class="mode === 'signup' ? 'text-foreground' : 'text-muted hover:text-foreground'"
           >
-            <span v-if="mode === 'signup'" class="absolute inset-0 bg-white/5 border border-white/10 rounded-lg"></span>
-            RECRUIT
+            <span v-if="mode === 'signup'" class="absolute inset-0 bg-surface border border-border/40 rounded-xl shadow-sm"></span>
+            Registrarse
           </button>
         </div>
 
@@ -52,55 +52,55 @@
         </div>
 
         <!-- Manual Form -->
-        <form @submit.prevent="handleSubmit" class="space-y-6 mb-10">
+        <form @submit.prevent="handleSubmit" class="space-y-6 mb-8">
           <div v-if="mode === 'signup'" class="space-y-2">
-            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-600 px-1 font-tight italic">Biological ID</label>
+            <label class="text-[11px] font-bold text-muted/60 px-1 tracking-tight">Nombre completo</label>
             <input 
               v-model="form.name" 
               type="text" 
-              placeholder="YOUR NAME"
+              placeholder="Ej: John Doe"
               required
-              class="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white text-precision placeholder:text-zinc-800 focus:border-primary-500/50 outline-none transition-all"
+              class="w-full bg-surface border border-border/40 rounded-2xl px-5 py-4 text-foreground font-bold focus:border-primary-500/50 outline-none transition-all shadow-sm"
             />
           </div>
           
           <div class="space-y-2">
-            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-600 px-1 font-tight italic">Data Core (Email)</label>
+            <label class="text-[11px] font-bold text-muted/60 px-1 tracking-tight">Email</label>
             <input 
               v-model="form.email" 
               type="email" 
-              placeholder="PROTOCOL@REPPY.IO"
+              placeholder="tu@email.com"
               required
-              class="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white text-precision placeholder:text-zinc-800 focus:border-primary-500/50 outline-none transition-all"
+              class="w-full bg-surface border border-border/40 rounded-2xl px-5 py-4 text-foreground font-bold focus:border-primary-500/50 outline-none transition-all shadow-sm"
             />
           </div>
 
           <div class="space-y-2">
-            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-600 px-1 font-tight italic">Coded Key (Password)</label>
+            <label class="text-[11px] font-bold text-muted/60 px-1 tracking-tight">Contraseña</label>
             <input 
               v-model="form.password" 
               type="password" 
               placeholder="••••••••"
               required
-              class="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white text-precision placeholder:text-zinc-800 focus:border-primary-500/50 outline-none transition-all"
+              class="w-full bg-surface border border-border/40 rounded-2xl px-5 py-4 text-foreground font-bold focus:border-primary-500/50 outline-none transition-all shadow-sm"
             />
           </div>
 
           <button 
             type="submit"
             :disabled="loading"
-            class="btn-reppy w-full !py-5 shadow-2xl disabled:opacity-20 disabled:grayscale disabled:scale-100"
+            class="btn-reppy w-full !py-5 shadow-xl disabled:opacity-20 disabled:grayscale disabled:scale-100 mt-4"
           >
             <Loader2 v-if="loading" class="w-5 h-5 animate-spin" />
-            <span v-else>{{ mode === 'login' ? 'ESTABLISH LINK' : 'INITIALIZE RECRUIT' }}</span>
+            <span v-else>{{ mode === 'login' ? 'Identificarse' : 'Crear Cuenta' }}</span>
           </button>
         </form>
 
         <!-- OR Divider -->
         <div class="relative flex items-center gap-4 mb-10">
-          <div class="flex-1 h-px bg-white/5 font-precision italic"></div>
-          <span class="text-[9px] font-black text-zinc-800 uppercase tracking-[0.4em]">SYNC WITH GOOGLE CLOUD</span>
-          <div class="flex-1 h-px bg-white/5"></div>
+          <div class="flex-1 h-px bg-border/40"></div>
+          <span class="text-[10px] font-bold text-muted/30 tracking-widest">O CONTINÚA CON</span>
+          <div class="flex-1 h-px bg-border/40"></div>
         </div>
         
         <!-- Google Button (Refined Scale) -->

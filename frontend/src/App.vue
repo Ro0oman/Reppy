@@ -10,23 +10,22 @@
       <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <!-- Logo Core -->
         <div class="flex items-center gap-4 group cursor-pointer" @click="view = 'dashboard'">
-          <div class="w-10 h-10 bg-primary-500 rounded-xl flex items-center justify-center font-black italic text-white shadow-[0_0_20px_rgba(255,69,0,0.3)] transition-transform font-industrial">R</div>
-          <span class="text-2xl font-black tracking-tighter text-foreground font-industrial uppercase italic">REPPY<span class="text-primary-500">.</span></span>
+          <div class="w-10 h-10 bg-primary-500 rounded-2xl flex items-center justify-center font-bold text-white shadow-xl shadow-primary-500/20 transition-transform">R</div>
+          <span class="text-2xl font-bold tracking-tight text-foreground font-industrial">Reppy<span class="text-primary-500">.</span></span>
         </div>
         
-        <!-- Desktop Navigation (Industrial Links) -->
-        <div class="hidden lg:flex items-center gap-2">
+        <!-- Desktop Navigation (Clean Links) -->
+        <div class="hidden lg:flex items-center gap-1">
           <button v-for="nav in navLinks" :key="nav.id"
             @click="view = nav.id" 
-            class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all relative group flex items-center gap-2"
-            :class="view === nav.id ? 'text-foreground bg-surface/10' : 'text-muted hover:text-foreground'">
-            <div v-if="view === nav.id" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary-500 rounded-full"></div>
-            <component :is="nav.icon" class="w-3.5 h-3.5" />
+            class="px-4 py-2 rounded-2xl text-[13px] font-semibold transition-all relative group flex items-center gap-2.5"
+            :class="view === nav.id ? 'text-foreground bg-primary-500/5' : 'text-muted hover:text-foreground hover:bg-surface/10'">
+            <component :is="nav.icon" class="w-4 h-4" :class="view === nav.id ? 'text-primary-500' : ''" />
             {{ i18n.t(nav.label) || nav.fallback }}
             
-            <!-- Red Notification Dot for Inventory (Chests) -->
+            <!-- Notification Dot -->
             <div v-if="nav.id === 'inventory' && authStore.user?.boss_chests > 0" 
-              class="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full animate-ping"></div>
+              class="absolute top-1.5 right-2 w-2 h-2 bg-primary-500 rounded-full border-2 border-surface"></div>
           </button>
           
           <button v-if="authStore.user?.is_admin" @click="view = 'admin'" 
@@ -55,14 +54,14 @@
             </div>
 
             <!-- Profile Entry -->
-            <button @click="openProfile(authStore.user.id)" class="flex items-center gap-4 hover:opacity-80 transition-all p-1 rounded-2xl">
+            <button @click="openProfile(authStore.user.id)" class="flex items-center gap-3 transition-all p-1 hover:bg-surface/10 rounded-2xl">
               <div class="text-right hidden md:flex flex-col items-end">
-                <p class="text-[10px] font-black text-foreground uppercase tracking-widest leading-none">{{ authStore.user?.name }}</p>
-                <span v-if="authStore.user?.title_name" class="text-[7px] uppercase tracking-[0.3em] font-black text-primary-500 mt-1">
+                <p class="text-xs font-bold text-foreground leading-none">{{ authStore.user?.name }}</p>
+                <span v-if="authStore.user?.title_name" class="text-[9px] font-medium text-primary-500 mt-1">
                   {{ authStore.user?.title_name }}
                 </span>
               </div>
-              <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :avatar-css="authStore.user?.avatar_css" :size="44" />
+              <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :avatar-css="authStore.user?.avatar_css" :size="40" />
             </button>
           </div>
         </div>
@@ -88,35 +87,40 @@
       </template>
     </main>
 
-    <footer class="mt-auto py-16 pb-40 md:pb-16 border-t border-border">
-      <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-center items-center gap-8 text-zinc-700">
-        <span class="text-[9px] font-black uppercase tracking-[0.6em]">REPPY CORE © 2026</span>
-        <div class="hidden md:block w-1.5 h-1.5 bg-zinc-900 rounded-full"></div>
-        <span class="text-[9px] font-black uppercase tracking-[0.6em]">DEEP ABYSS DEPLOYED</span>
+    <footer class="mt-auto py-12 pb-32 md:pb-12 border-t border-border/5">
+      <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 text-muted/40">
+        <span class="text-[10px] font-medium tracking-wider">Reppy Core © 2026</span>
+        <div class="flex items-center gap-6">
+          <span class="text-[10px] font-medium tracking-wider">Privacy Protocol</span>
+          <span class="text-[10px] font-medium tracking-wider">System Status: Optimal</span>
+        </div>
       </div>
     </footer>
 
     <!-- Mobile Bottom Operational Dock -->
     <nav v-if="authStore.isAuthenticated" 
-      class="lg:hidden fixed bottom-6 left-4 right-4 z-[60] bg-surface/80 backdrop-blur-3xl border border-border rounded-[2.5rem] shadow-2xl p-2 transition-transform duration-500">
-      <div class="flex items-center justify-around h-16">
+      class="lg:hidden fixed bottom-6 left-6 right-6 z-[60] bg-surface/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-2xl p-1.5 transition-transform duration-500">
+      <div class="flex items-center justify-around h-14">
         <button v-for="nav in mobileNavLinks" :key="nav.id"
           @click="view = nav.id" 
-          class="flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all"
-          :class="view === nav.id ? 'text-primary-500 bg-primary-500/5' : 'text-muted hover:text-foreground'">
+          class="flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all relative"
+          :class="view === nav.id ? 'text-primary-500' : 'text-muted hover:text-foreground'">
+          
+          <div v-if="view === nav.id" class="absolute -top-1 w-8 h-1 bg-primary-500 rounded-full blur-[2px]"></div>
+          
           <component :is="nav.icon" class="w-5 h-5" :class="view === nav.id ? 'fill-primary-500/10' : ''" />
-          <span class="text-[8px] font-black uppercase tracking-widest font-tight">{{ i18n.t(nav.label) }}</span>
+          <span class="text-[9px] font-bold tracking-tight">{{ i18n.t(nav.label) }}</span>
           
           <!-- Inventory Notification -->
           <div v-if="nav.id === 'inventory' && authStore.user?.boss_chests > 0" 
-            class="absolute top-2 right-1/4 w-2 h-2 bg-primary-500 rounded-full border-2 border-deep-abyss animate-pulse"></div>
+            class="absolute top-1 right-1/4 w-2 h-2 bg-primary-500 rounded-full border-2 border-background"></div>
         </button>
 
         <!-- Mobile Profile -->
         <button @click="view = 'profile'" class="flex-1 flex flex-col items-center justify-center gap-1 transition-all">
-          <AvatarFrame :src="authStore.user?.avatar_url" :border-css="view === 'profile' ? authStore.user?.border_css : ''" :size="24" 
-               class="transition-all" :class="view === 'profile' ? '' : 'opacity-60 grayscale'" />
-          <span class="text-[8px] font-black uppercase tracking-widest font-tight" :class="view === 'profile' ? 'text-primary-500' : 'text-muted'">{{ i18n.t('nav_profile').toUpperCase() }}</span>
+          <AvatarFrame :src="authStore.user?.avatar_url" :border-css="view === 'profile' ? authStore.user?.border_css : ''" :size="26" 
+               class="transition-all" :class="view === 'profile' ? 'ring-2 ring-primary-500/20' : 'opacity-60 grayscale'" />
+          <span class="text-[9px] font-bold tracking-tight" :class="view === 'profile' ? 'text-primary-500' : 'text-muted'">{{ i18n.t('nav_profile') }}</span>
         </button>
       </div>
     </nav>
