@@ -26,53 +26,67 @@
     <div class="relative bg-surface/30 border border-white/5 rounded-2xl p-4 group/board backdrop-blur-md overflow-x-auto custom-scrollbar min-w-0">
       <div class="min-w-[300px]"> <!-- Ensure a minimum readable width for the grid -->
         <!-- Day Detail Modal (Centered) -->
+    <Teleport to="body">
       <transition name="modal">
-        <div v-if="selectedDay" class="absolute inset-0 z-[200] flex items-center justify-center p-4">
+        <div v-if="selectedDay" class="fixed inset-0 z-[150] flex items-center justify-center p-6">
           <!-- Backdrop -->
-          <div class="absolute inset-0 bg-black/80 backdrop-blur-md rounded-2xl" @click="selectedDay = null"></div>
+          <div class="absolute inset-0 bg-black/40 backdrop-blur-xl" @click="selectedDay = null"></div>
           
           <!-- Modal Card -->
-          <div class="relative w-full max-w-[280px] bg-zinc-950 border border-white/10 rounded-3xl shadow-2xl p-8 overflow-hidden animate-in zoom-in duration-300">
-            <!-- Glow Effect -->
-            <div class="absolute -top-10 -right-10 w-40 h-40 bg-primary/20 blur-[60px] rounded-full pointer-events-none"></div>
+          <div class="relative w-full max-w-[320px] bg-zinc-950/90 border border-white/10 rounded-[2.5rem] shadow-[0_0_60px_rgba(0,0,0,0.4)] p-10 overflow-hidden animate-in zoom-in duration-300 backdrop-blur-md">
+            <!-- Premium Glow Effects -->
+            <div class="absolute -top-20 -right-20 w-48 h-48 bg-primary/10 blur-[80px] rounded-full pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-primary/5 blur-[80px] rounded-full pointer-events-none"></div>
+
+            <!-- Close Button -->
+            <button @click="selectedDay = null" 
+                    class="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white transition-colors rounded-full hover:bg-white/5">
+              <XIcon class="w-5 h-5" />
+            </button>
             
-            <div class="relative flex flex-col items-center gap-4">
-              <div class="flex flex-col items-center">
-                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 mb-1">
+            <div class="relative flex flex-col items-center gap-6">
+              <div class="flex flex-col items-center text-center">
+                <span class="text-[9px] font-black uppercase tracking-[0.4em] text-zinc-500 mb-2">
                   {{ formatDate(selectedDay.date, true) }}
                 </span>
-                <h4 class="text-2xl font-black uppercase tracking-tighter text-white">
+                <h4 class="text-3xl font-black uppercase tracking-tighter text-white italic">
                   {{ formatDate(selectedDay.date, false) }}
                 </h4>
               </div>
 
-              <div class="w-full flex flex-col items-center gap-2 bg-white/[0.03] p-8 rounded-2xl border border-white/5 mb-2">
-                <span class="text-5xl font-black text-primary leading-none tabular-nums">
+              <div class="w-full flex flex-col items-center gap-3 bg-white/[0.03] p-10 rounded-[2rem] border border-white/5 shadow-inner">
+                <span class="text-6xl font-black text-primary leading-none tabular-nums italic drop-shadow-[0_0_20px_rgba(255,69,0,0.3)]">
                   {{ selectedDay.count }}
                 </span>
-                <span class="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">
+                <span class="text-[9px] font-black uppercase tracking-[0.4em] text-zinc-500">
                   {{ i18n.t('stats_reps').toUpperCase() }} TOTAL
                 </span>
               </div>
 
               <!-- Exercise Breakdown List -->
-              <div v-if="selectedDay.breakdown?.length > 0" class="w-full space-y-2 mb-6">
-                 <p class="text-[9px] font-black text-muted uppercase tracking-widest px-1">Breakdown</p>
-                 <div class="space-y-1.5">
+              <div v-if="selectedDay.breakdown?.length > 0" class="w-full space-y-3">
+                 <div class="flex items-center gap-2 px-1">
+                    <div class="w-1 h-3 bg-primary/40 rounded-full"></div>
+                    <p class="text-[9px] font-black text-muted uppercase tracking-widest leading-none">Protocol Breakdown</p>
+                 </div>
+                 
+                 <div class="space-y-2">
                     <div v-for="item in selectedDay.breakdown" :key="item.type" 
-                         class="flex items-center justify-between p-3 bg-white/[0.02] border border-white/5 rounded-xl group/item">
-                       <div class="flex items-center gap-3">
-                          <component :is="getIconForType(item.type)" class="w-3.5 h-3.5 text-primary/60 group-hover/item:text-primary transition-colors" />
-                          <span class="text-[10px] font-bold text-zinc-300 uppercase tracking-tight">{{ i18n.t(item.type) }}</span>
+                         class="flex items-center justify-between p-4 bg-white/[0.02] border border-white/5 rounded-2xl group/item hover:border-white/10 transition-all">
+                       <div class="flex items-center gap-4">
+                          <div class="p-2 bg-surface/10 rounded-lg group-hover/item:text-primary transition-colors">
+                            <component :is="getIconForType(item.type)" class="w-4 h-4 text-primary/60" />
+                          </div>
+                          <span class="text-[10px] font-bold text-zinc-300 uppercase tracking-widest">{{ i18n.t(item.type) }}</span>
                        </div>
-                       <span class="text-sm font-black text-white tabular-nums">{{ item.count }}</span>
+                       <span class="text-lg font-black text-white tabular-nums">{{ item.count }}</span>
                     </div>
                  </div>
               </div>
 
               <button 
                 @click="selectedDay = null"
-                class="w-full py-3 text-[10px] font-black uppercase tracking-widest bg-white/5 text-white rounded-xl transition-all border border-white/10"
+                class="w-full py-5 text-[10px] font-black uppercase tracking-widest bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 rounded-2xl transition-all border border-white/5 mt-2"
               >
                 {{ i18n.locale === 'es' ? 'Cerrar' : 'Close' }}
               </button>
@@ -80,6 +94,7 @@
           </div>
         </div>
       </transition>
+    </Teleport>
 
       <!-- Weekday Headers -->
       <div class="grid grid-cols-7 mb-4 ">
@@ -138,7 +153,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { useI18nStore } from '../stores/i18n';
-import { Dumbbell, Zap, Flame, Target, Trophy, Globe } from 'lucide-vue-next';
+import { Dumbbell, Zap, Flame, Target, Trophy, Globe, X as XIcon } from 'lucide-vue-next';
 
 const props = defineProps({
   data: {
