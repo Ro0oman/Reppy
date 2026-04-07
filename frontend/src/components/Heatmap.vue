@@ -28,12 +28,12 @@
       <transition name="modal">
         <div v-if="selectedDay" class="fixed inset-0 z-[200] flex items-center justify-center p-4">
           <!-- Backdrop -->
-          <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="selectedDay = null"></div>
+          <div class="absolute inset-0 bg-black/80 backdrop-blur-md" @click="selectedDay = null"></div>
           
           <!-- Modal Card -->
-          <div class="relative w-full max-w-[280px] bg-surface border border-white/10 rounded-2xl shadow-2xl p-6 overflow-hidden animate-in fade-in duration-300">
+          <div class="relative w-full max-w-[280px] bg-zinc-950 border border-white/10 rounded-3xl shadow-2xl p-8 overflow-hidden animate-in zoom-in duration-300">
             <!-- Glow Effect -->
-            <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/20 blur-[50px] rounded-full"></div>
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-primary/20 blur-[60px] rounded-full pointer-events-none"></div>
             
             <div class="relative flex flex-col items-center gap-4">
               <div class="flex flex-col items-center">
@@ -45,13 +45,28 @@
                 </h4>
               </div>
 
-              <div class="w-full flex flex-col items-center gap-1 bg-white/[0.03] p-6 rounded-xl border border-white/5">
-                <span class="text-4xl font-black text-primary leading-none">
+              <div class="w-full flex flex-col items-center gap-2 bg-white/[0.03] p-8 rounded-2xl border border-white/5 mb-2">
+                <span class="text-5xl font-black text-primary leading-none tabular-nums">
                   {{ selectedDay.count }}
                 </span>
-                <span class="text-[10px] font-black uppercase tracking-widest text-zinc-400">
-                  {{ i18n.t('stats_reps') }}
+                <span class="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">
+                  {{ i18n.t('stats_reps').toUpperCase() }} TOTAL
                 </span>
+              </div>
+
+              <!-- Exercise Breakdown List -->
+              <div v-if="selectedDay.breakdown?.length > 0" class="w-full space-y-2 mb-6">
+                 <p class="text-[9px] font-black text-muted uppercase tracking-widest px-1">Breakdown</p>
+                 <div class="space-y-1.5">
+                    <div v-for="item in selectedDay.breakdown" :key="item.type" 
+                         class="flex items-center justify-between p-3 bg-white/[0.02] border border-white/5 rounded-xl group/item">
+                       <div class="flex items-center gap-3">
+                          <component :is="getIconForType(item.type)" class="w-3.5 h-3.5 text-primary/60 group-hover/item:text-primary transition-colors" />
+                          <span class="text-[10px] font-bold text-zinc-300 uppercase tracking-tight">{{ i18n.t(item.type) }}</span>
+                       </div>
+                       <span class="text-sm font-black text-white tabular-nums">{{ item.count }}</span>
+                    </div>
+                 </div>
               </div>
 
               <button 
@@ -121,6 +136,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { useI18nStore } from '../stores/i18n';
+import { Dumbbell, Zap, Flame, Target, Trophy, Globe } from 'lucide-vue-next';
 
 const props = defineProps({
   data: {
@@ -179,7 +195,11 @@ const goToToday = () => {
 const dataMap = computed(() => {
   return props.data.reduce((acc, curr) => {
     const dStr = new Date(curr.date).toISOString().split('T')[0];
-    acc[dStr] = (acc[dStr] || 0) + Number(curr.count);
+    if (!acc[dStr]) {
+      acc[dStr] = { total: 0, breakdown: [] };
+    }
+    acc[dStr].total += Number(curr.count);
+    acc[dStr].breakdown.push({ type: curr.exercise_type, count: Number(curr.count) });
     return acc;
   }, {});
 });
@@ -220,7 +240,8 @@ const calendarDays = computed(() => {
       date: dStr,
       dayNumber: i,
       isCurrentMonth: true,
-      count: dataMap.value[dStr] || 0,
+      count: dataMap.value[dStr]?.total || 0,
+      breakdown: dataMap.value[dStr]?.breakdown || [],
       isToday: dStr === today.toISOString().split('T')[0]
     });
   }
@@ -271,6 +292,18 @@ const formatDate = (dateStr, isSecondary = false) => {
     month: 'long', 
     day: 'numeric' 
   });
+};
+
+const getIconForType = (type) => {
+  const icons = {
+    pullups: Dumbbell,
+    pushups: Flame,
+    muscleups: Zap,
+    dips: Target,
+    weighted_pullups: Trophy,
+    all: Globe
+  };
+  return icons[type] || Dumbbell;
 };
 </script>
 

@@ -36,9 +36,9 @@ router.get('/:id', async (req, res) => {
     const params = isGlobal ? [userId] : [userId, type];
 
     const heatmapResult = await query(
-      `SELECT date, SUM(count)::int as count FROM reps 
+      `SELECT date, exercise_type, SUM(count)::int as count FROM reps 
        WHERE user_id = $1 ${typeFilter} AND date > CURRENT_DATE - INTERVAL '1 year'
-       GROUP BY date ORDER BY date ASC`,
+       GROUP BY date, exercise_type ORDER BY date ASC`,
       params
     );
 
