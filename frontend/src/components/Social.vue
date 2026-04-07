@@ -63,7 +63,8 @@
         <div class="space-y-4">
           <TransitionGroup name="list">
             <div v-for="user in searchResults" :key="user.id"
-              class="bg-foreground/[0.02] border border-border p-5 rounded-3xl flex items-center justify-between hover:bg-foreground/[0.04] transition-all group">
+              @click="$emit('viewProfile', user.id)"
+              class="bg-foreground/[0.02] border border-border p-5 rounded-3xl flex items-center justify-between hover:bg-foreground/[0.04] transition-all group cursor-pointer">
               <div class="flex items-center gap-4">
                 <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :avatar-css="user.avatar_css" :size="48" />
                 <div>

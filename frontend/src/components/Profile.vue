@@ -111,7 +111,10 @@
         </div>
 
         <!-- Heatmap Deck -->
-        <div class="md:col-span-2">
+        <div class="md:col-span-2 space-y-6">
+           <!-- Exercise Protocol Selector -->
+           <ExerciseSelector v-model="activeExercise" class="w-full" />
+
            <div class="card-stats border-white/5 space-y-6 h-full flex flex-col justify-center">
               <div class="flex items-center justify-between mb-2">
                 <h3 class="text-[10px] font-black text-muted tracking-[0.3em] uppercase">DISTRIBUTION HEATMAP</h3>
@@ -222,6 +225,7 @@ import { useNotificationStore } from '../stores/notification';
 import { useThemeStore } from '../stores/theme';
 import Heatmap from './Heatmap.vue';
 import AvatarFrame from './AvatarFrame.vue';
+import ExerciseSelector from './ExerciseSelector.vue';
 import axios from 'axios';
 import { Moon, Sun, Monitor } from 'lucide-vue-next';
 
@@ -237,6 +241,7 @@ const user = ref({});
 const stats = ref({});
 const heatmapData = ref([]);
 const loading = ref(true);
+const activeExercise = ref('all');
 const showInfoModal = ref(false);
 const fileInput = ref(null);
 
@@ -294,7 +299,9 @@ const fetchProfile = async () => {
   loading.value = true;
   try {
     const targetId = props.userId || authStore.user?.id;
-    const res = await axios.get(`/api/profile/${targetId}`);
+    const res = await axios.get(`/api/profile/${targetId}`, {
+      params: { type: activeExercise.value }
+    });
     user.value = res.data.user;
     stats.value = res.data.stats;
     heatmapData.value = res.data.heatmap;
@@ -303,6 +310,7 @@ const fetchProfile = async () => {
   finally { loading.value = false; }
 };
 
+watch(activeExercise, fetchProfile);
 onMounted(fetchProfile);
 watch(() => props.userId, fetchProfile);
 </script>

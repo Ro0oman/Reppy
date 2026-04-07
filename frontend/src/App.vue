@@ -74,7 +74,7 @@
       <template v-if="authStore.isAuthenticated">
         <div class="animate-in">
           <Dashboard v-if="view === 'dashboard'" @viewProfile="openProfile" />
-          <Social v-if="view === 'social'" />
+          <Social v-if="view === 'social'" @viewProfile="openProfile" />
           <Shop v-if="view === 'shop'" />
           <Inventory v-if="view === 'inventory'" />
           <Profile v-if="view === 'profile'" :userId="currentProfileId" />

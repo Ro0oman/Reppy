@@ -31,22 +31,26 @@ router.get('/:id', async (req, res) => {
     }
     const user = userResult.rows[0];
 
+    const isGlobal = type === 'all';
+    const typeFilter = isGlobal ? '' : 'AND exercise_type = $2';
+    const params = isGlobal ? [userId] : [userId, type];
+
     const heatmapResult = await query(
-      `SELECT date, count FROM reps 
-       WHERE user_id = $1 AND exercise_type = $2 AND date > CURRENT_DATE - INTERVAL '1 year'
-       ORDER BY date ASC`,
-      [userId, type]
+      `SELECT date, SUM(count)::int as count FROM reps 
+       WHERE user_id = $1 ${typeFilter} AND date > CURRENT_DATE - INTERVAL '1 year'
+       GROUP BY date ORDER BY date ASC`,
+      params
     );
 
     const totalRes = await query(
-      'SELECT SUM(count) as total FROM reps WHERE user_id = $1 AND exercise_type = $2',
-      [userId, type]
+      `SELECT SUM(count)::int as total FROM reps WHERE user_id = $1 ${typeFilter}`,
+      params
     );
     const totalReps = parseInt(totalRes.rows[0]?.total || 0);
 
     const recentLogs = await query(
-      'SELECT id, date, count FROM reps WHERE user_id = $1 AND exercise_type = $2 ORDER BY date DESC LIMIT 20',
-      [userId, type]
+      `SELECT id, date, count, exercise_type FROM reps WHERE user_id = $1 ${typeFilter} ORDER BY date DESC LIMIT 20`,
+      params
     );
 
     // Calculate current streak (PULLUPS ONLY as requested)
