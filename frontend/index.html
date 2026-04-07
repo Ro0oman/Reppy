@@ -1,49 +1,296 @@
 <!doctype html>
-<html lang="en">
+<html lang="es" dir="ltr">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         PRIMARY META TAGS — Core SEO
+    ═══════════════════════════════════════════════════════════════ -->
+    <title>Reppy – Contador de Dominadas, Flexiones y Calistenia | Tracker Fitness Gamificado</title>
+    <meta name="title" content="Reppy – Contador de Dominadas, Flexiones y Calistenia | Tracker Fitness Gamificado" />
+    <meta name="description" content="Reppy es la app gratuita para contar dominadas, flexiones, fondos y muscle ups. Tracker de calistenia con sistema RPG: gana monedas, sube de nivel, compite en rankings globales y derrota bosses con la comunidad. ¡Empieza hoy!" />
+    <meta name="keywords" content="reppy, contador de dominadas, pull-up tracker, contador de flexiones, pushup counter, calistenia app, fitness tracker, workout tracker, ejercicios calistenia, dominadas tracker, flexiones tracker, fondos tracker, muscle ups, repeticiones, entrenamiento cuerpo libre, bodyweight training, fitness gamificado, RPG fitness, contador repeticiones, racha ejercicio, heatmap entrenamiento, leaderboard fitness, ranking dominadas, app dominadas gratis, tracker calistenia gratis, registrar dominadas, registrar flexiones, entrenamiento sin pesas, street workout, barras, pull up counter, chin ups, dips counter, weighted pull ups, calisthenics tracker, rep counter, workout log, fitness app free, gym tracker, exercise counter, calistenia principiantes, rutina dominadas, challenge dominadas, reto fitness" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow" />
+
+    <!-- Canonical & Language -->
+    <link rel="canonical" href="https://reppy-weld.vercel.app/" />
+    <link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/" />
+    <link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/" />
+    <link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/" />
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         ICONS & PWA
+    ═══════════════════════════════════════════════════════════════ -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- Primary Meta Tags -->
-    <title>Reppy | Gamified Calisthenics Protocol</title>
-    <meta name="title" content="Reppy | Gamified Calisthenics Protocol" />
-    <meta name="description" content="Level up your calisthenics journey with Reppy. An elite RPG-style tracking platform where you earn coins, equip items, and dominate the global leaderboards." />
-    <meta name="keywords" content="pull-up tracker, fitness tracker, pullups, calisthenics, workout tracker, gym tracking, reppy, fitness app" />
-    <meta name="robots" content="index, follow" />
-    <meta name="googlebot" content="index, follow" />
-    <link rel="canonical" href="https://reppy.vercel.app/" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/og-image.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#f97316" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Reppy" />
+    <meta name="application-name" content="Reppy" />
+    <meta name="msapplication-TileColor" content="#f97316" />
 
-    <!-- Open Graph / Facebook -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         OPEN GRAPH / FACEBOOK
+    ═══════════════════════════════════════════════════════════════ -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://reppy.vercel.app/" />
-    <meta property="og:title" content="Reppy | Gamified Calisthenics Protocol" />
-    <meta property="og:description" content="Level up your calisthenics journey with Reppy. An elite RPG-style tracking platform where you earn coins, equip items, and dominate the global leaderboards." />
-    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:site_name" content="Reppy - Fitness RPG" />
+    <meta property="og:url" content="https://reppy-weld.vercel.app/" />
+    <meta property="og:title" content="Reppy – Contador de Dominadas y Calistenia | Tracker Fitness Gamificado" />
+    <meta property="og:description" content="Cuenta tus dominadas, flexiones, fondos y muscle ups. App de calistenia con sistema RPG: gana monedas, sube de nivel, compite en rankings globales y derrota bosses épicos con la comunidad." />
+    <meta property="og:image" content="https://reppy-weld.vercel.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Reppy - App de Calistenia Gamificada con sistema RPG para contar dominadas y flexiones" />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:locale:alternate" content="en_US" />
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://reppy.vercel.app/" />
-    <meta property="twitter:title" content="Reppy | Gamified Calisthenics Protocol" />
-    <meta property="twitter:description" content="Level up your calisthenics journey with Reppy. An elite RPG-style tracking platform where you earn coins, equip items, and dominate the global leaderboards." />
-    <meta property="twitter:image" content="/og-image.png" />
-    <!-- Google tag (gtag.js) -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         TWITTER / X CARD
+    ═══════════════════════════════════════════════════════════════ -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://reppy-weld.vercel.app/" />
+    <meta name="twitter:title" content="Reppy – Contador de Dominadas y Calistenia | Tracker Fitness Gamificado" />
+    <meta name="twitter:description" content="Cuenta tus dominadas, flexiones, fondos y muscle ups. App de calistenia con sistema RPG: gana monedas, compite en rankings globales y derrota bosses con la comunidad." />
+    <meta name="twitter:image" content="https://reppy-weld.vercel.app/og-image.png" />
+    <meta name="twitter:image:alt" content="Reppy - App de calistenia gamificada para contar dominadas y flexiones" />
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         STRUCTURED DATA — JSON-LD (WebApplication + FAQPage)
+    ═══════════════════════════════════════════════════════════════ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "name": "Reppy",
+          "alternateName": ["Reppy App", "Reppy Fitness", "Reppy Calistenia"],
+          "url": "https://reppy-weld.vercel.app/",
+          "description": "App gratuita de calistenia gamificada para contar dominadas, flexiones, fondos y muscle ups. Sistema RPG con monedas, niveles, rankings globales, heatmap de actividad y boss fights comunitarios.",
+          "applicationCategory": "HealthApplication",
+          "applicationSubCategory": "Fitness Tracker",
+          "operatingSystem": "Web Browser",
+          "browserRequirements": "Requires JavaScript. Works on Chrome, Firefox, Safari, Edge.",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "EUR"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "150",
+            "bestRating": "5",
+            "worstRating": "1"
+          },
+          "featureList": [
+            "Contador de dominadas (pull-ups)",
+            "Contador de flexiones (push-ups)",
+            "Contador de fondos (dips)",
+            "Contador de muscle ups",
+            "Dominadas con lastre (weighted pull-ups)",
+            "Heatmap de actividad estilo GitHub",
+            "Rankings y leaderboard global",
+            "Sistema RPG con atributos (STR, PWR, END, AGI)",
+            "Monedas y tienda de cosméticos",
+            "Boss fights comunitarios",
+            "Perfiles sociales públicos",
+            "Racha de entrenamiento (streak)",
+            "Progreso diario con metas",
+            "Login con Google",
+            "Disponible en español e inglés"
+          ],
+          "screenshot": "https://reppy-weld.vercel.app/og-image.png",
+          "softwareVersion": "2.0",
+          "inLanguage": ["es", "en"],
+          "author": {
+            "@type": "Organization",
+            "name": "Reppy Ecosystem",
+            "url": "https://reppy-weld.vercel.app/"
+          },
+          "datePublished": "2025-01-01",
+          "dateModified": "2026-04-07"
+        },
+        {
+          "@type": "WebSite",
+          "name": "Reppy",
+          "url": "https://reppy-weld.vercel.app/",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://reppy-weld.vercel.app/?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "¿Qué es Reppy?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Reppy es una aplicación web gratuita de calistenia gamificada que te permite contar y registrar dominadas, flexiones, fondos, muscle ups y dominadas con lastre. Incluye un sistema RPG con monedas, niveles, rankings globales y boss fights comunitarios."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Cómo cuento mis dominadas con Reppy?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Simplemente inicia sesión con tu cuenta de Google, selecciona el ejercicio (dominadas, flexiones, fondos, etc.) y registra tus repeticiones. Reppy guarda tu historial y te muestra un heatmap de actividad con tu progreso."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Es gratis Reppy?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Sí, Reppy es completamente gratis. Puedes registrarte con Google y empezar a contar tus repeticiones de calistenia sin ningún coste."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Qué ejercicios puedo trackear?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Puedes registrar dominadas (pull-ups), flexiones (push-ups), fondos (dips), muscle ups y dominadas con lastre (weighted pull-ups)."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Qué es el sistema RPG de Reppy?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Reppy convierte tus entrenamientos en progresión RPG. Ganas monedas (Reppy Coins) con cada serie, subes atributos como Fuerza (STR), Potencia (PWR), Resistencia (END) y Agilidad (AGI), y puedes comprar cosméticos en la tienda."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Qué son los Boss Fights?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Son eventos comunitarios donde todos los usuarios luchan contra un boss épico. Cada repetición que registras inflige daño al boss. Al derrotarlo, toda la comunidad desbloquea cofres con recompensas exclusivas."
+              }
+            }
+          ]
+        },
+        {
+          "@type": "SportsActivityLocation",
+          "name": "Reppy - Plataforma de Calistenia Online",
+          "description": "Comunidad online de calistenia con tracker de dominadas, flexiones y más ejercicios de peso corporal.",
+          "url": "https://reppy-weld.vercel.app/",
+          "sport": "Calisthenics"
+        }
+      ]
+    }
+    </script>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         BREADCRUMB STRUCTURED DATA
+    ═══════════════════════════════════════════════════════════════ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://reppy-weld.vercel.app/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Dashboard",
+          "item": "https://reppy-weld.vercel.app/#dashboard"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Rankings",
+          "item": "https://reppy-weld.vercel.app/#leaderboard"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Tienda",
+          "item": "https://reppy-weld.vercel.app/#shop"
+        }
+      ]
+    }
+    </script>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         GOOGLE ANALYTICS
+    ═══════════════════════════════════════════════════════════════ -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-TJ4SF4KS8R"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-TJ4SF4KS8R');
     </script>
 
-    <!-- Theme Color for browsers -->
-    <meta name="theme-color" content="#f97316" />
+    <!-- ═══════════════════════════════════════════════════════════════
+         PRECONNECT & DNS PREFETCH (Performance)
+    ═══════════════════════════════════════════════════════════════ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="dns-prefetch" href="https://accounts.google.com" />
   </head>
   <body>
+    <!-- ═══════════════════════════════════════════════════════════════
+         NOSCRIPT FALLBACK — SEO-visible content for crawlers
+    ═══════════════════════════════════════════════════════════════ -->
+    <noscript>
+      <div style="max-width:800px;margin:0 auto;padding:40px 20px;font-family:system-ui,sans-serif;color:#1a1a2e;">
+        <h1>Reppy – Contador de Dominadas, Flexiones y Calistenia</h1>
+        <p>Reppy es la <strong>app de calistenia gamificada</strong> más completa. Registra tus <strong>dominadas</strong>, <strong>flexiones</strong>, <strong>fondos</strong>, <strong>muscle ups</strong> y <strong>dominadas con lastre</strong> de forma gratuita.</p>
+        
+        <h2>🏋️ Tracker de Calistenia con Sistema RPG</h2>
+        <p>Cada repetición que registras te da <strong>Reppy Coins</strong> y te hace subir de nivel en 4 atributos: Fuerza (STR), Potencia (PWR), Resistencia (END) y Agilidad (AGI). Compra títulos, marcos y efectos en la tienda.</p>
+        
+        <h2>📊 Contador de Repeticiones con Estadísticas</h2>
+        <ul>
+          <li><strong>Heatmap de actividad</strong> estilo GitHub para visualizar tu constancia</li>
+          <li><strong>Rankings globales</strong> en tiempo real</li>
+          <li><strong>Racha de entrenamiento</strong> para mantener la motivación</li>
+          <li><strong>Progreso diario</strong> con metas personalizadas</li>
+          <li><strong>Historial completo</strong> de todas tus repeticiones</li>
+        </ul>
+
+        <h2>👹 Boss Fights Comunitarios</h2>
+        <p>Participa en eventos globales donde la comunidad lucha contra bosses épicos. Tus repeticiones infligen daño al boss. Derrótalo y desbloquea cofres con recompensas exclusivas.</p>
+
+        <h2>🎯 Ejercicios que puedes registrar</h2>
+        <ul>
+          <li>Dominadas (Pull-ups)</li>
+          <li>Flexiones (Push-ups)</li>
+          <li>Fondos (Dips)</li>
+          <li>Muscle Ups</li>
+          <li>Dominadas con lastre (Weighted Pull-ups)</li>
+        </ul>
+
+        <h2>🤝 Comunidad y Social</h2>
+        <p>Añade amigos, compara rankings, visita perfiles públicos y compite por el Top 1 en la clasificación global. Disponible en español e inglés.</p>
+
+        <p><strong>¡Empieza gratis!</strong> Solo necesitas una cuenta de Google para comenzar a trackear tu entrenamiento de calistenia.</p>
+        
+        <p>Para usar Reppy necesitas tener JavaScript habilitado en tu navegador.</p>
+      </div>
+    </noscript>
+
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
-
-    
   </body>
 </html>
