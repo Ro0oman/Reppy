@@ -108,7 +108,8 @@ export const recalculateUserStats = async (userId) => {
       currentLevel: newLevel,
       xpIntoLevel,
       xpForNextLevel: 1000,
-      streak
+      streak,
+      totalVolume
     };
 
   } catch (err) {

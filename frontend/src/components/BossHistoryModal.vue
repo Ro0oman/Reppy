@@ -27,9 +27,10 @@
       </div>
 
       <!-- List -->
-      <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-        <div v-if="loading" class="space-y-4">
-            <div v-for="i in 5" :key="i" class="h-20 bg-surface/40 rounded-2xl animate-pulse"></div>
+      <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar min-h-[300px]">
+        <div v-if="loading" class="h-64 flex flex-col items-center justify-center gap-6">
+            <div class="animate-spin rounded-full h-12 w-12 border-2 border-primary-500 border-t-transparent"></div>
+            <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em] animate-pulse">DECRYPTING BATTLE LOGS...</p>
         </div>
         <div v-else-if="contributors.length === 0" class="h-64 flex flex-col items-center justify-center text-muted">
             <Inbox class="w-12 h-12 mb-4 opacity-20" />
@@ -85,7 +86,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
-import { X, Inbox } from 'lucide-vue-next';
+import { X, Inbox, Loader2 } from 'lucide-vue-next';
 import AvatarFrame from './AvatarFrame.vue';
 
 const props = defineProps({

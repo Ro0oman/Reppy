@@ -70,9 +70,15 @@ router.get('/:id', async (req, res) => {
     );
     const favExercise = favResult.rows[0]?.exercise_type || 'pullups';
 
+    // Calculate total breakdown by exercise
+    const breakdownRes = await query(
+      'SELECT exercise_type as type, SUM(count)::int as count FROM reps WHERE user_id = $1 GROUP BY exercise_type ORDER BY count DESC',
+      [userId]
+    );
+
     // RPG CALCULATIONS - Now handled by shared utility
     const stats = await recalculateUserStats(userId);
-    const { strXP: str_xp, pwrXP: pwr_xp, endXP: end_xp, agiXP: agi_xp, streak } = stats;
+    const { strXP: str_xp, pwrXP: pwr_xp, endXP: end_xp, agiXP: agi_xp, streak, totalVolume } = stats;
 
     const getLevel = (xp) => Math.floor((xp || 0) / 100) + 1;
 
@@ -103,7 +109,7 @@ router.get('/:id', async (req, res) => {
         agi_lvl: getLevel(agi_xp)
       },
       heatmap: heatmapResult.rows || [],
-      stats: { totalReps, streak, favExercise, totalXP },
+      stats: { totalReps, streak, favExercise, totalXP, totalVolume, breakdown: breakdownRes.rows || [] },
       recentLogs: recentLogs.rows || [],
       transactions: transactions.rows || []
     });

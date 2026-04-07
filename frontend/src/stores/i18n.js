@@ -163,7 +163,12 @@ const translations = {
     cat_title: 'Honor Titles',
     cat_border: 'Avatar Borders',
     cat_avatar: 'Avatars',
-    cat_background: 'Interface Screens'
+    cat_avatar: 'Avatars',
+    cat_background: 'Interface Screens',
+
+    // Protocol Mastery
+    protocol_mastery: 'Protocol Mastery',
+    protocol_mastery_desc: 'HISTORICAL REPOSITORY OF EFFORT BY EXERCISE'
   },
   es: {
     // Landing
@@ -327,7 +332,11 @@ const translations = {
     cat_title: 'Títulos de Honor',
     cat_border: 'Marcos de Avatar',
     cat_avatar: 'Avatares',
-    cat_background: 'Pantallas de Interfaz'
+    cat_background: 'Pantallas de Interfaz',
+    
+    // Protocol Mastery
+    protocol_mastery: 'Maestría de Protocolos',
+    protocol_mastery_desc: 'REPOSITORIO HISTÓRICO DE MAGNITUD POR EJERCICIO'
   }
 };
 

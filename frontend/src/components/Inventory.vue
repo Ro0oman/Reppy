@@ -32,6 +32,7 @@
         </div>
         
         <button @click="handleOpenLevelChest" :disabled="openingChest"
+          title="Abrir Cofre de Nivel / Decode Progression Reward"
           class="btn-reppy !bg-cyan-500 hover:!bg-cyan-600 !px-12 !py-6 !text-lg !rounded-3xl shadow-[0_20px_50px_rgba(6,182,212,0.3)] disabled:opacity-20 disabled:grayscale transition-all">
           <Sparkles class="w-6 h-6" />
           {{ openingChest ? 'DESCIFRANDO...' : 'ABRIR COFRE DE NIVEL' }}
@@ -64,6 +65,7 @@
         </div>
         
         <button @click="handleOpenChest" :disabled="openingChest"
+          title="Abrir Cofre de Boss / Decode Season Loot"
           class="btn-reppy !px-12 !py-6 !text-lg !rounded-3xl shadow-[0_20px_50px_rgba(255,69,0,0.3)] disabled:opacity-20 disabled:grayscale transition-all">
           <Sparkles class="w-6 h-6" />
           {{ openingChest ? 'DESCIFRANDO...' : 'ABRIR COFRE DE BOSS' }}

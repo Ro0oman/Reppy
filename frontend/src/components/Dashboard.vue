@@ -84,14 +84,26 @@
           </div>
 
           <!-- 3. Peak Volume -->
-          <div class="card-stats flex flex-col justify-between group/pb min-h-[160px]">
+          <div class="card-stats flex flex-col justify-between group/pb min-h-[160px]" title="Máximo volumen conseguido en un solo mes">
             <div class="flex items-center justify-between">
               <span class="text-[11px] font-bold tracking-tight text-muted/60">Volumen Pico</span>
-              <Zap class="w-4 h-4 text-accent" />
+              <Activity class="w-4 h-4 text-accent" />
             </div>
             <div class="mt-4">
               <span class="text-5xl font-bold text-foreground tracking-tighter leading-none">{{ stats.topMonthCount }}</span>
               <p class="text-[11px] font-bold text-accent tracking-tight mt-1">Máximo Mes</p>
+            </div>
+          </div>
+
+          <!-- 4. Total Tonnage -->
+          <div class="card-stats flex flex-col justify-between group/tonnage min-h-[160px]" title="Tonelaje total desplazado (Repeticiones x Resistencia)">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold tracking-tight text-muted/60">Tonelaje Total</span>
+              <Trophy class="w-4 h-4 text-primary-500" />
+            </div>
+            <div class="mt-4">
+              <span class="text-5xl font-bold text-foreground tracking-tighter leading-none">{{ (stats.totalVolume / 1000).toFixed(1) }}</span>
+              <p class="text-[11px] font-bold text-primary-500 tracking-tight mt-1">TONS MOVIMIENTOS</p>
             </div>
           </div>
         </div>

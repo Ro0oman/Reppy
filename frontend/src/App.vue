@@ -9,7 +9,7 @@
       class="border-b border-border bg-surface/40 backdrop-blur-3xl sticky top-0 z-50 transition-all">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
         <!-- Logo Core -->
-        <div class="flex items-center gap-4 group cursor-pointer" @click="router.push('/dashboard')">
+        <div class="flex items-center gap-4 group cursor-pointer" @click="router.push('/dashboard')" title="Dashboard / Inicio">
           <div class="w-10 h-10 bg-primary-500 rounded-2xl flex items-center justify-center font-bold text-white shadow-xl shadow-primary-500/20 transition-transform">R</div>
           <span class="text-2xl font-bold tracking-tight text-foreground font-industrial">Reppy<span class="text-primary-500">.</span></span>
         </div>
@@ -18,6 +18,7 @@
         <div class="hidden lg:flex items-center gap-1">
           <router-link v-for="nav in navLinks" :key="nav.id"
             :to="'/' + nav.id" 
+            :title="i18n.t(nav.label) || nav.fallback"
             class="px-4 py-2 rounded-2xl text-[13px] font-semibold transition-all relative group flex items-center gap-2.5"
             :class="$route.name === nav.id ? 'text-foreground bg-primary-500/5' : 'text-muted hover:text-foreground hover:bg-surface/10'">
             <component :is="nav.icon" class="w-4 h-4" :class="$route.name === nav.id ? 'text-primary-500' : ''" />
@@ -38,6 +39,7 @@
         <div class="flex items-center gap-6">
           <!-- Desktop GitHub Module -->
           <a href="https://github.com/Ro0oman/Reppy" target="_blank"
+            title="GitHub Repository / Código Fuente"
             class="hidden xl:flex items-center gap-3 px-4 py-2 rounded-xl bg-surface/5 hover:bg-surface/10 border border-border transition-all group">
             <Github class="w-4 h-4 text-muted group-hover:text-foreground" />
             <div class="flex items-center gap-2">
@@ -48,7 +50,9 @@
 
           <div class="flex items-center gap-4">
             <!-- Currency Module -->
-             <div @click="showCoinsInfo = true" class="flex items-center gap-3 bg-surface/5 px-4 py-2 rounded-xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group">
+             <div @click="showCoinsInfo = true" 
+                  title="Protocol Coins History / Historial de Monedas"
+                  class="flex items-center gap-3 bg-surface/5 px-4 py-2 rounded-xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group">
                <Coins class="w-3.5 h-3.5 text-primary-500 transition-transform" />
                <span class="text-sm font-black text-precision text-foreground">{{ authStore.user?.reppy_coins || 0 }}</span>
             </div>
@@ -70,7 +74,9 @@
             </div>
 
             <!-- Profile Entry -->
-            <button @click="openProfile(authStore.user.id)" class="flex items-center gap-3 transition-all p-1 hover:bg-surface/10 rounded-2xl">
+            <button @click="openProfile(authStore.user.id)" 
+                    title="My Profile / Mi Perfil"
+                    class="flex items-center gap-3 transition-all p-1 hover:bg-surface/10 rounded-2xl">
               <div class="text-right hidden md:flex flex-col items-end">
                 <p class="text-xs font-bold text-foreground leading-none">{{ authStore.user?.name }}</p>
                 <span v-if="authStore.user?.title_name" class="text-[9px] font-medium text-primary-500 mt-1">
@@ -109,6 +115,7 @@
       <div class="flex items-center justify-around h-14">
         <router-link v-for="nav in mobileNavLinks" :key="nav.id"
           :to="'/' + nav.id" 
+          :title="i18n.t(nav.label)"
           class="flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all relative"
           :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted hover:text-foreground'">
           

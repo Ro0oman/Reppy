@@ -65,7 +65,9 @@
               <p class="text-[8px] font-bold text-muted uppercase tracking-widest leading-relaxed max-w-[240px] text-center md:text-left">Cada subida de nivel otorga 1 cofre de temporada de regalo</p>
             </div>
             
-            <button @click="showInfoModal = true" class="flex items-center gap-3 bg-surface/5 px-5 py-3 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[8px] font-black tracking-widest">
+            <button @click="showInfoModal = true" 
+                   title="Evolution Protocol Guide"
+                   class="flex items-center gap-3 bg-surface/5 px-5 py-3 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[8px] font-black tracking-widest">
               <HelpCircle class="w-4 h-4" />
               CODEX INFO
             </button>
@@ -87,7 +89,9 @@
         
         <!-- Emergency Exit (Logout) -->
         <div v-if="isOwnProfile" class="md:absolute top-8 right-8">
-          <button @click="authStore.logout()" class="p-4 bg-red-500/5 text-red-500/60 hover:bg-red-500 hover:text-white border border-red-500/10 rounded-2xl transition-all group/logout">
+          <button @click="authStore.logout()" 
+                  title="Abandono de puesto / Log Out"
+                  class="p-4 bg-red-500/5 text-red-500/60 hover:bg-red-500 hover:text-white border border-red-500/10 rounded-2xl transition-all group/logout">
             <LogOut class="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
@@ -106,10 +110,19 @@
               <div class="space-y-6">
                 <!-- Total Reps Pill -->
                 <div class="group/stat">
-                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Total Magnitude</p>
+                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Total Effort</p>
                    <div class="flex items-baseline gap-2">
-                      <span class="text-5xl font-black text-precision text-foreground tracking-tighter">{{ stats.totalReps || 0 }}</span>
+                      <span class="text-4xl font-black text-precision text-foreground tracking-tighter">{{ stats.totalReps || 0 }}</span>
                       <span class="text-[10px] font-black text-primary-500 uppercase tracking-widest">REPS</span>
+                   </div>
+                </div>
+
+                <!-- Total Volume Pill -->
+                <div class="group/stat">
+                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Tonnage Moved</p>
+                   <div class="flex items-baseline gap-2">
+                      <span class="text-4xl font-black text-precision text-red-500 tracking-tighter">{{ (stats.totalVolume / 1000).toFixed(1) }}</span>
+                      <span class="text-[10px] font-black text-muted uppercase tracking-widest">TONS</span>
                    </div>
                 </div>
  
@@ -146,6 +159,38 @@
               </div>
               <Heatmap :data="heatmapData" class="flex-1 min-h-[180px]" />
            </div>
+        </div>
+      </div>
+
+      <!-- Protocol Mastery Breakdown (#55 Additional) -->
+      <div class="card-stats border-border space-y-8 bg-gradient-to-br from-surface/20 to-surface/5">
+        <div class="flex items-center gap-4">
+          <div class="p-3 bg-primary-500/10 rounded-2xl border border-primary-500/20">
+            <Trophy class="w-6 h-6 text-primary-500" />
+          </div>
+          <div>
+            <h3 class="text-xl font-black text-industrial text-foreground tracking-tight uppercase">{{ i18nStore.t('protocol_mastery') }}</h3>
+            <p class="text-[9px] font-black text-muted uppercase tracking-[0.3em] font-tight">{{ i18nStore.t('protocol_mastery_desc') }}</p>
+          </div>
+        </div>
+
+        <div v-if="stats.breakdown?.length > 0" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div v-for="item in stats.breakdown" :key="item.type"
+               class="p-5 bg-black/20 border border-white/5 rounded-3xl group hover:border-primary-500/30 transition-all duration-500 relative overflow-hidden">
+            <!-- Background Icon Hint -->
+            <component :is="getIconForType(item.type)" class="absolute -right-2 -bottom-2 w-12 h-12 text-foreground/[0.03] -rotate-12 transition-transform group-hover:scale-125" />
+            
+            <div class="relative z-10 space-y-3">
+              <div class="flex items-center gap-2">
+                <component :is="getIconForType(item.type)" class="w-3.5 h-3.5 text-primary-500/60" />
+                <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18nStore.t(item.type) }}</span>
+              </div>
+              <div class="flex flex-col">
+                <span class="text-3xl font-black text-foreground italic tabular-nums group-hover:text-primary-500 transition-colors">{{ item.count }}</span>
+                <span class="text-[8px] font-black text-zinc-600 uppercase tracking-tighter">{{ i18nStore.t('stats_total') }}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -244,17 +289,19 @@
     <!-- RPG Info Modal (The Codex) -->
     <Teleport to="body">
       <div v-if="showInfoModal" 
-           class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-deep-abyss/90 backdrop-blur-md animate-in fade-in duration-300">
-        <div class="card-stats max-w-xl w-full p-8 md:p-12 border-primary-500/20 shadow-[0_0_100px_rgba(255,69,0,0.1)] space-y-10 relative overflow-hidden">
+           class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
+        <div class="card-stats max-w-xl w-full p-8 md:p-12 border-primary-500/20 shadow-[0_0_100px_rgba(255,69,0,0.1)] space-y-10 relative overflow-hidden bg-background">
           <div class="absolute -top-20 -right-20 w-64 h-64 bg-primary-500/10 rounded-full blur-[80px] pointer-events-none"></div>
           
           <div class="flex items-center justify-between z-10 relative">
             <div class="flex flex-col">
-              <h3 class="text-4xl font-black text-industrial text-white uppercase italic leading-none">THE CODEX<span class="text-primary-500">.</span></h3>
-              <p class="text-[10px] font-black text-zinc-600 uppercase tracking-[0.4em] mt-3">RPG EVOLUTION GUIDE</p>
+              <h3 class="text-4xl font-black text-industrial text-foreground uppercase italic leading-none">THE CODEX<span class="text-primary-500">.</span></h3>
+              <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em] mt-3">RPG EVOLUTION GUIDE</p>
             </div>
-            <button @click="showInfoModal = false" class="p-3 bg-white/5 hover:bg-white/10 rounded-2xl transition-all hover:rotate-90">
-              <XIcon class="w-6 h-6 text-white" />
+            <button @click="showInfoModal = false" 
+                   title="Close Protocol"
+                   class="p-3 bg-surface/10 hover:bg-surface/20 rounded-2xl transition-all hover:rotate-90">
+              <XIcon class="w-6 h-6 text-foreground" />
             </button>
           </div>
 
@@ -262,15 +309,15 @@
           <div class="space-y-6 z-10 relative">
             <div class="grid grid-cols-1 gap-5">
               <div v-for="desc in attributeDescriptions" :key="desc.key" 
-                   class="flex gap-6 items-start p-6 bg-white/[0.02] border border-white/5 rounded-2xl group transition-all"
+                   class="flex gap-6 items-start p-6 bg-surface/5 border border-border rounded-2xl group transition-all hover:bg-surface/10"
                    :class="desc.borderColor">
-                <div class="p-4 bg-white/5 rounded-2xl transition-transform" :class="desc.iconColor">
+                <div class="p-4 bg-surface/10 rounded-2xl transition-transform group-hover:scale-110" :class="desc.iconColor">
                    <component :is="desc.icon" class="w-6 h-6" />
                 </div>
                 <div class="flex-1">
                   <h4 class="font-black uppercase text-xs tracking-widest mb-1" :class="desc.iconColor">{{ desc.name }} ({{ desc.key }})</h4>
-                  <p class="text-zinc-500 text-[10px] leading-relaxed italic mb-2">"{{ desc.quote }}"</p>
-                  <p class="text-zinc-300 text-[11px] font-medium leading-relaxed">{{ desc.description }}</p>
+                  <p class="text-muted text-[10px] leading-relaxed italic mb-2">"{{ desc.quote }}"</p>
+                  <p class="text-foreground/80 text-[11px] font-medium leading-relaxed">{{ desc.description }}</p>
                 </div>
               </div>
             </div>
@@ -287,9 +334,10 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
-import { Camera, Settings, LogOut, Activity, Flame, Trophy, HelpCircle, X as XIcon, Sword, Zap, Heart, Shield, Coins } from 'lucide-vue-next';
+import { Camera, Settings, LogOut, Activity, Flame, Trophy, HelpCircle, X as XIcon, Sword, Zap, Heart, Shield, Coins, Dumbbell, Target, Globe } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
+import { useI18nStore } from '../stores/i18n';
 import { useThemeStore } from '../stores/theme';
 import Heatmap from './Heatmap.vue';
 import AvatarFrame from './AvatarFrame.vue';
@@ -302,6 +350,7 @@ const props = defineProps({
 });
 
 const authStore = useAuthStore();
+const i18nStore = useI18nStore();
 const notificationStore = useNotificationStore();
 const themeStore = useThemeStore();
 
@@ -320,6 +369,18 @@ const attributeDescriptions = [
   { key: 'END', name: 'ENDURANCE', icon: Heart, iconColor: 'text-emerald-500', borderColor: 'hover:border-emerald-500/30', quote: 'Infinite fuel cell.', description: 'Purity of stamina. Scales with the total volume of repetitions performed across protocols.' },
   { key: 'AGI', name: 'AGILITY', icon: Shield, iconColor: 'text-blue-500', borderColor: 'hover:border-blue-500/30', quote: 'Zero metabolic drag.', description: 'Tactical consistency. Earned through active streaks and protocol variety.' }
 ];
+
+const getIconForType = (type) => {
+  const icons = {
+    pullups: Dumbbell,
+    pushups: Flame,
+    muscleups: Zap,
+    dips: Target,
+    weighted_pullups: Trophy,
+    all: Globe
+  };
+  return icons[type] || Dumbbell;
+};
 
 const attributes = computed(() => [
   { key: 'STR', xp: user.value.str_xp || 0, lvl: user.value.str_lvl || 1, labelColor: 'text-red-500' },
