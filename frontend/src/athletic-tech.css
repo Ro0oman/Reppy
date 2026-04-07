@@ -8,28 +8,7 @@
     --primary: 215 100% 55%; /* Electric Blue #1A73E8 style (Premium Athletic) */
     --accent: 142 100% 50%;  /* Emerald Neon #00FF88 */
     
-    /* Dark Theme (Clean Obsidian) - Default */
-    --background: 224 25% 4%;      /* Real Obsidian #0A0B0D */
-    --surface: 224 20% 8%;         /* #121417 */
-    --card: 224 15% 12% / 0.6;     /* Glossy card */
-    --foreground: 210 20% 98%;     /* Crisp white-blue */
-    --muted: 215 15% 65%;          /* Soft metal gray */
-    --border: 215 20% 20% / 0.4;
-    --ring: 215 100% 55% / 0.4;
-
-    /* Heatmap Levels (Dark - Blue/Emerald) */
-    --heatmap-bg: 224 25% 4%;
-    --heatmap-l0: 224 15% 10%;
-    --heatmap-l1: 199 89% 24%;
-    --heatmap-l2: 201 96% 32%;
-    --heatmap-l3: 209 100% 45%;
-    --heatmap-l4: 215 100% 55%;
-
-    --white-to-gray: 0 0% 100%;
-  }
-
-  .light {
-    /* Light Theme (Clean Studio) */
+    /* Light Theme (Clean Studio) - Default */
     --background: 210 40% 98%;     /* Soft Paper #F8FAFC */
     --surface: 0 0% 100%;          /* Pure White */
     --card: 0 0% 100% / 0.7;
@@ -47,6 +26,27 @@
     --heatmap-l2: 210 96% 80%;
     --heatmap-l3: 215 100% 55%;
     --heatmap-l4: 221 83% 45%;
+  }
+
+  .dark {
+    /* Dark Theme (Clean Obsidian) */
+    --background: 224 25% 4%;      /* Real Obsidian #0A0B0D */
+    --surface: 224 20% 8%;         /* #121417 */
+    --card: 224 15% 12% / 0.6;     /* Glossy card */
+    --foreground: 210 20% 98%;     /* Crisp white-blue */
+    --muted: 215 15% 65%;          /* Soft metal gray */
+    --border: 215 20% 20% / 0.4;
+    --ring: 215 100% 55% / 0.4;
+
+    /* Heatmap Levels (Dark - Blue/Emerald) */
+    --heatmap-bg: 224 25% 4%;
+    --heatmap-l0: 224 15% 10%;
+    --heatmap-l1: 199 89% 24%;
+    --heatmap-l2: 201 96% 32%;
+    --heatmap-l3: 209 100% 45%;
+    --heatmap-l4: 215 100% 55%;
+
+    --white-to-gray: 0 0% 100%;
   }
 
   body {

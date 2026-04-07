@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-wrap items-center justify-between gap-1.5 p-1.5 bg-surface/40 backdrop-blur-3xl border border-border/40 rounded-[1.5rem] shadow-xl">
+  <div class="flex flex-wrap items-center justify-between gap-1.5 p-1.5 bg-surface/40 backdrop-blur-3xl   rounded-[1.5rem] shadow-xl">
     <button 
       v-for="ex in exercises" :key="ex.id"
       @click="$emit('update:modelValue', ex.id)"

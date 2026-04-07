@@ -146,7 +146,7 @@ const matrixColumns = computed(() => {
 
 /* 1. Protocol Deck (Default) */
 .bg-pure-black {
-  background: radial-gradient(circle at 50% 50%, hsl(var(--background)) 0%, hsl(var(--background)) 100%);
+  background: transparent;
 }
 
 /* 2. Neural Grid */

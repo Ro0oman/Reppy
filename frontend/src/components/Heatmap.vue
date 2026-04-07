@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex flex-col gap-4 transition-opacity duration-500" :class="{ 'opacity-40 pointer-events-none': loading }">
+  <div class="relative flex flex-col gap-4 shadow transition-opacity duration-500" :class="{ 'opacity-40 pointer-events-none': loading }">
     <!-- Calendar Header -->
     <div class="flex items-center justify-between px-1">
       <div class="flex flex-col">

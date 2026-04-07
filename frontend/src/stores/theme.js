@@ -10,9 +10,9 @@ export const useThemeStore = defineStore('theme', () => {
       (newTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
     
     if (isDark) {
-      root.classList.remove('light');
+      root.classList.add('dark');
     } else {
-      root.classList.add('light');
+      root.classList.remove('dark');
     }
     
     localStorage.setItem('reppy_theme', newTheme);
