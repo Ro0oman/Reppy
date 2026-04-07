@@ -5,19 +5,19 @@
     </p>
     
     <!-- GitHub-Style Activity Box -->
-    <div class="relative bg-[#0d1117] border border-zinc-800 rounded-md p-4 lg:p-6 group/board">
+    <div class="relative bg-surface border border-border rounded-md p-4 lg:p-6 group/board">
       <!-- Tooltip -->
       <transition name="tooltip">
         <div v-if="hoveredDay" 
-          class="absolute z-[100] px-4 py-2 bg-zinc-900 text-white text-[10px] font-black rounded-xl shadow-2xl pointer-events-none whitespace-nowrap -translate-x-1/2 -translate-y-[calc(100%+12px)] border border-white/10"
+          class="absolute z-[100] px-4 py-2 bg-surface text-foreground text-[10px] font-black rounded-xl shadow-2xl pointer-events-none whitespace-nowrap -translate-x-1/2 -translate-y-[calc(100%+12px)] border border-border"
           :style="tooltipPosition"
         >
           <div class="flex flex-col items-center gap-0.5 relative">
-            <span class="text-zinc-400 font-bold mb-0.5">{{ formatDate(hoveredDay.date) }}</span>
-            <span class="text-emerald-400">
+            <span class="text-muted font-bold mb-0.5">{{ formatDate(hoveredDay.date) }}</span>
+            <span class="text-emerald-500">
               {{ hoveredDay.count > 0 ? `${hoveredDay.count} ${i18n.t('heatmap_reps')}` : i18n.t('heatmap_no_reps') }}
             </span>
-            <div class="w-2 h-2 bg-zinc-900 rotate-45 absolute -bottom-3 left-1/2 -translate-x-1/2 border-b border-r border-white/10"></div>
+            <div class="w-2 h-2 bg-surface rotate-45 absolute -bottom-3 left-1/2 -translate-x-1/2 border-b border-r border-border"></div>
           </div>
         </div>
       </transition>
@@ -228,23 +228,23 @@ const monthLabels = computed(() => {
 
 const getLevelClass = (level) => {
   const levels = {
-    0: 'bg-[#161b22]',
-    1: 'bg-[#0e4429]',
-    2: 'bg-[#006d32]',
-    3: 'bg-[#26a641]',
-    4: 'bg-[#39d353]'
+    0: 'bg-[hsl(var(--heatmap-l0))]',
+    1: 'bg-[hsl(var(--heatmap-l1))]',
+    2: 'bg-[hsl(var(--heatmap-l2))]',
+    3: 'bg-[hsl(var(--heatmap-l3))]',
+    4: 'bg-[hsl(var(--heatmap-l4))]'
   };
   return levels[level] || levels[0];
 };
 
 const getColorClass = (day) => {
   if (day.isOutsideRange) return 'bg-transparent pointer-events-none opacity-0';
-  if (day.isFuture) return 'bg-[#0d1117] border border-zinc-800/50';
-  if (day.count === 0) return 'bg-[#161b22]';
-  if (day.count < 10) return 'bg-[#0e4429]';
-  if (day.count < 30) return 'bg-[#006d32]';
-  if (day.count < 50) return 'bg-[#26a641]';
-  return 'bg-[#39d353]';
+  if (day.isFuture) return 'bg-[hsl(var(--heatmap-bg))] border border-border/50';
+  if (day.count === 0) return 'bg-[hsl(var(--heatmap-l0))]';
+  if (day.count < 10) return 'bg-[hsl(var(--heatmap-l1))]';
+  if (day.count < 30) return 'bg-[hsl(var(--heatmap-l2))]';
+  if (day.count < 50) return 'bg-[hsl(var(--heatmap-l3))]';
+  return 'bg-[hsl(var(--heatmap-l4))]';
 };
 
 const formatDate = (dateStr) => {

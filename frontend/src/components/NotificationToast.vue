@@ -24,15 +24,15 @@
           </div>
           
           <div class="flex-1 min-w-0">
-            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-900 dark:text-white/40 mb-0.5">
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted mb-0.5">
               {{ store.type === 'error' ? 'Security Protocol' : 'Neural Sync' }}
             </p>
-            <p class="text-[13px] font-black text-zinc-900 dark:text-white leading-tight">
+            <p class="text-[13px] font-black text-foreground leading-tight">
               {{ store.message }}
             </p>
           </div>
           
-          <button @click="store.hide" class="text-zinc-900 dark:text-white/30 hover:text-zinc-900 dark:text-white transition-colors p-1">
+          <button @click="store.hide" class="text-muted hover:text-foreground transition-colors p-1">
             <X class="w-4 h-4" />
           </button>
         </div>

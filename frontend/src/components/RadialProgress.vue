@@ -9,7 +9,7 @@
         stroke="currentColor"
         stroke-width="12"
         fill="transparent"
-        class="text-white/5"
+        class="text-foreground/10"
       />
       <!-- Progress Circle -->
       <circle
@@ -35,7 +35,7 @@
     <!-- Center Label -->
     <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
       <slot>
-        <span class="text-2xl font-black text-industrial text-white">{{ Math.round(progress) }}%</span>
+        <span class="text-2xl font-black text-industrial text-foreground">{{ Math.round(progress) }}%</span>
       </slot>
     </div>
   </div>

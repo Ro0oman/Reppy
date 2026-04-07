@@ -2,12 +2,12 @@
   <div class="max-w-5xl mx-auto px-4 py-12 space-y-12 animate-in relative z-10">
     <div v-if="loading" class="flex flex-col items-center justify-center py-32">
       <div class="w-12 h-12 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-      <p class="text-[10px] font-black text-zinc-700 uppercase tracking-[0.4em] mt-8">DECRYPTING PROFILE...</p>
+      <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em] mt-8">DECRYPTING PROFILE...</p>
     </div>
     
     <template v-else>
       <!-- Profile Header Showcase (The Command Center) -->
-      <div class="card-stats p-8 md:p-12 relative flex flex-col md:flex-row items-center md:items-start gap-10 text-center md:text-left border-white/10 group">
+      <div class="card-stats p-8 md:p-12 relative flex flex-col md:flex-row items-center md:items-start gap-10 text-center md:text-left border-border group">
         <!-- Background Power Detail -->
         <div class="absolute -top-32 -right-32 w-[500px] h-[500px] bg-primary-500/5 blur-[120px] rounded-full pointer-events-none group-hover:bg-primary-500/10 transition-colors duration-1000"></div>
 
@@ -23,25 +23,25 @@
         <!-- Identity & Status -->
         <div class="flex-1 space-y-6">
           <div class="space-y-1">
-            <h2 class="text-4xl md:text-5xl font-black text-industrial tracking-tighter text-white uppercase italic" :class="user.title_css">
+            <h2 class="text-4xl md:text-5xl font-black text-industrial tracking-tighter text-foreground uppercase italic" :class="user.title_css">
               {{ user.name }}
             </h2>
             <div class="flex items-center justify-center md:justify-start gap-3">
               <span class="w-2 h-2 rounded-full bg-neon-lime animate-pulse"></span>
-              <p class="text-xs font-black text-zinc-500 uppercase tracking-[0.25em] font-tight">{{ user.title_name || 'RECRUIT' }}</p>
+              <p class="text-xs font-black text-muted uppercase tracking-[0.25em] font-tight">{{ user.title_name || 'RECRUIT' }}</p>
             </div>
           </div>
 
           <div class="flex flex-wrap items-center justify-center md:justify-start gap-4">
-            <div class="flex items-center gap-3 bg-white/5 px-5 py-3 rounded-xl border border-white/10 group/coins">
+            <div class="flex items-center gap-3 bg-surface/5 px-5 py-3 rounded-xl border border-border group/coins">
               <Zap class="w-4 h-4 text-primary-500 group-hover/coins:scale-125 transition-transform" />
               <div class="flex items-baseline gap-1.5">
-                <span class="text-2xl font-black text-precision text-white leading-none">{{ user.reppy_coins || 0 }}</span>
-                <span class="text-[8px] font-black text-zinc-500 uppercase tracking-widest">COINS</span>
+                <span class="text-2xl font-black text-precision text-foreground leading-none">{{ user.reppy_coins || 0 }}</span>
+                <span class="text-[8px] font-black text-muted uppercase tracking-widest">COINS</span>
               </div>
             </div>
             
-            <button @click="showInfoModal = true" class="flex items-center gap-3 bg-white/5 px-5 py-3 rounded-xl border border-white/10 hover:border-primary-500/30 transition-all text-zinc-400 hover:text-white uppercase text-[8px] font-black tracking-widest">
+            <button @click="showInfoModal = true" class="flex items-center gap-3 bg-surface/5 px-5 py-3 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[8px] font-black tracking-widest">
               <HelpCircle class="w-4 h-4" />
               CODEX INFO
             </button>
@@ -50,12 +50,12 @@
           <!-- RPG Metrics (The Attributes Grid) -->
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-lg mt-8">
             <div v-for="attr in attributes" :key="attr.key" 
-                 class="p-4 rounded-xl border border-white/5 bg-black/20 group/attr transition-all"
+                 class="p-4 rounded-xl border border-border bg-surface/20 group/attr transition-all"
                  :class="getAttrColor(attr.lvl)">
               <p class="text-[9px] font-black uppercase tracking-[0.2em] mb-2 font-tight" :class="attr.labelColor">{{ attr.key }}</p>
               <div class="flex flex-col leading-none">
-                <span class="text-2xl font-black text-precision text-white">LVL {{ attr.lvl }}</span>
-                <span class="text-[8px] font-bold text-zinc-600 mt-1 tabular-nums">{{ attr.xp }} XP</span>
+                <span class="text-2xl font-black text-precision text-foreground">LVL {{ attr.lvl }}</span>
+                <span class="text-[8px] font-bold text-muted mt-1 tabular-nums">{{ attr.xp }} XP</span>
               </div>
             </div>
           </div>
@@ -123,29 +123,43 @@
       </div>
 
       <!-- Protocol Override (Settings) -->
-      <div v-if="isOwnProfile" class="card-stats border-white/5 space-y-10">
+      <div v-if="isOwnProfile" class="card-stats border-border space-y-10">
         <div class="flex items-center gap-4">
           <div class="p-3 bg-primary-500/5 rounded-2xl border border-primary-500/10">
             <Settings class="w-6 h-6 text-primary-500" />
           </div>
-          <h3 class="text-xl font-black text-industrial text-white tracking-tight uppercase">PROTOCOL CONFIGURATION</h3>
+          <h3 class="text-xl font-black text-industrial text-foreground tracking-tight uppercase">PROTOCOL CONFIGURATION</h3>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div class="space-y-2">
-            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-600 px-1">IDENTIFIER</label>
+            <label class="text-[10px] font-black uppercase tracking-widest text-muted px-1">IDENTIFIER</label>
             <input v-model="settingsForm.name" type="text"
-              class="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white text-precision focus:border-primary-500/50 outline-none transition-all shadow-inner" />
+              class="w-full bg-surface/40 border border-border rounded-xl px-5 py-4 text-foreground text-precision focus:border-primary-500/50 outline-none transition-all shadow-inner" />
           </div>
           <div class="space-y-2">
-            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-600 px-1">DAILY TARGET</label>
+            <label class="text-[10px] font-black uppercase tracking-widest text-muted px-1">DAILY TARGET</label>
             <input v-model.number="settingsForm.daily_goal" type="number"
-              class="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white text-precision focus:border-primary-500/50 outline-none transition-all shadow-inner" />
+              class="w-full bg-surface/40 border border-border rounded-xl px-5 py-4 text-foreground text-precision focus:border-primary-500/50 outline-none transition-all shadow-inner" />
           </div>
           <div class="space-y-2">
-            <label class="text-[10px] font-black uppercase tracking-widest text-zinc-600 px-1">BODY MASS (KG)</label>
+            <label class="text-[10px] font-black uppercase tracking-widest text-muted px-1">BODY MASS (KG)</label>
             <input v-model.number="settingsForm.body_weight" type="number" step="0.1"
-              class="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white text-precision focus:border-primary-500/50 outline-none transition-all shadow-inner" />
+              class="w-full bg-surface/40 border border-border rounded-xl px-5 py-4 text-foreground text-precision focus:border-primary-500/50 outline-none transition-all shadow-inner" />
+          </div>
+          
+          <!-- Theme Protocol Toggle -->
+          <div class="space-y-2">
+            <label class="text-[10px] font-black uppercase tracking-widest text-muted px-1">INTERFACE MODE</label>
+            <div class="flex items-center bg-surface/40 border border-border rounded-xl p-1.5 h-[58px]">
+              <button v-for="m in ['light', 'dark', 'system']" :key="m"
+                @click="themeStore.setTheme(m)"
+                class="flex-1 flex items-center justify-center h-full rounded-lg transition-all gap-2"
+                :class="themeStore.theme === m ? 'bg-primary-500 text-white shadow-lg' : 'text-muted hover:text-foreground hover:bg-surface/10'">
+                <component :is="m === 'light' ? Sun : m === 'dark' ? Moon : Monitor" class="w-4 h-4" />
+                <span class="text-[8px] font-bold uppercase tracking-tighter hidden md:block">{{ m }}</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -205,9 +219,11 @@ import { ref, onMounted, computed, watch } from 'vue';
 import { Camera, Settings, LogOut, Activity, Flame, Trophy, HelpCircle, X as XIcon, Sword, Zap, Heart, Shield } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
+import { useThemeStore } from '../stores/theme';
 import Heatmap from './Heatmap.vue';
 import AvatarFrame from './AvatarFrame.vue';
 import axios from 'axios';
+import { Moon, Sun, Monitor } from 'lucide-vue-next';
 
 const props = defineProps({
   userId: { type: String, default: null }
@@ -215,6 +231,7 @@ const props = defineProps({
 
 const authStore = useAuthStore();
 const notificationStore = useNotificationStore();
+const themeStore = useThemeStore();
 
 const user = ref({});
 const stats = ref({});

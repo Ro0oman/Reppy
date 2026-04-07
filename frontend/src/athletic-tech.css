@@ -3,21 +3,57 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
+:root {
+    /* Core Brand */
     --primary: 15 100% 50%; /* Bolt Orange #FF4500 */
-    --background: 240 10% 4%; /* Deep Abyss #0D0D0D */
-    --surface: 0 0% 10%; /* Steel Grey #1A1A1A */
+    --accent: 72 100% 50%;  /* Neon Lime #CCFF00 */
+    
+    /* Dark Theme (YouTube Style) - Default */
+    --background: 0 0% 6%;      /* #101010 */
+    --surface: 0 0% 12%;         /* #1F1F1F */
+    --card: 0 0% 12% / 0.6;
     --foreground: 0 0% 98%;
-    --accent: 72 100% 50%; /* Neon Lime #CCFF00 */
+    --muted: 0 0% 60%;
+    --border: 0 0% 20% / 0.5;
+    --ring: 15 100% 50% / 0.3;
+
+    /* Heatmap Levels (Dark) */
+    --heatmap-bg: 0 0% 6%;
+    --heatmap-l0: 0 0% 9%;
+    --heatmap-l1: 144 66% 16%;
+    --heatmap-l2: 147 100% 21%;
+    --heatmap-l3: 142 62% 40%;
+    --heatmap-l4: 142 64% 59%;
+  }
+
+  .light {
+    --background: 0 0% 98%;     /* #FAFAFA */
+    --surface: 0 0% 100%;       /* #FFFFFF */
+    --card: 0 0% 100% / 0.7;
+    --foreground: 0 0% 10%;     /* #1A1A1A */
+    --muted: 0 0% 40%;
+    --border: 0 0% 0% / 0.08;
+    --ring: 15 100% 50% / 0.15;
+
+    /* Heatmap Levels (Light) */
+    --heatmap-bg: 0 0% 100%;
+    --heatmap-l0: 240 5% 96%;
+    --heatmap-l1: 142 76% 83%;
+    --heatmap-l2: 142 72% 64%;
+    --heatmap-l3: 142 62% 45%;
+    --heatmap-l4: 142 64% 35%;
   }
 
   body {
-    @apply bg-deep-abyss text-zinc-100 font-sans antialiased overflow-x-hidden selection:bg-bolt-orange selection:text-white;
-    /* Premium Dark Background Layer */
-    background: 
-      radial-gradient(circle at 100% 0%, rgba(255, 69, 0, 0.08) 0, transparent 40%),
-      radial-gradient(circle at 0% 100%, rgba(204, 255, 0, 0.05) 0, transparent 40%),
-      #0D0D0D;
+    @apply antialiased overflow-x-hidden font-sans;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    
+    /* Premium Dynamic Background Layer */
+    background-image: 
+      radial-gradient(circle at 100% 0%, hsla(var(--primary) / 0.08) 0, transparent 40%),
+      radial-gradient(circle at 0% 100%, hsla(var(--accent) / 0.05) 0, transparent 40%);
+    background-attachment: fixed;
   }
 
   #app {
@@ -26,13 +62,17 @@
 
   /* Custom scrollbar (Athletic style) */
   ::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
   }
   ::-webkit-scrollbar-track {
-    @apply bg-deep-abyss;
+    background: hsl(var(--background));
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-steel-grey rounded-full hover:bg-bolt-orange/50 transition-colors;
+    background: hsla(var(--muted) / 0.3);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsla(var(--primary) / 0.5);
   }
 }
 
@@ -66,9 +106,9 @@
   }
 
   .card-stats {
-    background: rgba(26, 26, 26, 0.6);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: hsla(var(--card));
+    backdrop-filter: blur(20px);
+    border: 1px solid hsla(var(--border));
     border-radius: 24px;
     padding: 24px;
     transition: all 0.3s ease;
@@ -90,8 +130,8 @@
 
   .card-stats:hover {
     transform: translateY(-5px);
-    border-color: rgba(255, 69, 0, 0.2);
-    background: rgba(26, 26, 26, 0.8);
+    border-color: hsla(var(--primary) / 0.2);
+    background: hsla(var(--card));
   }
 
   .card-stats:hover::before {
@@ -99,7 +139,10 @@
   }
 
   .glass {
-    @apply bg-steel-grey/60 backdrop-blur-xl border border-white/5 shadow-2xl;
+    background: hsla(var(--surface) / 0.6);
+    backdrop-filter: blur(24px);
+    border: 1px solid hsla(var(--border));
+    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.2);
   }
 }
 

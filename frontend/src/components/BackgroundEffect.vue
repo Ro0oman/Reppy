@@ -131,9 +131,9 @@ const matrixColumns = computed(() => {
   z-index: 0;
 }
 
-/* 1. Pure Black Glass */
+/* 1. Protocol Deck (Default) */
 .bg-pure-black {
-  background: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
+  background: radial-gradient(circle at 50% 50%, hsl(var(--background)) 0%, hsl(var(--background)) 100%);
 }
 
 /* 2. Neural Grid */

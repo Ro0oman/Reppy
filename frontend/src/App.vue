@@ -1,17 +1,17 @@
 <template>
-  <div class="min-h-screen selection:bg-primary-500/30 relative text-white bg-deep-abyss">
+  <div class="min-h-screen selection:bg-primary-500/30 relative text-foreground bg-background transition-colors duration-500">
     
     <!-- Animated background system -->
     <BackgroundEffect v-if="authStore.isAuthenticated" :background-css="authStore.user?.background_css" />
 
     <!-- Industrial Navigation Bar -->
     <nav v-if="authStore.isAuthenticated"
-      class="border-b border-white/5 bg-black/40 backdrop-blur-2xl sticky top-0 z-50">
+      class="border-b border-border bg-surface/40 backdrop-blur-3xl sticky top-0 z-50 transition-all">
       <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <!-- Logo Core -->
         <div class="flex items-center gap-4 group cursor-pointer" @click="view = 'dashboard'">
           <div class="w-10 h-10 bg-primary-500 rounded-xl flex items-center justify-center font-black italic text-white shadow-[0_0_20px_rgba(255,69,0,0.3)] transform group-hover:scale-110 transition-transform font-industrial">R</div>
-          <span class="text-2xl font-black tracking-tighter text-white font-industrial uppercase italic">REPPY<span class="text-primary-500">.</span></span>
+          <span class="text-2xl font-black tracking-tighter text-foreground font-industrial uppercase italic">REPPY<span class="text-primary-500">.</span></span>
         </div>
         
         <!-- Desktop Navigation (Industrial Links) -->
@@ -19,7 +19,7 @@
           <button v-for="nav in navLinks" :key="nav.id"
             @click="view = nav.id" 
             class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all relative group"
-            :class="view === nav.id ? 'text-white bg-white/5' : 'text-zinc-500 hover:text-white'">
+            :class="view === nav.id ? 'text-foreground bg-surface/10' : 'text-muted hover:text-foreground'">
             <div v-if="view === nav.id" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary-500 rounded-full"></div>
             {{ i18n.t(nav.label) || nav.fallback }}
             
@@ -38,8 +38,8 @@
         <div class="flex items-center gap-6">
           <!-- Desktop GitHub Module -->
           <a href="https://github.com/Ro0oman/Reppy" target="_blank"
-            class="hidden xl:flex items-center gap-3 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all group">
-            <Github class="w-4 h-4 text-zinc-500 group-hover:text-white" />
+            class="hidden xl:flex items-center gap-3 px-4 py-2 rounded-xl bg-surface/5 hover:bg-surface/10 border border-border transition-all group">
+            <Github class="w-4 h-4 text-muted group-hover:text-foreground" />
             <div class="flex items-center gap-2">
               <Star class="w-3.5 h-3.5 text-primary-500 fill-primary-500 animate-pulse" />
               <span class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">SOURCE</span>
@@ -48,15 +48,15 @@
 
           <div class="flex items-center gap-4">
             <!-- Currency Module -->
-            <div @click="showCoinsInfo = true" class="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-xl border border-white/5 hover:border-primary-500/30 cursor-pointer transition-all group">
+            <div @click="showCoinsInfo = true" class="flex items-center gap-3 bg-surface/5 px-4 py-2 rounded-xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group">
                <Zap class="w-3.5 h-3.5 text-primary-500 group-hover:scale-125 transition-transform" />
-               <span class="text-sm font-black text-precision text-white">{{ authStore.user?.reppy_coins || 0 }}</span>
+               <span class="text-sm font-black text-precision text-foreground">{{ authStore.user?.reppy_coins || 0 }}</span>
             </div>
 
             <!-- Profile Entry -->
             <button @click="openProfile(authStore.user.id)" class="flex items-center gap-4 hover:opacity-80 transition-all p-1 rounded-2xl">
               <div class="text-right hidden md:flex flex-col items-end">
-                <p class="text-[10px] font-black text-white uppercase tracking-widest leading-none">{{ authStore.user?.name }}</p>
+                <p class="text-[10px] font-black text-foreground uppercase tracking-widest leading-none">{{ authStore.user?.name }}</p>
                 <span v-if="authStore.user?.title_name" class="text-[7px] uppercase tracking-[0.3em] font-black text-primary-500 mt-1">
                   {{ authStore.user?.title_name }}
                 </span>
@@ -87,7 +87,7 @@
       </template>
     </main>
 
-    <footer class="mt-auto py-16 pb-40 md:pb-16 border-t border-white/5">
+    <footer class="mt-auto py-16 pb-40 md:pb-16 border-t border-border">
       <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-center items-center gap-8 text-zinc-700">
         <span class="text-[9px] font-black uppercase tracking-[0.6em]">REPPY CORE © 2026</span>
         <div class="hidden md:block w-1.5 h-1.5 bg-zinc-900 rounded-full"></div>
@@ -97,7 +97,7 @@
 
     <!-- Mobile Bottom Operational Dock -->
     <nav v-if="authStore.isAuthenticated" 
-      class="lg:hidden fixed bottom-6 left-4 right-4 z-[60] bg-steel-grey/60 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] shadow-2xl p-2 transition-transform duration-500">
+      class="lg:hidden fixed bottom-6 left-4 right-4 z-[60] bg-surface/80 backdrop-blur-3xl border border-border rounded-[2.5rem] shadow-2xl p-2 transition-transform duration-500">
       <div class="flex items-center justify-around h-16">
         <button v-for="nav in mobileNavLinks" :key="nav.id"
           @click="view = nav.id" 
@@ -129,18 +129,18 @@
     <!-- Economy Codex Modal -->
     <Teleport to="body">
       <div v-if="showCoinsInfo" 
-           class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-deep-abyss/90 backdrop-blur-md animate-in"
+           class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/90 backdrop-blur-md animate-in"
            @click.self="showCoinsInfo = false">
-        <div class="card-stats max-w-xl w-full p-8 md:p-12 border-white/5 space-y-10 relative overflow-hidden overflow-y-auto max-h-[90vh]">
+        <div class="card-stats max-w-xl w-full p-8 md:p-12 border-border space-y-10 relative overflow-hidden overflow-y-auto max-h-[90vh]">
           <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
           <div class="flex items-center justify-between">
             <div class="space-y-1">
-              <h3 class="text-3xl font-black text-industrial text-white uppercase italic tracking-tighter">ECONOMY<span class="text-primary-500">.</span>CODEX</h3>
-              <p class="text-[10px] font-black text-zinc-600 uppercase tracking-[0.4em]">Resource allocation protocol</p>
+              <h3 class="text-3xl font-black text-industrial text-foreground uppercase italic tracking-tighter">ECONOMY<span class="text-primary-500">.</span>CODEX</h3>
+              <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em]">Resource allocation protocol</p>
             </div>
-            <button @click="showCoinsInfo = false" class="p-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl transition-all">
-              <X class="w-6 h-6 text-white" />
+            <button @click="showCoinsInfo = false" class="p-3 bg-surface/5 hover:bg-surface/10 border border-border rounded-2xl transition-all">
+              <X class="w-6 h-6 text-foreground" />
             </button>
           </div>
 

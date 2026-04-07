@@ -7,7 +7,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
       <!-- Phase 0: Tactical Heatmap (Priority View) -->
       <div class="space-y-4">
-        <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-500 px-2">
+        <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-muted px-2">
           <Activity class="w-4 h-4 text-primary-500" />
           {{ i18n.t('activity_stream') }}
         </h3>
@@ -24,7 +24,7 @@
 
       <!-- Tactical Status (Community Boss) -->
       <div class="space-y-4">
-        <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-500 px-2">
+        <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-muted px-2">
           <Zap class="w-4 h-4 text-primary-500" />
           ESTADO DEL BOSS
         </h3>
@@ -40,9 +40,9 @@
           <Zap class="w-4 h-4 text-primary-500" />
           REGISTRO DE VOLUMEN
         </h3>
-        <div v-if="activeExercise === 'all'" class="card-stats p-8 flex flex-col items-center justify-center text-center space-y-4 opacity-50 border-dashed border-white/10 min-h-[360px]">
-          <Globe class="w-12 h-12 text-zinc-600" />
-          <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest leading-relaxed">
+        <div v-if="activeExercise === 'all'" class="card-stats p-8 flex flex-col items-center justify-center text-center space-y-4 opacity-50 border-dashed border-border min-h-[360px]">
+          <Globe class="w-12 h-12 text-muted" />
+          <p class="text-[10px] font-black text-muted uppercase tracking-widest leading-relaxed">
             Global view active. <br /> Select a protocol to log volume.
           </p>
         </div>
@@ -63,7 +63,7 @@
 
       <!-- 2. The Bento Analytics (Stats) -->
       <div class="space-y-4">
-        <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-zinc-500 px-2">
+        <h3 class="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3 text-muted px-2">
           <Target class="w-4 h-4 text-primary-500" />
           PROGRESO DIARIO
         </h3>
@@ -72,13 +72,13 @@
           <div class="card-stats xl:col-span-2 xl:row-span-2 flex flex-col items-center justify-center gap-6 group/goal min-h-[360px]">
             <RadialProgress :progress="(todayProgress / stats.dailyGoal) * 100" :size="200">
               <div class="flex flex-col items-center">
-                <span class="text-5xl font-black text-precision transition-transform group-hover/goal:scale-110 tracking-tighter">
+                <span class="text-5xl font-black text-precision transition-transform group-hover/goal:scale-110 tracking-tighter text-foreground">
                   {{ todayProgress }}
                 </span>
-                <span class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">/ {{ stats.dailyGoal }} REPS</span>
+                <span class="text-[9px] font-black text-muted uppercase tracking-widest">/ {{ stats.dailyGoal }} REPS</span>
               </div>
             </RadialProgress>
-            <p class="text-[10px] font-bold text-zinc-400 text-center px-4">
+            <p class="text-[10px] font-bold text-muted text-center px-4">
               {{ todayProgress >= stats.dailyGoal ? 'Goal achieved.' : 'Analyzing performance...' }}
             </p>
           </div>
@@ -86,11 +86,11 @@
           <!-- 2. Streak -->
           <div class="card-stats flex flex-col justify-between group/streak min-h-[160px]">
             <div class="flex items-center justify-between">
-              <span class="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Streak</span>
+              <span class="text-[10px] font-black uppercase tracking-[0.2em] text-muted">Streak</span>
               <Flame class="w-4 h-4 text-primary-500" />
             </div>
             <div class="mt-4">
-              <span class="text-5xl font-black text-precision text-white tracking-tighter">{{ stats.streak }}</span>
+              <span class="text-5xl font-black text-precision text-foreground tracking-tighter">{{ stats.streak }}</span>
               <p class="text-[10px] font-black text-primary-500 uppercase tracking-widest">Active Days</p>
             </div>
           </div>
@@ -98,11 +98,11 @@
           <!-- 3. Peak Volume -->
           <div class="card-stats flex flex-col justify-between group/pb min-h-[160px]">
             <div class="flex items-center justify-between">
-              <span class="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Peak Vol</span>
+              <span class="text-[10px] font-black uppercase tracking-[0.2em] text-muted">Peak Vol</span>
               <Zap class="w-4 h-4 text-neon-lime" />
             </div>
             <div class="mt-4">
-              <span class="text-4xl font-black text-precision text-white tracking-tighter">{{ stats.topMonthCount }}</span>
+              <span class="text-4xl font-black text-precision text-foreground tracking-tighter">{{ stats.topMonthCount }}</span>
               <p class="text-[10px] font-black text-neon-lime uppercase tracking-widest">Month Max</p>
             </div>
           </div>
@@ -122,31 +122,31 @@
         <div class="card-stats !p-0 h-[380px] overflow-hidden flex flex-col shadow-2xl">
           <div class="overflow-y-auto scrollbar-hide flex-1">
             <table class="w-full text-left">
-              <thead class="sticky top-0 bg-steel-grey/90 backdrop-blur-md z-10">
-                <tr class="text-zinc-600 text-[9px] uppercase font-black tracking-[0.2em] border-b border-white/5">
+              <thead class="sticky top-0 bg-surface/90 backdrop-blur-md z-10">
+                <tr class="text-muted text-[9px] uppercase font-black tracking-[0.2em] border-b border-border/10">
                   <th class="px-8 py-5">Timestamp</th>
                   <th class="px-8 py-5 text-right">Magnitude</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-white/[0.03]">
-                <tr v-for="rep in reps" :key="rep.id" class="group hover:bg-white/[0.02] transition-colors">
+              <tbody class="divide-y divide-border/5">
+                <tr v-for="rep in reps" :key="rep.id" class="group hover:bg-foreground/5 transition-colors">
                   <td class="px-8 py-4">
-                    <span class="text-xs font-bold text-zinc-500 uppercase italic group-hover:text-white transition-colors">
+                    <span class="text-xs font-bold text-muted uppercase italic group-hover:text-foreground transition-colors">
                       {{ formatDate(rep.date) }}
                     </span>
                   </td>
                   <td class="px-8 py-4 text-right">
                     <div v-if="editingId === rep.id" class="flex items-center justify-end gap-3">
                       <input v-model.number="editValue" type="number"
-                        class="w-20 bg-black/40 border border-primary-500/50 rounded-lg px-2 py-1 text-right text-precision focus:outline-none"
+                        class="w-20 bg-surface/40 border border-primary-500/50 rounded-lg px-2 py-1 text-right text-precision focus:outline-none text-foreground"
                         @keyup.enter="saveEdit(rep.id)" />
                       <button @click="saveEdit(rep.id)" class="text-primary-500"><Check class="w-4 h-4" /></button>
                     </div>
                     <div v-else class="flex items-center justify-end gap-4">
-                      <span @click="startEdit(rep)" class="text-xl font-black text-precision text-white cursor-pointer hover:text-primary-500">
+                      <span @click="startEdit(rep)" class="text-xl font-black text-precision text-foreground cursor-pointer hover:text-primary-500">
                         {{ rep.count }}
                       </span>
-                      <button @click="confirmDelete(rep.id)" class="opacity-0 group-hover:opacity-100 text-zinc-600 hover:text-red-500 transition-all">
+                      <button @click="confirmDelete(rep.id)" class="opacity-0 group-hover:opacity-100 text-muted hover:text-red-500 transition-all">
                         <Trash2 class="w-4 h-4" />
                       </button>
                     </div>

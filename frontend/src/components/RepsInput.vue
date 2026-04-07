@@ -1,5 +1,5 @@
 <template>
-  <div class="card-stats p-8 relative overflow-hidden group transition-all duration-500 border-white/10 hover:border-primary-500/30">
+  <div class="card-stats p-8 relative overflow-hidden group transition-all duration-500 border-border hover:border-primary-500/30">
     <!-- Background Industrial Detail -->
     <div class="absolute -top-12 -right-12 w-32 h-32 bg-primary-500/5 rounded-full blur-3xl group-hover:bg-primary-500/10 transition-colors"></div>
     
@@ -9,10 +9,10 @@
           <Zap class="w-6 h-6 text-white" />
         </div>
         <div>
-          <h3 class="text-2xl font-black text-industrial uppercase tracking-tighter text-white">{{ activeLabel }}</h3>
+          <h3 class="text-2xl font-black text-industrial uppercase tracking-tighter text-foreground">{{ activeLabel }}</h3>
           <div class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-neon-lime animate-pulse"></span>
-            <p class="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em]">{{ exerciseType.replace('_', ' ') }} protocol</p>
+            <p class="text-[10px] font-bold text-muted uppercase tracking-[0.2em]">{{ exerciseType.replace('_', ' ') }} protocol</p>
           </div>
         </div>
       </div>
@@ -23,10 +23,10 @@
       <button 
         v-for="val in [1, 5, 10]" :key="val"
         @click="addReps(val)"
-        class="group relative overflow-hidden py-6 px-4 bg-white/5 border border-white/5 rounded-2xl transition-all hover:bg-primary-500 hover:scale-105 active:scale-95 shadow-xl"
+        class="group relative overflow-hidden py-6 px-4 bg-foreground/5 border border-border rounded-2xl transition-all hover:bg-primary-500 hover:scale-105 active:scale-95 shadow-xl"
       >
-        <span class="relative z-10 text-2xl font-black text-precision group-hover:text-white">+{{ val }}</span>
-        <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <span class="relative z-10 text-2xl font-black text-precision transition-colors group-hover:text-white text-foreground">+{{ val }}</span>
+        <div class="absolute inset-0 bg-gradient-to-tr from-foreground/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
       </button>
     </div>
 
@@ -40,7 +40,7 @@
               v-model.number="customReps"
               type="number"
               placeholder="00"
-              class="w-full bg-black/40 border border-white/10 rounded-xl px-6 py-4 text-white font-black text-precision placeholder:text-zinc-800 focus:outline-none focus:border-primary-500/50 transition-all text-xl shadow-inner"
+              class="w-full bg-surface/40 border border-border rounded-xl px-6 py-4 text-foreground font-black text-precision placeholder:text-muted/30 focus:outline-none focus:border-primary-500/50 transition-all text-xl shadow-inner"
             />
           </div>
           <button 
@@ -61,9 +61,9 @@
             v-model.number="addedWeight"
             type="number"
             placeholder="0.0"
-            class="w-full bg-black/40 border border-white/10 rounded-xl px-6 py-4 text-white font-black text-precision focus:outline-none focus:border-neon-lime/30 transition-all text-lg shadow-inner"
+            class="w-full bg-surface/40 border border-border rounded-xl px-6 py-4 text-foreground font-black text-precision focus:outline-none focus:border-neon-lime/30 transition-all text-lg shadow-inner"
           />
-          <div class="absolute right-6 top-1/2 -translate-y-1/2 text-[10px] font-black text-zinc-600 uppercase tracking-widest pointer-events-none">KG</div>
+          <div class="absolute right-6 top-1/2 -translate-y-1/2 text-[10px] font-black text-muted uppercase tracking-widest pointer-events-none">KG</div>
         </div>
       </div>
     </div>

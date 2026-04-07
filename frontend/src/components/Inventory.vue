@@ -1,10 +1,10 @@
 <template>
   <div class="max-w-6xl mx-auto px-4 py-12 space-y-12 animate-in relative z-10">
     <div class="text-center space-y-4">
-      <h1 class="text-4xl md:text-6xl font-black text-industrial tracking-tighter text-white uppercase italic">
+      <h1 class="text-4xl md:text-6xl font-black text-industrial tracking-tighter text-foreground uppercase italic">
         GEAR<span class="text-primary-500">.</span>MANAGEMENT
       </h1>
-      <p class="text-[10px] font-black text-zinc-600 uppercase tracking-[0.4em] font-tight">Configure your legendary protocol loadout.</p>
+      <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em] font-tight">Configure your legendary protocol loadout.</p>
     </div>
 
     <!-- Section: Boss Chests (Industrial Reward) -->
@@ -18,16 +18,16 @@
         <div class="flex items-center gap-8">
           <div class="relative group/chest">
             <div class="absolute inset-0 bg-primary-500/20 blur-3xl group-hover/chest:bg-primary-500/40 transition-all duration-700"></div>
-            <div class="relative bg-steel-grey/60 rounded-3xl p-6 border border-primary-500/30 shadow-2xl">
+            <div class="relative bg-surface/60 rounded-3xl p-6 border border-primary-500/30 shadow-2xl">
               <Archive class="w-12 h-12 text-primary-500" />
             </div>
-            <div class="absolute -top-3 -right-3 bg-neon-lime text-black text-xs font-black px-3 py-1.5 rounded-xl shadow-xl border-4 border-deep-abyss z-20">
+            <div class="absolute -top-3 -right-3 bg-neon-lime text-black text-xs font-black px-3 py-1.5 rounded-xl shadow-xl border-4 border-background z-20">
               x{{ authStore.user.boss_chests }}
             </div>
           </div>
           <div class="space-y-2">
-            <h2 class="text-3xl font-black text-industrial text-white uppercase italic tracking-tighter">SEASONAL <span class="text-primary-500">CHESTS</span></h2>
-            <p class="text-zinc-500 font-bold uppercase tracking-widest text-[10px]">Uncovered from defeated anomalies. Decrypt for legendary loot.</p>
+            <h2 class="text-3xl font-black text-industrial text-foreground uppercase italic tracking-tighter">SEASONAL <span class="text-primary-500">CHESTS</span></h2>
+            <p class="text-muted font-bold uppercase tracking-widest text-[10px]">Uncovered from defeated anomalies. Decrypt for legendary loot.</p>
           </div>
         </div>
         
@@ -41,15 +41,15 @@
 
     <div v-if="loading" class="flex flex-col items-center justify-center py-24 gap-6">
       <div class="animate-spin rounded-full h-12 w-12 border-2 border-primary-500 border-t-transparent"></div>
-      <p class="text-[10px] font-black text-zinc-700 uppercase tracking-[0.4em]">SYNCING INVENTORY...</p>
+      <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em]">SYNCING INVENTORY...</p>
     </div>
 
-    <div v-else-if="inventory.length === 0" class="card-stats py-32 text-center border-white/5 bg-white/[0.01]">
-      <div class="bg-white/5 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner border border-white/5">
-        <Package class="w-10 h-10 text-zinc-600" />
+    <div v-else-if="inventory.length === 0" class="card-stats py-32 text-center border-border bg-foreground/[0.01]">
+      <div class="bg-foreground/5 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner border border-border">
+        <Package class="w-10 h-10 text-muted" />
       </div>
-      <h3 class="text-2xl font-black text-industrial text-white uppercase tracking-tight">INVENTORY NULL</h3>
-      <p class="text-[10px] font-black text-zinc-600 mt-4 uppercase tracking-[0.3em]">Visit THE ARMORY to initiate your collection.</p>
+      <h3 class="text-2xl font-black text-industrial text-foreground uppercase tracking-tight">INVENTORY NULL</h3>
+      <p class="text-[10px] font-black text-muted mt-4 uppercase tracking-[0.3em]">Visit THE ARMORY to initiate your collection.</p>
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -58,32 +58,32 @@
         <div class="flex items-center justify-between px-2">
           <div class="flex items-center gap-3">
              <div class="p-2 bg-blue-500/10 rounded-xl"><Frame class="w-5 h-5 text-blue-500" /></div>
-             <h2 class="text-lg font-black text-industrial text-white tracking-widest uppercase">AVATAR BORDERS</h2>
+             <h2 class="text-lg font-black text-industrial text-foreground tracking-widest uppercase">AVATAR BORDERS</h2>
           </div>
-          <span class="text-[10px] font-black text-zinc-700 uppercase tabular-nums tracking-widest font-precision">{{ groupedItems.border.length }} UNITS</span>
+          <span class="text-[10px] font-black text-muted uppercase tabular-nums tracking-widest font-precision">{{ groupedItems.border.length }} UNITS</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div v-for="item in groupedItems.border" :key="item.id" 
-            class="card-stats !p-0 overflow-hidden border-white/5 group/card transition-all"
+            class="card-stats !p-0 overflow-hidden border-border group/card transition-all"
             :class="isEquipped(item) ? '!border-primary-500/50 bg-primary-500/5' : 'hover:border-primary-500/30'">
             
             <div class="p-6 flex items-center gap-5 relative">
               <div v-if="item.is_new" class="absolute top-4 right-4 z-20 px-2 py-1 rounded-lg bg-neon-lime text-[8px] font-black text-black uppercase tracking-widest animate-pulse">NEW</div>
               <div class="relative flex-shrink-0">
                 <AvatarFrame :src="authStore.user?.avatar_url" :border-css="item.css_value" :size="56" />
-                <div v-if="isEquipped(item)" class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center border-2 border-deep-abyss z-20"><Check class="w-3 h-3 text-white" /></div>
+                <div v-if="isEquipped(item)" class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center border-2 border-background z-20"><Check class="w-3 h-3 text-white" /></div>
               </div>
               <div class="min-w-0 flex-1">
-                <h4 class="text-sm font-black text-white truncate font-tight uppercase italic leading-none group-hover/card:text-primary-500 transition-colors">{{ item.name }}</h4>
-                <p class="text-[10px] font-bold text-zinc-600 mt-1 lines-clamp-1 truncate uppercase tracking-widest">{{ item.description }}</p>
+                <h4 class="text-sm font-black text-foreground truncate font-tight uppercase italic leading-none group-hover/card:text-primary-500 transition-colors">{{ item.name }}</h4>
+                <p class="text-[10px] font-bold text-muted mt-1 lines-clamp-1 truncate uppercase tracking-widest">{{ item.description }}</p>
               </div>
             </div>
             
             <div class="p-4 pt-0">
               <button @click="toggleEquip(item)" 
                 class="w-full py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all"
-                :class="isEquipped(item) ? 'bg-white/5 text-zinc-600 border border-white/5' : 'bg-primary-500 text-white hover:scale-105 active:scale-95 shadow-lg shadow-primary-500/20'">
+                :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-primary-500 text-white hover:scale-105 active:scale-95 shadow-lg shadow-primary-500/20'">
                 {{ isEquipped(item) ? 'DEACTIVATE' : 'ACTIVATE' }}
               </button>
             </div>
@@ -96,9 +96,9 @@
         <div class="flex items-center justify-between px-2">
           <div class="flex items-center gap-3">
              <div class="p-2 bg-amber-500/10 rounded-xl"><Type class="w-5 h-5 text-amber-500" /></div>
-             <h2 class="text-lg font-black text-industrial text-white tracking-widest uppercase">HONOR TITLES</h2>
+             <h2 class="text-lg font-black text-industrial text-foreground tracking-widest uppercase">HONOR TITLES</h2>
           </div>
-          <span class="text-[10px] font-black text-zinc-700 uppercase tabular-nums tracking-widest font-precision">{{ groupedItems.title.length }} UNITS</span>
+          <span class="text-[10px] font-black text-muted uppercase tabular-nums tracking-widest font-precision">{{ groupedItems.title.length }} UNITS</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -109,12 +109,12 @@
             <div class="p-6 relative space-y-4">
               <div v-if="item.is_new" class="absolute top-4 right-4 z-20 px-2 py-1 rounded-lg bg-neon-lime text-[8px] font-black text-black uppercase tracking-widest animate-pulse">NEW</div>
               <div class="flex flex-col">
-                <h4 class="text-base font-black text-white truncate font-tight uppercase italic leading-none group-hover/card:text-primary-500 transition-colors" :class="item.css_value">{{ item.name }}</h4>
-                <p class="text-[9px] font-black text-zinc-600 mt-2 uppercase tracking-widest italic line-clamp-1">"{{ item.description }}"</p>
+                <h4 class="text-base font-black text-foreground truncate font-tight uppercase italic leading-none group-hover/card:text-primary-500 transition-colors" :class="item.css_value">{{ item.name }}</h4>
+                <p class="text-[9px] font-black text-muted mt-2 uppercase tracking-widest italic line-clamp-1">"{{ item.description }}"</p>
               </div>
               <button @click="toggleEquip(item)" 
                 class="w-full py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all"
-                :class="isEquipped(item) ? 'bg-white/5 text-zinc-600 border border-white/5' : 'bg-primary-500 text-white hover:scale-105 active:scale-95 shadow-lg shadow-primary-500/20'">
+                :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-primary-500 text-white hover:scale-105 active:scale-95 shadow-lg shadow-primary-500/20'">
                 {{ isEquipped(item) ? 'DEACTIVATE' : 'ACTIVATE' }}
               </button>
             </div>
@@ -127,10 +127,10 @@
         <div class="flex items-center justify-between px-2">
           <div class="flex items-center gap-3">
              <div class="p-2 bg-purple-500/10 rounded-xl"><Sparkles class="w-5 h-5 text-purple-500" /></div>
-             <h2 class="text-lg font-black text-industrial text-white tracking-widest uppercase">INTERFACE SCREENS</h2>
+             <h2 class="text-lg font-black text-industrial text-foreground tracking-widest uppercase">INTERFACE SCREENS</h2>
           </div>
-          <div class="h-px flex-1 bg-white/5 mx-6 hidden md:block"></div>
-          <span class="text-[10px] font-black text-zinc-700 uppercase tabular-nums tracking-widest font-precision">{{ groupedItems.background.length }} UNITS</span>
+          <div class="h-px flex-1 bg-border mx-6 hidden md:block"></div>
+          <span class="text-[10px] font-black text-muted uppercase tabular-nums tracking-widest font-precision">{{ groupedItems.background.length }} UNITS</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -147,12 +147,12 @@
 
             <div class="p-5 space-y-4">
               <div>
-                <h4 class="text-xs font-black text-white font-tight uppercase italic leading-none group-hover/card:text-primary-500 transition-colors">{{ item.name }}</h4>
-                <p class="text-[9px] font-black text-zinc-600 mt-2 uppercase tracking-widest line-clamp-1 italic">{{ item.description }}</p>
+                <h4 class="text-xs font-black text-foreground font-tight uppercase italic leading-none group-hover/card:text-primary-500 transition-colors">{{ item.name }}</h4>
+                <p class="text-[9px] font-black text-muted mt-2 uppercase tracking-widest line-clamp-1 italic">{{ item.description }}</p>
               </div>
               <button @click="toggleEquip(item)" 
                 class="w-full py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all"
-                :class="isEquipped(item) ? 'bg-white/5 text-zinc-600 border border-white/5' : 'bg-primary-500 text-white hover:scale-105 active:scale-95 shadow-lg shadow-primary-500/20'">
+                :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-primary-500 text-white hover:scale-105 active:scale-95 shadow-lg shadow-primary-500/20'">
                 {{ isEquipped(item) ? 'DEACTIVATE' : 'ACTIVATE' }}
               </button>
             </div>

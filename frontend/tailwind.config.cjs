@@ -9,14 +9,19 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          500: '#FF4500', // Bolt Orange
-          600: '#E63E00',
-          DEFAULT: '#FF4500',
+          500: 'hsl(var(--primary))',
+          600: 'hsl(var(--primary) / 0.9)',
+          DEFAULT: 'hsl(var(--primary))',
         },
-        'bolt-orange': '#FF4500',
-        'deep-abyss': '#0D0D0D',
-        'steel-grey': '#1A1A1A',
-        'neon-lime': '#CCFF00',
+        'bolt-orange': 'hsl(var(--primary))',
+        'deep-abyss': 'hsl(var(--background))',
+        'steel-grey': 'hsl(var(--surface))',
+        'neon-lime': 'hsl(var(--accent))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        muted: 'hsl(var(--muted))',
+        card: 'hsla(var(--card))',
+        border: 'hsla(var(--border))',
       },
       fontFamily: {
         industrial: ['"Inter Tight"', 'sans-serif'],
