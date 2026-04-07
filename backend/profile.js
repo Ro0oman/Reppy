@@ -1,5 +1,6 @@
 import express from 'express';
 import { query } from './db.js';
+import { recalculateUserStats } from './utils/stats.js';
 
 const router = express.Router();
 
@@ -11,7 +12,8 @@ router.get('/:id', async (req, res) => {
   try {
     const userResult = await query(`
         SELECT u.id, u.name, u.email, u.avatar_url, u.reppy_coins, u.daily_goal,
-               u.str_xp, u.pwr_xp, u.end_xp, u.agi_xp, u.body_weight, u.is_private,
+               u.str_xp, u.pwr_xp, u.end_xp, u.agi_xp, u.total_xp, u.body_weight, u.is_private,
+               u.current_level, u.level_chests_claimed, u.level_chests,
                u.equipped_title_id, u.equipped_border_id, u.equipped_background_id,
                cTitle.name as title_name, cTitle.css_value as title_css,
                cBorder.name as border_name, cBorder.css_value as border_css,
@@ -53,28 +55,13 @@ router.get('/:id', async (req, res) => {
       params
     );
 
-    // Calculate current streak (PULLUPS ONLY as requested)
-    const streakResult = await query(
-      'SELECT DISTINCT date FROM reps WHERE user_id = $1 AND exercise_type = \'pullups\' ORDER BY date DESC',
+    const transactions = await query(
+      `SELECT amount, source, description, created_at 
+       FROM coin_transactions 
+       WHERE user_id = $1 
+       ORDER BY created_at DESC LIMIT 20`,
       [userId]
     );
-    
-    let streak = 0;
-    if (streakResult && streakResult.rowCount > 0) {
-      const dates = streakResult.rows.map(r => new Date(r.date).toISOString().split('T')[0]);
-      const today = new Date().toISOString().split('T')[0];
-      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-      
-      let checkDate = dates.includes(today) ? today : (dates.includes(yesterday) ? yesterday : null);
-      
-      if (checkDate) {
-        let current = new Date(checkDate);
-        while (dates.includes(current.toISOString().split('T')[0])) {
-          streak++;
-          current.setDate(current.getDate() - 1);
-        }
-      }
-    }
 
     // Calculate favorite exercise
     const favResult = await query(
@@ -83,29 +70,9 @@ router.get('/:id', async (req, res) => {
     );
     const favExercise = favResult.rows[0]?.exercise_type || 'pullups';
 
-    // RPG CALCULATIONS
-    const volumeResult = await query(
-      'SELECT SUM(count * (COALESCE(added_weight, 0) + $2)) as volume FROM reps WHERE user_id = $1',
-      [userId, parseFloat(user.body_weight) || 75]
-    );
-    const totalVolume = parseFloat(volumeResult.rows[0]?.volume || 0);
-    const str_xp = Math.floor(totalVolume * 0.05);
-
-    const pwrResult = await query(
-      'SELECT MAX(added_weight) as max_weight FROM reps WHERE user_id = $1',
-      [userId]
-    );
-    const maxWeight = parseFloat(pwrResult.rows[0]?.max_weight || 0);
-    const pwr_xp = Math.floor(maxWeight * 25);
-
-    const end_xp = Math.floor(totalReps * 5);
-
-    const varietyResult = await query(
-      'SELECT COUNT(DISTINCT exercise_type) as variety FROM reps WHERE user_id = $1',
-      [userId]
-    );
-    const varietyCount = parseInt(varietyResult.rows[0]?.variety || 1);
-    const agi_xp = Math.floor((streak * 40) + (varietyCount * 75));
+    // RPG CALCULATIONS - Now handled by shared utility
+    const stats = await recalculateUserStats(userId);
+    const { strXP: str_xp, pwrXP: pwr_xp, endXP: end_xp, agiXP: agi_xp, streak } = stats;
 
     const getLevel = (xp) => Math.floor((xp || 0) / 100) + 1;
 
@@ -128,7 +95,8 @@ router.get('/:id', async (req, res) => {
         ...user,
         title_name: finalTitleName,
         title_css: finalTitleCss,
-        str_xp, pwr_xp, end_xp, agi_xp,
+        str_xp, pwr_xp, end_xp, agi_xp, 
+        total_xp: totalXP,
         str_lvl: getLevel(str_xp),
         pwr_lvl: getLevel(pwr_xp),
         end_lvl: getLevel(end_xp),
@@ -136,7 +104,8 @@ router.get('/:id', async (req, res) => {
       },
       heatmap: heatmapResult.rows || [],
       stats: { totalReps, streak, favExercise, totalXP },
-      recentLogs: recentLogs.rows || []
+      recentLogs: recentLogs.rows || [],
+      transactions: transactions.rows || []
     });
   } catch (error) {
     console.error('CRITICAL ERROR IN /api/profile/[id]:', error.message);

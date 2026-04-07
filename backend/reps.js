@@ -2,6 +2,8 @@ import express from 'express';
 import { query } from './db.js';
 import { authenticate } from './middleware.js';
 import { getExerciseRewards, getBossDamageMultiplier } from './utils/rewards.js';
+import { recalculateUserStats } from './utils/stats.js';
+import { trackCoinTransaction } from './utils/transactions.js';
 
 
 const router = express.Router();
@@ -62,6 +64,12 @@ router.post('/', authenticate, async (req, res) => {
     userUpdateQuery += ` WHERE id = $3`;
     
     await query(userUpdateQuery, [count, earnedCoins, userId]);
+
+    // Record the transaction in the history
+    await trackCoinTransaction(userId, earnedCoins, 'EXERCISE', `Recompensa por ${count} ${exercise_type}`);
+
+    // Update ALL XP stats and total_reps based on history (Aggregate Truth)
+    await recalculateUserStats(userId);
 
 
 
@@ -342,6 +350,14 @@ router.put('/:id', authenticate, async (req, res) => {
 
     await query(userUpdateQuery, [diffCount, diffCoins, userId]);
 
+    // Record the transaction (positive or negative)
+    if (diffCoins !== 0) {
+      await trackCoinTransaction(userId, diffCoins, 'EXERCISE', `Ajuste por edición de ${exercise_type}`);
+    }
+
+    // Recalculate everything to stay in sync
+    await recalculateUserStats(userId);
+
     res.json(updateResult.rows[0]);
   } catch (error) {
     console.error('Error updating reps:', error);
@@ -416,6 +432,12 @@ router.delete('/:id', authenticate, async (req, res) => {
     userUpdateQuery += ` WHERE id = $3`;
 
     await query(userUpdateQuery, [oldRep.count, rewards.coins, userId]);
+
+    // Record the transaction (negative)
+    await trackCoinTransaction(userId, -rewards.coins, 'EXERCISE', `Eliminación de ${oldRep.count} ${oldRep.exercise_type}`);
+
+    // Recalculate stats after deletion to ensure Level and XP drop correctly
+    await recalculateUserStats(userId);
 
     res.json({ message: 'Rep deleted successfully' });
   } catch (error) {

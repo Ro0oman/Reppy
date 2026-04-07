@@ -53,6 +53,10 @@
           </div>
         </div>
         <p class="text-[10px] font-black text-muted uppercase tracking-tighter truncate w-20 text-center mb-0.5 font-tight">{{ podiumUsers[1].name }}</p>
+        <div class="flex items-center gap-1.5 mb-1 bg-surface/40 px-1.5 py-0.5 rounded-md border border-border/30">
+           <span class="text-[7px] font-black text-primary-500 uppercase tracking-widest">LVL</span>
+           <span class="text-[9px] font-black text-foreground italic">{{ podiumUsers[1].current_level }}</span>
+        </div>
         <span class="text-sm font-black text-foreground italic text-precision">{{ podiumUsers[1].total_reps }}</span>
       </div>
 
@@ -70,6 +74,10 @@
           </div>
         </div>
         <p class="text-xs font-black text-foreground uppercase tracking-widest truncate w-28 text-center mb-0.5 leading-tight font-tight">{{ podiumUsers[0].name }}</p>
+        <div class="flex items-center gap-2 mb-1.5 bg-primary-500/10 px-2.5 py-1 rounded-lg border border-primary-500/30 shadow-[0_0_15px_rgba(255,69,0,0.1)]">
+           <span class="text-[8px] font-black text-primary-500 uppercase tracking-[0.2em]">LEVEL</span>
+           <span class="text-xs font-black text-foreground italic leading-none">{{ podiumUsers[0].current_level }}</span>
+        </div>
         <span class="text-2xl font-black text-primary-500 italic text-precision drop-shadow-lg">{{ podiumUsers[0].total_reps }}</span>
       </div>
 
@@ -86,6 +94,10 @@
           </div>
         </div>
         <p class="text-[10px] font-black text-muted uppercase tracking-tighter truncate w-20 text-center mb-0.5 font-tight">{{ podiumUsers[2].name }}</p>
+        <div class="flex items-center gap-1.5 mb-1 bg-surface/40 px-1.5 py-0.5 rounded-md border border-border/30">
+           <span class="text-[7px] font-black text-primary-500 uppercase tracking-widest">LVL</span>
+           <span class="text-[9px] font-black text-foreground italic">{{ podiumUsers[2].current_level }}</span>
+        </div>
         <span class="text-sm font-black text-foreground italic text-precision">{{ podiumUsers[2].total_reps }}</span>
       </div>
     </div>
@@ -116,6 +128,10 @@
               <h4 class="text-sm font-black text-foreground truncate group-hover:text-primary-400 transition-colors tracking-tight uppercase italic leading-none font-tight">
                 {{ user.id === authStore.user?.id ? 'YOU' : user.name }}
               </h4>
+              <div class="flex items-center gap-1 bg-foreground/5 px-1.5 py-0.5 rounded border border-border/30">
+                <span class="text-[6px] font-black text-primary-500/80 tracking-widest">LVL</span>
+                <span class="text-[8px] font-black text-foreground italic">{{ user.current_level }}</span>
+              </div>
               <span v-if="user.title_name" class="hidden xs:inline-block text-[7px] uppercase tracking-widest px-2 py-0.5 rounded-md bg-foreground/5 border border-border font-black shrink-0" :class="user.title_css">
                 {{ user.title_name }}
               </span>

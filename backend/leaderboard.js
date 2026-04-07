@@ -26,14 +26,15 @@ router.get('/global', async (req, res) => {
              COALESCE(SUM(r.count * (COALESCE(u.body_weight, 75.0) + COALESCE(r.added_weight, 0))), 0) as total_volume,
              t.name as title_name, t.css_value as title_css,
              b.css_value as border_css,
-             a.css_value as avatar_css
+             a.css_value as avatar_css,
+             u.current_level
       FROM users u
       LEFT JOIN reps r ON u.id = r.user_id ${typeFilter} ${dateFilter}
       LEFT JOIN cosmetics t ON u.equipped_title_id = t.id
       LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
       LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
       WHERE u.is_private = false
-      GROUP BY u.id, u.name, u.avatar_url, u.reppy_coins, t.name, t.css_value, b.css_value, a.css_value
+      GROUP BY u.id, u.name, u.avatar_url, u.reppy_coins, t.name, t.css_value, b.css_value, a.css_value, u.current_level
       HAVING COALESCE(SUM(r.count), 0) > 0
       ORDER BY total_reps DESC
       LIMIT 20
@@ -69,7 +70,8 @@ router.get('/friends', authenticate, async (req, res) => {
              COALESCE(SUM(r.count * (COALESCE(u.body_weight, 75.0) + COALESCE(r.added_weight, 0))), 0) as total_volume,
              t.name as title_name, t.css_value as title_css,
              b.css_value as border_css,
-             a.css_value as avatar_css
+             a.css_value as avatar_css,
+             u.current_level
       FROM users u
       LEFT JOIN reps r ON u.id = r.user_id ${typeFilter} ${dateFilter}
       LEFT JOIN cosmetics t ON u.equipped_title_id = t.id
@@ -80,7 +82,7 @@ router.get('/friends', authenticate, async (req, res) => {
         UNION
         SELECT user_id_2 FROM friendships WHERE user_id_1 = $1
       )
-      GROUP BY u.id, u.name, u.avatar_url, u.reppy_coins, t.name, t.css_value, b.css_value, a.css_value
+      GROUP BY u.id, u.name, u.avatar_url, u.reppy_coins, t.name, t.css_value, b.css_value, a.css_value, u.current_level
       HAVING COALESCE(SUM(r.count), 0) > 0
       ORDER BY total_reps DESC
     `;

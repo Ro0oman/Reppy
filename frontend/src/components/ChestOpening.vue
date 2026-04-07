@@ -39,8 +39,9 @@
             <div v-for="(item, index) in localReel" :key="index" 
               class="flex-shrink-0 w-32 h-32 md:w-44 md:h-44 mx-1.5 rounded-2xl md:rounded-3xl border flex flex-col items-center justify-center p-3 md:p-4 transition-all duration-700"
               :class="[
-                item.is_seasonal ? 'bg-primary-500/5 border-primary-500/30' : 'bg-white/[0.02] border-white/5',
-                finished && index === winningIndex ? 'scale-110 border-primary-500 bg-primary-500/10 shadow-[0_0_40px_rgba(255,69,0,0.15)] grayscale-0' : 'opacity-20 grayscale'
+                item.is_seasonal ? 'bg-primary-500/10 border-primary-500/30' : 'bg-white/[0.04] border-white/10',
+                finished && index === winningIndex ? 'scale-110 border-primary-500 bg-primary-500/20 shadow-[0_0_50px_rgba(255,69,0,0.2)] grayscale-0 opacity-100' : 
+                (finished ? 'opacity-10 grayscale scale-90' : 'opacity-70 grayscale-[0.4]')
               ]">
               
               <div class="w-16 h-16 md:w-24 md:h-24 mb-3 md:mb-4 relative flex items-center justify-center overflow-hidden rounded-2xl">

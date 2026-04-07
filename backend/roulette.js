@@ -1,6 +1,7 @@
 import express from 'express';
 import { query } from './db.js';
 import { authenticate } from './middleware.js';
+import { trackCoinTransaction } from './utils/transactions.js';
 
 const router = express.Router();
 
@@ -80,6 +81,7 @@ router.post('/spin', authenticate, async (req, res) => {
     // 4. Process Prize
     if (selectedPrize.type === 'coins') {
       await query('UPDATE users SET reppy_coins = reppy_coins + $1 WHERE id = $2', [selectedPrize.value, userId]);
+      await trackCoinTransaction(userId, selectedPrize.value, 'ROULETTE', `Premio de la Ruleta Diaria`);
     } else if (selectedPrize.type === 'special') {
       // Grant random unowned cosmetic
       const unownedRes = await query(
@@ -96,6 +98,7 @@ router.post('/spin', authenticate, async (req, res) => {
       } else {
         // Backup prize: 500 coins
         await query('UPDATE users SET reppy_coins = reppy_coins + 500 WHERE id = $1', [userId]);
+        await trackCoinTransaction(userId, 500, 'ROULETTE', 'Ruleta: Bono Especial (Todo Coleccionado)');
         result.type = 'coins';
         result.value = 500;
         result.message = '¡Todos los objetos obtenidos! +500 Reppy Coins';

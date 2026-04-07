@@ -53,6 +53,22 @@
                <span class="text-sm font-black text-precision text-foreground">{{ authStore.user?.reppy_coins || 0 }}</span>
             </div>
 
+            <!-- Level Module (Responsive) -->
+            <div class="flex items-center gap-3">
+              <!-- Compact for mobile, full for desktop -->
+              <div class="sm:hidden flex items-center gap-1.5 bg-primary-500/10 px-2 py-1.5 rounded-lg border border-primary-500/20">
+                <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest">LVL</span>
+                <span class="text-sm font-black text-foreground italic">{{ authStore.user?.current_level || 1 }}</span>
+              </div>
+              <div class="hidden sm:block">
+                <LevelBar 
+                  :level="authStore.user?.current_level || 1" 
+                  :current-xp="authStore.user?.total_xp || 0" 
+                  :next-level-xp="1000" 
+                />
+              </div>
+            </div>
+
             <!-- Profile Entry -->
             <button @click="openProfile(authStore.user.id)" class="flex items-center gap-3 transition-all p-1 hover:bg-surface/10 rounded-2xl">
               <div class="text-right hidden md:flex flex-col items-end">
@@ -218,6 +234,7 @@ import AvatarFrame from './components/AvatarFrame.vue'
 import BackgroundEffect from './components/BackgroundEffect.vue'
 import WelcomeModal from './components/WelcomeModal.vue'
 import LuckyWheel from './components/LuckyWheel.vue'
+import LevelBar from './components/LevelBar.vue'
 import NotificationToast from './components/NotificationToast.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
 import DamageNumbers from './components/DamageNumbers.vue'

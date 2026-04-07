@@ -93,6 +93,16 @@ CREATE TABLE IF NOT EXISTS event_participants (
     UNIQUE(boss_fight_id, user_id)
 );
 
+-- Coin Transactions Tracking
+CREATE TABLE IF NOT EXISTS coin_transactions (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    amount INTEGER NOT NULL, -- Positive for rewards, Negative for purchases
+    source VARCHAR(50) NOT NULL, -- 'EXERCISE', 'CHEST_BOSS', 'CHEST_LVL', 'ROULETTE', 'PURCHASE'
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Index for better performance
 CREATE INDEX IF NOT EXISTS idx_reps_user_date ON reps(user_id, date);
 CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(user_id_1, user_id_2);
@@ -104,13 +114,19 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS str_xp INTEGER DEFAULT 0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS pwr_xp INTEGER DEFAULT 0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS end_xp INTEGER DEFAULT 0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS agi_xp INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS total_xp INTEGER DEFAULT 0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS last_seen_version VARCHAR(50) DEFAULT '1.0.0';
 ALTER TABLE users ADD COLUMN IF NOT EXISTS equipped_title_id INTEGER;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS equipped_border_id INTEGER;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS equipped_background_id INTEGER;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_easter_modal BOOLEAN DEFAULT false;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS boss_chests INTEGER DEFAULT 1;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS level_chests INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS current_level INTEGER DEFAULT 1;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS level_chests_claimed INTEGER DEFAULT 1;
 
 -- Grant 1 chest to all existing users (Safety Update)
 UPDATE users SET boss_chests = GREATEST(boss_chests, 1) WHERE boss_chests IS NULL OR boss_chests = 0;
+UPDATE users SET level_chests = GREATEST(level_chests, 0) WHERE level_chests IS NULL;
+UPDATE users SET current_level = GREATEST(current_level, 1) WHERE current_level IS NULL OR current_level = 0;
+UPDATE users SET level_chests_claimed = GREATEST(level_chests_claimed, 1) WHERE level_chests_claimed IS NULL OR level_chests_claimed = 0;
 

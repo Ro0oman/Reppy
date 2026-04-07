@@ -68,7 +68,13 @@
               <div class="flex items-center gap-4">
                 <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :avatar-css="user.avatar_css" :size="48" />
                 <div>
-                  <p class="font-black text-foreground uppercase tracking-tight group-hover:text-primary-500 transition-colors text-sm">{{ user.name }}</p>
+                  <div class="flex items-center gap-2">
+                    <p class="font-black text-foreground uppercase tracking-tight group-hover:text-primary-500 transition-colors text-sm">{{ user.name }}</p>
+                    <div class="flex items-center gap-1 bg-foreground/5 px-1.5 py-0.5 rounded border border-border/30">
+                      <span class="text-[6px] font-black text-primary-500/80 tracking-widest uppercase">LVL</span>
+                      <span class="text-[8px] font-black text-foreground italic">{{ user.current_level }}</span>
+                    </div>
+                  </div>
                   <p class="text-[9px] text-muted font-black uppercase tracking-[0.2em] mt-1.5 opacity-70">{{ user.total_reps }} REPS COLLECTED</p>
                 </div>
               </div>
@@ -109,7 +115,13 @@
                   </div>
                 </div>
                 <div>
-                  <p class="text-xl font-black text-foreground tracking-tight group-hover:text-primary-500 transition-colors uppercase italic font-industrial drop-shadow-sm">{{ friend.name }}</p>
+                  <div class="flex items-center gap-3">
+                    <p class="text-xl font-black text-foreground tracking-tight group-hover:text-primary-500 transition-colors uppercase italic font-industrial drop-shadow-sm">{{ friend.name }}</p>
+                    <div class="flex items-center gap-1.5 bg-primary-500/10 px-2 py-0.5 rounded-lg border border-primary-500/30">
+                      <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest">LVL</span>
+                      <span class="text-[10px] font-black text-foreground italic">{{ friend.current_level }}</span>
+                    </div>
+                  </div>
                   <div class="flex items-center gap-3 mt-1.5">
                     <Trophy class="w-3 h-3 text-primary-500 drop-shadow-[0_0_5px_rgba(255,69,0,0.5)]" />
                     <p class="text-[10px] font-black uppercase text-muted tracking-[0.2em] opacity-80">{{ friend.total_reps }} REPS SCALED</p>

@@ -7,6 +7,38 @@
       <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em] font-tight">Configure your legendary protocol loadout.</p>
     </div>
 
+    <!-- Section: Level-Up Chests (Progression Reward) -->
+    <div v-if="authStore.user?.level_chests > 0" 
+      class="card-stats p-10 bg-gradient-radial from-cyan-500/10 via-transparent to-transparent border-cyan-500/20 group relative overflow-hidden">
+      
+      <!-- Decorative Background Icon -->
+      <TrendingUp class="absolute -right-8 -bottom-8 w-64 h-64 text-cyan-500/5 -rotate-12 transition-transform duration-1000" />
+      
+      <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
+        <div class="flex items-center gap-8">
+          <div class="relative group/chest">
+            <div class="absolute inset-0 bg-cyan-500/20 blur-3xl group-hover/chest:bg-cyan-500/40 transition-all duration-700"></div>
+            <div class="relative bg-surface/60 rounded-3xl p-6 border border-cyan-500/30 shadow-2xl">
+              <TrendingUp class="w-12 h-12 text-cyan-500" />
+            </div>
+            <div class="absolute -top-3 -right-3 bg-cyan-400 text-black text-xs font-black px-3 py-1.5 rounded-xl shadow-xl border-4 border-background z-20 font-precision">
+              x{{ authStore.user.level_chests }}
+            </div>
+          </div>
+          <div class="space-y-2">
+            <h2 class="text-3xl font-black text-industrial text-foreground uppercase italic tracking-tighter">COFRES DE <span class="text-cyan-500">NIVEL</span></h2>
+            <p class="text-muted font-bold uppercase tracking-widest text-[10px]">Ganados por evolución física. Descifra para equipo común y oro.</p>
+          </div>
+        </div>
+        
+        <button @click="handleOpenLevelChest" :disabled="openingChest"
+          class="btn-reppy !bg-cyan-500 hover:!bg-cyan-600 !px-12 !py-6 !text-lg !rounded-3xl shadow-[0_20px_50px_rgba(6,182,212,0.3)] disabled:opacity-20 disabled:grayscale transition-all">
+          <Sparkles class="w-6 h-6" />
+          {{ openingChest ? 'DESCIFRANDO...' : 'ABRIR COFRE DE NIVEL' }}
+        </button>
+      </div>
+    </div>
+
     <!-- Section: Boss Chests (Industrial Reward) -->
     <div v-if="authStore.user?.boss_chests > 0" 
       class="card-stats p-10 bg-gradient-radial from-primary-500/10 via-transparent to-transparent border-primary-500/20 group relative overflow-hidden">
@@ -21,20 +53,20 @@
             <div class="relative bg-surface/60 rounded-3xl p-6 border border-primary-500/30 shadow-2xl">
               <Archive class="w-12 h-12 text-primary-500" />
             </div>
-            <div class="absolute -top-3 -right-3 bg-neon-lime text-black text-xs font-black px-3 py-1.5 rounded-xl shadow-xl border-4 border-background z-20">
+            <div class="absolute -top-3 -right-3 bg-neon-lime text-black text-xs font-black px-3 py-1.5 rounded-xl shadow-xl border-4 border-background z-20 font-precision">
               x{{ authStore.user.boss_chests }}
             </div>
           </div>
           <div class="space-y-2">
-            <h2 class="text-3xl font-black text-industrial text-foreground uppercase italic tracking-tighter">SEASONAL <span class="text-primary-500">CHESTS</span></h2>
-            <p class="text-muted font-bold uppercase tracking-widest text-[10px]">Uncovered from defeated anomalies. Decrypt for legendary loot.</p>
+            <h2 class="text-3xl font-black text-industrial text-foreground uppercase italic tracking-tighter">COFRES DE <span class="text-primary-500">TEMPORADA</span></h2>
+            <p class="text-muted font-bold uppercase tracking-widest text-[10px]">Descubiertos tras derrotar anomalías. Descifra para botín legendario.</p>
           </div>
         </div>
         
         <button @click="handleOpenChest" :disabled="openingChest"
           class="btn-reppy !px-12 !py-6 !text-lg !rounded-3xl shadow-[0_20px_50px_rgba(255,69,0,0.3)] disabled:opacity-20 disabled:grayscale transition-all">
           <Sparkles class="w-6 h-6" />
-          {{ openingChest ? 'DECRYPTING...' : 'OPEN CHEST' }}
+          {{ openingChest ? 'DESCIFRANDO...' : 'ABRIR COFRE DE BOSS' }}
         </button>
       </div>
     </div>
@@ -174,7 +206,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import { Package, Frame, Type, Check, Sparkles, Archive } from 'lucide-vue-next';
+import { Package, Frame, Type, Check, Sparkles, Archive, Zap, TrendingUp } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import AvatarFrame from './AvatarFrame.vue';
@@ -202,6 +234,19 @@ const handleOpenChest = async () => {
     showChestModal.value = true;
     if (authStore.user) authStore.user.boss_chests--;
   } catch (err) { notificationStore.notify('Chest decryption failed', 'error'); }
+  finally { openingChest.value = false; }
+};
+
+const handleOpenLevelChest = async () => {
+  if (openingChest.value) return;
+  openingChest.value = true;
+  try {
+    const res = await axios.post('/api/boss/open-level-chest');
+    chestReward.value = res.data.reward;
+    reelItems.value = res.data.reel_items;
+    showChestModal.value = true;
+    if (authStore.user) authStore.user.level_chests--;
+  } catch (err) { notificationStore.notify('Level chest decryption failed', 'error'); }
   finally { openingChest.value = false; }
 };
 

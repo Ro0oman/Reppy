@@ -2,6 +2,7 @@ import express from 'express';
 import { query } from './db.js';
 import { authenticate } from './middleware.js';
 import { autoGrantPendingChests } from './utils/bossRewards.js';
+import { trackCoinTransaction } from './utils/transactions.js';
 
 const router = express.Router();
 
@@ -212,6 +213,9 @@ router.post('/open-chest', authenticate, async (req, res) => {
 
     await query('UPDATE users SET boss_chests = boss_chests - 1, reppy_coins = reppy_coins + $1 WHERE id = $2', [rewardCoins, userId]);
     
+    // Log the transaction
+    await trackCoinTransaction(userId, rewardCoins, 'CHEST_BOSS', rewardItem ? `Botín de Cofre: ${rewardItem.name}` : 'Recompensa de Cofre de Boss');
+
     // Get dummy items for the reel animation
     const dummiesRes = await query(`
       SELECT name, type, css_value, is_seasonal FROM cosmetics 
@@ -233,6 +237,80 @@ router.post('/open-chest', authenticate, async (req, res) => {
     await query('ROLLBACK');
     console.error('Error opening chest:', error);
     res.status(500).json({ message: 'Error al abrir el cofre' });
+  }
+});
+
+// Open Level-up Chest - Restricted to Common Items
+router.post('/open-level-chest', authenticate, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const userRes = await query('SELECT level_chests FROM users WHERE id = $1', [userId]);
+    if (userRes.rows.length === 0 || userRes.rows[0].level_chests <= 0) {
+      return res.status(400).json({ message: 'No tienes cofres de nivel para abrir' });
+    }
+
+    await query('BEGIN');
+
+    let rewardItem = null;
+    let rewardCoins = 0;
+    let message = '';
+
+    // 1. Try to find a random unowned Common (non-seasonal) item
+    const commonRes = await query(`
+      SELECT c.* FROM cosmetics c
+      WHERE c.is_seasonal = FALSE
+      AND NOT EXISTS (SELECT 1 FROM user_inventory ui WHERE ui.cosmetic_id = c.id AND ui.user_id = $1)
+      ORDER BY RANDOM() LIMIT 1
+    `, [userId]);
+
+    if (commonRes.rows.length > 0) {
+      rewardItem = commonRes.rows[0];
+      message = `¡Protocolo de Nivel completado! Has obtenido: ${rewardItem.name}`;
+      rewardCoins = 100; // Bonus coins
+    } else {
+      // 2. Give coins only (higher amount as consolation)
+      rewardCoins = 1000;
+      message = '¡Ya tienes todas las recompensas comunes disponibles! Has recibido Reppy Coins de alto nivel.';
+    }
+
+    // Process Reward
+    if (rewardItem) {
+      await query(
+        `INSERT INTO user_inventory (user_id, cosmetic_id, is_new) 
+         VALUES ($1, $2, TRUE) 
+         ON CONFLICT (user_id, cosmetic_id) DO NOTHING`, 
+        [userId, rewardItem.id]
+      );
+    }
+
+    await query('UPDATE users SET level_chests = level_chests - 1, reppy_coins = reppy_coins + $1 WHERE id = $2', [rewardCoins, userId]);
+    
+    // Log the transaction
+    await trackCoinTransaction(userId, rewardCoins, 'CHEST_LVL', rewardItem ? `Recompensa de Nivel: ${rewardItem.name}` : 'Bono por subida de Nivel');
+
+    // Get dummy items for the reel animation (filtered to common items for thematic consistency)
+    const dummiesRes = await query(`
+      SELECT name, type, css_value, is_seasonal FROM cosmetics 
+      WHERE is_seasonal = FALSE
+      ORDER BY RANDOM() LIMIT 40
+    `);
+
+    await query('COMMIT');
+
+    res.json({ 
+      success: true,
+      reward: {
+        item: rewardItem,
+        coins: rewardCoins,
+        message
+      },
+      reel_items: dummiesRes.rows
+    });
+  } catch (error) {
+    await query('ROLLBACK');
+    console.error('Error opening level-up chest:', error);
+    res.status(500).json({ message: 'Error al abrir el cofre de nivel' });
   }
 });
 

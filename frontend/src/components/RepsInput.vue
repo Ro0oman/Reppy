@@ -77,6 +77,7 @@ import { Zap } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useNotificationStore } from '../stores/notification';
 import { useDamageStore } from '../stores/damage';
+import { useAuthStore } from '../stores/auth';
 
 const props = defineProps({
   exerciseType: {
@@ -114,6 +115,10 @@ const addReps = async (count) => {
       const damageStore = useDamageStore();
       damageStore.addDamage(res.data.boss_damage_dealt, props.exerciseType);
     }
+    
+    // Refresh global user state to sync header level/XP
+    const authStore = useAuthStore();
+    await authStore.fetchUser();
     
     if (customReps.value === count) customReps.value = null;
     emit('updated');
