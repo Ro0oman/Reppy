@@ -31,7 +31,7 @@
           <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="selectedDay = null"></div>
           
           <!-- Modal Card -->
-          <div class="relative w-full max-w-[280px] bg-surface border border-white/10 rounded-2xl shadow-2xl p-6 overflow-hidden animate-in fade-in zoom-in duration-300">
+          <div class="relative w-full max-w-[280px] bg-surface border border-white/10 rounded-2xl shadow-2xl p-6 overflow-hidden animate-in fade-in duration-300">
             <!-- Glow Effect -->
             <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/20 blur-[50px] rounded-full"></div>
             

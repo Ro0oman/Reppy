@@ -16,7 +16,7 @@
       </div>
 
       <!-- Modal Card -->
-      <div class="glass relative max-w-lg w-full p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border-white/20 shadow-[0_0_50px_rgba(245,158,11,0.2)] text-center space-y-6 md:space-y-8 animate-in zoom-in duration-500 scale-100">
+      <div class="glass relative max-w-lg w-full p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border-white/20 shadow-[0_0_50px_rgba(245,158,11,0.2)] text-center space-y-6 md:space-y-8 animate-in fade-in duration-500 scale-100">
         <!-- Close Button (X) -->
         <button @click="close" class="absolute top-4 right-4 md:top-6 md:right-6 p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-all hover:rotate-90 group z-10 text-white">
           <XIcon class="w-4 h-4 md:w-5 md:h-5" />
@@ -71,7 +71,7 @@
         </div>
 
         <button @click="close"
-          class="w-full py-4 bg-primary-600 hover:bg-primary-500 text-white font-black uppercase tracking-[0.2em] rounded-2xl shadow-lg shadow-primary-900/20 transition-all hover:scale-105 active:scale-95 group flex items-center justify-center gap-3">
+          class="w-full py-4 bg-primary-600 hover:bg-primary-500 text-white font-black uppercase tracking-[0.2em] rounded-2xl shadow-lg shadow-primary-900/20 transition-all group flex items-center justify-center gap-3">
           <span>¡A por ellos!</span>
           <ArrowRight class="w-5 h-5 group-hover:translate-x-1 transition-transform" />
         </button>

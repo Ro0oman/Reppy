@@ -6,7 +6,7 @@
       <div class="absolute -right-20 -top-20 w-64 h-64 bg-primary-500/10 rounded-full blur-[80px] pointer-events-none"></div>
        
       <div class="flex flex-col md:flex-row items-center gap-6 relative z-10 mb-6">
-        <div class="w-24 h-24 bg-surface rounded-[1.5rem] flex items-center justify-center border border-border shadow-2xl overflow-hidden group-hover:scale-105 transition-transform duration-500">
+        <div class="w-24 h-24 bg-surface rounded-[1.5rem] flex items-center justify-center border border-border shadow-2xl overflow-hidden transition-transform duration-500">
           <img v-if="boss.image_url" :src="boss.image_url" class="w-full h-full object-contain p-1.5" :class="isDefeated ? 'grayscale opacity-50' : ''" />
           <span v-else class="text-4xl italic font-black text-foreground">?</span>
         </div>
@@ -59,7 +59,7 @@
             <template v-if="chestsClaimed < 1">
                <p class="text-[10px] font-black uppercase tracking-widest text-emerald-500 animate-bounce">¡Boss derrotado! Reclama tu recompensa</p>
                <button @click="claim" :disabled="claiming" 
-                class="px-8 py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest rounded-2xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:scale-105 active:scale-95 flex items-center gap-2">
+                class="px-8 py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest rounded-2xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.4)] flex items-center gap-2">
                  <span class="text-xl">🎁</span> Reclamar Cofre
                </button>
             </template>
@@ -91,7 +91,7 @@
 
     <!-- Help Modal Overlay -->
     <div v-if="showHelp" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/60 backdrop-blur-md animate-fade-in" @click.self="showHelp = false">
-      <div class="glass max-w-lg w-full p-8 rounded-[2.5rem] border border-border shadow-2xl space-y-6 relative animate-scale-in">
+      <div class="glass max-w-lg w-full p-8 rounded-[2.5rem] border border-border shadow-2xl space-y-6 relative animate-fade-in">
         <button @click="showHelp = false" class="absolute top-6 right-6 text-muted hover:text-foreground transition-colors text-2xl">&times;</button>
         
         <div class="space-y-2">
@@ -133,7 +133,7 @@
           </div>
         </div>
 
-        <button @click="showHelp = false" class="w-full py-4 bg-primary-600 hover:bg-primary-500 text-white font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl hover:scale-105 active:scale-95">
+        <button @click="showHelp = false" class="w-full py-4 bg-primary-600 hover:bg-primary-500 text-white font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl">
           ¡Entendido!
         </button>
       </div>
@@ -225,17 +225,12 @@ defineExpose({ refresh: fetchBoss });
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out forwards;
 }
-.animate-scale-in {
-  animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
+
 
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
-}
+
 </style>

@@ -83,7 +83,7 @@
             <div class="p-4 pt-0">
               <button @click="toggleEquip(item)" 
                 class="w-full py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all"
-                :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-primary-500 text-white hover:scale-105 active:scale-95 shadow-lg shadow-primary-500/20'">
+                :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-primary-500 text-white shadow-lg shadow-primary-500/20'">
                 {{ isEquipped(item) ? 'DEACTIVATE' : 'ACTIVATE' }}
               </button>
             </div>

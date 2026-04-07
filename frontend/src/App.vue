@@ -49,7 +49,7 @@
           <div class="flex items-center gap-4">
             <!-- Currency Module -->
             <div @click="showCoinsInfo = true" class="flex items-center gap-3 bg-surface/5 px-4 py-2 rounded-xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group">
-               <Zap class="w-3.5 h-3.5 text-primary-500 group-hover:scale-125 transition-transform" />
+               <Zap class="w-3.5 h-3.5 text-primary-500 transition-transform" />
                <span class="text-sm font-black text-precision text-foreground">{{ authStore.user?.reppy_coins || 0 }}</span>
             </div>
 

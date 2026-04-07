@@ -38,7 +38,7 @@
             ? 'bg-primary-500 text-white shadow-lg' 
             : 'bg-surface/40 text-muted border border-border hover:text-foreground'"
         >
-          <div v-if="selectedCategory !== cat.id" class="absolute inset-x-0 bottom-0 h-0.5 bg-primary-500 transform scale-x-0 group-hover:scale-x-100 transition-transform"></div>
+          <div v-if="selectedCategory !== cat.id" class="absolute inset-x-0 bottom-0 h-0.5 bg-primary-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
           <component :is="cat.icon" class="w-3.5 h-3.5 inline-block mr-2.5" />
           {{ cat.name }}
         </button>

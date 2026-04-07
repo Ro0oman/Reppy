@@ -34,7 +34,7 @@
       </div>
 
       <!-- Massive Industrial Logo -->
-      <h1 class="text-8xl md:text-[14rem] font-black text-industrial tracking-tighter text-white leading-none animate-in zoom-in duration-1000">
+      <h1 class="text-8xl md:text-[14rem] font-black text-industrial tracking-tighter text-white leading-none animate-in fade-in duration-1000">
         REPPY<span class="text-primary-500">.</span>
       </h1>
       

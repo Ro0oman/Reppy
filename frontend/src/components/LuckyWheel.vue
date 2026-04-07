@@ -2,7 +2,7 @@
   <div v-if="show" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-zinc-950/80 backdrop-blur-md" @click="!spinning && $emit('close')"></div>
     
-    <div class="relative bg-white dark:bg-zinc-900 w-full max-w-sm rounded-[2.5rem] shadow-2xl border border-white/10 overflow-hidden transform transition-all scale-100 animate-in fade-in zoom-in duration-300">
+    <div class="relative bg-white dark:bg-zinc-900 w-full max-w-sm rounded-[2.5rem] shadow-2xl border border-white/10 overflow-hidden transform transition-all animate-in fade-in duration-300">
       <div class="px-8 pt-8 text-center">
         <div class="inline-flex p-3 bg-primary-500/10 rounded-2xl mb-4">
           <Sparkles class="w-6 h-6 text-primary-600" />
@@ -54,7 +54,7 @@
           <button 
             @click="spinWheel"
             :disabled="spinning || !canSpin"
-            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white dark:bg-zinc-800 shadow-2xl border-4 border-primary-500 flex items-center justify-center z-30 transition-all hover:scale-110 active:scale-90 disabled:opacity-50 disabled:grayscale"
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white dark:bg-zinc-800 shadow-2xl border-4 border-primary-500 flex items-center justify-center z-30 transition-all disabled:opacity-50 disabled:grayscale"
           >
             <span class="text-[10px] font-black text-primary-600 uppercase tracking-tighter">{{ spinning ? '...' : 'GIRAR' }}</span>
           </button>

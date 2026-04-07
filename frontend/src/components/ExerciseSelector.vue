@@ -9,7 +9,7 @@
         : 'text-muted hover:text-foreground hover:bg-foreground/5'"
     >
       <!-- Background Shimmer on Hover -->
-      <div v-if="modelValue !== ex.id" class="absolute inset-x-0 bottom-0 h-0.5 bg-primary-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+      <div v-if="modelValue !== ex.id" class="absolute inset-x-0 bottom-0 h-0.5 bg-primary-500 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
       
        <component :is="ex.icon" :class="['w-4 h-4 transition-transform duration-500', modelValue === ex.id ? '' : 'group-hover:rotate-12']" />
       <span class="text-[11px] font-black uppercase tracking-[0.15em] font-tight">{{ i18n.t(ex.id) }}</span>
