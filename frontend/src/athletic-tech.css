@@ -24,16 +24,20 @@
     --heatmap-l2: 147 100% 21%;
     --heatmap-l3: 142 62% 40%;
     --heatmap-l4: 142 64% 59%;
+
+    --white-to-gray: 0 0% 100%;
   }
 
   .light {
     --background: 0 0% 98%;     /* #FAFAFA */
     --surface: 0 0% 100%;       /* #FFFFFF */
-    --card: 0 0% 100% / 0.7;
-    --foreground: 0 0% 10%;     /* #1A1A1A */
-    --muted: 0 0% 40%;
-    --border: 0 0% 0% / 0.08;
-    --ring: 15 100% 50% / 0.15;
+    --card: 0 0% 100% / 0.8;
+    --foreground: 0 0% 15%;     /* #262626 */
+    --muted: 0 0% 45%;          /* #737373 */
+    --border: 0 0% 0% / 0.1;
+    --ring: 15 100% 50% / 0.2;
+
+    --white-to-gray: 0 0% 40%;  /* Light charcoal/gray for light mode */
 
     /* Heatmap Levels (Light) */
     --heatmap-bg: 0 0% 100%;
@@ -179,6 +183,35 @@
   .text-precision {
     font-family: 'JetBrains Mono', monospace;
     @apply tracking-tighter;
+  }
+
+  .text-contrast {
+    color: hsl(var(--white-to-gray));
+  }
+
+  /* 17. Hyperspace (NEW FUN) */
+  .bg-hyperspace {
+    background: #000;
+  }
+  .hyperspace-container {
+    position: absolute;
+    inset: 0;
+    perspective: 500px;
+  }
+  .streak {
+    position: absolute;
+    width: 2px;
+    height: 100px;
+    background: linear-gradient(to top, transparent, #fff, #a855f7, #60a5fa);
+    opacity: 0;
+    transform-origin: center bottom;
+    animation: streak-move linear infinite;
+  }
+  @keyframes streak-move {
+    0% { transform: translateZ(-500px) scale(0.1); opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateZ(500px) scale(2); opacity: 0; }
   }
 
   .bento-grid {

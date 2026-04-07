@@ -27,21 +27,42 @@
     </div> 
     
     <div v-else class="space-y-16">
-      <!-- Categories (Industrial Dock) -->
-      <div class="flex flex-wrap items-center gap-2">
-        <button 
-          v-for="cat in categories" 
-          :key="cat.id"
-          @click="selectedCategory = cat.id"
-          class="group relative px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all overflow-hidden"
-          :class="selectedCategory === cat.id 
-            ? 'bg-primary-500 text-white shadow-lg' 
-            : 'bg-surface/40 text-muted border border-border hover:text-foreground'"
-        >
-          <div v-if="selectedCategory !== cat.id" class="absolute inset-x-0 bottom-0 h-0.5 bg-primary-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <component :is="cat.icon" class="w-3.5 h-3.5 inline-block mr-2.5" />
-          {{ cat.name }}
-        </button>
+      <!-- Categories Dropdown (Compact Industrial) -->
+      <div class="flex justify-center relative z-20">
+        <div class="relative w-full max-w-md">
+          <button 
+            @click="showDropdown = !showDropdown"
+            class="flex items-center gap-3 px-6 py-3 bg-surface/40 border border-border rounded-xl text-[10px] font-black uppercase tracking-widest hover:border-primary-500/30 transition-all w-full justify-between"
+          >
+            <div class="flex items-center gap-2">
+              <component :is="categories.find(c => c.id === selectedCategory).icon" class="w-3.5 h-3.5 text-primary-500" />
+              <span class="text-foreground">{{ i18n.t(categories.find(c => c.id === selectedCategory).label) }}</span>
+            </div>
+            <ChevronDown class="w-4 h-4 text-muted transition-transform" :class="{ 'rotate-180': showDropdown }" />
+          </button>
+
+          <Transition
+            enter-active-class="transition duration-200 ease-out"
+            enter-from-class="transform scale-95 opacity-0 -translate-y-2"
+            enter-to-class="transform scale-100 opacity-100 translate-y-0"
+            leave-active-class="transition duration-150 ease-in"
+            leave-from-class="transform scale-100 opacity-100 translate-y-0"
+            leave-to-class="transform scale-95 opacity-0 -translate-y-2"
+          >
+            <div v-if="showDropdown" class="absolute top-full left-0 mt-2 w-full bg-surface/90 backdrop-blur-3xl border border-border rounded-2xl shadow-2xl overflow-hidden py-2 z-50">
+              <button 
+                v-for="cat in categories" 
+                :key="cat.id"
+                @click="selectedCategory = cat.id; showDropdown = false"
+                class="w-full flex items-center gap-3 px-6 py-3 text-[10px] font-black uppercase tracking-widest transition-all text-left"
+                :class="selectedCategory === cat.id ? 'bg-primary-500 text-white' : 'text-muted hover:bg-white/5 hover:text-foreground'"
+              >
+                <component :is="cat.icon" class="w-3.5 h-3.5" />
+                {{ i18n.t(cat.label) }}
+              </button>
+            </div>
+          </Transition>
+        </div>
       </div>
 
       <!-- Main Collection -->
@@ -51,7 +72,7 @@
           <div class="h-px flex-1 bg-gradient-to-r from-muted/20 to-transparent"></div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           <div 
             v-for="item in regularItems" 
             :key="item.id"
@@ -66,73 +87,76 @@
             </div>
 
             <!-- Header Info -->
-            <div class="p-6 pb-0 flex items-start justify-between z-10">
-              <span class="text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border border-border text-muted bg-foreground/5">
+            <div class="p-4 pb-0 flex items-start justify-between z-10">
+              <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-border text-muted bg-foreground/5">
                 #{{ item.roadmap_position || '??' }}
               </span>
-              <span class="text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border" :class="getRarityBadge(item).classes">
+              <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border" :class="getRarityBadge(item).classes">
                 {{ getRarityBadge(item).label }}
               </span>
             </div>
 
             <!-- Preview Area -->
-            <div class="h-44 flex items-center justify-center m-6 mb-2 bg-surface rounded-2xl border border-border relative overflow-hidden group-hover/item:border-primary-500/20 transition-colors shadow-inner">
-               <div v-if="item.type === 'title'" class="text-2xl text-center px-6 leading-tight font-black" :class="item.css_value">
+            <div class="h-32 flex items-center justify-center m-4 mb-2 bg-surface rounded-2xl border border-border relative overflow-hidden group-hover/item:border-primary-500/20 transition-colors shadow-inner">
+               <div v-if="item.type === 'title'" class="text-lg text-center px-4 leading-tight font-black" :class="item.css_value">
                  {{ item.name }}
                </div>
                <div v-if="item.type === 'border'">
-                 <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :border-css="item.css_value" :size="90" />
+                 <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :border-css="item.css_value" :size="64" />
                </div>
                <div v-if="item.type === 'avatar'">
-                 <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :avatar-css="item.css_value" :size="90" />
+                 <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :avatar-css="item.css_value" :size="64" />
                </div>
-               <div v-if="item.type === 'background'" class="w-full h-full relative">
-                  <BackgroundEffect :background-css="item.css_value" is-preview class="!absolute !inset-0 !w-full !h-full" />
-                  <div class="absolute inset-0 bg-black/10"></div>
+               <div v-if="item.type === 'background'" class="w-full h-full relative group/bg overflow-hidden">
+                  <BackgroundEffect :background-css="item.css_value" is-preview class="!absolute !inset-0 !w-full !h-full transition-transform duration-700 group-hover/item:scale-110" />
+                  <!-- Screen Overlay Effect -->
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none"></div>
+                  <div class="absolute inset-0 opacity-20 pointer-events-none h-[200%] animate-scanline" style="background: linear-gradient(to bottom, transparent 50%, rgba(34, 211, 238, 0.5) 50.5%, transparent 51%); background-size: 100% 4px;"></div>
+                  <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">PRVW.MODE</div>
                </div>
             </div>
 
             <!-- Content -->
-            <div class="p-6 pt-2 flex-1">
-              <h3 class="text-lg font-black text-industrial text-foreground mb-1">{{ item.name }}</h3>
-              <p class="text-xs text-muted font-medium line-clamp-2 mb-4 leading-relaxed">{{ item.description }}</p>
+            <div class="p-4 pt-2 flex-1">
+              <h3 class="text-sm font-black text-industrial text-foreground mb-1">{{ item.name }}</h3>
+              <p class="text-[10px] text-muted font-medium line-clamp-2 mb-4 leading-relaxed">{{ item.description }}</p>
               
-              <div v-if="!item.is_unlocked" class="px-3 py-2 bg-red-500/5 border border-red-500/10 rounded-lg">
-                <p class="text-[8px] font-black uppercase tracking-widest text-red-500/70">DECRYPT AT: {{ getCountdown(item) }}</p>
+              <div v-if="!item.is_unlocked" class="px-2 py-1.5 bg-red-500/5 border border-red-500/10 rounded-lg">
+                <p class="text-[7px] font-black uppercase tracking-widest text-red-500/70">DECRYPT AT: {{ getCountdown(item) }}</p>
               </div>
             </div>
 
             <!-- Action Footer -->
-            <div class="p-6 pt-0 mt-auto border-t border-border bg-foreground/[0.01]">
-              <div class="flex items-center justify-between mt-6">
-                <div v-if="item.owned" class="flex items-center gap-2 text-neon-lime">
-                  <Check class="w-4 h-4" />
-                  <span class="text-[10px] font-black uppercase tracking-widest leading-none">ACQUIRED</span>
+            <div class="p-4 pt-0 mt-auto border-t border-border bg-foreground/[0.01]">
+              <div class="flex items-center justify-between mt-4">
+                <div v-if="item.owned" class="flex items-center gap-1.5 text-neon-lime">
+                  <Check class="w-3.5 h-3.5" />
+                  <span class="text-[8px] font-black uppercase tracking-widest leading-none">ACQUIRED</span>
                 </div>
                 <div v-else-if="item.price > 0" class="flex items-baseline gap-1">
-                  <span class="text-xl font-black text-precision" :class="canAfford(item) ? 'text-primary-500' : 'text-muted'">{{ item.price }}</span>
-                  <span class="text-[8px] font-black text-muted uppercase tracking-widest">COINS</span>
+                  <span class="text-base font-black text-precision" :class="canAfford(item) ? 'text-primary-500' : 'text-muted'">{{ item.price }}</span>
+                  <span class="text-[7px] font-black text-muted uppercase tracking-widest">COINS</span>
                 </div>
-                <div v-else class="text-[9px] font-black uppercase tracking-widest text-primary-500/60 leading-none">EVENT REWARD</div>
+                <div v-else class="text-[8px] font-black uppercase tracking-widest text-primary-500/60 leading-none">EVENT</div>
 
                 <!-- Action Button -->
                 <button 
                   v-if="!item.owned && item.price > 0"
                   @click="buyItem(item)"
                   :disabled="!canAfford(item) || buying || !item.is_unlocked"
-                  class="btn-reppy !px-6 !py-3 !text-[10px] disabled:opacity-20 disabled:grayscale disabled:scale-100"
+                  class="btn-reppy !px-4 !py-2 !text-[8px] disabled:opacity-20 disabled:grayscale disabled:scale-100"
                 >
-                  {{ item.is_unlocked ? 'ACQUIRE' : 'LOCKED' }}
+                  {{ item.is_unlocked ? 'GET' : 'LOCK' }}
                 </button>
                 
                 <button 
                   v-if="item.owned"
                   @click="equipItem(item)"
                   :disabled="isEquipped(item)"
-                  class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                  class="px-4 py-2 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all"
                   :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-neon-lime text-black shadow-lg shadow-neon-lime/20'"
                 >
-                  {{ isEquipped(item) ? 'ACTIVE' : 'EQUIP' }}
+                  {{ isEquipped(item) ? 'ON' : 'EQUIP' }}
                 </button>
               </div>
             </div>
@@ -169,7 +193,7 @@
           leave-from-class="transform scale-100 opacity-100"
           leave-to-class="transform scale-95 opacity-0"
         >
-          <div v-if="showSeasonal" class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-12 animate-in">
+          <div v-if="showSeasonal" class="mt-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-12 animate-in text-left">
              <!-- Seasonal Items use same card template as regular items -->
              <div 
               v-for="item in seasonalItems" 
@@ -180,25 +204,30 @@
               <div v-if="!item.is_unlocked" class="absolute inset-0 bg-background/40 backdrop-blur-[2px] z-[5] pointer-events-none flex items-center justify-center">
                  <div class="w-12 h-12 bg-surface/60 rounded-full flex items-center justify-center border border-border"><span class="text-xl">🔒</span></div>
               </div>
-              <div class="p-6 pb-0 flex items-start justify-between z-10">
-                <span class="text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border border-primary-500/20 text-primary-500 bg-primary-500/5">SEASONAL</span>
-                <span class="text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border" :class="getRarityBadge(item).classes">{{ getRarityBadge(item).label }}</span>
+              <div class="p-4 pb-0 flex items-start justify-between z-10">
+                <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-primary-500/20 text-primary-500 bg-primary-500/5">SEASONAL</span>
+                <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border" :class="getRarityBadge(item).classes">{{ getRarityBadge(item).label }}</span>
               </div>
-              <div class="h-44 flex items-center justify-center m-6 mb-2 bg-surface rounded-2xl border border-border relative overflow-hidden group-hover/item:border-primary-500/20 transition-colors shadow-inner">
-                 <div v-if="item.type === 'title'" class="text-2xl text-center px-6 leading-tight font-black" :class="item.css_value">{{ item.name }}</div>
-                 <div v-if="item.type === 'border'"><AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :border-css="item.css_value" :size="90" /></div>
-                 <div v-if="item.type === 'avatar'"><AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :avatar-css="item.css_value" :size="90" /></div>
-                 <div v-if="item.type === 'background'" class="w-full h-full relative"><BackgroundEffect :background-css="item.css_value" is-preview class="!absolute !inset-0 !w-full !h-full" /><div class="absolute inset-0 bg-foreground/10"></div></div>
+              <div class="h-32 flex items-center justify-center m-4 mb-2 bg-surface rounded-2xl border border-border relative overflow-hidden group-hover/item:border-primary-500/20 transition-colors shadow-inner">
+                 <div v-if="item.type === 'title'" class="text-lg text-center px-4 leading-tight font-black" :class="item.css_value">{{ item.name }}</div>
+                 <div v-if="item.type === 'border'"><AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :border-css="item.css_value" :size="64" /></div>
+                 <div v-if="item.type === 'avatar'"><AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :avatar-css="item.css_value" :size="64" /></div>
+                 <div v-if="item.type === 'background'" class="w-full h-full relative group/bg overflow-hidden">
+                    <BackgroundEffect :background-css="item.css_value" is-preview class="!absolute !inset-0 !w-full !h-full transition-transform duration-700 group-hover/item:scale-110" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none"></div>
+                    <div class="absolute inset-0 opacity-20 pointer-events-none h-[200%] animate-scanline" style="background: linear-gradient(to bottom, transparent 50%, rgba(34, 211, 238, 0.5) 50.5%, transparent 51%); background-size: 100% 4px;"></div>
+                    <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">SEASONAL.PRVW</div>
+                 </div>
               </div>
-              <div class="p-6 pt-2 flex-1">
-                <h3 class="text-lg font-black text-industrial text-foreground mb-1">{{ item.name }}</h3>
-                <p class="text-xs text-muted font-medium line-clamp-2 mb-4 leading-relaxed">{{ item.description }}</p>
+              <div class="p-4 pt-2 flex-1">
+                <h3 class="text-sm font-black text-industrial text-foreground mb-1">{{ item.name }}</h3>
+                <p class="text-[10px] text-muted font-medium line-clamp-2 mb-4 leading-relaxed">{{ item.description }}</p>
               </div>
-              <div class="p-6 pt-0 mt-auto border-t border-border bg-foreground/[0.01]">
-                <div class="flex items-center justify-between mt-6">
-                  <div v-if="item.owned" class="flex items-center gap-2 text-neon-lime"><Check class="w-4 h-4" /><span class="text-[10px] font-black uppercase tracking-widest leading-none">ACQUIRED</span></div>
-                  <div v-else class="text-[9px] font-black uppercase tracking-widest text-primary-500/60 leading-none">SPECIAL REWARD</div>
-                  <button v-if="item.owned" @click="equipItem(item)" :disabled="isEquipped(item)" class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all" :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-neon-lime text-black shadow-lg shadow-neon-lime/20'">{{ isEquipped(item) ? 'ACTIVE' : 'EQUIP' }}</button>
+              <div class="p-4 pt-0 mt-auto border-t border-border bg-foreground/[0.01]">
+                <div class="flex items-center justify-between mt-4">
+                  <div v-if="item.owned" class="flex items-center gap-1 text-neon-lime"><Check class="w-3.5 h-3.5" /><span class="text-[8px] font-black uppercase tracking-widest leading-none">ACQUIRED</span></div>
+                  <div v-else class="text-[8px] font-black uppercase tracking-widest text-primary-500/60 leading-none">SPECIAL</div>
+                  <button v-if="item.owned" @click="equipItem(item)" :disabled="isEquipped(item)" class="px-4 py-2 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all" :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-neon-lime text-black shadow-lg shadow-neon-lime/20'">{{ isEquipped(item) ? 'ON' : 'EQUIP' }}</button>
                 </div>
               </div>
             </div>
@@ -214,11 +243,13 @@ import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
-import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, Coins, Check } from 'lucide-vue-next';
+import { useI18nStore } from '../stores/i18n';
+import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, Coins, Check, Swords } from 'lucide-vue-next';
 import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
 
 const authStore = useAuthStore();
+const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
 
 const items = ref([]);
@@ -226,16 +257,17 @@ const loading = ref(true);
 const buying = ref(false);
 const nowMs = ref(Date.now());
 const showSeasonal = ref(false);
+const showDropdown = ref(false);
 let countdownTimer = null;
 
 const selectedCategory = ref('all');
 
 const categories = [
-  { id: 'all', name: 'ALL UNITS', icon: LayoutGrid },
-  { id: 'title', name: 'TITLES', icon: Type },
-  { id: 'border', name: 'BORDERS', icon: Frame },
-  { id: 'avatar', name: 'AVATARS', icon: Sparkles },
-  { id: 'background', name: 'SCREENS', icon: Sparkles }
+  { id: 'all', label: 'cat_all', icon: Swords },
+  { id: 'title', label: 'cat_title', icon: Type },
+  { id: 'border', label: 'cat_border', icon: Frame },
+  { id: 'avatar', label: 'cat_avatar', icon: Sparkles },
+  { id: 'background', label: 'cat_background', icon: Sparkles }
 ];
 
 const filteredItems = computed(() => {
@@ -342,4 +374,6 @@ onBeforeUnmount(() => { if (countdownTimer) clearInterval(countdownTimer); });
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .animate-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scanline { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+.animate-scanline { animation: scanline 8s linear infinite; }
 </style>

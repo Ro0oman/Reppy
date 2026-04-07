@@ -156,7 +156,14 @@ const translations = {
     onboarding_rewards_desc: 'Spend RC in the shop for exclusive titles, borders, and effects. Claim chests from fallen bosses to grow your collection.',
     onboarding_btn_next: 'Next Phase',
     onboarding_btn_back: 'Previous',
-    onboarding_btn_finish: 'Begin Operation'
+    onboarding_btn_finish: 'Begin Operation',
+    
+    // Categories
+    cat_all: 'All Units',
+    cat_title: 'Honor Titles',
+    cat_border: 'Avatar Borders',
+    cat_avatar: 'Avatars',
+    cat_background: 'Interface Screens'
   },
   es: {
     // Landing
@@ -313,7 +320,14 @@ const translations = {
     onboarding_rewards_desc: 'Gasta tus RC en la tienda en títulos, bordes y efectos exclusivos. Reclama cofres de bosses caídos para aumentar tu colección.',
     onboarding_btn_next: 'Siguiente Fase',
     onboarding_btn_back: 'Anterior',
-    onboarding_btn_finish: 'Iniciar Operación'
+    onboarding_btn_finish: 'Iniciar Operación',
+    
+    // Categorías
+    cat_all: 'Todas las Unidades',
+    cat_title: 'Títulos de Honor',
+    cat_border: 'Marcos de Avatar',
+    cat_avatar: 'Avatares',
+    cat_background: 'Pantallas de Interfaz'
   }
 };
 

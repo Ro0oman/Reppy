@@ -106,6 +106,19 @@ const matrixColumns = computed(() => {
       <div class="blood-wave blood-wave--1"></div>
       <div class="blood-wave blood-wave--2"></div>
     </div>
+
+    <!-- 17. bg-hyperspace (Hyperspace) -->
+    <div v-if="activeEffect === 'bg-hyperspace'" class="hyperspace-container">
+      <div v-for="i in 50" :key="i" class="streak" 
+        :style="{ 
+          left: `${Math.random() * 100}%`, 
+          top: `${Math.random() * 100}%`, 
+          animationDelay: `${Math.random() * -5}s`, 
+          animationDuration: `${0.5 + Math.random() * 1}s`,
+          transform: `rotate(${Math.random() * 360}deg)`
+        }">
+      </div>
+    </div>
   </div>
 </template>
 

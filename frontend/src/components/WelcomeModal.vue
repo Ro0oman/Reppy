@@ -38,7 +38,7 @@
                     <div class="h-1 w-12 bg-primary-500 rounded-full"></div>
                   </div>
                 </div>
-                <p class="text-lg font-medium text-zinc-400 leading-relaxed font-tight">
+                <p class="text-lg font-medium text-muted leading-relaxed font-tight">
                   {{ i18n.t('onboarding_mission_desc') }}
                 </p>
               </div>
@@ -54,7 +54,7 @@
                     <div class="h-1 w-12 bg-red-500 rounded-full"></div>
                   </div>
                 </div>
-                <p class="text-lg font-medium text-zinc-400 leading-relaxed font-tight">
+                <p class="text-lg font-medium text-muted leading-relaxed font-tight">
                   {{ i18n.t('onboarding_damage_desc') }}
                 </p>
               </div>
@@ -70,7 +70,7 @@
                     <div class="h-1 w-12 bg-amber-500 rounded-full"></div>
                   </div>
                 </div>
-                <p class="text-lg font-medium text-zinc-400 leading-relaxed font-tight">
+                <p class="text-lg font-medium text-muted leading-relaxed font-tight">
                   {{ i18n.t('onboarding_rewards_desc') }}
                 </p>
               </div>
@@ -85,7 +85,7 @@
           <div class="flex items-center gap-2">
             <div v-for="i in 3" :key="i" 
               class="h-1.5 transition-all duration-300 rounded-full"
-              :class="currentStep === i-1 ? 'w-8 bg-primary-500' : 'w-1.5 bg-zinc-800'">
+              :class="currentStep === i-1 ? 'w-8 bg-primary-500' : 'w-1.5 bg-border'">
             </div>
           </div>
 

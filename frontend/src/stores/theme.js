@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
 
 export const useThemeStore = defineStore('theme', () => {
-  const theme = ref(localStorage.getItem('reppy_theme') || 'dark');
+  const theme = ref(localStorage.getItem('reppy_theme') || 'light');
 
   const applyTheme = (newTheme) => {
     const root = document.documentElement;

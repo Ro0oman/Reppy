@@ -18,9 +18,10 @@
         <div class="hidden lg:flex items-center gap-2">
           <button v-for="nav in navLinks" :key="nav.id"
             @click="view = nav.id" 
-            class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all relative group"
+            class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all relative group flex items-center gap-2"
             :class="view === nav.id ? 'text-foreground bg-surface/10' : 'text-muted hover:text-foreground'">
             <div v-if="view === nav.id" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary-500 rounded-full"></div>
+            <component :is="nav.icon" class="w-3.5 h-3.5" />
             {{ i18n.t(nav.label) || nav.fallback }}
             
             <!-- Red Notification Dot for Inventory (Chests) -->
@@ -102,7 +103,7 @@
         <button v-for="nav in mobileNavLinks" :key="nav.id"
           @click="view = nav.id" 
           class="flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all"
-          :class="view === nav.id ? 'text-primary-500' : 'text-zinc-600'">
+          :class="view === nav.id ? 'text-primary-500 bg-primary-500/5' : 'text-muted hover:text-foreground'">
           <component :is="nav.icon" class="w-5 h-5" :class="view === nav.id ? 'fill-primary-500/10' : ''" />
           <span class="text-[8px] font-black uppercase tracking-widest font-tight">{{ i18n.t(nav.label) }}</span>
           
@@ -114,8 +115,8 @@
         <!-- Mobile Profile -->
         <button @click="view = 'profile'" class="flex-1 flex flex-col items-center justify-center gap-1 transition-all">
           <AvatarFrame :src="authStore.user?.avatar_url" :border-css="view === 'profile' ? authStore.user?.border_css : ''" :size="24" 
-               class="transition-all" :class="view === 'profile' ? '' : 'opacity-40 grayscale'" />
-          <span class="text-[8px] font-black uppercase tracking-widest font-tight" :class="view === 'profile' ? 'text-primary-500' : 'text-zinc-600'">{{ i18n.t('nav_profile').toUpperCase() }}</span>
+               class="transition-all" :class="view === 'profile' ? '' : 'opacity-60 grayscale'" />
+          <span class="text-[8px] font-black uppercase tracking-widest font-tight" :class="view === 'profile' ? 'text-primary-500' : 'text-muted'">{{ i18n.t('nav_profile').toUpperCase() }}</span>
         </button>
       </div>
     </nav>
@@ -148,11 +149,11 @@
           <div class="space-y-6">
             <h4 class="text-[10px] font-black uppercase text-primary-500 tracking-[0.3em]">REVENUE GENERATION</h4>
             <div class="grid grid-cols-1 gap-3">
-              <div v-for="earn in earnings" :key="earn.name" class="flex items-center justify-between p-5 bg-white/[0.02] rounded-2xl border border-white/5">
-                <span class="text-xs font-black text-zinc-400 uppercase tracking-widest">{{ earn.name }}</span>
+              <div v-for="earn in earnings" :key="earn.name" class="flex items-center justify-between p-5 bg-white/[0.02] dark:bg-white/[0.02] bg-foreground/[0.03] rounded-2xl border border-border">
+                <span class="text-xs font-black text-muted uppercase tracking-widest">{{ earn.name }}</span>
                 <div class="flex items-baseline gap-2">
-                   <span class="text-lg font-black text-precision text-white">{{ earn.amount }}</span>
-                   <span class="text-[8px] font-black text-zinc-600 uppercase tracking-widest">RC / REP</span>
+                   <span class="text-lg font-black text-precision text-foreground">{{ earn.amount }}</span>
+                   <span class="text-[8px] font-black text-muted uppercase tracking-widest">RC / REP</span>
                 </div>
               </div>
             </div>
@@ -162,13 +163,13 @@
           <div class="space-y-6">
             <h4 class="text-[10px] font-black uppercase text-neon-lime tracking-[0.3em]">EXCEPTIONAL YIELD</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-               <div class="p-5 bg-neon-lime/5 border border-neon-lime/10 rounded-2xl space-y-2">
+               <div class="p-5 bg-neon-lime/5 border border-neon-lime/10 rounded-2xl space-y-2 text-left">
                   <p class="text-[9px] font-black text-neon-lime uppercase tracking-widest">DAILY ROULETTE</p>
-                  <p class="text-sm font-black text-white text-precision">10 – 100 RC</p>
+                  <p class="text-sm font-black text-foreground text-precision">10 – 100 RC</p>
                </div>
-               <div class="p-5 bg-primary-500/5 border border-primary-500/10 rounded-2xl space-y-2">
+               <div class="p-5 bg-primary-500/5 border border-primary-500/10 rounded-2xl space-y-2 text-left">
                   <p class="text-[9px] font-black text-primary-500 uppercase tracking-widest">BOSS ANOMALIES</p>
-                  <p class="text-sm font-black text-white text-precision">LEGENDARY DROPS</p>
+                  <p class="text-sm font-black text-foreground text-precision">LEGENDARY DROPS</p>
                </div>
             </div>
           </div>
@@ -177,8 +178,8 @@
           <div class="bg-white/5 p-6 rounded-3xl border border-white/5 flex items-center gap-6">
             <div class="p-3 bg-primary-500/10 rounded-2xl"><Coins class="w-6 h-6 text-primary-500" /></div>
             <div>
-               <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest">MONTHLY PROJECTION</p>
-               <p class="text-sm font-black text-white font-tight">ACTIVE OPERATIVES YIELD <span class="text-primary-500 text-precision">~1200 RC</span></p>
+               <p class="text-[10px] font-black text-muted uppercase tracking-widest">MONTHLY PROJECTION</p>
+               <p class="text-sm font-black text-foreground font-tight uppercase tracking-tight">ACTIVE OPERATIVES YIELD <span class="text-primary-500 text-precision">~1200 RC</span></p>
             </div>
           </div>
         </div>
@@ -212,7 +213,7 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue';
 import axios from 'axios';
-import { Github, Star, Home, LayoutDashboard, Users, ShoppingBag, Package, RefreshCw, HelpCircle, X, Coins } from 'lucide-vue-next';
+import { Github, Star, Home, LayoutDashboard, Users, Swords, Package, RefreshCw, HelpCircle, X, Coins } from 'lucide-vue-next';
 import { useAuthStore } from './stores/auth';
 import { useI18nStore } from './stores/i18n';
 
@@ -244,18 +245,16 @@ const canSpinToday = ref(false);
 const showCoinsInfo = ref(false);
 
 const navLinks = [
-  { id: 'landing', label: 'nav_home', fallback: 'HOME' },
-  { id: 'dashboard', label: 'nav_dashboard', fallback: 'DASHBOARD' },
-  { id: 'social', label: 'nav_social', fallback: 'RANKINGS' },
-  { id: 'inventory', label: 'nav_inventory', fallback: 'GEAR' },
-  { id: 'shop', label: 'nav_shop', fallback: 'ARMORY' },
+  { id: 'dashboard', label: 'nav_dashboard', fallback: 'DASHBOARD', icon: LayoutDashboard },
+  { id: 'social', label: 'nav_social', fallback: 'RANKINGS', icon: Users },
+  { id: 'inventory', label: 'nav_inventory', fallback: 'GEAR', icon: Package },
+  { id: 'shop', label: 'nav_shop', fallback: 'ARMORY', icon: Swords },
 ];
 
 const mobileNavLinks = [
-  { id: 'landing', icon: Home, label: 'nav_home' },
   { id: 'dashboard', icon: LayoutDashboard, label: 'nav_dashboard' },
   { id: 'social', icon: Users, label: 'nav_social' },
-  { id: 'shop', icon: ShoppingBag, label: 'nav_armory' },
+  { id: 'shop', icon: Swords, label: 'nav_armory' },
   { id: 'inventory', icon: Package, label: 'nav_gear' },
 ];
 
