@@ -65,25 +65,28 @@
               <p class="text-[8px] font-bold text-muted uppercase tracking-widest leading-relaxed max-w-[240px] text-center md:text-left">Cada subida de nivel otorga 1 cofre de temporada de regalo</p>
             </div>
             
+            
+          </div>
+          
+          <!-- RPG Metrics (The Attributes Grid) -->
+          <div class="flex items-center gap-4"  >
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-lg mt-8">
+              <div v-for="attr in attributes" :key="attr.key" 
+                  class="p-4 rounded-xl border border-border bg-surface/20 group/attr transition-all"
+                  :class="getAttrColor(attr.lvl)">
+                <p class="text-[9px] font-black uppercase tracking-[0.2em] mb-2 font-tight" :class="attr.labelColor">{{ attr.key }}</p>
+                <div class="flex flex-col leading-none">
+                  <span class="text-2xl font-black text-precision text-foreground">LVL {{ attr.lvl }}</span>
+                  <span class="text-[8px] font-bold text-muted mt-1 tabular-nums">{{ attr.xp }} XP</span>
+                </div>
+              </div>
+            </div>
             <button @click="showInfoModal = true" 
                    title="Evolution Protocol Guide"
                    class="flex items-center gap-3 bg-surface/5 px-5 py-3 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[8px] font-black tracking-widest">
               <HelpCircle class="w-4 h-4" />
               CODEX INFO
             </button>
-          </div>
-          
-          <!-- RPG Metrics (The Attributes Grid) -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-lg mt-8">
-            <div v-for="attr in attributes" :key="attr.key" 
-                 class="p-4 rounded-xl border border-border bg-surface/20 group/attr transition-all"
-                 :class="getAttrColor(attr.lvl)">
-              <p class="text-[9px] font-black uppercase tracking-[0.2em] mb-2 font-tight" :class="attr.labelColor">{{ attr.key }}</p>
-              <div class="flex flex-col leading-none">
-                <span class="text-2xl font-black text-precision text-foreground">LVL {{ attr.lvl }}</span>
-                <span class="text-[8px] font-bold text-muted mt-1 tabular-nums">{{ attr.xp }} XP</span>
-              </div>
-            </div>
           </div>
         </div>
         
@@ -110,7 +113,7 @@
               <div class="space-y-6">
                 <!-- Total Reps Pill -->
                 <div class="group/stat">
-                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Total Effort</p>
+                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">{{ i18nStore.t('stats_effort') }}</p>
                    <div class="flex items-baseline gap-2">
                       <span class="text-4xl font-black text-precision text-foreground tracking-tighter">{{ stats.totalReps || 0 }}</span>
                       <span class="text-[10px] font-black text-primary-500 uppercase tracking-widest">REPS</span>
@@ -119,16 +122,16 @@
 
                 <!-- Total Volume Pill -->
                 <div class="group/stat">
-                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Tonnage Moved</p>
+                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">{{ i18nStore.t('stats_tonnage') }}</p>
                    <div class="flex items-baseline gap-2">
-                      <span class="text-4xl font-black text-precision text-red-500 tracking-tighter">{{ (stats.totalVolume / 1000).toFixed(1) }}</span>
+                      <span class="text-4xl font-black text-precision text-red-500 tracking-tighter">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</span>
                       <span class="text-[10px] font-black text-muted uppercase tracking-widest">TONS</span>
                    </div>
                 </div>
  
                 <!-- Streak Pill -->
                 <div class="group/stat">
-                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Consistency Streak</p>
+                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">{{ i18nStore.t('stats_consistency') }}</p>
                    <div class="flex items-center gap-3">
                       <span class="text-4xl font-black text-precision text-orange-500 tracking-tighter">{{ stats.streak || 0 }}</span>
                       <Flame class="w-6 h-6 text-orange-500 animate-pulse" />
@@ -137,14 +140,45 @@
  
                 <!-- Goal Pill -->
                 <div class="group/stat">
-                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Protocol Goal</p>
+                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">{{ i18nStore.t('stats_protocol_goal') }}</p>
                    <div class="flex items-baseline gap-2">
                       <span class="text-4xl font-black text-precision text-neon-lime tracking-tighter">{{ user.daily_goal || 0 }}</span>
-                      <span class="text-[10px] font-black text-muted uppercase tracking-widest">PER DAY</span>
-                   </div>
-                </div>
+                      <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18nStore.t('stats_per_day') }}</span>
+                    </div>
+                 </div>
+
+                 <!-- Protocol Mastery (Compact Sidebar Version) -->
+                 <div v-if="stats.breakdown?.length > 0" class="pt-6 border-t border-white/5 space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                      <Trophy class="w-3.5 h-3.5 text-primary-500" />
+                      <h4 class="text-[10px] font-black text-foreground uppercase tracking-[0.2em] leading-none">{{ i18nStore.t('protocol_mastery') }}</h4>
+                    </div>
+                    
+                    <div class="space-y-3">
+                      <div v-for="item in stats.breakdown" :key="item.type" 
+                           class="flex items-center justify-between p-3 bg-white/5 border border-white/5 rounded-xl group hover:border-primary-500/30 transition-all">
+                        <div class="flex items-center gap-3">
+                          <div class="w-8 h-8 bg-surface rounded-lg flex items-center justify-center border border-white/5">
+                            <component :is="getIconForType(item.type)" class="w-4 h-4 text-primary-500/60" />
+                          </div>
+                          <div>
+                            <p class="text-[9px] font-black text-muted uppercase tracking-wider leading-none mb-1">{{ i18nStore.t(item.type) }}</p>
+                            <div class="flex items-baseline gap-2">
+                              <span class="text-xs font-black text-foreground tabular-nums">{{ item.count }}</span>
+                              <span class="text-[7px] font-bold text-zinc-600 uppercase">REPS</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="text-right">
+                          <span class="text-[10px] font-black text-red-500/80 italic tabular-nums block font-precision leading-none">{{ ((item.volume || 0) / 1000).toFixed(1) }}T</span>
+                          <span class="text-[7px] font-black text-zinc-700 uppercase tracking-tighter">VOLUMEN</span>
+                        </div>
+                    </div>
+                 </div>
               </div>
            </div>
+        </div>
+
         </div>
 
         <!-- Heatmap Deck -->
@@ -162,37 +196,7 @@
         </div>
       </div>
 
-      <!-- Protocol Mastery Breakdown (#55 Additional) -->
-      <div class="card-stats border-border space-y-8 bg-gradient-to-br from-surface/20 to-surface/5">
-        <div class="flex items-center gap-4">
-          <div class="p-3 bg-primary-500/10 rounded-2xl border border-primary-500/20">
-            <Trophy class="w-6 h-6 text-primary-500" />
-          </div>
-          <div>
-            <h3 class="text-xl font-black text-industrial text-foreground tracking-tight uppercase">{{ i18nStore.t('protocol_mastery') }}</h3>
-            <p class="text-[9px] font-black text-muted uppercase tracking-[0.3em] font-tight">{{ i18nStore.t('protocol_mastery_desc') }}</p>
-          </div>
-        </div>
 
-        <div v-if="stats.breakdown?.length > 0" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div v-for="item in stats.breakdown" :key="item.type"
-               class="p-5 bg-black/20 border border-white/5 rounded-3xl group hover:border-primary-500/30 transition-all duration-500 relative overflow-hidden">
-            <!-- Background Icon Hint -->
-            <component :is="getIconForType(item.type)" class="absolute -right-2 -bottom-2 w-12 h-12 text-foreground/[0.03] -rotate-12 transition-transform group-hover:scale-125" />
-            
-            <div class="relative z-10 space-y-3">
-              <div class="flex items-center gap-2">
-                <component :is="getIconForType(item.type)" class="w-3.5 h-3.5 text-primary-500/60" />
-                <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18nStore.t(item.type) }}</span>
-              </div>
-              <div class="flex flex-col">
-                <span class="text-3xl font-black text-foreground italic tabular-nums group-hover:text-primary-500 transition-colors">{{ item.count }}</span>
-                <span class="text-[8px] font-black text-zinc-600 uppercase tracking-tighter">{{ i18nStore.t('stats_total') }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- Historial de Monedas (Transaction Log) -->
       <div class="card-stats border-border space-y-8 bg-gradient-to-br from-surface/20 to-surface/5">

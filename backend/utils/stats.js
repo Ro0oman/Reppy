@@ -33,7 +33,7 @@ export const recalculateUserStats = async (userId) => {
       WHERE user_id = $1
     `, [userId, bodyWeight]);
 
-    const stats = statsRes.rows[0];
+    const stats = statsRes.rows[0] || {};
     const totalReps = parseInt(stats.total_reps || 0);
     const totalVolume = parseFloat(stats.total_volume || 0);
     const pwrXP = parseInt(stats.calculated_pwr_xp || 0);
@@ -93,7 +93,7 @@ export const recalculateUserStats = async (userId) => {
         agi_xp = $6,
         total_xp = $3::int + $4::int + $5::int + $6::int,
         current_level = $7,
-        level_chests = level_chests + $8,
+        level_chests = COALESCE(level_chests, 0) + $8,
         level_chests_claimed = $9
       WHERE id = $1
     `, [userId, totalReps, strXP, pwrXP, endXP, agiXP, newLevel, additionalChests, newLevelChestsClaimed]);

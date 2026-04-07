@@ -70,9 +70,16 @@ router.get('/:id', async (req, res) => {
     );
     const favExercise = favResult.rows[0]?.exercise_type || 'pullups';
 
-    // Calculate total breakdown by exercise
+    // Calculate total breakdown (count and volume) by exercise
     const breakdownRes = await query(
-      'SELECT exercise_type as type, SUM(count)::int as count FROM reps WHERE user_id = $1 GROUP BY exercise_type ORDER BY count DESC',
+      `SELECT r.exercise_type as type, 
+              SUM(r.count)::int as count,
+              SUM(r.count * (COALESCE(r.added_weight, 0) + u.body_weight))::float as volume
+       FROM reps r
+       JOIN users u ON r.user_id = u.id
+       WHERE r.user_id = $1 
+       GROUP BY r.exercise_type 
+       ORDER BY volume DESC`,
       [userId]
     );
 

@@ -3,7 +3,7 @@
     <!-- Calendar Header -->
     <div class="flex items-center justify-between px-1 ">
       <div class="flex flex-col">
-        <h3 class="text-xl font-black uppercase tracking-tighter text-white">{{ currentMonthName }} {{ displayYear }}</h3>
+        <h3 class="text-xl font-black uppercase tracking-tighter ">{{ currentMonthName }} {{ displayYear }}</h3>
         <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
           <span class="text-primary">{{ monthReps }}</span> {{ i18n.t('stats_reps') }} {{ i18n.locale === 'es' ? 'este mes' : 'this month' }}
         </p>
@@ -13,7 +13,7 @@
         <button @click="prevMonth" class="p-2 transition-colors text-zinc-400">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
         </button>
-        <button @click="goToToday" class="px-3 py-1 text-[10px] font-black uppercase tracking-tight bg-white/5 rounded-md transition-colors text-white border border-white/10">
+        <button @click="goToToday" class="px-3 py-1 text-[10px] font-black uppercase tracking-tight bg-white/5 rounded-md transition-colors  border border-white/10">
           {{ i18n.locale === 'es' ? 'Hoy' : 'Today' }}
         </button>
         <button @click="nextMonth" class="p-2 rounded-lg transition-colors text-zinc-400">

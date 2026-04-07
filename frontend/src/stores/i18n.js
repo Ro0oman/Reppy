@@ -100,6 +100,14 @@ const translations = {
     tf_year: 'Year',
     tf_all: 'All Time',
     
+    // Statistics Section
+    stats_effort: 'Total Effort',
+    stats_tonnage: 'Tonnage Moved',
+    stats_consistency: 'Consistency Streak',
+    stats_protocol_goal: 'Protocol Goal',
+    stats_per_day: 'PER DAY',
+    stats_total_reps: 'TOTAL REPS',
+    
     // Privacy
     privacy_settings: 'Privacy Settings',
     private_profile: 'Private Profile',
@@ -268,6 +276,14 @@ const translations = {
     tf_month: 'Mes',
     tf_year: 'Año',
     tf_all: 'Total',
+
+    // Sección de Estadísticas
+    stats_effort: 'Esfuerzo Total',
+    stats_tonnage: 'Tonelaje Total',
+    stats_consistency: 'Racha de Consistencia',
+    stats_protocol_goal: 'Meta del Protocolo',
+    stats_per_day: 'POR DÍA',
+    stats_total_reps: 'REPS TOTALES',
 
     // Privacy
     privacy_settings: 'Ajustes de Privacidad',
