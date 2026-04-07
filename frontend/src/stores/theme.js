@@ -1,8 +1,19 @@
 import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
+import { useAuthStore } from './auth';
+import axios from 'axios';
 
 export const useThemeStore = defineStore('theme', () => {
+  const authStore = useAuthStore();
   const theme = ref(localStorage.getItem('reppy_theme') || 'light');
+
+  // Sync with DB if user theme changes (e.g., on login)
+  watch(() => authStore.user?.theme, (newDbTheme) => {
+    if (newDbTheme && theme.value !== newDbTheme) {
+      theme.value = newDbTheme;
+      applyTheme(newDbTheme);
+    }
+  });
 
   const applyTheme = (newTheme) => {
     const root = document.documentElement;
@@ -28,9 +39,18 @@ export const useThemeStore = defineStore('theme', () => {
     });
   };
 
-  const setTheme = (newTheme) => {
+  const setTheme = async (newTheme) => {
     theme.value = newTheme;
     applyTheme(newTheme);
+
+    // Persist to DB if logged in
+    if (authStore.isAuthenticated) {
+      try {
+        await axios.patch('/api/users/profile', { theme: newTheme });
+      } catch (error) {
+        console.error('Failed to sync theme to DB:', error);
+      }
+    }
   };
 
   return {

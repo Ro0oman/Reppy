@@ -12,7 +12,7 @@ router.get('/me', authenticate, async (req, res) => {
     await autoGrantPendingChests(req.user.id);
 
     const result = await query(
-      `SELECT u.id, u.name, u.email, u.avatar_url, u.total_reps, u.is_private, u.has_seen_easter_modal, u.daily_goal, u.body_weight, u.reppy_coins, u.boss_chests, u.str_xp, u.pwr_xp, u.end_xp, u.agi_xp, u.equipped_title_id, u.equipped_border_id, u.equipped_avatar_id, u.equipped_background_id, u.is_admin,
+      `SELECT u.id, u.name, u.email, u.avatar_url, u.total_reps, u.is_private, u.has_seen_easter_modal, u.daily_goal, u.body_weight, u.reppy_coins, u.boss_chests, u.str_xp, u.pwr_xp, u.end_xp, u.agi_xp, u.equipped_title_id, u.equipped_border_id, u.equipped_avatar_id, u.equipped_background_id, u.is_admin, u.theme,
               t.name as title_name, t.css_value as title_css,
               b.css_value as border_css,
               a.css_value as avatar_css,
@@ -34,7 +34,7 @@ router.get('/me', authenticate, async (req, res) => {
 
 // Update user profile
 router.patch('/profile', authenticate, async (req, res) => {
-  const { is_private, name, daily_goal, body_weight } = req.body;
+  const { is_private, name, daily_goal, body_weight, theme } = req.body;
   
   try {
     // Dynamically build the update query
@@ -58,6 +58,10 @@ router.patch('/profile', authenticate, async (req, res) => {
       updateFields.push(`body_weight = $${i++}`);
       params.push(body_weight);
     }
+    if (theme) {
+      updateFields.push(`theme = $${i++}`);
+      params.push(theme);
+    }
 
     if (updateFields.length === 0) return res.json({ message: 'No changes provided' });
 
@@ -66,7 +70,7 @@ router.patch('/profile', authenticate, async (req, res) => {
       `UPDATE users SET ${updateFields.join(', ')} WHERE id = $${i} RETURNING *`,
       params
     );
-    res.json({ user: result.rows[0] });
+    res.json(result.rows[0]);
   } catch (error) {
     console.error('Error updating profile:', error);
     res.status(500).json({ message: 'Error updating profile' });

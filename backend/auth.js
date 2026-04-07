@@ -34,8 +34,8 @@ router.post('/google', async (req, res) => {
 
     if (!user) {
       userResult = await query(
-        'INSERT INTO users (id, name, email, avatar_url) VALUES ($1, $2, $3, $4) RETURNING *',
-        [sub, name, email, picture]
+        'INSERT INTO users (id, name, email, avatar_url, theme) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        [sub, name, email, picture, 'light']
       );
       user = userResult.rows[0];
     }
@@ -52,7 +52,8 @@ router.post('/google', async (req, res) => {
         total_reps: user.total_reps,
         is_private: user.is_private,
         has_seen_easter_modal: user.has_seen_easter_modal,
-        is_admin: user.is_admin
+        is_admin: user.is_admin,
+        theme: user.theme
       }
     });
   } catch (error) {
@@ -80,8 +81,8 @@ router.post('/signup', async (req, res) => {
     const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=f97316&color=fff`;
 
     const result = await query(
-      'INSERT INTO users (id, name, email, password_hash, avatar_url) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [id, name, email, passwordHash, defaultAvatar]
+      'INSERT INTO users (id, name, email, password_hash, avatar_url, theme) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [id, name, email, passwordHash, defaultAvatar, 'light']
     );
 
     const user = result.rows[0];
@@ -97,7 +98,8 @@ router.post('/signup', async (req, res) => {
         total_reps: user.total_reps,
         is_private: user.is_private,
         has_seen_easter_modal: user.has_seen_easter_modal,
-        is_admin: user.is_admin
+        is_admin: user.is_admin,
+        theme: user.theme
       }
     });
   } catch (error) {
@@ -139,7 +141,8 @@ router.post('/login', async (req, res) => {
         total_reps: user.total_reps,
         is_private: user.is_private,
         has_seen_easter_modal: user.has_seen_easter_modal,
-        is_admin: user.is_admin
+        is_admin: user.is_admin,
+        theme: user.theme
       }
     });
   } catch (error) {
