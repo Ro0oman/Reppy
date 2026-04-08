@@ -12,24 +12,15 @@
       </div>
 
       <!-- Active Boss Banner (VISIBLE TO ALL) -->
-      <div v-if="hasActiveEvent && activeBoss" class="w-full max-w-5xl bg-surface/40 backdrop-blur-3xl border border-primary-500/20 p-10 rounded-[2.5rem] animate-in fade-in slide-in-from-top-10 duration-1000 shadow-xl mb-16 relative overflow-hidden group">
-        <div class="absolute inset-0 bg-gradient-to-r from-primary-500/[0.03] via-transparent to-primary-500/[0.03] opacity-50"></div>
-        <div class="relative z-10 flex flex-col md:flex-row items-center gap-10 text-left">
-           <div class="p-5 bg-primary-500 rounded-2xl shadow-lg shadow-primary-500/20">
-              <Sword class="w-10 h-10 text-white" />
-           </div>
-           <div class="flex-1">
-              <div class="flex items-center gap-3 mb-2">
-                <span class="px-3 py-1 bg-primary-500/20 text-primary-500 text-[10px] font-black uppercase tracking-widest rounded-full">Evento Gratuito</span>
-                <span class="text-xs font-bold text-muted/60 tracking-tight">Evento de Calistenia Mundial</span>
-              </div>
-              <h2 class="text-3xl md:text-5xl font-bold text-foreground tracking-tight leading-none mb-3">
-                {{ activeBoss.name }} <span class="text-primary-500">detectado</span>
-              </h2>
-              <p class="text-muted/60 font-medium text-sm md:text-lg tracking-tight max-w-2xl">{{ activeBoss.description }}</p>
-           </div>
+      <div class="w-full max-w-5xl mb-16 animate-in fade-in slide-in-from-top-10 duration-1000">
+        <div class="flex items-center gap-3 mb-6 px-4">
+          <span class="px-3 py-1 bg-primary-500/20 text-primary-500 text-[10px] font-black uppercase tracking-widest rounded-full">Evento Gratuito</span>
+          <span class="text-xs font-bold text-muted/60 tracking-tight">Evento de Calistenia Mundial</span>
+        </div>
+        <BossHealth />
+        <div class="flex justify-center mt-8">
            <button @click="$emit('start')" class="btn-reppy !px-12 !py-5 shadow-xl transition-transform hover:scale-105 active:scale-95">
-             Unirse a la caza gratis
+             {{ authStore.isAuthenticated ? 'Ver Batalla' : 'Unirse a la caza gratis' }}
            </button>
         </div>
       </div>
@@ -671,13 +662,11 @@ import {
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
 import Leaderboard from './Leaderboard.vue';
+import BossHealth from './BossHealth.vue';
 
 const i18n = useI18nStore();
 const authStore = useAuthStore();
 defineEmits(['start']);
-
-const hasActiveEvent = ref(false);
-const activeBoss = ref(null);
 
 const faqs = [
   {
@@ -715,15 +704,7 @@ const faqs = [
 ];
 
 onMounted(async () => {
-  try {
-    const res = await axios.get('/api/boss/active');
-    if (res.data && res.data.boss) {
-      hasActiveEvent.value = true;
-      activeBoss.value = res.data.boss;
-    }
-  } catch (e) {
-    console.error('Landing sync error:', e);
-  }
+  // Logic here if needed, but boss logic moved to component
 });
 </script>
 

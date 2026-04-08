@@ -1,14 +1,13 @@
 import express from 'express';
 import { query } from './db.js';
-import { authenticate } from './middleware.js';
+import { authenticate, optionalAuthenticate } from './middleware.js';
 import { autoGrantPendingChests } from './utils/bossRewards.js';
 import { trackCoinTransaction } from './utils/transactions.js';
 
 const router = express.Router();
 
 // Get active or upcoming boss
-// Get active or upcoming boss
-router.get('/active', authenticate, async (req, res) => {
+router.get('/active', optionalAuthenticate, async (req, res) => {
   try {
     // Current boss is the one with the lowest order_index that is not defeated
     let bossRes = await query(
@@ -54,38 +53,48 @@ router.get('/active', authenticate, async (req, res) => {
     );
     const next_boss = nextBossRes.rows[0] || null;
 
-    // Get user's personal participation and chest status
-    const participantRes = await query(
-      `SELECT p.damage_dealt, p.chests_claimed, u.daily_boss_damage, u.last_boss_damage_date 
-       FROM event_participants p 
-       JOIN users u ON u.id = p.user_id
-       WHERE p.boss_fight_id = $1 AND p.user_id = $2`,
-      [boss.id, req.user.id]
-    );
+    // User-specific data (only if logged in)
+    let personal_damage = 0;
+    let daily_damage = 0;
+    let chests_claimed = 0;
+    let boss_chests = 0;
 
-    let participant = participantRes.rows[0];
-    
-    // If no record in event_participants yet, still need to check daily_boss_damage from users table
-    if (!participant) {
-      const userRes = await query('SELECT daily_boss_damage, last_boss_damage_date FROM users WHERE id = $1', [req.user.id]);
-      const user = userRes.rows[0];
-      participant = { 
-        damage_dealt: 0, 
-        chests_claimed: 0, 
-        daily_boss_damage: user.daily_boss_damage, 
-        last_boss_damage_date: user.last_boss_damage_date 
-      };
+    if (req.user) {
+      // Get user's personal participation and chest status
+      const participantRes = await query(
+        `SELECT p.damage_dealt, p.chests_claimed, u.daily_boss_damage, u.last_boss_damage_date 
+         FROM event_participants p 
+         JOIN users u ON u.id = p.user_id
+         WHERE p.boss_fight_id = $1 AND p.user_id = $2`,
+        [boss.id, req.user.id]
+      );
+
+      let participant = participantRes.rows[0];
+      
+      // If no record in event_participants yet, still need to check daily_boss_damage from users table
+      if (!participant) {
+        const userRes = await query('SELECT daily_boss_damage, last_boss_damage_date FROM users WHERE id = $1', [req.user.id]);
+        const user = userRes.rows[0];
+        participant = { 
+          damage_dealt: 0, 
+          chests_claimed: 0, 
+          daily_boss_damage: user.daily_boss_damage, 
+          last_boss_damage_date: user.last_boss_damage_date 
+        };
+      }
+
+      const isToday = new Date(participant.last_boss_damage_date).toISOString().split('T')[0] === new Date().toISOString().split('T')[0];
+      daily_damage = isToday ? participant.daily_boss_damage : 0;
+      personal_damage = participant.damage_dealt;
+      chests_claimed = participant.chests_claimed;
+
+      // AUTO-GRANT CHESTS FOR PREVIOUS DEFEATED BOSSES
+      await autoGrantPendingChests(req.user.id);
+
+      // Refresh user chest count
+      const finalUserRes = await query('SELECT boss_chests FROM users WHERE id = $1', [req.user.id]);
+      boss_chests = finalUserRes.rows[0]?.boss_chests || 0;
     }
-
-    const isToday = new Date(participant.last_boss_damage_date).toISOString().split('T')[0] === new Date().toISOString().split('T')[0];
-    const dailyDamage = isToday ? participant.daily_boss_damage : 0;
-
-    // AUTO-GRANT CHESTS FOR PREVIOUS DEFEATED BOSSES
-    await autoGrantPendingChests(req.user.id);
-
-    // Refresh user chest count
-    const finalUserRes = await query('SELECT boss_chests FROM users WHERE id = $1', [req.user.id]);
-    const boss_chests = finalUserRes.rows[0]?.boss_chests || 0;
 
     // Get Top Damage Dealer for this boss
     const topParticipantRes = await query(
@@ -102,9 +111,9 @@ router.get('/active', authenticate, async (req, res) => {
     res.json({
       boss: { ...boss, starts_in: null },
       next_boss,
-      personal_damage: participant.damage_dealt,
-      daily_damage: dailyDamage,
-      chests_claimed: participant.chests_claimed,
+      personal_damage,
+      daily_damage,
+      chests_claimed,
       boss_chests,
       top_damage_dealer
     });

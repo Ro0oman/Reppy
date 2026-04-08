@@ -49,10 +49,11 @@
         <div class="flex flex-col md:flex-row items-center justify-between gap-4">
           <div class="flex flex-col sm:flex-row items-center gap-2 md:gap-4 mt-2 md:mt-0">
              <div class="flex items-center gap-2">
-                <div class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></div>
-                <p class="text-[9px] text-muted font-black uppercase tracking-[0.2em]">Total: <span class="text-foreground">{{ personalDamage }} reps</span></p>
+                <div v-if="authStore.isAuthenticated" class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></div>
+                <p v-if="authStore.isAuthenticated" class="text-[9px] text-muted font-black uppercase tracking-[0.2em]">Total: <span class="text-foreground">{{ personalDamage }} reps</span></p>
+                <p v-else class="text-[9px] text-muted font-black uppercase tracking-[0.2em]">Entrena para participar</p>
              </div>
-             <div class="flex items-center gap-2 bg-primary-500/5 px-2 py-1 rounded-lg border border-primary-500/10" :class="dailyDamage >= 100 ? 'border-amber-500/30 bg-amber-500/5' : ''">
+             <div v-if="authStore.isAuthenticated" class="flex items-center gap-2 bg-primary-500/5 px-2 py-1 rounded-lg border border-primary-500/10" :class="dailyDamage >= 100 ? 'border-amber-500/30 bg-amber-500/5' : ''">
                 <p class="text-[9px] font-black uppercase tracking-[0.2em]" :class="dailyDamage >= 100 ? 'text-amber-500' : 'text-primary-500'">
                   Día: {{ dailyDamage }} / 100 🛡️
                 </p>
@@ -65,7 +66,7 @@
           </div>
 
           <!-- Sequential Reward Logic -->
-          <div v-if="isDefeated" class="flex items-center gap-4">
+          <div v-if="isDefeated && authStore.isAuthenticated" class="flex items-center gap-4">
             <template v-if="chestsClaimed < 1">
                <p class="text-[10px] font-black uppercase tracking-widest text-emerald-500 animate-bounce">¡Boss derrotado! Reclama tu recompensa</p>
                <button @click="claim" :disabled="claiming" 
@@ -76,6 +77,9 @@
             <div v-else class="flex items-center gap-2 text-muted font-black uppercase text-[10px] tracking-widest px-4 py-2 bg-foreground/5 rounded-xl border border-border">
               <span>✅ Recompensa Reclamada</span>
             </div>
+          </div>
+          <div v-else-if="!authStore.isAuthenticated" class="text-[10px] font-black uppercase tracking-widest text-primary-500 bg-primary-500/5 px-4 py-2 rounded-xl border border-primary-500/20">
+             Inicia sesión para ganar recompensas
           </div>
           <div v-else class="text-[10px] font-black uppercase tracking-widest text-muted bg-background px-4 py-2 rounded-xl border border-border">
              Continúa entrenando para derrotarlo
@@ -156,7 +160,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import axios from 'axios';
+import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { History } from 'lucide-vue-next';
 import confetti from 'canvas-confetti';
@@ -171,6 +175,7 @@ const dailyDamage = ref(0);
 const chestsClaimed = ref(0);
 const showHelp = ref(false);
 const showHistory = ref(false);
+const authStore = useAuthStore();
 const notificationStore = useNotificationStore();
 const topDamageDealer = ref(null);
 

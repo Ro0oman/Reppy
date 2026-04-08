@@ -24,3 +24,22 @@ export const isAdmin = (req, res, next) => {
   }
   next();
 };
+
+export const optionalAuthenticate = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return next();
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    // If token is invalid, just continue without user
+    next();
+  }
+};

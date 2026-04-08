@@ -1,13 +1,17 @@
 import express from 'express';
 import { query } from './db.js';
-import { authenticate } from './middleware.js';
+import { authenticate, optionalAuthenticate } from './middleware.js';
 import { trackCoinTransaction } from './utils/transactions.js';
 
 const router = express.Router();
 
 // Get roulette status (can the user spin today?)
-router.get('/status', authenticate, async (req, res) => {
+router.get('/status', optionalAuthenticate, async (req, res) => {
   try {
+    if (!req.user) {
+      return res.json({ canSpin: false });
+    }
+
     const userRes = await query('SELECT last_spin_at FROM users WHERE id = $1', [req.user.id]);
     const lastSpin = userRes.rows[0].last_spin_at;
 

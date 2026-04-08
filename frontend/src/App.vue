@@ -279,10 +279,13 @@ const earnings = [
 ];
 
 const checkRoulette = async () => {
+  if (!authStore.isAuthenticated || !authStore.token) return;
   try {
     const res = await axios.get('/api/roulette/status');
     canSpinToday.value = res.data.canSpin;
-  } catch (e) {}
+  } catch (e) {
+    console.warn('[ROULETTE_SYNC_ERROR]', e.message);
+  }
 };
 
 const onSpun = () => { canSpinToday.value = false; showRoulette.value = false; };
