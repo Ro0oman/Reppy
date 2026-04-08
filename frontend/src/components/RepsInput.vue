@@ -23,7 +23,8 @@
       <button 
         v-for="val in [1, 5, 10]" :key="val"
         @click="addReps(val)"
-        class="group relative overflow-hidden py-7 px-4 bg-surface border border-border rounded-2xl transition-all hover:border-primary-500/50 hover:bg-primary-500/[0.03] shadow-sm active:scale-95"
+        :disabled="loading"
+        class="group relative overflow-hidden py-7 px-4 bg-surface border border-border rounded-2xl transition-all hover:border-primary-500/50 hover:bg-primary-500/[0.03] shadow-sm active:scale-95 disabled:opacity-50 disabled:grayscale disabled:pointer-events-none"
       >
         <span class="relative z-10 text-2xl font-bold transition-colors text-foreground">+{{ val }}</span>
         <div class="absolute inset-0 bg-primary-500 opacity-0 group-hover:opacity-[0.02] transition-opacity"></div>
@@ -45,7 +46,7 @@
           </div>
           <button 
             @click="addReps(customReps)"
-            :disabled="!customReps"
+            :disabled="!customReps || loading"
             class="btn-reppy !px-10 !py-4 disabled:opacity-20 disabled:grayscale disabled:scale-100"
           >
             {{ i18n.t('btn_add') }}
@@ -96,8 +97,11 @@ const activeLabel = computed(() => {
   return i18n.t(props.exerciseType);
 });
 
+const loading = ref(false);
+
 const addReps = async (count) => {
-  if (!count) return;
+  if (!count || loading.value) return;
+  loading.value = true;
   try {
     const today = new Date().toISOString().split('T')[0];
     const res = await axios.post('/api/reps', {
@@ -112,19 +116,22 @@ const addReps = async (count) => {
     
     // Trigger JRPG damage animation if boss damage was dealt
     if (res.data.boss_damage_dealt > 0) {
+      console.log('[DEBUG_DAMAGE] RepsInput: Calling addDamage', { amount: res.data.boss_damage_dealt, type: props.exerciseType });
       const damageStore = useDamageStore();
       damageStore.addDamage(res.data.boss_damage_dealt, props.exerciseType);
     }
     
     // Refresh global user state to sync header level/XP
     const authStore = useAuthStore();
-    await authStore.fetchUser();
+    await authStore.fetchProfile();
     
     if (customReps.value === count) customReps.value = null;
     emit('updated');
   } catch (error) {
     console.error('Error logging reps:', error);
     notificationStore.notify('Failed to log reps', 'error');
+  } finally {
+    loading.value = false;
   }
 };
 </script>

@@ -120,7 +120,6 @@
           class="aspect-square relative flex items-center justify-center rounded-xl transition-all duration-400 group/day hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary/50"
           :class="[
             day.isCurrentMonth ? 'cursor-pointer' : 'opacity-20 pointer-events-none grayscale',
-            day.isToday ? 'ring-2 ring-primary/50 bg-primary/5' : ''
           ]"
           @click="day.isCurrentMonth && (selectedDay = day)"
           :title="day.isCurrentMonth ? `${day.dayNumber} ${currentMonthName}: ${day.count} reps` : ''"
@@ -269,7 +268,7 @@ const calendarDays = computed(() => {
       isCurrentMonth: true,
       count: dataMap.value[dStr]?.total || 0,
       breakdown: dataMap.value[dStr]?.breakdown || [],
-      isToday: dStr === today.toISOString().split('T')[0]
+      isToday: dStr === (today.toISOString().split('T')[0])
     });
   }
 

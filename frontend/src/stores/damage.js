@@ -8,8 +8,8 @@ export const useDamageStore = defineStore('damage', {
   actions: {
     addDamage(amount, type) {
       const now = Date.now();
-      // Debounce: ignore if same amount/type added in the last 100ms
-      if (now - this.lastDamageTime < 100) return;
+      // Throttle rapid calls
+      if (now - this.lastDamageTime < 1000) return;
       
       this.lastDamageTime = now;
       const id = now + Math.random();
@@ -25,15 +25,10 @@ export const useDamageStore = defineStore('damage', {
         y
       });
 
-      // Character-specific colors for JRPG style
-      // PullUps: Yellow/Primary
-      // PushUps: Red/Orange
-      // MuscleUps: Purple/Legendary
-      // etc.
-
+      // SYNC: Remove exactly when animation ends (1.2s)
       setTimeout(() => {
         this.removeDamage(id);
-      }, 2000); // Duration matches animation
+      }, 1200); 
     },
     removeDamage(id) {
       this.activeDamages = this.activeDamages.filter(d => d.id !== id);

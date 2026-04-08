@@ -4,7 +4,7 @@
       <div 
         v-for="dmg in damageStore.activeDamages" 
         :key="dmg.id"
-        class="absolute"
+        class="absolute opacity-0 pointer-events-none"
         :style="{ 
           left: `${dmg.x}%`, 
           top: `${dmg.y}%`, 
@@ -33,7 +33,7 @@ const damageStore = useDamageStore();
 // Play sound whenever a new damage is added
 watch(() => damageStore.activeDamages.length, (newLen, oldLen) => {
   if (newLen > oldLen) {
-    const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-10.mp3'); // Higher quality, reliable Hit sound
+    const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-10.mp3'); 
     audio.volume = 0.4;
     audio.play().catch(e => console.warn('[AUDIO_BLOCKED] User interaction required for sound'));
   }
