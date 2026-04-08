@@ -178,91 +178,70 @@
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════
-         EXERCISES — Individual keyword targets with internal links
+         INTERFACE SHOWCASE — Visual proof of the product
     ═══════════════════════════════════════════════════════════ -->
-    <section class="max-w-6xl w-full px-6 py-16 md:py-24" id="ejercicios">
-      <div class="text-center mb-16 space-y-4">
-        <h2 class="text-4xl md:text-6xl font-bold tracking-tight text-foreground leading-none">
-          Ejercicios <span class="text-primary-500">Soportados</span>
+    <section class="max-w-7xl w-full px-6 py-20 md:py-32 space-y-20" id="interfaz">
+      <div class="text-center space-y-6">
+        <h2 class="text-4xl md:text-7xl font-bold tracking-tight text-foreground leading-none uppercase italic">
+          DENTRO DEL <span class="text-primary-500">PROTOCOLO</span>
         </h2>
-        <p class="text-muted/80 font-bold tracking-[0.2em] text-[11px] uppercase">Haz clic para ver guías específicas</p>
+        <p class="text-xl text-muted max-w-3xl mx-auto leading-relaxed font-medium">
+          Explora la interfaz táctica diseñada para el máximo rendimiento. 
+          Cada detalle ha sido optimizado para que te centres en lo único que importa: la siguiente repetición.
+        </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Pull-ups -->
-        <router-link to="/contador-dominadas" class="card-stats p-8 space-y-5 group transition-all duration-500 border-border/40 hover:bg-surface/60 block text-left">
-          <div class="w-14 h-14 bg-primary-500/10 rounded-2xl flex items-center justify-center text-primary-500">
-            <ArrowUp class="w-7 h-7" />
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <!-- Dashboard Preview -->
+        <div class="group relative space-y-6">
+          <div class="relative rounded-[2.5rem] overflow-hidden border border-white/10 bg-surface/20 backdrop-blur-3xl p-4 transition-all duration-700 group-hover:border-primary-500/50 group-hover:shadow-[0_0_50px_rgba(var(--primary),0.2)]">
+            <img src="/img/showcase/dashboard_preview.png" alt="Panel de Control Reppy" class="w-full rounded-[1.8rem] transition-transform duration-1000 group-hover:scale-[1.02]" />
+            <div class="absolute inset-0 bg-gradient-to-t from-deep-abyss via-transparent to-transparent opacity-60"></div>
           </div>
-          <h3 class="text-xl font-bold text-foreground tracking-tight">Contador de Dominadas</h3>
-          <p class="text-muted/60 font-medium text-sm leading-relaxed">
-            El <strong>tracker de dominadas</strong> definitivo. Registro de volumen, analítica de progreso 
-            y ranking mundial. Ideal para pull-ups y chin-ups.
-          </p>
-          <span class="text-[10px] font-black text-primary-500 uppercase tracking-widest">Ver Guía SEO &rarr;</span>
-        </router-link>
+          <div class="px-4 space-y-2">
+            <h3 class="text-2xl font-black text-foreground uppercase tracking-tight italic">01. PANEL DE CONTROL</h3>
+            <p class="text-muted text-sm leading-relaxed">Gestión centralizada de protocolos, calendario de consistencia y estado del Boss actual.</p>
+          </div>
+        </div>
 
-        <!-- Push-ups -->
-        <router-link to="/contador-flexiones" class="card-stats p-8 space-y-5 group transition-all duration-500 border-border/40 hover:bg-surface/60 block text-left">
-          <div class="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500">
-            <ArrowDown class="w-7 h-7" />
+        <!-- Social Preview -->
+        <div class="group relative space-y-6 md:mt-24">
+          <div class="relative rounded-[2.5rem] overflow-hidden border border-white/10 bg-surface/20 backdrop-blur-3xl p-4 transition-all duration-700 group-hover:border-blue-500/50 group-hover:shadow-[0_0_50px_rgba(59,130,246,0.2)]">
+            <img src="/img/showcase/social_preview.png" alt="Muro Social Reppy" class="w-full rounded-[1.8rem] transition-transform duration-1000 group-hover:scale-[1.02]" />
+            <div class="absolute inset-0 bg-gradient-to-t from-deep-abyss via-transparent to-transparent opacity-60"></div>
           </div>
-          <h3 class="text-xl font-bold text-foreground tracking-tight">Contador de Flexiones</h3>
-          <p class="text-muted/60 font-medium text-sm leading-relaxed">
-            Lleva el <strong>tracking de tus push-ups</strong>. Comprueba tu resistencia cardiovascular y muscular 
-            mientras subes de nivel tu atributo STR.
-          </p>
-          <span class="text-[10px] font-black text-blue-500 uppercase tracking-widest">Ver Guía SEO &rarr;</span>
-        </router-link>
+          <div class="px-4 space-y-2">
+            <h3 class="text-2xl font-black text-foreground uppercase tracking-tight italic">02. MURO SOCIAL</h3>
+            <p class="text-muted text-sm leading-relaxed">Conecta con la comunidad, ve los entrenamientos en tiempo real y personaliza tus publicaciones.</p>
+          </div>
+        </div>
 
-        <!-- Dips -->
-        <article class="card-stats p-8 space-y-5 group transition-all duration-500 border-border/40 hover:bg-surface/60">
-          <div class="w-14 h-14 bg-accent/10 rounded-2xl flex items-center justify-center text-accent">
-            <ArrowDownUp class="w-7 h-7" />
+        <!-- Armory Preview -->
+        <div class="group relative space-y-6">
+          <div class="relative rounded-[2.5rem] overflow-hidden border border-white/10 bg-surface/20 backdrop-blur-3xl p-4 transition-all duration-700 group-hover:border-purple-500/50 group-hover:shadow-[0_0_50px_rgba(168,85,247,0.2)]">
+            <img src="/img/showcase/armory_preview.png" alt="Tienda de Cosméticos Reppy" class="w-full rounded-[1.8rem] transition-transform duration-1000 group-hover:scale-[1.02]" />
+            <div class="absolute inset-0 bg-gradient-to-t from-deep-abyss via-transparent to-transparent opacity-60"></div>
           </div>
-          <h3 class="text-xl font-bold text-foreground tracking-tight">Contador de Fondos</h3>
-          <p class="text-muted/60 font-medium text-sm leading-relaxed">
-            Trackea tus <strong>fondos en paralelas</strong>. Gana Reppy Coins por cada repetición y 
-            mejora tu empuje vertical.
-          </p>
-        </article>
+          <div class="px-4 space-y-2">
+            <h3 class="text-2xl font-black text-foreground uppercase tracking-tight italic">03. ARMERÍA LEGENDARIA</h3>
+            <p class="text-muted text-sm leading-relaxed">Canjea tus Reppy Coins por fondos dinámicos, marcos de avatar y títulos de honor exclusivos.</p>
+          </div>
+        </div>
 
-        <!-- Muscle Ups -->
-        <article class="card-stats p-8 space-y-5 group transition-all duration-500 border-border/40 hover:bg-surface/60">
-          <div class="w-14 h-14 bg-purple-500/10 rounded-2xl flex items-center justify-center text-purple-500">
-            <Flame class="w-7 h-7" />
+        <!-- Profile Preview -->
+        <div class="group relative space-y-6 md:mt-24">
+          <div class="relative rounded-[2.5rem] overflow-hidden border border-white/10 bg-surface/20 backdrop-blur-3xl p-4 transition-all duration-700 group-hover:border-neon-lime/50 group-hover:shadow-[0_0_50px_rgba(191,255,0,0.2)]">
+            <img src="/img/showcase/profile_preview.png" alt="Perfil de Atleta RPG" class="w-full rounded-[1.8rem] transition-transform duration-1000 group-hover:scale-[1.02]" />
+            <div class="absolute inset-0 bg-gradient-to-t from-deep-abyss via-transparent to-transparent opacity-60"></div>
           </div>
-          <h3 class="text-xl font-bold text-foreground tracking-tight">Contador de Muscle Ups</h3>
-          <p class="text-muted/60 font-medium text-sm leading-relaxed">
-            El ejercicio reina de la calistenia explosiva. Gana 5 monedas por cada <strong>muscle up</strong> 
-            y sube tu atributo de Potencia (PWR).
-          </p>
-        </article>
-
-        <!-- Weighted Pull-ups -->
-        <article class="card-stats p-8 space-y-5 group transition-all duration-500 border-border/40 hover:bg-surface/60">
-          <div class="w-14 h-14 bg-red-500/10 rounded-2xl flex items-center justify-center text-red-500">
-            <Dumbbell class="w-7 h-7" />
+          <div class="px-4 space-y-2">
+            <h3 class="text-2xl font-black text-foreground uppercase tracking-tight italic">04. PERFIL DE ATLETA</h3>
+            <p class="text-muted text-sm leading-relaxed">Sube de nivel tus atributos STR, PWR, END y AGI. Visualiza tu progresión de fuerza relativa.</p>
           </div>
-          <h3 class="text-xl font-bold text-foreground tracking-tight">Dominadas con Lastre</h3>
-          <p class="text-muted/60 font-medium text-sm leading-relaxed">
-            Registra tus <strong>dominadas con peso</strong>. Añade los kilos extra y conviértete 
-            en el atleta más fuerte del ranking.
-          </p>
-        </article>
-
-        <!-- All exercises CTA -->
-        <article class="card-stats p-8 space-y-5 flex flex-col items-center justify-center text-center border-primary-500/20 bg-primary-500/5 cursor-pointer hover:bg-primary-500/10 transition-all" @click="$emit('start')">
-          <div class="w-14 h-14 bg-primary-500/20 rounded-2xl flex items-center justify-center text-primary-500">
-            <Plus class="w-7 h-7" />
-          </div>
-          <h3 class="text-xl font-bold text-primary-500 tracking-tight">Empieza Ahora</h3>
-          <p class="text-muted/90 font-medium text-sm">
-            Crea tu cuenta gratuita y empieza a trackear tu progreso hoy.
-          </p>
-        </article>
+        </div>
       </div>
     </section>
+
 
     <!-- ═══════════════════════════════════════════════════════════
          LONG ARTICLE — Guía Completa de Calistenia (800+ words target)
