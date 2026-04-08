@@ -117,25 +117,25 @@
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
         <article class="card-stats p-10 space-y-6 hover:bg-surface/60 transition-all border-border/40">
-          <div class="text-4xl font-black text-primary-500/20">01</div>
+          <div class="text-4xl font-black text-primary-500/40">01</div>
           <h3 class="text-2xl font-bold text-foreground tracking-tight">Sobrecarga Progresiva</h3>
-          <p class="text-muted/60 text-sm leading-relaxed">
+          <p class="text-muted/90 text-sm leading-relaxed">
             Trata de aumentar el volumen total (sets x reps) cada semana. 
             Reppy te muestra tu volumen total por ejercicio para que nunca te estanques.
           </p>
         </article>
         <article class="card-stats p-10 space-y-6 hover:bg-surface/60 transition-all border-border/40">
-          <div class="text-4xl font-black text-primary-500/20">02</div>
+          <div class="text-4xl font-black text-primary-500/40">02</div>
           <h3 class="text-2xl font-bold text-foreground tracking-tight">Frecuencia Semanal</h3>
-          <p class="text-muted/60 text-sm leading-relaxed">
+          <p class="text-muted/90 text-sm leading-relaxed">
             Frecuencia 2 o 3 es ideal para dominadas. Usa el heatmap de Reppy para 
             asegurarte de que estás dejando los días de descanso necesarios pero manteniendo el ritmo.
           </p>
         </article>
         <article class="card-stats p-10 space-y-6 hover:bg-surface/60 transition-all border-border/40">
-          <div class="text-4xl font-black text-primary-500/20">03</div>
+          <div class="text-4xl font-black text-primary-500/40">03</div>
           <h3 class="text-2xl font-bold text-foreground tracking-tight">Control de Intensidad</h3>
-          <p class="text-muted/60 text-sm leading-relaxed">
+          <p class="text-muted/90 text-sm leading-relaxed">
             Alterna entre días de volumen alto (flexiones, dominadas normales) y 
             días de potencia (muscle ups, dominadas con lastre) para optimizar tus atributos STR y PWR.
           </p>
@@ -174,7 +174,7 @@
         <h2 class="text-4xl md:text-6xl font-bold tracking-tight text-foreground leading-none">
           Ejercicios <span class="text-primary-500">Soportados</span>
         </h2>
-        <p class="text-muted/60 font-bold tracking-[0.2em] text-[11px] uppercase">Haz clic para ver guías específicas</p>
+        <p class="text-muted/80 font-bold tracking-[0.2em] text-[11px] uppercase">Haz clic para ver guías específicas</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -246,7 +246,7 @@
             <Plus class="w-7 h-7" />
           </div>
           <h3 class="text-xl font-bold text-primary-500 tracking-tight">Empieza Ahora</h3>
-          <p class="text-muted/60 font-medium text-sm">
+          <p class="text-muted/90 font-medium text-sm">
             Crea tu cuenta gratuita y empieza a trackear tu progreso hoy.
           </p>
         </article>
