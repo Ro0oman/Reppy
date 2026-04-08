@@ -47,7 +47,7 @@
       </div>
 
       <!-- Grid of Exercises -->
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div class="grid gap-3" :class="activity.exercises.length === 1 ? 'grid-cols-1' : 'grid-cols-2 sm:grid-cols-3'">
         <div v-for="ex in activity.exercises" :key="ex.exercise_type" 
              class="p-4 bg-foreground/[0.03] border border-border/50 rounded-2xl flex flex-col gap-1 group/item hover:bg-foreground/[0.05] transition-all">
           <span class="text-[8px] font-black text-primary-500 uppercase tracking-[0.2em]">{{ i18n.t(ex.exercise_type) }}</span>

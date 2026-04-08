@@ -361,6 +361,15 @@ router.put('/:id', authenticate, async (req, res) => {
     // Recalculate everything to stay in sync
     await recalculateUserStats(userId);
 
+    // CLEANUP: If reps for this date reached 0, delete the daily summary
+    const remainingRes = await query(
+      'SELECT COUNT(*) FROM reps WHERE user_id = $1 AND date = $2',
+      [userId, oldRep.date]
+    );
+    if (parseInt(remainingRes.rows[0].count) === 0) {
+      await query('DELETE FROM daily_summaries WHERE user_id = $1 AND date = $2', [userId, oldRep.date]);
+    }
+
     res.json(updateResult.rows[0]);
   } catch (error) {
     console.error('Error updating reps:', error);
@@ -441,6 +450,15 @@ router.delete('/:id', authenticate, async (req, res) => {
 
     // Recalculate stats after deletion to ensure Level and XP drop correctly
     await recalculateUserStats(userId);
+
+    // CLEANUP: If this was the last rep for this date, delete the daily summary
+    const remainingRes = await query(
+      'SELECT COUNT(*) FROM reps WHERE user_id = $1 AND date = $2',
+      [userId, oldRep.date]
+    );
+    if (parseInt(remainingRes.rows[0].count) === 0) {
+      await query('DELETE FROM daily_summaries WHERE user_id = $1 AND date = $2', [userId, oldRep.date]);
+    }
 
     res.json({ message: 'Rep deleted successfully' });
   } catch (error) {
