@@ -176,7 +176,33 @@ const translations = {
 
     // Protocol Mastery
     protocol_mastery: 'Protocol Mastery',
-    protocol_mastery_desc: 'HISTORICAL REPOSITORY OF EFFORT BY EXERCISE'
+    protocol_mastery_desc: 'HISTORICAL REPOSITORY OF EFFORT BY EXERCISE',
+
+    // Codex
+    codex_title: 'THE CODEX',
+    codex_subtitle: 'RPG EVOLUTION GUIDE',
+    codex_next_lv: 'NEXT LEVEL: +100 XP POINTS REQUIRED',
+    codex_lv_up: 'Level Up:',
+
+    codex_str_name: 'STRENGTH',
+    codex_str_quote: 'Lifting the weight of the world.',
+    codex_str_desc: 'Scales with total load. Influenced by body mass and added resistance.',
+    codex_str_action: 'Do more sets with extra weight.',
+
+    codex_pwr_name: 'POWER',
+    codex_pwr_quote: 'Explosive critical impact.',
+    codex_pwr_desc: 'Rewards absolute intensity. Based on your highest resistance recorded in a single set.',
+    codex_pwr_action: 'Move faster or lift heavier.',
+
+    codex_end_name: 'ENDURANCE',
+    codex_end_quote: 'Infinite fuel cell.',
+    codex_end_desc: 'Purity of stamina. Scales with the total volume of repetitions performed across protocols.',
+    codex_end_action: 'Do more total reps every day.',
+
+    codex_agi_name: 'AGILITY',
+    codex_agi_quote: 'Zero metabolic drag.',
+    codex_agi_desc: 'Tactical consistency. Earned through active streaks and protocol variety.',
+    codex_agi_action: 'Maintain streak & varied protocols.'
   },
   es: {
     // Landing
@@ -352,7 +378,33 @@ const translations = {
     
     // Protocol Mastery
     protocol_mastery: 'Maestría de Protocolos',
-    protocol_mastery_desc: 'REPOSITORIO HISTÓRICO DE MAGNITUD POR EJERCICIO'
+    protocol_mastery_desc: 'REPOSITORIO HISTÓRICO DE MAGNITUD POR EJERCICIO',
+
+    // Codex
+    codex_title: 'EL CODEX',
+    codex_subtitle: 'GUÍA DE EVOLUCIÓN RPG',
+    codex_next_lv: 'PRÓXIMO NIVEL: +100 XP REQUERIDOS',
+    codex_lv_up: 'Mejora:',
+
+    codex_str_name: 'FUERZA',
+    codex_str_quote: 'Cargando con el peso del mundo.',
+    codex_str_desc: 'Escala con la carga total. Influenciada por la masa corporal y resistencia añadida.',
+    codex_str_action: 'Haz más series con peso extra.',
+
+    codex_pwr_name: 'PODER',
+    codex_pwr_quote: 'Impacto crítico explosivo.',
+    codex_pwr_desc: 'Recompensa la intensidad absoluta. Basada en tu resistencia máxima en una serie.',
+    codex_pwr_action: 'Muévete más rápido o levanta más pesado.',
+
+    codex_end_name: 'RESISTENCIA',
+    codex_end_quote: 'Célula de energía infinita.',
+    codex_end_desc: 'Pureza de estamina. Escala con el volumen total de repeticiones de los protocolos.',
+    codex_end_action: 'Haz más repeticiones totales cada día.',
+
+    codex_agi_name: 'AGILIDAD',
+    codex_agi_quote: 'Cero fricción metabólica.',
+    codex_agi_desc: 'Consistencia táctica. Se gana con rachas activas y variedad de protocolos.',
+    codex_agi_action: 'Mantén tu racha y varía los protocolos.'
   }
 };
 

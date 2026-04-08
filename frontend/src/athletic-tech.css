@@ -11,7 +11,8 @@
     /* Light Theme (Clean Studio) - Default */
     --background: 210 40% 98%;     /* Soft Paper #F8FAFC */
     --surface: 0 0% 100%;          /* Pure White */
-    --card: 0 0% 100% / 0.7;
+    --card: 0 0% 100%;
+    --card-alpha: 0.7;
     --foreground: 224 45% 12%;     /* Deep Navy #1E293B */
     --muted: 215 16% 47%;          /* Slate Gray */
     --border: 215 32% 91%;         /* Light Slate #E2E8F0 */
@@ -32,10 +33,12 @@
     /* Dark Theme (Clean Obsidian) */
     --background: 224 25% 4%;      /* Real Obsidian #0A0B0D */
     --surface: 224 20% 8%;         /* #121417 */
-    --card: 224 15% 12% / 0.6;     /* Glossy card */
+    --card: 224 15% 12%;           /* Glossy card */
+    --card-alpha: 0.6;
     --foreground: 210 20% 98%;     /* Crisp white-blue */
     --muted: 215 15% 65%;          /* Soft metal gray */
-    --border: 215 20% 20% / 0.4;
+    --border: 215 20% 20%;
+    --border-alpha: 0.4;
     --ring: 215 100% 55% / 0.4;
 
     /* Heatmap Levels (Dark - Blue/Emerald) */
@@ -126,9 +129,9 @@
   }
 
   .card-stats {
-    background: hsla(var(--card));
+    background: hsla(var(--card), var(--card-alpha));
     backdrop-filter: blur(16px) saturate(160%);
-    border: 1px solid hsla(var(--border));
+    border: 1px solid hsla(var(--border), var(--border-alpha, 1));
     border-radius: 32px;
     padding: 28px;
     transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
@@ -142,7 +145,7 @@
   .card-stats:hover {
     transform: translateY(-4px);
     border-color: hsla(var(--primary) / 0.2);
-    background: hsla(var(--card) / 1.1);
+    background: hsla(var(--card), calc(var(--card-alpha) + 0.1));
     box-shadow: 
       0 25px 50px -12px rgba(0, 0, 0, 0.3),
       0 0 20px hsla(var(--primary) / 0.05);

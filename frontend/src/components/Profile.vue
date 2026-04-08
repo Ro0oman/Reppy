@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-5xl mx-auto px-4 pt-12 pb-32 space-y-16 animate-in relative z-10">
+  <div class="max-w-7xl mx-auto px-4 pt-12 pb-32 space-y-12 animate-in relative z-10">
     <div v-if="loading" class="flex flex-col items-center justify-center py-32">
       <div class="w-12 h-12 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
       <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em] mt-8">DECRYPTING PROFILE...</p>
@@ -67,13 +67,11 @@
               <p class="text-[9px] font-black text-neon-lime uppercase tracking-[0.2em] mb-1 italic animate-pulse">🎁 REWARD PROTOCOL ACTIVE</p>
               <p class="text-[8px] font-bold text-muted uppercase tracking-widest leading-relaxed max-w-[240px] text-center md:text-left">Cada subida de nivel otorga 1 cofre de temporada de regalo</p>
             </div>
-            
-            
           </div>
           
           <!-- RPG Metrics (The Attributes Grid) -->
-          <div class="flex items-center gap-4"  >
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-lg mt-8">
+          <div class="flex flex-col xl:flex-row items-center xl:items-end gap-10 w-full mt-8">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-2xl">
               <div v-for="attr in attributes" :key="attr.key" 
                   class="p-4 rounded-xl border border-border bg-surface/20 group/attr transition-all"
                   :class="getAttrColor(attr.lvl)">
@@ -86,7 +84,7 @@
             </div>
             <button @click="showInfoModal = true" 
                    :title="i18nStore.locale === 'es' ? 'Guía del Protocolo de Evolución' : 'Evolution Protocol Guide'"
-                   class="flex items-center gap-3 bg-surface/5 px-5 py-3 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[8px] font-black tracking-widest">
+                   class="flex items-center gap-3 bg-surface/5 px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[9px] font-black tracking-widest h-fit shrink-0">
               <HelpCircle class="w-4 h-4" />
               CODEX INFO
             </button>
@@ -103,17 +101,18 @@
         </div>
       </div>
 
-      <!-- Performance Stream -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <!-- Analytics Deck -->
-        <div class="md:col-span-1 space-y-6">
-           <div class="card-stats border-white/5 h-full space-y-8">
-              <div class="flex items-center gap-3">
+      <!-- Dashboard Operational Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+        <!-- Sidebar Column: Stats & Setup -->
+        <div class="lg:col-span-4 space-y-10 order-2 lg:order-1">
+           <!-- Analytics Deck -->
+           <div class="card-stats border-white/5 space-y-8 bg-surface/5">
+              <div class="flex items-center gap-3 border-b border-white/5 pb-6">
                 <Activity class="w-5 h-5 text-primary-500" />
                 <h3 class="text-sm font-black text-industrial text-foreground tracking-widest uppercase">STATISTICS</h3>
               </div>
               
-              <div class="space-y-6">
+              <div class="grid grid-cols-2 lg:grid-cols-1 gap-6">
                 <!-- Total Reps Pill -->
                 <div class="group/stat">
                    <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">{{ i18nStore.t('stats_effort') }}</p>
@@ -149,190 +148,172 @@
                       <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18nStore.t('stats_per_day') }}</span>
                     </div>
                  </div>
+              </div>
 
-                 <!-- Protocol Mastery (Compact Sidebar Version) -->
-                 <div v-if="stats.breakdown?.length > 0" class="pt-6 border-t border-white/5 space-y-4">
-                    <div class="flex items-center gap-2 mb-4">
-                      <Trophy class="w-3.5 h-3.5 text-primary-500" />
-                      <h4 class="text-[10px] font-black text-foreground uppercase tracking-[0.2em] leading-none">{{ i18nStore.t('protocol_mastery') }}</h4>
-                    </div>
-                    
-                    <div class="space-y-3">
-                      <div v-for="item in stats.breakdown" :key="item.type" 
-                           class="flex items-center justify-between p-3 bg-white/5 border border-white/5 rounded-xl group hover:border-primary-500/30 transition-all">
-                        <div class="flex items-center gap-3">
-                          <div class="w-8 h-8 bg-surface rounded-lg flex items-center justify-center border border-white/5">
-                            <component :is="getIconForType(item.type)" class="w-4 h-4 text-primary-500/60" />
-                          </div>
-                          <div>
-                            <p class="text-[9px] font-black text-muted uppercase tracking-wider leading-none mb-1">{{ i18nStore.t(item.type) }}</p>
-                            <div class="flex items-baseline gap-2">
-                              <span class="text-xs font-black text-foreground tabular-nums">{{ item.count }}</span>
-                              <span class="text-[7px] font-bold text-zinc-600 uppercase">REPS</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="text-right">
-                          <span class="text-[10px] font-black text-red-500/80 italic tabular-nums block font-precision leading-none">{{ ((item.volume || 0) / 1000).toFixed(1) }}T</span>
-                          <span class="text-[7px] font-black text-zinc-700 uppercase tracking-tighter">VOLUMEN</span>
-                        </div>
-                    </div>
+              <!-- Protocol Mastery -->
+              <div v-if="stats.breakdown?.length > 0" class="pt-8 border-t border-white/5 space-y-4">
+                 <div class="flex items-center gap-2 mb-4">
+                   <Trophy class="w-3.5 h-3.5 text-primary-500" />
+                   <h4 class="text-[10px] font-black text-foreground uppercase tracking-[0.2em] leading-none">{{ i18nStore.t('protocol_mastery') }}</h4>
+                 </div>
+                 
+                 <div class="space-y-3">
+                   <div v-for="item in stats.breakdown" :key="item.type" 
+                        class="flex items-center justify-between p-3 bg-white/5 border border-white/5 rounded-xl group hover:border-primary-500/30 transition-all">
+                     <div class="flex items-center gap-3">
+                       <div class="w-8 h-8 bg-surface rounded-lg flex items-center justify-center border border-white/5">
+                         <component :is="getIconForType(item.type)" class="w-4 h-4 text-primary-500/60" />
+                       </div>
+                       <div>
+                         <p class="text-[9px] font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t(item.type) }}</p>
+                         <div class="flex items-baseline gap-2">
+                           <span class="text-xs font-black text-foreground tabular-nums">{{ item.count }}</span>
+                           <span class="text-[7px] font-bold text-zinc-600 uppercase">REPS</span>
+                         </div>
+                       </div>
+                     </div>
+                     <span class="text-[10px] font-black text-red-500/80 font-precision tabular-nums">{{ ((item.volume || 0) / 1000).toFixed(1) }}T</span>
+                  </div>
                  </div>
               </div>
-           </div>
-        </div>
 
-        </div>
-
-        <!-- Heatmap Deck -->
-        <div class="md:col-span-2 space-y-6 my-8 ">
-           <!-- Exercise Protocol Selector -->
-           <ExerciseSelector v-model="activeExercise" class="w-full" />
-
-           <div class="card-stats border-white/5 space-y-6 h-full flex flex-col justify-center">
-              <div class="flex items-center justify-between mb-2">
-                <h3 class="text-[10px] font-black text-muted tracking-[0.3em] uppercase">DISTRIBUTION HEATMAP</h3>
-                <span class="text-[10px] font-black text-neon-lime tabular-nums uppercase tracking-widest">Active 365 Days</span>
+              <!-- User Options Overlay (Settings Overlay) -->
+              <div v-if="isOwnProfile" class="pt-8 border-t border-white/5 space-y-6">
+                <div class="flex items-center gap-3">
+                  <Settings class="w-4 h-4 text-primary-500" />
+                  <h4 class="text-[10px] font-black text-foreground uppercase tracking-widest">CONFIGURATION</h4>
+                </div>
+                <div class="space-y-4">
+                  <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                       <label class="text-[8px] font-black uppercase text-muted tracking-widest px-1">IDENTIFIER</label>
+                       <input v-model="settingsForm.name" type="text" class="input-tactical !py-2 !px-3 !text-xs" />
+                    </div>
+                    <div class="space-y-2">
+                       <label class="text-[8px] font-black uppercase text-muted tracking-widest px-1">TARGET</label>
+                       <input v-model.number="settingsForm.daily_goal" type="number" class="input-tactical !py-2 !px-3 !text-xs" />
+                    </div>
+                  </div>
+                  <div class="space-y-2">
+                    <label class="text-[8px] font-black uppercase text-muted tracking-widest px-1">INTERFACE</label>
+                    <div class="flex items-center bg-surface/40 border border-border rounded-xl p-1 h-[38px]">
+                      <button v-for="m in ['light', 'dark', 'system']" :key="m" @click="themeStore.setTheme(m)"
+                        class="flex-1 flex items-center justify-center h-full rounded-lg transition-all"
+                        :class="themeStore.theme === m ? 'bg-primary-500 text-white shadow-lg' : 'text-muted hover:bg-surface/10'">
+                        <component :is="m === 'light' ? Sun : m === 'dark' ? Moon : Monitor" class="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                  <button @click="saveSettings" class="btn-reppy w-full !py-3 !text-xs">SAVE CHANGES</button>
+                </div>
               </div>
-              <Heatmap :data="heatmapData" class="flex-1 min-h-[180px]" />
            </div>
         </div>
-      </div>
 
+        <!-- Main Workspace Column: Heatmap & Audit -->
+        <div class="lg:col-span-8 space-y-10 order-1 lg:order-2">
+           <!-- Heatmap Deck -->
+           <div class="space-y-6">
+              <ExerciseSelector v-model="activeExercise" class="w-full" />
+              <div class="card-stats border-white/5 space-y-8 min-h-[400px] flex flex-col justify-center bg-surface/5">
+                 <div class="flex items-center justify-between">
+                   <h3 class="text-[10px] font-black text-muted tracking-[0.3em] uppercase">DISTRIBUTION HEATMAP</h3>
+                   <span class="text-[10px] font-black text-neon-lime tabular-nums uppercase tracking-widest">Active 365 Days</span>
+                 </div>
+                 <Heatmap :data="heatmapData" class="flex-1" />
+              </div>
+           </div>
 
+           <!-- Transaction Audit Log -->
+           <div class="card-stats border-border space-y-8 bg-gradient-to-br from-surface/20 to-surface/5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <div class="p-3 bg-cyan-500/10 rounded-2xl border border-cyan-500/20">
+                    <Coins class="w-6 h-6 text-cyan-500" />
+                  </div>
+                  <div>
+                    <h4 class="text-m font-black text-industrial text-foreground tracking-tight uppercase">AUDITORÍA DE ACTIVIDAD</h4>
+                    <p class="text-[9px] font-black text-muted uppercase tracking-[0.3em] font-tight">HISTORIAL DE REPPY COINS</p>
+                  </div>
+                </div>
+                <span class="text-[10px] font-black bg-white/5 border border-white/5 px-3 py-1 rounded-full text-zinc-500 tracking-tighter uppercase font-precision opacity-40">CADENA_ENCRIPTADA</span>
+              </div>
 
-      <!-- Historial de Monedas (Transaction Log) -->
-      <div class="  card-stats border-border space-y- bg-gradient-to-br from-surface/20 to-surface/5">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <div class="p-3 bg-cyan-500/10 rounded-2xl border border-cyan-500/20">
-              <Coins class="w-6 h-6 text-cyan-500" />
-            </div>
-            <div>
-              <h4 class="text-m font-black text-industrial text-foreground tracking-tight uppercase">HISTORIAL.DE.TRANSACCIONES</h4>
-              <p class="text-[9px] font-black text-muted uppercase tracking-[0.3em] font-tight">AUDITORÍA DEL PROTOCOLO REPPY COIN</p>
-            </div>
-          </div>
-          <span class="text-[10px] font-black bg-white/5 border border-white/5 px-3 py-1 rounded-full text-zinc-500 tracking-tighter uppercase font-precision opacity-40">CADENA_ENCRIPTADA</span>
+              <div v-if="transactions?.length > 0" class="space-y-3 font-precision">
+                <div v-for="(tx, idx) in transactions" :key="idx"
+                  class="flex items-center justify-between p-4 bg-black/20 border border-white/5 rounded-2xl group hover:border-white/10 transition-all hover:translate-x-1 duration-500">
+                  <div class="flex items-center gap-6">
+                    <span class="text-[10px] text-zinc-600 tabular-nums uppercase w-20">{{ new Date(tx.created_at).toLocaleDateString() }}</span>
+                    <span class="text-xs font-bold text-foreground/90 uppercase tracking-tight">{{ tx.description }}</span>
+                  </div>
+                  
+                  <div class="flex items-center gap-3">
+                    <span class="text-sm font-black tabular-nums"
+                      :class="tx.amount > 0 ? 'text-neon-lime' : 'text-cyan-400'">
+                      {{ tx.amount > 0 ? '+' : '' }}{{ tx.amount }}
+                    </span>
+                    <Coins class="w-3 h-3 text-zinc-600" />
+                  </div>
+                </div>
+                
+                <!-- Pagination Protocol -->
+                <div v-if="hasMoreTransactions" class="pt-4 border-t border-white/5">
+                  <button @click="fetchMoreTransactions" 
+                          :disabled="loadingMore"
+                          class="w-full py-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500 hover:text-white transition-all flex items-center justify-center gap-3">
+                    <span v-if="loadingMore" class="animate-spin border-2 border-primary-500 border-t-transparent rounded-full w-3 h-3"></span>
+                    {{ loadingMore ? 'COMMUNICATION...' : 'CARGAR MÁS TRANSACCIONES' }}
+                  </button>
+                </div>
+              </div>
+              
+              <div v-else class="text-center py-20 opacity-20 border-2 border-dashed border-white/5 rounded-[2.5rem]">
+                <p class="text-[10px] font-black text-zinc-600 uppercase tracking-[0.5em]">SIN_TRANSACCIONES_REGISTRADAS</p>
+              </div>
+           </div>
         </div>
-
-        <div v-if="transactions?.length > 0" class="space-y-3 font-precision">
-          <div v-for="(tx, idx) in transactions" :key="idx"
-            class="flex items-center justify-between p-4 bg-black/20 border border-white/5 rounded-2xl group hover:border-white/10 transition-all hover:translate-x-1 duration-500">
-            <div class="flex items-center gap-6">
-              <span class="text-[10px] text-zinc-600 tabular-nums uppercase w-20">{{ new Date(tx.created_at).toLocaleDateString() }}</span>
-              <div class="h-1 w-1 bg-white/10 rounded-full"></div>
-              <span class="text-xs font-bold text-foreground/90 uppercase tracking-tight">{{ tx.description }}</span>
-            </div>
-            
-            <div class="flex items-center gap-3">
-              <span class="text-[8px] font-black tracking-widest uppercase opacity-20 hidden md:block">{{ tx.amount > 0 ? 'RECVD' : 'SPENT' }}</span>
-              <span class="text-sm font-black tabular-nums"
-                :class="tx.amount > 0 ? 'text-neon-lime drop-shadow-[0_0_8px_rgba(0,255,153,0.2)]' : 'text-cyan-400 drop-shadow-[0_0_8px_rgba(6,182,212,0.2)]'">
-                {{ tx.amount > 0 ? '+' : '' }}{{ tx.amount }}
-              </span>
-              <Coins class="w-3 h-3 text-zinc-600" />
-            </div>
-          </div>
-        </div>
-        
-        <div v-else class="text-center py-20 border-2 border-dashed border-white/5 rounded-[2.5rem]">
-          <div class="opacity-10 bg-white/10 p-6 rounded-full inline-block mb-4">
-            <Activity class="w-12 h-12 text-foreground" />
-          </div>
-          <p class="text-[10px] font-black text-zinc-600 uppercase tracking-[0.5em]">SIN_TRANSACCIONES_REGISTRADAS</p>
-          <p class="text-[8px] font-bold text-zinc-700 uppercase mt-2">Gana monedas entrenando o derrotando anomalías.</p>
-        </div>
-      </div>
-
-      <!-- Protocol Override (Settings) -->
-      <div v-if="isOwnProfile" class="card-stats border-border space-y-10">
-        <div class="flex items-center gap-4">
-          <div class="p-3 bg-primary-500/5 rounded-2xl border border-primary-500/10">
-            <Settings class="w-6 h-6 text-primary-500" />
-          </div>
-          <h3 class="text-xl font-black text-industrial text-foreground tracking-tight uppercase">PROTOCOL CONFIGURATION</h3>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div class="space-y-2">
-            <label class="text-[10px] font-black uppercase tracking-widest text-muted px-1">IDENTIFIER</label>
-            <input v-model="settingsForm.name" type="text"
-              class="input-tactical" />
-          </div>
-          <div class="space-y-2">
-            <label class="text-[10px] font-black uppercase tracking-widest text-muted px-1">DAILY TARGET</label>
-            <input v-model.number="settingsForm.daily_goal" type="number"
-              class="input-tactical" />
-          </div>
-          <div class="space-y-2">
-            <label class="text-[10px] font-black uppercase tracking-widest text-muted px-1">BODY MASS (KG)</label>
-            <input v-model.number="settingsForm.body_weight" type="number" step="0.1"
-              class="input-tactical" />
-          </div>
-          
-          <!-- Theme Protocol Toggle -->
-          <div class="space-y-2">
-            <label class="text-[10px] font-black uppercase tracking-widest text-muted px-1">INTERFACE MODE</label>
-            <div class="flex items-center bg-surface/40 border border-border rounded-xl p-1.5 h-[58px]">
-              <button v-for="m in ['light', 'dark', 'system']" :key="m"
-                @click="themeStore.setTheme(m)"
-                class="flex-1 flex items-center justify-center h-full rounded-lg transition-all gap-2"
-                :class="themeStore.theme === m ? 'bg-primary-500 text-white shadow-lg' : 'text-muted hover:text-foreground hover:bg-surface/10'">
-                <component :is="m === 'light' ? Sun : m === 'dark' ? Moon : Monitor" class="w-4 h-4" />
-                <span class="text-[8px] font-bold uppercase tracking-tighter hidden md:block">{{ m }}</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <button @click="saveSettings"
-          :title="i18nStore.locale === 'es' ? 'Guardar Cambios de Perfil' : 'Save Profile Changes'"
-          class="btn-reppy w-full !py-5 shadow-2xl text-lg">
-          SAVE PROTOCOL OVERRIDE
-        </button>
       </div>
     </template>
 
     <!-- RPG Info Modal (The Codex) -->
     <Teleport to="body">
       <div v-if="showInfoModal" 
-           class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
-        <div class="card-stats max-w-xl w-full p-8 md:p-12 border-primary-500/20 shadow-[0_0_100px_rgba(255,69,0,0.1)] space-y-10 relative overflow-hidden bg-background">
+           class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300"
+           @click.self="showInfoModal = false">
+        <div class="max-w-xl w-full p-6 md:p-12 border-primary-500/20 shadow-[0_0_100px_rgba(255,69,0,0.1)] space-y-8 md:space-y-10 relative overflow-hidden bg-background rounded-[2.5rem] max-h-[90vh] overflow-y-auto select-none">
           <div class="absolute -top-20 -right-20 w-64 h-64 bg-primary-500/10 rounded-full blur-[80px] pointer-events-none"></div>
           
           <div class="flex items-center justify-between z-10 relative">
             <div class="flex flex-col">
-              <h3 class="text-4xl font-black text-industrial text-foreground uppercase italic leading-none">THE CODEX<span class="text-primary-500">.</span></h3>
-              <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em] mt-3">RPG EVOLUTION GUIDE</p>
+              <h3 class="text-3xl md:text-4xl font-black text-industrial text-foreground uppercase italic leading-none">{{ i18nStore.t('codex_title') }}<span class="text-primary-500">.</span></h3>
+              <p class="text-[9px] md:text-[10px] font-black text-muted uppercase tracking-[0.4em] mt-3">{{ i18nStore.t('codex_subtitle') }}</p>
             </div>
-            <button @click="showInfoModal = false" 
-                   :title="i18nStore.locale === 'es' ? 'Cerrar Guía' : 'Close Guide'"
-                   class="p-3 bg-surface/10 hover:bg-surface/20 rounded-2xl transition-all hover:rotate-90">
-              <XIcon class="w-6 h-6 text-foreground" />
+            <button @click="showInfoModal = false" class="p-2 md:p-3 bg-surface/10 hover:bg-surface/20 rounded-2xl transition-all hover:rotate-90">
+              <XIcon class="w-5 h-5 md:w-6 md:h-6 text-foreground" />
             </button>
           </div>
 
           <!-- Attributes Tab -->
-          <div class="space-y-6 z-10 relative">
-            <div class="grid grid-cols-1 gap-5">
+          <div class="space-y-6 z-10 relative select-none">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
               <div v-for="desc in attributeDescriptions" :key="desc.key" 
-                   class="flex gap-6 items-start p-6 bg-surface/5 border border-border rounded-2xl group transition-all hover:bg-surface/10"
+                   class="flex gap-4 md:gap-6 items-start p-4 md:p-6 bg-surface/5 border border-border rounded-2xl group transition-all hover:bg-surface/10"
                    :class="desc.borderColor">
-                <div class="p-4 bg-surface/10 rounded-2xl transition-transform group-hover:scale-110" :class="desc.iconColor">
-                   <component :is="desc.icon" class="w-6 h-6" />
+                <div class="p-3 md:p-4 bg-surface/10 rounded-2xl transition-transform group-hover:scale-110 shrink-0" :class="desc.iconColor">
+                   <component :is="desc.icon" class="w-5 h-5 md:w-6 md:h-6" />
                 </div>
                 <div class="flex-1">
-                  <h4 class="font-black uppercase text-xs tracking-widest mb-1" :class="desc.iconColor">{{ desc.name }} ({{ desc.key }})</h4>
-                  <p class="text-muted text-[10px] leading-relaxed italic mb-2">"{{ desc.quote }}"</p>
-                  <p class="text-foreground/80 text-[11px] font-medium leading-relaxed">{{ desc.description }}</p>
+                  <h4 class="font-black uppercase text-[10px] md:text-xs tracking-widest mb-1" :class="desc.iconColor">{{ i18nStore.t('codex_' + desc.key.toLowerCase() + '_name') }} ({{ desc.key }})</h4>
+                  <p class="text-muted text-[9px] md:text-[10px] leading-relaxed italic mb-2">"{{ i18nStore.t('codex_' + desc.key.toLowerCase() + '_quote') }}"</p>
+                  <p class="text-foreground/80 text-[10px] md:text-[11px] font-medium leading-relaxed mb-3">{{ i18nStore.t('codex_' + desc.key.toLowerCase() + '_desc') }}</p>
+                  
+                  <div class="flex items-center gap-2 pt-3 border-t border-white/5">
+                    <span class="text-[7px] md:text-[8px] font-black text-primary-500 uppercase tracking-widest">{{ i18nStore.t('codex_lv_up') }}</span>
+                    <p class="text-[8px] md:text-[9px] font-black text-foreground uppercase tracking-tight">{{ i18nStore.t('codex_' + desc.key.toLowerCase() + '_action') }}</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-
-          <div class="bg-primary-500/10 p-5 rounded-2xl border border-primary-500/20 z-10 relative text-center">
-            <p class="text-[10px] font-black text-primary-400 uppercase tracking-widest">NEXT LEVEL: +100 XP POINTS REQUIRED</p>
           </div>
         </div>
       </div>
@@ -371,11 +352,16 @@ const activeExercise = ref('all');
 const showInfoModal = ref(false);
 const fileInput = ref(null);
 
+// Pagination State
+const transactionsPage = ref(1);
+const hasMoreTransactions = ref(true);
+const loadingMore = ref(false);
+
 const attributeDescriptions = [
-  { key: 'STR', name: 'STRENGTH', icon: Sword, iconColor: 'text-red-500', borderColor: 'hover:border-red-500/30', quote: 'Lifting the weight of the world.', description: 'Scales with total load. Influenced by body mass and added resistance.' },
-  { key: 'PWR', name: 'POWER', icon: Zap, iconColor: 'text-orange-500', borderColor: 'hover:border-orange-500/30', quote: 'Explosive critical impact.', description: 'Rewards absolute intensity. Based on your highest resistance recorded in a single set.' },
-  { key: 'END', name: 'ENDURANCE', icon: Heart, iconColor: 'text-emerald-500', borderColor: 'hover:border-emerald-500/30', quote: 'Infinite fuel cell.', description: 'Purity of stamina. Scales with the total volume of repetitions performed across protocols.' },
-  { key: 'AGI', name: 'AGILITY', icon: Shield, iconColor: 'text-blue-500', borderColor: 'hover:border-blue-500/30', quote: 'Zero metabolic drag.', description: 'Tactical consistency. Earned through active streaks and protocol variety.' }
+  { key: 'STR', icon: Sword, iconColor: 'text-red-500', borderColor: 'hover:border-red-500/30' },
+  { key: 'PWR', icon: Zap, iconColor: 'text-orange-500', borderColor: 'hover:border-orange-500/30' },
+  { key: 'END', icon: Heart, iconColor: 'text-emerald-500', borderColor: 'hover:border-emerald-500/30' },
+  { key: 'AGI', icon: Shield, iconColor: 'text-blue-500', borderColor: 'hover:border-blue-500/30' }
 ];
 
 const getIconForType = (type) => {
@@ -435,6 +421,8 @@ const saveSettings = async () => {
 
 const fetchProfile = async () => {
   loading.value = true;
+  transactionsPage.value = 1;
+  hasMoreTransactions.value = true;
   try {
     const targetId = props.userId || authStore.user?.id;
     const res = await axios.get(`/api/profile/${targetId}`, {
@@ -444,6 +432,10 @@ const fetchProfile = async () => {
     stats.value = res.data.stats;
     heatmapData.value = res.data.heatmap;
     transactions.value = res.data.transactions || [];
+    
+    // Check if there might be more based on default limit (20)
+    hasMoreTransactions.value = (res.data.transactions || []).length === 20;
+
     if (isOwnProfile.value) {
       settingsForm.value = { name: user.value.name, daily_goal: user.value.daily_goal, body_weight: user.value.body_weight };
       // Sync global header
@@ -451,6 +443,30 @@ const fetchProfile = async () => {
     }
   } catch (err) { notificationStore.notify('Profile sync failed', 'error'); }
   finally { loading.value = false; }
+};
+
+const fetchMoreTransactions = async () => {
+  if (loadingMore.value || !hasMoreTransactions.value) return;
+  loadingMore.value = true;
+  try {
+    const targetId = props.userId || authStore.user?.id;
+    const nextPage = transactionsPage.value + 1;
+    const res = await axios.get(`/api/profile/${targetId}/transactions`, {
+      params: { page: nextPage, limit: 20 }
+    });
+    
+    if (res.data.transactions && res.data.transactions.length > 0) {
+      transactions.value.push(...res.data.transactions);
+      transactionsPage.value = nextPage;
+      hasMoreTransactions.value = res.data.hasMore;
+    } else {
+      hasMoreTransactions.value = false;
+    }
+  } catch (err) {
+    notificationStore.notify('Error loading more transactions', 'error');
+  } finally {
+    loadingMore.value = false;
+  }
 };
 
 watch(activeExercise, fetchProfile);
