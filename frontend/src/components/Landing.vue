@@ -600,7 +600,13 @@
          <div class="p-8 bg-white/5 border-b border-white/5">
             <span class="text-[10px] font-black text-primary-500 uppercase tracking-[0.5em]">LIVE RANKING</span>
          </div>
-         <Leaderboard />
+         <div ref="leaderboardTrigger" class="min-h-[400px]">
+           <Leaderboard v-if="shouldLoadLeaderboard" />
+           <div v-else class="py-24 flex flex-col items-center gap-4">
+             <div class="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+             <span class="text-[10px] font-black text-muted uppercase tracking-[0.4em]">Preparando Ranking...</span>
+           </div>
+         </div>
       </div>
       
       <div class="text-center pt-8">
@@ -652,7 +658,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, defineAsyncComponent } from 'vue';
 import axios from 'axios';
 import { 
   Activity, Trophy, Users, Sword, Flame, Plus, 
@@ -660,13 +666,30 @@ import {
 } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
-import Leaderboard from './Leaderboard.vue';
 import BossHealth from './BossHealth.vue';
 import BossBanner from './BossBanner.vue';
 
+const Leaderboard = defineAsyncComponent(() => import('./Leaderboard.vue'));
+
 const i18n = useI18nStore();
 const authStore = useAuthStore();
+const leaderboardTrigger = ref(null);
+const shouldLoadLeaderboard = ref(false);
+
 defineEmits(['start']);
+
+onMounted(() => {
+  const observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      shouldLoadLeaderboard.value = true;
+      observer.disconnect();
+    }
+  }, { rootMargin: '200px' });
+
+  if (leaderboardTrigger.value) {
+    observer.observe(leaderboardTrigger.value);
+  }
+});
 
 const faqs = [
   {

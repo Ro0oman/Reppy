@@ -8,7 +8,7 @@
     <div class="flex flex-col md:flex-row items-center gap-10 relative z-10">
       <!-- Boss Image -->
       <div class="w-32 h-32 md:w-48 md:h-48 bg-background/50 rounded-[2rem] flex items-center justify-center border border-border/60 shadow-inner group-hover:scale-105 transition-transform duration-700 overflow-hidden shrink-0">
-        <img v-if="boss.image_url" :src="boss.image_url" :alt="boss.name" class="w-full h-full object-contain p-4 drop-shadow-2xl" loading="eager" width="192" height="192" />
+        <img v-if="boss.image_url" :src="boss.image_url" :alt="boss.name" class="w-full h-full object-contain p-4 drop-shadow-2xl" loading="eager" fetchpriority="high" width="192" height="192" />
         <span v-else class="text-6xl italic font-black text-foreground opacity-20">?</span>
       </div>
       

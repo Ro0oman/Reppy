@@ -2,6 +2,7 @@ import express from 'express';
 import { query } from './db.js';
 import { authenticate } from './middleware.js';
 import { autoGrantPendingChests } from './utils/bossRewards.js';
+import { compressAvatar } from './utils/image.js';
 
 const router = express.Router();
 
@@ -80,9 +81,14 @@ router.patch('/profile', authenticate, async (req, res) => {
 // Update avatar (specifically) - Supporting both PATCH and POST
 const updateAvatar = async (req, res) => {
   const { avatar_url, avatarBase64 } = req.body;
-  const finalUrl = avatarBase64 || avatar_url;
+  let finalUrl = avatarBase64 || avatar_url;
   
   if (!finalUrl) return res.status(400).json({ message: 'No avatar provided' });
+
+  // Only compress if it's a base64 string
+  if (finalUrl.startsWith('data:image')) {
+    finalUrl = await compressAvatar(finalUrl);
+  }
 
   try {
     const result = await query(

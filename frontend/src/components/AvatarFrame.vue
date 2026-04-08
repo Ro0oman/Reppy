@@ -3,7 +3,7 @@
     <div class="avatar-frame__glow"></div>
     <div class="avatar-frame__border"></div>
     <div class="avatar-frame__inner">
-      <div class="avatar-frame__avatar" :class="avatarCss" :style="{ '--avatar-url': `url(${src})` }"></div>
+      <div class="avatar-frame__avatar" :class="avatarCss" :style="{ '--avatar-url': src ? `url(${src})` : 'url(https://ui-avatars.com/api/?background=333&color=fff&name=?)' }"></div>
     </div>
 
     <!-- Brick overlay -->
@@ -100,7 +100,7 @@
 import { computed } from 'vue';
 
 const props = defineProps({
-  src: { type: String, required: true },
+  src: { type: String, default: null },
   borderCss: { type: String, default: '' },
   avatarCss: { type: String, default: '' },
   size: { type: Number, default: 40 }
