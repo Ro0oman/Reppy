@@ -155,7 +155,7 @@
 
           <div class="flex items-center justify-between">
             <div class="space-y-1">
-              <h3 class="text-3xl font-black text-industrial text-foreground uppercase italic tracking-tighter">ECONOMY<span class="text-primary-500">.</span>CODEX</h3>
+              <h2 class="text-3xl font-black text-industrial text-foreground uppercase italic tracking-tighter">ECONOMY<span class="text-primary-500">.</span>CODEX</h2>
               <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em]">Resource allocation protocol</p>
             </div>
             <button @click="showCoinsInfo = false" class="p-3 bg-surface/5 hover:bg-surface/10 border border-border rounded-2xl transition-all">
@@ -165,7 +165,7 @@
 
           <!-- Generation Protocol -->
           <div class="space-y-6">
-            <h4 class="text-[10px] font-black uppercase text-primary-500 tracking-[0.3em]">REVENUE GENERATION</h4>
+            <h3 class="text-[10px] font-black uppercase text-primary-500 tracking-[0.3em]">REVENUE GENERATION</h3>
             <div class="grid grid-cols-1 gap-3">
               <div v-for="earn in earnings" :key="earn.name" class="flex items-center justify-between p-5 bg-white/[0.02] dark:bg-white/[0.02] bg-foreground/[0.03] rounded-2xl border border-border">
                 <span class="text-xs font-black text-muted uppercase tracking-widest">{{ earn.name }}</span>
@@ -179,7 +179,7 @@
 
           <!-- Bonus Events -->
           <div class="space-y-6">
-            <h4 class="text-[10px] font-black uppercase text-neon-lime tracking-[0.3em]">EXCEPTIONAL YIELD</h4>
+            <h3 class="text-[10px] font-black uppercase text-neon-lime tracking-[0.3em]">EXCEPTIONAL YIELD</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                <div class="p-5 bg-neon-lime/5 border border-neon-lime/10 rounded-2xl space-y-2 text-left">
                   <p class="text-[9px] font-black text-neon-lime uppercase tracking-widest">DAILY ROULETTE</p>

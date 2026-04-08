@@ -129,9 +129,9 @@
           <!-- User Info -->
           <div class="min-w-0 flex-1">
             <div class="flex items-center gap-2">
-              <h4 class="text-sm font-black text-foreground truncate group-hover:text-primary-400 transition-colors tracking-tight uppercase italic leading-none font-tight text-left">
+              <div class="text-sm font-black text-foreground truncate group-hover:text-primary-400 transition-colors tracking-tight uppercase italic leading-none font-tight text-left">
                 {{ user.id === authStore.user?.id ? 'YOU' : user.name }}
-              </h4>
+              </div>
               <div class="flex items-center gap-1 bg-foreground/5 px-1.5 py-0.5 rounded border border-border/30">
                 <span class="text-[6px] font-black text-primary-500/80 tracking-widest">LVL</span>
                 <span class="text-[8px] font-black text-foreground italic">{{ user.current_level }}</span>

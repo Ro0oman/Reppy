@@ -7,6 +7,24 @@ export default defineConfig({
   css: {
     postcss: './postcss.config.cjs',
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('vue') || id.includes('pinia')) return 'vendor-vue';
+            if (id.includes('lucide') || id.includes('confetti')) return 'vendor-ui';
+            return 'vendor';
+          }
+        }
+      }
+    },
+    chunkSizeWarningLimit: 1000,
+    cssCodeSplit: true,
+  },
+  esbuild: {
+    drop: ['console', 'debugger'],
+  },
   server: {
     proxy: {
       '/api': {

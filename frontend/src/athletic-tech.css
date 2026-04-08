@@ -14,7 +14,7 @@
     --card: 0 0% 100%;
     --card-alpha: 0.7;
     --foreground: 224 45% 12%;     /* Deep Navy #1E293B */
-    --muted: 215 16% 47%;          /* Slate Gray */
+    --muted: 215 16% 40%;          /* Slate Gray (Accessible) */
     --border: 215 32% 91%;         /* Light Slate #E2E8F0 */
     --ring: 215 100% 55% / 0.2;
 
