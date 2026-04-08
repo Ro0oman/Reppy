@@ -265,8 +265,8 @@ const navLinks = [
 
 const mobileNavLinks = [
   { id: 'dashboard', icon: LayoutDashboard, label: 'nav_dashboard' },
-  { id: 'social', icon: Users, label: 'nav_social' },
   { id: 'shop', icon: Swords, label: 'nav_armory' },
+  { id: 'social', icon: Users, label: 'nav_social' },
   { id: 'inventory', icon: Package, label: 'nav_gear' },
 ];
 
@@ -296,7 +296,7 @@ const openProfile = (id) => {
 
 const onStartAction = () => {
   if (authStore.isAuthenticated) {
-    router.push('/dashboard');
+    router.push('/social');
   } else {
     router.push('/login');
   }

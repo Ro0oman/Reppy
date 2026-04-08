@@ -12,6 +12,7 @@ import shopRoutes from './shop.js';
 import bossRoutes from './boss.js';
 import profileRoutes from './profile.js';
 import rouletteRoutes from './roulette.js';
+import socialFeedRoutes from './social_feed.js';
 import { query } from './db.js';
 
 
@@ -31,6 +32,7 @@ app.use(express.urlencoded({ limit: '5mb', extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/reps', repsRoutes);
 app.use('/api/social', socialRoutes);
+app.use('/api/social-feed', socialFeedRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/shop', shopRoutes);
@@ -213,7 +215,25 @@ app.get('/api/db/init', async (req, res) => {
        SELECT 'Digital Storm', 'Tormenta de datos encriptados.', 'background', 2500, 'bg-glitch', true, 'legendary'
        WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Digital Storm')`,
       
+      `CREATE TABLE IF NOT EXISTS daily_summaries (
+          id SERIAL PRIMARY KEY,
+          user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+          date DATE NOT NULL DEFAULT CURRENT_DATE,
+          title VARCHAR(255),
+          description TEXT,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE(user_id, date)
+      )`,
+      `CREATE TABLE IF NOT EXISTS summary_interactions (
+          id SERIAL PRIMARY KEY,
+          summary_id INTEGER REFERENCES daily_summaries(id) ON DELETE CASCADE,
+          user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+          type VARCHAR(50) NOT NULL,
+          content TEXT,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )`,
       `CREATE INDEX IF NOT EXISTS idx_reps_user_date ON reps(user_id, date)`,
+      `CREATE INDEX IF NOT EXISTS idx_summaries_user_date ON daily_summaries(user_id, date)`,
       `CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(user_id_1, user_id_2)`,
       `CREATE INDEX IF NOT EXISTS idx_inventory_user ON user_inventory(user_id)`
     ];
