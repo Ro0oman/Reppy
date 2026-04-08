@@ -1,5 +1,5 @@
 <template>
-  <div class="card-stats p-0 border-border bg-surface/90 backdrop-blur-3xl w-[400px] max-w-[calc(100vw-40px)] overflow-hidden shadow-2xl ring-1 ring-white/5">
+  <div class="p-0 border border-border bg-surface backdrop-blur-3xl rounded-[2rem] w-[400px] max-w-[calc(100vw-40px)] shadow-2xl relative transition-all flex flex-col overflow-hidden">
     <div class="px-6 py-5 border-b border-border/40 flex items-center justify-between bg-foreground/[0.02]">
       <div class="flex items-center gap-3">
         <Bell class="w-4 h-4 text-primary-500" />
@@ -28,8 +28,7 @@
 
       <TransitionGroup name="list">
         <div v-for="notif in store.notifications" :key="notif.id"
-          class="px-6 py-5 border-b border-border/20 last:border-0 hover:bg-foreground/[0.03] transition-all relative flex gap-4 items-start cursor-pointer"
-          :class="!notif.is_read ? 'bg-primary-500/[0.02]' : 'opacity-70'"
+          class="px-6 py-5 border-b border-border/10 last:border-0 hover:bg-foreground/[0.03] transition-all relative flex gap-4 items-start cursor-pointer"
           @click="handleNotifClick(notif)"
         >
           <!-- Unread Indicator -->
@@ -46,8 +45,8 @@
           </div>
 
           <!-- Content -->
-          <div class="space-y-1 py-1">
-            <p class="text-[11px] font-medium leading-relaxed text-foreground/90">
+          <div class="space-y-1 py-1 flex-1" :class="{ 'opacity-60': notif.is_read }">
+            <p class="text-[11px] font-semibold leading-relaxed text-foreground">
               <span v-if="notif.actor_name" class="font-black uppercase tracking-tight text-primary-500 mr-1">{{ notif.actor_name }}</span>
               {{ notif.content }}
             </p>
@@ -58,9 +57,12 @@
     </div>
 
     <!-- Footer: System Link -->
-    <router-link to="/social" @click="$emit('close')" class="block py-4 text-center bg-surface/5 hover:bg-surface/10 border-t border-border transition-all">
-       <span class="text-[9px] font-black text-muted uppercase tracking-[0.3em]">ACCEDER AL REGISTRO CENTRAL</span>
-    </router-link>
+    <button 
+      @click="handleRegistryClick" 
+      class="w-full py-5 text-center bg-surface/5 hover:bg-surface/10 border-t border-border transition-all cursor-pointer group"
+    >
+       <span class="text-[9px] font-black text-muted group-hover:text-primary-500 uppercase tracking-[0.3em] transition-colors">ACCEDER AL REGISTRO CENTRAL</span>
+    </button>
   </div>
 </template>
 
@@ -133,15 +135,18 @@ const handleNotifClick = (notif) => {
 
   emit('close');
 };
+
+const handleRegistryClick = () => {
+    emit('close');
+    router.push('/notifications');
+};
 </script>
 
 <style scoped>
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
 }
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
+
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(var(--primary-500-rgb), 0.1);
   border-radius: 10px;

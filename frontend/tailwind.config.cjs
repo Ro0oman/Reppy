@@ -16,6 +16,7 @@ module.exports = {
         'bolt-orange': 'hsl(var(--primary))',
         'deep-abyss': 'hsl(var(--background))',
         'steel-grey': 'hsl(var(--surface))',
+        surface: 'hsl(var(--surface))',
         'neon-lime': 'hsl(var(--accent))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',

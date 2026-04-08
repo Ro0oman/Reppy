@@ -124,6 +124,8 @@ const finished = ref(false);
 const sentinel = ref(null);
 let observer = null;
 
+const lastScrolledTarget = ref(null); // Pattern: user-date
+
 const editingActivity = ref(null);
 const editForm = reactive({
     title: '',
@@ -214,11 +216,15 @@ const isHighlighted = (activity) => {
 const checkAndScrollToHighlight = () => {
     if (!route.query.date || !route.query.user) return;
 
+    const qDate = normalizeDate(route.query.date);
+    const qUser = route.query.user;
+    const currentTarget = `${qUser}-${qDate}`;
+
+    // Avoid repeated scrolling to the same target
+    if (lastScrolledTarget.value === currentTarget) return;
+
     // Small delay to ensure DOM is rendered
     setTimeout(() => {
-        const qDate = normalizeDate(route.query.date);
-        const qUser = route.query.user;
-        
         // Find activity by checking normalized dates
         const activity = activities.value.find(a => normalizeDate(a.date) === qDate && a.user_id === qUser);
         
@@ -227,6 +233,7 @@ const checkAndScrollToHighlight = () => {
             const el = document.getElementById(id);
             if (el) {
                 el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                lastScrolledTarget.value = currentTarget; // Mark as done
             }
         }
     }, 500);

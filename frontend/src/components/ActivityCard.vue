@@ -107,7 +107,7 @@
       </div>
 
       <div class="flex -space-x-2">
-        <button @click="copyLink" class="w-8 h-8 rounded-full bg-surface/5 border border-border flex items-center justify-center hover:bg-primary-500/10 hover:border-primary-500/30 transition-all">
+        <button @click="shareActivity" class="w-8 h-8 rounded-full bg-surface/5 border border-border flex items-center justify-center hover:bg-primary-500/10 hover:border-primary-500/30 transition-all">
             <Share2 class="w-4 h-4 text-muted hover:text-primary-500" />
         </button>
       </div>
@@ -214,13 +214,32 @@ const timeAgo = computed(() => {
   });
 });
 
-const copyLink = async () => {
+const shareActivity = async () => {
     try {
-        const url = window.location.origin + '/social'; // Social Feed URL
-        await navigator.clipboard.writeText(url);
-        notificationStore.notify(i18n.locale === 'es' ? '¡Enlace de la comunidad copiado!' : 'Community link copied!', 'success');
+        const baseUrl = window.location.origin + '/social';
+        // Deep link: activity-USERID-DATE
+        const shareUrl = `${baseUrl}?user=${props.activity.user_id}&date=${props.activity.date}`;
+        
+        const shareData = {
+            title: 'Reppy - Protocolo de Entrenamiento',
+            text: i18n.locale === 'es' 
+                ? `Echa un vistazo al entrenamiento de ${props.activity.user_name} en Reppy` 
+                : `Check out ${props.activity.user_name}'s workout on Reppy`,
+            url: shareUrl
+        };
+
+        if (navigator.share) {
+            await navigator.share(shareData);
+            notificationStore.notify(i18n.locale === 'es' ? '¡Compartido con éxito!' : 'Shared successfully!', 'success');
+        } else {
+            await navigator.clipboard.writeText(shareUrl);
+            notificationStore.notify(i18n.locale === 'es' ? '¡Enlace de entrenamiento copiado!' : 'Workout link copied!', 'success');
+        }
     } catch (e) {
-        console.error('Error sharing:', e);
+        if (e.name !== 'AbortError') {
+            console.error('Error sharing:', e);
+            notificationStore.notify(i18n.locale === 'es' ? 'Error al compartir' : 'Error sharing', 'error');
+        }
     }
 };
 

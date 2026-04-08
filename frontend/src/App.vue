@@ -60,15 +60,16 @@
             <!-- Notification Bell -->
             <div class="relative">
               <button @click="handleBellClick" 
-                      class="p-2 sm:p-2.5 rounded-xl bg-surface/5 border border-border hover:bg-surface/10 transition-all group relative">
-                <Bell class="w-4.5 h-4.5 sm:w-5 sm:h-5 text-muted group-hover:text-primary-500 transition-colors" />
+                      class="p-2 sm:p-2.5 rounded-xl transition-all group relative border"
+                      :class="showNotifications ? 'bg-primary-500/10 border-primary-500/30 text-primary-500' : 'bg-surface/5 border-border hover:bg-surface/10'">
+                <Bell class="w-4.5 h-4.5 sm:w-5 sm:h-5 transition-colors" :class="showNotifications ? 'text-primary-500' : 'text-muted group-hover:text-primary-500'" />
                 <div v-if="notifStore.unreadCount > 0" 
                      class="absolute -top-1 -right-1 w-4 h-4 bg-primary-500 rounded-full border-2 border-surface flex items-center justify-center">
                   <span class="text-[8px] font-black text-white">{{ notifStore.unreadCount }}</span>
                 </div>
               </button>
               
-              <div v-if="showNotifications" class="absolute right-0 top-full mt-4 z-[100] animate-in slide-in-from-top-2 duration-300">
+              <div v-if="showNotifications" class="absolute right-0 top-full mt-4 z-[150] animate-in slide-in-from-top-2 duration-300">
                 <NotificationsDropdown @close="showNotifications = false" />
               </div>
             </div>
@@ -293,8 +294,8 @@ const handleBellClick = () => {
 };
 
 const navLinks = [
-  { id: 'dashboard', label: 'nav_dashboard', fallback: 'DASHBOARD', icon: LayoutDashboard },
   { id: 'social', label: 'nav_social', fallback: 'RANKINGS', icon: Users },
+  { id: 'dashboard', label: 'nav_dashboard', fallback: 'DASHBOARD', icon: LayoutDashboard },
   { id: 'inventory', label: 'nav_inventory', fallback: 'GEAR', icon: Package },
   { id: 'shop', label: 'nav_shop', fallback: 'ARMORY', icon: Swords },
 ];
