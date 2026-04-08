@@ -1,0 +1,34 @@
+# Reppy 🚀 - Fitness RPG MMO
+
+Reppy is a fitness RPG ecosystem designed to gamify training (specifically pull-ups). It features a premium glassmorphism interface, RPG progression, an economy system, and global community events.
+
+## Core Features
+
+- **RPG Progression**: Track reps to level up STR (Strength), PWR (Power), END (Endurance), and AGI (Agility).
+- **Economy & Shop**: Earn Reppy Coins and spend them on Legendary Titles and Profile Borders.
+- **Global Boss Events**: Participate in community events like "El Conejo de Acero" with shared HP bars and tiered rewards.
+- **Advanced Visualization**: consistency heatmaps and dynamic stats.
+- **Social Profiles**: Public profiles to showcase attributes and cosmetics.
+
+## Tech Stack
+
+- **Frontend**: Vue 3, Vite, Tailwind CSS, Lucide Icons, Axios.
+- **Backend**: Node.js, Express, JWT, PostgreSQL.
+- **Database**: Supabase / Neon (PostgreSQL).
+
+## Project Structure
+
+- `/frontend`: Vue 3 application.
+    - `/src/components`: UI components (Glassmorphism, RPG elements).
+    - `/src/views`: Page views (Dashboard, Shop, Leaderboard, Boss).
+    - `/src/stores`: Pinia stores (Auth, Theme, etc.).
+- `/backend`: Node.js/Express API.
+    - `auth.js`: OAuth and JWT authentication.
+    - `reps.js`: Workout tracking and attribute calculation.
+    - `boss.js`: Global boss event logic.
+    - `shop.js`: Economy and cosmetic transactions.
+    - `schema.sql`: Database schema definition.
+
+## Getting Started
+
+Refer to [README.md](file:///c:/Users/romai/Documents/GitHub/Reppy/README.md) for detailed setup instructions.
