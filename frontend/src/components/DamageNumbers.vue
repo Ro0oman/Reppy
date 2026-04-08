@@ -26,8 +26,18 @@
 
 <script setup>
 import { useDamageStore } from '../stores/damage';
+import { watch } from 'vue';
 
 const damageStore = useDamageStore();
+
+// Play sound whenever a new damage is added
+watch(() => damageStore.activeDamages.length, (newLen, oldLen) => {
+  if (newLen > oldLen) {
+    const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-10.mp3'); // Higher quality, reliable Hit sound
+    audio.volume = 0.4;
+    audio.play().catch(e => console.warn('[AUDIO_BLOCKED] User interaction required for sound'));
+  }
+});
 
 const getDamageColor = (type) => {
   const colors = {
@@ -44,15 +54,16 @@ const getDamageColor = (type) => {
 
 <style scoped>
 .damage-number {
-  font-size: clamp(2rem, 5vw, 4rem);
+  font-size: clamp(3.5rem, 8vw, 6rem);
   text-shadow: 
-    3px 3px 0px #000,
-    -1px -1px 0px #000,  
-    1px -1px 0px #000,
-    -1px 1px 0px #000,
-    1px 1px 0px #000;
+    4px 4px 0px #000,
+    -1.5px -1.5px 0px #000,  
+    1.5px -1.5px 0px #000,
+    -1.5px 1.5px 0px #000,
+    1.5px 1.5px 0px #000;
   display: block;
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4));
+  transform-origin: center;
 }
 
 .critical-hit {
