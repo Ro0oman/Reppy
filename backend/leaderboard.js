@@ -85,6 +85,7 @@ router.get('/friends', authenticate, async (req, res) => {
       GROUP BY u.id, u.name, u.avatar_url, u.reppy_coins, t.name, t.css_value, b.css_value, a.css_value, u.current_level
       HAVING COALESCE(SUM(r.count), 0) > 0
       ORDER BY total_reps DESC
+      LIMIT 50
     `;
 
     const result = await query(queryStr, queryParams);

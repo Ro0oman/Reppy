@@ -13,11 +13,15 @@
 
       <!-- Active Boss Banner (VISIBLE TO ALL) -->
       <div class="w-full max-w-5xl mb-16 animate-in fade-in slide-in-from-top-10 duration-1000">
+        <!-- SEO-aware event header -->
         <div class="flex items-center gap-3 mb-6 px-4">
           <span class="px-3 py-1 bg-primary-500/20 text-primary-500 text-[10px] font-black uppercase tracking-widest rounded-full">Evento Gratuito</span>
           <span class="text-xs font-bold text-muted/60 tracking-tight">Evento de Calistenia Mundial</span>
         </div>
-        <BossHealth />
+
+        <!-- NEW Minimalist Boss Banner (Lore-focused) -->
+        <BossBanner />
+
         <div class="flex justify-center mt-8">
            <button @click="$emit('start')" class="btn-reppy !px-12 !py-5 shadow-xl transition-transform hover:scale-105 active:scale-95">
              {{ authStore.isAuthenticated ? 'Ver Batalla' : 'Unirse a la caza gratis' }}
@@ -663,6 +667,7 @@ import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
 import Leaderboard from './Leaderboard.vue';
 import BossHealth from './BossHealth.vue';
+import BossBanner from './BossBanner.vue';
 
 const i18n = useI18nStore();
 const authStore = useAuthStore();

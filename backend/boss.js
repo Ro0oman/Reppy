@@ -111,12 +111,12 @@ router.get('/active', optionalAuthenticate, async (req, res) => {
 
     res.json({
       boss: { ...boss, starts_in: null },
-      next_boss,
+      next_boss: req.user ? next_boss : null,
       personal_damage,
       daily_damage,
       chests_claimed,
       boss_chests,
-      top_damage_dealer
+      top_damage_dealer: req.user ? top_damage_dealer : null
     });
   } catch (error) {
     console.error('Error fetching boss:', error);

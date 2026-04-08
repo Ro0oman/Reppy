@@ -1,13 +1,14 @@
 <template>
-  <div class="text-[8px] bg-red-500 text-white p-1 text-center">DEBUG: BossHealth Mounted (boss: {{ boss ? 'YES' : 'NO' }}, loading: {{ loading }})</div>
   <div v-if="loading" class="animate-pulse bg-foreground/5 h-24 rounded-3xl mb-8"></div>
   <div v-else-if="boss" class="space-y-4">
     <!-- Active Boss Card -->
-    <div @click="showHistory = true" class="glass p-5 rounded-[2rem] border border-border relative overflow-hidden group transition-all duration-500 shadow-xl cursor-pointer hover:border-primary-500/50">
+    <div @click="authStore.isAuthenticated && (showHistory = true)" 
+         class="glass p-5 rounded-[2rem] border border-border relative overflow-hidden group transition-all duration-500 shadow-xl cursor-pointer"
+         :class="authStore.isAuthenticated ? 'hover:border-primary-500/50' : 'cursor-default'">
       <div class="absolute -right-20 -top-20 w-64 h-64 bg-primary-500/10 rounded-full blur-[80px] pointer-events-none"></div>
       
-      <!-- History Icon Hint -->
-      <div class="absolute top-4 right-4 text-muted/20 group-hover:text-primary-500 transition-colors">
+      <!-- History Icon Hint (Authenticated only) -->
+      <div v-if="authStore.isAuthenticated" class="absolute top-4 right-4 text-muted/20 group-hover:text-primary-500 transition-colors">
           <History class="w-5 h-5" />
       </div>
        
@@ -59,7 +60,7 @@
                   Día: {{ dailyDamage }} / 100 🛡️
                 </p>
              </div>
-             <div v-if="topDamageDealer" class="flex items-center gap-2 bg-amber-500/10 px-2 py-1 rounded-lg border border-amber-500/20">
+             <div v-if="topDamageDealer && authStore.isAuthenticated" class="flex items-center gap-2 bg-amber-500/10 px-2 py-1 rounded-lg border border-amber-500/20">
                 <p class="text-[9px] font-black uppercase tracking-[0.2em] text-amber-500">
                   TOP Daño: <span class="text-foreground">{{ topDamageDealer.name }}</span> ({{ topDamageDealer.damage_dealt }}) 👑
                 </p>
@@ -89,8 +90,8 @@
       </div>
     </div>
 
-    <!-- Next Boss Preview -->
-    <div v-if="nextBoss" class="glass p-5 rounded-3xl border border-dashed border-border opacity-60 hover:opacity-100 transition-opacity flex items-center justify-between group">
+    <!-- Next Boss Preview (Authenticated only) -->
+    <div v-if="nextBoss && authStore.isAuthenticated" class="glass p-5 rounded-3xl border border-dashed border-border opacity-60 hover:opacity-100 transition-opacity flex items-center justify-between group">
        <div class="flex items-center gap-4">
          <div class="w-10 h-10 bg-background rounded-lg p-1 flex items-center justify-center grayscale group-hover:grayscale-0 transition-all text-xs border border-border">
             <img v-if="nextBoss.image_url" :src="nextBoss.image_url" :alt="`Próximo Boss: ${nextBoss.name}`" class="w-full h-full object-contain opacity-40 group-hover:opacity-100" />
@@ -180,8 +181,15 @@ const showHistory = ref(false);
 const authStore = useAuthStore();
 const notificationStore = useNotificationStore();
 const topDamageDealer = ref(null);
+let lastFetchTime = 0;
+const CACHE_TTL = 30000; // 30 seconds
 
-const fetchBoss = async () => {
+const fetchBoss = async (force = false) => {
+  const now = Date.now();
+  if (!force && lastFetchTime && (now - lastFetchTime < CACHE_TTL) && boss.value) {
+    return;
+  }
+
   try {
     const res = await axios.get('/api/boss/active');
     if (res.data && res.data.boss) {
@@ -191,6 +199,7 @@ const fetchBoss = async () => {
       dailyDamage.value = res.data.daily_damage || 0;
       chestsClaimed.value = res.data.chests_claimed;
       topDamageDealer.value = res.data.top_damage_dealer;
+      lastFetchTime = now;
     } else {
       boss.value = null;
     }

@@ -161,6 +161,7 @@ const matrixColumns = computed(() => {
     linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px);
   background-size: 100px 100px;
   animation: grid-shift 60s linear infinite;
+  will-change: transform;
 }
 @keyframes grid-shift {
   from { transform: perspective(500px) rotateX(60deg) translateY(0); }
@@ -183,7 +184,7 @@ const matrixColumns = computed(() => {
   left: 0;
   width: 200%;
   height: 100px;
-  background: url('https://raw.githubusercontent.com/r6698/reppy-assets/main/wave.png');
+  background: url('/assets/effects/wave.png');
   background-size: 50% 100px;
   opacity: 0.1;
   animation: wave-move 20s linear infinite;
@@ -196,6 +197,9 @@ const matrixColumns = computed(() => {
 @keyframes wave-move {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
+}
+.wave, .grid-floor, .matrix-column, .falling-egg, .ember, .data-drop, .streak {
+  will-change: transform;
 }
 
 /* 4. Cyber Horizon (PREMIUM) */
