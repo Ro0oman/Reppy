@@ -16,7 +16,6 @@
         <!-- SEO-aware event header -->
         <div class="flex items-center gap-3 mb-6 px-4">
           <span class="px-3 py-1 bg-primary-500/20 text-primary-500 text-[10px] font-black uppercase tracking-widest rounded-full">Evento Gratuito</span>
-          <span class="text-xs font-bold text-muted/60 tracking-tight">Evento de Calistenia Mundial</span>
         </div>
 
         <!-- NEW Minimalist Boss Banner (Lore-focused) -->
@@ -29,11 +28,7 @@
         </div>
       </div>
 
-      <!-- Branding Eyebrow -->
-      <div class="inline-flex items-center gap-3 px-6 py-2 bg-surface border border-border/40 rounded-full mb-4 animate-in fade-in slide-in-from-bottom-4 duration-1000 shadow-sm">
-        <div class="w-2 h-2 rounded-full bg-primary-500 animate-ping"></div>
-        <span class="text-[11px] font-bold tracking-widest text-muted/60 uppercase">App de Calistenia Gamificada</span>
-      </div>
+
 
       <!-- H1: PRIMARY SEO KEYWORD TARGET -->
       <h1 class="text-5xl md:text-[8rem] font-bold tracking-tight text-foreground leading-tight animate-in fade-in duration-1000 max-w-6xl">

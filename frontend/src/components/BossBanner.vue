@@ -19,11 +19,11 @@
           <span class="text-[9px] font-black uppercase tracking-[0.3em] text-primary-500">Boss Actual Activo</span>
         </div>
         
-        <h3 class="text-4xl md:text-6xl font-black italic tracking-tighter text-foreground uppercase italic leading-none drop-shadow-sm group-hover:text-primary-400 transition-colors duration-500">
+        <h3 class="text-xl md:text-4xl font-black italic tracking-tighter text-foreground uppercase italic leading-none drop-shadow-sm group-hover:text-primary-400 transition-colors duration-500">
           {{ boss.name }}
         </h3>
         
-        <p class="text-base md:text-xl text-muted/80 font-medium max-w-2xl leading-relaxed italic opacity-90">
+        <p class="text-base md:text-l text-muted/80 font-medium max-w-2xl leading-relaxed italic opacity-90">
           "{{ boss.description }}"
         </p>
       </div>
