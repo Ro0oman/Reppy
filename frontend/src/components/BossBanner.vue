@@ -67,7 +67,11 @@ const fetchBoss = async (force = false) => {
   }
 };
 
-onMounted(fetchBoss);
+onMounted(() => {
+  setTimeout(() => {
+    fetchBoss();
+  }, 0);
+});
 </script>
 
 <style scoped>
