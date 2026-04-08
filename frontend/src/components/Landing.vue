@@ -46,9 +46,20 @@
         <button @click="start" class="btn-reppy !text-lg !px-12 !py-5 shadow-xl">
           {{ authStore.isAuthenticated ? 'IR AL DASHBOARD' : 'EMPEZAR GRATIS AHORA' }}
         </button>
-        <router-link to="/" class="text-sm font-bold text-muted hover:text-foreground transition-colors">
-          Explorar otras funciones gratuitas &rarr;
-        </router-link>
+        <div class="flex items-center gap-4">
+          <router-link to="/" class="text-sm font-bold text-muted hover:text-foreground transition-colors mr-2">
+            Explorar funciones &rarr;
+          </router-link>
+          
+          <a href="https://github.com/Ro0oman/Reppy" target="_blank"
+             class="flex items-center gap-3 px-6 py-3 rounded-2xl bg-surface/40 hover:bg-surface/60 border border-white/10 transition-all group">
+            <Github class="w-5 h-5 text-muted group-hover:text-foreground" />
+            <div class="flex items-center gap-2">
+              <Star class="w-4 h-4 text-primary-500 fill-primary-500 animate-pulse" />
+              <span class="text-[10px] font-black text-foreground uppercase tracking-[0.2em]">Star the Protocol</span>
+            </div>
+          </a>
+        </div>
       </div>
     </section>
 
@@ -662,7 +673,8 @@ import { ref, onMounted, defineAsyncComponent } from 'vue';
 import axios from 'axios';
 import { 
   Activity, Trophy, Users, Sword, Flame, Plus, 
-  ArrowUp, ArrowDown, ArrowDownUp, Dumbbell, ChevronDown 
+  ArrowUp, ArrowDown, ArrowDownUp, Dumbbell, ChevronDown,
+  Github, Star
 } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';

@@ -157,12 +157,20 @@ const matrixColumns = computed(() => {
   position: absolute;
   inset: 0;
   background-image: 
-    linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px),
-    linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px);
-  background-size: 100px 100px;
-  animation: grid-shift 60s linear infinite;
+    linear-gradient(90deg, rgba(34, 211, 238, 0.15) 1px, transparent 1px),
+    linear-gradient(rgba(34, 211, 238, 0.15) 1px, transparent 1px);
+  background-size: 80px 80px;
+  animation: grid-shift 40s linear infinite;
   will-change: transform;
 }
+
+/* Light Mode Reversion */
+:root:not(.dark) .neural-lines {
+  background-image: 
+    linear-gradient(90deg, rgba(30, 41, 59, 0.1) 1px, transparent 1px),
+    linear-gradient(rgba(30, 41, 59, 0.1) 1px, transparent 1px);
+}
+
 @keyframes grid-shift {
   from { transform: perspective(500px) rotateX(60deg) translateY(0); }
   to { transform: perspective(500px) rotateX(60deg) translateY(100px); }

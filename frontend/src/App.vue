@@ -1,5 +1,6 @@
 <template>
-  <div class="min-h-screen selection:bg-primary-500/30 relative text-foreground bg-background transition-colors duration-500">
+  <div class="min-h-screen selection:bg-primary-500/30 relative text-foreground transition-colors duration-500"
+       :class="authStore.user?.background_css ? 'bg-transparent' : 'bg-background'">
     
     <!-- Animated background system -->
     <BackgroundEffect v-if="authStore.isAuthenticated" :background-css="authStore.user?.background_css" />
@@ -38,15 +39,6 @@
         <!-- System Status & User Profile -->
         <div class="flex items-center gap-3 sm:gap-6">
           <!-- Desktop GitHub Module -->
-          <a href="https://github.com/Ro0oman/Reppy" target="_blank"
-            title="GitHub Repository / Código Fuente"
-            class="hidden xl:flex items-center gap-3 px-4 py-2 rounded-xl bg-surface/5 hover:bg-surface/10 border border-border transition-all group">
-            <Github class="w-4 h-4 text-muted group-hover:text-foreground" />
-            <div class="flex items-center gap-2">
-              <Star class="w-3.5 h-3.5 text-primary-500 fill-primary-500 animate-pulse" />
-              <span class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">SOURCE</span>
-            </div>
-          </a>
 
           <div class="flex items-center gap-2 sm:gap-4">
             <!-- Currency Module -->
@@ -122,6 +114,15 @@
         <div class="flex items-center gap-6">
           <span class="text-[10px] font-medium tracking-wider">Privacy Protocol</span>
           <span class="text-[10px] font-medium tracking-wider">System Status: Optimal</span>
+          
+          <a href="https://github.com/Ro0oman/Reppy" target="_blank"
+            class="flex items-center gap-3 px-4 py-2 rounded-xl bg-surface/5 hover:bg-surface/10 border border-border/50 transition-all group">
+            <Github class="w-4 h-4 text-muted group-hover:text-foreground" />
+            <div class="flex items-center gap-2">
+              <Star class="w-3 h-3 text-primary-500 fill-primary-500 animate-pulse" />
+              <span class="text-[8px] font-black text-muted uppercase tracking-widest">STAR ON GITHUB</span>
+            </div>
+          </a>
         </div>
       </div>
     </footer>

@@ -9,20 +9,20 @@
   >
     <!-- Background Enhancement Layer -->
     <div v-if="activity.post_background_css" class="absolute inset-0 pointer-events-none overflow-hidden z-0">
-      <div class="absolute inset-0 transition-opacity duration-1000" :class="activity.post_background_css"></div>
+      <div class="absolute inset-0 transition-opacity duration-1000 opacity-90" :class="activity.post_background_css"></div>
       
       <!-- Specialized Overlays for specific backgrounds -->
-      <div v-if="activity.post_background_css === 'post-bg-matrix'" class="absolute inset-0 matrix-columns">
-        <div v-for="i in 10" :key="i" class="matrix-column" :style="{ left: (i-1)*10 + '%', animationDelay: (i*0.5) + 's' }"></div>
+      <div v-if="activity.post_background_css === 'post-bg-matrix'" class="absolute inset-0 z-10">
+        <div v-for="i in 20" :key="i" class="matrix-column" :style="{ left: (i-1)*5 + '%', animationDelay: (i*0.2) + 's', opacity: 0.8, height: '150px' }"></div>
       </div>
-      <div v-if="activity.post_background_css === 'post-bg-inferno'" class="absolute inset-0">
-        <div v-for="i in 15" :key="i" class="ember" :style="{ left: Math.random()*100 + '%', animationDelay: Math.random()*5 + 's' }"></div>
+      <div v-if="activity.post_background_css === 'post-bg-inferno'" class="absolute inset-0 z-10">
+        <div v-for="i in 30" :key="i" class="ember" :style="{ left: (Math.sin(i)*50 + 50) + '%', animationDelay: (i*0.2) + 's', opacity: 0.9, width: '3px', height: '3px' }"></div>
       </div>
     </div>
     
     <!-- Header: User & Info -->
     <div class="flex items-start justify-between gap-4 relative z-10 p-4 rounded-2xl"
-         :class="activity.post_background_css ? 'bg-background/20 backdrop-blur-sm' : ''">
+         :class="activity.post_background_css ? 'bg-background/10' : ''">
       <div class="flex items-center gap-4">
         <div class="relative cursor-pointer hover:scale-105 transition-transform" @click="$emit('viewProfile', activity.user_id)">
           <AvatarFrame 
@@ -52,7 +52,7 @@
 
     <!-- Content: Stats & Badges -->
     <div class="space-y-6 relative z-10 p-4 rounded-2xl"
-         :class="activity.post_background_css ? 'bg-background/20 backdrop-blur-sm' : ''">
+         :class="activity.post_background_css ? 'bg-background/10' : ''">
       <div v-if="activity.title || activity.description" class="space-y-2">
         <h3 v-if="activity.title" class="text-xl font-black text-foreground tracking-tight italic uppercase">{{ activity.title }}</h3>
         <p v-if="activity.description" class="text-sm text-muted/80 leading-relaxed font-medium">{{ activity.description }}</p>

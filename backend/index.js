@@ -248,7 +248,23 @@ app.get('/api/db/init', async (req, res) => {
         target_user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
         is_read BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )`
+      )`,
+      // Post Backgrounds Sync
+      `INSERT INTO cosmetics (name, description, type, price, css_value, rarity) 
+       SELECT 'Carbon Scan', 'Textura de carbono oscuro con línea de escaneo láser.', 'post_background', 1111, 'post-bg-carbon', 'rare'
+       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Carbon Scan')`,
+      `INSERT INTO cosmetics (name, description, type, price, css_value, rarity) 
+       SELECT 'Neon Pulse', 'Borde de neón con pulso reactivo.', 'post_background', 2222, 'post-bg-neon', 'epic'
+       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Neon Pulse')`,
+      `INSERT INTO cosmetics (name, description, type, price, css_value, rarity) 
+       SELECT 'Matrix Rain', '¿Ves el código? Lluvia de datos digital.', 'post_background', 3333, 'post-bg-matrix', 'legendary'
+       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Matrix Rain')`,
+      `INSERT INTO cosmetics (name, description, type, price, css_value, rarity) 
+       SELECT 'Inferno Core', 'Calor extremo y brasas ascendentes.', 'post_background', 4444, 'post-bg-inferno', 'legendary'
+       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Inferno Core')`,
+      `INSERT INTO cosmetics (name, description, type, price, css_value, rarity) 
+       SELECT 'Void Gravity', 'Punto de no retorno gravitacional.', 'post_background', 5555, 'post-bg-void', 'legendary'
+       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Void Gravity')`
     ];
     
     for (const q of queries) {
