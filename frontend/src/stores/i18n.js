@@ -204,7 +204,26 @@ const translations = {
     codex_agi_name: 'AGILITY',
     codex_agi_quote: 'Zero metabolic drag.',
     codex_agi_desc: 'Tactical consistency. Earned through active streaks and protocol variety.',
-    codex_agi_action: 'Maintain streak & varied protocols.'
+    codex_agi_action: 'Maintain streak & varied protocols.',
+
+    // Shop Categories
+    shop_tab_titles: 'TITLES',
+    shop_tab_borders: 'BORDERS',
+    shop_tab_avatars: 'AVATARS',
+    shop_tab_backgrounds: 'EFFECTS',
+    shop_tab_post_backgrounds: 'POSTS',
+
+    // Post Backgrounds
+    'post-bg-carbon_name': 'Carbon Scan',
+    'post-bg-carbon_desc': 'Dark carbon texture with laser scanning line.',
+    'post-bg-neon_name': 'Neon Pulse',
+    'post-bg-neon_desc': 'Neon border with vibrant reactive pulse.',
+    'post-bg-matrix_name': 'Matrix Rain',
+    'post-bg-matrix_desc': 'Digital code rain optimized for your wall.',
+    'post-bg-inferno_name': 'Inferno Core',
+    'post-bg-inferno_desc': 'Extreme heat with embers and thermal distortion.',
+    'post-bg-void_name': 'Void Gravity',
+    'post-bg-void_desc': 'Point of no return with gravitational distortion.',
   },
   es: {
     // Landing
@@ -408,7 +427,26 @@ const translations = {
     codex_agi_name: 'AGILIDAD',
     codex_agi_quote: 'Cero fricción metabólica.',
     codex_agi_desc: 'Consistencia táctica. Se gana con rachas activas y variedad de protocolos.',
-    codex_agi_action: 'Mantén tu racha y varía los protocolos.'
+    codex_agi_action: 'Mantén tu racha y varía los protocolos.',
+
+    // Shop Categories
+    shop_tab_titles: 'TÍTULOS',
+    shop_tab_borders: 'MARCOS',
+    shop_tab_avatars: 'AVATARES',
+    shop_tab_backgrounds: 'EFECTOS',
+    shop_tab_post_backgrounds: 'POSTS',
+
+    // Post Backgrounds
+    'post-bg-carbon_name': 'Carbon Scan',
+    'post-bg-carbon_desc': 'Textura de carbono oscuro con línea de escaneo láser.',
+    'post-bg-neon_name': 'Neon Pulse',
+    'post-bg-neon_desc': 'Borde de neón con pulso reactivo vibrante.',
+    'post-bg-matrix_name': 'Matrix Rain',
+    'post-bg-matrix_desc': 'Lluvia de código digital optimizada para tu muro.',
+    'post-bg-inferno_name': 'Inferno Core',
+    'post-bg-inferno_desc': 'Calor extremo con brasas y distorsión térmica.',
+    'post-bg-void_name': 'Void Gravity',
+    'post-bg-void_desc': 'Punto de no retorno con distorsión gravitacional.',
   }
 };
 

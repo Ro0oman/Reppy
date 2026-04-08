@@ -39,6 +39,7 @@ router.get('/feed', authenticate, async (req, res) => {
           u.current_level,
           b.css_value as border_css,
           a.css_value as avatar_css,
+          pb.css_value as post_background_css,
           TO_CHAR(r.date, 'YYYY-MM-DD') as date,
           ds.id as summary_id,
           ds.title,
@@ -57,8 +58,9 @@ router.get('/feed', authenticate, async (req, res) => {
       LEFT JOIN daily_summaries ds ON ds.user_id = r.user_id AND ds.date = r.date
       LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
       LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
+      LEFT JOIN cosmetics pb ON u.equipped_post_background_id = pb.id
       ${whereClause}
-      GROUP BY u.id, r.date, ds.id, b.css_value, a.css_value
+      GROUP BY u.id, r.date, ds.id, b.css_value, a.css_value, pb.css_value
       ORDER BY r.date DESC, MAX(r.created_at) DESC
       LIMIT ${limit} OFFSET $2
     `, params);

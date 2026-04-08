@@ -1,14 +1,28 @@
 <template>
   <div 
     :id="'activity-' + activity.user_id + '-' + activity.date"
-    class="card-stats group relative overflow-hidden flex flex-col gap-6 p-6 sm:p-8 border-border bg-surface/20 backdrop-blur-md transition-all duration-700"
+    class="card-stats group relative overflow-hidden flex flex-col gap-6 p-6 sm:p-8 border-border backdrop-blur-md transition-all duration-700"
     :class="[
+      activity.post_background_css ? 'bg-black' : 'bg-surface/20',
       highlighted ? 'ring-2 ring-primary-500 shadow-[0_0_30px_rgba(255,69,0,0.15)] bg-primary-500/[0.05] border-primary-500/50 scale-[1.01]' : 'hover:border-primary-500/30 hover:shadow-[0_0_40px_rgba(255,69,0,0.05)]'
     ]"
   >
+    <!-- Background Enhancement Layer -->
+    <div v-if="activity.post_background_css" class="absolute inset-0 pointer-events-none overflow-hidden z-0">
+      <div class="absolute inset-0 transition-opacity duration-1000" :class="activity.post_background_css"></div>
+      
+      <!-- Specialized Overlays for specific backgrounds -->
+      <div v-if="activity.post_background_css === 'post-bg-matrix'" class="absolute inset-0 matrix-columns">
+        <div v-for="i in 10" :key="i" class="matrix-column" :style="{ left: (i-1)*10 + '%', animationDelay: (i*0.5) + 's' }"></div>
+      </div>
+      <div v-if="activity.post_background_css === 'post-bg-inferno'" class="absolute inset-0">
+        <div v-for="i in 15" :key="i" class="ember" :style="{ left: Math.random()*100 + '%', animationDelay: Math.random()*5 + 's' }"></div>
+      </div>
+    </div>
     
     <!-- Header: User & Info -->
-    <div class="flex items-start justify-between gap-4">
+    <div class="flex items-start justify-between gap-4 relative z-10 p-4 rounded-2xl"
+         :class="activity.post_background_css ? 'bg-background/20 backdrop-blur-sm' : ''">
       <div class="flex items-center gap-4">
         <div class="relative cursor-pointer hover:scale-105 transition-transform" @click="$emit('viewProfile', activity.user_id)">
           <AvatarFrame 
@@ -37,7 +51,8 @@
     </div>
 
     <!-- Content: Stats & Badges -->
-    <div class="space-y-6">
+    <div class="space-y-6 relative z-10 p-4 rounded-2xl"
+         :class="activity.post_background_css ? 'bg-background/20 backdrop-blur-sm' : ''">
       <div v-if="activity.title || activity.description" class="space-y-2">
         <h3 v-if="activity.title" class="text-xl font-black text-foreground tracking-tight italic uppercase">{{ activity.title }}</h3>
         <p v-if="activity.description" class="text-sm text-muted/80 leading-relaxed font-medium">{{ activity.description }}</p>
@@ -86,7 +101,8 @@
     </div>
 
     <!-- Interactions Footer -->
-    <div class="flex items-center justify-between pt-4 border-t border-border/40">
+    <div class="flex items-center justify-between pt-4 border-t border-border/40 relative z-10 p-4 -mx-4 rounded-b-2xl"
+         :class="activity.post_background_css ? 'bg-background/20 backdrop-blur-sm' : ''">
       <div class="flex items-center gap-6">
         <button 
           @click="$emit('toggleLike')"

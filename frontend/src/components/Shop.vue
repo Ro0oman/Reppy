@@ -112,7 +112,29 @@
                   <!-- Screen Overlay Effect -->
                   <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none"></div>
                   <div class="absolute inset-0 opacity-20 pointer-events-none h-[200%] animate-scanline" style="background: linear-gradient(to bottom, transparent 50%, rgba(34, 211, 238, 0.5) 50.5%, transparent 51%); background-size: 100% 4px;"></div>
-                  <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">PRVW.MODE</div>
+                  <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">SCRN.PRVW</div>
+               </div>
+               <div v-if="item.type === 'post_background'" class="w-full h-full relative group/post-bg overflow-hidden flex items-center justify-center">
+                  <div class="w-[90%] h-[80%] bg-black border border-border rounded-lg relative overflow-hidden flex flex-col p-2 gap-2 shadow-2xl shop-preview">
+                     <div class="w-full h-full absolute inset-0 z-0" :class="item.css_value"></div>
+                     
+                     <!-- Particle Injector for Previews -->
+                     <div v-if="item.css_value === 'post-bg-matrix'" class="absolute inset-0 pointer-events-none z-0 opacity-60">
+                       <div v-for="i in 8" :key="i" class="matrix-column" :style="{ left: (i-1)*12 + '%', animationDelay: (i*0.2) + 's' }"></div>
+                     </div>
+                     <div v-if="item.css_value === 'post-bg-inferno'" class="absolute inset-0 pointer-events-none z-0">
+                       <div v-for="i in 12" :key="i" class="ember" :style="{ left: Math.random()*100 + '%', animationDelay: Math.random()*5 + 's' }"></div>
+                     </div>
+                     <div class="flex items-center gap-2">
+                       <div class="w-4 h-4 rounded-full bg-primary-500/20"></div>
+                       <div class="w-12 h-1 bg-muted/20 rounded"></div>
+                     </div>
+                     <div class="flex-1 space-y-1">
+                       <div class="w-full h-2 bg-foreground/5 rounded"></div>
+                       <div class="w-2/3 h-2 bg-foreground/5 rounded"></div>
+                     </div>
+                  </div>
+                  <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">POST.PRVW</div>
                </div>
             </div>
 
@@ -268,7 +290,32 @@
                     <BackgroundEffect :background-css="item.css_value" is-preview class="!absolute !inset-0 !w-full !h-full transition-transform duration-700 group-hover/item:scale-110" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none"></div>
                     <div class="absolute inset-0 opacity-20 pointer-events-none h-[200%] animate-scanline" style="background: linear-gradient(to bottom, transparent 50%, rgba(34, 211, 238, 0.5) 50.5%, transparent 51%); background-size: 100% 4px;"></div>
-                    <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">SEASONAL.PRVW</div>
+                    <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">SCRN.PRVW</div>
+                 </div>
+                 <div v-if="item.type === 'post_background'" class="w-full h-full relative group/post-bg overflow-hidden flex items-center justify-center">
+                    <div class="w-[90%] h-[80%] bg-black border border-border rounded-lg relative overflow-hidden flex flex-col p-2 gap-2 shadow-2xl shop-preview">
+                       <div class="w-full h-full absolute inset-0 z-0" :class="item.css_value"></div>
+                       
+                       <!-- Particle Injector for Previews -->
+                       <div v-if="item.css_value === 'post-bg-matrix'" class="absolute inset-0 pointer-events-none z-0 opacity-60">
+                         <div v-for="i in 8" :key="i" class="matrix-column" :style="{ left: (i-1)*12 + '%', animationDelay: (i*0.2) + 's' }"></div>
+                       </div>
+                       <div v-if="item.css_value === 'post-bg-inferno'" class="absolute inset-0 pointer-events-none z-0">
+                         <div v-for="i in 12" :key="i" class="ember" :style="{ left: Math.random()*100 + '%', animationDelay: Math.random()*5 + 's' }"></div>
+                       </div>
+
+                        <div class="relative z-10 space-y-2 p-2 rounded-xl bg-background/20 backdrop-blur-sm">
+                          <div class="flex items-center gap-2">
+                            <div class="w-4 h-4 rounded-full bg-primary-500/20"></div>
+                            <div class="w-12 h-1 bg-muted/20 rounded"></div>
+                          </div>
+                          <div class="flex-1 space-y-1">
+                            <div class="w-full h-2 bg-foreground/10 rounded"></div>
+                            <div class="w-2/3 h-2 bg-foreground/10 rounded"></div>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">POST.PRVW</div>
                  </div>
               </div>
               <div class="p-4 pt-2 flex-1">
@@ -321,7 +368,8 @@ const categories = [
   { id: 'title', label: 'cat_title', icon: Type },
   { id: 'border', label: 'cat_border', icon: Frame },
   { id: 'avatar', label: 'cat_avatar', icon: Sparkles },
-  { id: 'background', label: 'cat_background', icon: Sparkles }
+  { id: 'background', label: 'cat_background', icon: Sparkles },
+  { id: 'post_background', label: 'shop_tab_post_backgrounds', icon: LayoutGrid }
 ];
 
 const filteredItems = computed(() => {
@@ -376,6 +424,7 @@ const isEquipped = (item) => {
   if (item.type === 'border') return authStore.user.equipped_border_id === item.id;
   if (item.type === 'background') return authStore.user.equipped_background_id === item.id;
   if (item.type === 'avatar') return authStore.user.equipped_avatar_id === item.id;
+  if (item.type === 'post_background') return authStore.user.equipped_post_background_id === item.id;
   return false;
 };
 
@@ -418,6 +467,7 @@ const equipItem = async (item) => {
     if (item.type === 'border') authStore.user.equipped_border_id = item.id;
     if (item.type === 'avatar') authStore.user.equipped_avatar_id = item.id;
     if (item.type === 'background') authStore.user.equipped_background_id = item.id;
+    if (item.type === 'post_background') authStore.user.equipped_post_background_id = item.id;
     notificationStore.notify(`${item.name} active`, 'success');
   } catch (error) {
     notificationStore.notify('Activation failed', 'error');

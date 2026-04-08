@@ -116,6 +116,8 @@ router.post('/equip/:id', authenticate, async (req, res) => {
         await query('UPDATE users SET equipped_avatar_id = NULL WHERE id = $1', [userId]);
       } else if (typeParam === 'background') {
         await query('UPDATE users SET equipped_background_id = NULL WHERE id = $1', [userId]);
+      } else if (typeParam === 'post_background') {
+        await query('UPDATE users SET equipped_post_background_id = NULL WHERE id = $1', [userId]);
       }
       return res.json({ message: 'Un-equipped successfully' });
     }
@@ -135,6 +137,8 @@ router.post('/equip/:id', authenticate, async (req, res) => {
       await query('UPDATE users SET equipped_avatar_id = $1 WHERE id = $2', [cosmeticId, userId]);
     } else if (type === 'background') {
       await query('UPDATE users SET equipped_background_id = $1 WHERE id = $2', [cosmeticId, userId]);
+    } else if (type === 'post_background') {
+      await query('UPDATE users SET equipped_post_background_id = $1 WHERE id = $2', [cosmeticId, userId]);
     }
 
     res.json({ message: 'Equipped successfully' });

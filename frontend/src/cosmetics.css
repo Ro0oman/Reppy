@@ -50,3 +50,155 @@
   text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
   animation: title-mana-flow 4s linear infinite;
 }
+
+/* --- POST BACKGROUND EFFECTS --- */
+
+/* 1. Carbon Scan */
+.post-bg-carbon {
+  background: radial-gradient(circle, #222 1px, transparent 1px),
+              linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+  background-size: 20px 20px, 100% 100%;
+  position: absolute;
+  inset: 0;
+}
+.post-bg-carbon::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--primary-500), transparent);
+  animation: carbon-scan 4s linear infinite;
+  opacity: 0.3;
+}
+@keyframes carbon-scan {
+  0% { top: 0; }
+  100% { top: 100%; }
+}
+
+/* 2. Neon Pulse */
+.post-bg-neon {
+  background: rgba(var(--primary-500-rgb), 0.05);
+  position: absolute;
+  inset: 0;
+}
+
+/* Using [data-cosmetic-container] to target the parent from the child effect class if needed, 
+   or we just apply the animation to the container if this class is present. */
+.card-stats:has(.post-bg-neon),
+.shop-preview:has(.post-bg-neon) {
+  animation: neon-border-pulse 4s ease-in-out infinite !important;
+  border-width: 1.5px !important;
+}
+
+@keyframes neon-border-pulse {
+  0%, 100% { border-color: rgba(var(--primary-500-rgb), 0.1) !important; box-shadow: 0 0 10px rgba(var(--primary-500-rgb), 0) !important; }
+  50% { border-color: rgba(var(--primary-500-rgb), 0.6) !important; box-shadow: 0 0 25px rgba(var(--primary-500-rgb), 0.15) !important; }
+}
+
+/* 3. Matrix Rain */
+.post-bg-matrix {
+  background: #000500;
+  position: absolute;
+  inset: 0;
+}
+.matrix-column {
+  position: absolute;
+  top: -100px;
+  width: 1px;
+  height: 100px;
+  background: linear-gradient(to bottom, transparent, #00ff41);
+  animation: matrix-fall 2s linear infinite;
+  opacity: 0.4;
+}
+@keyframes matrix-fall {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(500px); }
+}
+
+/* 4. Inferno Core */
+.post-bg-inferno {
+  background: radial-gradient(circle at bottom, #2a0a00 0%, #0a0a0a 100%);
+  position: absolute;
+  inset: 0;
+}
+.ember {
+  position: absolute;
+  bottom: -10px;
+  width: 2px;
+  height: 2px;
+  background: #ff4500;
+  border-radius: 50%;
+  filter: blur(1px);
+  animation: ember-rise 4s ease-out infinite;
+  opacity: 0;
+}
+@keyframes ember-rise {
+  0% { transform: translateY(0) scale(1); opacity: 0; }
+  20% { opacity: 0.6; }
+  100% { transform: translateY(-300px) scale(0); opacity: 0; }
+}
+
+/* 5. Void Gravity (Literal Black Hole) */
+.post-bg-void {
+  background: radial-gradient(circle at center, #0a001a 0%, #000 100%);
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* Accretion Disk (Glow) */
+.post-bg-void::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 60px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 140, 0, 0.5) 20%, 
+    rgba(255, 255, 255, 0.9) 50%, 
+    rgba(255, 140, 0, 0.5) 80%, 
+    transparent 100%
+  );
+  filter: blur(10px);
+  transform: translate(-50%, -50%) rotateX(75deg);
+  animation: void-bh-disk-spin 2s linear infinite;
+  box-shadow: 0 0 50px rgba(255, 140, 0, 0.3);
+}
+
+/* Event Horizon (The Black Hole) */
+.post-bg-void::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 90px;
+  height: 90px;
+  background: #000;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 40px 15px rgba(139, 92, 246, 0.4), 
+              inset 0 0 25px rgba(255,255,255,0.15);
+  z-index: 1;
+}
+
+@keyframes void-bh-disk-spin {
+  from { transform: translate(-50%, -50%) rotateX(75deg) rotateZ(0deg); }
+  to { transform: translate(-50%, -50%) rotateX(75deg) rotateZ(360deg); }
+}
+
+.card-stats:has(.post-bg-void),
+.shop-preview:has(.post-bg-void) {
+  animation: void-gravity-glitch 5s step-end infinite !important;
+}
+
+@keyframes void-gravity-glitch {
+  0% { transform: translate(0) !important; filter: brightness(1) contrast(1) !important; }
+  94% { transform: translate(0) !important; filter: brightness(1) contrast(1) !important; }
+  95% { transform: translate(-3px, 0) skew(5deg) !important; filter: brightness(1.5) contrast(1.5) !important; }
+  96% { transform: translate(3px, 0) skew(-5deg) !important; filter: brightness(0.8) contrast(0.8) !important; }
+  97% { transform: translate(0) !important; filter: brightness(1) contrast(1) !important; }
+}
