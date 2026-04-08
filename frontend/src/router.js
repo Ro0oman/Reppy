@@ -118,9 +118,9 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated) {
     next({ name: 'login' })
   } else if (to.name === 'landing' && isAuthenticated) {
-    next({ name: 'social' })
+    next({ name: 'profile' })
   } else if (to.name === 'login' && isAuthenticated) {
-    next({ name: 'social' })
+    next({ name: 'profile' })
   } else if (to.name === 'dashboard' && !isAuthenticated) {
     // If logged in and goes to landing, maybe stay or go to dashboard?
     // Usually, users want the landing if they aren't forced otherwise.

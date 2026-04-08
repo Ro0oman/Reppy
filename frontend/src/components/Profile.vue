@@ -93,7 +93,7 @@
         
         <!-- Emergency Exit (Logout) -->
         <div v-if="isOwnProfile" class="md:absolute top-8 right-8">
-          <button @click="authStore.logout()" 
+          <button @click="handleLogout" 
                   :title="i18nStore.locale === 'es' ? 'Cerrar sesión / Salir de Reppy' : 'Log out / Exit Reppy'"
                   class="p-4 bg-red-500/5 text-red-500/60 hover:bg-red-500 hover:text-white border border-red-500/10 rounded-2xl transition-all group/logout active:scale-90 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-4 focus:ring-offset-background">
             <LogOut class="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -417,6 +417,11 @@ const saveSettings = async () => {
     Object.assign(user.value, res.data.user);
     notificationStore.notify('Protocol override success', 'success');
   } catch (error) { notificationStore.notify('Override failed', 'error'); }
+};
+
+const handleLogout = () => {
+    authStore.logout();
+    window.location.href = '/';
 };
 
 const fetchProfile = async () => {

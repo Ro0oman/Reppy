@@ -157,12 +157,16 @@ const handleSubmit = async () => {
     } else {
       await authStore.login({ email: form.email, password: form.password });
     }
+    router.push('/profile');
   } catch (error) { errorMessage.value = error.message; }
   finally { loading.value = false; }
 };
 
 const handleLoginSuccess = async (response) => {
-  try { await authStore.loginWithGoogle(response.credential); }
+  try { 
+    await authStore.loginWithGoogle(response.credential);
+    router.push('/profile');
+  }
   catch (error) { console.error('Google link failed:', error); }
 };
 

@@ -82,6 +82,22 @@
                 </p>
               </div>
 
+              <!-- Slide 4: Social -->
+              <div v-if="currentStep === 3" class="space-y-6">
+                <div class="flex items-center gap-6">
+                  <div class="p-5 bg-indigo-500/10 rounded-3xl border border-indigo-500/20">
+                    <MessageSquare class="w-10 h-10 text-indigo-500" />
+                  </div>
+                  <div class="space-y-1">
+                    <h3 class="text-xl font-black text-foreground uppercase tracking-widest">{{ i18n.t('onboarding_social_title') }}</h3>
+                    <div class="h-1 w-12 bg-indigo-500 rounded-full"></div>
+                  </div>
+                </div>
+                <p class="text-lg font-medium text-muted leading-relaxed font-tight">
+                  {{ i18n.t('onboarding_social_desc') }}
+                </p>
+              </div>
+
             </div>
           </Transition>
         </div>
@@ -90,7 +106,7 @@
         <div class="relative z-10 mt-12 flex items-center justify-between">
           <!-- Stepper Dots -->
           <div class="flex items-center gap-2">
-            <div v-for="i in 3" :key="i" 
+            <div v-for="i in 4" :key="i" 
               class="h-1.5 transition-all duration-300 rounded-full"
               :class="currentStep === i-1 ? 'w-8 bg-primary-500' : 'w-1.5 bg-border'">
             </div>
@@ -105,7 +121,7 @@
              
              <button @click="next" 
                class="px-8 py-4 bg-primary-500 hover:bg-primary-600 text-white font-black uppercase tracking-[0.2em] text-xs rounded-2xl shadow-xl shadow-primary-500/20 transition-all flex items-center gap-3">
-               <span>{{ currentStep < 2 ? i18n.t('onboarding_btn_next') : i18n.t('onboarding_btn_finish') }}</span>
+               <span>{{ currentStep < 3 ? i18n.t('onboarding_btn_next') : i18n.t('onboarding_btn_finish') }}</span>
                <ArrowRight class="w-4 h-4" />
              </button>
           </div>
@@ -118,7 +134,7 @@
 
 <script setup>
 import { ref, onBeforeUnmount, watch } from 'vue';
-import { Zap, Flame, ShoppingBag, ArrowRight, X as XIcon } from 'lucide-vue-next';
+import { Zap, Flame, ShoppingBag, MessageSquare, ArrowRight, X as XIcon } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import axios from 'axios';
 
@@ -150,7 +166,7 @@ onBeforeUnmount(() => {
 });
 
 const next = () => {
-  if (currentStep.value < 2) {
+  if (currentStep.value < 3) {
     currentStep.value++;
   } else {
     close();
