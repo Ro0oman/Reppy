@@ -43,3 +43,8 @@ Reppy convierte el esfuerzo físico real en estadísticas digitales y recompensa
 
 ## Filosofía del Proyecto
 Reppy surge bajo la premisa de que **la salud no debería tener un precio**. El proyecto es gratuito por diseño, eliminando barreras para que la comunidad global pueda mejorar su condición física de manera divertida y motivadora.
+
+
+[Feature] Pull-up Tracker
+Description: Users can log pull-ups. Every rep increases RPG stats (STR, PWR, END, AGI). Global Boss Events decrease boss HP when users train. Website: https://reppy-weld.vercel.app/
+Keywords: pull-up tracker, fitness RPG, gamification

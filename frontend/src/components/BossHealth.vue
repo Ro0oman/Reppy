@@ -12,7 +12,7 @@
        
       <div class="flex flex-col md:flex-row items-center gap-6 relative z-10 mb-6">
         <div class="w-24 h-24 bg-surface rounded-[1.5rem] flex items-center justify-center border border-border shadow-2xl overflow-hidden transition-transform duration-500">
-          <img v-if="boss.image_url" :src="boss.image_url" class="w-full h-full object-contain p-1.5" :class="isDefeated ? 'grayscale opacity-50' : ''" />
+          <img v-if="boss.image_url" :src="boss.image_url" :alt="boss.name" class="w-full h-full object-contain p-1.5" :class="isDefeated ? 'grayscale opacity-50' : ''" />
           <span v-else class="text-4xl italic font-black text-foreground">?</span>
         </div>
         
@@ -88,7 +88,7 @@
     <div v-if="nextBoss" class="glass p-5 rounded-3xl border border-dashed border-border opacity-60 hover:opacity-100 transition-opacity flex items-center justify-between group">
        <div class="flex items-center gap-4">
          <div class="w-10 h-10 bg-background rounded-lg p-1 flex items-center justify-center grayscale group-hover:grayscale-0 transition-all text-xs border border-border">
-            <img v-if="nextBoss.image_url" :src="nextBoss.image_url" class="w-full h-full object-contain opacity-40 group-hover:opacity-100" />
+            <img v-if="nextBoss.image_url" :src="nextBoss.image_url" :alt="`Próximo Boss: ${nextBoss.name}`" class="w-full h-full object-contain opacity-40 group-hover:opacity-100" />
             <span v-else class="text-foreground">?</span>
          </div>
          <div>

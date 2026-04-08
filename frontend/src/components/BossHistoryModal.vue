@@ -12,7 +12,7 @@
       <!-- Header -->
       <div class="flex items-center gap-6 mb-10 shrink-0">
         <div class="w-20 h-20 bg-surface rounded-2xl p-2 border border-border flex items-center justify-center">
-            <img v-if="boss?.image_url" :src="boss.image_url" class="w-full h-full object-contain" />
+            <img v-if="boss?.image_url" :src="boss.image_url" :alt="boss?.name || 'Boss image'" class="w-full h-full object-contain" />
             <span v-else class="text-4xl font-black italic text-muted">?</span>
         </div>
         <div class="space-y-1">

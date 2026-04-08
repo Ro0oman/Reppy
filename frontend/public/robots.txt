@@ -1,28 +1,6 @@
-# Reppy - Fitness RPG Calisthenics Tracker
-# https://reppy-weld.vercel.app/
-
+# https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Allow: /
-Disallow: /api/
-Disallow: /node_modules/
 
-# Sitemaps
+# Sitemap
 Sitemap: https://reppy-weld.vercel.app/sitemap.xml
-
-# Crawl-delay suggestion (optional, respected by some bots)
-Crawl-delay: 1
-
-# Google specific
-User-agent: Googlebot
-Allow: /
-Disallow: /api/
-
-# Bing specific
-User-agent: Bingbot
-Allow: /
-Disallow: /api/
-
-# Image crawlers
-User-agent: Googlebot-Image
-Allow: /og-image.png
-Allow: /favicon.svg
