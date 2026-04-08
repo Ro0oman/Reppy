@@ -1,34 +1,45 @@
-# Reppy 🚀 - Fitness RPG MMO
+# Reppy 🚀 - Fitness RPG MMO (Documentación Completa)
 
-Reppy is a fitness RPG ecosystem designed to gamify training (specifically pull-ups). It features a premium glassmorphism interface, RPG progression, an economy system, and global community events.
+> **Reppy es 100% GRATUITO.** No existen muros de pago, suscripciones ni cargos ocultos. Todas las funcionalidades de entrenamiento, comunidad y cosméticos están disponibles libremente para todos los usuarios.
 
-## Core Features
+## Resumen del Proyecto
+Reppy es un ecosistema de fitness gamificado que transforma el entrenamiento físico —especialmente dominadas/pull-ups— en una experiencia de juego de rol masivo (MMO). La plataforma combina mecánicas de RPG con una interfaz premium basada en **glassmorphism**, ofreciendo una experiencia visual de alta gama sin coste alguno.
 
-- **RPG Progression**: Track reps to level up STR (Strength), PWR (Power), END (Endurance), and AGI (Agility).
-- **Economy & Shop**: Earn Reppy Coins and spend them on Legendary Titles and Profile Borders.
-- **Global Boss Events**: Participate in community events like "El Conejo de Acero" with shared HP bars and tiered rewards.
-- **Advanced Visualization**: consistency heatmaps and dynamic stats.
-- **Social Profiles**: Public profiles to showcase attributes and cosmetics.
+## Mecánicas de Juego y Progresión
+Reppy convierte el esfuerzo físico real en estadísticas digitales y recompensas:
 
-## Tech Stack
+* **Sistema de Atributos (RPG):**
+    * **STR (Fuerza):** Incrementa con el volumen total de repeticiones.
+    * **PWR (Potencia):** Basado en la intensidad y explosividad de las series.
+    * **END (Resistencia):** Depende de la consistencia a largo plazo y sesiones de alta repetición.
+    * **AGI (Agilidad):** Mejora según la frecuencia de entrenamiento y la técnica.
+* **Economía Interna (100% gratuita):** Los usuarios ganan **Reppy Coins** exclusivamente entrenando; no se pueden comprar con dinero real.
+* **Tienda de Cosméticos:** Intercambio de Reppy Coins por Títulos Legendarios, Bordes de Perfil y otros elementos visuales.
+* **Eventos Globales de Boss:** Desafíos comunitarios periódicos (por ejemplo, *"El Conejo de Acero"*) donde toda la comunidad comparte una barra de vida (HP) que se reduce realizando repeticiones en el mundo real.
 
-- **Frontend**: Vue 3, Vite, Tailwind CSS, Lucide Icons, Axios.
-- **Backend**: Node.js, Express, JWT, PostgreSQL.
-- **Database**: Supabase / Neon (PostgreSQL).
+## Stack Tecnológico
+* **Frontend:** Vue 3 (Composition API), Vite, Tailwind CSS.
+* **Iconografía:** Lucide Icons.
+* **Backend:** Node.js con Express.
+* **Seguridad:** JWT y OAuth para autenticación y autorización.
+* **Base de Datos:** PostgreSQL, gestionada a través de Supabase o Neon.
 
-## Project Structure
+## Estructura del Repositorio
 
-- `/frontend`: Vue 3 application.
-    - `/src/components`: UI components (Glassmorphism, RPG elements).
-    - `/src/views`: Page views (Dashboard, Shop, Leaderboard, Boss).
-    - `/src/stores`: Pinia stores (Auth, Theme, etc.).
-- `/backend`: Node.js/Express API.
-    - `auth.js`: OAuth and JWT authentication.
-    - `reps.js`: Workout tracking and attribute calculation.
-    - `boss.js`: Global boss event logic.
-    - `shop.js`: Economy and cosmetic transactions.
-    - `schema.sql`: Database schema definition.
+### `/frontend` (Interfaz de Usuario)
+* `src/components`: Componentes reutilizables con lógica de **glassmorphism**.
+* `src/views`:  
+    * `Dashboard` — Visualización de estadísticas, heatmaps de consistencia y progreso.  
+    * `Shop` — Interfaz para intercambio de Reppy Coins por cosméticos.  
+    * `Boss` — Pantalla de eventos globales con sincronización de HP en tiempo real.
+* `src/stores`: Gestión global del estado con Pinia (Auth, Stats, Theme).
 
-## Getting Started
+### `/backend` (Lógica de Negocio)
+* `auth.js` — Gestión de sesiones y seguridad de usuario.
+* `reps.js` — Algoritmo de cálculo de atributos según input de ejercicios.
+* `boss.js` — Lógica de daño persistente y recompensas de eventos globales.
+* `shop.js` — Procesamiento de transacciones dentro de la economía interna.
+* `schema.sql` — Definición relacional de la base de datos.
 
-Refer to [README.md](file:///c:/Users/romai/Documents/GitHub/Reppy/README.md) for detailed setup instructions.
+## Filosofía del Proyecto
+Reppy surge bajo la premisa de que **la salud no debería tener un precio**. El proyecto es gratuito por diseño, eliminando barreras para que la comunidad global pueda mejorar su condición física de manera divertida y motivadora.
