@@ -1,6 +1,7 @@
 import express from 'express';
 import { query } from './db.js';
 import { authenticate } from './middleware.js';
+import { createNotification } from './utils/notifications.js';
 
 const router = express.Router();
 
@@ -38,7 +39,7 @@ router.get('/feed', authenticate, async (req, res) => {
           u.current_level,
           b.css_value as border_css,
           a.css_value as avatar_css,
-          r.date,
+          TO_CHAR(r.date, 'YYYY-MM-DD') as date,
           ds.id as summary_id,
           ds.title,
           ds.description,
@@ -117,6 +118,19 @@ router.post('/like', authenticate, async (req, res) => {
         [summaryId, myUserId, 'LIKE']
       );
       await query('COMMIT');
+      
+      const cleanDate = typeof date === 'string' ? date.substring(0, 10) : date;
+
+      // Trigger Notification
+      await createNotification(
+        TargetUserId, 
+        'LIKE', 
+        myUserId, 
+        'le ha dado like a tu entrenamiento', 
+        cleanDate,
+        TargetUserId
+      );
+
       return res.json({ liked: true });
     }
   } catch (error) {
@@ -166,8 +180,24 @@ router.post('/comment', authenticate, async (req, res) => {
     );
 
     const userRes = await query('SELECT name FROM users WHERE id = $1', [myUserId]);
+    const ownerRes = await query('SELECT name FROM users WHERE id = $1', [targetUserId]);
+    const ownerName = ownerRes.rows[0]?.name || 'un atleta';
     
     await query('COMMIT');
+
+    const cleanDate = typeof date === 'string' ? date.substring(0, 10) : date;
+
+    // 3. Notify Owner (if not self)
+    if (targetUserId !== myUserId) {
+      await createNotification(
+        targetUserId,
+        'COMMENT',
+        myUserId,
+        'ha comentado en tu publicación',
+        cleanDate,
+        targetUserId
+      );
+    }
 
     res.json({ 
       ...result.rows[0], 

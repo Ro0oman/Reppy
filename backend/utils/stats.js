@@ -1,4 +1,5 @@
 import { query } from '../db.js';
+import { createNotification } from './notifications.js';
 
 /**
  * Shared utility to recalculate and sync user stats (total_reps and XP levels)
@@ -80,6 +81,24 @@ export const recalculateUserStats = async (userId) => {
     if (newLevel > newLevelChestsClaimed) {
       additionalChests = newLevel - newLevelChestsClaimed;
       newLevelChestsClaimed = newLevel;
+
+      // Trigger Level Up Notification
+      await createNotification(
+        userId,
+        'LEVEL_UP',
+        null,
+        `¡Has alcanzado el nivel ${newLevel}!`,
+        newLevel.toString()
+      );
+
+      // Trigger New Chest Notification
+      await createNotification(
+        userId,
+        'NEW_CHEST',
+        null,
+        `Has recibido ${additionalChests} cofre(s) por subir de nivel`,
+        'LEVEL_CHEST'
+      );
     }
 
     // 6. Final Sync to Users Table

@@ -9,9 +9,9 @@
       class="border-b border-border bg-surface/40 backdrop-blur-3xl sticky top-0 z-50 transition-all">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
         <!-- Logo Core -->
-        <router-link to="/dashboard" class="flex items-center gap-4 group cursor-pointer outline-none" title="Dashboard / Inicio">
-          <div class="w-10 h-10 bg-primary-500 rounded-2xl flex items-center justify-center font-bold text-white shadow-xl shadow-primary-500/20 transition-transform group-hover:scale-110 group-focus:scale-110 group-focus:ring-2 group-focus:ring-primary-500/50">R</div>
-          <span class="text-2xl font-bold tracking-tight text-foreground font-industrial">Reppy<span class="text-primary-500">.</span></span>
+        <router-link to="/dashboard" class="flex items-center gap-3 group cursor-pointer outline-none" title="Dashboard / Inicio">
+          <div class="w-10 h-10 bg-primary-500 rounded-2xl flex items-center justify-center font-bold text-white shadow-xl shadow-primary-500/20 transition-transform group-hover:scale-110 group-focus:scale-110 group-focus:ring-2 group-focus:ring-primary-500/50 shrink-0">R</div>
+          <span class="text-2xl font-bold tracking-tight text-foreground font-industrial hidden xs:block">Reppy<span class="text-primary-500">.</span></span>
         </router-link>
         
         <!-- Desktop Navigation (Clean Links) -->
@@ -36,7 +36,7 @@
         </div>
 
         <!-- System Status & User Profile -->
-        <div class="flex items-center gap-6">
+        <div class="flex items-center gap-3 sm:gap-6">
           <!-- Desktop GitHub Module -->
           <a href="https://github.com/Ro0oman/Reppy" target="_blank"
             title="GitHub Repository / Código Fuente"
@@ -48,14 +48,30 @@
             </div>
           </a>
 
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2 sm:gap-4">
             <!-- Currency Module -->
              <button @click="showCoinsInfo = true" 
                   :title="i18n.locale === 'es' ? 'Historial de Monedas' : 'Protocol Coins History'"
-                  class="flex items-center gap-3 bg-surface/5 px-4 py-2 rounded-xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-primary-500/50">
+                  class="flex items-center gap-2 bg-surface/5 px-2.5 sm:px-4 py-2 rounded-xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-primary-500/50">
                <Coins class="w-3.5 h-3.5 text-primary-500 transition-transform group-hover:scale-110" />
-               <span class="text-sm font-black text-precision text-foreground">{{ authStore.user?.reppy_coins || 0 }}</span>
+               <span class="text-[12px] sm:text-sm font-black text-precision text-foreground">{{ authStore.user?.reppy_coins || 0 }}</span>
             </button>
+
+            <!-- Notification Bell -->
+            <div class="relative">
+              <button @click="handleBellClick" 
+                      class="p-2 sm:p-2.5 rounded-xl bg-surface/5 border border-border hover:bg-surface/10 transition-all group relative">
+                <Bell class="w-4.5 h-4.5 sm:w-5 sm:h-5 text-muted group-hover:text-primary-500 transition-colors" />
+                <div v-if="notifStore.unreadCount > 0" 
+                     class="absolute -top-1 -right-1 w-4 h-4 bg-primary-500 rounded-full border-2 border-surface flex items-center justify-center">
+                  <span class="text-[8px] font-black text-white">{{ notifStore.unreadCount }}</span>
+                </div>
+              </button>
+              
+              <div v-if="showNotifications" class="absolute right-0 top-full mt-4 z-[100] animate-in slide-in-from-top-2 duration-300">
+                <NotificationsDropdown @close="showNotifications = false" />
+              </div>
+            </div>
 
             <!-- Level Module (Responsive) -->
             <div class="flex items-center gap-3">
@@ -123,6 +139,12 @@
           
           <component :is="nav.icon" class="w-5 h-5" :class="$route.name === nav.id ? 'fill-primary-500/10' : ''" />
           <span class="text-[9px] font-bold tracking-tight">{{ i18n.t(nav.label) }}</span>
+          
+          <!-- Level/Badge logic if needed in custom icon -->
+          <div v-if="nav.id === 'notifications' && notifStore.unreadCount > 0" 
+            class="absolute top-1 right-2 px-1 bg-primary-500 rounded-full border border-background">
+            <span class="text-[7px] font-black text-white">{{ notifStore.unreadCount }}</span>
+          </div>
           
           <!-- Inventory Notification -->
           <div v-if="nav.id === 'inventory' && authStore.user?.boss_chests > 0" 
@@ -232,9 +254,10 @@
 import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
-import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins } from 'lucide-vue-next';
+import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Bell } from 'lucide-vue-next';
 import { useAuthStore } from './stores/auth';
 import { useI18nStore } from './stores/i18n';
+import { useNotificationsStore } from './stores/notifications';
 
 // Components
 import AvatarFrame from './components/AvatarFrame.vue'
@@ -245,9 +268,11 @@ import LevelBar from './components/LevelBar.vue'
 import NotificationToast from './components/NotificationToast.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
 import DamageNumbers from './components/DamageNumbers.vue'
+import NotificationsDropdown from './components/NotificationsDropdown.vue'
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();
+const notifStore = useNotificationsStore();
 const router = useRouter();
 const route = useRoute();
 
@@ -255,6 +280,17 @@ const showEasterModal = ref(false);
 const showRoulette = ref(false);
 const canSpinToday = ref(false);
 const showCoinsInfo = ref(false);
+const showNotifications = ref(false);
+
+const handleBellClick = () => {
+  if (window.innerWidth < 1024) {
+    // Mobile/Tablet: Redirect to page
+    router.push({ name: 'notifications' });
+  } else {
+    // Desktop: Toggle Dropdown
+    showNotifications.value = !showNotifications.value;
+  }
+};
 
 const navLinks = [
   { id: 'dashboard', label: 'nav_dashboard', fallback: 'DASHBOARD', icon: LayoutDashboard },
@@ -268,6 +304,7 @@ const mobileNavLinks = [
   { id: 'shop', icon: Swords, label: 'nav_armory' },
   { id: 'social', icon: Users, label: 'nav_social' },
   { id: 'inventory', icon: Package, label: 'nav_gear' },
+  { id: 'notifications', icon: Bell, label: 'Notif' },
 ];
 
 const earnings = [
@@ -309,6 +346,7 @@ watch(() => authStore.isAuthenticated, (val) => {
 onMounted(async () => {
   if (authStore.isAuthenticated) {
     checkRoulette();
+    notifStore.fetchNotifications();
     if (authStore.user && !authStore.user.has_seen_easter_modal) showEasterModal.value = true;
   }
 });

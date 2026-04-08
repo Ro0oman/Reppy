@@ -32,6 +32,7 @@
           v-for="activity in activities" 
           :key="activity.user_id + activity.date"
           :activity="activity"
+          :highlighted="isHighlighted(activity)"
           @toggleLike="handleLike(activity)"
           @viewProfile="$emit('viewProfile', $event)"
           @edit="openEditModal(activity)"
@@ -97,12 +98,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, reactive } from 'vue';
+import { ref, onMounted, onUnmounted, reactive, watch } from 'vue';
 import axios from 'axios';
 import ActivityCard from './ActivityCard.vue';
 import { ZapOff, X } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
+import { useRoute } from 'vue-router';
 
 const props = defineProps({
     initialFilter: { type: String, default: 'global' }
@@ -112,6 +114,7 @@ const emit = defineEmits(['viewProfile']);
 
 const authStore = useAuthStore();
 const notificationStore = useNotificationStore();
+const route = useRoute();
 
 const activities = ref([]);
 const filter = ref(props.initialFilter);
@@ -140,6 +143,9 @@ const fetchFeed = async () => {
         // Deduplicate or just append if pagination is strictly unique
         activities.value.push(...res.data);
         page.value++;
+
+        // After fetching, check for highlights
+        checkAndScrollToHighlight();
     } catch (e) {
         console.error('Error fetching feed:', e);
     } finally {
@@ -195,6 +201,37 @@ const saveEdit = async () => {
     }
 };
 
+const normalizeDate = (d) => {
+    if (!d) return '';
+    return typeof d === 'string' ? d.substring(0, 10) : d;
+};
+
+const isHighlighted = (activity) => {
+    return normalizeDate(route.query.date) === normalizeDate(activity.date) && 
+           route.query.user === activity.user_id;
+};
+
+const checkAndScrollToHighlight = () => {
+    if (!route.query.date || !route.query.user) return;
+
+    // Small delay to ensure DOM is rendered
+    setTimeout(() => {
+        const qDate = normalizeDate(route.query.date);
+        const qUser = route.query.user;
+        
+        // Find activity by checking normalized dates
+        const activity = activities.value.find(a => normalizeDate(a.date) === qDate && a.user_id === qUser);
+        
+        if (activity) {
+            const id = `activity-${activity.user_id}-${activity.date}`;
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    }, 500);
+};
+
 onMounted(() => {
     fetchFeed();
 
@@ -207,6 +244,18 @@ onMounted(() => {
 
     if (sentinel.value) observer.observe(sentinel.value);
 });
+
+// Watch for route changes (deep-linking while already on the page)
+watch(() => route.query, () => {
+    checkAndScrollToHighlight();
+}, { deep: true });
+
+// Also watch activities to ensure we scroll even if loading was slow
+watch(() => activities.value, (newVal) => {
+    if (newVal.length > 0 && route.query.date) {
+        checkAndScrollToHighlight();
+    }
+}, { deep: true });
 
 onUnmounted(() => {
     if (observer) observer.disconnect();

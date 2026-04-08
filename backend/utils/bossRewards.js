@@ -1,4 +1,5 @@
 import { query } from '../db.js';
+import { createNotification } from './notifications.js';
 
 /**
  * Checks for any defeated bosses the user participated in but hasn't claimed a chest for.
@@ -37,6 +38,16 @@ export async function autoGrantPendingChests(userId) {
         );
         
         await query('COMMIT');
+
+        // Trigger Notification
+        await createNotification(
+          userId,
+          'NEW_CHEST',
+          null,
+          `¡Has recibido ${pendingCount} cofre(s) de jefe!`,
+          'BOSS_CHEST'
+        );
+
         return pendingCount;
       } catch (err) {
         await query('ROLLBACK');

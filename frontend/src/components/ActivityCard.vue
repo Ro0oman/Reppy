@@ -1,5 +1,11 @@
 <template>
-  <div class="card-stats group relative overflow-hidden flex flex-col gap-6 p-6 sm:p-8 border-border bg-surface/20 backdrop-blur-md transition-all hover:border-primary-500/30 hover:shadow-[0_0_40px_rgba(255,69,0,0.05)]">
+  <div 
+    :id="'activity-' + activity.user_id + '-' + activity.date"
+    class="card-stats group relative overflow-hidden flex flex-col gap-6 p-6 sm:p-8 border-border bg-surface/20 backdrop-blur-md transition-all duration-700"
+    :class="[
+      highlighted ? 'ring-2 ring-primary-500 shadow-[0_0_30px_rgba(255,69,0,0.15)] bg-primary-500/[0.05] border-primary-500/50 scale-[1.01]' : 'hover:border-primary-500/30 hover:shadow-[0_0_40px_rgba(255,69,0,0.05)]'
+    ]"
+  >
     
     <!-- Header: User & Info -->
     <div class="flex items-start justify-between gap-4">
@@ -145,13 +151,15 @@ import { useI18nStore } from '../stores/i18n';
 import AvatarFrame from './AvatarFrame.vue';
 import { Heart, MessageSquare, Share2, Edit3, Send, Swords, ChevronRight, Trophy } from 'lucide-vue-next';
 import axios from 'axios';
+import { useRoute } from 'vue-router';
 import { useNotificationStore } from '../stores/notification';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { es } from 'date-fns/locale/es';
 import { enUS } from 'date-fns/locale/en-US';
 
 const props = defineProps({
-  activity: Object
+  activity: Object,
+  highlighted: Boolean
 });
 
 const emit = defineEmits(['toggleLike', 'viewProfile', 'edit', 'commentAdded']);
@@ -159,6 +167,7 @@ const emit = defineEmits(['toggleLike', 'viewProfile', 'edit', 'commentAdded']);
 const authStore = useAuthStore();
 const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
+const route = useRoute();
 
 const showComments = ref(false);
 const commentText = ref('');
@@ -197,9 +206,8 @@ const totalBossDamage = computed(() => {
 });
 
 const timeAgo = computed(() => {
-  const date = new Date(props.activity.date);
-  // Reppy activity date is technically "today" in local time but the feed dates 
-  // are DATE objects. We just show the distance for simplicity.
+  // Append a time to avoid timezone shift issues with date-only strings
+  const date = new Date(props.activity.date + 'T12:00:00'); 
   return formatDistanceToNow(date, { 
     addSuffix: true, 
     locale: i18n.locale === 'es' ? es : enUS 
@@ -253,6 +261,16 @@ watch(showComments, (val) => {
         fetchComments();
     }
 });
+
+// Auto-expand comments if deep-linked via comment action
+watch(() => props.highlighted, (newVal) => {
+    if (newVal && route.query.action === 'comment') {
+        showComments.value = true;
+        // The watch on showComments will call fetchComments() if needed, 
+        // but we call it here to ensure it's fresh for the notification.
+        fetchComments();
+    }
+}, { immediate: true });
 </script>
 
 <style scoped>

@@ -11,6 +11,7 @@ const Profile = () => import('./components/Profile.vue')
 const Login = () => import('./components/Login.vue')
 const AdminPanel = () => import('./components/AdminPanel.vue')
 const ExerciseLanding = () => import('./components/ExerciseLanding.vue')
+const Notifications = () => import('./components/Notifications.vue')
 
 const routes = [
   { 
@@ -61,6 +62,12 @@ const routes = [
     component: AdminPanel, 
     name: 'admin',
     meta: { requiresAuth: true, requiresAdmin: true, title: 'Admin Protocol | Reppy' }
+  },
+  { 
+    path: '/notifications', 
+    component: Notifications, 
+    name: 'notifications',
+    meta: { requiresAuth: true, title: 'Notificaciones | Reppy' }
   },
   // SEO Routes
   { 

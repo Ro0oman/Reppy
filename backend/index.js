@@ -13,6 +13,7 @@ import bossRoutes from './boss.js';
 import profileRoutes from './profile.js';
 import rouletteRoutes from './roulette.js';
 import socialFeedRoutes from './social_feed.js';
+import notificationRoutes from './notifications.js';
 import { query } from './db.js';
 
 
@@ -33,6 +34,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/reps', repsRoutes);
 app.use('/api/social', socialRoutes);
 app.use('/api/social-feed', socialFeedRoutes);
+app.use('/api/notifications', notificationRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/shop', shopRoutes);
@@ -235,7 +237,18 @@ app.get('/api/db/init', async (req, res) => {
       `CREATE INDEX IF NOT EXISTS idx_reps_user_date ON reps(user_id, date)`,
       `CREATE INDEX IF NOT EXISTS idx_summaries_user_date ON daily_summaries(user_id, date)`,
       `CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(user_id_1, user_id_2)`,
-      `CREATE INDEX IF NOT EXISTS idx_inventory_user ON user_inventory(user_id)`
+      `CREATE INDEX IF NOT EXISTS idx_inventory_user ON user_inventory(user_id)`,
+      `CREATE TABLE IF NOT EXISTS notifications (
+        id SERIAL PRIMARY KEY,
+        user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+        type VARCHAR(50) NOT NULL,
+        actor_id VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
+        content TEXT,
+        target_id VARCHAR(255),
+        target_user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+        is_read BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`
     ];
     
     for (const q of queries) {
