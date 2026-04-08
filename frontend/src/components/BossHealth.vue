@@ -1,4 +1,5 @@
 <template>
+  <div class="text-[8px] bg-red-500 text-white p-1 text-center">DEBUG: BossHealth Mounted (boss: {{ boss ? 'YES' : 'NO' }}, loading: {{ loading }})</div>
   <div v-if="loading" class="animate-pulse bg-foreground/5 h-24 rounded-3xl mb-8"></div>
   <div v-else-if="boss" class="space-y-4">
     <!-- Active Boss Card -->
@@ -160,6 +161,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { History } from 'lucide-vue-next';
