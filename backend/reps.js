@@ -4,6 +4,7 @@ import { authenticate } from './middleware.js';
 import { getExerciseRewards, getBossDamageMultiplier } from './utils/rewards.js';
 import { recalculateUserStats } from './utils/stats.js';
 import { trackCoinTransaction } from './utils/transactions.js';
+import { syncBossHealth } from './utils/boss.js';
 
 
 const router = express.Router();
@@ -120,6 +121,7 @@ router.post('/', authenticate, async (req, res) => {
         
         if (newHp === 0) {
           await query(`UPDATE boss_fights SET status = 'defeated' WHERE id = $1`, [boss.id]);
+          await syncBossHealth();
         }
       }
     }
@@ -323,6 +325,7 @@ router.put('/:id', authenticate, async (req, res) => {
       // Check for defeat
       if (newBossHp === 0) {
         await query(`UPDATE boss_fights SET status = 'defeated' WHERE id = $1`, [boss.id]);
+        await syncBossHealth();
       }
     }
 
