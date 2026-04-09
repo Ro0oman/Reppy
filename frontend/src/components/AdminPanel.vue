@@ -57,9 +57,9 @@
             <label class="text-[10px] uppercase font-black text-muted tracking-widest px-1">Descripción</label>
             <input v-model="newCosmetic.description" type="text" class="input-tactical" placeholder="Descripción breve...">
           </div>
-          <div class="space-y-1.5">
-            <label class="text-[10px] uppercase font-black text-muted tracking-widest px-1">CSS / Estilo</label>
-            <input v-model="newCosmetic.css_value" type="text" class="input-tactical" placeholder="Ej: text-pink-500 frame-neon">
+          <div class="md:col-span-3 space-y-1.5">
+            <label class="text-[10px] uppercase font-black text-muted tracking-widest px-1">CSS / Estilo (Clases o código raw)</label>
+            <textarea v-model="newCosmetic.css_value" rows="4" class="input-tactical font-mono text-xs" placeholder="Ej: bg-neural-grid  o  body { background: ... }"></textarea>
           </div>
           <div class="flex items-center gap-3 pt-6">
             <input v-model="newCosmetic.is_seasonal" type="checkbox" id="is_seasonal" class="w-5 h-5 rounded border-white/10 bg-white/5 text-primary-600 focus:ring-primary-500/50">

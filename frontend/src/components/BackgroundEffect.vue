@@ -1,5 +1,6 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
+import { useStyleTag } from '@vueuse/core';
 
 const props = defineProps({
   backgroundCss: {
@@ -12,7 +13,28 @@ const props = defineProps({
   }
 });
 
-const activeEffect = computed(() => props.backgroundCss || 'bg-pure-black');
+const isRawCss = computed(() => {
+  const val = props.backgroundCss;
+  return val && (val.includes('{') || val.includes('@'));
+});
+
+// Manage raw CSS injection
+const { css, load, unload } = useStyleTag('', { id: 'custom-cosmetic-css' });
+
+watch(() => props.backgroundCss, (newVal) => {
+  if (isRawCss.value) {
+    css.value = newVal;
+    load();
+  } else {
+    css.value = '';
+    unload();
+  }
+}, { immediate: true });
+
+const activeEffect = computed(() => {
+  if (isRawCss.value) return 'bg-raw-custom';
+  return props.backgroundCss || 'bg-pure-black';
+});
 
 const eggs = [
   { left: 10, duration: 15, delay: -2, rotation: 45, emoji: '🥚' },

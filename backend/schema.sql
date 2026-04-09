@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS cosmetics (
     description TEXT,
     type VARCHAR(50) NOT NULL, -- 'title', 'border', 'avatar'
     price INTEGER NOT NULL,
-    css_value VARCHAR(255), -- Helper for frontend styling
+    css_value TEXT, -- Helper for frontend styling
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(name)
 );

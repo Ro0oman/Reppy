@@ -78,7 +78,7 @@ app.get('/api/db/init', async (req, res) => {
           description TEXT,
           type VARCHAR(50) NOT NULL,
           price INTEGER NOT NULL,
-          css_value VARCHAR(255),
+          css_value TEXT,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       )`,
       `CREATE TABLE IF NOT EXISTS user_inventory (
