@@ -18,11 +18,11 @@ const isRawCss = computed(() => {
   return val && (val.includes('{') || val.includes('@'));
 });
 
-// Manage raw CSS injection
-const { css, load, unload } = useStyleTag('', { id: 'custom-cosmetic-css' });
+// Manage raw CSS injection (ID removed to avoid conflicts in lists)
+const { css, load, unload } = useStyleTag('');
 
 watch(() => props.backgroundCss, (newVal) => {
-  if (isRawCss.value) {
+  if (isRawCss.value && !props.isPreview) {
     css.value = newVal;
     load();
   } else {
@@ -214,7 +214,7 @@ const matrixColumns = computed(() => {
   left: 0;
   width: 200%;
   height: 100px;
-  background: url('/assets/effects/wave.png');
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
   background-size: 50% 100px;
   opacity: 0.1;
   animation: wave-move 20s linear infinite;
