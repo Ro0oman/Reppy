@@ -224,6 +224,102 @@ const translations = {
     'post-bg-inferno_desc': 'Extreme heat with embers and thermal distortion.',
     'post-bg-void_name': 'Void Gravity',
     'post-bg-void_desc': 'Point of no return with gravitational distortion.',
+
+    // New SEO Sections
+    latest_protocols: 'LATEST PROTOCOLS',
+    news_subtitle: 'Training updates, calisthenics guides, and community news.',
+    view_all_articles: 'View all articles',
+    trending: 'Trending',
+    read_time: 'min read',
+    related_protocols: 'Related Protocols',
+    share_knowledge: 'Share this knowledge',
+    copy_link: 'Copy link',
+    share_x: 'Share on X',
+    share_fb: 'Share on Facebook',
+    share_li: 'Share on LinkedIn',
+    share_wa: 'Share on WhatsApp',
+    back_to_home: 'Back to Home',
+    start_free: 'START FREE',
+
+    // Exercise SEO Cards
+    exercise_king: 'Exercise King',
+    push_power: 'Push Power',
+    full_ecosystem: 'Full Ecosystem',
+    pullup_guide_title: 'How to do your first pull-up: Master Guide',
+    pullup_guide_desc: 'Progression protocols from zero to mastering the bar.',
+    gamification_title: 'Gamification & Calisthenics: Why Reppy Works',
+    gamification_desc: 'The science behind XP points and motivation in fitness.',
+    pullup_seo_title: 'Online Pull-up Counter',
+    pullup_seo_desc: 'Log your pull-ups and compete in the global ranking.',
+    pushup_seo_title: 'Free Push-up Counter',
+    pushup_seo_desc: 'Keep track of your push-ups and level up your attributes.',
+    rpg_protocol_title: 'Explore RPG Protocols',
+    rpg_protocol_desc: 'Discover all of Reppy\'s gamification features.',
+
+    // Exercise Landing - Pull-ups
+    el_pullup_eyebrow: 'Free Pull-up App',
+    el_pullup_h1: 'Online Pull-up Counter with RPG Progression',
+    el_pullup_subtext: 'Log your pull-ups, visualize consistency with heatmaps, and compete in the global calisthenics ranking.',
+    el_pullup_card_label: 'PULL-UP STAT',
+    el_pullup_card_title: 'Monthly Volume',
+    el_pullup_section1_h2: 'What is a pull-up counter for?',
+    el_pullup_section1_body: '<p>Having an exact record of how many pull-ups you do each day is the only real way to ensure <strong>progressive overload</strong>. Our automatic counter doesn\'t just save the number; it assigns it to your Strength and Power attributes.</p><p>Forget about mobile notes. With Reppy, you have a GitHub-style visual history that motivates you to leave no blank spots.</p>',
+    el_pullup_section2_h2: 'How to improve your pull-ups',
+    el_pullup_tip1_title: 'Weekly Volume',
+    el_pullup_tip1_body: 'Don\'t just look for a max in one set. Track the total weekly volume and try to increase it by 5% each month.',
+    el_pullup_tip2_title: 'Grip Variety',
+    el_pullup_tip2_body: 'Combine prone, supine, and neutral pull-ups. Reppy counts them all equally for your level progression.',
+    el_pullup_tip3_title: 'Consistency Over Intensity',
+    el_pullup_tip3_body: 'It\'s better to do 50 pull-ups 5 days a week than one single day of 200. The heatmap will help you see it.',
+    el_pullup_guide_h2: 'Complete Guide to Perfect Pull-ups',
+    el_pullup_article: `
+      <h3>The importance of tracking in calisthenics</h3>
+      <p>Many calisthenics athletes plateau because they don't know exactly how much volume they are handling. A serious <strong>pull-up counter</strong> is the first step out of stagnation. By logging every set, you can observe trends, detect overtraining, or realize you're not training frequently enough.</p>
+      
+      <h3>Technique and Quality</h3>
+      <p>Doing a pull-up isn't just about getting your chin over the bar. It's about scapular control, avoiding kipping, and completing the range of motion. At Reppy, we encourage quality. Every rep you add to the counter should be a "clean" rep.</p>
+      
+      <h3>Why choose Reppy for your pull-ups?</h3>
+      <p>Unlike other generic fitness apps, Reppy is designed by and for <strong>street workout</strong> practitioners. We understand that bodyweight progress is slow but very rewarding. That's why we've gamified the experience: every workout contributes to your global level, allowing you to unlock cosmetics and compete with other athletes worldwide.</p>
+    `,
+
+    // Exercise Landing - Push-ups
+    el_pushup_eyebrow: 'Free Push-up App',
+    el_pushup_h1: 'Online Push-up Counter and Progress Tracker',
+    el_pushup_subtext: 'Keep track of your push-ups, level up your attributes, and maintain peak performance with advanced analytics.',
+    el_pushup_card_label: 'PUSH-UP STAT',
+    el_pushup_card_title: 'Total Endurance',
+    el_pushup_section1_h2: 'Why use a push-up counter?',
+    el_pushup_section1_body: '<p>Push-ups are the foundation of any push routine. Without a <strong>push-up counter</strong>, it\'s easy to lose count in high-volume sets or "lie" to yourself about real progress.</p><p>Logging your sets allows you to see if you\'re improving in endurance or if you need to move to harder variations to keep gaining strength.</p>',
+    el_pushup_section2_h2: 'How to do more push-ups',
+    el_pushup_tip1_title: 'High Frequency',
+    el_pushup_tip1_body: 'Being an exercise with less relative weight, you can train it more frequently. Reppy helps you maintain the daily streak.',
+    el_pushup_tip2_title: 'Push Variations',
+    el_pushup_tip2_body: 'Log anything from diamond push-ups to one-arm push-ups. All contribute to your Strength (STR) attribute.',
+    el_pushup_tip3_title: 'Core Control',
+    el_pushup_tip3_body: 'A push-up is a moving plank. Don\'t forget to keep your core tight to protect your back.',
+    el_pushup_guide_h2: 'Master Guide to Push-ups and Variations',
+    el_pushup_article: `
+      <h3>From beginner to expert</h3>
+      <p>Anyone can start using a <strong>push-up counter</strong>. If you can\'t do a standard push-up, log your inclines. The goal is for the number on your dashboard to go up day after day. Progression is the heart of calisthenics.</p>
+      
+      <h3>Gamified training</h3>
+      <p>Imagine every push-up is a hit to an enemy in an RPG. That\'s Reppy\'s philosophy. By turning physical effort into digital experience (XP) and coins, we reduce the mental friction of starting a workout. It\'s no longer "I have to train," it\'s "I have to level up."</p>
+    `,
+    el_cta_h2: 'Ready to start counting?',
+    el_cta_btn: 'CREATE ACCOUNT NOW',
+    el_cta_footer: '100% FREE · NO CARDS · PURE CALISTHENICS',
+    el_back_home: 'Back to Reppy Home',
+    el_latest_blog: 'Latest from Blog: David Goggins Routine',
+    
+    // Blog List & 404
+    blog_list_title: 'Protocols & Training News',
+    blog_list_subtitle: 'The latest calisthenics guides, mental protocols, and Reppy community updates.',
+    pagination_next: 'Next Page',
+    pagination_prev: 'Previous Page',
+    not_found_title: 'AREA RESTRICTED (404)',
+    not_found_desc: 'The protocol you are looking for has been moved or deleted from the mainframe.',
+    not_found_btn: 'RETURN TO SAFE ZONE',
   },
   es: {
     // Landing
@@ -447,6 +543,102 @@ const translations = {
     'post-bg-inferno_desc': 'Calor extremo con brasas y distorsión térmica.',
     'post-bg-void_name': 'Void Gravity',
     'post-bg-void_desc': 'Punto de no retorno con distorsión gravitacional.',
+
+    // Nuevas Secciones SEO
+    latest_protocols: 'ÚLTIMOS PROTOCOLOS',
+    news_subtitle: 'Actualizaciones de entrenamiento, guías de calistenia y noticias de la comunidad.',
+    view_all_articles: 'Ver todos los artículos',
+    trending: 'Tendencia',
+    read_time: 'min de lectura',
+    related_protocols: 'Protocolos Relacionados',
+    share_knowledge: 'Comparte este conocimiento',
+    copy_link: 'Copiar enlace',
+    share_x: 'Compartir en X',
+    share_fb: 'Compartir en Facebook',
+    share_li: 'Compartir en LinkedIn',
+    share_wa: 'Compartir en WhatsApp',
+    back_to_home: 'Volver a inicio',
+    start_free: 'EMPEZAR GRATIS',
+
+    // Tarjetas SEO de Ejercicio
+    exercise_king: 'Ejercicio Rey',
+    push_power: 'Fuerza de Empuje',
+    full_ecosystem: 'Ecosistema Completo',
+    pullup_guide_title: 'Cómo hacer tu primera dominada: Guía Maestra',
+    pullup_guide_desc: 'Protocolos de progresión desde cero hasta dominar la barra.',
+    gamification_title: 'Gamificación y Calistenia: Por qué funciona Reppy',
+    gamification_desc: 'La ciencia detrás de los puntos de experiencia y la motivación en el fitness.',
+    pullup_seo_title: 'Contador de Dominadas Online',
+    pullup_seo_desc: 'Registra tus pull-ups y compite en el ranking mundial.',
+    pushup_seo_title: 'Contador de Flexiones Gratis',
+    pushup_seo_desc: 'Lleva la cuenta de tus push-ups y sube de nivel tus atributos.',
+    rpg_protocol_title: 'Explorar Protocolos RPG',
+    rpg_protocol_desc: 'Descubre todas las funciones de gamificación de Reppy.',
+
+    // Exercise Landing - Dominadas
+    el_pullup_eyebrow: 'App de Dominadas Gratuita',
+    el_pullup_h1: 'Contador de Dominadas Online con Progresión RPG',
+    el_pullup_subtext: 'Registra tus pull-ups, visualiza tu consistencia con heatmaps y compite en el ranking global de calistenia.',
+    el_pullup_card_label: 'ESTADÍSTICA PULL-UP',
+    el_pullup_card_title: 'Volumen Mensual',
+    el_pullup_section1_h2: '¿Para qué sirve un contador de dominadas?',
+    el_pullup_section1_body: '<p>Tener un registro exacto de cuántas dominadas haces cada día es la única forma real de asegurar una <strong>sobrecarga progresiva</strong>. Nuestro contador automático no solo guarda el número, sino que lo asigna a tus atributos de Fuerza y Potencia.</p><p>Olvídate de las notas del móvil. Con Reppy tienes un historial visual estilo GitHub que te motiva a no dejar huecos en blanco.</p>',
+    el_pullup_section2_h2: 'Cómo mejorar tus dominadas',
+    el_pullup_tip1_title: 'Volumen Semanal',
+    el_pullup_tip1_body: 'No busques solo el máximo en un set. Registra el volumen total semanal y trata de aumentarlo un 5% cada mes.',
+    el_pullup_tip2_title: 'Variedad de Agarre',
+    el_pullup_tip2_body: 'Combina dominadas pronas, supinas y neutras. Reppy cuenta todas por igual para tu progresión de nivel.',
+    el_pullup_tip3_title: 'Constancia sobre Intensidad',
+    el_pullup_tip3_body: 'Es mejor hacer 50 dominadas 5 días a la semana que un solo día de 200. El heatmap te ayudará a verlo.',
+    el_pullup_guide_h2: 'Guía Completa para Dominadas Perfectas',
+    el_pullup_article: `
+      <h3>La importancia del seguimiento en calistenia</h3>
+      <p>Muchos atletas de calistenia se estancan porque no saben exactamente cuánto volumen están manejando. Un <strong>contador de dominadas</strong> serio es el primer paso para salir del estancamiento. Al registrar cada serie, puedes observar tendencias, detectar sobreentrenamiento o, por el contrario, darte cuenta de que no estás entrenando con la frecuencia suficiente.</p>
+      
+      <h3>Técnica y Calidad</h3>
+      <p>Hacer una dominada no es solo subir la barbilla por encima de la barra. Se trata de control escapular, evitar el balanceo (kipping) y completar el rango de movimiento. En Reppy, fomentamos la calidad. Cada repetición que añades al contador debería ser una repetición "limpia".</p>
+      
+      <h3>¿Por qué elegir Reppy para tus pull-ups?</h3>
+      <p>A diferencia de otras aplicaciones de fitness genéricas, Reppy está diseñado por y para personas que practican <strong>street workout</strong>. Entendemos que el progreso en el peso corporal es lento pero muy gratificante. Por eso hemos gamificado la experiencia: cada entrenamiento contribuye a tu nivel global, permitiéndote desbloquear cosméticos y competir con otros atletas de todo el mundo.</p>
+    `,
+
+    // Exercise Landing - Flexiones
+    el_pushup_eyebrow: 'App de Flexiones Gratuita',
+    el_pushup_h1: 'Contador de Flexiones Online y Tracker de Progresión',
+    el_pushup_subtext: 'Lleva la cuenta de tus push-ups, sube de nivel tus atributos y mantén tu rendimiento al máximo con analíticas avanzadas.',
+    el_pushup_card_label: 'ESTADÍSTICA PUSH-UP',
+    el_pushup_card_title: 'Resistencia Total',
+    el_pushup_section1_h2: '¿Por qué usar un contador de flexiones?',
+    el_pushup_section1_body: '<p>Las flexiones son el ejercicio base de cualquier rutina de empuje. Sin un <strong>contador de flexiones</strong>, es fácil perder la cuenta en series de alto volumen o "mentirse" a uno mismo sobre el progreso real.</p><p>Registrar tus series te permite ver si estás mejorando en resistencia (endurance) o si necesitas pasar a variantes más difíciles para seguir ganando fuerza.</p>',
+    el_pushup_section2_h2: 'Cómo hacer más flexiones',
+    el_pushup_tip1_title: 'Frecuencia Alta',
+    el_pushup_tip1_body: 'Al ser un ejercicio con menos peso relativo, puedes entrenarlo con más frecuencia. Reppy te ayuda a mantener la racha diaria.',
+    el_pushup_tip2_title: 'Variantes de Empuje',
+    el_pushup_tip2_body: 'Registra desde flexiones diamante hasta flexiones a una mano. Todas contribuyen a tu atributo de Fuerza (STR).',
+    el_pushup_tip3_title: 'Control del Core',
+    el_pushup_tip3_body: 'Una flexión es una plancha en movimiento. No olvides mantener el abdomen tenso para proteger tu espalda.',
+    el_pushup_guide_h2: 'Guía Maestra de Flexiones y Variantes',
+    el_pushup_article: `
+      <h3>Del principiante al experto</h3>
+      <p>Cualquiera puede empezar a usar un <strong>contador de flexiones</strong>. Si no puedes hacer una flexión estándar, registra tus inclinadas. El objetivo es que el número en tu dashboard suba día a tras día. La progresión es el corazón de la calistenia.</p>
+      
+      <h3>Entrenamiento gamificado</h3>
+      <p>Imagina que cada flexión es un golpe a un enemigo en un RPG. Esa es la filosofía de Reppy. Al convertir el esfuerzo físico en experiencia digital (XP) y monedas, reducimos la fricción mental de empezar un entrenamiento. Ya no es "tengo que entrenar", es "tengo que subir de nivel".</p>
+    `,
+    el_cta_h2: '¿Listo para empezar a contar?',
+    el_cta_btn: 'CREAR CUENTA AHORA',
+    el_cta_footer: '100% GRATIS · SIN TARJETAS · CALISTENIA PURA',
+    el_back_home: 'Volver al Inicio de Reppy',
+    el_latest_blog: 'Último del Blog: Rutina David Goggins',
+    
+    // Blog List & 404
+    blog_list_title: 'Protocolos y Noticias de Entrenamiento',
+    blog_list_subtitle: 'Las últimas guías de calistenia, protocolos mentales y actualizaciones de la comunidad Reppy.',
+    pagination_next: 'Página Siguiente',
+    pagination_prev: 'Página Anterior',
+    not_found_title: 'ÁREA RESTRINGIDA (404)',
+    not_found_desc: 'El protocolo que buscas ha sido movido o eliminado del mainframe.',
+    not_found_btn: 'VOLVER A ZONA SEGURA',
   }
 };
 

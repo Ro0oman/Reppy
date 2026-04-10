@@ -1,6 +1,11 @@
 <template>
-  <div class="min-h-screen flex flex-col items-center bg-deep-abyss selection:bg-primary-500 overflow-hidden">
+  <div class="min-h-screen bg-deep-abyss selection:bg-primary-500 overflow-x-hidden flex flex-col items-center font-industrial text-foreground relative">
     
+    <!-- Fixed Language Switcher for Guest/Landing -->
+    <div class="fixed top-6 right-6 z-[100] animate-in-delay">
+      <LanguageToggle />
+    </div>
+
     <!-- ═══════════════════════════════════════════════════════════
          HERO SECTION — H1 keyword-rich, visible to Google
     ═══════════════════════════════════════════════════════════ -->
@@ -515,32 +520,32 @@
       <div class="flex flex-col md:flex-row items-end justify-between gap-8">
         <div class="space-y-4">
           <h2 class="text-4xl md:text-7xl font-bold tracking-tight text-foreground leading-none uppercase italic text-industrial">
-            ÚLTIMOS <span class="text-primary-500">PROTOCOLOS</span>
+            {{ i18n.t('latest_protocols').split(' ')[0] }} <span class="text-primary-500">{{ i18n.t('latest_protocols').split(' ')[1] }}</span>
           </h2>
           <p class="text-xl text-muted max-w-xl leading-relaxed font-medium">
-            Actualizaciones de entrenamiento, guías de calistenia y noticias de la comunidad.
+            {{ i18n.t('news_subtitle') }}
           </p>
         </div>
-        <router-link to="/blog/rutina-calistenia-david-goggins" class="text-xs font-black text-primary-500 uppercase tracking-[0.4em] hover:text-white transition-all">
-          Ver todos los artículos &rarr;
+        <router-link to="/blog" class="text-xs font-black text-primary-500 uppercase tracking-[0.4em] hover:text-white transition-all">
+          {{ i18n.t('view_all_articles') }} &rarr;
         </router-link>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Post Card 1 -->
-        <router-link to="/blog/rutina-calistenia-david-goggins" class="group card-stats !p-0 overflow-hidden flex flex-col border-border/40 hover:border-primary-500/40">
+        <!-- Post Card 1 (Dynamic) -->
+        <router-link v-for="p in latestPosts" :key="p.slug" :to="`/blog/${p.slug}`" class="group card-stats !p-0 overflow-hidden flex flex-col border-border/40 hover:border-primary-500/40">
           <div class="relative aspect-video overflow-hidden">
-            <img src="/images/blog/rutina-goggins.png" alt="Rutina David Goggins Calistenia" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+            <img :src="p.image" :alt="p.locales[i18n.locale]?.title" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
             <div class="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent"></div>
-            <span class="absolute bottom-4 left-4 px-3 py-1 bg-primary-500 text-[9px] font-black text-white uppercase tracking-widest rounded-lg">Tendencia</span>
+            <span class="absolute bottom-4 left-4 px-3 py-1 bg-primary-500 text-[9px] font-black text-white uppercase tracking-widest rounded-lg">{{ i18n.t('trending') }}</span>
           </div>
           <div class="p-8 space-y-4 flex-grow flex flex-col">
-            <span class="text-[10px] font-black text-muted uppercase tracking-widest">10 Abril, 2026</span>
+            <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ p.date }}</span>
             <h3 class="text-xl font-bold text-foreground group-hover:text-primary-500 transition-colors leading-tight">
-              La Rutina Secreta de David Goggins para Calistenia
+              {{ p.locales[i18n.locale]?.title || p.locales.en.title }}
             </h3>
             <p class="text-sm text-muted/60 leading-relaxed line-clamp-2">
-              Descubre cómo el "hombre más duro del mundo" utiliza las dominadas y flexiones para forjar su mentalidad.
+              {{ p.locales[i18n.locale]?.excerpt || p.locales.en.excerpt }}
             </p>
           </div>
         </router-link>
@@ -710,7 +715,7 @@
           <span class="text-[11px] font-bold tracking-[0.4em] uppercase">Dominadas · Flexiones · Fondos</span>
         </div>
         <div class="flex justify-center gap-6">
-          <router-link to="/blog/rutina-calistenia-david-goggins" class="text-[10px] font-black text-muted hover:text-primary transition-all uppercase tracking-widest">Blog</router-link>
+          <router-link to="/blog" class="text-[10px] font-black text-muted hover:text-primary transition-all uppercase tracking-widest">Blog</router-link>
         </div>
         <p class="text-[10px] text-muted/20 max-w-lg mx-auto leading-relaxed">
           Reppy es un tracker de calistenia con sistema RPG para registrar dominadas, flexiones, 
@@ -722,17 +727,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted, defineAsyncComponent } from 'vue';
+import { ref, onMounted, defineAsyncComponent, computed } from 'vue';
 import axios from 'axios';
 import { 
   Activity, Trophy, Users, Sword, Flame, Plus, 
   ArrowUp, ArrowDown, ArrowDownUp, Dumbbell, ChevronDown,
-  Github, Star
+  Github, Star, MessageCircle
 } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
 import BossHealth from './BossHealth.vue';
 import BossBanner from './BossBanner.vue';
+import LanguageToggle from './LanguageToggle.vue';
+import { blogPosts } from '../blogPosts';
 
 const Leaderboard = defineAsyncComponent(() => import('./Leaderboard.vue'));
 
@@ -740,6 +747,8 @@ const i18n = useI18nStore();
 const authStore = useAuthStore();
 const leaderboardTrigger = ref(null);
 const shouldLoadLeaderboard = ref(false);
+
+const latestPosts = computed(() => blogPosts.slice(0, 3));
 
 defineEmits(['start']);
 
@@ -756,40 +765,56 @@ onMounted(() => {
   }
 });
 
-const faqs = [
+const faqs = computed(() => [
   {
-    q: '¿Reppy es gratis?',
-    a: 'Sí, Reppy es 100% gratuito. Puedes registrarte con Google y empezar a contar tus repeticiones de calistenia sin ningún coste.'
+    q: i18n.locale === 'es' ? '¿Reppy es gratis?' : 'Is Reppy free?',
+    a: i18n.locale === 'es' 
+      ? 'Sí, Reppy es 100% gratuito. Puedes registrarte con Google y empezar a contar tus repeticiones de calistenia sin ningún coste.'
+      : 'Yes, Reppy is 100% free. You can sign up with Google and start counting your calisthenics reps at no cost.'
   },
   {
-    q: '¿Qué ejercicios puedo registrar?',
-    a: 'Puedes registrar dominadas (pull-ups), flexiones (push-ups), fondos (dips), muscle ups y dominadas con lastre (weighted pull-ups).'
+    q: i18n.locale === 'es' ? '¿Qué ejercicios puedo registrar?' : 'What exercises can I track?',
+    a: i18n.locale === 'es'
+      ? 'Puedes registrar dominadas (pull-ups), flexiones (push-ups), fondos (dips), muscle ups y dominadas con lastre (weighted pull-ups).'
+      : 'You can track pull-ups, push-ups, dips, muscle ups, and weighted pull-ups.'
   },
   {
-    q: '¿Cómo funciona el sistema RPG?',
-    a: 'Cada repetición te da Reppy Coins y experiencia en 4 atributos: Fuerza (STR), Potencia (PWR), Resistencia (END) y Agilidad (AGI). Puedes gastar las monedas en la tienda para comprar títulos, marcos y efectos exclusivos.'
+    q: i18n.locale === 'es' ? '¿Cómo funciona el sistema RPG?' : 'How does the RPG system work?',
+    a: i18n.locale === 'es'
+      ? 'Cada repetición te da Reppy Coins y experiencia en 4 atributos: Fuerza (STR), Potencia (PWR), Resistencia (END) y Agilidad (AGI). Puedes gastar las monedas en la tienda para comprar títulos, marcos y efectos exclusivos.'
+      : 'Every rep gives you Reppy Coins and XP in 4 attributes: Strength (STR), Power (PWR), Endurance (END), and Agility (AGI). You can spend coins in the shop to buy exclusive titles, borders, and effects.'
   },
   {
-    q: '¿Qué son los Boss Fights?',
-    a: 'Son eventos comunitarios donde todos los usuarios luchan contra un boss épico. Cada repetición que registras inflige daño al boss. Al derrotarlo, toda la comunidad desbloquea cofres con recompensas exclusivas.'
+    q: i18n.locale === 'es' ? '¿Qué son los Boss Fights?' : 'What are Boss Fights?',
+    a: i18n.locale === 'es'
+      ? 'Son eventos comunitarios donde todos los usuarios luchan contra un boss épico. Cada repetición que registras inflige daño al boss. Al derrotarlo, toda la comunidad desbloquea cofres con recompensas exclusivas.'
+      : 'They are community events where all users fight against an epic boss. Every rep you log deals damage to the boss. Upon defeat, the entire community unlocks chests with exclusive rewards.'
   },
   {
-    q: '¿Puedo ver mi progreso de entrenamiento?',
-    a: 'Sí. Reppy incluye un heatmap de actividad estilo GitHub donde ves todos tus días de entrenamiento, además de estadísticas de racha, volumen total y progreso diario con metas personalizadas.'
+    q: i18n.locale === 'es' ? '¿Puedo ver mi progreso de entrenamiento?' : 'Can I see my training progress?',
+    a: i18n.locale === 'es'
+      ? 'Sí. Reppy incluye un heatmap de actividad estilo GitHub donde ves todos tus días de entrenamiento, además de estadísticas de racha, volumen total y progreso diario con metas personalizadas.'
+      : 'Yes. Reppy includes a GitHub-style activity heatmap where you can see all your training days, plus streak stats, total volume, and daily progress with custom goals.'
   },
   {
-    q: '¿Puedo competir con otros usuarios?',
-    a: 'Sí. Reppy tiene rankings globales filtrados por día, semana, mes y total. También puedes añadir amigos y ver un ranking privado con tu círculo de entrenamiento.'
+    q: i18n.locale === 'es' ? '¿Puedo competir con otros usuarios?' : 'Can I compete with other users?',
+    a: i18n.locale === 'es'
+      ? 'Sí. Reppy tiene rankings globales filtrados por día, semana, mes y total. También puedes añadir amigos y ver un ranking privado con tu círculo de entrenamiento.'
+      : 'Yes. Reppy has global rankings filtered by day, week, month, and all-time. You can also add friends and see a private ranking with your inner circle.'
   },
   {
-    q: '¿Funciona en el móvil?',
-    a: 'Sí. Reppy está optimizado para móvil con una interfaz responsive y una barra de navegación inferior para acceso rápido a todas las secciones.'
+    q: i18n.locale === 'es' ? '¿Funciona en el móvil?' : 'Does it work on mobile?',
+    a: i18n.locale === 'es'
+      ? 'Sí. Reppy está optimizado para móvil con una interfaz responsive y una barra de navegación inferior para acceso rápido a todas las secciones.'
+      : 'Yes. Reppy is mobile-optimized with a responsive interface and a bottom navigation bar for quick access to all sections.'
   },
   {
-    q: '¿Necesito descargar algo?',
-    a: 'No. Reppy es una web app que funciona directamente en tu navegador. No necesitas descargar nada. Compatible con Chrome, Firefox, Safari y Edge.'
+    q: i18n.locale === 'es' ? '¿Necesito descargar algo?' : 'Do I need to download anything?',
+    a: i18n.locale === 'es'
+      ? 'No. Reppy es una web app que funciona directamente en tu navegador. No necesitas descargar nada. Compatible con Chrome, Firefox, Safari y Edge.'
+      : 'No. Reppy is a web app that runs directly in your browser. You don\'t need to download anything. Compatible with Chrome, Firefox, Safari, and Edge.'
   }
-];
+]);
 
 onMounted(async () => {
   // Logic here if needed, but boss logic moved to component

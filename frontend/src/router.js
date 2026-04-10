@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from './stores/auth'
+import { useI18nStore } from './stores/i18n'
 
 // Lazy load components to optimize the landing performance
 const Landing = () => import('./components/Landing.vue')
@@ -12,13 +13,15 @@ const Login = () => import('./components/Login.vue')
 const AdminPanel = () => import('./components/AdminPanel.vue')
 const ExerciseLanding = () => import('./components/ExerciseLanding.vue')
 const Notifications = () => import('./components/Notifications.vue')
+const BlogList = () => import('./components/BlogList.vue')
+const NotFound = () => import('./components/NotFound.vue')
 
 const routes = [
   { 
     path: '/', 
     component: Landing, 
     name: 'landing',
-    meta: { title: 'Reppy – Contador de Dominadas y Calistenia | Tracker Fitness Gamificado' }
+    meta: { titleKey: 'landing_title' }
   },
   { 
     path: '/login', 
@@ -72,23 +75,32 @@ const routes = [
   // SEO Routes
   { 
     path: '/contador-dominadas', 
+    alias: '/pull-up-counter',
     component: ExerciseLanding, 
     name: 'seo-dominadas',
     props: { type: 'dominadas' },
-    meta: { title: 'Contador de Dominadas Gratis – App de Calistenia | Reppy' }
+    meta: { titleKey: 'pullup_seo_title' }
   },
   { 
     path: '/contador-flexiones', 
+    alias: '/push-up-counter',
     component: ExerciseLanding, 
     name: 'seo-flexiones',
     props: { type: 'flexiones' },
-    meta: { title: 'Contador de Flexiones Gratis – App de Calistenia | Reppy' }
+    meta: { titleKey: 'pushup_seo_title' }
   },
   { 
     path: '/app-calistenia', 
-    component: Landing, // For now redirect to landing but with specific SEO intention
+    alias: '/calisthenics-app',
+    component: Landing, 
     name: 'seo-calistenia',
-    meta: { title: 'La mejor App de Calistenia Gratis con RPG | Reppy' }
+    meta: { titleKey: 'hero_eyebrow' }
+  },
+  { 
+    path: '/blog', 
+    component: BlogList, 
+    name: 'blog-list',
+    meta: { titleKey: 'blog_list_title' }
   },
   { 
     path: '/blog/:slug', 
@@ -96,6 +108,12 @@ const routes = [
     name: 'blog-post',
     meta: { title: 'Blog | Reppy' }
   },
+  {
+    path: '/:pathMatch(.*)*',
+    component: NotFound,
+    name: 'not-found',
+    meta: { titleKey: 'not_found_title' }
+  }
 ]
 
 const router = createRouter({
@@ -113,9 +131,12 @@ const router = createRouter({
 // Route Guards
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
+  const i18n = useI18nStore()
   
   // Set page title
-  if (to.meta.title) {
+  if (to.meta.titleKey) {
+    document.title = `${i18n.t(to.meta.titleKey)} | Reppy`
+  } else if (to.meta.title) {
     document.title = to.meta.title
   }
 
@@ -128,8 +149,6 @@ router.beforeEach(async (to, from, next) => {
   } else if (to.name === 'login' && isAuthenticated) {
     next({ name: 'profile' })
   } else if (to.name === 'dashboard' && !isAuthenticated) {
-    // If logged in and goes to landing, maybe stay or go to dashboard?
-    // Usually, users want the landing if they aren't forced otherwise.
     next()
   } else if (to.meta.requiresAdmin && (!authStore.user || !authStore.user.is_admin)) {
     next({ name: 'dashboard' })

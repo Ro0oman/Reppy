@@ -66,6 +66,11 @@
               </div>
             </div>
 
+            <!-- Language Switcher -->
+            <div class="hidden sm:block">
+              <LanguageToggle />
+            </div>
+
             <!-- Level Module (Responsive) -->
             <div class="flex items-center gap-3">
               <!-- Compact for mobile, full for desktop -->
@@ -271,6 +276,7 @@ import NotificationToast from './components/NotificationToast.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
 import DamageNumbers from './components/DamageNumbers.vue'
 import NotificationsDropdown from './components/NotificationsDropdown.vue'
+import LanguageToggle from './components/LanguageToggle.vue'
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();

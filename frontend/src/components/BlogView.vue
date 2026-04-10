@@ -8,21 +8,18 @@
       ></div>
     </div>
 
-    <!-- Navigation Breadcrumbs (SEO benefit) -->
-    <nav class="w-full max-w-6xl px-6 py-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted/60">
-      <router-link to="/" class="hover:text-primary transition-colors">Inicio</router-link>
-      <ChevronRight class="w-3 h-3" />
-      <span class="text-muted/40">Blog</span>
-      <ChevronRight class="w-3 h-3" />
-      <span class="text-foreground truncate max-w-[200px] md:max-w-none">{{ post.title }}</span>
+    <nav class="w-full max-w-6xl px-6 pt-12 pb-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted/40">
+      <router-link to="/" class="hover:text-primary transition-colors">{{ i18n.t('nav_home') }}</router-link>
+      <ChevronRight class="w-3 h-3 opacity-20" />
+      <router-link to="/blog" class="hover:text-primary transition-colors">Blog</router-link>
+      <ChevronRight class="w-3 h-3 opacity-20" />
+      <span class="text-foreground/60 truncate max-w-[200px] md:max-w-none">{{ post.title }}</span>
     </nav>
 
     <!-- Hero Header -->
-    <header class="relative w-full py-20 px-6 overflow-hidden flex flex-col items-center justify-center text-center">
-      <div class="absolute inset-0 pointer-events-none opacity-20">
-        <div class="absolute top-0 right-1/4 w-[400px] h-[400px] bg-primary/20 rounded-full blur-[100px] animate-pulse"></div>
-        <div class="absolute bottom-0 left-1/4 w-[300px] h-[300px] bg-accent/10 rounded-full blur-[80px]"></div>
-      </div>
+      <div class="absolute inset-x-0 top-0 h-full bg-gradient-to-b from-primary/5 to-transparent pointer-events-none opacity-50"></div>
+      <div class="absolute top-0 right-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] animate-pulse pointer-events-none"></div>
+      <div class="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[100px] pointer-events-none"></div>
 
       <div class="max-w-4xl w-full space-y-6 relative z-10">
         <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-surface/80 border border-border/40 rounded-full mb-6">
@@ -44,7 +41,7 @@
           <span class="opacity-20">|</span>
           <div class="flex items-center gap-1.5">
             <Clock class="w-4 h-4" />
-            <span>5 min de lectura</span>
+            <span>5 {{ i18n.t('read_time') }}</span>
           </div>
         </div>
       </div>
@@ -57,10 +54,16 @@
       <main class="lg:col-span-8 space-y-16">
         <!-- Feature Image -->
         <div class="relative group animate-in-delay-2">
-          <div class="absolute inset-0 bg-primary/20 blur-[60px] opacity-0 group-hover:opacity-40 transition-opacity duration-700"></div>
-          <div class="relative rounded-[2.5rem] overflow-hidden border border-border/40 shadow-2xl">
-            <img :src="post.image" :alt="post.title" class="w-full h-auto aspect-video object-cover transform transition-transform duration-1000 group-hover:scale-105" />
-            <div class="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent"></div>
+          <!-- Ambient glow -->
+          <div class="absolute inset-0 bg-primary/10 blur-[100px] opacity-50 group-hover:opacity-100 transition-opacity duration-1000"></div>
+          
+          <div class="relative rounded-[3rem] overflow-hidden border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] bg-surface-dark/20 ring-1 ring-white/5">
+            <img 
+              :src="currentPost.image" 
+              :alt="post.title" 
+              class="w-full h-auto aspect-video object-cover transform transition-transform duration-1000 group-hover:scale-105"
+              @error="(e) => console.error('Image load failed:', currentPost.image)"
+            />
           </div>
         </div>
 
@@ -80,74 +83,74 @@
       <!-- Sidebar (Internal Linking) -->
       <aside class="lg:col-span-4 space-y-10 animate-in-delay-3">
         <div class="card-stats !p-8 space-y-8 !rounded-3xl border-primary/10">
-          <h3 class="text-lg font-black text-foreground uppercase tracking-tight italic border-b border-border/40 pb-4">Protocolos Relacionados</h3>
+          <h3 class="text-lg font-black text-foreground uppercase tracking-tight italic border-b border-border/40 pb-4">{{ i18n.t('related_protocols') }}</h3>
           
           <div class="space-y-6">
             <router-link to="/contador-dominadas" class="group block space-y-2">
               <div class="flex items-center justify-between">
-                <span class="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Ejercicio Rey</span>
+                <span class="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{{ i18n.t('exercise_king') }}</span>
                 <ArrowUpRight class="w-4 h-4 text-muted group-hover:text-primary transition-all" />
               </div>
-              <h4 class="text-md font-bold text-foreground group-hover:text-primary transition-colors">Contador de Dominadas Online</h4>
-              <p class="text-xs text-muted/60 leading-relaxed">Registra tus pull-ups y compite en el ranking mundial.</p>
+              <h4 class="text-md font-bold text-foreground group-hover:text-primary transition-colors">{{ i18n.t('pullup_seo_title') }}</h4>
+              <p class="text-xs text-muted/60 leading-relaxed">{{ i18n.t('pullup_seo_desc') }}</p>
             </router-link>
 
             <router-link to="/contador-flexiones" class="group block space-y-2">
               <div class="flex items-center justify-between">
-                <span class="text-[10px] font-black text-accent uppercase tracking-[0.2em]">Fuerza de Empuje</span>
+                <span class="text-[10px] font-black text-accent uppercase tracking-[0.2em]">{{ i18n.t('push_power') }}</span>
                 <ArrowUpRight class="w-4 h-4 text-muted group-hover:text-accent transition-all" />
               </div>
-              <h4 class="text-md font-bold text-foreground group-hover:text-accent transition-colors">Contador de Flexiones Gratis</h4>
-              <p class="text-xs text-muted/60 leading-relaxed">Lleva la cuenta de tus push-ups y sube de nivel tus atributos.</p>
+              <h4 class="text-md font-bold text-foreground group-hover:text-accent transition-colors">{{ i18n.t('pushup_seo_title') }}</h4>
+              <p class="text-xs text-muted/60 leading-relaxed">{{ i18n.t('pushup_seo_desc') }}</p>
             </router-link>
 
             <router-link to="/app-calistenia" class="group block space-y-2">
               <div class="flex items-center justify-between">
-                <span class="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em]">Ecosistema Completo</span>
+                <span class="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em]">{{ i18n.t('full_ecosystem') }}</span>
                 <ArrowUpRight class="w-4 h-4 text-muted group-hover:text-blue-500 transition-all" />
               </div>
-              <h4 class="text-md font-bold text-foreground group-hover:text-blue-500 transition-colors">Explorar Protocolos RPG</h4>
-              <p class="text-xs text-muted/60 leading-relaxed">Descubre todas las funciones de gamificación de Reppy.</p>
+              <h4 class="text-md font-bold text-foreground group-hover:text-blue-500 transition-colors">{{ i18n.t('rpg_protocol_title') }}</h4>
+              <p class="text-xs text-muted/60 leading-relaxed">{{ i18n.t('rpg_protocol_desc') }}</p>
             </router-link>
           </div>
         </div>
 
         <!-- Social Share CTA -->
         <div class="card-stats !p-8 bg-primary/5 border-primary/20 !rounded-3xl text-center space-y-4">
-          <p class="text-xs font-black text-primary uppercase tracking-widest">Comparte este conocimiento</p>
+          <p class="text-xs font-black text-primary uppercase tracking-widest">{{ i18n.t('share_knowledge') }}</p>
           <div class="flex flex-wrap items-center justify-center gap-4">
             <button 
               @click="sharePost"
               class="w-10 h-10 rounded-full bg-surface border border-border/40 flex items-center justify-center text-muted hover:text-primary transition-all"
-              title="Copiar enlace"
+              :title="i18n.t('copy_link')"
             >
               <Share2 class="w-4 h-4" />
             </button>
             <button 
               @click="shareTwitter"
               class="w-10 h-10 rounded-full bg-surface border border-border/40 flex items-center justify-center text-muted hover:text-primary transition-all"
-              title="Compartir en X (Twitter)"
+              :title="i18n.t('share_x')"
             >
               <Twitter class="w-4 h-4" />
             </button>
             <button 
               @click="shareFacebook"
               class="w-10 h-10 rounded-full bg-surface border border-border/40 flex items-center justify-center text-muted hover:text-primary transition-all"
-              title="Compartir en Facebook"
+              :title="i18n.t('share_fb')"
             >
               <Facebook class="w-4 h-4" />
             </button>
             <button 
               @click="shareLinkedin"
               class="w-10 h-10 rounded-full bg-surface border border-border/40 flex items-center justify-center text-muted hover:text-primary transition-all"
-              title="Compartir en LinkedIn"
+              :title="i18n.t('share_li')"
             >
               <Linkedin class="w-4 h-4" />
             </button>
             <button 
               @click="shareWhatsapp"
               class="w-10 h-10 rounded-full bg-surface border border-border/40 flex items-center justify-center text-muted hover:text-primary transition-all"
-              title="Compartir en WhatsApp"
+              :title="i18n.t('share_wa')"
             >
               <MessageCircle class="w-4 h-4" />
             </button>
@@ -159,11 +162,11 @@
     <!-- CTA Footer -->
     <section class="max-w-4xl w-full px-6 pb-32">
       <div class="p-12 bg-surface/40 border border-border/40 rounded-[3rem] text-center space-y-8 animate-in">
-        <h2 class="text-3xl font-black text-foreground tracking-tight">¿Quieres registrar tus propios límites?</h2>
-        <p class="text-muted text-lg max-w-xl mx-auto">Únete a la legión de atletas que usan Reppy para gamificar su entrenamiento de calistenia.</p>
+        <h2 class="text-3xl font-black text-foreground tracking-tight">{{ i18n.t('hero_subtitle') }}</h2>
+        <p class="text-muted text-lg max-w-xl mx-auto">{{ i18n.t('hero_subtitle') }}</p>
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <button @click="router.push('/login')" class="btn-reppy !px-10">EMPEZAR GRATIS</button>
-          <button @click="router.push('/')" class="text-sm font-bold text-muted hover:text-foreground transition-colors">Volver a inicio &rarr;</button>
+          <button @click="router.push('/login')" class="btn-reppy !px-10">{{ i18n.t('start_free') }}</button>
+          <button @click="router.push('/')" class="text-sm font-bold text-muted hover:text-foreground transition-colors">{{ i18n.t('back_to_home') }} &rarr;</button>
         </div>
       </div>
     </section>
@@ -189,24 +192,32 @@ import {
 } from 'lucide-vue-next';
 import { marked } from 'marked';
 import { blogPosts } from '../blogPosts';
+import { useI18nStore } from '../stores/i18n';
 
 const route = useRoute();
 const router = useRouter();
+const i18n = useI18nStore();
 
-const post = computed(() => {
+const currentPost = computed(() => {
   const slug = route.params.slug;
   return blogPosts.find(p => p.slug === slug) || blogPosts[0];
 });
 
+const post = computed(() => {
+  return currentPost.value.locales[i18n.locale] || currentPost.value.locales.en;
+});
+
 const renderedContent = computed(() => {
-  if (!post.value) return '';
-  return marked(post.value.content);
+  if (!post.value || !post.value.content) return '';
+  // Strip the first H1 to avoid redundancy with the header
+  const cleanContent = post.value.content.replace(/^# .*\n?/, '');
+  return marked(cleanContent);
 });
 
 const formattedDate = computed(() => {
-  if (!post.value) return '';
-  const date = new Date(post.value.date);
-  return new Intl.DateTimeFormat('es-ES', { 
+  if (!currentPost.value) return '';
+  const date = new Date(currentPost.value.date);
+  return new Intl.DateTimeFormat(i18n.locale === 'es' ? 'es-ES' : 'en-US', { 
     day: 'numeric', 
     month: 'long', 
     year: 'numeric' 
