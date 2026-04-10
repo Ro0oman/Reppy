@@ -17,6 +17,7 @@
     </nav>
 
     <!-- Hero Header -->
+    <header class="relative w-full py-20 px-6 overflow-hidden flex flex-col items-center justify-center text-center">
       <div class="absolute inset-x-0 top-0 h-full bg-gradient-to-b from-primary/5 to-transparent pointer-events-none opacity-50"></div>
       <div class="absolute top-0 right-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] animate-pulse pointer-events-none"></div>
       <div class="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[100px] pointer-events-none"></div>
