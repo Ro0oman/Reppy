@@ -3,7 +3,7 @@ export const blogPosts = [
     slug: 'rutina-calistenia-david-goggins',
     date: '2026-04-10',
     author: 'Reppy Editorial Team',
-    image: '/og-image.png',
+    image: '/images/blog/cover-goggins.png',
     locales: {
       es: {
         title: 'La Rutina Secreta de David Goggins para Calistenia: ¿Eres capaz de aguantar?',
