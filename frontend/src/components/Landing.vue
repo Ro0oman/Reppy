@@ -509,6 +509,77 @@
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════
+         LATEST NEWS — Internal linking for SEO
+    ═══════════════════════════════════════════════════════════ -->
+    <section class="max-w-7xl w-full px-6 py-20 md:py-32 space-y-16" id="noticias">
+      <div class="flex flex-col md:flex-row items-end justify-between gap-8">
+        <div class="space-y-4">
+          <h2 class="text-4xl md:text-7xl font-bold tracking-tight text-foreground leading-none uppercase italic text-industrial">
+            ÚLTIMOS <span class="text-primary-500">PROTOCOLOS</span>
+          </h2>
+          <p class="text-xl text-muted max-w-xl leading-relaxed font-medium">
+            Actualizaciones de entrenamiento, guías de calistenia y noticias de la comunidad.
+          </p>
+        </div>
+        <router-link to="/blog/rutina-calistenia-david-goggins" class="text-xs font-black text-primary-500 uppercase tracking-[0.4em] hover:text-white transition-all">
+          Ver todos los artículos &rarr;
+        </router-link>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Post Card 1 -->
+        <router-link to="/blog/rutina-calistenia-david-goggins" class="group card-stats !p-0 overflow-hidden flex flex-col border-border/40 hover:border-primary-500/40">
+          <div class="relative aspect-video overflow-hidden">
+            <img src="/images/blog/rutina-goggins.png" alt="Rutina David Goggins Calistenia" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+            <div class="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent"></div>
+            <span class="absolute bottom-4 left-4 px-3 py-1 bg-primary-500 text-[9px] font-black text-white uppercase tracking-widest rounded-lg">Tendencia</span>
+          </div>
+          <div class="p-8 space-y-4 flex-grow flex flex-col">
+            <span class="text-[10px] font-black text-muted uppercase tracking-widest">10 Abril, 2026</span>
+            <h3 class="text-xl font-bold text-foreground group-hover:text-primary-500 transition-colors leading-tight">
+              La Rutina Secreta de David Goggins para Calistenia
+            </h3>
+            <p class="text-sm text-muted/60 leading-relaxed line-clamp-2">
+              Descubre cómo el "hombre más duro del mundo" utiliza las dominadas y flexiones para forjar su mentalidad.
+            </p>
+          </div>
+        </router-link>
+
+        <!-- Placeholder Post 2 (Internal for Exercise) -->
+        <router-link to="/contador-dominadas" class="group card-stats !p-0 overflow-hidden flex flex-col border-border/40">
+          <div class="relative aspect-video overflow-hidden bg-surface-dark/40 flex items-center justify-center p-12">
+            <ArrowUp class="w-12 h-12 text-primary-500/20 group-hover:scale-125 transition-transform" />
+          </div>
+          <div class="p-8 space-y-4 flex-grow flex flex-col">
+            <span class="text-[10px] font-black text-muted uppercase tracking-widest">Guía de Entrenamiento</span>
+            <h3 class="text-xl font-bold text-foreground group-hover:text-primary-500 transition-colors leading-tight">
+              Cómo hacer tu primera dominada: Guía Maestra
+            </h3>
+            <p class="text-sm text-muted/60 leading-relaxed line-clamp-2">
+              Protocolos de progresión desde cero hasta dominar la barra.
+            </p>
+          </div>
+        </router-link>
+
+        <!-- Placeholder Post 3 (Internal for General SEO) -->
+        <router-link to="/app-calistenia" class="group card-stats !p-0 overflow-hidden flex flex-col border-border/40">
+          <div class="relative aspect-video overflow-hidden bg-surface-dark/40 flex items-center justify-center p-12">
+            <Sword class="w-12 h-12 text-accent/20 group-hover:scale-125 transition-transform" />
+          </div>
+          <div class="p-8 space-y-4 flex-grow flex flex-col">
+            <span class="text-[10px] font-black text-muted uppercase tracking-widest">Ecosistema RPG</span>
+            <h3 class="text-xl font-bold text-foreground group-hover:text-accent transition-colors leading-tight">
+              Gamificación y Calistenia: Por qué funciona Reppy
+            </h3>
+            <p class="text-sm text-muted/60 leading-relaxed line-clamp-2">
+              La ciencia detrás de los puntos de experiencia y la motivación en el fitness.
+            </p>
+          </div>
+        </router-link>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
          HOW TO USE — Step by step (FAQish long-form)
     ═══════════════════════════════════════════════════════════ -->
     <section class="max-w-5xl w-full px-6 py-16 md:py-24 space-y-12" id="como-funciona">
