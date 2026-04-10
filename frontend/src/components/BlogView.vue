@@ -63,7 +63,7 @@
               :src="currentPost.image" 
               :alt="post.title" 
               class="w-full h-auto aspect-video object-cover transform transition-transform duration-1000 group-hover:scale-105"
-              @error="(e) => console.error('Image load failed:', currentPost.image)"
+              @error="handleImageError"
             />
           </div>
         </div>
@@ -252,6 +252,12 @@ const updateScroll = () => {
 };
 
 // Social Functions
+const handleImageError = (e) => {
+  console.warn('[REPPY_IMAGE_RECOVERY] Local asset not found, switching to production fallback.');
+  // High quality calisthenics fallback from Unsplash
+  e.target.src = 'https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?auto=format&fit=crop&w=1200&q=80';
+};
+
 const sharePost = async () => {
   const url = window.location.href;
   const title = post.value.title;

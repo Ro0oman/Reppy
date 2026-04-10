@@ -535,8 +535,13 @@
         <!-- Post Card 1 (Dynamic) -->
         <router-link v-for="p in latestPosts" :key="p.slug" :to="`/blog/${p.slug}`" class="group card-stats !p-0 overflow-hidden flex flex-col border-border/40 hover:border-primary-500/40">
           <div class="relative aspect-video overflow-hidden">
-            <img :src="p.image" :alt="p.locales[i18n.locale]?.title" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-            <div class="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent"></div>
+            <img 
+              :src="p.image" 
+              :alt="p.locales[i18n.locale]?.title" 
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+              @error="(e) => e.target.src = 'https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?auto=format&fit=crop&w=800&q=60'"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent"></div>
             <span class="absolute bottom-4 left-4 px-3 py-1 bg-primary-500 text-[9px] font-black text-white uppercase tracking-widest rounded-lg">{{ i18n.t('trending') }}</span>
           </div>
           <div class="p-8 space-y-4 flex-grow flex flex-col">

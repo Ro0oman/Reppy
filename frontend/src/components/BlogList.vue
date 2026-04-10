@@ -30,7 +30,12 @@
           class="group card-stats !p-0 overflow-hidden flex flex-col border-border/40 hover:border-primary-500/40"
         >
           <div class="relative aspect-video overflow-hidden">
-            <img :src="post.image" :alt="post.locales[i18n.locale]?.title" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+            <img 
+              :src="post.image" 
+              :alt="post.locales[i18n.locale]?.title" 
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+              @error="(e) => e.target.src = 'https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?auto=format&fit=crop&w=800&q=60'"
+            />
             <div class="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent"></div>
           </div>
           <div class="p-8 space-y-4 flex-grow flex flex-col">
