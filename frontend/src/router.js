@@ -90,6 +90,12 @@ const routes = [
     name: 'seo-calistenia',
     meta: { title: 'La mejor App de Calistenia Gratis con RPG | Reppy' }
   },
+  { 
+    path: '/blog/:slug', 
+    component: () => import('./components/BlogView.vue'), 
+    name: 'blog-post',
+    meta: { title: 'Blog | Reppy' }
+  },
 ]
 
 const router = createRouter({

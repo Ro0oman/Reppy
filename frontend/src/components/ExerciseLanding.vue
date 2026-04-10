@@ -105,6 +105,9 @@
       <router-link to="/" class="text-xs font-black text-primary-500 hover:text-white transition-all uppercase tracking-widest">
         &larr; Volver al Inicio de Reppy
       </router-link>
+      <div class="mt-4">
+        <router-link to="/blog/rutina-calistenia-david-goggins" class="text-[10px] font-black text-muted/40 hover:text-primary transition-all uppercase tracking-widest">Último del Blog: Rutina David Goggins</router-link>
+      </div>
     </footer>
   </div>
 </template>

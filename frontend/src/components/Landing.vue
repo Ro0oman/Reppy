@@ -638,6 +638,9 @@
           <div class="w-1 h-1 bg-border/40 rounded-full hidden md:block"></div>
           <span class="text-[11px] font-bold tracking-[0.4em] uppercase">Dominadas · Flexiones · Fondos</span>
         </div>
+        <div class="flex justify-center gap-6">
+          <router-link to="/blog/rutina-calistenia-david-goggins" class="text-[10px] font-black text-muted hover:text-primary transition-all uppercase tracking-widest">Blog</router-link>
+        </div>
         <p class="text-[10px] text-muted/20 max-w-lg mx-auto leading-relaxed">
           Reppy es un tracker de calistenia con sistema RPG para registrar dominadas, flexiones, 
           fondos, muscle ups y dominadas con lastre. Disponible en español e inglés.
