@@ -4,6 +4,8 @@ import { authenticate, optionalAuthenticate } from './middleware.js';
 import { autoGrantPendingChests } from './utils/bossRewards.js';
 import { trackCoinTransaction } from './utils/transactions.js';
 
+import { getRandomPhrase } from './utils/bossPhrases.js';
+
 const router = express.Router();
 
 // Get active or upcoming boss
@@ -110,7 +112,11 @@ router.get('/active', optionalAuthenticate, async (req, res) => {
     const top_damage_dealer = topParticipantRes.rows[0] || null;
 
     res.json({
-      boss: { ...boss, starts_in: null },
+      boss: { 
+        ...boss, 
+        starts_in: null,
+        active_phrase: getRandomPhrase(boss.name)
+      },
       next_boss: req.user ? next_boss : null,
       personal_damage,
       daily_damage,

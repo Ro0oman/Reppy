@@ -24,10 +24,20 @@
             <button @click="showHelp = true" class="w-4 h-4 rounded-full bg-muted/10 flex items-center justify-center text-foreground text-[10px] font-bold hover:bg-primary-500 hover:text-white transition-colors">?</button>
           </div>
           <div class="flex flex-col md:flex-row md:items-baseline gap-2 mb-2">
-            <h3 class="text-2xl font-black italic tracking-tighter text-foreground uppercase leading-none">{{ boss.name }}</h3>
-            <span v-if="isDefeated" class="text-[9px] bg-emerald-500 text-black px-2 py-0.5 rounded-full font-black uppercase tracking-widest w-fit mx-auto md:mx-0">Derrotado</span>
-          </div>
-          <p class="text-sm text-muted font-medium max-w-xl">{{ boss.description }}</p>
+          <h3 class="text-2xl font-black italic tracking-tighter text-foreground uppercase leading-none">{{ boss.name }}</h3>
+          <span v-if="isDefeated" class="text-[9px] bg-emerald-500 text-black px-2 py-0.5 rounded-full font-black uppercase tracking-widest w-fit mx-auto md:mx-0">Derrotado</span>
+        </div>
+        
+        <div v-if="boss.active_phrase" class="mb-3">
+          <p class="text-primary-500 font-bold italic text-sm md:text-base border-l-2 border-primary-500 pl-3 py-1 animate-in fade-in slide-in-from-left-4 duration-500">
+            "{{ boss.active_phrase }}"
+          </p>
+          <p class="text-[8px] font-black text-muted/20 uppercase tracking-[0.1em] mt-1 pl-4">
+            Actualiza para ver nuevas frases
+          </p>
+        </div>
+
+        <p class="text-sm text-muted font-medium max-w-xl opacity-70 leading-relaxed">{{ boss.description }}</p>
         </div>
 
         <div class="text-center md:text-right">

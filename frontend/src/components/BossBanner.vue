@@ -23,8 +23,17 @@
           {{ boss.name }}
         </div>
         
-        <p class="text-base md:text-l text-muted font-medium max-w-2xl leading-relaxed italic">
-          "{{ boss.description }}"
+        <p v-if="boss.active_phrase" class="text-primary-500 font-bold italic text-lg md:text-xl border-l-2 border-primary-500 pl-4 py-1 animate-in fade-in slide-in-from-left-4 duration-700">
+          "{{ boss.active_phrase }}"
+        </p>
+        
+        <p class="text-base md:text-l text-muted font-medium max-w-2xl leading-relaxed opacity-80">
+          {{ boss.description }}
+        </p>
+
+        <!-- Discrete Refresh Hint -->
+        <p class="text-[9px] font-black text-muted/20 uppercase tracking-[0.2em] pt-2">
+          Actualiza la página para ver nuevas frases
         </p>
       </div>
     </div>
