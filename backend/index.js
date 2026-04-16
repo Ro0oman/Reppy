@@ -3,6 +3,10 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+
+// 1. Initialize environment variables first
+dotenv.config();
+
 import authRoutes from './auth.js';
 import repsRoutes from './reps.js';
 import socialRoutes from './social.js';
@@ -16,11 +20,7 @@ import socialFeedRoutes from './social_feed.js';
 import notificationRoutes from './notifications.js';
 import { query } from './db.js';
 import { blogData } from './blogData.js';
-
-
 import adminRoutes from './admin.js';
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -31,32 +31,41 @@ app.use(morgan('dev'));
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ limit: '5mb', extended: true }));
 
-app.use('/api/auth', authRoutes);
-app.use('/api/reps', repsRoutes);
-app.use('/api/social', socialRoutes);
-app.use('/api/social-feed', socialFeedRoutes);
-app.use('/api/notifications', notificationRoutes);
-app.use('/api/leaderboard', leaderboardRoutes);
-app.use('/api/users', usersRoutes);
-app.use('/api/shop', shopRoutes);
-app.use('/api/boss', bossRoutes);
-app.use('/api/profile', profileRoutes);
-app.use('/api/roulette', rouletteRoutes);
-app.use('/api/admin', adminRoutes);
+// Create a main router for all API endpoints to handle optional /api prefix
+const apiRouter = express.Router();
 
-// Health check route (doesn't use DB, useful for verifying server is up)
-app.get('/api/health', (req, res) => {
+apiRouter.use('/auth', authRoutes);
+apiRouter.use('/reps', repsRoutes);
+apiRouter.use('/social', socialRoutes);
+apiRouter.use('/social-feed', socialFeedRoutes);
+apiRouter.use('/notifications', notificationRoutes);
+apiRouter.use('/leaderboard', leaderboardRoutes);
+apiRouter.use('/users', usersRoutes);
+apiRouter.use('/shop', shopRoutes);
+apiRouter.use('/boss', bossRoutes);
+apiRouter.use('/profile', profileRoutes);
+apiRouter.use('/roulette', rouletteRoutes);
+apiRouter.use('/admin', adminRoutes);
+
+// Health check (within router)
+apiRouter.get('/health', (req, res) => {
   res.json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
-    env: process.env.NODE_ENV || 'development'
+    env: process.env.NODE_ENV || 'development',
+    vercel: process.env.VERCEL || '0'
   });
 });
 
-// --- DYNAMIC SEO BLOG ROUTES ---
+// Mounting the router at both /api and /
+// This ensures that hits to either /api/auth or just /auth (if stripped by Vercel) work.
+app.use('/api', apiRouter);
+app.use('/', apiRouter);
+
+// --- DYNAMIC SEO BLOG ROUTES (within apiRouter) ---
 
 // 1. Dynamic Sitemap API
-app.get('/api/sitemap', (req, res) => {
+apiRouter.get('/sitemap', (req, res) => {
   const BASE_URL = 'https://reppy-weld.vercel.app';
   const today = new Date();
   
@@ -100,8 +109,8 @@ app.get('/api/sitemap', (req, res) => {
   res.send(xml);
 });
 
-// 2. Blog JSON API (Internal use)
-app.get('/api/blog', (req, res) => {
+// 2. Blog JSON API
+apiRouter.get('/blog', (req, res) => {
   const today = new Date();
   const publishedPosts = blogData.filter(post => new Date(post.date) <= today);
   res.json(publishedPosts);
@@ -109,7 +118,8 @@ app.get('/api/blog', (req, res) => {
 
 
 // Automated DB initialization for the user
-app.get('/api/db/init', async (req, res) => {
+// Automated DB initialization for the user
+apiRouter.get('/db/init', async (req, res) => {
   try {
     const queries = [
       `CREATE TABLE IF NOT EXISTS users (
@@ -342,6 +352,12 @@ app.get('/api/db/init', async (req, res) => {
   }
 });
 
+// Root welcome route
+apiRouter.get('/', (req, res) => {
+  res.json({ message: 'Reppy API is running' });
+});
+
+// Root welcome route (redundant for safety)
 app.get('/', (req, res) => {
   res.json({ message: 'Reppy API is running' });
 });
