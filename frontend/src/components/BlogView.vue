@@ -262,15 +262,25 @@ const renderedContent = computed(() => {
   // Strip the first H1 to avoid redundancy with the header
   let cleanContent = post.value.content.replace(/^# .*\n?/, '');
   
-  // Custom Table rendering Enhancement
-  // (Marked already handles tables, but we will add IDs to Headings for TOC)
-  const renderer = new marked.Renderer();
-  renderer.heading = (text, level) => {
-    const id = text.toLowerCase().replace(/[^\w]+/g, '-');
-    return `<h${level} id="${id}">${text}</h${level}>`;
-  };
+  // Custom Table rendering Enhancement for TOC
+  marked.use({
+    renderer: {
+      heading(token) {
+        if (!token.depth) {
+            // Fallback for older versions if somehow loaded
+            const text = arguments[0];
+            const level = arguments[1];
+            const id = text.toLowerCase().replace(/[^\w]+/g, '-');
+            return `<h${level} id="${id}">${text}</h${level}>`;
+        }
+        const text = this.parser.parseInline(token.tokens);
+        const id = token.text.toLowerCase().replace(/[^\w]+/g, '-');
+        return `<h${token.depth} id="${id}">${text}</h${token.depth}>`;
+      }
+    }
+  });
 
-  return marked(cleanContent, { renderer });
+  return marked.parse(cleanContent);
 });
 
 // TOC Generation
