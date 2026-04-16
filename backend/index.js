@@ -44,6 +44,15 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/roulette', rouletteRoutes);
 app.use('/api/admin', adminRoutes);
 
+// Health check route (doesn't use DB, useful for verifying server is up)
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV || 'development'
+  });
+});
+
 // --- DYNAMIC SEO BLOG ROUTES ---
 
 // 1. Dynamic Sitemap API
@@ -337,8 +346,25 @@ app.get('/', (req, res) => {
   res.json({ message: 'Reppy API is running' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// Start server only in development or if not imported as a module
+if (process.env.NODE_ENV !== 'production' && process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('SERVER_ERROR:', {
+    message: err.message,
+    stack: err.stack,
+    path: req.path,
+    method: req.method
+  });
+  res.status(500).json({ 
+    error: 'Internal Server Error',
+    message: process.env.NODE_ENV === 'development' ? err.message : 'An unexpected error occurred'
+  });
 });
 
 export default app;
