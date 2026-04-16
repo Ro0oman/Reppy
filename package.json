@@ -1,6 +1,7 @@
 {
   "name": "reppy-monorepo",
   "private": true,
+  "type": "module",
   "workspaces": [
     "frontend",
     "backend"
