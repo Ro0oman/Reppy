@@ -1,10 +1,10 @@
 {
   "version": 2,
+  "outputDirectory": "frontend/dist",
   "rewrites": [
     { "source": "/sitemap.xml", "destination": "/api/sitemap" },
     { "source": "/api/(.*)", "destination": "/api/index.js" },
-    { "source": "/((?!api/|assets/|src/|favicon|og-image|manifest|robots|sitemap).*)", "destination": "/frontend/index.html" },
-    { "source": "/(.*)", "destination": "/frontend/$1" }
+    { "source": "/((?!api/|_nuxt/|assets/|src/|favicon|og-image|manifest|robots|sitemap).*)", "destination": "/index.html" }
   ],
   "headers": [
     {
