@@ -6,7 +6,6 @@ const lastmod = new Date().toISOString();
 
 const staticRoutes = [
   { path: '/', priority: '1.0', changefreq: 'daily' },
-  { path: '/login', priority: '0.5', changefreq: 'monthly' },
   { path: '/contador-dominadas', priority: '0.9', changefreq: 'weekly' },
   { path: '/contador-flexiones', priority: '0.9', changefreq: 'weekly' },
   { path: '/app-calistenia', priority: '0.8', changefreq: 'weekly' },

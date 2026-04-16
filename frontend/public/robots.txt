@@ -1,6 +1,19 @@
-# https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Allow: /
+Allow: /blog
+Allow: /contador-dominadas
+Allow: /contador-flexiones
+Allow: /app-calistenia
 
-# Sitemap
+# Disallow Private & Auth Routes
+Disallow: /login
+Disallow: /dashboard
+Disallow: /social
+Disallow: /inventory
+Disallow: /shop
+Disallow: /profile
+Disallow: /admin
+Disallow: /notifications
+Disallow: /api
+
 Sitemap: https://reppy-weld.vercel.app/sitemap.xml
