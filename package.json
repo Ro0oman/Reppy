@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "build": "cd frontend && npm run build",
+    "sync-blog": "cp backend/blogData.json frontend/src/blogPosts.json",
     "install:all": "npm install"
   }
 }

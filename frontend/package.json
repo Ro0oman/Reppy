@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "sitemap": "node scripts/generate-sitemap.js",
-    "build": "npm run sitemap && vite build",
+    "sync-blog": "cp ../backend/blogData.json ./src/blogPosts.json",
+    "build": "npm run sync-blog && npm run sitemap && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
