@@ -117,6 +117,7 @@
       <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 text-muted/40">
         <span class="text-[10px] font-medium tracking-wider">Reppy Core © 2026</span>
         <div class="flex items-center gap-6">
+          <router-link to="/blog" class="text-[10px] font-medium tracking-wider hover:text-primary-500 transition-colors">Blog</router-link>
           <span class="text-[10px] font-medium tracking-wider">Privacy Protocol</span>
           <span class="text-[10px] font-medium tracking-wider">System Status: Optimal</span>
           

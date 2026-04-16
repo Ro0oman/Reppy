@@ -100,5 +100,111 @@ Don't try to be David Goggins today. Try to be better than you were yesterday. L
 `
       }
     }
+  },
+  {
+    slug: 'fitness-rpg-boss-fights',
+    date: '2026-04-16',
+    author: 'Reppy Editorial Team',
+    image: '/images/blog/cover-boss-fight.png',
+    locales: {
+      es: {
+        title: 'Fitness RPG: Cómo derrotar bosses comunitarios entrenando calistenia',
+        excerpt: '¿Te cuesta mantener la motivación en la barra de dominadas? Descubre cómo Reppy transforma tu entrenamiento en una batalla épica contra jefes legendarios.',
+        keywords: ['gamificación', 'calistenia', 'boss fight', 'RPG fitness', 'motivación', 'entrenamiento divertido', 'comunidad'],
+        content: `
+# Fitness RPG: Convirtiendo el Sudor en Daño Crítico
+
+¿Recuerdas esa sensación de satisfacción al derrotar a un jefe final en tu videojuego favorito? Ese chute de dopamina es lo que nos mantiene pegados a la pantalla. Pero, ¿y si pudieras sentir lo mismo cada vez que terminas una serie de dominadas? Bienvenido al **Fitness RPG**.
+
+En **Reppy**, hemos tomado los elementos más adictivos de los juegos de rol y los hemos aplicado al mundo de la calistenia. Ya no estás simplemente "haciendo ejercicio"; estás participando en un **Protocolo de Batalla**.
+
+## El Concepto de Boss Fight Comunitario
+
+La joya de la corona de Reppy son los **Boss Fights**. Estos no son simples retos individuales, sino eventos globales donde toda la comunidad une fuerzas. 
+
+Cuando un Boss aparece en el dashboard, tiene una cantidad masiva de puntos de vida (HP). Para derrotarlo, la comunidad debe registrar repeticiones. 
+- Cada **dominada** inflige daño masivo.
+- Cada **flexión** debilita su defensa.
+- Cada **fondo** o **muscle-up** es un golpe crítico.
+
+[Únete a la caza y derrota al Boss actual](/dashboard)
+
+## Cómo la Gamificación Hackea tu Cerebro
+
+La ciencia detrás de la [gamificación en la salud](https://www.nature.com/articles/s41591-018-0263-x) es clara: los sistemas de recompensa inmediata aumentan la adherencia al ejercicio. En Reppy, cada repetición te otorga:
+
+1. **Reppy Coins**: Monedas virtuales para gastar en la [Armería](/armeria).
+2. **Experiencia (XP)**: Para subir el nivel de tus atributos (STR, PWR, END, AGI).
+3. **Botín**: Al derrotar a un Boss, todos los participantes reciben cofres con marcos de avatar y títulos exclusivos.
+
+## Entrenar con Propósito
+
+Muchos atletas de calistenia abandonan porque no ven resultados físicos rápidos. Sin embargo, en un sistema RPG, los resultados son **cuantificables e instantáneos**. Ver tu barra de experiencia subir tras una sesión agónica es la prueba visual de que estás mejorando, incluso si el espejo aún no lo refleja.
+
+### Atributos que defines en cada barra:
+- **Fuerza (STR)**: Dominadas y Flexiones.
+- **Potencia (PWR)**: Muscle Ups y Lastre.
+- **Resistencia (END)**: Volumen total.
+- **Agilidad (AGI)**: Consistencia diaria.
+
+## Conclusión
+
+El fitness no tiene por qué ser aburrido o solitario. En Reppy, cada entrenamiento cuenta para algo más grande. Así que la próxima vez que te sientas cansado, recuerda: **el Boss no se va a derrotar solo.**
+
+**¿Estás listo para subir de nivel?**
+
+[Registra tu entrenamiento ahora](/contador-dominadas)
+`
+      },
+      en: {
+        title: 'Fitness RPG: How to Defeat Community Bosses by Training Calisthenics',
+        excerpt: 'Struggling to stay motivated on the pull-up bar? Discover how Reppy transforms your workout into an epic battle against legendary bosses.',
+        keywords: ['gamification', 'calisthenics', 'boss fight', 'RPG fitness', 'motivation', 'fun training', 'community'],
+        content: `
+# Fitness RPG: Turning Sweat into Critical Damage
+
+Do you remember that feeling of satisfaction when defeating a final boss in your favorite video game? That dopamine rush is what keeps us glued to the screen. But what if you could feel the same way every time you finish a set of pull-ups? Welcome to the **Fitness RPG**.
+
+At **Reppy**, we've taken the most addictive elements of role-playing games and applied them to the world of calisthenics. You're no longer just "exercising"; you're participating in a **Battle Protocol**.
+
+## The Community Boss Fight Concept
+
+The crown jewel of Reppy is the **Boss Fights**. These aren't just individual challenges, but global events where the entire community joins forces.
+
+When a Boss appears on the dashboard, it has a massive amount of Hit Points (HP). To defeat it, the community must log repetitions.
+- Every **pull-up** deals massive damage.
+- Every **push-up** weakens its defense.
+- Every **dip** or **muscle-up** is a critical hit.
+
+[Join the hunt and defeat the current Boss](/dashboard)
+
+## How Gamification Hacks Your Brain
+
+The science behind [gamification in health](https://www.nature.com/articles/s41591-018-0263-x) is clear: immediate reward systems increase exercise adherence. In Reppy, every rep grants you:
+
+1. **Reppy Coins**: Virtual currency to spend in the [Armory](/armeria).
+2. **Experience (XP)**: To level up your attributes (STR, PWR, END, AGI).
+3. **Loot**: Upon defeating a Boss, all participants receive chests with avatar frames and exclusive titles.
+
+## Training with Purpose
+
+Many calisthenics athletes quit because they don't see quick physical results. However, in an RPG system, results are **quantifiable and instantaneous**. Seeing your experience bar rise after a grueling session is visual proof that you are improving, even if the mirror doesn't reflect it yet.
+
+### Attributes you define on every bar:
+- **Strength (STR)**: Pull-ups and Push-ups.
+- **Power (PWR)**: Muscle Ups and Weighted reps.
+- **Endurance (END)**: Total volume.
+- **Agility (AGI)**: Daily consistency.
+
+## Conclusion
+
+Fitness doesn't have to be boring or lonely. In Reppy, every workout counts for something bigger. So next time you feel tired, remember: **the Boss isn't going to defeat itself.**
+
+**Are you ready to level up?**
+
+[Log your workout now](/contador-dominadas)
+`
+      }
+    }
   }
 ];
