@@ -1,0 +1,12 @@
+﻿
+> frontend@0.0.0 build
+> npm run sitemap && vite build
+
+
+> frontend@0.0.0 sitemap
+> node scripts/generate-sitemap.js
+
+­ƒÜÇ [SEO] Sitemap generated successfully in public/sitemap.xml
+[36mvite v8.0.2 [32mbuilding client environment for production...[36m[39m
+[2K
+transforming...Ô£ô 2434 modules transformed.

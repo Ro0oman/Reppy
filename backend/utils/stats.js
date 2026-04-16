@@ -1,5 +1,6 @@
 import { query } from '../db.js';
 import { createNotification } from './notifications.js';
+import { getLocalDateString } from './date.js';
 
 /**
  * Shared utility to recalculate and sync user stats (total_reps and XP levels)

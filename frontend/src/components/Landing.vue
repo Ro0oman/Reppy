@@ -753,7 +753,12 @@ const authStore = useAuthStore();
 const leaderboardTrigger = ref(null);
 const shouldLoadLeaderboard = ref(false);
 
-const latestPosts = computed(() => blogPosts.slice(0, 3));
+const latestPosts = computed(() => {
+  const today = new Date();
+  return blogPosts
+    .filter(p => new Date(p.date) <= today)
+    .slice(0, 3);
+});
 
 defineEmits(['start']);
 

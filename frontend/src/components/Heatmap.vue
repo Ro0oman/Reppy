@@ -6,8 +6,7 @@
       <div class="flex flex-col">
         <h3 class="text-xl font-black uppercase tracking-tighter ">{{ currentMonthName }} {{ displayYear }}</h3>
         <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-          <span class="text-primary">{{ monthReps }}</span> {{ i18n.t('stats_reps') }} {{ i18n.locale === 'es' ? 'este
-          mes' : 'this month' }}
+          <span class="text-primary">{{ monthReps }}</span> {{ i18n.t('stats_reps') }} {{ i18n.locale === 'es' ? 'este mes' : 'this month' }}
         </p>
       </div>
 
@@ -164,6 +163,7 @@
 import { computed, ref } from 'vue';
 import { useI18nStore } from '../stores/i18n';
 import { Dumbbell, Zap, Flame, Target, Trophy, Globe, X as XIcon } from 'lucide-vue-next';
+import { getLocalDateString } from '../utils/dateUtils.js';
 
 const props = defineProps({
   data: {

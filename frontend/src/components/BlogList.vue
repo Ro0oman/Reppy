@@ -108,7 +108,10 @@ const currentPage = ref(1);
 const postsPerPage = 10;
 
 const sortedPosts = computed(() => {
-  return [...blogPosts].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const today = new Date();
+  return blogPosts
+    .filter(post => new Date(post.date) <= today)
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
 });
 
 const totalPages = computed(() => Math.ceil(sortedPosts.value.length / postsPerPage));

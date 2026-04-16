@@ -263,3 +263,28 @@
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
 }
+
+/* --- Premium Blog & Authority Content --- */
+.prose table {
+  @apply w-full border-collapse rounded-2xl overflow-hidden my-12 border border-border/40;
+  background: hsla(var(--surface) / 0.5);
+  backdrop-filter: blur(8px);
+}
+.prose thead { @apply bg-primary/10 border-b border-border/40; }
+.prose th { @apply px-6 py-4 text-xs font-black uppercase tracking-widest text-foreground text-left; }
+.prose td { @apply px-6 py-4 text-sm text-muted/80 border-b border-border/10; }
+.prose tr:last-child td { @apply border-b-0; }
+.prose tr:nth-child(even) { background: hsla(var(--foreground) / 0.02); }
+
+.prose blockquote {
+  @apply italic font-medium;
+}
+
+.prose code {
+  @apply bg-foreground/5 px-1.5 py-0.5 rounded text-primary font-bold;
+}
+
+/* Smooth reveal for TOC */
+.blog-toc-active {
+  @apply text-primary border-primary;
+}

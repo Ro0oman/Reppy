@@ -69,8 +69,35 @@
         </div>
 
         <!-- Post Content -->
-        <article class="card-stats !p-8 md:!p-16 !rounded-[3rem] animate-in-delay-2">
+        <article class="card-stats !p-8 md:!p-16 !rounded-[3rem] animate-in-delay-2 relative">
+          <!-- Table of Contents (Mobile & Inline) -->
+          <div v-if="toc.length > 0" class="mb-12 p-8 bg-foreground/5 rounded-3xl border border-border/40">
+            <h4 class="text-sm font-black uppercase tracking-widest text-primary mb-6 flex items-center gap-2">
+              <ListIcon class="w-4 h-4" />
+              {{ i18n.t('index_title') || 'En esta guía' }}
+            </h4>
+            <nav class="space-y-4">
+              <a 
+                v-for="item in toc" 
+                :key="item.id" 
+                :href="`#${item.id}`"
+                class="block text-sm font-bold text-muted hover:text-primary transition-colors pl-4 border-l-2 border-transparent hover:border-primary"
+                :class="{'ml-6 !text-xs !font-medium opacity-80': item.level === 3}"
+                @click.prevent="scrollTo(item.id)"
+              >
+                {{ item.text }}
+              </a>
+            </nav>
+          </div>
+
           <div class="prose prose-lg dark:prose-invert max-w-none prose-headings:font-black prose-headings:tracking-tight prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-primary prose-blockquote:bg-primary/5 prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:rounded-r-xl" v-html="renderedContent"></div>
+
+          <!-- Dynamic CTA Section -->
+          <div v-if="ctaTarget" class="mt-16 p-8 bg-gradient-to-br from-primary/10 to-accent/5 rounded-3xl border border-primary/20 text-center space-y-6">
+            <h3 class="text-2xl font-black text-foreground">{{ ctaHeader }}</h3>
+            <p class="text-muted text-sm max-w-md mx-auto">{{ ctaSub }}</p>
+            <button @click="router.push(ctaTarget)" class="btn-reppy !px-12">{{ ctaLabel }}</button>
+          </div>
         </article>
 
         <!-- Post Tags (SEO Keywords) -->
@@ -78,6 +105,18 @@
           <span v-for="tag in post.keywords" :key="tag" class="px-3 py-1 bg-surface-dark/10 border border-border/40 text-[9px] font-black uppercase tracking-widest text-muted rounded-lg">
             #{{ tag }}
           </span>
+        </div>
+
+        <!-- Semantic Internal Linking (Read Pillar) -->
+        <div v-if="!currentPost.isPillar && relatedPillar" class="mt-12 p-8 bg-surface border border-border/40 rounded-3xl flex flex-col md:flex-row items-center gap-8 animate-in">
+          <div class="w-24 h-24 rounded-2xl overflow-hidden shrink-0 shadow-lg">
+            <img :src="relatedPillar.image" class="w-full h-full object-cover" />
+          </div>
+          <div class="space-y-2 text-center md:text-left">
+            <span class="text-[10px] font-black uppercase tracking-widest text-primary">{{ i18n.t('master_guide') || 'Guía Maestra' }}</span>
+            <h4 class="text-xl font-bold text-foreground">Aprende la técnica completa en: {{ (relatedPillar.locales[i18n.locale] || relatedPillar.locales.en).title }}</h4>
+            <router-link :to="`/blog/${relatedPillar.slug}`" class="inline-block text-sm font-black text-primary hover:underline">Leer Guía Definitiva &rarr;</router-link>
+          </div>
         </div>
       </main>
 
@@ -189,7 +228,8 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { 
   Calendar, User, Clock, ChevronRight, 
-  ArrowUpRight, Share2, Twitter, Facebook, Linkedin, MessageCircle 
+  ArrowUpRight, Share2, Twitter, Facebook, Linkedin, MessageCircle,
+  List as ListIcon
 } from 'lucide-vue-next';
 import { marked } from 'marked';
 import { blogPosts } from '../blogPosts';
@@ -201,7 +241,16 @@ const i18n = useI18nStore();
 
 const currentPost = computed(() => {
   const slug = route.params.slug;
-  return blogPosts.find(p => p.slug === slug) || blogPosts[0];
+  const today = new Date();
+  const found = blogPosts.find(p => p.slug === slug);
+  
+  // If post found but it's in the future, return null or redirect
+  if (found && new Date(found.date) > today) {
+    router.replace('/blog');
+    return blogPosts[0]; // Temporary fallback while redirecting
+  }
+  
+  return found || blogPosts[0];
 });
 
 const post = computed(() => {
@@ -211,8 +260,82 @@ const post = computed(() => {
 const renderedContent = computed(() => {
   if (!post.value || !post.value.content) return '';
   // Strip the first H1 to avoid redundancy with the header
-  const cleanContent = post.value.content.replace(/^# .*\n?/, '');
-  return marked(cleanContent);
+  let cleanContent = post.value.content.replace(/^# .*\n?/, '');
+  
+  // Custom Table rendering Enhancement
+  // (Marked already handles tables, but we will add IDs to Headings for TOC)
+  const renderer = new marked.Renderer();
+  renderer.heading = (text, level) => {
+    const id = text.toLowerCase().replace(/[^\w]+/g, '-');
+    return `<h${level} id="${id}">${text}</h${level}>`;
+  };
+
+  return marked(cleanContent, { renderer });
+});
+
+// TOC Generation
+const toc = computed(() => {
+  if (!post.value || !post.value.content) return [];
+  const lines = post.value.content.split('\n');
+  const items = [];
+  
+  lines.forEach(line => {
+    const match = line.match(/^(#{2,3})\s+(.+)$/);
+    if (match) {
+      const level = match[1].length;
+      const text = match[2].trim();
+      const id = text.toLowerCase().replace(/[^\w]+/g, '-');
+      items.push({ id, text, level });
+    }
+  });
+  
+  return items;
+});
+
+const scrollTo = (id) => {
+  const el = document.getElementById(id);
+  if (el) {
+    window.scrollTo({
+      top: el.offsetTop - 100,
+      behavior: 'smooth'
+    });
+  }
+};
+
+// Internal Linking (Pillar mapping)
+const relatedPillar = computed(() => {
+  if (currentPost.value.isPillar) return null;
+  return blogPosts.find(p => p.isPillar && p.category === currentPost.value.category);
+});
+
+// Dynamic CTAs
+const ctaTarget = computed(() => {
+  const cat = currentPost.value.category;
+  if (cat === 'dominadas') return '/contador-dominadas';
+  if (cat === 'flexiones') return '/contador-flexiones';
+  if (cat === 'principiantes' || cat === 'rpg' || cat === 'habitos') return '/app-calistenia';
+  return '/dashboard';
+});
+
+const ctaHeader = computed(() => {
+  const cat = currentPost.value.category;
+  if (cat === 'dominadas') return '¿Fuerza máxima?';
+  if (cat === 'flexiones') return '¿Pecho de acero?';
+  return 'Sube de nivel';
+});
+
+const ctaSub = computed(() => {
+  const cat = currentPost.value.category;
+  if (cat === 'dominadas') return 'Registra tus dominadas y compite contra el resto del mundo.';
+  if (cat === 'flexiones') return 'Mide cada repetición y derriba a los jefes de calistenia.';
+  return 'Entra en el ecosistema Reppy y gamifica tu entrenamiento hoy mismo.';
+});
+
+const ctaLabel = computed(() => {
+  const cat = currentPost.value.category;
+  if (cat === 'dominadas') return 'Contar Dominadas';
+  if (cat === 'flexiones') return 'Contar Flexiones';
+  return 'Empezar RPG';
 });
 
 const formattedDate = computed(() => {

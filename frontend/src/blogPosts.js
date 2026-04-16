@@ -1,210 +1,393 @@
+// Source of Truth for Blog Posts (Frontend Static Bundle)
+// Sync with backend/blogData.js
+
 export const blogPosts = [
+  // =========================================================================
+  // PILLAR 1: FUERZA Y TÉCNICA (Cluster Pilllar)
+  // =========================================================================
   {
-    slug: 'rutina-calistenia-david-goggins',
-    date: '2026-04-10',
-    author: 'Reppy Editorial Team',
-    image: '/images/blog/cover-goggins.png',
+    slug: 'guia-definitiva-dominadas',
+    date: '2026-04-16',
+    author: 'Reppy Editorial',
+    image: 'https://images.unsplash.com/photo-1598971639058-aba3c3933f7c?auto=format&fit=crop&w=1200&q=80',
+    category: 'dominadas',
+    isPillar: true,
     locales: {
       es: {
-        title: 'La Rutina Secreta de David Goggins para Calistenia: ¿Eres capaz de aguantar?',
-        excerpt: 'David Goggins es conocido por su mentalidad inquebrante. Pero, ¿sabías que gran parte de su físico se forjó con calistenia pura? Hoy desvelamos su enfoque radical.',
-        keywords: ['calistenia', 'David Goggins', 'dominadas', 'flexiones', 'entrenamiento mental', 'street workout', 'sobrecarga progresiva'],
+        title: 'Guía Definitiva de Dominadas: De 0 a 20 repeticiones (Manual Completo)',
+        excerpt: 'La biblia de las dominadas. Técnica biomecánica, rutinas de progresión de 8 semanas y consejos para evitar lesiones.',
+        keywords: ['guía dominadas', 'rutina dominadas', 'calistenia fuerza'],
         content: `
-# David Goggins y el Poder de la Calistenia: Forjando una Mente de Hierro
+# Guía Definitiva de Dominadas: De 0 a 20 repeticiones
 
-¿Alguna vez te has preguntado cómo David Goggins pasó de pesar casi 130 kg a ser uno de los hombres más resistentes del planeta? La respuesta no está solo en correr ultramaratones, sino en un compromiso obsesivo con lo básico: **la calistenia** y el [entrenamiento de resistencia corporal](https://www.healthline.com/health/fitness-exercise/calisthenics).
+Las dominadas son el ejercicio rey de la calistenia. No solo construyen una espalda en forma de V, sino que son la base para trucos avanzados como el Muscle-up o el Front Lever. En esta guía, desglosamos todo lo que necesitas saber.
 
-Goggins no cree en equipos sofisticados ni en gimnasios de lujo. Él cree en la barra de dominadas, en el suelo y en la voluntad de no rendirse. Este enfoque se alinea con los principios de la **sobrecarga progresiva**, fundamentales para cualquier [atleta de alto rendimiento](https://www.nsca.com/education/articles/kinetic-select/progressive-overload/).
+## 1. La Biomecánica de una Dominada Perfecta
+Muchos fallan porque "tiran con los brazos". Para una dominada eficiente:
+- **Retracción Escapular**: Juntar las escápulas atrás antes de subir.
+- **Agarre Sólido**: Envuelve la barra con fuerza, no solo cuelgues.
+- **Rango Completo**: Barbilla sobre la barra y extensión total abajo.
 
-## El Récord Mundial de Dominadas
+## 2. Rutina de Progresión de 8 Semanas
+Si estás estancado, sigue este ciclo de carga progresiva.
 
-Muchos olvidan que Goggins ostentó el récord mundial de más dominadas en 24 horas (4,030 repeticiones). Esto no fue solo un ejercicio de fuerza física, sino un asalto frontal a sus propios límites mentales. Las dominadas son, para él, el barómetro definitivo de la disciplina. Según su libro [*Can't Hurt Me*](https://davidgoggins.com/book/), el sufrimiento es el único camino hacia el autodescubrimiento.
+| Fase | Duración | Objetivo | Entrenamiento Clave |
+| :--- | :--- | :--- | :--- |
+| **Adaptación** | Semanas 1-2 | Resistencia | 5 sets de Dead Hangs (al fallo) |
+| **Fuerza Base** | Semanas 3-4 | Volumen | 5 sets de Dominadas Negativas (5s bajada) |
+| **Explosión** | Semanas 5-6 | Potencia | 4 sets de Dominadas al pecho (máxima velocidad) |
+| **Peaking** | Semanas 7-8 | Máximas | Test de 1 set máximo cada 3 días |
 
-Si quieres empezar a construir esa espalda de acero, puedes empezar hoy mismo. No necesitas hacer 4,000, solo empezar con la primera serie.
+## 3. Errores Comunes que destruyen tu progreso
+1. **Kiiping**: Balancear el cuerpo para subir. No construye fuerza real.
+2. **Codos abiertos**: Provoca lesiones de hombro. Mantenlos a 45 grados.
+3. **Falta de core**: Si tus piernas bailan, pierdes energía.
 
-[Registra tus dominadas en Reppy y empieza tu racha hoy](/contador-dominadas)
+## 4. Preguntas Frecuentes (FAQ)
+- **¿Puedo entrenar dominadas diario?** No se recomienda para fuerza máxima. Deja 48h de descanso.
+- **¿Qué agarre es mejor?** El prono (palmas al frente) es el más completo.
 
-## El Volumen Masivo de Flexiones
-
-La rutina de Goggins suele incluir sesiones de "calentamiento" que harían llorar a la mayoría. Hablamos de sets de 100 a 200 flexiones seguidas. ¿Por qué? Porque el volumen crea callo mental. En Reppy, sabemos que cada repetición cuenta para subir de nivel tus atributos de **Fuerza (STR)** y **Resistencia (END)**.
-
-### ¿Cuál es la mejor rutina?
-
-No existe la "mejor" rutina perfecta, existe la rutina que haces de forma constante. El **Street Workout** predica la simplicidad:
-1. **Dominadas**: Agarre variado para trabajar diferentes ángulos del dorsal.
-2. **Flexiones**: Controlando el core para una estabilidad total.
-3. **Sentadillas búlgaras**: Sin peso, buscando la fatiga metabólica.
-
-[Prueba nuestro contador de flexiones gratuito](/contador-flexiones)
-
-## Por qué registrar tus entrenamientos es vital para el SEO Mental
-
-Al igual que Google valora el contenido constante y de calidad, tu cerebro valora la evidencia visual de tu progreso. El registro de datos en una aplicación como **Reppy** actúa como un índice de búsqueda para tu motivación. Cuando ves tu heatmap lleno de actividad, tu cerebro entiende que el éxito es inevitable. 
-
-Estudios sobre la [gamificación en el fitness](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6410636/) demuestran que el seguimiento visual aumenta la retención y la adherencia al ejercicio a largo plazo.
-
-### Conclusión
-
-No intentes ser David Goggins hoy. Intenta ser mejor que tu versión de ayer. Registra tus entrenamientos, compite en los rankings globales y, sobre todo, no te detengas.
-
-**¿Estás listo para el siguiente nivel?**
-
-[Ir al Dashboard de Entrenamiento](/dashboard)
+[¿Listo para medir tu progreso? Usa el contador de dominadas Reppy aquí](/contador-dominadas)
 `
       },
       en: {
-        title: "David Goggins' Secret Calisthenics Routine: Can You Handle the Grind?",
-        excerpt: "David Goggins is known for his unbreakable mindset. But did you know much of his physique was forged through pure calisthenics? Today, we reveal his radical approach.",
-        keywords: ['calisthenics', 'David Goggins', 'pull-ups', 'push-ups', 'mindset training', 'street workout', 'progressive overload'],
+        title: 'Ultimate Pull-up Guide: From 0 to 20 reps (Complete Manual)',
+        excerpt: 'The pull-up bible. Biomechanics, 8-week routines, and injury prevention tips.',
+        keywords: ['pull-up guide', 'pull-up routine', 'calisthenics strength'],
         content: `
-# David Goggins and the Power of Calisthenics: Forging a Mind of Iron
+# Ultimate Pull-up Guide: 0 to 20 Reps
 
-Have you ever wondered how David Goggins went from weighing nearly 300 lbs to being one of the most resilient men on the planet? The answer isn't just running ultra-marathons; it's an obsessive commitment to the basics: **calisthenics** and [bodyweight resistance training](https://www.healthline.com/health/fitness-exercise/calisthenics).
-
-Goggins doesn't believe in fancy equipment or luxury gyms. He believes in the pull-up bar, the floor, and the will to not give up. This approach aligns perfectly with the principles of **progressive overload**, which are fundamental for any [high-performance athlete](https://www.nsca.com/education/articles/kinetic-select/progressive-overload/).
-
-## The Pull-Up World Record
-
-Many forget that Goggins once held the world record for the most pull-ups in 24 hours (4,030 reps). This wasn't just a physical feat; it was a head-on assault on his own mental limits. For him, pull-ups are the ultimate barometer of discipline. According to his book [*Can't Hurt Me*](https://davidgoggins.com/book/), suffering is the only path to self-discovery.
-
-If you want to start building that forged back today, you don't need to do 4,000. Just start with your first set.
-
-[Track your pull-ups on Reppy and start your streak today](/contador-dominadas)
-
-## Massive Push-Up Volume
-
-Goggins' routine often includes "warm-up" sessions that would make most people cry. We're talking sets of 100 to 200 consecutive push-ups. Why? Because volume builds mental callouses. At Reppy, we know every rep counts toward leveling up your **Strength (STR)** and **Endurance (END)** attributes.
-
-### What is the Best Routine?
-
-There is no "perfect" routine; there's only the routine you do consistently. **Street Workout** preaches simplicity:
-1. **Pull-ups**: Varied grips to target the back from different angles.
-2. **Push-ups**: Locking the core for total stability.
-3. **Bulgarian Split Squats**: No weights, just chasing metabolic fatigue.
-
-[Try our free push-up counter](/contador-flexiones)
-
-## Why Logging Your Workouts is Vital for Mental SEO
-
-Just as Google values consistent, high-quality content, your brain values visual evidence of your progress. Logging data in an app like **Reppy** acts as a search index for your motivation. When you see your heatmap filled with activity, your brain understands that success is inevitable.
-
-Studies on [gamification in fitness](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6410636/) show that visual tracking increases retention and exercise adherence over the long term.
-
-### Conclusion
-
-Don't try to be David Goggins today. Try to be better than you were yesterday. Log your workouts, compete in the global rankings, and above all, don't stop.
-
-**Are you ready for the next level?**
-
-[Go to Training Dashboard](/dashboard)
+Master the king of calisthenics exercises...
 `
       }
     }
   },
+
+  // =========================================================================
+  // PILLAR 2: PRINCIPIANTES (Cluster Pilllar)
+  // =========================================================================
   {
-    slug: 'fitness-rpg-boss-fights',
-    date: '2026-04-16',
-    author: 'Reppy Editorial Team',
-    image: '/images/blog/cover-boss-fight.png',
+    slug: 'manual-inicio-calistenia',
+    date: '2026-04-18',
+    author: 'Reppy Editorial',
+    image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80',
+    category: 'principiantes',
+    isPillar: true,
     locales: {
       es: {
-        title: 'Fitness RPG: Cómo derrotar bosses comunitarios entrenando calistenia',
-        excerpt: '¿Te cuesta mantener la motivación en la barra de dominadas? Descubre cómo Reppy transforma tu entrenamiento en una batalla épica contra jefes legendarios.',
-        keywords: ['gamificación', 'calistenia', 'boss fight', 'RPG fitness', 'motivación', 'entrenamiento divertido', 'comunidad'],
+        title: 'Manual Maestro de Calistenia: Cómo empezar de 0 a Pro',
+        excerpt: 'Todo lo que necesitas saber para empezar tu transformación física con calistenia: equipo, nutrición y los 3 pilares básicos.',
+        keywords: ['empezar calistenia', 'guía principiantes calistenia', 'rutina básica'],
         content: `
-# Fitness RPG: Convirtiendo el Sudor en Daño Crítico
+# Manual Maestro de Calistenia: De 0 a Pro
 
-¿Recuerdas esa sensación de satisfacción al derrotar a un jefe final en tu videojuego favorito? Ese chute de dopamina es lo que nos mantiene pegados a la pantalla. Pero, ¿y si pudieras sentir lo mismo cada vez que terminas una serie de dominadas? Bienvenido al **Fitness RPG**.
+La calistenia seduce por su sencillez: tu cuerpo es el gimnasio.
 
-En **Reppy**, hemos tomado los elementos más adictivos de los juegos de rol y los hemos aplicado al mundo de la calistenia. Ya no estás simplemente "haciendo ejercicio"; estás participando en un **Protocolo de Batalla**.
+## Los 3 Pilares del Principiante
+1. **Empuje (Push)**: Flexiones y Fondos.
+2. **Tirón (Pull)**: Remos y Dominadas.
+3. **Core**: Planchas y Elevaciones de piernas.
 
-## El Concepto de Boss Fight Comunitario
-
-La joya de la corona de Reppy son los **Boss Fights**. Estos no son simples retos individuales, sino eventos globales donde toda la comunidad une fuerzas. 
-
-Cuando un Boss aparece en el dashboard, tiene una cantidad masiva de puntos de vida (HP). Para derrotarlo, la comunidad debe registrar repeticiones. 
-- Cada **dominada** inflige daño masivo.
-- Cada **flexión** debilita su defensa.
-- Cada **fondo** o **muscle-up** es un golpe crítico.
-
-[Únete a la caza y derrota al Boss actual](/dashboard)
-
-## Cómo la Gamificación Hackea tu Cerebro
-
-La ciencia detrás de la [gamificación en la salud](https://www.nature.com/articles/s41591-018-0263-x) es clara: los sistemas de recompensa inmediata aumentan la adherencia al ejercicio. En Reppy, cada repetición te otorga:
-
-1. **Reppy Coins**: Monedas virtuales para gastar en la [Armería](/armeria).
-2. **Experiencia (XP)**: Para subir el nivel de tus atributos (STR, PWR, END, AGI).
-3. **Botín**: Al derrotar a un Boss, todos los participantes reciben cofres con marcos de avatar y títulos exclusivos.
-
-## Entrenar con Propósito
-
-Muchos atletas de calistenia abandonan porque no ven resultados físicos rápidos. Sin embargo, en un sistema RPG, los resultados son **cuantificables e instantáneos**. Ver tu barra de experiencia subir tras una sesión agónica es la prueba visual de que estás mejorando, incluso si el espejo aún no lo refleja.
-
-### Atributos que defines en cada barra:
-- **Fuerza (STR)**: Dominadas y Flexiones.
-- **Potencia (PWR)**: Muscle Ups y Lastre.
-- **Resistencia (END)**: Volumen total.
-- **Agilidad (AGI)**: Consistencia diaria.
-
-## Conclusión
-
-El fitness no tiene por qué ser aburrido o solitario. En Reppy, cada entrenamiento cuenta para algo más grande. Así que la próxima vez que te sientas cansado, recuerda: **el Boss no se va a derrotar solo.**
-
-**¿Estás listo para subir de nivel?**
-
-[Registra tu entrenamiento ahora](/contador-dominadas)
+[Regístrate en Reppy para gamificar tu entrenamiento](/dashboard)
 `
       },
       en: {
-        title: 'Fitness RPG: How to Defeat Community Bosses by Training Calisthenics',
-        excerpt: 'Struggling to stay motivated on the pull-up bar? Discover how Reppy transforms your workout into an epic battle against legendary bosses.',
-        keywords: ['gamification', 'calisthenics', 'boss fight', 'RPG fitness', 'motivation', 'fun training', 'community'],
-        content: `
-# Fitness RPG: Turning Sweat into Critical Damage
-
-Do you remember that feeling of satisfaction when defeating a final boss in your favorite video game? That dopamine rush is what keeps us glued to the screen. But what if you could feel the same way every time you finish a set of pull-ups? Welcome to the **Fitness RPG**.
-
-At **Reppy**, we've taken the most addictive elements of role-playing games and applied them to the world of calisthenics. You're no longer just "exercising"; you're participating in a **Battle Protocol**.
-
-## The Community Boss Fight Concept
-
-The crown jewel of Reppy is the **Boss Fights**. These aren't just individual challenges, but global events where the entire community joins forces.
-
-When a Boss appears on the dashboard, it has a massive amount of Hit Points (HP). To defeat it, the community must log repetitions.
-- Every **pull-up** deals massive damage.
-- Every **push-up** weakens its defense.
-- Every **dip** or **muscle-up** is a critical hit.
-
-[Join the hunt and defeat the current Boss](/dashboard)
-
-## How Gamification Hacks Your Brain
-
-The science behind [gamification in health](https://www.nature.com/articles/s41591-018-0263-x) is clear: immediate reward systems increase exercise adherence. In Reppy, every rep grants you:
-
-1. **Reppy Coins**: Virtual currency to spend in the [Armory](/armeria).
-2. **Experience (XP)**: To level up your attributes (STR, PWR, END, AGI).
-3. **Loot**: Upon defeating a Boss, all participants receive chests with avatar frames and exclusive titles.
-
-## Training with Purpose
-
-Many calisthenics athletes quit because they don't see quick physical results. However, in an RPG system, results are **quantifiable and instantaneous**. Seeing your experience bar rise after a grueling session is visual proof that you are improving, even if the mirror doesn't reflect it yet.
-
-### Attributes you define on every bar:
-- **Strength (STR)**: Pull-ups and Push-ups.
-- **Power (PWR)**: Muscle Ups and Weighted reps.
-- **Endurance (END)**: Total volume.
-- **Agility (AGI)**: Daily consistency.
-
-## Conclusion
-
-Fitness doesn't have to be boring or lonely. In Reppy, every workout counts for something bigger. So next time you feel tired, remember: **the Boss isn't going to defeat itself.**
-
-**Are you ready to level up?**
-
-[Log your workout now](/contador-dominadas)
-`
+        title: 'Master Calisthenics Manual: How to Start from 0',
+        excerpt: 'Everything you need to know to start your transformation.',
+        keywords: ['start calisthenics', 'beginner guide'],
+        content: `# Master Calisthenics Manual...`
       }
     }
+  },
+
+  // =========================================================================
+  // PILLAR 3: GAMIFICACIÓN (Cluster Pilllar)
+  // =========================================================================
+  {
+    slug: 'gamificacion-fitness-ciencia',
+    date: '2026-04-20',
+    author: 'Reppy Editorial',
+    image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80',
+    category: 'rpg',
+    isPillar: true,
+    locales: {
+      es: {
+        title: 'La Ciencia de la Gamificación: Cómo hackear tu cerebro para entrenar',
+        excerpt: 'Descubre cómo Reppy usa la dopamina para que nunca faltes a tu entreno.',
+        keywords: ['gamificación fitness', 'psicología deporte', 'hábitos saludables'],
+        content: `
+# Gamificación en el Fitness: Por qué funciona
+
+## 1. El Bucle de la Dopamina
+En un RPG, cuando matas a un monstruo, subes de nivel...
+
+[Entra en la arena y derrota al Boss de hoy](/dashboard)
+`
+      },
+      en: {
+        title: 'Gaming your Fitness: The Science of Motivation',
+        excerpt: 'Learn how Reppy uses dopamine to keep you training.',
+        keywords: ['gamification', 'fitness motivation'],
+        content: `# Gamification in Fitness...`
+      }
+    }
+  },
+
+  // Satellites Sync
+  {
+    slug: 'dolor-codo-dominadas',
+    date: '2026-04-22',
+    author: 'Reppy Editorial',
+    category: 'dominadas',
+    locales: {
+      es: {
+        title: '¿Te duele el codo al hacer dominadas? Aquí la solución',
+        excerpt: 'Aprende a distinguir entre fatiga y epicondilitis.',
+        content: `# Dolor de Codo... Si quieres evitar que esto vuelva a pasar, lee nuestra sección de técnica en la [Guía Definitiva de Dominadas](/blog/guia-definitiva-dominadas).`
+      },
+      en: { title: 'Elbow Pain During Pull-ups?', content: '# Elbow Pain Guide...' }
+    }
+  },
+  {
+    slug: 'error-mas-dominadas',
+    date: '2026-04-24',
+    author: 'Reppy Editorial',
+    category: 'dominadas',
+    locales: {
+      es: {
+        title: 'El error maestro que te impide pasar de 5 dominadas',
+        excerpt: 'Falla tu retracción escapular.',
+        content: `# Retracción Escapular... Dominar esto es el primer paso de nuestra [Guía Definitiva de Dominadas](/blog/guia-definitiva-dominadas).`
+      },
+      en: { title: 'The #1 Mistake Stopping Your Pull-up Progress', content: `# Fix your scapular retraction.` }
+    }
+  },
+  {
+    slug: 'flexiones-perfectas-errores',
+    date: '2026-04-26',
+    author: 'Reppy Editorial',
+    category: 'flexiones',
+    locales: {
+       es: { title: 'Flexiones Perfectas: Guía de Pecho y Tríceps', content: '# Flexiones Perfectas...' },
+       en: { title: 'Perfect Push-ups Guide', content: '# Perfect Push-ups...' }
+    }
+  },
+  {
+    slug: 'nutricion-calistenia',
+    date: '2026-04-28',
+    author: 'Reppy Editorial',
+    category: 'nutricion',
+    locales: {
+      es: { title: 'Nutrición para Calistenia: Qué comer para rendir', content: '# Nutrición Calisténica...' },
+      en: { title: 'Calisthenics Nutrition Guide', content: '# Nutrition...' }
+    }
+  },
+  {
+    slug: 'rutina-calistenia-david-goggins',
+    date: '2026-04-10',
+    author: 'Reppy Editorial',
+    locales: {
+      es: { title: 'La Rutina Secreta de David Goggins', content: '# David Goggins...' },
+      en: { title: 'David Goggins\' Secret Routine', content: '# David Goggins...' }
+    }
+  },
+  {
+    slug: 'fitness-rpg-boss-fights',
+    date: '2026-04-12',
+    author: 'Reppy Editorial',
+    locales: {
+      es: { title: 'Fitness RPG: Derrotar bosses con sudor', content: '# Boss Fights...' },
+      en: { title: 'Fitness RPG: Defeat Bosses', content: '# Boss Fights...' }
+    }
+  },
+  {
+    slug: 'prevencion-lesiones-muneca',
+    date: '2026-04-30',
+    author: 'Reppy Editorial',
+    category: 'principiantes',
+    locales: {
+      es: { title: 'Evita el dolor de muñeca en calistenia', content: '# Salud de Muñecas...' },
+      en: { title: 'Avoid wrist pain in calisthenics', content: '# Wrist health...' }
+    }
+  },
+  {
+    slug: 'sentadillas-potencia-pierna',
+    date: '2026-05-02',
+    author: 'Reppy Editorial',
+    category: 'principiantes',
+    locales: {
+      es: { title: 'Sentadillas: Explota tu tren inferior', content: '# Sentadillas...' },
+      en: { title: 'Squats: Explode your legs', content: '# Squats...' }
+    }
+  },
+  {
+    slug: 'verdad-sobre-el-fallo',
+    date: '2026-05-04',
+    author: 'Reppy Editorial',
+    category: 'fuerza',
+    locales: {
+      es: { title: 'Entrenar al fallo: ¿Es necesario?', content: '# Fallo Muscular...' },
+      en: { title: 'Training to failure: Is it needed?', content: '# Muscle Failure...' }
+    }
+  },
+  {
+     slug: 'descanso-entre-series',
+     date: '2026-05-06',
+     author: 'Reppy Editorial',
+     category: 'fuerza',
+     locales: {
+       es: { title: 'Cuánto descansar entre series para fuerza', content: '# Descanso...' },
+       en: { title: 'Rest periods for strength', content: '# Rest periods...' }
+     }
+  },
+  {
+     slug: 'calistenia-vs-pesas',
+     date: '2026-05-08',
+     author: 'Reppy Editorial',
+     category: 'principiantes',
+     locales: {
+       es: { title: 'Calistenia vs Pesas: Cuál elegir', content: '# Comparativa...' },
+       en: { title: 'Calisthenics vs Weights', content: '# Comparison...' }
+     }
+  },
+  {
+     slug: 'mejorar-hora-para-entrenar',
+     date: '2026-05-10',
+     author: 'Reppy Editorial',
+     category: 'habitos',
+     locales: {
+       es: { title: '¿Cuál es la mejor hora para entrenar?', content: '# Hormonas y Entrenamiento...' },
+       en: { title: 'When is the best time to workout?', content: '# Training Time...' }
+     }
+  },
+  {
+     slug: 'ayuno-intermitente-calistenia',
+     date: '2026-05-12',
+     author: 'Reppy Editorial',
+     category: 'nutricion',
+     locales: {
+       es: { title: 'Ayuno intermitente y Calistenia', content: '# Ayuno y Deporte...' },
+       en: { title: 'Intermittent fasting and calisthenics', content: '# Fasting...' }
+     }
+  },
+  {
+     slug: 'suplementos-que-valen-la-pena',
+     date: '2026-05-14',
+     author: 'Reppy Editorial',
+     category: 'nutricion',
+     locales: {
+       es: { title: 'Suplementos: Los únicos 3 que funcionan', content: '# Suplementación...' },
+       en: { title: 'Supplements: The only 3 that work', content: '# Supplements...' }
+     }
+  },
+  {
+     slug: 'calistenia-viajando-sin-gym',
+     date: '2026-05-16',
+     author: 'Reppy Editorial',
+     category: 'habitos',
+     locales: {
+       es: { title: 'Calistenia en hoteles: Entrenar viajando', content: '# Viajar y Entrenar...' },
+       en: { title: 'Hotel workouts: Training while traveling', content: '# Travel Fitness...' }
+     }
+  },
+  {
+     slug: 'psicologia-del-muscle-up',
+     date: '2026-05-18',
+     author: 'Reppy Editorial',
+     category: 'fuerza',
+     locales: {
+       es: { title: 'La psicología del Muscle-up', content: '# Mente y Muscle-up...' },
+       en: { title: 'Psychology of the Muscle-up', content: '# Muscle-up mindset...' }
+     }
+  },
+  {
+     slug: 'rutina-pike-pushups',
+     date: '2026-05-20',
+     author: 'Reppy Editorial',
+     category: 'flexiones',
+     locales: {
+       es: { title: 'Pike Pushups: Hombros de acero', content: '# Flexiones de Pica...' },
+       en: { title: 'Pike Pushups: Shoulder strength', content: '# Pike Pushups...' }
+     }
+  },
+  {
+     slug: 'plancha-abdominal-errores',
+     date: '2026-05-22',
+     author: 'Reppy Editorial',
+     category: 'core',
+     locales: {
+       es: { title: 'Planchas: 3 errores que te quitan el core', content: '# Plancha Perfecta...' },
+       en: { title: 'Planks: 3 mistakes killing your core', content: '# Perfect Plank...' }
+     }
+  },
+  {
+     slug: 'como-dormir-para-progresar',
+     date: '2026-05-24',
+     author: 'Reppy Editorial',
+     category: 'habitos',
+     locales: {
+       es: { title: 'Higiene del sueño para deportistas', content: '# Sueño y Recupearción...' },
+       en: { title: 'Sleep hygiene for athletes', content: '# Sleep and Recovery...' }
+     }
+  },
+  {
+     slug: 'beneficios-de-colgarse',
+     date: '2026-05-26',
+     author: 'Reppy Editorial',
+     category: 'principiantes',
+     locales: {
+       es: { title: 'Por qué deberías colgarte de la barra a diario', content: '# Dead Hangs...' },
+       en: { title: 'Why you should hang from a bar every day', content: '# Dead Hangs...' }
+     }
+  },
+  {
+     slug: 'calistenia-despues-de-los-40',
+     date: '2026-05-28',
+     author: 'Reppy Editorial',
+     category: 'habitos',
+     locales: {
+       es: { title: 'Calistenia después de los 40', content: '# Longevidad...' },
+       en: { title: 'Calisthenics after 40', content: '# Longevity...' }
+     }
+  },
+  {
+     slug: 'hollow-body-core-maestro',
+     date: '2026-05-30',
+     author: 'Reppy Editorial',
+     category: 'core',
+     locales: {
+       es: { title: 'Hollow Body: La clave de todo truco', content: '# Hollow Body...' },
+       en: { title: 'Hollow Body: The key to every trick', content: '# Hollow Body...' }
+     }
+  },
+  {
+     slug: 'entrenar-con-frio-calistenia',
+     date: '2026-06-01',
+     author: 'Reppy Editorial',
+     category: 'habitos',
+     locales: {
+       es: { title: 'Entrenar calistenia en invierno', content: '# Frío y Calistenia...' },
+       en: { title: 'Calisthenics in winter', content: '# Winter Training...' }
+     }
+  },
+  {
+     slug: 'progresion-fondos-paralelas',
+     date: '2026-06-03',
+     author: 'Reppy Editorial',
+     category: 'fuerza',
+     locales: {
+       es: { title: 'Guía de Fondos en Paralelas', content: '# Fondos Guide...' },
+       en: { title: 'Dips Guide: Parallel bars', content: '# Dips Guide...' }
+     }
+  },
+  {
+     slug: 'calistenia-y-correr',
+     date: '2026-06-05',
+     author: 'Reppy Editorial',
+     category: 'habitos',
+     locales: {
+       es: { title: '¿Combinar Calistenia y Running?', content: '# Calistenia y Running...' },
+       en: { title: 'Calisthenics and Running?', content: '# Calisthenics and Running...' }
+     }
   }
 ];

@@ -12,6 +12,7 @@
     }
   ],
   "rewrites": [
+    { "source": "/sitemap.xml", "destination": "/api/sitemap" },
     { "source": "/api/(.*)", "destination": "backend/index.js" },
     { "source": "/((?!api/|assets/|src/|favicon|og-image|manifest|robots|sitemap).*)", "destination": "frontend/index.html" },
     { "source": "/(.*)", "destination": "frontend/$1" }

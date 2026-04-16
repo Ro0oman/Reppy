@@ -5,6 +5,7 @@ import { autoGrantPendingChests } from './utils/bossRewards.js';
 import { trackCoinTransaction } from './utils/transactions.js';
 
 import { getRandomPhrase } from './utils/bossPhrases.js';
+import { getLocalDateString } from './utils/date.js';
 
 const router = express.Router();
 

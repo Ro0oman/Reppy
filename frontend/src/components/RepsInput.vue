@@ -79,7 +79,7 @@ import { useI18nStore } from '../stores/i18n';
 import { useNotificationStore } from '../stores/notification';
 import { useDamageStore } from '../stores/damage';
 import { useAuthStore } from '../stores/auth';
-import { getLocalDateString } from '../utils/dateUtils';
+import { getLocalDateString } from '../utils/dateUtils.js';
 
 const props = defineProps({
   exerciseType: {
