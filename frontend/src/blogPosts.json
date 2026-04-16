@@ -8,14 +8,26 @@
     "isPillar": true,
     "locales": {
       "es": {
-        "title": "Guía Definitiva de Dominadas: De 0 a 20 repeticiones (Manual Completo)",
+        "title": "Guía Definitiva de Dominadas: Biomecánica y Progresión 0-20",
         "excerpt": "La biblia de las dominadas. Técnica biomecánica, rutinas de progresión de 8 semanas y consejos para evitar lesiones.",
         "keywords": [
           "guía dominadas",
           "rutina dominadas",
           "calistenia fuerza"
         ],
-        "content": "# Guía Definitiva de Dominadas: De 0 a 20 repeticiones\n\nLas dominadas son el ejercicio rey de la calistenia. No solo construyen una espalda en forma de V, sino que son la base para trucos avanzados como el Muscle-up o el Front Lever. En esta guía, desglosamos todo lo que necesitas saber.\n\n## 1. La Biomecánica de una Dominada Perfecta\nMuchos fallan porque \"tiran con los brazos\". Para una dominada eficiente:\n- **Retracción Escapular**: Juntar las escápulas atrás antes de subir.\n- **Agarre Sólido**: Envuelve la barra con fuerza, no solo cuelgues.\n- **Rango Completo**: Barbilla sobre la barra y extensión total abajo.\n\n## 2. Rutina de Progresión de 8 Semanas\nSi estás estancado, sigue este ciclo de carga progresiva.\n\n| Fase | Duración | Objetivo | Entrenamiento Clave |\n| :--- | :--- | :--- | :--- |\n| **Adaptación** | Semanas 1-2 | Resistencia | 5 sets de Dead Hangs (al fallo) |\n| **Fuerza Base** | Semanas 3-4 | Volumen | 5 sets de Dominadas Negativas (5s bajada) |\n| **Explosión** | Semanas 5-6 | Potencia | 4 sets de Dominadas al pecho (máxima velocidad) |\n| **Peaking** | Semanas 7-8 | Máximas | Test de 1 set máximo cada 3 días |\n\n## 3. Errores Comunes que destruyen tu progreso\n1. **Kiiping**: Balancear el cuerpo para subir. No construye fuerza real.\n2. **Codos abiertos**: Provoca lesiones de hombro. Mantenlos a 45 grados.\n3. **Falta de core**: Si tus piernas bailan, pierdes energía.\n\n## 4. Preguntas Frecuentes (FAQ)\n- **¿Puedo entrenar dominadas diario?** No se recomienda para fuerza máxima. Deja 48h de descanso.\n- **¿Qué agarre es mejor?** El prono (palmas al frente) es el más completo.\n\n[¿Listo para medir tu progreso? Usa el contador de dominadas Reppy aquí](/contador-dominadas)"
+        "content": "En Reppy, cada repetición técnica cuenta para tu XP.\n\n## 🧠 Biomecánica: El Secreto de las Escápulas\nEl error común es tirar solo con los brazos. Una dominada eficiente comienza con la **depresión y retracción escapular**: tirar de los hombros hacia abajo y atrás antes de flexionar los codos .\n\n| Fase | Acción Clave | Músculo Motor |\n| :--- | :--- | :--- |\n| Inicio | Depresión Escapular | Trapecio Inferior [3] |\n| Ascenso | Tracción Vertical | Dorsal Ancho [1] |\n| Final | Pecho a la barra | Bíceps / Braquial |\n\n## 📈 Plan de Progresión\n- **Semanas 1-2:** Cuelgues activos (Dead Hangs) y remos australianos.[4, 5]\n- **Semanas 3-4:** Negativas controladas (5 seg de bajada).[6]\n- **Semanas 5-8:** Series de volumen acumulado.\n\n**🔥 Tip de Reppy:** Registra tus series en el [contador de dominadas](/contador-dominadas) para infligir daño al Boss global. ¡Consulta tu progreso en el [dashboard](/dashboard)!"
+      },
+      "en": {
+        "title": "Ultimate Pull-Up Guide: Biomechanics & 0 to 20 Rep Progression",
+        "excerpt": "Master vertical pulling. Learn proper scapular activation, prevent injuries, and follow our 8-week plan to level up in Reppy.",
+        "keywords": [
+          "pull-up technique",
+          "back training",
+          "calisthenics progression",
+          "strength training",
+          "lats"
+        ],
+        "content": "# Master Pull-Up Guide: Own the Bar\n\nA pull-up is a symphony of strength between your **lats**, **lower traps**, and **elbow flexors**.[1, 2] To conquer the leaderboard, form is everything.\n\n## 🧠 Biomechanics: Scapular Mastery\nDon't just pull; initiate with **scapular depression**—pulling your shoulder blades down and back . This secures the shoulder joint and engages the powerful back muscles.\n\n## 🚀 8-Week Roadmap\n- **Weeks 1-2:** Active hangs and Australian rows.[5]\n- **Weeks 3-4:** 5-second eccentric negatives.[6]\n- **Weeks 5-8:** Volume building.\n\n**🔥 Reppy Tip:** Log your reps in the [pull-up counter](/contador-dominadas) to earn gold for the [shop](/shop). Check your daily streaks on the [dashboard](/dashboard)!"
       }
     }
   },
@@ -29,22 +41,25 @@
     "locales": {
       "es": {
         "title": "Manual Maestro de Calistenia: Cómo empezar de 0 a Pro",
-        "excerpt": "Todo lo que necesitas saber para empezar tu transformación física con calistenia: equipo, nutrición y los 3 pilares básicos.",
+        "excerpt": "Descubre los 3 pilares de la calistenia, la rutina perfecta para empezar hoy y cómo usar Reppy para gamificar tu transformación física.",
         "keywords": [
           "empezar calistenia",
-          "guía principiantes calistenia",
-          "rutina básica"
+          "rutina calistenia principiantes",
+          "ejercicios peso corporal",
+          "guía calistenia 2026"
         ],
-        "content": "# Manual Maestro de Calistenia: De 0 a Pro\n\nLa calistenia seduce por su sencillez: tu cuerpo es el gimnasio. Pero sin un plan, es fácil lesionarse o abandonar. Este manual te llevará desde tu primer día hasta dominar tu peso corporal.\n\n## Los 3 Pilares del Principiante\n1. **Empuje (Push)**: Flexiones y Fondos. Desarrollan pecho, tríceps y hombros.\n2. **Tirón (Pull)**: Remos y Dominadas. Construyen una espalda fuerte y bíceps funcionales.\n3. **Core**: Planchas y Elevaciones de piernas. El centro de transferencia de fuerza.\n\n## El Equipo Mínimo Necesario\nNo necesitas nada para empezar, pero esto te dará un 200% más de resultados a largo plazo:\n- **Barra de dominadas** (imprescindible).\n- **Paralelas bajas** (para cuidar tus muñecas).\n- **Bandas elásticas** (para asistirte al principio).\n\n## Tu Primera Rutina (La de los 20 minutos)\nRealiza este circuito 3 veces por semana, descansando un día entre sesiones:\n- 10 Flexiones (o inclinadas adaptadas a tu nivel).\n- 5 Dominadas (o dominadas negativas).\n- 15 Sentadillas clásicas.\n- 30 segundos de Plancha abdominal sólida.\nDescansa 90 segundos y repite 4 veces.\n\n[Regístrate en Reppy para gamificar tu entrenamiento](/dashboard)"
+        "content": "# Manual de Inicio: Tu Primera Misión\n\nLa calistenia es el dominio del propio cuerpo contra la gravedad. No necesitas equipo, solo técnica y constancia.[7]\n\n## 🏗️ Los 3 Pilares del Guerrero\n1. **Empuje (Push):** Flexiones e inclinaciones. Enfocado en pecho y tríceps.[8]\n2. **Tracción (Pull):** Remos y cuelgues. Clave para la postura.\n3. **Core y Piernas:** Sentadillas y planchas. Tu base de estabilidad .\n\n## ⚔️ Rutina Nivel 1\n- 10 Flexiones (usa el [contador de flexiones](/contador-flexiones)).\n- 15 Sentadillas profundas.\n- 5 Negativas de dominada.\n- 30 seg de Plancha.\n\nRegistra tu entrenamiento en el [dashboard](/dashboard) y gasta tu primer oro en la [shop](/shop). ¡La aventura empieza hoy!"
       },
       "en": {
         "title": "Master Calisthenics Manual: How to Start from 0",
-        "excerpt": "Everything you need to know to start your transformation.",
+        "excerpt": "Discover the 3 pillars of calisthenics, the perfect starter routine, and how to use Reppy to gamify your fitness journey.",
         "keywords": [
           "start calisthenics",
-          "beginner guide"
+          "beginner routine",
+          "bodyweight training",
+          "calisthenics guide 2026"
         ],
-        "content": "# Master Calisthenics Manual: How to Start from 0\n\nCalisthenics seduces with its simplicity: your body is the gym. But without a plan, it's easy to get injured or quit. This manual will take you from day one to mastering your body weight.\n\n## The 3 Beginner Pillars\n1. **Push**: Push-ups and Dips. Develop chest, triceps, and shoulders.\n2. **Pull**: Rows and Pull-ups. Build a strong back and functional biceps.\n3. **Core**: Planks and Leg Raises. The center of force transfer.\n\n## Minimal Equipment Needed\nYou don't need anything to start, but this will give you 200% more results long term:\n- **Pull-up Bar** (essential).\n- **Low Parallettes** (to protect your wrists).\n- **Resistance Bands** (to assist you at the beginning).\n\n## Your First Routine (The 20-minute Workout)\nDo this circuit 3 times a week, resting a day between sessions:\n- 10 Push-ups (or incline push-ups adapted to your level).\n- 5 Pull-ups (or negative pull-ups).\n- 15 Classic Squats.\n- 30 seconds of solid abdominal Plank.\nRest 90 seconds and repeat 4 times.\n\n[Sign up at Reppy Dashboard to gamify your training](/dashboard)"
+        "content": "# Beginner's Manual: Your First Quest\n\nCalisthenics is about mastering your own gravity. Focus on fundamental movement patterns to build a solid base .\n\n## 🏗️ The 3 Pillars\n1. **Push:** Push-ups and dips.[8]\n2. **Pull:** Rows and scapular strength.[1]\n3. **Core & Legs:** Squats and hollow body holds.[9]\n\n**🔥 Action:** Track your progress on the [dashboard](/dashboard) and spend your gold in the [shop](/shop)!"
       }
     }
   },
@@ -52,28 +67,31 @@
     "slug": "gamificacion-fitness-ciencia",
     "date": "2026-04-20",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
     "category": "rpg",
     "isPillar": true,
     "locales": {
       "es": {
-        "title": "La Ciencia de la Gamificación: Cómo hackear tu cerebro para entrenar",
-        "excerpt": "¿Por qué es más fácil jugar 5 horas que entrenar 1? Descubre cómo Reppy usa la dopamina para que nunca faltes a tu entreno.",
+        "title": "Ciencia del Fitness RPG: Hackea tu cerebro para entrenar",
+        "excerpt": "Por qué Reppy funciona donde otros fallan. Neurología de la recompensa, Boss Fights y el poder de la comunidad gamificada.",
         "keywords": [
           "gamificación fitness",
           "psicología deporte",
-          "hábitos saludables"
+          "fitness RPG",
+          "motivación entrenar"
         ],
-        "content": "# La Ciencia de la Gamificación: Por qué funciona\n\n¿Alguna vez te has preguntado por qué te enganchan los videojuegos pero te cuesta ir a entrenar de forma consistente? La respuesta neurológica está en la **Retroalimentación Inmediata**.\n\n## 1. El Bucle de la Dopamina\nEn un RPG, cuando derrotas a un monstruo, subes de nivel instantáneamente o consigues oro. El cerebro recibe una inyección de dopamina que refuerza el hábito. En el gimnasio convencional, el \"nivel\" (ganancia muscular o pérdida de grasa corporal) tarda semanas o incluso meses en hacerse visible en el espejo. El cerebro primitivo se desmotiva por la falta de recompensa a corto plazo.\n\n## 2. Cómo lo soluciona Reppy\nAl registrar tus repeticiones en la plataforma Reppy, cerramos de golpe la brecha de retroalimentación:\n- **Boss Fights**: Tus flexiones y dominadas hacen daño real a un jefe comunitario en tiempo real.\n- **Economía Virtual**: Ganas recompensas tangibles (monedas) que puedes gastar en la tienda para conseguir cosméticos para tu perfil.\n- **Progreso Visual**: Tu barra de experiencia sube de color y porcentaje con cada serie completada.\n\n## 3. Convirtiendo la Disciplina en Juego\nCuando el entrenamiento se convierte en una misión heroica, la fricción mental inicial desaparece. Ya no entrenas por obligación social, lo haces por la recompensa intrínseca de formar parte del juego y escalar en la clasificación mundial.\n\n[Entra en la arena y derrota al Boss de hoy](/dashboard)"
+        "content": "# ¿Por qué Reppy funciona? El Bucle de Dopamina\n\nEl fitness tradicional ofrece resultados lentos. Reppy hackea este sistema mediante **recompensas inmediatas**.[10, 9]\n\n## 🧠 Neurología de la Victoria\nCada flexión en el [contador de flexiones](/contador-flexiones) otorga XP. Esto libera dopamina, vinculando el esfuerzo con placer instantáneo.[11]\n\n### Mecánicas Reppy:\n- **Boss Fights:** Tus repeticiones dañan al jefe en el feed [social](/social).[12]\n- **Armería:** El sudor se traduce en skins en la [shop](/shop).\n- **Streaks:** La racha en tu [dashboard](/dashboard) es tu mayor activo.\n\nNo solo entrenas, estás jugando. ¡Entra y derrota al Boss de hoy!"
       },
       "en": {
-        "title": "Gaming your Fitness: The Science of Motivation",
-        "excerpt": "Learn how Reppy uses dopamine to keep you training.",
+        "title": "The Science of Fitness RPG: Hack Your Brain to Train",
+        "excerpt": "Why Reppy works. Reward neurology, Boss Fights, and the power of a gamified community.",
         "keywords": [
-          "gamification",
-          "fitness motivation"
+          "fitness RPG",
+          "gamification science",
+          "dopamine loop",
+          "training motivation"
         ],
-        "content": "# Gaming your Fitness: The Science of Motivation\n\nHave you ever wondered why you get hooked on video games but struggle to go to the gym consistently? The neurological answer lies in **Immediate Feedback**.\n\n## 1. The Dopamine Loop\nIn an RPG, when you defeat a monster, you level up instantly or get gold. The brain receives a hit of dopamine that reinforces the habit. In a conventional gym, the \"level up\" (muscle gain or body fat loss) takes weeks or even months to become visible in the mirror. The primitive brain loses motivation due to the lack of short-term rewards.\n\n## 2. How Reppy Solves It\nBy logging your reps on the Reppy platform, we close the feedback gap instantly:\n- **Boss Fights**: Your push-ups and pull-ups deal real damage to a community boss in real-time.\n- **Virtual Economy**: You earn tangible rewards (coins) that you can spend in the shop to get cosmetics for your profile.\n- **Visual Progress**: Your experience bar levels up in color and percentage with every completed set.\n\n## 3. Turning Discipline into a Game\nWhen training becomes a heroic quest, the initial mental friction disappears. You no longer train out of obligation, you do it for the intrinsic reward of being part of the game and climbing the global leaderboard.\n\n[Enter the arena and defeat today's Boss](/dashboard)"
+        "content": "# Why Reppy Works: The Habit Loop\n\nReppy turns delayed gratification into instant wins using the **Dopamine Loop**.[10, 9]\n\n## 🧠 Reward Mechanics\nLogging sets in the [push-up counter](/contador-flexiones) grants immediate XP, reinforcing the habit.[11] \n\nCheck your ranking on the [dashboard](/dashboard) and join the raid in the [social](/social) feed!"
       }
     }
   },
@@ -81,54 +99,63 @@
     "slug": "dolor-codo-dominadas",
     "date": "2026-04-22",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1590239068512-63296417ca15?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1476067711923-5582b77ecb82?auto=format&fit=crop&w=1200&q=80",
     "category": "dominadas",
     "locales": {
       "es": {
-        "title": "¿Te duele el codo al hacer dominadas? Aquí la solución",
-        "excerpt": "No ignores el dolor. Aprende a distinguir entre fatiga y epicondilitis, y cómo corregir tu técnica.",
+        "title": "Epicondilitis: Elimina el dolor de codo en Dominadas",
+        "excerpt": "Guía de rehabilitación para atletas. Estiramientos, trabajo excéntrico y técnica para volver a la barra sin dolor.",
         "keywords": [
           "dolor codo dominadas",
-          "lesiones calistenia"
+          "epicondilitis calistenia",
+          "tendinitis codo",
+          "rehabilitación"
         ],
-        "content": "\n# Dolor de Codo en Dominadas: Guía de Rehabilitación\n\nEl dolor en el codo (epicondilitis) es la lesión más común en dominadas. Ocurre por sobrecarga en los tendones del antebrazo.\n\n## 3 Pasos para eliminar el dolor:\n1. **Reduce la intensidad**: No entrenes al fallo mientras duela.\n2. **Cambia a agarre Neutro**: Las palmas enfrentadas reducen la carga en el codo.\n3. **Fortalece el agarre**: Cuelgues pasivos en barra limpia a menudo.\n\nSi quieres evitar que esto vuelva a pasar, lee nuestra sección de técnica en la [Guía Definitiva de Dominadas](/blog/guia-definitiva-dominadas).\n"
+        "content": "# Codos de Acero: Recuperación para Guerreros\n\nEl dolor de codo suele ser epicondilitis por sobrecarga.[13] No dejes que frene tu racha en Reppy.\n\n## 🛠️ Protocolo de Rehabilitación\n1. **Trabajo Excéntrico:** Flexiones de muñeca lentas (3 seg bajada) para regenerar colágeno .\n2. **Técnica:** Usa anillas o agarre neutro para reducir torque .\n3. **Movilidad:** Estiramientos de extensores 4x al día.[14, 15]\n\nRegistra tus sesiones de movilidad en el [dashboard](/dashboard). ¡Consulta a otros atletas en el feed [social](/social)!"
       },
       "en": {
-        "title": "Elbow Pain During Pull-ups? Here is the fix",
-        "excerpt": "Learn how to distinguish fatigue from injury.",
+        "title": "Elbow Pain? How to Fix Epicondylitis in Calisthenics",
+        "excerpt": "Rehab protocols for pull-ups. Stretching, eccentric work, and technique adjustments.",
         "keywords": [
-          "elbow pain",
+          "elbow pain pullups",
+          "epicondylitis rehab",
           "calisthenics injury"
         ],
-        "content": "\n# Elbow Pain During Pull-ups? Here is the fix\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
+        "content": "# Steel Elbows: Rehab for Warriors\n\nDon't let elbow pain stop your streak. Epicondylitis is caused by over-gripping or poor scapular form .\n\n## 🛠️ Recovery Steps\n- **Eccentric Loading:** Slow wrist curls .\n- **Grip Adjustments:** Use neutral grip or rings .\n\nLog your mobility work on the [dashboard](/dashboard) and keep the community updated in the [social](/social) feed!"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "error-mas-dominadas",
     "date": "2026-04-24",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1590239068512-63296417ca15?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1591117207239-7887103447c4?auto=format&fit=crop&w=1200&q=80",
     "category": "dominadas",
     "locales": {
       "es": {
-        "title": "El error maestro que te impide pasar de 5 dominadas",
-        "excerpt": "¿Estancado? Tu espalda no está fallando, está fallando tu retracción escapular.",
+        "title": "El Error que te impide pasar de 5 Dominadas",
+        "excerpt": "No es falta de fuerza, es falta de activación. Aprende por qué la retracción escapular es la llave de tu progreso.",
         "keywords": [
-          "error dominadas",
-          "retracción escapular"
+          "estancamiento dominadas",
+          "técnica espalda",
+          "retracción escapular",
+          "calistenia"
         ],
-        "content": "\n# Retracción Escapular: El Secreto Olvidado\n\nMuchos principiantes tiran con los brazos (bíceps) en lugar de usar los dorsales.\n\n## El Check-list:\n- Antes de subir, baja los hombros lejos de las orejas.\n- Junta los omóplatos como si quisieras aplastar una nuez entre ellos.\n- Solo entonces, tira hacia arriba.\n\nDominar esto es el primer paso de nuestra [Guía Definitiva de Dominadas](/blog/guia-definitiva-dominadas).\n"
+        "content": "# Rompe el Techo de las 5 Repeticiones\n\n¿Atascado? El culpable suele ser la **falta de retracción escapular**.[1, 16]\n\n## ❌ El Fallo\nSi encoges los hombros, desactivas los dorsales y saturas los bíceps.[2, 17]\n\n## ✅ La Solución\nAntes de tirar, junta las escápulas hacia abajo y atrás .\n\nDomina la técnica en el [contador de dominadas](/contador-dominadas) y desbloquea cosméticos épicos en la [shop](/shop)!"
       },
       "en": {
-        "title": "The #1 Mistake Stopping Your Pull-up Progress",
-        "excerpt": "Stuck at 5 reps?",
+        "title": "The Secret Mistake Keeping You Stuck at 5 Pull-ups",
+        "excerpt": "It's not about arm strength; it's about activation. Learn how scapular retraction unlocks power.",
         "keywords": [
-          "pullup mistakes"
+          "pullup plateau",
+          "back technique",
+          "scapular retraction"
         ],
-        "content": "\n# The #1 Mistake Stopping Your Pull-up Progress\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
+        "content": "# Break the 5-Rep Plateau\n\nStuck at 5? Your biceps aren't the problem—your **scapular retraction** is .\n\nMaster the form in the [pull-up counter](/contador-dominadas) and reach new heights in the [dashboard](/dashboard)!"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "flexiones-perfectas-errores",
@@ -159,7 +186,7 @@
     "slug": "nutricion-calistenia",
     "date": "2026-04-28",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1490645935967-10de6ba17051?auto=format&fit=crop&w=1200&q=80",
     "category": "nutricion",
     "locales": {
       "es": {
@@ -184,7 +211,7 @@
     "slug": "prevencion-lesiones-muneca",
     "date": "2026-04-30",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1614930332213-433e1458e0a2?auto=format&fit=crop&w=1200&q=80",
     "category": "principiantes",
     "locales": {
       "es": {
@@ -203,7 +230,7 @@
     "slug": "sentadillas-potencia-pierna",
     "date": "2026-05-02",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80",
     "category": "principiantes",
     "locales": {
       "es": {
@@ -222,7 +249,7 @@
     "slug": "verdad-sobre-el-fallo",
     "date": "2026-05-04",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1526506118085-60cf8714f82b?auto=format&fit=crop&w=1200&q=80",
     "category": "fuerza",
     "locales": {
       "es": {
@@ -241,7 +268,7 @@
     "slug": "descanso-entre-series",
     "date": "2026-05-06",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1200&q=80",
     "category": "fuerza",
     "locales": {
       "es": {
@@ -260,7 +287,7 @@
     "slug": "calistenia-vs-pesas",
     "date": "2026-05-08",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1553969546-6f7388a7e07c?auto=format&fit=crop&w=1200&q=80",
     "category": "principiantes",
     "locales": {
       "es": {
@@ -279,7 +306,7 @@
     "slug": "mejor-hora-para-entrenar",
     "date": "2026-05-10",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1470252649358-96949c7513c9?auto=format&fit=crop&w=1200&q=80",
     "category": "habitos",
     "locales": {
       "es": {
@@ -298,7 +325,7 @@
     "slug": "ayuno-intermitente-calistenia",
     "date": "2026-05-12",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1505253149613-112d21d9f6a9?auto=format&fit=crop&w=1200&q=80",
     "category": "nutricion",
     "locales": {
       "es": {
@@ -317,7 +344,7 @@
     "slug": "suplementos-que-valen-la-pena",
     "date": "2026-05-14",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1584017911766-d451b626496b?auto=format&fit=crop&w=1200&q=80",
     "category": "nutricion",
     "locales": {
       "es": {
@@ -336,7 +363,7 @@
     "slug": "calistenia-viajando-sin-gym",
     "date": "2026-05-16",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8df0?auto=format&fit=crop&w=1200&q=80",
     "category": "habitos",
     "locales": {
       "es": {
@@ -355,7 +382,7 @@
     "slug": "psicologia-del-muscle-up",
     "date": "2026-05-18",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1517438476312-10d79c67750d?auto=format&fit=crop&w=1200&q=80",
     "category": "fuerza",
     "locales": {
       "es": {
@@ -374,7 +401,7 @@
     "slug": "rutina-pike-pushups",
     "date": "2026-05-20",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1571019623452-8d9af2dfb2cc?auto=format&fit=crop&w=1200&q=80",
     "category": "flexiones",
     "locales": {
       "es": {
@@ -393,7 +420,7 @@
     "slug": "plancha-abdominal-errores",
     "date": "2026-05-22",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1510894347713-fc3ad6cb0392?auto=format&fit=crop&w=1200&q=80",
     "category": "core",
     "locales": {
       "es": {
@@ -412,7 +439,7 @@
     "slug": "como-dormir-para-progresar",
     "date": "2026-05-24",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1511295742364-903170ca94ce?auto=format&fit=crop&w=1200&q=80",
     "category": "habitos",
     "locales": {
       "es": {
@@ -431,7 +458,7 @@
     "slug": "beneficios-de-colgarse",
     "date": "2026-05-26",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&w=1200&q=80",
     "category": "principiantes",
     "locales": {
       "es": {
@@ -450,7 +477,7 @@
     "slug": "calistenia-despues-de-los-40",
     "date": "2026-05-28",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=1200&q=80",
     "category": "habitos",
     "locales": {
       "es": {
@@ -469,7 +496,7 @@
     "slug": "hollow-body-core-maestro",
     "date": "2026-05-30",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1434608519344-49d77a699e1d?auto=format&fit=crop&w=1200&q=80",
     "category": "core",
     "locales": {
       "es": {
@@ -488,7 +515,7 @@
     "slug": "entrenar-con-frio-calistenia",
     "date": "2026-06-01",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1453306458620-5bbef13a5bca?auto=format&fit=crop&w=1200&q=80",
     "category": "habitos",
     "locales": {
       "es": {
@@ -507,7 +534,7 @@
     "slug": "progresion-fondos-paralelas",
     "date": "2026-06-03",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1598971426620-6d4b99824de4?auto=format&fit=crop&w=1200&q=80",
     "category": "fuerza",
     "locales": {
       "es": {
@@ -526,7 +553,7 @@
     "slug": "calistenia-y-correr",
     "date": "2026-06-05",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
+    "image": "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=1200&q=80",
     "category": "habitos",
     "locales": {
       "es": {
@@ -540,5 +567,309 @@
         "content": "\n# Calisthenics and Running?\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
     }
+  },
+  {
+    "slug": "flexiones-hombro-pike-pushups",
+    "date": "2026-04-26",
+    "image": "https://images.unsplash.com/photo-1571019623452-8d9af2dfb2cc?auto=format&fit=crop&w=1200&q=80",
+    "category": "empuje",
+    "isPillar": false,
+    "locales": {
+      "es": {
+        "title": "Hombros de Hierro: Guía de Pike Push-ups a Handstand",
+        "excerpt": "Domina el empuje vertical. Biomecánica de la flexión en pica y cómo progresar hacia el pino estricto.",
+        "keywords": [
+          "pike pushups",
+          "entrenamiento hombros",
+          "calistenia hombros",
+          "handstand"
+        ],
+        "content": "# Domina el Empuje Vertical\n\nLas **Pike Push-ups** son la base para el Handstand Push-up (HSPU) .\n\n## 🧠 Geometría del Trípode\nNo bajes la cabeza entre las manos. Forma un triángulo: la cabeza debe aterrizar por delante de las manos.[8]\n\n## 📈 Progresión\n1. Pike en suelo.\n2. Pike con pies elevados.\n3. Wall Handstand Push-up.\n\nRegistra tus series en el [contador de flexiones](/contador-flexiones) y prepárate para las Boss Fights de fuerza en el feed [social](/social)."
+      },
+      "en": {
+        "title": "Shoulder Mastery: Pike Push-ups to Handstand Guide",
+        "excerpt": "Build bulletproof shoulders. Master Pike Push-up mechanics and progress toward HSPU.",
+        "keywords": [
+          "pike pushups",
+          "shoulder training",
+          "calisthenics shoulders"
+        ],
+        "content": "# Master Vertical Pushing\n\n**Pike Push-ups** are the ultimate foundation for HSPU .\n\n## 🧠 The Tripod Rule\nYour head should touch the floor in front of your hands, forming a triangle.[8]\n\nLog your gains in the [push-up counter](/contador-flexiones) and check your rank on the [dashboard](/dashboard)!"
+      }
+    },
+    "author": "Reppy Editorial"
+  },
+  {
+    "slug": "sentadilla-pistol-guia-piernas",
+    "date": "2026-04-28",
+    "image": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80",
+    "category": "piernas",
+    "isPillar": false,
+    "locales": {
+      "es": {
+        "title": "Sentadilla Pistol: El Desafío Unilateral Definitivo",
+        "excerpt": "Fuerza, equilibrio y movilidad. Domina la sentadilla a una pierna y deja de saltarte el leg day en Reppy.",
+        "keywords": [
+          "pistol squat",
+          "entrenamiento piernas",
+          "calistenia piernas",
+          "movilidad tobillo"
+        ],
+        "content": "# Piernas de Acero: La Pistol Squat\n\nLa **Pistol Squat** exige fuerza masiva, equilibrio y dorsiflexión de tobillo .\n\n## 🧠 Factores Limitantes\n1. **Movilidad de Tobillo:** Si el talón se levanta, trabaja tu sóleo.[9]\n2. **Tensión del Core:** Mantener la pierna libre extendida es vital.\n\n## 📈 Cómo lograrla\n- Sentadillas búlgaras.\n- Pistol asistida con silla.[18]\n- Pistol estricta.\n\n¡Registra tu progreso en el [dashboard](/dashboard) y reclama tus recompensas en la [shop](/shop)!"
+      },
+      "en": {
+        "title": "Pistol Squat: The Ultimate Leg Challenge",
+        "excerpt": "Strength, balance, and mobility. Master the one-legged xsquat in Reppy.",
+        "keywords": [
+          "pistol xsquat",
+          "leg training",
+          "calisthenics legs"
+        ],
+        "content": "# Lower Body Power: The Pistol Squat\n\nPistol Squats require unilateral strength and extreme ankle mobility .\n\nTrack your leg volume on the [dashboard](/dashboard) and show off in the [social](/social) feed!"
+      }
+    },
+    "author": "Reppy Editorial"
+  },
+  {
+    "slug": "fondos-paralelas-guia",
+    "date": "2026-04-30",
+    "image": "https://images.unsplash.com/photo-1598971426620-6d4b99824de4?auto=format&fit=crop&w=1200&q=80",
+    "category": "empuje",
+    "isPillar": false,
+    "locales": {
+      "es": {
+        "title": "Fondos en Paralelas: Construye un Torso Potente",
+        "excerpt": "La sentadilla del tren superior. Aprende la técnica para evitar dolor de hombro y maximizar ganancias de pecho y tríceps.",
+        "keywords": [
+          "fondos paralelas",
+          "calistenia pecho",
+          "tríceps",
+          "dips técnica"
+        ],
+        "content": "# Fondos: Fuerza Bruta de Empuje\n\nLos **Dips** son esenciales para el pectoral y tríceps.[4, 6, 19]\n\n## 🧠 Técnica y Seguridad\nMantén las escápulas deprimidas (hombros lejos de orejas) para proteger el manguito rotador .\n\n- **Enfoque Pecho:** Torso inclinado adelante .\n- **Enfoque Tríceps:** Torso vertical.\n\nUsa el [contador de flexiones](/contador-flexiones) (modo Fondos) para ganar XP y mejorar tu héroe en el [dashboard](/dashboard)."
+      },
+      "en": {
+        "title": "Parallel Bar Dips: Build a Massive Upper Body",
+        "excerpt": "The upper body squat. Learn the form to prevent shoulder pain and maximize gains.",
+        "keywords": [
+          "dips technique",
+          "calisthenics chest",
+          "triceps"
+        ],
+        "content": "# Dips: The Upper Body Powerhouse\n\nDips are fundamental for chest and triceps growth.[4, 19] Keep your shoulders depressed to avoid injury .\n\nLog your sets on the [dashboard](/dashboard) and upgrade your gear in the [shop](/shop)!"
+      }
+    },
+    "author": "Reppy Editorial"
+  },
+  {
+    "slug": "orden-aprender-trucos",
+    "date": "2026-05-02",
+    "image": "https://images.unsplash.com/photo-1517438476312-10d79c67750d?auto=format&fit=crop&w=1200&q=80",
+    "category": "rpg",
+    "isPillar": true,
+    "locales": {
+      "es": {
+        "title": "Hoja de Ruta de Calistenia: El Orden de los Trucos",
+        "excerpt": "¿Quieres el Muscle-up o el Front Lever? Aprende el orden lógico de progresión para no estancarte nunca.",
+        "keywords": [
+          "trucos calistenia",
+          "orden habilidades",
+          "muscle up",
+          "front lever"
+        ],
+        "content": "# El Árbol de Habilidades de Reppy\n\nEn calistenia, como en un RPG, no puedes saltar niveles sin base sólida.[18, 20]\n\n## 🗺️ Mapa de Progresión\n1. **Básicos (0-3 meses):** 15 dominadas, 20 fondos, 30 flexiones.\n2. **Habilidades I (3-10 meses):** Muscle-up, Pino, Back Lever.[18, 21]\n3. **Habilidades II (10+ meses):** Front Lever, Plancha.\n\nConsulta tu nivel en el [dashboard](/dashboard) y únete a un clan en el feed [social](/social) para entrenar juntos."
+      },
+      "en": {
+        "title": "Calisthenics Skill Tree: Learning Order",
+        "excerpt": "Muscle-ups or Front Levers? Follow the logical progression tree to avoid plateaus.",
+        "keywords": [
+          "calisthenics skills",
+          "skills roadmap",
+          "muscle up"
+        ],
+        "content": "# Your Progression Roadmap\n\nMaster the basics before unlocking elite skills. Respect your tendons.[18, 21, 20]\n\nCheck your stats on the [dashboard](/dashboard) and share your skill unlocks in the [social](/social) feed!"
+      }
+    },
+    "author": "Reppy Editorial"
+  },
+  {
+    "slug": "errores-comunes-principiantes",
+    "date": "2026-05-04",
+    "image": "https://images.unsplash.com/photo-1541534741688-6078c64ec4d9?auto=format&fit=crop&w=1200&q=80",
+    "category": "principiantes",
+    "isPillar": false,
+    "locales": {
+      "es": {
+        "title": "5 Errores de Novato que Frenan tu XP",
+        "excerpt": "Evita el estancamiento desde el primer día. Aprende por qué la calidad siempre gana a la cantidad en Reppy.",
+        "keywords": [
+          "errores calistenia",
+          "estancamiento",
+          "técnica básica",
+          "consejos"
+        ],
+        "content": "# No Sabotees tus Ganancias\n\nMuchos fallan por errores estratégicos, no por falta de esfuerzo .\n\n## ❌ Pecados Clave\n- **Rep Chasing:** 50 flexiones mal son peor que 10 perfectas .\n- **Ignorar Piernas:** Tu base de poder .\n- **Inconsistencia:** La racha del [dashboard](/dashboard) es sagrada.\n\n¡La técnica es el camino más rápido a la [shop](/shop)!"
+      },
+      "en": {
+        "title": "5 Beginner Mistakes Killing Your XP",
+        "excerpt": "Avoid plateaus from day one. Why quality beats quantity in Reppy.",
+        "keywords": [
+          "calisthenics mistakes",
+          "beginner tips",
+          "form quality"
+        ],
+        "content": "# Don't Sabotage Your Gains\n\nQuality over quantity is the rule of calisthenics . Track only perfect reps in your [dashboard](/dashboard).\n\nCheck the [social](/social) feed to learn from the best!"
+      }
+    },
+    "author": "Reppy Editorial"
+  },
+  {
+    "slug": "muscle-up-progresion-tecnica",
+    "date": "2026-05-06",
+    "image": "https://images.unsplash.com/photo-1526506118085-60cf8714f82b?auto=format&fit=crop&w=1200&q=80",
+    "category": "avanzado",
+    "isPillar": false,
+    "locales": {
+      "es": {
+        "title": "Muscle-up: De la Tracción al Empuje Explosivo",
+        "excerpt": "El truco más icónico. Aprende la transición, el agarre falso y la potencia necesaria para subir sobre la barra.",
+        "keywords": [
+          "muscle up técnica",
+          "calistenia avanzada",
+          "transición dominada"
+        ],
+        "content": "# El Santo Grial: El Muscle-up\n\nEl Muscle-up no es solo una dominada alta; es una transición de potencia .\n\n## 🧠 Los 3 Pasos\n1. **Dominada Explosiva:** Tira hasta el ombligo.[22]\n2. **Transición:** Gira las muñecas sobre la barra (agarre falso ayuda).\n3. **Fondo:** El empuje final para bloquear codos.\n\nRegistra tus intentos en el [contador de dominadas](/contador-dominadas) y presume tu primer Muscle-up en el feed [social](/social)."
+      },
+      "en": {
+        "title": "Muscle-up: From Pulling to Explosive Pushing",
+        "excerpt": "The most iconic skill. Learn the transition, false grip, and power needed.",
+        "keywords": [
+          "muscle up technique",
+          "advanced calisthenics"
+        ],
+        "content": "# The Holy Grail: The Muscle-up\n\nIt's not just a high pull-up; it's a power transition . Focus on explosive pull-ups first.\n\nEarn massive XP on your [dashboard](/dashboard) with your first successful rep!"
+      }
+    },
+    "author": "Reppy Editorial"
+  },
+  {
+    "slug": "nutricion-calistenia-proteina",
+    "date": "2026-05-08",
+    "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80",
+    "category": "nutrición",
+    "isPillar": false,
+    "locales": {
+      "es": {
+        "title": "Nutrición para Calistenia: Gasolina para tu Héroe",
+        "excerpt": "Cuánta proteína necesitas y qué comer para recuperar más rápido. Optimiza tus macros para ganar músculo real.",
+        "keywords": [
+          "nutrición calistenia",
+          "dieta hipertrofia",
+          "proteína calistenia"
+        ],
+        "content": "# Nutrición: El Inventario de tu Héroe\n\nPara ganar niveles, necesitas reparar tus tejidos.[23]\n\n## 🥩 Macros Clave\n- **Proteína:** 1.8g a 2.2g por kilo de peso.\n- **Carbohidratos:** Tu energía para las Boss Fights.\n- **Grasas:** Salud hormonal.\n\nUn cuerpo bien nutrido rinde mejor en el [dashboard](/dashboard). ¡Visita la [shop](/shop) para consejos de suplementación básica!"
+      },
+      "en": {
+        "title": "Calisthenics Nutrition: Fueling Your Hero",
+        "excerpt": "How much protein you need and what to eat for faster recovery.",
+        "keywords": [
+          "calisthenics nutrition",
+          "protein intake",
+          "muscle growth"
+        ],
+        "content": "# Nutrition: Your Hero's Inventory\n\nFuel your body to sustain your training streaks.[23] Aim for high-quality protein and complex carbs.\n\nKeep your energy high for the next Boss Fight on the [social](/social) feed!"
+      }
+    },
+    "author": "Reppy Editorial"
+  },
+  {
+    "slug": "front-lever-guia-fuerza",
+    "date": "2026-05-10",
+    "image": "https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&w=1200&q=80",
+    "category": "avanzado",
+    "isPillar": false,
+    "locales": {
+      "es": {
+        "title": "Front Lever: Gravedad Cero con Fuerza Isométrica",
+        "excerpt": "Domina uno de los estáticos más estéticos. Progresiones desde Tuck hasta Full Front Lever.",
+        "keywords": [
+          "front lever progresion",
+          "estáticos calistenia",
+          "fuerza abdominal"
+        ],
+        "content": "# Front Lever: Desafiando la Gravedad\n\nRequiere una fuerza brutal de dorsales y core .\n\n## 📈 Progresiones\n- Tuck Front Lever.\n- Advanced Tuck.\n- Straddle (piernas abiertas).\n- Full Front Lever.\n\nRegistra tus tiempos en el [dashboard](/dashboard) y desbloquea el título de 'Maestro de la Gravedad' en la [shop](/shop)."
+      },
+      "en": {
+        "title": "Front Lever: Gravity-Defying Isometric Strength",
+        "excerpt": "Master one of the most aesthetic static holds. Progressions from Tuck to Full.",
+        "keywords": [
+          "front lever",
+          "calisthenics statics",
+          "core strength"
+        ],
+        "content": "# Front Lever Mastery\n\nA test of lats and core tension . Focus on scapular depression and straight arms.\n\nPost your hold times on the [social](/social) feed to motivate the community!"
+      }
+    },
+    "author": "Reppy Editorial"
+  },
+  {
+    "slug": "core-hollow-body-tension",
+    "date": "2026-05-12",
+    "image": "https://images.unsplash.com/photo-1510894347713-fc3ad6cb0392?auto=format&fit=crop&w=1200&q=80",
+    "category": "core",
+    "isPillar": false,
+    "locales": {
+      "es": {
+        "title": "Hollow Body: La Base de toda la Calistenia",
+        "excerpt": "El ejercicio más importante que no estás haciendo. Cómo la tensión corporal mejora tus dominadas y planchas.",
+        "keywords": [
+          "hollow body",
+          "tensión abdominal",
+          "core calistenia"
+        ],
+        "content": "# Hollow Body: El Núcleo del Guerrero\n\nSin tensión corporal, la fuerza se disipa . El Hollow Body es el fundamento del pino y la plancha.\n\n## 🛠️ Técnica\nPresiona la zona lumbar contra el suelo, levanta hombros y piernas. Cuerpo en forma de 'banana' .\n\nMejora tu estabilidad para registrar más reps en el [contador de flexiones](/contador-flexiones) y sube de rango en el [dashboard](/dashboard)."
+      },
+      "en": {
+        "title": "Hollow Body: The Foundation of All Calisthenics",
+        "excerpt": "The most important exercise you're not doing. Body tension for better pull-ups.",
+        "keywords": [
+          "hollow body",
+          "core tension",
+          "bodyweight core"
+        ],
+        "content": "# Hollow Body: The Warrior's Core\n\nMaster body tension to unlock advanced skills . Keep your lower back flat on the floor.\n\nBetter core means better stats on your [dashboard](/dashboard)!"
+      }
+    },
+    "author": "Reppy Editorial"
+  },
+  {
+    "slug": "calistenia-en-casa-sin-equipo",
+    "date": "2026-05-14",
+    "image": "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=1200&q=80",
+    "category": "principiantes",
+    "isPillar": false,
+    "locales": {
+      "es": {
+        "title": "Calistenia en Casa: Entrena sin excusas ni equipo",
+        "excerpt": "Cómo usar muebles y la gravedad para ponerte en forma. Rutina full body para días de lluvia.",
+        "keywords": [
+          "entrenar en casa",
+          "calistenia sin equipo",
+          "rutina casa 2026"
+        ],
+        "content": "# Calistenia Casera: Tu Salón es el Gym\n\nNo tener barras no es excusa para romper tu racha .\n\n## 🏠 Equipo Improvisado\n- **Sillas:** Para fondos de tríceps .\n- **Mesa:** Para remos australianos.[5]\n- **Suelo:** Tu mejor aliado para flexiones .\n\nMantén tu streak diaria en el [dashboard](/dashboard) incluso si no puedes ir al parque. ¡Comparte tu 'home gym' en el feed [social](/social)!"
+      },
+      "en": {
+        "title": "Home Calisthenics: Train Anywhere, No Gear Needed",
+        "excerpt": "How to use furniture and gravity to get fit. Full body routine for home.",
+        "keywords": [
+          "home workout",
+          "no equipment calisthenics",
+          "train at home"
+        ],
+        "content": "# Home Calisthenics: No Gym, No Problem\n\nUse your environment to stay active . Dips on chairs, push-ups on the floor.\n\nDon't break your [dashboard](/dashboard) streak. Post your home session on the [social](/social) feed!"
+      }
+    },
+    "author": "Reppy Editorial"
   }
 ]

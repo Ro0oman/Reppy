@@ -58,11 +58,18 @@
           <!-- Ambient glow -->
           <div class="absolute inset-0 bg-primary/10 blur-[100px] opacity-50 group-hover:opacity-100 transition-opacity duration-1000"></div>
           
-          <div class="relative rounded-[3rem] overflow-hidden border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] bg-surface-dark/20 ring-1 ring-white/5">
+          <div class="relative rounded-[3rem] overflow-hidden border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] bg-surface-dark/20 ring-1 ring-white/5 flex items-center justify-center min-h-[300px]">
+            <!-- Loading Spinner -->
+            <div v-if="!imageLoaded" class="absolute inset-0 flex items-center justify-center">
+              <Loader2 class="w-12 h-12 text-primary animate-spin opacity-50" />
+            </div>
+
             <img 
               :src="currentPost.image" 
               :alt="post.title" 
-              class="w-full h-auto aspect-video object-cover transform transition-transform duration-1000 group-hover:scale-105"
+              class="w-full h-auto aspect-video object-cover transform transition-all duration-1000 group-hover:scale-105"
+              :class="imageLoaded ? 'opacity-100' : 'opacity-0'"
+              @load="imageLoaded = true"
               @error="handleImageError"
             />
           </div>
@@ -109,8 +116,16 @@
 
         <!-- Semantic Internal Linking (Read Pillar) -->
         <div v-if="!currentPost.isPillar && relatedPillar" class="mt-12 p-8 bg-surface border border-border/40 rounded-3xl flex flex-col md:flex-row items-center gap-8 animate-in">
-          <div class="w-24 h-24 rounded-2xl overflow-hidden shrink-0 shadow-lg">
-            <img :src="relatedPillar.image" class="w-full h-full object-cover" />
+          <div class="w-24 h-24 rounded-2xl overflow-hidden shrink-0 shadow-lg bg-surface-dark/10 relative flex items-center justify-center">
+            <div v-if="!pillarLoaded" class="absolute inset-0 flex items-center justify-center">
+              <Loader2 class="w-6 h-6 text-primary animate-spin opacity-40" />
+            </div>
+            <img 
+              :src="relatedPillar.image" 
+              class="w-full h-full object-cover transition-opacity duration-500" 
+              :class="pillarLoaded ? 'opacity-100' : 'opacity-0'"
+              @load="pillarLoaded = true"
+            />
           </div>
           <div class="space-y-2 text-center md:text-left">
             <span class="text-[10px] font-black uppercase tracking-widest text-primary">{{ i18n.t('master_guide') || 'Guía Maestra' }}</span>
@@ -229,7 +244,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { 
   Calendar, User, Clock, ChevronRight, 
   ArrowUpRight, Share2, Twitter, Facebook, Linkedin, MessageCircle,
-  List as ListIcon
+  List as ListIcon, Loader2
 } from 'lucide-vue-next';
 import { marked } from 'marked';
 import { blogPosts } from '../blogPosts';
@@ -238,6 +253,9 @@ import { useI18nStore } from '../stores/i18n';
 const route = useRoute();
 const router = useRouter();
 const i18n = useI18nStore();
+
+const imageLoaded = ref(false);
+const pillarLoaded = ref(false);
 
 const currentPost = computed(() => {
   const slug = route.params.slug;

@@ -29,12 +29,22 @@
           :to="`/blog/${post.slug}`" 
           class="group card-stats !p-0 overflow-hidden flex flex-col border-border/40 hover:border-primary-500/40"
         >
-          <div class="relative aspect-video overflow-hidden">
+          <div class="relative aspect-video overflow-hidden bg-surface-dark/20 flex items-center justify-center">
+            <!-- Loading Spinner -->
+            <div v-if="!loadedImages[post.slug]" class="absolute inset-0 flex items-center justify-center">
+              <Loader2 class="w-8 h-8 text-primary-500/40 animate-spin" />
+            </div>
+
             <img 
               :src="post.image" 
               :alt="post.locales[i18n.locale]?.title" 
-              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-              @error="(e) => e.target.src = 'https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?auto=format&fit=crop&w=800&q=60'"
+              class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110" 
+              :class="loadedImages[post.slug] ? 'opacity-100' : 'opacity-0'"
+              @load="loadedImages[post.slug] = true"
+              @error="(e) => { 
+                loadedImages[post.slug] = true;
+                e.target.src = 'https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?auto=format&fit=crop&w=800&q=60';
+              }"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent"></div>
           </div>
@@ -97,15 +107,16 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, reactive } from 'vue';
 import { blogPosts } from '../blogPosts';
 import { useI18nStore } from '../stores/i18n';
-import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
+import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-vue-next';
 import LanguageToggle from './LanguageToggle.vue';
 
 const i18n = useI18nStore();
 const currentPage = ref(1);
 const postsPerPage = 10;
+const loadedImages = reactive({});
 
 const sortedPosts = computed(() => {
   const today = new Date();
