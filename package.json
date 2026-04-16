@@ -1,8 +1,12 @@
 {
   "name": "reppy-monorepo",
   "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
   "scripts": {
-    "build": "cd frontend && npm install && npm run build",
-    "install:all": "cd frontend && npm install && cd ../backend && npm install"
+    "build": "cd frontend && npm run build",
+    "install:all": "npm install"
   }
 }
