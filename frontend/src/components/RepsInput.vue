@@ -79,6 +79,7 @@ import { useI18nStore } from '../stores/i18n';
 import { useNotificationStore } from '../stores/notification';
 import { useDamageStore } from '../stores/damage';
 import { useAuthStore } from '../stores/auth';
+import { getLocalDateString } from '../utils/dateUtils';
 
 const props = defineProps({
   exerciseType: {
@@ -103,7 +104,7 @@ const addReps = async (count) => {
   if (!count || loading.value) return;
   loading.value = true;
   try {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getLocalDateString();
     const res = await axios.post('/api/reps', {
       count,
       date: today,

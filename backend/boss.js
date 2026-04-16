@@ -86,7 +86,7 @@ router.get('/active', optionalAuthenticate, async (req, res) => {
         };
       }
 
-      const isToday = new Date(participant.last_boss_damage_date).toISOString().split('T')[0] === new Date().toISOString().split('T')[0];
+      const isToday = getLocalDateString(participant.last_boss_damage_date) === getLocalDateString();
       daily_damage = isToday ? participant.daily_boss_damage : 0;
       personal_damage = participant.damage_dealt;
       chests_claimed = participant.chests_claimed;

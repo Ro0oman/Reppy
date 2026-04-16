@@ -48,15 +48,15 @@ export const recalculateUserStats = async (userId) => {
     
     let streak = 0;
     if (streakResult && streakResult.rowCount > 0) {
-      const dates = streakResult.rows.map(r => new Date(r.date).toISOString().split('T')[0]);
-      const today = new Date().toISOString().split('T')[0];
-      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+      const dates = streakResult.rows.map(r => getLocalDateString(r.date));
+      const today = getLocalDateString();
+      const yesterday = getLocalDateString(new Date(Date.now() - 86400000));
       
       let checkDate = dates.includes(today) ? today : (dates.includes(yesterday) ? yesterday : null);
       
       if (checkDate) {
         let current = new Date(checkDate);
-        while (dates.includes(current.toISOString().split('T')[0])) {
+        while (dates.includes(getLocalDateString(current))) {
           streak++;
           current.setDate(current.getDate() - 1);
         }

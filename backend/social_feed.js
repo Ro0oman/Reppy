@@ -248,7 +248,7 @@ router.put('/summary', authenticate, async (req, res) => {
        ON CONFLICT (user_id, date) 
        DO UPDATE SET title = EXCLUDED.title, description = EXCLUDED.description
        RETURNING *`,
-      [userId, date || new Date().toISOString().split('T')[0], title, description]
+      [userId, date || getLocalDateString(), title, description]
     );
     res.json(result.rows[0]);
   } catch (error) {

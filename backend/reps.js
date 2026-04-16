@@ -5,6 +5,7 @@ import { getExerciseRewards, getBossDamageMultiplier } from './utils/rewards.js'
 import { recalculateUserStats } from './utils/stats.js';
 import { trackCoinTransaction } from './utils/transactions.js';
 import { syncBossHealth } from './utils/boss.js';
+import { getLocalDateString } from './utils/date.js';
 
 
 const router = express.Router();
@@ -46,7 +47,7 @@ router.post('/', authenticate, async (req, res) => {
        DO UPDATE SET count = reps.count + EXCLUDED.count,
                      added_weight = EXCLUDED.added_weight 
        RETURNING *`,
-      [userId, count, date || new Date().toISOString().split('T')[0], exercise_type, parseFloat(added_weight) || 0]
+      [userId, count, date || getLocalDateString(), exercise_type, parseFloat(added_weight) || 0]
     );
 
     // 2. Calcular Reppy Coins y XP ganada
@@ -92,7 +93,7 @@ router.post('/', authenticate, async (req, res) => {
         [userId]
       );
       const userDamageInfo = userDamageRes.rows[0];
-      const isToday = new Date(userDamageInfo.last_boss_damage_date).toISOString().split('T')[0] === new Date().toISOString().split('T')[0];
+      const isToday = getLocalDateString(userDamageInfo.last_boss_damage_date) === getLocalDateString();
       
       const currentDailyDamage = isToday ? userDamageInfo.daily_boss_damage : 0;
       const allowableDamage = Math.max(0, 100 - currentDailyDamage);
@@ -288,7 +289,7 @@ router.put('/:id', authenticate, async (req, res) => {
 
     // 2. Boss Health Adjustment
     let newBossDamageDealt = 0;
-    const isToday = new Date(oldRep.date).toISOString().split('T')[0] === new Date().toISOString().split('T')[0];
+    const isToday = getLocalDateString(oldRep.date) === getLocalDateString();
 
     // Find active boss
     const bossRes = await query(
@@ -419,7 +420,7 @@ router.delete('/:id', authenticate, async (req, res) => {
       }
 
       // Adjust daily cap if it was today
-      const isToday = new Date(oldRep.date).toISOString().split('T')[0] === new Date().toISOString().split('T')[0];
+      const isToday = getLocalDateString(oldRep.date) === getLocalDateString();
       if (isToday) {
         await query(
           `UPDATE users SET daily_boss_damage = GREATEST(0, daily_boss_damage - $1) WHERE id = $2`,
