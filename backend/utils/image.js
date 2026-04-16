@@ -1,5 +1,4 @@
-import sharp from 'sharp';
-
+// Sharp is dynamically imported inside the target function
 /**
  * Compresses a Base64 image string.
  * @param {string} base64Str - The raw base64 string (with or without data prefix).
@@ -10,6 +9,9 @@ export const compressAvatar = async (base64Str, size = 128) => {
   if (!base64Str) return null;
 
   try {
+    // Dynamically import sharp to prevent Vercel serverless cold-start crashes if linux bindings are missing
+    const { default: sharp } = await import('sharp');
+
     // Extract buffer from base64
     const base64Data = base64Str.replace(/^data:image\/\w+;base64,/, '');
     const buffer = Buffer.from(base64Data, 'base64');
