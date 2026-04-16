@@ -2,31 +2,31 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://reppy-weld.vercel.app/</loc>
-    <lastmod>2026-04-16T14:34:17.960Z</lastmod>
+    <lastmod>2026-04-16T15:08:51.094Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://reppy-weld.vercel.app/contador-dominadas</loc>
-    <lastmod>2026-04-16T14:34:17.960Z</lastmod>
+    <lastmod>2026-04-16T15:08:51.094Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://reppy-weld.vercel.app/contador-flexiones</loc>
-    <lastmod>2026-04-16T14:34:17.960Z</lastmod>
+    <lastmod>2026-04-16T15:08:51.094Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://reppy-weld.vercel.app/app-calistenia</loc>
-    <lastmod>2026-04-16T14:34:17.960Z</lastmod>
+    <lastmod>2026-04-16T15:08:51.094Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://reppy-weld.vercel.app/blog</loc>
-    <lastmod>2026-04-16T14:34:17.960Z</lastmod>
+    <lastmod>2026-04-16T15:08:51.094Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
@@ -115,7 +115,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://reppy-weld.vercel.app/blog/mejorar-hora-para-entrenar</loc>
+    <loc>https://reppy-weld.vercel.app/blog/mejor-hora-para-entrenar</loc>
     <lastmod>2026-05-10T00:00:00.000Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

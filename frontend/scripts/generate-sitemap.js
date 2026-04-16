@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { blogPosts } from '../src/blogPosts.js';
+const blogPosts = JSON.parse(fs.readFileSync('./src/blogPosts.json', 'utf8'));
 
 const BASE_URL = 'https://reppy-weld.vercel.app';
 const lastmod = new Date().toISOString();

@@ -1,12 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 
-const backendFile = path.join(process.cwd(), 'blogData.js');
-const frontendFile = path.join(process.cwd(), '../frontend/src/blogPosts.js');
+const backendFile = path.join(process.cwd(), 'blogData.json');
+const frontendFile = path.join(process.cwd(), '../frontend/src/blogPosts.json');
 
 const files = [backendFile, frontendFile];
 
-const contentPillar1Es = `
+const pillarsMap = {
+  'guia-definitiva-dominadas': {
+    es: `
 # Guía Definitiva de Dominadas: De 0 a 20 repeticiones
 
 Las dominadas son el ejercicio rey de la calistenia. No solo construyen una espalda en forma de V, sino que son la base para trucos avanzados como el Muscle-up o el Front Lever. En esta guía, desglosamos todo lo que necesitas saber.
@@ -37,9 +39,8 @@ Si estás estancado, sigue este ciclo de carga progresiva.
 - **¿Qué agarre es mejor?** El prono (palmas al frente) es el más completo.
 
 [¿Listo para medir tu progreso? Usa el contador de dominadas Reppy aquí](/contador-dominadas)
-`;
-
-const contentPillar1En = `
+`,
+    en: `
 # Ultimate Pull-up Guide: 0 to 20 Reps
 
 Master the king of calisthenics exercises. Pull-ups not only build a V-shaped back but are the foundation for advanced skills like the Muscle-up or Front Lever. In this guide, we break down everything you need to know.
@@ -70,10 +71,10 @@ If you're stuck, follow this progressive overload cycle.
 - **Which grip is better?** Pronated (palms facing away) is the most complete.
 
 [Ready to measure your progress? Use the Reppy pull-up counter here](/contador-dominadas)
-`;
-
-
-const contentPillar2Es = `
+`
+  },
+  'manual-inicio-calistenia': {
+    es: `
 # Manual Maestro de Calistenia: De 0 a Pro
 
 La calistenia seduce por su sencillez: tu cuerpo es el gimnasio. Pero sin un plan, es fácil lesionarse o abandonar. Este manual te llevará desde tu primer día hasta dominar tu peso corporal.
@@ -98,9 +99,8 @@ Realiza este circuito 3 veces por semana, descansando un día entre sesiones:
 Descansa 90 segundos y repite 4 veces.
 
 [Regístrate en Reppy para gamificar tu entrenamiento](/dashboard)
-`;
-
-const contentPillar2En = `
+`,
+    en: `
 # Master Calisthenics Manual: How to Start from 0
 
 Calisthenics seduces with its simplicity: your body is the gym. But without a plan, it's easy to get injured or quit. This manual will take you from day one to mastering your body weight.
@@ -125,9 +125,10 @@ Do this circuit 3 times a week, resting a day between sessions:
 Rest 90 seconds and repeat 4 times.
 
 [Sign up at Reppy Dashboard to gamify your training](/dashboard)
-`;
-
-const contentPillar3Es = `
+`
+  },
+  'gamificacion-fitness-ciencia': {
+    es: `
 # La Ciencia de la Gamificación: Por qué funciona
 
 ¿Alguna vez te has preguntado por qué te enganchan los videojuegos pero te cuesta ir a entrenar de forma consistente? La respuesta neurológica está en la **Retroalimentación Inmediata**.
@@ -145,9 +146,8 @@ Al registrar tus repeticiones en la plataforma Reppy, cerramos de golpe la brech
 Cuando el entrenamiento se convierte en una misión heroica, la fricción mental inicial desaparece. Ya no entrenas por obligación social, lo haces por la recompensa intrínseca de formar parte del juego y escalar en la clasificación mundial.
 
 [Entra en la arena y derrota al Boss de hoy](/dashboard)
-`;
-
-const contentPillar3En = `
+`,
+    en: `
 # Gaming your Fitness: The Science of Motivation
 
 Have you ever wondered why you get hooked on video games but struggle to go to the gym consistently? The neurological answer lies in **Immediate Feedback**.
@@ -165,39 +165,26 @@ By logging your reps on the Reppy platform, we close the feedback gap instantly:
 When training becomes a heroic quest, the initial mental friction disappears. You no longer train out of obligation, you do it for the intrinsic reward of being part of the game and climbing the global leaderboard.
 
 [Enter the arena and defeat today's Boss](/dashboard)
-`;
-
+`
+  }
+};
 
 files.forEach(file => {
-  let text = fs.readFileSync(file, 'utf8');
+  if (!fs.existsSync(file)) return;
+  
+  let data = JSON.parse(fs.readFileSync(file, 'utf8'));
 
-  // Replace Pillar 1 ES
-  text = text.replace(/slug:\s*'guia-definitiva-dominadas'[\s\S]*?content:\s*`[\s\S]*?`\s*\},/g, match => {
-    return match.replace(/content:\s*`[\s\S]*?`/, "content: `" + contentPillar1Es + "`");
-  });
-  // Replace Pillar 1 EN
-  text = text.replace(/slug:\s*'guia-definitiva-dominadas'[\s\S]*?en:\s*\{[\s\S]*?content:\s*`[\s\S]*?`/g, match => {
-    return match.replace(/content:\s*`[\s\S]*?`$/, "content: `" + contentPillar1En + "`");
-  });
-
-  // Replace Pillar 2 ES
-  text = text.replace(/slug:\s*'manual-inicio-calistenia'[\s\S]*?content:\s*`[\s\S]*?`\s*\},/g, match => {
-    return match.replace(/content:\s*`[\s\S]*?`/, "content: `" + contentPillar2Es + "`");
-  });
-  // Replace Pillar 2 EN
-  text = text.replace(/slug:\s*'manual-inicio-calistenia'[\s\S]*?en:\s*\{[\s\S]*?content:\s*`#[\s\S]*?`/g, match => {
-    return match.replace(/content:\s*`#[\s\S]*?`$/, "content: `" + contentPillar2En + "`");
+  data.forEach(post => {
+    if (pillarsMap[post.slug]) {
+      const pillar = pillarsMap[post.slug];
+      if (post.locales) {
+          if (post.locales.es && pillar.es) post.locales.es.content = pillar.es.trim();
+          if (post.locales.en && pillar.en) post.locales.en.content = pillar.en.trim();
+      }
+    }
   });
 
-  // Replace Pillar 3 ES
-  text = text.replace(/slug:\s*'gamificacion-fitness-ciencia'[\s\S]*?content:\s*`[\s\S]*?`\s*\},/g, match => {
-    return match.replace(/content:\s*`[\s\S]*?`/, "content: `" + contentPillar3Es + "`");
-  });
-  // Replace Pillar 3 EN
-  text = text.replace(/slug:\s*'gamificacion-fitness-ciencia'[\s\S]*?en:\s*\{[\s\S]*?content:\s*`#[\s\S]*?`/g, match => {
-    return match.replace(/content:\s*`#[\s\S]*?`$/, "content: `" + contentPillar3En + "`");
-  });
-
-  fs.writeFileSync(file, text, 'utf8');
+  fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
 });
-console.log('Successfully updated Pillar posts with full content.');
+
+console.log('Successfully updated Pillar posts with full content in JSON files.');
