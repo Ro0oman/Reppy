@@ -11,7 +11,6 @@ const router = express.Router();
 
 // Get active or upcoming boss
 router.get('/active', optionalAuthenticate, async (req, res) => {
-  console.log('[BOSS_API] Hit, user:', req.user ? req.user.id : 'GUEST');
   try {
     // Current boss is the one with the lowest order_index that is not defeated
     let bossRes = await query(

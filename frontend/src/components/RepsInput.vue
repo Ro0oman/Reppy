@@ -117,7 +117,6 @@ const addReps = async (count) => {
     
     // Trigger JRPG damage animation if boss damage was dealt
     if (res.data.boss_damage_dealt > 0) {
-      console.log('[DEBUG_DAMAGE] RepsInput: Calling addDamage', { amount: res.data.boss_damage_dealt, type: props.exerciseType });
       const damageStore = useDamageStore();
       damageStore.addDamage(res.data.boss_damage_dealt, props.exerciseType);
     }

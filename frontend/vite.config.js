@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [vue()],
   css: {
     postcss: './postcss.config.cjs',
+    transformer: 'postcss',
   },
   build: {
     rollupOptions: {
