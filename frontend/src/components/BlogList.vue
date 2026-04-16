@@ -122,7 +122,13 @@ const sortedPosts = computed(() => {
   const today = new Date();
   return blogPosts
     .filter(post => new Date(post.date) <= today)
-    .sort((a, b) => new Date(b.date) - new Date(a.date));
+    .sort((a, b) => {
+      // Prioritize pillar posts (How to do my first X)
+      if (a.isPillar && !b.isPillar) return -1;
+      if (!a.isPillar && b.isPillar) return 1;
+      // Then sort by date
+      return new Date(b.date) - new Date(a.date);
+    });
 });
 
 const totalPages = computed(() => Math.ceil(sortedPosts.value.length / postsPerPage));

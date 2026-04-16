@@ -8,18 +8,18 @@
     "isPillar": true,
     "locales": {
       "es": {
-        "title": "Guía Definitiva de Dominadas: Biomecánica y Progresión 0-20",
-        "excerpt": "La biblia de las dominadas. Técnica biomecánica, rutinas de progresión de 8 semanas y consejos para evitar lesiones.",
+        "title": "¿Cómo hacer mi primera dominada? Guía para novatos",
+        "excerpt": "Si no puedes hacer ni una dominada, este es tu sitio. Aprende los pasos reales para levantar tu peso por primera vez.",
         "keywords": [
           "guía dominadas",
           "rutina dominadas",
           "calistenia fuerza"
         ],
-        "content": "En Reppy, cada repetición técnica cuenta para tu XP.\n\n## 🧠 Biomecánica: El Secreto de las Escápulas\nEl error común es tirar solo con los brazos. Una dominada eficiente comienza con la **depresión y retracción escapular**: tirar de los hombros hacia abajo y atrás antes de flexionar los codos .\n\n| Fase | Acción Clave | Músculo Motor |\n| :--- | :--- | :--- |\n| Inicio | Depresión Escapular | Trapecio Inferior [3] |\n| Ascenso | Tracción Vertical | Dorsal Ancho [1] |\n| Final | Pecho a la barra | Bíceps / Braquial |\n\n## 📈 Plan de Progresión\n- **Semanas 1-2:** Cuelgues activos (Dead Hangs) y remos australianos.[4, 5]\n- **Semanas 3-4:** Negativas controladas (5 seg de bajada).[6]\n- **Semanas 5-8:** Series de volumen acumulado.\n\n**🔥 Tip de Reppy:** Registra tus series en el [contador de dominadas](/contador-dominadas) para infligir daño al Boss global. ¡Consulta tu progreso en el [dashboard](/dashboard)!"
+        "content": "# ¿Cómo hacer mi primera dominada? Guía para novatos\n\n¿Te cuelgas de la barra y pareces un saco de patatas? No te rayes, todos hemos empezado así. Hacer tu primera dominada es como pasarse el primer Boss de un juego: cuesta, pero una vez lo haces, te sientes invencible.\n\n## 🚀 Los 3 pasos para tu primera rep:\n1. **El Cuelgue Activo:** No te quedes ahí tirado. Tira de los hombros hacia abajo y aguanta 30 segundos. Si no aguantas colgado, no vas a subir nunca.\n2. **Dominadas Negativas:** Salta o usa una silla para subir, y baja lo más LENTO que puedas. Este es el mejor truco para ganar fuerza rápido.\n3. **Remos Australianos:** Busca una barra más baja y tira con los pies en el suelo. Es como la dominada, pero en versión fácil para farmear XP.\n\n**🔥 Tip Reppy:** Cuando lo consigas, regístralo en el [contador](/contador-dominadas). ¡Esa primera dominada vale oro en la [/shop](/shop)!"
       },
       "en": {
-        "title": "Ultimate Pull-Up Guide: Biomechanics & 0 to 20 Rep Progression",
-        "excerpt": "Master vertical pulling. Learn proper scapular activation, prevent injuries, and follow our 8-week plan to level up in Reppy.",
+        "title": "How to do my first pull-up? A guide for beginners",
+        "excerpt": "Stuck at zero pull-ups? Learn the real steps to lift your body weight for the first time.",
         "keywords": [
           "pull-up technique",
           "back training",
@@ -27,39 +27,39 @@
           "strength training",
           "lats"
         ],
-        "content": "# Master Pull-Up Guide: Own the Bar\n\nA pull-up is a symphony of strength between your **lats**, **lower traps**, and **elbow flexors**.[1, 2] To conquer the leaderboard, form is everything.\n\n## 🧠 Biomechanics: Scapular Mastery\nDon't just pull; initiate with **scapular depression**—pulling your shoulder blades down and back . This secures the shoulder joint and engages the powerful back muscles.\n\n## 🚀 8-Week Roadmap\n- **Weeks 1-2:** Active hangs and Australian rows.[5]\n- **Weeks 3-4:** 5-second eccentric negatives.[6]\n- **Weeks 5-8:** Volume building.\n\n**🔥 Reppy Tip:** Log your reps in the [pull-up counter](/contador-dominadas) to earn gold for the [shop](/shop). Check your daily streaks on the [dashboard](/dashboard)!"
+        "content": "# How to do my first pull-up? A guide for beginners\n\nHanging from the bar like a sack of potatoes? Don't worry, we've all been there. Getting your first pull-up is like beating the first Boss in a game: it's hard, but once you do it, you feel invincible.\n\n## 🚀 The 3 steps to your first rep:\n1. **The Active Hang:** Don't just dangle. Pull your shoulders down and hold for 30 seconds. If you can't hang, you'll never pull up.\n2. **Negative Pull-ups:** Jump or use a chair to get up, then lower yourself as SLOWLY as you can. This is the best trick to gain strength fast.\n3. **Australian Rows:** Find a lower bar and pull with your feet on the ground. It's like a pull-up but in \"Easy Mode\" to farm XP.\n\n**🔥 Reppy Tip:** Once you nail it, log it in the [counter](/contador-dominadas). That first pull-up is worth gold in the [/shop](/shop)!"
       }
     }
   },
   {
     "slug": "manual-inicio-calistenia",
-    "date": "2026-04-18",
+    "date": "2026-04-16",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
     "category": "principiantes",
     "isPillar": true,
     "locales": {
       "es": {
-        "title": "Manual Maestro de Calistenia: Cómo empezar de 0 a Pro",
-        "excerpt": "Descubre los 3 pilares de la calistenia, la rutina perfecta para empezar hoy y cómo usar Reppy para gamificar tu transformación física.",
+        "title": "¿Cómo empezar en calistenia desde cero?",
+        "excerpt": "Todo lo que necesitas para tu primer día: rutina, equipo (que no necesitas) y motivación.",
         "keywords": [
           "empezar calistenia",
           "rutina calistenia principiantes",
           "ejercicios peso corporal",
           "guía calistenia 2026"
         ],
-        "content": "# Manual de Inicio: Tu Primera Misión\n\nLa calistenia es el dominio del propio cuerpo contra la gravedad. No necesitas equipo, solo técnica y constancia.[7]\n\n## 🏗️ Los 3 Pilares del Guerrero\n1. **Empuje (Push):** Flexiones e inclinaciones. Enfocado en pecho y tríceps.[8]\n2. **Tracción (Pull):** Remos y cuelgues. Clave para la postura.\n3. **Core y Piernas:** Sentadillas y planchas. Tu base de estabilidad .\n\n## ⚔️ Rutina Nivel 1\n- 10 Flexiones (usa el [contador de flexiones](/contador-flexiones)).\n- 15 Sentadillas profundas.\n- 5 Negativas de dominada.\n- 30 seg de Plancha.\n\nRegistra tu entrenamiento en el [dashboard](/dashboard) y gasta tu primer oro en la [shop](/shop). ¡La aventura empieza hoy!"
+        "content": "# ¿Cómo empezar en calistenia desde cero?\n\n¿Quieres ponerte fuerte pero pasas de pagar un gimnasio? Bienvenido a la calistenia. Aquí eres tú contra el mundo (y contra la gravedad).\n\n## 🏗️ Lo mínimo para empezar:\n- **Una barra:** Si no tienes una en el parque, compra una de puerta. Es tu mejor inversión.\n- **Tu cuerpo:** Ganas de sudar y de ganar XP. \n- **Esta App:** Registra cada repetición. Ver cómo subes de nivel es lo que te hará seguir cuando no tengas ganas.\n\n**🔥 Acción:** Ve a tu [/dashboard](/dashboard), mira el Boss de hoy y haz al menos 5 flexiones para empezar a dañarlo. ¡Tu aventura empieza ahora!"
       },
       "en": {
-        "title": "Master Calisthenics Manual: How to Start from 0",
-        "excerpt": "Discover the 3 pillars of calisthenics, the perfect starter routine, and how to use Reppy to gamify your fitness journey.",
+        "title": "How to start calisthenics from zero?",
+        "excerpt": "Everything you need for your first day: routine, gear (or lack thereof), and motivation.",
         "keywords": [
           "start calisthenics",
           "beginner routine",
           "bodyweight training",
           "calisthenics guide 2026"
         ],
-        "content": "# Beginner's Manual: Your First Quest\n\nCalisthenics is about mastering your own gravity. Focus on fundamental movement patterns to build a solid base .\n\n## 🏗️ The 3 Pillars\n1. **Push:** Push-ups and dips.[8]\n2. **Pull:** Rows and scapular strength.[1]\n3. **Core & Legs:** Squats and hollow body holds.[9]\n\n**🔥 Action:** Track your progress on the [dashboard](/dashboard) and spend your gold in the [shop](/shop)!"
+        "content": "# How to start calisthenics from zero?\n\nWant to get ripped but don't want to pay for a gym? Welcome to calisthenics. It's you vs. the world (and gravity).\n\n## 🏗️ The minimum to start:\n- **A Bar:** If there isn't one at the park, get a doorway bar. It's your best investment.\n- **Your Body:** A willingness to sweat and earn XP.\n- **This App:** Log every rep. Seeing yourself level up is what keeps you going when you don't feel like it.\n\n**🔥 Action:** Go to your [/dashboard](/dashboard), find today's Boss, and do at least 5 push-ups to start dealing damage. Your adventure starts now!"
       }
     }
   },
@@ -69,10 +69,10 @@
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
     "category": "rpg",
-    "isPillar": true,
+    "isPillar": false,
     "locales": {
       "es": {
-        "title": "Ciencia del Fitness RPG: Hackea tu cerebro para entrenar",
+        "title": "Por qué Reppy engancha más que el Gym: Ciencia para Viciados",
         "excerpt": "Por qué Reppy funciona donde otros fallan. Neurología de la recompensa, Boss Fights y el poder de la comunidad gamificada.",
         "keywords": [
           "gamificación fitness",
@@ -80,10 +80,10 @@
           "fitness RPG",
           "motivación entrenar"
         ],
-        "content": "# ¿Por qué Reppy funciona? El Bucle de Dopamina\n\nEl fitness tradicional ofrece resultados lentos. Reppy hackea este sistema mediante **recompensas inmediatas**.[10, 9]\n\n## 🧠 Neurología de la Victoria\nCada flexión en el [contador de flexiones](/contador-flexiones) otorga XP. Esto libera dopamina, vinculando el esfuerzo con placer instantáneo.[11]\n\n### Mecánicas Reppy:\n- **Boss Fights:** Tus repeticiones dañan al jefe en el feed [social](/social).[12]\n- **Armería:** El sudor se traduce en skins en la [shop](/shop).\n- **Streaks:** La racha en tu [dashboard](/dashboard) es tu mayor activo.\n\nNo solo entrenas, estás jugando. ¡Entra y derrota al Boss de hoy!"
+        "content": "# Por qué Reppy engancha más que el Gym: Ciencia para Viciados\n\nIr al gimnasio es aburrido. Mirarse en el espejo y no verse cambios es frustrante. Por eso Reppy mola más: porque lo convertimos todo en un juego.\n\n## 🧠 Hackeo Cerebral\nTu cerebro es vago por naturaleza. Solo quiere recompensas rápidas. En el gym, el \"músculo\" tarda meses. En Reppy, el XP es instantáneo.\n- **Sube de Nivel:** Cada vez que registras una serie, tu barra de experiencia sube. Es el mismo subidón que cuando subes de nivel en tu juego favorito.\n- **Gana Oro:** El sudor se convierte en monedas. ¿Quieres una skin nueva para tu perfil? Pues a hacer flexiones.\n- **Boss Fights:** No entrenas solo. Tus repeticiones ayudan a derrotar al Boss global en el feed [/social](/social). ¡Es un raid de la vida real!\n\n## ⚔️ No seas un \"Lurker\"\nLo que no se mide, no mejora. Si solo vas al parque a charlar, no vas a progresar. Reppy te obliga a ver tus números y a querer superarlos.\n\n**🚀 Misión:** Entra hoy, mira quién va primero en el [/social](/social) y trata de quitarle el puesto. ¡Que empiece el vicio sano!"
       },
       "en": {
-        "title": "The Science of Fitness RPG: Hack Your Brain to Train",
+        "title": "Why Reppy is More Addictive than the Gym: Science for Gamers",
         "excerpt": "Why Reppy works. Reward neurology, Boss Fights, and the power of a gamified community.",
         "keywords": [
           "fitness RPG",
@@ -91,7 +91,7 @@
           "dopamine loop",
           "training motivation"
         ],
-        "content": "# Why Reppy Works: The Habit Loop\n\nReppy turns delayed gratification into instant wins using the **Dopamine Loop**.[10, 9]\n\n## 🧠 Reward Mechanics\nLogging sets in the [push-up counter](/contador-flexiones) grants immediate XP, reinforcing the habit.[11] \n\nCheck your ranking on the [dashboard](/dashboard) and join the raid in the [social](/social) feed!"
+        "content": "# Why Reppy is More Addictive than the Gym: Science for Gamers\n\nGoing to the gym is boring. Looking in the mirror and seeing zero changes is frustrating. That's why Reppy is better: because we turn everything into a game.\n\n## 🧠 Brain Hacking\nYour brain is naturally lazy. It only wants quick rewards. At the gym, \"gains\" take months. In Reppy, XP is instant.\n- **Level Up:** Every time you log a set, your XP bar starts moving. It's the same rush as leveling up in your favorite game.\n- **Earn Gold:** Sweat turns into coins. Want a new skin for your profile? Get those push-ups in.\n- **Boss Fights:** You're not training alone. Your reps help defeat the global Boss in the [/social](/social) feed. It's a real-life raid!\n\n## ⚔️ Don't Be a \"Lurker\"\nWhat gets measured, gets improved. If you just go to the park to chat, you won't progress. Reppy forces you to see your numbers and want to beat them.\n\n**🚀 Mission:** Log in today, see who's top of the [/social](/social) feed, and try to take their spot. Let the healthy addiction begin!"
       }
     }
   },
@@ -103,7 +103,7 @@
     "category": "dominadas",
     "locales": {
       "es": {
-        "title": "Epicondilitis: Elimina el dolor de codo en Dominadas",
+        "title": "¿Te duelen los codos? Deja de hacer el Bruto y lee esto",
         "excerpt": "Guía de rehabilitación para atletas. Estiramientos, trabajo excéntrico y técnica para volver a la barra sin dolor.",
         "keywords": [
           "dolor codo dominadas",
@@ -111,76 +111,77 @@
           "tendinitis codo",
           "rehabilitación"
         ],
-        "content": "# Codos de Acero: Recuperación para Guerreros\n\nEl dolor de codo suele ser epicondilitis por sobrecarga.[13] No dejes que frene tu racha en Reppy.\n\n## 🛠️ Protocolo de Rehabilitación\n1. **Trabajo Excéntrico:** Flexiones de muñeca lentas (3 seg bajada) para regenerar colágeno .\n2. **Técnica:** Usa anillas o agarre neutro para reducir torque .\n3. **Movilidad:** Estiramientos de extensores 4x al día.[14, 15]\n\nRegistra tus sesiones de movilidad en el [dashboard](/dashboard). ¡Consulta a otros atletas en el feed [social](/social)!"
+        "content": "# ¿Te duelen los codos? Deja de hacer el Bruto y lee esto\n\nSi al colgarte de la barra sientes un pinchazo en el codo, para un segundo. No eres un superhéroe y si sigues así te vas a quedar sin entrenar 3 meses. El dolor de codo en calistenia es súper común, pero tiene solución.\n\n## 🛠️ Cómo arreglarlo sin dejar el deporte\nNo hace falta que te quedes en el sofá, solo haz las cosas con cabeza:\n1. **Usa Anillas:** Las barras fijas son muy rígidas. Las anillas se mueven contigo y quitan muchísima presión a tus articulaciones.\n2. **Baja el ritmo:** Si te duele, no hagas el máximo hoy. Haz menos reps pero más lentas y controladas.\n3. **Estira el antebrazo:** Sí, esa parte que nunca tocas. Masajéate y estira un poco cada día.\n\n## 📈 Regístralo\nUsa las notas en tu [/dashboard](/dashboard) para saber cuándo te duele más. ¿Es cuando haces dominadas anchas? Pues cámbialas por agarre estrecho un tiempo.\n\n**🔔 Consejo Pro:** Pasa por el [/social](/social) y pregunta a la comunidad. ¡Seguro que hay algún veterano que te da el truco definitivo!"
       },
       "en": {
-        "title": "Elbow Pain? How to Fix Epicondylitis in Calisthenics",
+        "title": "Elbows Hurting? Stop Being a Bro and Read This",
         "excerpt": "Rehab protocols for pull-ups. Stretching, eccentric work, and technique adjustments.",
         "keywords": [
           "elbow pain pullups",
           "epicondylitis rehab",
           "calisthenics injury"
         ],
-        "content": "# Steel Elbows: Rehab for Warriors\n\nDon't let elbow pain stop your streak. Epicondylitis is caused by over-gripping or poor scapular form .\n\n## 🛠️ Recovery Steps\n- **Eccentric Loading:** Slow wrist curls .\n- **Grip Adjustments:** Use neutral grip or rings .\n\nLog your mobility work on the [dashboard](/dashboard) and keep the community updated in the [social](/social) feed!"
+        "content": "# Elbows Hurting? Stop Being a Bro and Read This\n\nIf you feel a sharp pain in your elbow when you hang from the bar, stop for a second. You're not a superhero, and if you keep going, you'll be out for 3 months. Elbow pain in calisthenics is super common, but it's fixable.\n\n## 🛠️ How to Fix it Without Quitting\nYou don't have to stay on the couch; just train smart:\n1. **Use Rings:** Straight bars are stiff. Rings move with you and take a lot of pressure off your joints.\n2. **Slow Down:** If it hurts, don't go for a PR today. Do fewer reps but make them super slow and controlled.\n3. **Stretch Your Forearms:** Yes, those things you never touch. Massage them and stretch them out a bit every day.\n\n## 📈 Track It\nUse the notes in your [/dashboard](/dashboard) to know when it hurts most. Is it during wide pull-ups? Swap them for a narrow grip for a while.\n\n**🔔 Pro Tip:** Check the [/social](/social) feed and ask the community. There's definitely a veteran in there who has the ultimate fix for you!"
       }
     },
     "isPillar": false
   },
   {
     "slug": "error-mas-dominadas",
-    "date": "2026-04-24",
+    "date": "2026-04-16",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1591117207239-7887103447c4?auto=format&fit=crop&w=1200&q=80",
     "category": "dominadas",
     "locales": {
       "es": {
-        "title": "El Error que te impide pasar de 5 Dominadas",
-        "excerpt": "No es falta de fuerza, es falta de activación. Aprende por qué la retracción escapular es la llave de tu progreso.",
+        "title": "¿Cómo hacer más dominadas? (Consejos para mejorar)",
+        "excerpt": "¿Atascado en 5 o 10 dominadas? Aprende cómo romper el techo y subir tus números de verdad.",
         "keywords": [
           "estancamiento dominadas",
           "técnica espalda",
           "retracción escapular",
           "calistenia"
         ],
-        "content": "# Rompe el Techo de las 5 Repeticiones\n\n¿Atascado? El culpable suele ser la **falta de retracción escapular**.[1, 16]\n\n## ❌ El Fallo\nSi encoges los hombros, desactivas los dorsales y saturas los bíceps.[2, 17]\n\n## ✅ La Solución\nAntes de tirar, junta las escápulas hacia abajo y atrás .\n\nDomina la técnica en el [contador de dominadas](/contador-dominadas) y desbloquea cosméticos épicos en la [shop](/shop)!"
+        "content": "# ¿Cómo hacer más dominadas? Rompe tus límites\n\n¿Llevas meses haciendo el mismo número de dominadas? Eso es porque tu cuerpo se ha acostumbrado. Tienes que engañarlo (en el buen sentido).\n\n## 📈 2 Trucos para mejorar:\n1. **Series con Lastre:** Si ya haces 10 bien, ponte una mochila con peso. Cuando te la quites, ¡volarás!\n2. **Descansos cortos:** En lugar de hacer 3 series de 10, haz 10 series de 4 con solo 30 segundos de descanso. Esto acumula volumen y XP sin que te canses tanto.\n\nMira tus estadísticas en el [/dashboard](/dashboard) y no dejes que tu racha baje. ¡A por las 20 repeticiones!"
       },
       "en": {
-        "title": "The Secret Mistake Keeping You Stuck at 5 Pull-ups",
-        "excerpt": "It's not about arm strength; it's about activation. Learn how scapular retraction unlocks power.",
+        "title": "How to do more pull-ups? (Tips to improve)",
+        "excerpt": "Stuck at 5 or 10 pull-ups? Learn how to break the ceiling and actually increase your numbers.",
         "keywords": [
           "pullup plateau",
           "back technique",
           "scapular retraction"
         ],
-        "content": "# Break the 5-Rep Plateau\n\nStuck at 5? Your biceps aren't the problem—your **scapular retraction** is .\n\nMaster the form in the [pull-up counter](/contador-dominadas) and reach new heights in the [dashboard](/dashboard)!"
+        "content": "# How to do more pull-ups? Break your limits\n\nBeen doing the same number of pull-ups for months? That's because your body got used to it. You need to trick it (in a good way).\n\n## 📈 2 Tricks to improve:\n1. **Weighted Sets:** If you can do 10 clean reps, put on a weighted vest or a backpack with books. When you take it off, you'll feel like you have wings!\n2. **Short Rests:** Instead of 3 sets of 10, try 10 sets of 4 with only 30 seconds of rest. This builds volume and XP without burning you out too fast.\n\nCheck your stats in the [/dashboard](/dashboard) and keep that streak alive. Let's go for 20 reps!"
       }
     },
-    "isPillar": false
+    "isPillar": true
   },
   {
     "slug": "flexiones-perfectas-errores",
-    "date": "2026-04-26",
+    "date": "2026-04-16",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1598971426620-6d4b99824de4?auto=format&fit=crop&w=1200&q=80",
     "category": "flexiones",
     "locales": {
       "es": {
-        "title": "Flexiones Perfectas: Guía de Pecho y Tríceps",
-        "excerpt": "Cómo hacer flexiones impecables.",
+        "title": "¿Cómo hacer mi primera flexión? Técnica perfecta",
+        "excerpt": "Aprende a hacer flexiones sin que te duelan las muñecas y sacando el máximo pecho posible.",
         "keywords": [
           "flexiones"
         ],
-        "content": "\n# Flexiones Perfectas: Guía de Pecho y Tríceps\n\nSi estás buscando mejorar tu rendimiento y llevar tu entrenamiento al siguiente nivel, has llegado al lugar indicado. Este artículo desglosará todos los detalles clave que necesitas saber.\n\n## 1. El Concepto Fundamental\nLa mayoría de las personas comenten el error de saltarse los fundamentos. En la calistenia, la base lo es todo. Necesitas entender la biomecánica, la tensión mecánica y cómo aplicarlo a tus entrenamientos diarios para ver progresos reales rápidos y prevenir lesiones.\n\n*   **Técnica sobre repeticiones**: Nunca sacrifiques forma por ego.\n*   **Progresión Constante**: Añadir dificultad progresivamente es la clave de la hipertrofia.\n*   **Recuperación**: El músculo crece mientras descansas, no cuando entrenas.\n\n## 2. Los Beneficios Principales\nAplicar correctamente estos principios te dará:\n- **Mayor fuerza relativa**: Control absoluto de tu cuerpo.\n- **Prevención de lesiones**: Articulaciones más fuertes.\n- **Mejor estética**: El físico de un gimnasta.\n\n## 3. Implementación Paso a Paso\n1.  **Analiza tu nivel**: Sé honesto contigo mismo.\n2.  **Define el objetivo**: Fuerza, resistencia o trucos.\n3.  **Ejecuta**: Mantén la constancia durante mínimo 8 semanas.\n\n[Regístrate en el Dashboard de Reppy para hacer seguimiento de tus marcas](/dashboard)\n"
+        "content": "# ¿Cómo hacer mi primera flexión? Técnica perfecta\n\nSi haces flexiones y parece que estás haciendo el gusano en una discoteca, para un segundo. La flexión es la base de todo en Reppy. Si las haces bien, tu pecho y tus brazos van a explotar.\n\n## ✅ El Secreto:\n- **No abras los codos:** No los pongas en forma de T. Ponlos un poco más cerrados, como si tus brazos formaran una flecha. Tus hombros te lo agradecerán.\n- **Toca el suelo:** Si no tocas el suelo con el pecho, no cuenta. En Reppy queremos calidad, no repeticiones a medias.\n- **Si no puedes:** Apoya las rodillas o hazlas contra una mesa. Lo importante es que sientas el esfuerzo.\n\nUsa el [contador de flexiones](/contador-flexiones) y gáname en el feed [/social](/social). ¡Dale caña!"
       },
       "en": {
-        "title": "Perfect Push-ups Guide",
-        "excerpt": "How to master the push-up.",
+        "title": "How to do my first push-up? Perfect form",
+        "excerpt": "Learn how to do push-ups without wrist pain and maximizing your chest gains.",
         "keywords": [
           "pushups"
         ],
-        "content": "\n# Perfect Push-ups Guide\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
+        "content": "# How to do my first push-up? Perfect form\n\nIf you're doing push-ups and you look like you're doing the \"worm\" on a dance floor, stop for a second. The push-up is the foundation of everything in Reppy. If you do them right, your chest and arms will explode.\n\n## ✅ The Secret:\n- **Don't flare your elbows:** Don't put them in a T-shape. Keep them slightly tucked, like an arrow. Your shoulders will thank you.\n- **Touch the floor:** If your chest doesn't touch the ground, it doesn't count. In Reppy, we want quality, not half-reps.\n- **If you can't:** Use your knees or push against a table. The important thing is feeling the burn.\n\nUse the [push-up counter](/contador-flexiones) and beat me in the [/social](/social) feed. Let's go!"
       }
-    }
+    },
+    "isPillar": true
   },
   {
     "slug": "nutricion-calistenia",
@@ -205,7 +206,8 @@
         ],
         "content": "\n# Calisthenics Nutrition Guide\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "prevencion-lesiones-muneca",
@@ -224,7 +226,8 @@
         "excerpt": "Warmup tips.",
         "content": "\n# Avoid wrist pain in calisthenics\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "sentadillas-potencia-pierna",
@@ -243,7 +246,8 @@
         "excerpt": "Leg technique.",
         "content": "\n# Squats: Explode your legs\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "verdad-sobre-el-fallo",
@@ -262,7 +266,8 @@
         "excerpt": "Effort science.",
         "content": "\n# Training to failure: Is it needed?\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "descanso-entre-series",
@@ -281,7 +286,8 @@
         "excerpt": "Optimize workout.",
         "content": "\n# Rest periods for strength\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "calistenia-vs-pesas",
@@ -300,7 +306,8 @@
         "excerpt": "Pros and cons.",
         "content": "\n# Calisthenics vs Weights\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "mejor-hora-para-entrenar",
@@ -319,7 +326,8 @@
         "excerpt": "Circadian rhythms.",
         "content": "\n# When is the best time to workout?\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "ayuno-intermitente-calistenia",
@@ -338,7 +346,8 @@
         "excerpt": "Does it work?",
         "content": "\n# Intermittent fasting and calisthenics\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "suplementos-que-valen-la-pena",
@@ -357,7 +366,8 @@
         "excerpt": "Don't waste money.",
         "content": "\n# Supplements: The only 3 that work\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "calistenia-viajando-sin-gym",
@@ -376,7 +386,8 @@
         "excerpt": "No excuses.",
         "content": "\n# Hotel workouts: Training while traveling\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "psicologia-del-muscle-up",
@@ -395,7 +406,8 @@
         "excerpt": "Overcoming the fear.",
         "content": "\n# Psychology of the Muscle-up\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "rutina-pike-pushups",
@@ -414,7 +426,8 @@
         "excerpt": "Path to Handstand.",
         "content": "\n# Pike Pushups: Shoulder strength\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "plancha-abdominal-errores",
@@ -433,7 +446,8 @@
         "excerpt": "Abdominal technique.",
         "content": "\n# Planks: 3 mistakes killing your core\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "como-dormir-para-progresar",
@@ -452,7 +466,8 @@
         "excerpt": "Grow while you sleep.",
         "content": "\n# Sleep hygiene for athletes\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "beneficios-de-colgarse",
@@ -471,7 +486,8 @@
         "excerpt": "Shoulder health.",
         "content": "\n# Why you should hang from a bar every day\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "calistenia-despues-de-los-40",
@@ -490,7 +506,8 @@
         "excerpt": "Long term health.",
         "content": "\n# Calisthenics after 40\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "hollow-body-core-maestro",
@@ -509,7 +526,8 @@
         "excerpt": "Extreme stability.",
         "content": "\n# Hollow Body: The key to every trick\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "entrenar-con-frio-calistenia",
@@ -528,26 +546,28 @@
         "excerpt": "Warmup hacks.",
         "content": "\n# Calisthenics in winter\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "progresion-fondos-paralelas",
-    "date": "2026-06-03",
+    "date": "2026-04-16",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1598971426620-6d4b99824de4?auto=format&fit=crop&w=1200&q=80",
     "category": "fuerza",
     "locales": {
       "es": {
-        "title": "Guía de Fondos en Paralelas",
-        "excerpt": "Pecho y Tríceps.",
-        "content": "\n# Guía de Fondos en Paralelas\n\nSi estás buscando mejorar tu rendimiento y llevar tu entrenamiento al siguiente nivel, has llegado al lugar indicado. Este artículo desglosará todos los detalles clave que necesitas saber.\n\n## 1. El Concepto Fundamental\nLa mayoría de las personas comenten el error de saltarse los fundamentos. En la calistenia, la base lo es todo. Necesitas entender la biomecánica, la tensión mecánica y cómo aplicarlo a tus entrenamientos diarios para ver progresos reales rápidos y prevenir lesiones.\n\n*   **Técnica sobre repeticiones**: Nunca sacrifiques forma por ego.\n*   **Progresión Constante**: Añadir dificultad progresivamente es la clave de la hipertrofia.\n*   **Recuperación**: El músculo crece mientras descansas, no cuando entrenas.\n\n## 2. Los Beneficios Principales\nAplicar correctamente estos principios te dará:\n- **Mayor fuerza relativa**: Control absoluto de tu cuerpo.\n- **Prevención de lesiones**: Articulaciones más fuertes.\n- **Mejor estética**: El físico de un gimnasta.\n\n## 3. Implementación Paso a Paso\n1.  **Analiza tu nivel**: Sé honesto contigo mismo.\n2.  **Define el objetivo**: Fuerza, resistencia o trucos.\n3.  **Ejecuta**: Mantén la constancia durante mínimo 8 semanas.\n\n[Regístrate en el Dashboard de Reppy para hacer seguimiento de tus marcas](/dashboard)\n"
+        "title": "¿Cómo hacer mi primer fondo? Fuerza de tríceps",
+        "excerpt": "La guía para dominar las paralelas. De fondos en banco a fondos estrictos para un torso potente.",
+        "content": "# ¿Cómo hacer mi primer fondo? Fuerza de tríceps\n\nEl fondo en paralelas es \"la sentadilla del torso\". Si quieres hombros y tríceps de acero, es una misión obligatoria.\n\n## 🛠️ Pasos para el éxito:\n1. **Fondos en Banco:** Usa una silla o un banco. Pies delante y sube y baja. Es el nivel 1.\n2. **Soporte en Paralelas:** Solo súbete a las barras y aguanta. Si tus brazos tiemblan como flanes, necesitas más tiempo aquí.\n3. **Fondos de Novato:** Baja solo un poquito y sube. Poco a poco irás bajando más hasta que los hombros pasen el codo.\n\n¡No olvides registrar tus series en el [/dashboard](/dashboard) para subir de rango!"
       },
       "en": {
-        "title": "Dips Guide: Parallel bars",
-        "excerpt": "Chest and Triceps.",
-        "content": "\n# Dips Guide: Parallel bars\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
+        "title": "How to do my first dip? Tricep power",
+        "excerpt": "The guide to mastering parallel bars. From bench dips to strict dips for a powerful torso.",
+        "content": "# How to do my first dip? Tricep power\n\nThe dip is the \"upper body squat.\" If you want steel shoulders and triceps, this is a mandatory quest.\n\n## 🛠️ Steps to Success:\n1. **Bench Dips:** Use a chair or a bench. Feet out, push up and down. This is Level 1.\n2. **Parallel Support:** Just get on the bars and hold. If your arms are shaking like jelly, you need more time here.\n3. **Partial Dips:** Go down just a bit and push back up. Over time, you'll go deeper until your shoulders go below your elbows.\n\nDon't forget to log your sets in the [/dashboard](/dashboard) to rank up!"
       }
-    }
+    },
+    "isPillar": true
   },
   {
     "slug": "calistenia-y-correr",
@@ -566,7 +586,8 @@
         "excerpt": "Cardio vs Strength.",
         "content": "\n# Calisthenics and Running?\n\nIf you are looking to improve your performance and take your training to the next level, you have come to the right place. This article will break down all the key details you need to know.\n\n## 1. The Core Concept\nMost people make the mistake of skipping the fundamentals. In calisthenics, the base is everything. You need to understand biomechanics, mechanical tension and how to apply it to your daily workouts to see real fast progress and prevent injuries.\n\n*   **Form over reps**: Never sacrifice form for ego.\n*   **Progressive Overload**: Progressively adding difficulty is the key to hypertrophy.\n*   **Recovery**: Muscle grows while you rest, not when you train.\n\n## 2. Main Benefits\nApplying these principles correctly will give you:\n- **Higher relative strength**: Absolute body control.\n- **Injury prevention**: Stronger joints.\n- **Better aesthetics**: A gymnast's physique.\n\n## 3. Step by Step Implementation\n1.  **Analyze your level**: Be honest with yourself.\n2.  **Define your goal**: Strength, endurance, or skills.\n3.  **Execute**: Stay consistent for at least 8 weeks.\n\n[Sign up at Reppy Dashboard to track your progress](/dashboard)\n"
       }
-    }
+    },
+    "isPillar": false
   },
   {
     "slug": "flexiones-hombro-pike-pushups",
@@ -666,7 +687,7 @@
     "date": "2026-05-02",
     "image": "https://images.unsplash.com/photo-1517438476312-10d79c67750d?auto=format&fit=crop&w=1200&q=80",
     "category": "rpg",
-    "isPillar": true,
+    "isPillar": false,
     "locales": {
       "es": {
         "title": "Hoja de Ruta de Calistenia: El Orden de los Trucos",
@@ -725,29 +746,29 @@
   },
   {
     "slug": "muscle-up-progresion-tecnica",
-    "date": "2026-05-06",
+    "date": "2026-04-16",
     "image": "https://images.unsplash.com/photo-1526506118085-60cf8714f82b?auto=format&fit=crop&w=1200&q=80",
     "category": "avanzado",
-    "isPillar": false,
+    "isPillar": true,
     "locales": {
       "es": {
-        "title": "Muscle-up: De la Tracción al Empuje Explosivo",
-        "excerpt": "El truco más icónico. Aprende la transición, el agarre falso y la potencia necesaria para subir sobre la barra.",
+        "title": "¿Cómo hacer mi primer Muscle-up? El secreto de la transición",
+        "excerpt": "El truco más deseado de la calistenia. Aprende el 'giro' y la potencia explosiva necesaria.",
         "keywords": [
           "muscle up técnica",
           "calistenia avanzada",
           "transición dominada"
         ],
-        "content": "# El Santo Grial: El Muscle-up\n\nEl Muscle-up no es solo una dominada alta; es una transición de potencia .\n\n## 🧠 Los 3 Pasos\n1. **Dominada Explosiva:** Tira hasta el ombligo.[22]\n2. **Transición:** Gira las muñecas sobre la barra (agarre falso ayuda).\n3. **Fondo:** El empuje final para bloquear codos.\n\nRegistra tus intentos en el [contador de dominadas](/contador-dominadas) y presume tu primer Muscle-up en el feed [social](/social)."
+        "content": "# ¿Cómo hacer mi primer Muscle-up? El secreto del giro\n\nEl Muscle-up es el \"Power Up\" definitivo. No es solo una dominada fuerte, es técnica pura.\n\n## 🔑 Las 2 llaves del Muscle-up:\n- **La Dominada Explosiva:** Tienes que tirar tan fuerte que la barra te llegue al ombligo. Si tiras flojo, te quedarás atascado abajo.\n- **El Giro de Muñeca:** No intentes rodear la barra, tienes que \"subirte\" a ella. Imagina que quieres asomarte por encima de un muro alto.\n\n**🚀 Misión:** Practica dominadas explosivas en el parque y comparte tu progreso en el feed [/social](/social). ¡Queremos ver ese primer MU!"
       },
       "en": {
-        "title": "Muscle-up: From Pulling to Explosive Pushing",
-        "excerpt": "The most iconic skill. Learn the transition, false grip, and power needed.",
+        "title": "How to do my first Muscle-up? The transition secret",
+        "excerpt": "The most wanted calisthenics trick. Learn the 'spin' and the explosive power needed.",
         "keywords": [
           "muscle up technique",
           "advanced calisthenics"
         ],
-        "content": "# The Holy Grail: The Muscle-up\n\nIt's not just a high pull-up; it's a power transition . Focus on explosive pull-ups first.\n\nEarn massive XP on your [dashboard](/dashboard) with your first successful rep!"
+        "content": "# How to do my first Muscle-up? The secret of the transition\n\nThe Muscle-up is the ultimate Power Up. It's not just a strong pull-up; it's pure technique.\n\n## 🔑 The 2 Keys to the Muscle-up:\n- **Explosive Pull-up:** You need to pull so hard the bar reaches your belly button. If you pull weak, you'll get stuck at the bottom.\n- **The Wrist Flip:** Don't just pull around the bar; you have to \"get on top\" of it. Imagine peeking over a high wall.\n\n**🚀 Mission:** Practice explosive pull-ups at the park and share your progress in the [/social](/social) feed. We want to see that first MU!"
       }
     },
     "author": "Reppy Editorial"
