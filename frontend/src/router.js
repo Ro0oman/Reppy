@@ -145,9 +145,9 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated) {
     next({ name: 'login' })
   } else if (to.name === 'landing' && isAuthenticated) {
-    next({ name: 'profile' })
+    next({ name: 'social' })
   } else if (to.name === 'login' && isAuthenticated) {
-    next({ name: 'profile' })
+    next({ name: 'social' })
   } else if (to.name === 'dashboard' && !isAuthenticated) {
     next()
   } else if (to.meta.requiresAdmin && (!authStore.user || !authStore.user.is_admin)) {

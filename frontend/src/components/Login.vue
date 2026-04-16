@@ -129,9 +129,12 @@
 <script setup>
 import { ref, reactive, watch } from 'vue';
 import { GoogleSignInButton } from 'vue3-google-signin';
+import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
 import { ChevronLeft, Loader2, AlertCircle } from 'lucide-vue-next';
+
+const router = useRouter();
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();
@@ -157,7 +160,7 @@ const handleSubmit = async () => {
     } else {
       await authStore.login({ email: form.email, password: form.password });
     }
-    router.push('/profile');
+    router.push('/social');
   } catch (error) { errorMessage.value = error.message; }
   finally { loading.value = false; }
 };
@@ -165,7 +168,7 @@ const handleSubmit = async () => {
 const handleLoginSuccess = async (response) => {
   try { 
     await authStore.loginWithGoogle(response.credential);
-    router.push('/profile');
+    router.push('/social');
   }
   catch (error) { console.error('Google link failed:', error); }
 };

@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 const translations = {
   en: {
     // Landing
+    landing_title: 'Elite Training Platform',
     hero_eyebrow: 'Elite Training Platform',
     hero_subtitle: 'The premium tracking platform for pull-up enthusiasts. Record reps, visualize progress, and dominate the rankings.',
     btn_start: 'Get Started',
@@ -323,6 +324,7 @@ const translations = {
   },
   es: {
     // Landing
+    landing_title: 'Plataforma de Entrenamiento de Élite',
     hero_eyebrow: 'Plataforma de Entrenamiento de Élite',
     hero_subtitle: 'La plataforma premium para entusiastas de las dominadas. Registra repeticiones, visualiza tu progreso y domina los rankings.',
     btn_start: 'Comenzar Ahora',

@@ -349,7 +349,12 @@ const onStartAction = () => {
 };
 
 watch(() => authStore.isAuthenticated, (val) => {
-  if (val && authStore.user && !authStore.user.has_seen_easter_modal) showEasterModal.value = true;
+  if (val) {
+    authStore.fetchProfile();
+    checkRoulette();
+    notifStore.fetchNotifications();
+    if (authStore.user && !authStore.user.has_seen_easter_modal) showEasterModal.value = true;
+  }
 }, { immediate: true });
 
 onMounted(async () => {
