@@ -21,6 +21,9 @@
     "vue-router": "^4.6.4",
     "vue3-google-signin": "^2.1.1"
   },
+  "optionalDependencies": {
+    "@rolldown/binding-linux-x64-gnu": "0.13.2"
+  },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.5",
     "autoprefixer": "^10.4.20",
