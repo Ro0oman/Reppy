@@ -22,7 +22,9 @@
     "vue3-google-signin": "^2.1.1"
   },
   "optionalDependencies": {
-    "@rolldown/binding-linux-x64-gnu": "0.13.2"
+    "@rolldown/binding-linux-x64-gnu": "0.13.2",
+    "lightningcss-linux-x64-gnu": "^1.29.1",
+    "@esbuild/linux-x64": "^0.24.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.5",
