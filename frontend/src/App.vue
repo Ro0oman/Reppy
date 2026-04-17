@@ -135,35 +135,29 @@
 
     <!-- Mobile Bottom Operational Dock -->
     <nav v-if="authStore.isAuthenticated" 
-      class="lg:hidden fixed bottom-6 left-6 right-6 z-[60] bg-surface/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-2xl p-1.5 transition-transform duration-500">
-      <div class="flex items-center justify-around h-14">
+      class="lg:hidden fixed bottom-6 left-6 right-6 z-[60] bg-surface/80 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-2 transition-transform duration-500">
+      <div class="flex items-center justify-around h-16">
         <router-link v-for="nav in mobileNavLinks" :key="nav.id"
-          :to="'/' + nav.id" 
+          :to="{ name: nav.id, params: nav.id === 'profile' ? { userId: authStore.user?.id } : {} }" 
           :title="i18n.t(nav.label)"
-          class="flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all relative"
+          class="flex flex-col items-center justify-center gap-1.5 flex-1 h-full transition-all relative group"
           :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted hover:text-foreground'">
           
-          <div v-if="$route.name === nav.id" class="absolute -top-1 w-8 h-1 bg-primary-500 rounded-full blur-[2px]"></div>
+          <!-- Modern Active Indicator -->
+          <div v-if="$route.name === nav.id" 
+               class="absolute -top-2 w-10 h-1 bg-primary-500 rounded-full shadow-[0_0_15px_rgba(236,72,153,0.8)] animate-in fade-in zoom-in duration-500"></div>
           
-          <component :is="nav.icon" class="w-5 h-5" :class="$route.name === nav.id ? 'fill-primary-500/10' : ''" />
-          <span class="text-[9px] font-bold tracking-tight">{{ i18n.t(nav.label) }}</span>
-          
-          <!-- Level/Badge logic if needed in custom icon -->
-          <div v-if="nav.id === 'notifications' && notifStore.unreadCount > 0" 
-            class="absolute top-1 right-2 px-1 bg-primary-500 rounded-full border border-background">
-            <span class="text-[7px] font-black text-white">{{ notifStore.unreadCount }}</span>
+          <div class="relative">
+            <component :is="nav.icon" class="w-6 h-6 transition-transform group-active:scale-90" :class="$route.name === nav.id ? 'fill-primary-500/10' : ''" />
+            
+            <!-- Contextual Badges -->
+            <div v-if="nav.id === 'inventory' && authStore.user?.boss_chests > 0" 
+                 class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-primary-500 rounded-full border-2 border-background animate-pulse"></div>
           </div>
-          
-          <!-- Inventory Notification -->
-          <div v-if="nav.id === 'inventory' && authStore.user?.boss_chests > 0" 
-            class="absolute top-1 right-1/4 w-2 h-2 bg-primary-500 rounded-full border-2 border-background"></div>
-        </router-link>
 
-        <!-- Mobile Profile -->
-        <router-link to="/profile" class="flex-1 flex flex-col items-center justify-center gap-1 transition-all">
-          <AvatarFrame :src="authStore.user?.avatar_url" :border-css="$route.name === 'profile' ? authStore.user?.border_css : ''" :size="26" 
-               class="transition-all" :class="$route.name === 'profile' ? 'ring-2 ring-primary-500/20' : 'opacity-60 grayscale'" />
-          <span class="text-[9px] font-bold tracking-tight" :class="$route.name === 'profile' ? 'text-primary-500' : 'text-muted'">{{ i18n.t('nav_profile') }}</span>
+          <span class="text-[9px] font-black uppercase tracking-widest opacity-60 group-hover:opacity-100 transition-opacity" :class="$route.name === nav.id ? 'opacity-100' : ''">
+            {{ i18n.t(nav.label) }}
+          </span>
         </router-link>
       </div>
     </nav>
@@ -262,7 +256,7 @@
 import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
-import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Bell } from 'lucide-vue-next';
+import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Bell, User } from 'lucide-vue-next';
 import { useAuthStore } from './stores/auth';
 import { useI18nStore } from './stores/i18n';
 import { useNotificationsStore } from './stores/notifications';
@@ -310,10 +304,10 @@ const navLinks = [
 
 const mobileNavLinks = [
   { id: 'dashboard', icon: LayoutDashboard, label: 'nav_dashboard' },
-  { id: 'shop', icon: Swords, label: 'nav_armory' },
   { id: 'social', icon: Users, label: 'nav_social' },
   { id: 'inventory', icon: Package, label: 'nav_gear' },
-  { id: 'notifications', icon: Bell, label: 'Notif' },
+  { id: 'shop', icon: Swords, label: 'nav_armory' },
+  { id: 'profile', icon: User, label: 'nav_profile' },
 ];
 
 const earnings = [
