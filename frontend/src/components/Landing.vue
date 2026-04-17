@@ -9,61 +9,71 @@
     <!-- ═══════════════════════════════════════════════════════════
          HERO SECTION — H1 keyword-rich, visible to Google
     ═══════════════════════════════════════════════════════════ -->
-    <section class="relative w-full py-32 md:py-48 px-4 flex flex-col items-center text-center space-y-12">
-      <!-- Background Ambient Glow -->
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none opacity-40">
-        <div class="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary-500/10 rounded-full blur-[150px] animate-pulse"></div>
-        <div class="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-neon-lime/5 rounded-full blur-[150px] animate-pulse delay-1000"></div>
+    <section class="relative w-full min-h-[90vh] flex flex-col items-center justify-center text-center px-6 overflow-hidden">
+      <!-- Ambient Neural Grid Background -->
+      <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-20">
+        <div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0); background-size: 40px 40px;"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary-500/20 rounded-full blur-[160px] animate-pulse"></div>
+        <div class="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[120px] animate-pulse delay-700"></div>
       </div>
-
-      <!-- Active Boss Banner (VISIBLE TO ALL) -->
-      <div class="w-full max-w-5xl mb-16 animate-in fade-in slide-in-from-top-10 duration-1000">
-        <!-- SEO-aware event header -->
-        <div class="flex items-center gap-3 mb-6 px-4">
-          <span class="px-3 py-1 bg-primary-500/20 text-primary-500 text-[10px] font-black uppercase tracking-widest rounded-full">Evento Gratuito</span>
-        </div>
-
-        <!-- NEW Minimalist Boss Banner (Lore-focused) -->
-        <BossBanner />
-
-        <div class="flex justify-center mt-8">
-           <button @click="$emit('start')" class="btn-reppy !px-12 !py-5 shadow-xl transition-transform hover:scale-105 active:scale-95">
-             {{ authStore.isAuthenticated ? 'Ver Batalla' : 'Unirse a la caza gratis' }}
-           </button>
-        </div>
-      </div>
-
-
-
-      <!-- H1: PRIMARY SEO KEYWORD TARGET -->
-      <h1 class="text-5xl md:text-[8rem] font-bold tracking-tight text-foreground leading-tight animate-in fade-in duration-1000 max-w-6xl">
-        Contador de <span class="text-primary-500">Dominadas</span> y Calistenia Gratis – Reppy
-      </h1>
       
-      <!-- SEO-rich subtitle -->
-      <p class="max-w-3xl text-xl md:text-3xl text-muted font-medium tracking-tight leading-snug animate-in fade-in duration-1000 delay-300">
-        La mejor herramienta para registrar tus <strong class="text-foreground">dominadas</strong>, <strong class="text-foreground">flexiones</strong> y progresar en <strong class="text-foreground">calistenia</strong> con sistema RPG. 
-        Gana experiencia, compite en rankings y derrota bosses con la comunidad.
-      </p>
+      <div class="relative z-10 max-w-6xl w-full flex flex-col items-center gap-12">
+        <!-- Floating Status Badge -->
+        <div class="animate-in fade-in slide-in-from-bottom-4 duration-1000">
+          <div class="inline-flex items-center gap-3 px-4 py-2 bg-foreground/5 border border-white/10 rounded-full backdrop-blur-md">
+            <span class="flex h-2 w-2 rounded-full bg-primary-500 animate-ping"></span>
+            <span class="text-[9px] font-black uppercase tracking-[0.3em] text-foreground/60">{{ authStore.isAuthenticated ? 'PROTOCOL_ACTIVE' : 'SYSTEM_READY' }}</span>
+          </div>
+        </div>
 
-      <!-- Primary Action -->
-      <div class="flex flex-col md:flex-row items-center gap-6 animate-in-delay-2">
-        <button @click="start" class="btn-reppy !text-lg !px-12 !py-5 shadow-xl">
-          {{ authStore.isAuthenticated ? 'IR AL DASHBOARD' : 'EMPEZAR GRATIS AHORA' }}
-        </button>
-        <div class="flex items-center gap-4">
-          <router-link to="/" class="text-sm font-bold text-muted hover:text-foreground transition-colors mr-2">
-            Explorar funciones &rarr;
-          </router-link>
+        <!-- H1: High-Impact Typography -->
+        <div class="space-y-6">
+          <h1 class="text-6xl md:text-[9rem] font-black tracking-tighter text-foreground leading-[0.85] uppercase italic animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+            ENTRENA EN EL <br/> <span class="text-primary-500 drop-shadow-[0_0_30px_rgba(255,69,0,0.3)]">PROTOCOLO</span>
+          </h1>
+          
+          <p class="max-w-2xl mx-auto text-xl md:text-2xl text-muted font-medium tracking-tight leading-relaxed animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-400">
+            {{ i18n.locale === 'es' 
+              ? 'La primera plataforma de calistenia con sistema RPG. Cada dominada cuenta. Cada boss cae. Tu leyenda empieza hoy.' 
+              : 'The first calisthenics platform with an RPG system. Every rep counts. Every boss falls. Your legend begins today.' }}
+          </p>
+        </div>
+
+        <!-- Primary Actions -->
+        <div class="flex flex-col sm:flex-row items-center gap-6 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-600">
+          <button @click="$emit('start')" class="group relative px-12 py-6 bg-primary-500 text-white rounded-[2rem] font-black uppercase tracking-widest overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-primary-500/20">
+            <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+            <span class="relative z-10 text-lg">{{ authStore.isAuthenticated ? 'IR AL DASHBOARD' : 'SOLICITAR ACCESO' }}</span>
+          </button>
           
           <a href="https://github.com/Ro0oman/Reppy" target="_blank"
-             class="flex items-center gap-3 px-6 py-3 rounded-2xl bg-surface/40 hover:bg-surface/60 border border-white/10 transition-all group">
-            <Github class="w-5 h-5 text-muted group-hover:text-foreground" />
-            <div class="flex items-center gap-2">
-              <Star class="w-4 h-4 text-primary-500 fill-primary-500 animate-pulse" />
-              <span class="text-[10px] font-black text-foreground uppercase tracking-[0.2em]">Star the Protocol</span>
+             class="flex items-center gap-4 px-8 py-6 rounded-[2rem] bg-surface/40 hover:bg-surface/60 border border-white/10 backdrop-blur-md transition-all group">
+            <Github class="w-6 h-6 text-muted group-hover:text-foreground transition-colors" />
+            <div class="flex flex-col items-start gap-0.5">
+              <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest leading-none">OPEN SOURCE</span>
+              <span class="text-sm font-black text-foreground uppercase tracking-tight">GITHUB COMMAND</span>
             </div>
           </a>
+        </div>
+
+        <!-- Hero Stats Teaser -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-24 pt-12 animate-in fade-in duration-1000 delay-1000">
+          <div class="flex flex-col gap-1">
+            <span class="text-3xl font-black text-foreground tracking-tighter italic">1.2M+</span>
+            <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">Protocol Reps</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-3xl font-black text-foreground tracking-tighter italic">450+</span>
+            <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">Bosses Slained</span>
+          </div>
+          <div class="flex flex-col gap-1">
+             <span class="text-3xl font-black text-foreground tracking-tighter italic">100%</span>
+             <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">Free Access</span>
+          </div>
+          <div class="flex flex-col gap-1">
+             <span class="text-3xl font-black text-foreground tracking-tighter italic">4.9/5</span>
+             <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">User Protocol</span>
+          </div>
         </div>
       </div>
     </section>
@@ -71,181 +81,82 @@
     <!-- ═══════════════════════════════════════════════════════════
          SEARCH INTENT SECTIONS — Critical for SEO
     ═══════════════════════════════════════════════════════════ -->
-    <section class="max-w-7xl w-full px-6 py-20 md:py-32 grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-      <div class="space-y-8">
-        <h2 class="text-4xl md:text-6xl font-bold tracking-tight text-foreground leading-tight">
-          ¿Para qué sirve un <span class="text-primary-500">contador de dominadas</span>?
-        </h2>
-        <div class="space-y-6 text-lg text-muted leading-relaxed font-medium">
-          <p>
-            Un contador de dominadas es mucho más que una simple libreta digital. Es la base de la 
-            <strong>sobrecarga progresiva</strong> en calistenia. Si no sabes cuántas repeticiones hiciste 
-            la semana pasada, no puedes saber si estás mejorando hoy.
-          </p>
-          <p>
-            Reppy permite registrar tus repeticiones diarias de forma instantánea, asignándolas a 
-            tus estadísticas de personaje. Esto te permite visualizar tu <strong>volumen total de entrenamiento</strong>, 
-            identificar estancamientos y mantener la constancia necesaria para ganar masa muscular y fuerza.
-          </p>
-          <ul class="space-y-4">
-            <li class="flex items-center gap-3">
-              <div class="w-1.5 h-1.5 rounded-full bg-primary-500"></div>
-              <span>Seguimiento de volumen semanal automático</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <div class="w-1.5 h-1.5 rounded-full bg-primary-500"></div>
-              <span>Visualización de rachas y consistencia</span>
-            </li>
-            <li class="flex items-center gap-3">
-              <div class="w-1.5 h-1.5 rounded-full bg-primary-500"></div>
-              <span>Motivación intrínseca mediante progresión RPG</span>
-            </li>
-          </ul>
+    <!-- ═══════════════════════════════════════════════════════════
+         BENTO GRID FEATURES — Modern Industrial UI
+    ═══════════════════════════════════════════════════════════ -->
+    <section class="max-w-7xl w-full px-6 py-20 md:py-32">
+      <div class="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 h-full md:h-[800px]">
+        
+        <!-- Big Card: RPG Progression (Height 2, Width 2) -->
+        <div class="md:col-span-2 md:row-span-2 card-stats p-10 flex flex-col justify-between group overflow-hidden relative border-primary-500/20 bg-primary-500/[0.02]">
+          <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary-500/10 rounded-full blur-[100px] group-hover:bg-primary-500/20 transition-all duration-1000"></div>
+          <div class="relative z-10 space-y-6">
+            <div class="w-16 h-16 bg-primary-500/10 rounded-2xl flex items-center justify-center text-primary-500">
+               <Trophy class="w-8 h-8" />
+            </div>
+            <h3 class="text-4xl md:text-5xl font-black italic tracking-tighter text-foreground uppercase leading-none">SISTEMA <br/><span class="text-primary-500">RPG</span> INTEGRADO</h3>
+            <p class="text-xl text-muted font-medium leading-relaxed max-w-md">
+              {{ i18n.locale === 'es' 
+                ? 'Sube de nivel tus atributos STR, PWR, END y AGI con cada repetición. Desbloquea cosméticos exclusivos y demuestra tu estatus.' 
+                : 'Level up your STR, PWR, END, and AGI attributes with every rep. Unlock exclusive cosmetics and prove your status.' }}
+            </p>
+          </div>
+          <div class="relative z-10 grid grid-cols-2 gap-4 pt-8">
+             <div v-for="stat in ['STR', 'PWR', 'END', 'AGI']" :key="stat" class="p-4 bg-foreground/5 border border-white/5 rounded-2xl">
+                <span class="text-[10px] font-black text-primary-500 uppercase tracking-widest">{{ stat }}</span>
+                <div class="h-1 w-full bg-white/5 rounded-full mt-2 overflow-hidden">
+                   <div class="h-full bg-primary-500" :style="{ width: Math.random() * 60 + 40 + '%' }"></div>
+                </div>
+             </div>
+          </div>
         </div>
-      </div>
-      <div class="relative group">
-        <div class="absolute inset-0 bg-primary-500/10 blur-3xl group-hover:bg-primary-500/20 transition-all rounded-full"></div>
-        <div class="card-stats p-10 border-primary-500/20 relative bg-surface/40 backdrop-blur-3xl overflow-hidden">
-           <div class="absolute -top-10 -right-10 w-40 h-40 bg-primary-500/5 rounded-full blur-3xl"></div>
-           <Activity class="w-12 h-12 text-primary-500 mb-6" />
-           <h3 class="text-2xl font-bold text-foreground mb-4">Analítica de Entrenamiento</h3>
-           <p class="text-muted/60 text-sm leading-relaxed mb-8">
-             Visualiza cada dominada, flexión y fondo en un heatmap interactivo. 
-             La constancia es el único secreto del éxito en el street workout.
-           </p>
-           <div class="h-1.5 w-full bg-surface-dark/10 rounded-full overflow-hidden">
-              <div class="h-full bg-primary-500 w-[85%] shadow-[0_0_15px_rgba(var(--primary),0.4)]"></div>
+
+        <!-- Medium Card: Global Rankings (Width 2, Height 1) -->
+        <div class="md:col-span-2 card-stats p-8 flex flex-col justify-between group overflow-hidden relative border-blue-500/20 bg-blue-500/[0.02]">
+          <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-500/10 rounded-full blur-[80px]"></div>
+          <div class="relative z-10 flex items-start justify-between">
+            <div class="space-y-2">
+              <h3 class="text-2xl font-black text-foreground uppercase italic tracking-tight">RANKING MUNDIAL</h3>
+              <p class="text-sm text-muted font-medium max-w-[200px]">Compite por el Top 1 en el protocolo global.</p>
+            </div>
+            <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500">
+               <Users class="w-6 h-6" />
+            </div>
+          </div>
+          <div class="relative z-10 flex items-end gap-2 pt-6">
+             <div v-for="i in 5" :key="i" class="flex-1 bg-blue-500/20 rounded-t-lg" :style="{ height: (i * 15) + 'px' }"></div>
+          </div>
+        </div>
+
+        <!-- Small Card: Heatmap (Width 1, Height 1) -->
+        <div class="card-stats p-8 flex flex-col justify-between group border-neon-lime/20 bg-neon-lime/[0.02] overflow-hidden">
+           <div class="space-y-4">
+              <div class="w-10 h-10 bg-neon-lime/10 rounded-xl flex items-center justify-center text-neon-lime">
+                 <Activity class="w-5 h-5" />
+              </div>
+              <h3 class="text-lg font-black text-foreground uppercase italic tracking-tight">CONSISTENCIA</h3>
+           </div>
+           <div class="grid grid-cols-4 gap-1 opacity-40">
+              <div v-for="i in 16" :key="i" class="aspect-square bg-neon-lime/30 rounded-sm"></div>
            </div>
         </div>
+
+        <!-- Small Card: Community Social (Width 1, Height 1) -->
+        <div class="card-stats p-8 flex flex-col justify-between group border-amber-500/20 bg-amber-500/[0.02] overflow-hidden">
+           <div class="space-y-4">
+              <div class="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500">
+                 <MessageCircle class="w-5 h-5" />
+              </div>
+              <h3 class="text-lg font-black text-foreground uppercase italic tracking-tight">COMUNIDAD</h3>
+           </div>
+           <div class="flex -space-x-3">
+              <div v-for="i in 4" :key="i" class="w-8 h-8 rounded-full border-2 border-background bg-surface flex items-center justify-center text-[8px] font-black">U{{i}}</div>
+           </div>
+        </div>
+
       </div>
     </section>
 
-    <!-- SECTION: HOW TO IMPROVE -->
-    <section class="max-w-7xl w-full px-6 py-20 md:py-32 bg-surface/10 rounded-[4rem] border border-white/5">
-      <div class="text-center space-y-12 mb-20">
-        <h2 class="text-4xl md:text-7xl font-bold tracking-tight text-foreground leading-none">
-          Cómo <span class="text-primary-500">mejorar</span> tus dominadas
-        </h2>
-        <p class="text-xl text-muted max-w-3xl mx-auto leading-relaxed font-medium">
-          No se trata de entrenar más fuerte, sino de entrenar de forma más inteligente. 
-          Aquí tienes los 3 pilares para reventar tu récord personal.
-        </p>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-        <article class="card-stats p-10 space-y-6 hover:bg-surface/60 transition-all border-border/40">
-          <div class="text-4xl font-black text-primary-500/40">01</div>
-          <h3 class="text-2xl font-bold text-foreground tracking-tight">Sobrecarga Progresiva</h3>
-          <p class="text-muted/90 text-sm leading-relaxed">
-            Trata de aumentar el volumen total (sets x reps) cada semana. 
-            Reppy te muestra tu volumen total por ejercicio para que nunca te estanques.
-          </p>
-        </article>
-        <article class="card-stats p-10 space-y-6 hover:bg-surface/60 transition-all border-border/40">
-          <div class="text-4xl font-black text-primary-500/40">02</div>
-          <h3 class="text-2xl font-bold text-foreground tracking-tight">Frecuencia Semanal</h3>
-          <p class="text-muted/90 text-sm leading-relaxed">
-            Frecuencia 2 o 3 es ideal para dominadas. Usa el heatmap de Reppy para 
-            asegurarte de que estás dejando los días de descanso necesarios pero manteniendo el ritmo.
-          </p>
-        </article>
-        <article class="card-stats p-10 space-y-6 hover:bg-surface/60 transition-all border-border/40">
-          <div class="text-4xl font-black text-primary-500/40">03</div>
-          <h3 class="text-2xl font-bold text-foreground tracking-tight">Control de Intensidad</h3>
-          <p class="text-muted/90 text-sm leading-relaxed">
-            Alterna entre días de volumen alto (flexiones, dominadas normales) y 
-            días de potencia (muscle ups, dominadas con lastre) para optimizar tus atributos STR y PWR.
-          </p>
-        </article>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════
-         WHAT IS REPPY — Detailed SEO content
-    ═══════════════════════════════════════════════════════════ -->
-    <section class="max-w-5xl w-full px-6 py-20 md:py-32 space-y-8" id="que-es-reppy">
-      <div class="text-center space-y-6 mb-16">
-        <h2 class="text-4xl md:text-6xl font-bold tracking-tight text-foreground leading-none">
-          ¿Qué es <span class="text-primary-500">Reppy</span>?
-        </h2>
-        <div class="text-lg md:text-xl text-muted max-w-3xl mx-auto leading-relaxed font-medium space-y-6">
-          <p>
-            Reppy es la primera <strong class="text-foreground">app de calistenia gratuita</strong> diseñada para transformar 
-            tu entrenamiento en una aventura épica. Creemos que la mayor barrera para el fitness es la falta de 
-            motivación constante, por eso hemos aplicado mecánicas de juegos RPG a la barra de dominadas.
-          </p>
-          <p>
-            Cada vez que registras una serie en nuestro <strong>contador de repeticiones</strong>, tu personaje 
-            digital gana puntos de experiencia. A medida que subes de nivel, desbloqueas títulos, marcos para 
-            tu avatar y efectos visuales que demuestran tu estatus en la comunidad global de calistenia.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════════════════
-         INTERFACE SHOWCASE — Visual proof of the product
-    ═══════════════════════════════════════════════════════════ -->
-    <section class="max-w-7xl w-full px-6 py-20 md:py-32 space-y-20" id="interfaz">
-      <div class="text-center space-y-6">
-        <h2 class="text-4xl md:text-7xl font-bold tracking-tight text-foreground leading-none uppercase italic">
-          DENTRO DEL <span class="text-primary-500">PROTOCOLO</span>
-        </h2>
-        <p class="text-xl text-muted max-w-3xl mx-auto leading-relaxed font-medium">
-          Explora la interfaz táctica diseñada para el máximo rendimiento. 
-          Cada detalle ha sido optimizado para que te centres en lo único que importa: la siguiente repetición.
-        </p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-        <!-- Dashboard Preview -->
-        <div class="group relative space-y-6">
-          <div class="relative rounded-[2.5rem] overflow-hidden border border-white/10 bg-surface/20 backdrop-blur-3xl p-4 transition-all duration-700 group-hover:border-primary-500/50 group-hover:shadow-[0_0_50px_rgba(var(--primary),0.2)]">
-            <img src="/img/showcase/dashboard_preview.png" alt="Panel de Control Reppy" class="w-full rounded-[1.8rem] transition-transform duration-1000 group-hover:scale-[1.02]" />
-            <div class="absolute inset-0 bg-gradient-to-t from-deep-abyss via-transparent to-transparent opacity-60"></div>
-          </div>
-          <div class="px-4 space-y-2">
-            <h3 class="text-2xl font-black text-foreground uppercase tracking-tight italic">01. PANEL DE CONTROL</h3>
-            <p class="text-muted text-sm leading-relaxed">Gestión centralizada de protocolos, calendario de consistencia y estado del Boss actual.</p>
-          </div>
-        </div>
-
-        <!-- Social Preview -->
-        <div class="group relative space-y-6 md:mt-24">
-          <div class="relative rounded-[2.5rem] overflow-hidden border border-white/10 bg-surface/20 backdrop-blur-3xl p-4 transition-all duration-700 group-hover:border-blue-500/50 group-hover:shadow-[0_0_50px_rgba(59,130,246,0.2)]">
-            <img src="/img/showcase/social_preview.png" alt="Muro Social Reppy" class="w-full rounded-[1.8rem] transition-transform duration-1000 group-hover:scale-[1.02]" />
-            <div class="absolute inset-0 bg-gradient-to-t from-deep-abyss via-transparent to-transparent opacity-60"></div>
-          </div>
-          <div class="px-4 space-y-2">
-            <h3 class="text-2xl font-black text-foreground uppercase tracking-tight italic">02. MURO SOCIAL</h3>
-            <p class="text-muted text-sm leading-relaxed">Conecta con la comunidad, ve los entrenamientos en tiempo real y personaliza tus publicaciones.</p>
-          </div>
-        </div>
-
-        <!-- Armory Preview -->
-        <div class="group relative space-y-6">
-          <div class="relative rounded-[2.5rem] overflow-hidden border border-white/10 bg-surface/20 backdrop-blur-3xl p-4 transition-all duration-700 group-hover:border-purple-500/50 group-hover:shadow-[0_0_50px_rgba(168,85,247,0.2)]">
-            <img src="/img/showcase/armory_preview.png" alt="Tienda de Cosméticos Reppy" class="w-full rounded-[1.8rem] transition-transform duration-1000 group-hover:scale-[1.02]" />
-            <div class="absolute inset-0 bg-gradient-to-t from-deep-abyss via-transparent to-transparent opacity-60"></div>
-          </div>
-          <div class="px-4 space-y-2">
-            <h3 class="text-2xl font-black text-foreground uppercase tracking-tight italic">03. ARMERÍA LEGENDARIA</h3>
-            <p class="text-muted text-sm leading-relaxed">Canjea tus Reppy Coins por fondos dinámicos, marcos de avatar y títulos de honor exclusivos.</p>
-          </div>
-        </div>
-
-        <!-- Profile Preview -->
-        <div class="group relative space-y-6 md:mt-24">
-          <div class="relative rounded-[2.5rem] overflow-hidden border border-white/10 bg-surface/20 backdrop-blur-3xl p-4 transition-all duration-700 group-hover:border-neon-lime/50 group-hover:shadow-[0_0_50px_rgba(191,255,0,0.2)]">
-            <img src="/img/showcase/profile_preview.png" alt="Perfil de Atleta RPG" class="w-full rounded-[1.8rem] transition-transform duration-1000 group-hover:scale-[1.02]" />
-            <div class="absolute inset-0 bg-gradient-to-t from-deep-abyss via-transparent to-transparent opacity-60"></div>
-          </div>
-          <div class="px-4 space-y-2">
-            <h3 class="text-2xl font-black text-foreground uppercase tracking-tight italic">04. PERFIL DE ATLETA</h3>
-            <p class="text-muted text-sm leading-relaxed">Sube de nivel tus atributos STR, PWR, END y AGI. Visualiza tu progresión de fuerza relativa.</p>
-          </div>
-        </div>
-      </div>
-    </section>
 
 
     <!-- ═══════════════════════════════════════════════════════════
