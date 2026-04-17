@@ -30,16 +30,16 @@
           <div class="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-2 md:pb-0 hide-scrollbar flex-1">
             <button v-for="desc in attributeDescriptions" :key="desc.key" 
                     @click="activeTab = desc.key"
-                    class="relative w-full text-left p-4 rounded-2xl flex items-center gap-4 transition-all duration-500 overflow-hidden group shrink-0 shadow-lg"
+                    class="relative flex-1 md:w-full text-center md:text-left p-3 md:p-4 rounded-[1.5rem] md:rounded-2xl flex items-center justify-center md:justify-start gap-4 transition-all duration-500 overflow-hidden group shrink-0 shadow-lg"
                     :class="activeTab === desc.key ? desc.bgActive + ' border ' + desc.borderActive : 'bg-white/5 border border-transparent hover:bg-white/10'">
               
               <div class="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity bg-white"></div>
               
-              <div class="p-2 rounded-xl transition-all duration-500 shadow-inner bg-black/50" :class="activeTab === desc.key ? desc.buttonIconBg : 'grayscale opacity-50'">
-                <component :is="desc.icon" class="w-5 h-5" :class="activeTab === desc.key ? desc.iconColor : 'text-white'" />
+              <div class="p-3 md:p-2 rounded-[1.2rem] md:rounded-xl transition-all duration-500 shadow-inner bg-black/50" :class="activeTab === desc.key ? desc.buttonIconBg : 'grayscale opacity-50'">
+                <component :is="desc.icon" class="w-6 h-6 md:w-5 md:h-5" :class="activeTab === desc.key ? desc.iconColor : 'text-white'" />
               </div>
               
-              <div class="flex flex-col">
+              <div class="hidden md:flex flex-col">
                 <span class="font-black text-xs uppercase tracking-widest transition-colors duration-300" :class="activeTab === desc.key ? 'text-white' : 'text-white/50'">{{ i18nStore.t('codex_' + desc.key.toLowerCase() + '_name') }}</span>
                 <span class="text-[9px] font-bold uppercase tracking-[0.2em] transition-colors duration-300 mt-0.5" :class="activeTab === desc.key ? desc.iconColor : 'text-white/30'">{{ desc.key }}</span>
               </div>
