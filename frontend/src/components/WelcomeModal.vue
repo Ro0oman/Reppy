@@ -64,6 +64,23 @@
                 <p class="text-lg font-medium text-muted leading-relaxed font-tight">
                   {{ i18n.t('onboarding_damage_desc') }}
                 </p>
+                <!-- Damage Formula Preview -->
+                <div class="p-6 bg-red-500/5 border border-red-500/10 rounded-2xl flex flex-col items-center gap-4">
+                   <div class="flex items-center gap-4 text-sm font-black italic">
+                      <div class="flex flex-col items-center">
+                        <span class="text-foreground">REPS</span>
+                      </div>
+                      <span class="text-red-500">×</span>
+                      <div class="flex flex-col items-center">
+                        <span class="text-foreground">STR LVL</span>
+                      </div>
+                      <span class="text-red-500">=</span>
+                      <div class="flex flex-col items-center">
+                        <span class="text-red-500">DAÑO</span>
+                      </div>
+                   </div>
+                   <p class="text-[9px] font-black text-muted uppercase tracking-widest">+ Bonus por Críticos (AGI) y Multiplicador Global</p>
+                </div>
               </div>
 
               <!-- Slide 3: Rewards -->
