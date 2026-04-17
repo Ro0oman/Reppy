@@ -1,174 +1,216 @@
 <template>
-  <div v-if="loading" class="animate-pulse bg-foreground/5 h-24 rounded-3xl mb-8"></div>
-  <div v-else-if="boss" class="space-y-4">
-    <!-- Active Boss Card -->
+  <div v-if="loading" class="animate-pulse bg-surface/30 h-64 rounded-[2.5rem] mb-8 border border-white/5"></div>
+  <div v-else-if="boss" class="space-y-6">
+    
+    <!-- Active Boss Card (Codex Style) -->
     <div @click="authStore.isAuthenticated && (showHistory = true)" 
-         class="glass p-5 rounded-[2rem] border border-border relative overflow-hidden group transition-all duration-500 shadow-xl cursor-pointer"
-         :class="authStore.isAuthenticated ? 'hover:border-primary-500/50' : 'cursor-default'">
-      <div class="absolute -right-20 -top-20 w-64 h-64 bg-primary-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+         class="w-full bg-surface/30 border border-white/10 rounded-[2.5rem] shadow-[0_0_80px_rgba(236,72,153,0.1)] relative overflow-hidden group transition-all duration-700 cursor-pointer"
+         :class="authStore.isAuthenticated ? 'hover:border-primary-500/40 hover:shadow-[0_0_100px_rgba(236,72,153,0.2)]' : 'cursor-default'">
+      
+      <!-- Ambient Background Glow -->
+      <div class="absolute inset-0 pointer-events-none opacity-20 bg-gradient-to-br from-primary-500/20 via-transparent to-transparent group-hover:opacity-40 transition-opacity duration-700"></div>
       
       <!-- History Icon Hint (Authenticated only) -->
-      <div v-if="authStore.isAuthenticated" class="absolute top-4 right-4 text-muted/20 group-hover:text-primary-500 transition-colors">
-          <History class="w-5 h-5" />
+      <div v-if="authStore.isAuthenticated" class="absolute top-6 right-6 text-white/20 group-hover:text-primary-500 transition-colors z-20" title="Ver Historial de Combate">
+          <History class="w-6 h-6" />
       </div>
-       
-      <div class="flex flex-col md:flex-row items-center gap-8 relative z-10 mb-8">
-        <!-- Boss Image with glow -->
-        <div class="relative group/img">
-          <div class="absolute inset-0 bg-primary-500/20 blur-2xl rounded-full opacity-0 group-hover/img:opacity-100 transition-opacity"></div>
-          <div class="w-32 h-32 bg-surface rounded-[2rem] flex items-center justify-center border border-border shadow-2xl overflow-hidden transition-transform duration-500 relative z-10">
-            <img v-if="boss.image_url" :src="boss.image_url" :alt="boss.name" class="w-full h-full object-cover" :class="isDefeated ? 'grayscale opacity-50' : ''" />
-            <span v-else class="text-4xl italic font-black text-foreground">?</span>
-          </div>
+      
+      <div class="relative z-10 p-6 md:p-10 flex flex-col justify-center">
+
+        <!-- Top Status & Actions -->
+        <div class="flex flex-wrap items-center gap-3 mb-6">
+           <span class="px-4 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-500 text-[9px] md:text-[10px] font-black tracking-[0.3em] uppercase backdrop-blur-sm">
+              CLASE: SECTOR ACTIVO
+           </span>
+           <button @click.stop="showCodex = true" class="px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 text-[9px] md:text-[10px] font-black tracking-[0.3em] uppercase hover:bg-orange-500/20 hover:border-orange-500/40 transition-all backdrop-blur-sm flex items-center gap-2">
+              <span>📖</span> GUÍA RPG
+           </button>
+           <button @click.stop="showHelp = true" class="w-7 h-7 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/50 text-[10px] font-bold hover:bg-white hover:text-black transition-colors" title="Manual de Batalla">?</button>
         </div>
-        
-        <div class="flex-1 text-center md:text-left space-y-4">
-          <div class="flex flex-col md:flex-row md:items-end justify-between items-center gap-4">
-            <div class="space-y-1">
-              <div class="flex items-center justify-center md:justify-start gap-2">
-                <span class="text-[7px] font-black uppercase tracking-[0.3em] text-primary-500 bg-primary-500/10 px-2 py-0.5 rounded-md">Sector Activo</span>
-                <button @click="showHelp = true" class="w-4 h-4 rounded-full bg-muted/10 flex items-center justify-center text-foreground text-[10px] font-bold hover:bg-primary-500 hover:text-white transition-colors" title="Manual de Batalla">?</button>
-                <button @click="showCodex = true" class="text-[7px] font-black uppercase tracking-[0.3em] text-orange-500 bg-orange-500/10 hover:bg-orange-500/20 px-2 py-0.5 rounded-md transition-colors flex items-center gap-1" title="Guía de Evolución RPG">
-                   <span>📖</span> GUÍA RPG
-                </button>
+
+        <!-- Boss Info & Avatar -->
+        <div class="flex flex-col md:flex-row gap-6 md:gap-10 items-center md:items-start mb-10">
+           <!-- Portrait -->
+           <div class="relative shrink-0 group/img">
+              <div class="absolute inset-0 bg-primary-500/30 blur-[40px] rounded-full opacity-60 group-hover/img:opacity-100 transition-opacity duration-700"></div>
+              <div class="w-32 h-32 md:w-48 md:h-48 rounded-[2.5rem] border border-white/10 bg-black/40 shadow-2xl overflow-hidden relative z-10">
+                 <img v-if="boss.image_url" :src="boss.image_url" :alt="boss.name" class="w-full h-full object-cover transition-all duration-700" :class="isDefeated ? 'grayscale opacity-30 mix-blend-luminosity' : 'group-hover/img:scale-105 saturate-150'" />
+                 <span v-else class="text-6xl font-black italic text-white/20 absolute inset-0 flex items-center justify-center">?</span>
               </div>
-              <h3 class="text-4xl font-black italic tracking-tighter text-foreground uppercase leading-none">{{ boss.name }}</h3>
-              <p v-if="isDefeated" class="text-[8px] bg-emerald-500 text-black px-2 py-0.5 rounded-full font-black uppercase tracking-widest w-fit mx-auto md:mx-0">Neutralizado</p>
-            </div>
+           </div>
 
-            <div class="text-center md:text-right">
-              <div class="text-4xl font-black text-primary-500 tracking-tighter tabular-nums leading-none mb-1">{{ formatNumber(boss.current_hp) }}</div>
-              <div class="text-[9px] text-muted font-black uppercase tracking-[0.2em] opacity-40">/ {{ formatNumber(boss.total_hp) }} PROTOCOL_HP</div>
-            </div>
-          </div>
-
-          <div v-if="boss.active_phrase" class="animate-in fade-in slide-in-from-left-2 duration-700">
-            <p class="text-primary-500 font-bold italic text-sm md:text-base border-l-2 border-primary-500 pl-4 py-0.5">
-              "{{ boss.active_phrase }}"
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Progress & Stats Area -->
-      <div class="space-y-6">
-        <div class="relative">
-          <div class="relative h-6 bg-background rounded-2xl overflow-hidden border border-border shadow-inner">
-            <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-primary-600 via-primary-500 to-amber-400 transition-all duration-1000 ease-out shadow-[0_0_20px_rgba(236,72,153,0.2)]" :style="{ width: `${hpPercentage}%` }"></div>
-            <div class="absolute inset-0 flex items-center justify-center">
-              <span class="text-[8px] font-black text-white/50 uppercase tracking-[0.4em]">{{ Math.round(hpPercentage) }}% INTEGRIDAD</span>
-            </div>
-          </div>
+           <!-- Name & Quote -->
+           <div class="flex-1 text-center md:text-left space-y-4">
+              <h3 class="text-4xl md:text-6xl lg:text-7xl font-black italic tracking-tighter text-white uppercase leading-none drop-shadow-2xl">
+                 {{ boss.name }}
+              </h3>
+              <p v-if="boss.active_phrase && !isDefeated" class="text-primary-500 font-medium italic text-sm md:text-lg pl-4 border-l-2 border-primary-500">
+                "{{ boss.active_phrase }}"
+              </p>
+              <div v-if="isDefeated" class="inline-block mt-4">
+                 <span class="px-4 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-500 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                    <Check class="w-3 h-3" /> PROTOCOLO DE CAÍDA COMPLETADO
+                 </span>
+              </div>
+           </div>
         </div>
 
-        <!-- Damage Stats Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div v-if="authStore.isAuthenticated" class="p-3 bg-foreground/[0.02] border border-border rounded-2xl flex flex-col items-center justify-center gap-1">
-             <span class="text-[7px] font-black text-muted uppercase tracking-widest">Tu Daño Total</span>
-             <span class="text-sm font-black text-foreground">{{ personalDamage }} <span class="text-[8px] opacity-40">REPS</span></span>
-          </div>
-          <div v-if="authStore.isAuthenticated" class="p-3 bg-primary-500/[0.03] border border-primary-500/10 rounded-2xl flex flex-col items-center justify-center gap-1">
-             <span class="text-[7px] font-black text-primary-500 uppercase tracking-widest">Daño Hoy</span>
-             <span class="text-sm font-black text-primary-500">{{ dailyDamage }} <span class="text-[8px] opacity-40">🛡️</span></span>
-          </div>
-          <div v-if="topDamageDealer" class="p-3 bg-amber-500/[0.03] border border-amber-500/10 rounded-2xl flex flex-col items-center justify-center gap-1">
-             <span class="text-[7px] font-black text-amber-500 uppercase tracking-widest">TOP Daño</span>
-             <span class="text-sm font-black text-foreground truncate w-full text-center px-2">
-               {{ topDamageDealer.id === authStore.user?.id ? 'TÚ' : topDamageDealer.name }} 
-               <span class="text-[8px] text-amber-500/50">({{ topDamageDealer.damage_dealt }})</span>
-             </span>
-          </div>
+        <!-- Cinematic Health Bar -->
+        <div class="w-full relative mb-10">
+           <div class="flex justify-between items-end mb-3">
+              <span class="text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-white/50">Integridad del Objetivo</span>
+              <div class="text-right">
+                 <span class="text-3xl md:text-5xl font-black text-white leading-none tracking-tighter shadow-black drop-shadow-md">{{ formatNumber(boss.current_hp) }}</span>
+                 <span class="text-[10px] md:text-xs font-black text-primary-500/70 ml-2 tracking-widest">/ {{ formatNumber(boss.total_hp) }} HP</span>
+              </div>
+           </div>
+           
+           <div class="h-6 md:h-8 rounded-[1rem] bg-black/60 border border-white/10 p-1 md:p-1.5 relative overflow-hidden shadow-inner">
+              <!-- Glow -->
+              <div class="absolute inset-0 bg-primary-500/30 blur-[20px] transition-all duration-1000" :style="{ width: `${hpPercentage}%` }"></div>
+              
+              <!-- Actual Bar -->
+              <div class="h-full rounded-full bg-gradient-to-r from-primary-600 via-primary-500 to-amber-400 relative overflow-hidden transition-all duration-1000 ease-out" 
+                   :style="{ width: `${hpPercentage}%` }"
+                   :class="hpPercentage === 0 ? 'opacity-0' : 'opacity-100'">
+                 <!-- Shimmer Effect -->
+                 <div class="absolute inset-0 w-[200%] animate-shimmer bg-[linear-gradient(90deg,transparent_25%,rgba(255,255,255,0.4)_50%,transparent_75%)]"></div>
+              </div>
+              
+              <!-- Placeholder if empty -->
+              <div v-if="hpPercentage === 0" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                 <span class="text-[8px] md:text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">0% INTEGRIDAD - OBJETIVO NEUTRALIZADO</span>
+              </div>
+           </div>
         </div>
 
-        <!-- Footer Actions -->
-        <div class="flex items-center justify-between gap-4 pt-2">
+        <!-- Damage Stats (Premium HUD Modules) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" v-if="authStore.isAuthenticated">
+           
+           <!-- Tu Daño Total -->
+           <div class="relative p-5 md:p-6 rounded-[2rem] bg-black/40 border border-white/5 overflow-hidden group/card hover:border-primary-500/30 transition-all duration-500">
+              <div class="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
+              <div class="relative z-10">
+                 <span class="text-[8px] md:text-[9px] font-black tracking-[0.3em] uppercase text-white/40 block mb-1">Tu Daño Histórico</span>
+                 <div class="text-3xl md:text-4xl font-black text-white tracking-tighter">{{ formatNumber(personalDamage) }}<span class="text-xs font-bold text-primary-500/60 ml-2 tracking-widest">DMG</span></div>
+              </div>
+           </div>
+
+           <!-- Daño Hoy -->
+           <div class="relative p-5 md:p-6 rounded-[2rem] bg-black/40 border border-white/5 overflow-hidden group/card hover:border-emerald-500/30 transition-all duration-500">
+              <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
+              <div class="relative z-10 flex flex-col justify-between h-full">
+                 <span class="text-[8px] md:text-[9px] font-black tracking-[0.3em] uppercase text-white/40 block mb-1">Daño Realizado Hoy</span>
+                 <div class="flex items-end gap-2">
+                    <div class="text-3xl md:text-4xl font-black text-emerald-400 tracking-tighter">{{ formatNumber(dailyDamage) }}</div>
+                    <span class="text-xs font-bold text-emerald-500/50 mb-1 tracking-widest">DMG</span>
+                 </div>
+              </div>
+           </div>
+
+           <!-- Top Daño -->
+           <div v-if="topDamageDealer" class="relative p-5 md:p-6 rounded-[2rem] bg-black/40 border border-white/5 overflow-hidden group/card hover:border-amber-500/30 transition-all duration-500 flex flex-col">
+              <div class="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
+              <div class="relative z-10 flex-1 flex flex-col justify-between">
+                 <span class="text-[8px] md:text-[9px] font-black tracking-[0.3em] uppercase text-white/40 block mb-1">Dominación (Top 1)</span>
+                 <div>
+                    <div class="text-xl md:text-2xl font-black text-amber-500 tracking-tighter truncate uppercase" :title="topDamageDealer.id === authStore.user?.id ? 'TÚ' : topDamageDealer.name">
+                       {{ topDamageDealer.id === authStore.user?.id ? 'TÚ' : topDamageDealer.name }}
+                    </div>
+                    <div class="text-[10px] font-bold text-white/30 uppercase tracking-widest mt-0.5">{{ formatNumber(topDamageDealer.damage_dealt) }} DMG</div>
+                 </div>
+              </div>
+           </div>
+           
+        </div>
+
+        <!-- Footer Call To Action -->
+        <div class="mt-8 flex flex-col md:flex-row items-center justify-between gap-4 border-t border-white/5 pt-6">
           <div v-if="!isDefeated" class="hidden md:block">
-             <p class="text-[9px] font-black uppercase tracking-[0.1em] text-muted opacity-40">
-               REQ. <span class="text-primary-500">{{ formatNumber(boss.current_hp) }}</span> HP PARA CAÍDA
+             <p class="text-[9px] font-black uppercase tracking-[0.3em] text-white/30">
+               DAÑO REQUERIDO: <span class="text-primary-500">{{ formatNumber(boss.current_hp) }} HP</span>
              </p>
           </div>
 
-          <div v-if="isDefeated && authStore.isAuthenticated" class="w-full flex items-center justify-between gap-4">
+          <div v-if="isDefeated && authStore.isAuthenticated" class="w-full flex items-center justify-center md:justify-end gap-4">
             <template v-if="chestsClaimed < 1">
-               <p class="text-[10px] font-black uppercase tracking-widest text-emerald-500 animate-pulse">PROTOCOL_CLEARED</p>
-               <button @click="claim" :disabled="claiming" 
-                class="px-8 py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest rounded-2xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] flex items-center gap-2">
-                 <span class="text-xl">🎁</span> RECLAMAR
+               <button @click.stop="claim" :disabled="claiming" 
+                class="w-full md:w-auto px-10 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-[0.2em] rounded-2xl transition-all shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_40px_rgba(16,185,129,0.5)] flex items-center justify-center gap-3 text-sm md:text-base">
+                 <span class="text-xl">🎁</span> RECLAMAR BOTÍN
                </button>
             </template>
-            <div v-else class="flex items-center justify-center w-full gap-2 text-muted font-black uppercase text-[9px] tracking-[0.2em] px-4 py-3 bg-foreground/[0.02] rounded-2xl border border-border/40">
-              <Check class="w-4 h-4 text-emerald-500" />
+            <div v-else class="w-full md:w-auto flex items-center justify-center gap-3 text-white/30 font-black uppercase text-[10px] tracking-[0.2em] px-8 py-4 bg-black/40 rounded-2xl border border-white/5">
+              <Check class="w-4 h-4 text-emerald-500/50" />
               <span>RECOMPENSA_ADQUIRIDA</span>
             </div>
           </div>
-          <div v-else-if="!authStore.isAuthenticated" class="w-full text-center text-[9px] font-black uppercase tracking-widest text-primary-500/60 bg-primary-500/5 p-3 rounded-2xl border border-primary-500/10">
-             INICIA SESIÓN PARA PARTICIPAR EN EL PROTOCOLO
-          </div>
+          
+          <div v-else-if="!authStore.isAuthenticated" class="w-full text-center text-[10px] font-black uppercase tracking-[0.2em] text-primary-500/80 bg-primary-500/10 p-4 rounded-[1.5rem] border border-primary-500/20 backdrop-blur-md">
+             Inicia sesión para registrar tu daño y acceder al botín
           </div>
         </div>
+
       </div>
+    </div>
 
     <!-- Next Boss Preview (Authenticated only) -->
-    <div v-if="nextBoss && authStore.isAuthenticated" class="glass p-5 rounded-3xl border border-dashed border-border opacity-60 hover:opacity-100 transition-opacity flex items-center justify-between group">
-       <div class="flex items-center gap-4">
-         <div class="w-10 h-10 bg-background rounded-lg flex items-center justify-center grayscale group-hover:grayscale-0 transition-all text-xs border border-border overflow-hidden">
-            <img v-if="nextBoss.image_url" :src="nextBoss.image_url" :alt="`Próximo Boss: ${nextBoss.name}`" class="w-full h-full object-cover opacity-40 group-hover:opacity-100" />
-            <span v-else class="text-foreground">?</span>
+    <div v-if="nextBoss && authStore.isAuthenticated" class="w-full bg-surface/10 p-5 md:p-6 rounded-[2rem] border border-dashed border-white/10 opacity-70 hover:opacity-100 transition-opacity flex items-center justify-between group">
+       <div class="flex items-center gap-4 md:gap-6">
+         <div class="w-12 h-12 md:w-16 md:h-16 bg-black/60 rounded-[1.5rem] flex items-center justify-center grayscale group-hover:grayscale-0 transition-all border border-white/5 overflow-hidden">
+            <img v-if="nextBoss.image_url" :src="nextBoss.image_url" :alt="`Próximo Boss: ${nextBoss.name}`" class="w-full h-full object-cover opacity-50 group-hover:opacity-100 transition-opacity" />
+            <span v-else class="text-white/30 font-black italic text-xl">?</span>
          </div>
          <div>
-           <p class="text-[8px] font-black uppercase tracking-widest text-muted">Siguiente Desafío</p>
-           <h4 class="text-sm font-bold text-muted group-hover:text-foreground transition-colors uppercase tracking-tight">{{ nextBoss.name }}</h4>
+           <p class="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-white/30 mb-1">Próximo Protocolo</p>
+           <h4 class="text-sm md:text-lg font-bold text-white/60 group-hover:text-white transition-colors uppercase tracking-tight italic">{{ nextBoss.name }}</h4>
          </div>
        </div>
-       <div class="text-[10px] font-black text-muted uppercase tracking-widest italic">Bloqueado 🔒</div>
+       <div class="text-[9px] md:text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">Bloqueado 🔒</div>
     </div>
 
     <!-- Help Modal Overlay -->
-    <div v-if="showHelp" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/60 backdrop-blur-md animate-fade-in" @click.self="showHelp = false">
-      <div class="glass max-w-lg w-full p-8 rounded-[2.5rem] border border-border shadow-2xl space-y-6 relative animate-fade-in">
-        <button @click="showHelp = false" class="absolute top-6 right-6 text-muted hover:text-foreground transition-colors text-2xl">&times;</button>
+    <div v-if="showHelp" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-in fade-in duration-500" @click.self="showHelp = false">
+      <div class="w-full max-w-2xl bg-surface/30 border border-white/10 rounded-[2.5rem] shadow-[0_0_100px_rgba(0,0,0,0.8)] relative p-8 md:p-12 animate-in slide-in-from-bottom-8 duration-700 select-none overflow-hidden">
         
-        <div class="space-y-2">
-          <span class="text-[10px] font-black uppercase tracking-[0.3em] text-primary-500">Manual de Batalla</span>
-          <h2 class="text-3xl font-black italic tracking-tighter text-foreground uppercase italic">Evento de la Comunidad</h2>
+        <div class="absolute -top-32 -right-32 w-96 h-96 bg-primary-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <button @click="showHelp = false" class="absolute top-6 right-6 p-3 bg-white/5 hover:bg-white/10 rounded-2xl text-white/50 hover:text-white transition-all">
+          <XIcon class="w-5 h-5" />
+        </button>
+        
+        <div class="mb-10 relative z-10">
+          <span class="text-[10px] font-black uppercase tracking-[0.4em] text-primary-500 bg-primary-500/10 px-3 py-1.5 rounded-full border border-primary-500/20">Manual de Operaciones</span>
+          <h2 class="text-3xl md:text-5xl font-black tracking-tighter text-white uppercase italic mt-6 leading-none">Evento de la Comunidad<span class="text-primary-500">.</span></h2>
         </div>
 
-        <div class="space-y-4">
-          <div class="flex gap-4 items-start">
-            <div class="w-8 h-8 rounded-full bg-primary-500/20 flex items-center justify-center text-primary-500 shrink-0 font-bold">1</div>
+        <div class="space-y-6 relative z-10">
+          <div class="p-6 rounded-[1.5rem] bg-black/40 border border-white/5 flex gap-5 items-start">
+            <div class="w-10 h-10 rounded-2xl bg-primary-500/10 border border-primary-500/30 flex items-center justify-center text-primary-500 shrink-0 font-black text-lg">1</div>
             <div>
-              <p class="text-sm font-bold text-foreground uppercase tracking-tight">{{ i18nStore.t('battle_help_title1') }}</p>
-              <p class="text-xs text-muted">{{ i18nStore.t('battle_help_desc1') }}</p>
+              <p class="text-sm font-black text-white uppercase tracking-widest mb-1">{{ i18nStore.t('battle_help_title1') }}</p>
+              <p class="text-xs text-white/50 leading-relaxed font-medium">{{ i18nStore.t('battle_help_desc1') }}</p>
             </div>
           </div>
 
-          <div class="flex gap-4 items-start">
-            <div class="w-8 h-8 rounded-full bg-primary-500/20 flex items-center justify-center text-primary-500 shrink-0 font-bold">2</div>
+          <div class="p-6 rounded-[1.5rem] bg-black/40 border border-white/5 flex gap-5 items-start">
+            <div class="w-10 h-10 rounded-2xl bg-primary-500/10 border border-primary-500/30 flex items-center justify-center text-primary-500 shrink-0 font-black text-lg">2</div>
             <div>
-              <p class="text-sm font-bold text-foreground uppercase tracking-tight">{{ i18nStore.t('battle_help_title2') }}</p>
-              <p class="text-xs text-muted">{{ i18nStore.t('battle_help_desc2') }}</p>
+              <p class="text-sm font-black text-white uppercase tracking-widest mb-1">{{ i18nStore.t('battle_help_title2') }}</p>
+              <p class="text-xs text-white/50 leading-relaxed font-medium">{{ i18nStore.t('battle_help_desc2') }}</p>
             </div>
           </div>
 
-          <div class="flex gap-4 items-start">
-            <div class="w-8 h-8 rounded-full bg-primary-500/20 flex items-center justify-center text-primary-500 shrink-0 font-bold">3</div>
+          <div class="p-6 rounded-[1.5rem] bg-black/40 border border-white/5 flex gap-5 items-start">
+            <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-500 shrink-0 font-black text-lg text-[20px]">🎁</div>
             <div>
-              <p class="text-sm font-bold text-foreground uppercase tracking-tight">Cofre de Recompensa</p>
-              <p class="text-xs text-muted">Al derrotar al boss, desbloqueas un cofre con un objeto de Temporada (o Normal) garantizado.</p>
-            </div>
-          </div>
-
-          <div class="flex gap-4 items-start">
-            <div class="w-8 h-8 rounded-full bg-primary-500/20 flex items-center justify-center text-primary-500 shrink-0 font-bold">4</div>
-            <div>
-              <p class="text-sm font-bold text-foreground uppercase tracking-tight">Ciclo Infinito</p>
-              <p class="text-xs text-muted">Cuando un jefe cae, aparece el siguiente. Si derrotan a los 10, ¡el ciclo vuelve a empezar!</p>
+              <p class="text-sm font-black text-emerald-500 uppercase tracking-widest mb-1">Cofre de Recompensa</p>
+              <p class="text-xs text-white/50 leading-relaxed font-medium">Al derrotar al boss, desbloqueas un cofre con un objeto de Temporada (o Normal) garantizado.</p>
             </div>
           </div>
         </div>
 
-        <button @click="showHelp = false" class="w-full py-4 bg-primary-600 hover:bg-primary-500 text-white font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl">
-          ¡Entendido!
+        <button @click="showHelp = false" class="w-full mt-10 p-5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black uppercase tracking-[0.3em] text-xs rounded-2xl transition-all relative z-10 flex items-center justify-center gap-2">
+          Cerrar Manual
         </button>
       </div>
     </div>
@@ -186,7 +228,8 @@ import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
-import { History } from 'lucide-vue-next';
+import { useI18nStore } from '../stores/i18n';
+import { History, Check, X as XIcon } from 'lucide-vue-next';
 import { formatNumber } from '../utils/numberUtils';
 import confetti from 'canvas-confetti';
 import BossHistoryModal from './BossHistoryModal.vue';
@@ -203,6 +246,7 @@ const showHelp = ref(false);
 const showHistory = ref(false);
 const showCodex = ref(false);
 const authStore = useAuthStore();
+const i18nStore = useI18nStore();
 const notificationStore = useNotificationStore();
 const topDamageDealer = ref(null);
 let lastFetchTime = 0;
@@ -241,7 +285,7 @@ const isDefeated = computed(() => {
 
 const hpPercentage = computed(() => {
   if (!boss.value) return 0;
-  return (boss.value.current_hp / boss.value.total_hp) * 100;
+  return Math.max(0, (boss.value.current_hp / boss.value.total_hp) * 100);
 });
 
 const claim = async () => {
@@ -280,15 +324,12 @@ defineExpose({ refresh: fetchBoss });
 </script>
 
 <style scoped>
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out forwards;
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.animate-shimmer {
+  animation: shimmer 2s infinite linear;
 }
-
-
 </style>
