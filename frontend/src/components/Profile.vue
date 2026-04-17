@@ -340,6 +340,7 @@ const props = defineProps({
 
 const authStore = useAuthStore();
 const i18nStore = useI18nStore();
+const emit = defineEmits(['start', 'viewProfile']);
 const notificationStore = useNotificationStore();
 const themeStore = useThemeStore();
 

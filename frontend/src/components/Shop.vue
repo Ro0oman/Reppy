@@ -1,5 +1,6 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 py-12 animate-in relative z-10">
+  <div class="shop-page-wrapper">
+    <div class="max-w-7xl mx-auto px-4 py-12 animate-in relative z-10">
     <!-- Header Section -->
     <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
       <div>
@@ -508,6 +509,7 @@
       </div>
     </div>
   </Transition>
+  </div>
 </template>
 
 <script setup>
@@ -520,6 +522,7 @@ import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRig
 import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
 
+const emit = defineEmits(['start', 'viewProfile']);
 const authStore = useAuthStore();
 const i18n = useI18nStore();
 const notificationStore = useNotificationStore();

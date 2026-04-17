@@ -191,7 +191,7 @@ import ExerciseSelector from './ExerciseSelector.vue';
 import SocialFeed from './SocialFeed.vue';
 import { computed } from 'vue';
 
-const emit = defineEmits(['viewProfile']);
+const emit = defineEmits(['viewProfile', 'start']);
 
 const i18n = useI18nStore();
 const notificationStore = useNotificationStore();

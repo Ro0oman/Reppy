@@ -686,7 +686,7 @@ const latestPosts = computed(() => {
     .slice(0, 3);
 });
 
-defineEmits(['start']);
+defineEmits(['start', 'viewProfile']);
 
 onMounted(() => {
   const observer = new IntersectionObserver((entries) => {

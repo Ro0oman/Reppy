@@ -190,7 +190,7 @@ import BossHealth from './BossHealth.vue';
 import RadialProgress from './RadialProgress.vue';
 import DamageOverhaulModal from './DamageOverhaulModal.vue';
 
-const emit = defineEmits(['viewProfile']);
+const emit = defineEmits(['viewProfile', 'start']);
 const authStore = useAuthStore();
 const i18n = useI18nStore();
 const notificationStore = useNotificationStore();

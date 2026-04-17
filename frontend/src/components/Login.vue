@@ -138,7 +138,7 @@ const router = useRouter();
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();
-const emit = defineEmits(['back']);
+const emit = defineEmits(['back', 'start', 'viewProfile']);
 
 const mode = ref('login');
 const loading = ref(false);

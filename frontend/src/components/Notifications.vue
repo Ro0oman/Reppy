@@ -77,6 +77,7 @@ import AvatarFrame from './AvatarFrame.vue';
 const store = useNotificationsStore();
 const i18n = useI18nStore();
 const router = useRouter();
+const emit = defineEmits(['start', 'viewProfile']);
 
 const getIcon = (type) => {
   switch (type) {

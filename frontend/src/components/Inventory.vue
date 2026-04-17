@@ -217,6 +217,7 @@ import ChestOpening from './ChestOpening.vue';
 import axios from 'axios';
 
 const authStore = useAuthStore();
+const emit = defineEmits(['start', 'viewProfile']);
 const notificationStore = useNotificationStore();
 const inventory = ref([]);
 const loading = ref(true);
