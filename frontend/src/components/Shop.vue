@@ -98,6 +98,20 @@
 
             <!-- Preview Area -->
             <div class="h-32 flex items-center justify-center m-4 mb-2 bg-surface rounded-2xl border border-border relative overflow-hidden group-hover/item:border-primary-500/20 transition-colors shadow-inner">
+               <div v-if="item.type === 'bundle'" class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-500/10 to-purple-500/10 relative">
+                  <div class="grid grid-cols-2 gap-1 p-2 scale-75">
+                     <div class="w-10 h-10 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><Type class="w-5 h-5 text-primary-500/40" /></div>
+                     <div class="w-10 h-10 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><Frame class="w-5 h-5 text-purple-400/40" /></div>
+                     <div class="w-10 h-10 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><Sparkles class="w-5 h-5 text-blue-400/40" /></div>
+                     <div class="w-10 h-10 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><LayoutGrid class="w-5 h-5 text-neon-lime/40" /></div>
+                  </div>
+                  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                     <div class="p-3 bg-surface/80 backdrop-blur-md rounded-2xl border border-primary-500/30 shadow-2xl">
+                        <Swords class="w-6 h-6 text-primary-500 animate-pulse" />
+                     </div>
+                  </div>
+               </div>
+
                <div v-if="item.type === 'title'" class="text-lg text-center px-4 leading-tight font-black" :class="item.css_value">
                  {{ item.name }}
                </div>
@@ -155,9 +169,15 @@
                   <Check class="w-3.5 h-3.5" />
                   <span class="text-[8px] font-black uppercase tracking-widest leading-none">ACQUIRED</span>
                 </div>
-                <div v-else-if="item.price > 0" class="flex items-baseline gap-1">
-                  <span class="text-base font-black text-precision" :class="canAfford(item) ? 'text-primary-500' : 'text-muted'">{{ item.price }}</span>
-                  <span class="text-[7px] font-black text-muted uppercase tracking-widest">COINS</span>
+                <div v-else-if="item.price > 0" class="flex flex-col">
+                  <div v-if="item.original_price" class="flex items-center gap-2 mb-0.5">
+                    <span class="text-[9px] font-black text-muted line-through tracking-tighter">{{ item.original_price }}</span>
+                    <span class="text-[7px] font-black bg-primary-500/20 text-primary-500 px-1 rounded">40% OFF</span>
+                  </div>
+                  <div class="flex items-baseline gap-1">
+                    <span class="text-base font-black text-precision" :class="canAfford(item) ? 'text-primary-500' : 'text-muted'">{{ item.price }}</span>
+                    <span class="text-[7px] font-black text-muted uppercase tracking-widest">COINS</span>
+                  </div>
                 </div>
                 <div v-else class="text-[8px] font-black uppercase tracking-widest text-primary-500/60 leading-none">EVENT</div>
 
@@ -172,7 +192,7 @@
                 </button>
                 
                 <button 
-                  v-if="item.owned"
+                  v-if="item.owned && item.type !== 'bundle'"
                   @click="equipItem(item)"
                   :disabled="isEquipped(item)"
                   class="px-4 py-2 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all"
@@ -365,6 +385,7 @@ const itemsPerPage = ref(15);
 
 const categories = [
   { id: 'all', label: 'cat_all', icon: Swords },
+  { id: 'bundle', label: 'cat_bundle', icon: LayoutGrid },
   { id: 'title', label: 'cat_title', icon: Type },
   { id: 'border', label: 'cat_border', icon: Frame },
   { id: 'avatar', label: 'cat_avatar', icon: Sparkles },
@@ -419,7 +440,7 @@ const getCountdown = (item) => {
 };
 
 const isEquipped = (item) => {
-  if (!authStore.user) return false;
+  if (!authStore.user || item.type === 'bundle') return false;
   if (item.type === 'title') return authStore.user.equipped_title_id === item.id;
   if (item.type === 'border') return authStore.user.equipped_border_id === item.id;
   if (item.type === 'background') return authStore.user.equipped_background_id === item.id;

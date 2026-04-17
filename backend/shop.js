@@ -84,8 +84,28 @@ router.post('/buy/:id', authenticate, async (req, res) => {
 
     // Process Purchase
     await query('BEGIN');
+    
+    if (item.type === 'bundle' && item.bundle_items) {
+      // Handle Bundle Purchase
+      const itemIds = item.bundle_items.split(',').map(id => parseInt(id.trim()));
+      
+      // Add all items in bundle to inventory
+      for (const id of itemIds) {
+        // Check if user already has it (skip if so, but bundle allows buying even if partial items owned)
+        const checkInv = await query('SELECT * FROM user_inventory WHERE user_id = $1 AND cosmetic_id = $2', [userId, id]);
+        if (checkInv.rows.length === 0) {
+          await query('INSERT INTO user_inventory (user_id, cosmetic_id) VALUES ($1, $2)', [userId, id]);
+        }
+      }
+      
+      // Also add the bundle itself to inventory so we know they bought it
+      await query('INSERT INTO user_inventory (user_id, cosmetic_id) VALUES ($1, $2)', [userId, cosmeticId]);
+    } else {
+      // Regular Item Purchase
+      await query('INSERT INTO user_inventory (user_id, cosmetic_id) VALUES ($1, $2)', [userId, cosmeticId]);
+    }
+
     await query('UPDATE users SET reppy_coins = reppy_coins - $1 WHERE id = $2', [item.price, userId]);
-    await query('INSERT INTO user_inventory (user_id, cosmetic_id) VALUES ($1, $2)', [userId, cosmeticId]);
     
     // Log the transaction (negative amount)
     await trackCoinTransaction(userId, -item.price, 'PURCHASE', `Compra de: ${item.name}`);

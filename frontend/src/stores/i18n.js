@@ -176,6 +176,7 @@ const translations = {
     cat_avatar: 'Avatars',
     cat_avatar: 'Avatars',
     cat_background: 'Interface Screens',
+    cat_bundle: 'Welcome Packs',
 
     // Protocol Mastery
     protocol_mastery: 'Protocol Mastery',
@@ -496,6 +497,7 @@ const translations = {
     cat_border: 'Marcos de Avatar',
     cat_avatar: 'Avatares',
     cat_background: 'Pantallas de Interfaz',
+    cat_bundle: 'Pack de Bienvenida',
     
     // Protocol Mastery
     protocol_mastery: 'Maestría de Protocolos',
