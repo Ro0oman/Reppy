@@ -71,15 +71,15 @@ router.post('/buy/:id', authenticate, async (req, res) => {
     // Check inventory
     const inventoryRes = await query('SELECT * FROM user_inventory WHERE user_id = $1 AND cosmetic_id = $2', [userId, cosmeticId]);
     if (inventoryRes.rows.length > 0) {
-      return res.status(400).json({ message: 'Item already owned' });
+      return res.status(400).json({ message: 'UNIT DETECTED: PROTOCOL ALREADY ACQUIRED' });
     }
 
     if (item.is_seasonal) {
-      return res.status(400).json({ message: 'Este objeto es especial y solo se obtiene en eventos' });
+      return res.status(400).json({ message: 'ERROR: SEASONAL UNIT - ACQUISITION VIA EVENT ONLY' });
     }
 
     if (user.reppy_coins < item.price) {
-      return res.status(400).json({ message: 'Not enough Reppy Coins' });
+      return res.status(400).json({ message: 'INSUFFICIENT FUNDS: REPPY COINS REQUIRED' });
     }
 
     // Process Purchase

@@ -214,6 +214,7 @@ const translations = {
     shop_tab_avatars: 'AVATARS',
     shop_tab_backgrounds: 'EFFECTS',
     shop_tab_post_backgrounds: 'POSTS',
+    shop_bundles_title: 'ELITE PROTOCOL BUNDLES',
 
     // Post Backgrounds
     'post-bg-carbon_name': 'Carbon Scan',
@@ -535,6 +536,7 @@ const translations = {
     shop_tab_avatars: 'AVATARES',
     shop_tab_backgrounds: 'EFECTOS',
     shop_tab_post_backgrounds: 'POSTS',
+    shop_bundles_title: 'PACKS DE PROTOCOLO ÉLITE',
 
     // Post Backgrounds
     'post-bg-carbon_name': 'Carbon Scan',

@@ -65,6 +65,89 @@
         </div>
       </div>
 
+      <!-- Elite Bundles Highlight (Industrial Gold) -->
+      <section v-if="bundleItems.length > 0 && selectedCategory === 'all'" class="relative">
+        <div class="flex items-center gap-4 mb-10">
+          <h2 class="text-xl font-black text-industrial text-yellow-500 tracking-tight italic flex items-center gap-2">
+            <LayoutGrid class="w-5 h-5" />
+            {{ i18n.t('shop_bundles_title') }}
+          </h2>
+          <div class="h-px flex-1 bg-gradient-to-r from-yellow-500/40 to-transparent"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div 
+            v-for="item in bundleItems" 
+            :key="item.id"
+            class="card-stats p-0 flex flex-col group/item bg-yellow-500/5 border-yellow-500/20 hover:border-yellow-500/50 shadow-[0_0_50px_rgba(234,179,8,0.05)] overflow-hidden relative"
+            :class="getCardClass(item)"
+          >
+            <!-- Gold Glow Detail -->
+            <div class="absolute -top-24 -right-24 w-48 h-48 bg-yellow-500/10 blur-[60px] rounded-full pointer-events-none transition-opacity group-hover/item:opacity-100 opacity-50"></div>
+
+            <!-- Header Info -->
+            <div class="p-4 pb-0 flex items-start justify-between z-10">
+              <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-yellow-500/20 text-yellow-500 bg-yellow-500/10">
+                ELITE_PACK
+              </span>
+              <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border" :class="getRarityBadge(item).classes">
+                {{ getRarityBadge(item).label }}
+              </span>
+            </div>
+
+            <!-- Preview Area -->
+            <div class="h-40 flex items-center justify-center m-4 mb-2 bg-black/40 rounded-2xl border border-yellow-500/10 relative overflow-hidden group-hover/item:border-yellow-500/30 transition-colors shadow-inner">
+               <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-yellow-500/10 to-transparent relative">
+                  <div class="grid grid-cols-2 gap-2 p-2 scale-90">
+                     <div class="w-12 h-12 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><Type class="w-6 h-6 text-yellow-500/40" /></div>
+                     <div class="w-12 h-12 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><Frame class="w-6 h-6 text-yellow-500/40" /></div>
+                     <div class="w-12 h-12 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><Sparkles class="w-6 h-6 text-yellow-500/40" /></div>
+                     <div class="w-12 h-12 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><LayoutGrid class="w-6 h-6 text-yellow-500/40" /></div>
+                  </div>
+                  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                     <div class="p-4 bg-background/80 backdrop-blur-md rounded-2xl border border-yellow-500/40 shadow-2xl">
+                        <Swords class="w-8 h-8 text-yellow-500 animate-pulse" />
+                     </div>
+                  </div>
+               </div>
+            </div>
+
+            <div class="p-4 pt-2 flex-1">
+              <h3 class="text-base font-black text-industrial text-foreground mb-1">{{ item.name }}</h3>
+              <p class="text-[10px] text-muted font-medium mb-4 leading-relaxed">{{ item.description }}</p>
+            </div>
+
+            <div class="p-4 pt-0 mt-auto border-t border-yellow-500/10 bg-yellow-500/[0.02]">
+              <div class="flex items-center justify-between mt-4">
+                <div v-if="item.owned" class="flex items-center gap-1.5 text-neon-lime">
+                  <Check class="w-3.5 h-3.5" />
+                  <span class="text-[8px] font-black uppercase tracking-widest leading-none">ACQUIRED</span>
+                </div>
+                <div v-else class="flex flex-col">
+                  <div v-if="item.original_price" class="flex items-center gap-2 mb-0.5">
+                    <span class="text-[10px] font-black text-muted line-through tracking-tighter">{{ item.original_price }}</span>
+                    <span class="text-[8px] font-black bg-yellow-500/20 text-yellow-500 px-1.5 rounded uppercase">Special Deal</span>
+                  </div>
+                  <div class="flex items-baseline gap-1">
+                    <span class="text-xl font-black text-precision text-yellow-500">{{ item.price }}</span>
+                    <span class="text-[8px] font-black text-muted uppercase tracking-widest">RC</span>
+                  </div>
+                </div>
+
+                <button 
+                  v-if="!item.owned"
+                  @click="buyItem(item)"
+                  :disabled="!canAfford(item) || buying"
+                  class="bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-20 shadow-lg shadow-yellow-500/20 active:scale-95"
+                >
+                  ACQUIRE
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Main Collection -->
       <section>
         <div class="flex items-center gap-4 mb-10">
@@ -380,6 +463,7 @@ const showDropdown = ref(false);
 let countdownTimer = null;
 
 const selectedCategory = ref('all');
+const seasonalItems = computed(() => filteredItems.value.filter(item => item.is_seasonal));
 const currentPage = ref(1);
 const itemsPerPage = ref(15);
 
@@ -401,8 +485,13 @@ const filteredItems = computed(() => {
   return result.sort((a, b) => a.price - b.price);
 });
 
-const seasonalItems = computed(() => filteredItems.value.filter(item => item.is_seasonal));
-const regularItems = computed(() => filteredItems.value.filter(item => !item.is_seasonal));
+const bundleItems = computed(() => items.value.filter(item => item.type === 'bundle'));
+const regularItems = computed(() => {
+  if (selectedCategory.value === 'all') {
+    return filteredItems.value.filter(item => !item.is_seasonal && item.type !== 'bundle');
+  }
+  return filteredItems.value.filter(item => !item.is_seasonal);
+});
 
 const totalPages = computed(() => Math.ceil(regularItems.value.length / itemsPerPage.value));
 
