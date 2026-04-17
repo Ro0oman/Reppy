@@ -10,21 +10,37 @@
 ## 🌟 Key Features
 
 ### ⚔️ RPG Progression System
-Your workouts translate into real character growth. Level up four core attributes based on your performance:
-- **STR (Strength)**: Based on consistency and total volume.
-- **PWR (Power)**: Earned through high-intensity and weighted sets.
-- **END (Endurance)**: Tracks your ability to sustain volume over time.
-- **AGI (Agility)**: Rewarded for daily consistency and streaks.
+Your character grows with every rep. Progress is tracked through four core attributes that scale your power:
+- **LVL (Account Level)**: Your overall progress. Increases with total XP.
+- **STR (Strength)**: Scales your base damage against Bosses. Raised by Pull-ups and Push-ups.
+- **PWR (Power)**: Critical for high-tier unlocks. Raised by Muscle-ups and weighted sets.
+- **END (Endurance)**: Determines your durability in community events. Raised by high-volume sessions.
+- **AGI (Agility)**: Critical for loot chance. Reward for daily streaks and consistency.
 
-### 🪙 Economy & Goggins Shop
-Earn **Reppy Coins** with every set you log. Spend them in the shop to customize your identity:
-- **Legendary Titles**: "The Rabbit King", "Pull-up God", etc.
-- **Profile Borders**: Glassmorphism borders that make you stand out in the leaderboard.
+### 🏹 Combat & Damage Mechanics
+Reppy features a community-driven battle system where every user contributes to a global effort:
+- **Calculation**: `Reps × STR LVL = Base Damage`.
+- **Critical Hits**: A 10% base chance (enhanced by items) to deal `2x` damage. 
+- **Global HP**: Bosses feature massive HP pools (e.g., 500K+) that synchronize across all active users in real-time.
+- **Participation**: You must log at least 1 rep during the active event window to be eligible for rewards.
 
 ### 👹 Global Boss Events
-Participate in massive community events. Face off against seasonal bosses like **"El Conejo de Acero"** (The Steel Rabbit). 
-- **Global HP Bar**: Every rep you do deals damage to the boss.
-- **Tiered Rewards**: Unlock chests and exclusive items as the community hits damage milestones.
+Massive community protocols triggered seasonally. Face legends like **"El Conejo de Acero"**.
+- **Real-time Sync**: Battle progress updates via polling for all hunters.
+- **Death Phrases**: Bosses taunt the community with dynamic quotes that change based on their health state.
+- **Neutralization**: Once HP hits 0, the boss enters a `PROTOCOL_CLEARED` state, allowing reward claims.
+
+### 🎁 Loot & Chest System
+Victories grant access to a rarity-based reward system:
+- **Chests**: Claimable once per boss defeat.
+- **Rarity Tiers**: Common, Rare, Epic, and Legendary items.
+- **Drop Logic**: Higher AGI stats and participation volume influence the quality of rewards (titles, coin modifiers, and borders).
+
+### 🪙 Economy & Elite Bundles
+Earn **Reppy Coins** to spend in the **Goggins Shop**:
+- **Consumables**: Temporary stat boosters and XP multipliers.
+- **Cosmetics**: Dynamic glassmorphism backgrounds and animated profile borders.
+- **Elite Bundles**: Limited-time shop offers featuring Legendary rarity sets at discounted rates.
 
 ### 📊 Advanced Visualization
 - **GitHub-style Heatmaps**: Visualize your consistency over the year.
