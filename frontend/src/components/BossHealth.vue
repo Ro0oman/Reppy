@@ -41,8 +41,8 @@
         </div>
 
         <div class="text-center md:text-right">
-          <div class="text-3xl font-black text-primary-500 tracking-tighter tabular-nums">{{ boss.current_hp.toLocaleString() }}</div>
-          <div class="text-[10px] text-muted font-black uppercase tracking-widest">/ {{ boss.total_hp.toLocaleString() }} HP</div>
+          <div class="text-3xl font-black text-primary-500 tracking-tighter tabular-nums">{{ formatNumber(boss.current_hp) }}</div>
+          <div class="text-[10px] text-muted font-black uppercase tracking-widest">/ {{ formatNumber(boss.total_hp) }} HP</div>
         </div>
       </div>
 
@@ -54,7 +54,7 @@
 
         <div v-if="!isDefeated" class="text-center">
            <p class="text-[10px] font-black uppercase tracking-[0.1em] text-muted">
-             Faltan <span class="text-primary-500">{{ boss.current_hp.toLocaleString() }}</span> de daño total para desbloquear el cofre 🎁
+             Faltan <span class="text-primary-500">{{ formatNumber(boss.current_hp) }}</span> de daño total para desbloquear el cofre 🎁
            </p>
         </div>
 
@@ -176,6 +176,7 @@ import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { History } from 'lucide-vue-next';
+import { formatNumber } from '../utils/numberUtils';
 import confetti from 'canvas-confetti';
 import BossHistoryModal from './BossHistoryModal.vue';
 
