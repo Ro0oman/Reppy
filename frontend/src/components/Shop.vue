@@ -21,10 +21,15 @@
       </div>
     </div>
 
-    <div v-if="loading" class="text-center py-24">
-      <div class="animate-spin w-10 h-10 rounded-full border-2 border-primary-500 border-t-transparent mx-auto"></div>
-      <p class="text-[10px] font-black text-zinc-700 uppercase tracking-[0.4em] mt-6">SYNCING ARMORY...</p>
-    </div> 
+    <div v-if="loading" class="space-y-16">
+      <div class="flex flex-col items-center justify-center py-24 gap-4 animate-skeleton">
+        <div class="w-16 h-16 bg-foreground/10 rounded-2xl"></div>
+        <div class="h-4 w-48 bg-foreground/10 rounded"></div>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <div v-for="i in 10" :key="'skeleton-' + i" class="h-64 bg-surface/40 border border-border rounded-[2rem] animate-skeleton"></div>
+      </div>
+    </div>
     
     <div v-else class="space-y-16">
       <!-- Categories Dropdown (Compact Industrial) -->
@@ -676,4 +681,12 @@ onBeforeUnmount(() => { if (countdownTimer) clearInterval(countdownTimer); });
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes scanline { from { transform: translateY(0); } to { transform: translateY(-50%); } }
 .animate-scanline { animation: scanline 8s linear infinite; }
+@keyframes skeleton-pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+  100% { opacity: 0.6; }
+}
+.animate-skeleton {
+  animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
 </style>

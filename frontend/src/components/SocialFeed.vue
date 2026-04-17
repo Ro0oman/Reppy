@@ -40,9 +40,8 @@
       </TransitionGroup>
 
       <!-- Loading State -->
-      <div v-if="loading" class="py-12 flex flex-col items-center justify-center gap-4">
-          <div class="w-8 h-8 border-4 border-primary-500/20 border-t-primary-500 animate-spin rounded-full"></div>
-          <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em]">Synchronizing Feed...</p>
+      <div v-if="loading" class="space-y-8">
+        <ActivitySkeleton v-for="i in 3" :key="'skeleton-' + i" />
       </div>
 
       <!-- End of Feed -->
@@ -101,6 +100,7 @@
 import { ref, onMounted, onUnmounted, reactive, watch } from 'vue';
 import axios from 'axios';
 import ActivityCard from './ActivityCard.vue';
+import ActivitySkeleton from './ActivitySkeleton.vue';
 import { ZapOff, X } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';

@@ -156,9 +156,19 @@
       </button>
       
       <!-- Loading & Empty States -->
-      <div v-if="loading" class="py-24 flex flex-col items-center gap-4">
-        <div class="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-        <span class="text-[10px] font-black text-muted uppercase tracking-[0.4em]">SYNCING...</span>
+      <div v-if="loading" class="space-y-1">
+        <div v-for="i in 8" :key="'skeleton-' + i" 
+             class="w-full flex items-center justify-between p-3 rounded-xl bg-foreground/[0.01] border border-transparent animate-skeleton">
+          <div class="flex items-center gap-4 flex-1">
+            <div class="w-10 h-4 bg-foreground/10 rounded"></div>
+            <div class="w-[42px] h-[42px] rounded-full bg-foreground/10"></div>
+            <div class="flex-1 space-y-2">
+              <div class="h-4 w-32 bg-foreground/10 rounded"></div>
+              <div class="h-3 w-16 bg-foreground/5 rounded"></div>
+            </div>
+          </div>
+          <div class="h-6 w-12 bg-foreground/10 rounded"></div>
+        </div>
       </div>
       
       <div v-if="!loading && users.length === 0" class="py-24 text-center opacity-30">
@@ -224,4 +234,12 @@ defineExpose({ refresh: fetchLeaderboard });
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+@keyframes skeleton-pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+  100% { opacity: 0.6; }
+}
+.animate-skeleton {
+  animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
 </style>
