@@ -178,9 +178,9 @@ const translations = {
     cat_background: 'Interface Screens',
     cat_bundle: 'Welcome Packs',
 
-    // Protocol Mastery
-    protocol_mastery: 'Protocol Mastery',
-    protocol_mastery_desc: 'HISTORICAL REPOSITORY OF EFFORT BY EXERCISE',
+    // Exercise Mastery
+    exercise_mastery: 'Exercise Mastery',
+    exercise_mastery_desc: 'HISTORICAL REPOSITORY OF EFFORT BY EXERCISE',
 
     // Codex
     codex_title: 'THE CODEX',
@@ -498,7 +498,7 @@ const translations = {
 
     // Onboarding
     onboarding_title: 'Bienvenido a Reppy',
-    onboarding_subtitle: 'El protocolo de entrenamiento de élite.',
+    onboarding_subtitle: 'Tu ecosistema de entrenamiento de élite.',
     onboarding_mission_title: 'La Misión',
     onboarding_mission_desc: 'Registra tus reps y gana Reppy Coins (RC). Cada serie cuenta para tu progreso y estatus en el circuito global.',
     onboarding_damage_title: 'Impacto Universal',
@@ -519,9 +519,9 @@ const translations = {
     cat_background: 'Pantallas de Interfaz',
     cat_bundle: 'Pack de Bienvenida',
     
-    // Protocol Mastery
-    protocol_mastery: 'Maestría de Protocolos',
-    protocol_mastery_desc: 'REPOSITORIO HISTÓRICO DE MAGNITUD POR EJERCICIO',
+    // Exercise Mastery
+    exercise_mastery: 'Maestría de Ejercicios',
+    exercise_mastery_desc: 'REPOSITORIO HISTÓRICO DE MAGNITUD POR EJERCICIO',
 
     // Codex
     codex_title: 'EL CODEX',
@@ -555,7 +555,7 @@ const translations = {
     shop_tab_avatars: 'AVATARES',
     shop_tab_backgrounds: 'EFECTOS',
     shop_tab_post_backgrounds: 'POSTS',
-    shop_bundles_title: 'PACKS DE PROTOCOLO ÉLITE',
+    shop_bundles_title: 'PACKS DE BIENVENIDA ÉLITE',
 
     // Post Backgrounds
     'post-bg-carbon_name': 'Carbon Scan',
@@ -570,7 +570,7 @@ const translations = {
     'post-bg-void_desc': 'Punto de no retorno con distorsión gravitacional.',
 
     // Nuevas Secciones SEO
-    latest_protocols: 'ÚLTIMOS PROTOCOLOS',
+    latest_news: 'ÚLTIMAS NOVEDADES',
     news_subtitle: 'Actualizaciones de entrenamiento, guías de calistenia y noticias de la comunidad.',
     view_all_articles: 'Ver todos los artículos',
     trending: 'Tendencia',

@@ -10,11 +10,14 @@
          HERO SECTION — H1 keyword-rich, visible to Google
     ═══════════════════════════════════════════════════════════ -->
     <section class="relative w-full min-h-[90vh] flex flex-col items-center justify-center text-center px-6 overflow-hidden">
-      <!-- Ambient Neural Grid Background -->
-      <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-20">
-        <div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0); background-size: 40px 40px;"></div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary-500/20 rounded-full blur-[160px] animate-pulse"></div>
-        <div class="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[120px] animate-pulse delay-700"></div>
+      <!-- Ambient Aurora & Neural Grid Background -->
+      <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-30">
+        <div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.03) 1px, transparent 0); background-size: 60px 60px;"></div>
+        
+        <!-- Aurora Blobs -->
+        <div class="absolute top-[-10%] left-[-10%] w-[1000px] h-[1000px] bg-primary-500/20 rounded-full blur-[180px] animate-pulse duration-[10s]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[800px] h-[800px] bg-indigo-500/10 rounded-full blur-[180px] animate-pulse duration-[8s] delay-1000"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-rose-500/5 rounded-full blur-[200px] animate-pulse duration-[12s]"></div>
       </div>
       
       <div class="relative z-10 max-w-6xl w-full flex flex-col items-center gap-12">
@@ -22,14 +25,14 @@
         <div class="animate-in fade-in slide-in-from-bottom-4 duration-1000">
           <div class="inline-flex items-center gap-3 px-4 py-2 bg-foreground/5 border border-white/10 rounded-full backdrop-blur-md">
             <span class="flex h-2 w-2 rounded-full bg-primary-500 animate-ping"></span>
-            <span class="text-[9px] font-black uppercase tracking-[0.3em] text-foreground/60">{{ authStore.isAuthenticated ? 'PROTOCOL_ACTIVE' : 'SYSTEM_READY' }}</span>
+            <span class="text-[9px] font-black uppercase tracking-[0.3em] text-foreground/60">{{ authStore.isAuthenticated ? 'REPPY_ACTIVE' : 'READY_TO_TRAIN' }}</span>
           </div>
         </div>
 
         <!-- H1: High-Impact Typography -->
         <div class="space-y-6">
-          <h1 class="text-6xl md:text-[9rem] font-black tracking-tighter text-foreground leading-[0.85] uppercase italic animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
-            ENTRENA EN EL <br/> <span class="text-primary-500 drop-shadow-[0_0_30px_rgba(255,69,0,0.3)]">PROTOCOLO</span>
+          <h1 class="text-6xl md:text-[8.5rem] font-black tracking-tighter text-foreground leading-[0.85] uppercase italic animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+            DOMINA CADA <br/> <span class="bg-gradient-to-r from-primary-500 to-rose-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(255,69,0,0.2)]">REPETICIÓN</span>
           </h1>
           
           <p class="max-w-2xl mx-auto text-xl md:text-2xl text-muted font-medium tracking-tight leading-relaxed animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-400">
@@ -43,15 +46,15 @@
         <div class="flex flex-col sm:flex-row items-center gap-6 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-600">
           <button @click="$emit('start')" class="group relative px-12 py-6 bg-primary-500 text-white rounded-[2rem] font-black uppercase tracking-widest overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-primary-500/20">
             <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-            <span class="relative z-10 text-lg">{{ authStore.isAuthenticated ? 'IR AL DASHBOARD' : 'SOLICITAR ACCESO' }}</span>
+            <span class="relative z-10 text-lg">{{ authStore.isAuthenticated ? 'CONTINUAR AVENTURA' : 'UNIRSE AHORA' }}</span>
           </button>
           
           <a href="https://github.com/Ro0oman/Reppy" target="_blank"
-             class="flex items-center gap-4 px-8 py-6 rounded-[2rem] bg-surface/40 hover:bg-surface/60 border border-white/10 backdrop-blur-md transition-all group">
-            <Github class="w-6 h-6 text-muted group-hover:text-foreground transition-colors" />
+             class="flex items-center gap-4 px-8 py-6 rounded-[2rem] bg-surface/30 hover:bg-surface/50 border border-white/5 backdrop-blur-2xl transition-all group">
+            <Github class="w-6 h-6 text-muted group-hover:text-primary-500 transition-all group-hover:rotate-12" />
             <div class="flex flex-col items-start gap-0.5">
               <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest leading-none">OPEN SOURCE</span>
-              <span class="text-sm font-black text-foreground uppercase tracking-tight">GITHUB COMMAND</span>
+              <span class="text-sm font-black text-foreground uppercase tracking-tight">GITHUB REPPY</span>
             </div>
           </a>
         </div>
@@ -60,19 +63,19 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-24 pt-12 animate-in fade-in duration-1000 delay-1000">
           <div class="flex flex-col gap-1">
             <span class="text-3xl font-black text-foreground tracking-tighter italic">1.2M+</span>
-            <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">Protocol Reps</span>
+            <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">Repeticiones</span>
           </div>
           <div class="flex flex-col gap-1">
             <span class="text-3xl font-black text-foreground tracking-tighter italic">450+</span>
-            <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">Bosses Slained</span>
+            <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">Bosses Derrotados</span>
           </div>
           <div class="flex flex-col gap-1">
              <span class="text-3xl font-black text-foreground tracking-tighter italic">100%</span>
-             <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">Free Access</span>
+             <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">Sin Coste</span>
           </div>
           <div class="flex flex-col gap-1">
              <span class="text-3xl font-black text-foreground tracking-tighter italic">4.9/5</span>
-             <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">User Protocol</span>
+             <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">Puntuación</span>
           </div>
         </div>
       </div>
@@ -88,8 +91,8 @@
       <div class="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 h-full md:h-[800px]">
         
         <!-- Big Card: RPG Progression (Height 2, Width 2) -->
-        <div class="md:col-span-2 md:row-span-2 card-stats p-10 flex flex-col justify-between group overflow-hidden relative border-primary-500/20 bg-primary-500/[0.02]">
-          <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary-500/10 rounded-full blur-[100px] group-hover:bg-primary-500/20 transition-all duration-1000"></div>
+        <div class="md:col-span-2 md:row-span-2 card-stats p-10 flex flex-col justify-between group overflow-hidden relative border-primary-500/20 bg-primary-500/[0.03] backdrop-blur-xl hover:bg-primary-500/[0.05] transition-all duration-500">
+          <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary-500/10 rounded-full blur-[100px] group-hover:bg-primary-500/30 transition-all duration-1000"></div>
           <div class="relative z-10 space-y-6">
             <div class="w-16 h-16 bg-primary-500/10 rounded-2xl flex items-center justify-center text-primary-500">
                <Trophy class="w-8 h-8" />
@@ -112,12 +115,12 @@
         </div>
 
         <!-- Medium Card: Global Rankings (Width 2, Height 1) -->
-        <div class="md:col-span-2 card-stats p-8 flex flex-col justify-between group overflow-hidden relative border-blue-500/20 bg-blue-500/[0.02]">
-          <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-500/10 rounded-full blur-[80px]"></div>
+        <div class="md:col-span-2 card-stats p-8 flex flex-col justify-between group overflow-hidden relative border-blue-500/20 bg-blue-500/[0.04] backdrop-blur-xl hover:bg-blue-500/[0.08] transition-all duration-500">
+          <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-500/15 rounded-full blur-[80px]"></div>
           <div class="relative z-10 flex items-start justify-between">
             <div class="space-y-2">
               <h3 class="text-2xl font-black text-foreground uppercase italic tracking-tight">RANKING MUNDIAL</h3>
-              <p class="text-sm text-muted font-medium max-w-[200px]">Compite por el Top 1 en el protocolo global.</p>
+              <p class="text-sm text-muted font-medium max-w-[200px]">Compite por el Top 1 en la clasificación global.</p>
             </div>
             <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500">
                <Users class="w-6 h-6" />
@@ -172,7 +175,10 @@
 
       <div class="prose prose-invert prose-lg max-w-none space-y-12 text-muted/80 leading-loose font-medium">
         <div class="space-y-6">
-          <h3 class="text-3xl font-bold text-foreground">Introducción al Street Workout</h3>
+          <h3 class="text-3xl font-black text-foreground flex items-center gap-4 uppercase italic tracking-tight">
+            <Dumbbell class="w-8 h-8 text-primary-500" />
+            Introducción al Street Workout
+          </h3>
           <p>
             La calistenia, también conocida como street workout, es una disciplina milenaria que se centra en el 
             uso exclusivo del propio peso corporal para ganar fuerza, agilidad y control muscular. A diferencia 
@@ -188,7 +194,10 @@
         </div>
 
         <div class="space-y-6">
-          <h3 class="text-3xl font-bold text-foreground">Dominando la Barra: El Camino del Pull-Up</h3>
+          <h3 class="text-3xl font-black text-foreground flex items-center gap-4 uppercase italic tracking-tight">
+            <ArrowUp class="w-8 h-8 text-rose-500" />
+            Dominando la Barra: El Camino del Pull-Up
+          </h3>
           <p>
             Las dominadas son, sin duda, el ejercicio rey de la calistenia para el tren superior. Involucran el dorsal 
             ancho, los trapecios, los romboides, los bíceps y, por supuesto, el core. Realizar tu primera dominada 
@@ -204,7 +213,10 @@
         </div>
 
         <div class="space-y-6">
-          <h3 class="text-3xl font-bold text-foreground">La Psicología del Fitness: Gamificación y Motivación</h3>
+          <h3 class="text-3xl font-black text-foreground flex items-center gap-4 uppercase italic tracking-tight">
+            <Flame class="w-8 h-8 text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.3)]" />
+            La Psicología del Fitness: Gamificación
+          </h3>
           <p>
             ¿Por qué nos cuesta tanto ir a entrenar pero podemos pasar horas subiendo de nivel en un videojuego? 
             La respuesta está en el bucle de retroalimentación inmediata. En el gimnasio, los resultados tardan 
@@ -220,7 +232,10 @@
         </div>
 
         <div class="space-y-6">
-          <h3 class="text-3xl font-bold text-foreground">Nutrición y Descanso en Calistenia</h3>
+          <h3 class="text-3xl font-black text-foreground flex items-center gap-4 uppercase italic tracking-tight">
+            <Target class="w-8 h-8 text-neon-lime" />
+            Nutrición y Descanso en Calistenia
+          </h3>
           <p>
             Ningún <strong>contador de repeticiones</strong> podrá salvarte si no descansas y te alimentas 
             correctamente. El tejido muscular se daña durante el entrenamiento y se repara (crecer) durante el sueño. 
@@ -431,7 +446,7 @@
       <div class="flex flex-col md:flex-row items-end justify-between gap-8">
         <div class="space-y-4">
           <h2 class="text-4xl md:text-7xl font-bold tracking-tight text-foreground leading-none uppercase italic text-industrial">
-            {{ i18n.t('latest_protocols').split(' ')[0] }} <span class="text-primary-500">{{ i18n.t('latest_protocols').split(' ')[1] }}</span>
+            {{ i18n.t('latest_news').split(' ')[0] }} <span class="text-primary-500">{{ i18n.t('latest_news').split(' ')[1] }}</span>
           </h2>
           <p class="text-xl text-muted max-w-xl leading-relaxed font-medium">
             {{ i18n.t('news_subtitle') }}
@@ -606,7 +621,7 @@
     ═══════════════════════════════════════════════════════════ -->
     <section class="max-w-4xl w-full px-6 py-20 md:py-32 text-center space-y-10">
       <h2 class="text-4xl md:text-6xl font-bold tracking-tight text-foreground leading-tight">
-        Empieza a contar tus <span class="text-primary-500">dominadas</span> hoy
+        Empieza tu <span class="text-primary-500">leyenda</span> hoy
       </h2>
       <p class="text-lg text-muted max-w-2xl mx-auto leading-relaxed font-medium">
         Únete a la comunidad de calistenia de Reppy. Registra flexiones, fondos y muscle ups. 

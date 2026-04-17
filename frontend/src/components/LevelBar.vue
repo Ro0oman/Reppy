@@ -11,7 +11,7 @@
         </span>
       </div>
       <div class="flex flex-col items-end leading-none">
-        <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest mb-0.5">NODO_SYNC</span>
+        <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest mb-0.5">PROGRESO</span>
         <span class="text-[10px] font-black text-foreground/80 text-precision tabular-nums">
           {{ Math.floor(progress) }}%
         </span>
@@ -41,25 +41,25 @@
         <div class="relative z-10 space-y-4">
           <div class="flex items-center gap-3 border-b border-white/10 pb-3">
             <Zap class="w-4 h-4 text-primary-500 animate-pulse" />
-            <p class="text-[10px] font-black text-white uppercase tracking-[0.3em] font-industrial">PROTOCOLO.PROGRESO</p>
+            <p class="text-[10px] font-black text-white uppercase tracking-[0.3em] font-industrial">DETALLES DE RANGO</p>
           </div>
 
           <div class="space-y-3">
             <div class="flex justify-between items-end">
-              <span class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">XP_TOTAL</span>
-              <span class="text-xs font-black text-white text-precision tabular-nums">{{ currentXp }} / {{ nextLevelXp * level }}</span>
+              <span class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">XP TOTAL</span>
+              <span class="text-xs font-black text-white text-precision tabular-nums">{{ currentXp }} / {{ (level + 1) * nextLevelXp }}</span>
             </div>
             
             <div class="flex justify-between items-end">
-              <span class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">NODO_ACTUAL</span>
+              <span class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">PROGRESO NIVEL</span>
               <div class="flex items-baseline gap-1">
                 <span class="text-sm font-black text-primary-500 text-precision">{{ currentXp % nextLevelXp }}</span>
-                <span class="text-[8px] font-bold text-zinc-500 text-precision">UNIDADES</span>
+                <span class="text-[8px] font-bold text-zinc-500 text-precision">XP</span>
               </div>
             </div>
  
             <div class="flex justify-between items-end">
-              <span class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">SYNC_RESTANTE</span>
+              <span class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">RESTANTE</span>
               <span class="text-xs font-black text-neon-lime text-precision tabular-nums">{{ nextLevelXp - (currentXp % nextLevelXp) }} XP</span>
             </div>
           </div>
@@ -67,7 +67,7 @@
           <!-- Mini Stats Bar Info -->
           <div class="pt-3 border-t border-white/10 mt-1">
             <p class="text-[8px] font-bold text-zinc-400 uppercase tracking-widest leading-relaxed text-center">
-              Sube de nivel para recibir <span class="text-primary-500 font-black">x1 COFRE DE NIVEL</span>. El protocolo requiere enfoque.
+              Consigue XP para ganar <span class="text-primary-500 font-black">COFRES DE BOTÍN</span>. Cada repetición suma.
             </p>
           </div>
         </div>
