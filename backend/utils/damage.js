@@ -20,14 +20,14 @@
  * @returns {Object} { totalDamage, isCrit, magicBonus, baseDamage }
  */
 export const calculateDamage = (user, reps, type) => {
-  // 1. Determine Exercise Multiplier
-  let exerciseMult = 1;
+  // 1. Determine Exercise Multiplier (BUFFED)
+  let exerciseMult = 3.0; // Base: Pullups
   const t = type?.toLowerCase();
   
-  if (t === 'muscleups') exerciseMult = 2;
-  else if (t === 'weighted_pullups') exerciseMult = 3;
-  else if (t === 'dips') exerciseMult = 1.2;
-  else if (t === 'pushups') exerciseMult = 0.8; // Faster, so lower base
+  if (t === 'muscleups') exerciseMult = 10.0;
+  else if (t === 'weighted_pullups') exerciseMult = 8.0;
+  else if (t === 'dips') exerciseMult = 4.0;
+  else if (t === 'pushups') exerciseMult = 2.0;
   
   // 2. Extract Stats & Levels
   const glvl = parseInt(user.current_level) || 1;
@@ -35,22 +35,22 @@ export const calculateDamage = (user, reps, type) => {
   const pwrLvl = parseInt(user.pwr_lvl) || 1;
   const agiLvl = parseInt(user.agi_lvl) || 1;
 
-  // 3. Base & Level Scaling
+  // 3. Base & Level Scaling (BUFFED)
   const baseDamage = reps * exerciseMult;
-  const levelMult = 1 + (glvl / 5); // Balanced: Level 30 = 7x
-  const magicBonus = (strLvl + pwrLvl) * 3; // Balanced: Vet = 90
+  const levelMult = 1 + (glvl / 2); // Faster progression: Level 30 = 16x multiplier
+  const magicBonus = (strLvl + pwrLvl) * 10; // Massive flat bonus for high stats
 
   let damageBeforeCrit = (baseDamage * levelMult) + magicBonus;
 
-  // 4. Critical Hit Roll
-  const critChance = (agiLvl * 1.5) + (pwrLvl * 0.5); // Balanced chance
+  // 4. Critical Hit Roll (BUFFED)
+  const critChance = (agiLvl * 1.5) + (pwrLvl * 0.5);
   const isCrit = (Math.random() * 100) < Math.min(65, critChance); 
   
   let finalDamage = damageBeforeCrit;
   let critMult = 1;
   
   if (isCrit) {
-    critMult = 1.75 + (pwrLvl * 0.07); // Balanced: Vet = ~2.8x
+    critMult = 2.5 + (pwrLvl * 0.1); // High crit base and stat scale
     finalDamage = damageBeforeCrit * critMult;
   }
 
