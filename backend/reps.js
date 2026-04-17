@@ -87,43 +87,36 @@ router.post('/', authenticate, async (req, res) => {
     if (bossRes.rows.length > 0) {
       const boss = bossRes.rows[0];
       
-      // Check for daily damage cap (100)
-      const userDamageRes = await query(
-        `SELECT daily_boss_damage, last_boss_damage_date FROM users WHERE id = $1`,
-        [userId]
+      const damageMultiplier = getBossDamageMultiplier(exercise_type);
+      actualDamageDealt = count * damageMultiplier;
+      const newHp = Math.max(0, boss.current_hp - actualDamageDealt);
+      
+      await query(`UPDATE boss_fights SET current_hp = $1 WHERE id = $2`, [newHp, boss.id]);
+      
+      // Update participant damage
+      await query(
+        `INSERT INTO event_participants (boss_fight_id, user_id, damage_dealt) 
+         VALUES ($1, $2, $3)
+         ON CONFLICT (boss_fight_id, user_id) 
+         DO UPDATE SET damage_dealt = event_participants.damage_dealt + EXCLUDED.damage_dealt`,
+        [boss.id, userId, actualDamageDealt]
       );
-      const userDamageInfo = userDamageRes.rows[0];
-      const isToday = getLocalDateString(userDamageInfo.last_boss_damage_date) === getLocalDateString();
-      
-      const currentDailyDamage = isToday ? userDamageInfo.daily_boss_damage : 0;
-      const allowableDamage = Math.max(0, 100 - currentDailyDamage);
-      
-      if (allowableDamage > 0) {
-        const damageMultiplier = getBossDamageMultiplier(exercise_type);
-        actualDamageDealt = Math.min(count * damageMultiplier, allowableDamage);
-        const newHp = Math.max(0, boss.current_hp - actualDamageDealt);
-        
-        await query(`UPDATE boss_fights SET current_hp = $1 WHERE id = $2`, [newHp, boss.id]);
-        
-        // Update participant damage
-        await query(
-          `INSERT INTO event_participants (boss_fight_id, user_id, damage_dealt) 
-           VALUES ($1, $2, $3)
-           ON CONFLICT (boss_fight_id, user_id) 
-           DO UPDATE SET damage_dealt = event_participants.damage_dealt + EXCLUDED.damage_dealt`,
-          [boss.id, userId, actualDamageDealt]
-        );
 
-        // Update user's daily damage tracker
-        await query(
-          `UPDATE users SET daily_boss_damage = $1, last_boss_damage_date = CURRENT_DATE WHERE id = $2`,
-          [currentDailyDamage + actualDamageDealt, userId]
-        );
-        
-        if (newHp === 0) {
-          await query(`UPDATE boss_fights SET status = 'defeated' WHERE id = $1`, [boss.id]);
-          await syncBossHealth();
-        }
+      // Update user's daily damage tracker (Keep for UI stats, but no cap enforced)
+      await query(
+        `UPDATE users 
+         SET daily_boss_damage = CASE 
+           WHEN last_boss_damage_date = CURRENT_DATE THEN daily_boss_damage + $1 
+           ELSE $1 
+         END, 
+         last_boss_damage_date = CURRENT_DATE 
+         WHERE id = $2`,
+        [actualDamageDealt, userId]
+      );
+      
+      if (newHp === 0) {
+        await query(`UPDATE boss_fights SET status = 'defeated' WHERE id = $1`, [boss.id]);
+        await syncBossHealth();
       }
     }
 
@@ -301,14 +294,8 @@ router.put('/:id', authenticate, async (req, res) => {
     if (bossRes.rows.length > 0) {
       const boss = bossRes.rows[0];
       
-      // Calculate daily damage excluding this entry
-      const userRes = await query('SELECT daily_boss_damage FROM users WHERE id = $1', [userId]);
-      const currentDailyTotal = isToday ? userRes.rows[0].daily_boss_damage : 0;
-      const dailyDamageWithoutThisEntry = Math.max(0, currentDailyTotal - oldRep.boss_damage_dealt);
-      
-      const allowableDamage = Math.max(0, 100 - dailyDamageWithoutThisEntry);
       const damageMultiplier = getBossDamageMultiplier(oldRep.exercise_type);
-      newBossDamageDealt = Math.min(count * damageMultiplier, allowableDamage);
+      newBossDamageDealt = count * damageMultiplier;
 
       const bossHpChange = newBossDamageDealt - oldRep.boss_damage_dealt;
       const newBossHp = Math.min(boss.total_hp, Math.max(0, boss.current_hp - bossHpChange));

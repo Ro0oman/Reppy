@@ -2,7 +2,7 @@ import { query } from '../db.js';
 
 /**
  * Recalculates the total HP for all bosses based on the number of active users in the last 7 days.
- * Formula: ActiveUsers * 30 (Min: 30)
+ * Formula: ActiveUsers * 350 (Min: 350)
  */
 export async function syncBossHealth() {
   try {
@@ -16,7 +16,7 @@ export async function syncBossHealth() {
     `);
     
     const activeUsers = parseInt(activeUsersRes.rows[0]?.count) || 0;
-    const newTotalHp = Math.max(30, activeUsers * 30);
+    const newTotalHp = Math.max(350, activeUsers * 350);
     
     console.log(`[BOSS_SYNC] Active users (7d): ${activeUsers}. New scale: ${newTotalHp} HP.`);
 

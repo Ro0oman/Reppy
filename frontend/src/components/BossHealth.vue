@@ -65,9 +65,9 @@
                 <p v-if="authStore.isAuthenticated" class="text-[9px] text-muted font-black uppercase tracking-[0.2em]">Total: <span class="text-foreground">{{ personalDamage }} reps</span></p>
                 <p v-else class="text-[9px] text-muted font-black uppercase tracking-[0.2em]">Entrena para participar</p>
              </div>
-             <div v-if="authStore.isAuthenticated" class="flex items-center gap-2 bg-primary-500/5 px-2 py-1 rounded-lg border border-primary-500/10" :class="dailyDamage >= 100 ? 'border-amber-500/30 bg-amber-500/5' : ''">
-                <p class="text-[9px] font-black uppercase tracking-[0.2em]" :class="dailyDamage >= 100 ? 'text-amber-500' : 'text-primary-500'">
-                  Día: {{ dailyDamage }} / 100 🛡️
+             <div v-if="authStore.isAuthenticated" class="flex items-center gap-2 bg-primary-500/5 px-2 py-1 rounded-lg border border-primary-500/10">
+                <p class="text-[9px] font-black uppercase tracking-[0.2em] text-primary-500">
+                  Daño Hoy: {{ dailyDamage }} 🛡️
                 </p>
              </div>
              <div v-if="topDamageDealer && authStore.isAuthenticated" class="flex items-center gap-2 bg-amber-500/10 px-2 py-1 rounded-lg border border-amber-500/20">
@@ -137,8 +137,8 @@
           <div class="flex gap-4 items-start">
             <div class="w-8 h-8 rounded-full bg-primary-500/20 flex items-center justify-center text-primary-500 shrink-0 font-bold">2</div>
             <div>
-              <p class="text-sm font-bold text-foreground uppercase tracking-tight">Límite de Daño Diario</p>
-              <p class="text-xs text-muted">Existe un límite de 100 de daño al día por usuario para que todos puedan participar.</p>
+              <p class="text-sm font-bold text-foreground uppercase tracking-tight">Sin límites</p>
+              <p class="text-xs text-muted">No hay límite de daño diario. ¡Todo el esfuerzo que pongas ayudará a derrotar al boss más rápido!</p>
             </div>
           </div>
 
