@@ -12,93 +12,98 @@
           <History class="w-5 h-5" />
       </div>
        
-      <div class="flex flex-col md:flex-row items-center gap-6 relative z-10 mb-6">
-        <div class="w-24 h-24 bg-surface rounded-[1.5rem] flex items-center justify-center border border-border shadow-2xl overflow-hidden transition-transform duration-500">
-          <img v-if="boss.image_url" :src="boss.image_url" :alt="boss.name" class="w-full h-full object-cover" :class="isDefeated ? 'grayscale opacity-50' : ''" />
-          <span v-else class="text-4xl italic font-black text-foreground">?</span>
+      <div class="flex flex-col md:flex-row items-center gap-8 relative z-10 mb-8">
+        <!-- Boss Image with glow -->
+        <div class="relative group/img">
+          <div class="absolute inset-0 bg-primary-500/20 blur-2xl rounded-full opacity-0 group-hover/img:opacity-100 transition-opacity"></div>
+          <div class="w-32 h-32 bg-surface rounded-[2rem] flex items-center justify-center border border-border shadow-2xl overflow-hidden transition-transform duration-500 relative z-10">
+            <img v-if="boss.image_url" :src="boss.image_url" :alt="boss.name" class="w-full h-full object-cover" :class="isDefeated ? 'grayscale opacity-50' : ''" />
+            <span v-else class="text-4xl italic font-black text-foreground">?</span>
+          </div>
         </div>
         
-        <div class="flex-1 text-center md:text-left">
-          <div class="flex items-center justify-center md:justify-start gap-2 mb-1">
-            <span class="text-[8px] font-black uppercase tracking-[0.3em] text-primary-500 bg-primary-500/10 px-2 py-0.5 rounded-md">Evento de la Comunidad</span>
-            <button @click="showHelp = true" class="w-4 h-4 rounded-full bg-muted/10 flex items-center justify-center text-foreground text-[10px] font-bold hover:bg-primary-500 hover:text-white transition-colors">?</button>
-          </div>
-          <div class="flex flex-col md:flex-row md:items-baseline gap-2 mb-2">
-          <h3 class="text-2xl font-black italic tracking-tighter text-foreground uppercase leading-none">{{ boss.name }}</h3>
-          <span v-if="isDefeated" class="text-[9px] bg-emerald-500 text-black px-2 py-0.5 rounded-full font-black uppercase tracking-widest w-fit mx-auto md:mx-0">Derrotado</span>
-        </div>
-        
-        <div v-if="boss.active_phrase" class="mb-3">
-          <p class="text-primary-500 font-bold italic text-sm md:text-base border-l-2 border-primary-500 pl-3 py-1 animate-in fade-in slide-in-from-left-4 duration-500">
-            "{{ boss.active_phrase }}"
-          </p>
-          <p class="text-[8px] font-black text-muted/20 uppercase tracking-[0.1em] mt-1 pl-4">
-            Actualiza para ver nuevas frases
-          </p>
-        </div>
+        <div class="flex-1 text-center md:text-left space-y-4">
+          <div class="flex flex-col md:flex-row md:items-end justify-between items-center gap-4">
+            <div class="space-y-1">
+              <div class="flex items-center justify-center md:justify-start gap-2">
+                <span class="text-[7px] font-black uppercase tracking-[0.3em] text-primary-500 bg-primary-500/10 px-2 py-0.5 rounded-md">Sector Activo</span>
+                <button @click="showHelp = true" class="w-4 h-4 rounded-full bg-muted/10 flex items-center justify-center text-foreground text-[10px] font-bold hover:bg-primary-500 hover:text-white transition-colors">?</button>
+              </div>
+              <h3 class="text-4xl font-black italic tracking-tighter text-foreground uppercase leading-none">{{ boss.name }}</h3>
+              <p v-if="isDefeated" class="text-[8px] bg-emerald-500 text-black px-2 py-0.5 rounded-full font-black uppercase tracking-widest w-fit mx-auto md:mx-0">Neutralizado</p>
+            </div>
 
-        <p class="text-sm text-muted font-medium max-w-xl opacity-70 leading-relaxed">{{ boss.description }}</p>
-        </div>
-
-        <div class="text-center md:text-right">
-          <div class="text-3xl font-black text-primary-500 tracking-tighter tabular-nums">{{ formatNumber(boss.current_hp) }}</div>
-          <div class="text-[10px] text-muted font-black uppercase tracking-widest">/ {{ formatNumber(boss.total_hp) }} HP</div>
-        </div>
-      </div>
-
-      <!-- Progress Bar -->
-      <div class="space-y-4">
-        <div class="relative h-4 bg-background rounded-full overflow-hidden border border-border shadow-inner">
-          <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-primary-600 via-primary-400 to-amber-400 transition-all duration-1000 ease-out shadow-[0_0_20px_rgba(236,72,153,0.3)]" :style="{ width: `${hpPercentage}%` }"></div>
-        </div>
-
-        <div v-if="!isDefeated" class="text-center">
-           <p class="text-[10px] font-black uppercase tracking-[0.1em] text-muted">
-             Faltan <span class="text-primary-500">{{ formatNumber(boss.current_hp) }}</span> de daño total para desbloquear el cofre 🎁
-           </p>
-        </div>
-
-        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-          <div class="flex flex-col sm:flex-row items-center gap-2 md:gap-4 mt-2 md:mt-0">
-             <div class="flex items-center gap-2">
-                <div v-if="authStore.isAuthenticated" class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></div>
-                <p v-if="authStore.isAuthenticated" class="text-[9px] text-muted font-black uppercase tracking-[0.2em]">Total: <span class="text-foreground">{{ personalDamage }} reps</span></p>
-                <p v-else class="text-[9px] text-muted font-black uppercase tracking-[0.2em]">Entrena para participar</p>
-             </div>
-             <div v-if="authStore.isAuthenticated" class="flex items-center gap-2 bg-primary-500/5 px-2 py-1 rounded-lg border border-primary-500/10">
-                <p class="text-[9px] font-black uppercase tracking-[0.2em] text-primary-500">
-                  Daño Hoy: {{ dailyDamage }} 🛡️
-                </p>
-             </div>
-             <div v-if="topDamageDealer && authStore.isAuthenticated" class="flex items-center gap-2 bg-amber-500/10 px-2 py-1 rounded-lg border border-amber-500/20">
-                <p class="text-[9px] font-black uppercase tracking-[0.2em] text-amber-500">
-                  TOP Daño: <span class="text-foreground">{{ topDamageDealer.name }}</span> ({{ topDamageDealer.damage_dealt }}) 👑
-                </p>
-             </div>
-          </div>
-
-          <!-- Sequential Reward Logic -->
-          <div v-if="isDefeated && authStore.isAuthenticated" class="flex items-center gap-4">
-            <template v-if="chestsClaimed < 1">
-               <p class="text-[10px] font-black uppercase tracking-widest text-emerald-500 animate-bounce">¡Boss derrotado! Reclama tu recompensa</p>
-               <button @click="claim" :disabled="claiming" 
-                class="px-8 py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest rounded-2xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.4)] flex items-center gap-2">
-                 <span class="text-xl">🎁</span> Reclamar Cofre
-               </button>
-            </template>
-            <div v-else class="flex items-center gap-2 text-muted font-black uppercase text-[10px] tracking-widest px-4 py-2 bg-foreground/5 rounded-xl border border-border">
-              <span>✅ Recompensa Reclamada</span>
+            <div class="text-center md:text-right">
+              <div class="text-4xl font-black text-primary-500 tracking-tighter tabular-nums leading-none mb-1">{{ formatNumber(boss.current_hp) }}</div>
+              <div class="text-[9px] text-muted font-black uppercase tracking-[0.2em] opacity-40">/ {{ formatNumber(boss.total_hp) }} PROTOCOL_HP</div>
             </div>
           </div>
-          <div v-else-if="!authStore.isAuthenticated" class="text-[10px] font-black uppercase tracking-widest text-primary-500 bg-primary-500/5 px-4 py-2 rounded-xl border border-primary-500/20">
-             Inicia sesión para ganar recompensas
-          </div>
-          <div v-else class="text-[10px] font-black uppercase tracking-widest text-muted bg-background px-4 py-2 rounded-xl border border-border">
-             Continúa entrenando para derrotarlo
+
+          <div v-if="boss.active_phrase" class="animate-in fade-in slide-in-from-left-2 duration-700">
+            <p class="text-primary-500 font-bold italic text-sm md:text-base border-l-2 border-primary-500 pl-4 py-0.5">
+              "{{ boss.active_phrase }}"
+            </p>
           </div>
         </div>
       </div>
-    </div>
+
+      <!-- Progress & Stats Area -->
+      <div class="space-y-6">
+        <div class="relative">
+          <div class="relative h-6 bg-background rounded-2xl overflow-hidden border border-border shadow-inner">
+            <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-primary-600 via-primary-500 to-amber-400 transition-all duration-1000 ease-out shadow-[0_0_20px_rgba(236,72,153,0.2)]" :style="{ width: `${hpPercentage}%` }"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="text-[8px] font-black text-white/50 uppercase tracking-[0.4em]">{{ Math.round(hpPercentage) }}% INTEGRIDAD</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Damage Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div v-if="authStore.isAuthenticated" class="p-3 bg-foreground/[0.02] border border-border rounded-2xl flex flex-col items-center justify-center gap-1">
+             <span class="text-[7px] font-black text-muted uppercase tracking-widest">Tu Daño Total</span>
+             <span class="text-sm font-black text-foreground">{{ personalDamage }} <span class="text-[8px] opacity-40">REPS</span></span>
+          </div>
+          <div v-if="authStore.isAuthenticated" class="p-3 bg-primary-500/[0.03] border border-primary-500/10 rounded-2xl flex flex-col items-center justify-center gap-1">
+             <span class="text-[7px] font-black text-primary-500 uppercase tracking-widest">Daño Hoy</span>
+             <span class="text-sm font-black text-primary-500">{{ dailyDamage }} <span class="text-[8px] opacity-40">🛡️</span></span>
+          </div>
+          <div v-if="topDamageDealer" class="p-3 bg-amber-500/[0.03] border border-amber-500/10 rounded-2xl flex flex-col items-center justify-center gap-1">
+             <span class="text-[7px] font-black text-amber-500 uppercase tracking-widest">TOP Daño</span>
+             <span class="text-sm font-black text-foreground truncate w-full text-center px-2">
+               {{ topDamageDealer.id === authStore.user?.id ? 'TÚ' : topDamageDealer.name }} 
+               <span class="text-[8px] text-amber-500/50">({{ topDamageDealer.damage_dealt }})</span>
+             </span>
+          </div>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="flex items-center justify-between gap-4 pt-2">
+          <div v-if="!isDefeated" class="hidden md:block">
+             <p class="text-[9px] font-black uppercase tracking-[0.1em] text-muted opacity-40">
+               REQ. <span class="text-primary-500">{{ formatNumber(boss.current_hp) }}</span> HP PARA CAÍDA
+             </p>
+          </div>
+
+          <div v-if="isDefeated && authStore.isAuthenticated" class="w-full flex items-center justify-between gap-4">
+            <template v-if="chestsClaimed < 1">
+               <p class="text-[10px] font-black uppercase tracking-widest text-emerald-500 animate-pulse">PROTOCOL_CLEARED</p>
+               <button @click="claim" :disabled="claiming" 
+                class="px-8 py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest rounded-2xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] flex items-center gap-2">
+                 <span class="text-xl">🎁</span> RECLAMAR
+               </button>
+            </template>
+            <div v-else class="flex items-center justify-center w-full gap-2 text-muted font-black uppercase text-[9px] tracking-[0.2em] px-4 py-3 bg-foreground/[0.02] rounded-2xl border border-border/40">
+              <Check class="w-4 h-4 text-emerald-500" />
+              <span>RECOMPENSA_ADQUIRIDA</span>
+            </div>
+          </div>
+          <div v-else-if="!authStore.isAuthenticated" class="w-full text-center text-[9px] font-black uppercase tracking-widest text-primary-500/60 bg-primary-500/5 p-3 rounded-2xl border border-primary-500/10">
+             INICIA SESIÓN PARA PARTICIPAR EN EL PROTOCOLO
+          </div>
+          </div>
+        </div>
+      </div>
 
     <!-- Next Boss Preview (Authenticated only) -->
     <div v-if="nextBoss && authStore.isAuthenticated" class="glass p-5 rounded-3xl border border-dashed border-border opacity-60 hover:opacity-100 transition-opacity flex items-center justify-between group">
