@@ -129,16 +129,16 @@
           <div class="flex gap-4 items-start">
             <div class="w-8 h-8 rounded-full bg-primary-500/20 flex items-center justify-center text-primary-500 shrink-0 font-bold">1</div>
             <div>
-              <p class="text-sm font-bold text-foreground uppercase tracking-tight">Ataca con esfuerzo</p>
-              <p class="text-xs text-muted">Cada repetición que registras resta 1 HP al boss global. ¡Todo cuenta!</p>
+              <p class="text-sm font-bold text-foreground uppercase tracking-tight">{{ i18nStore.t('battle_help_title1') }}</p>
+              <p class="text-xs text-muted">{{ i18nStore.t('battle_help_desc1') }}</p>
             </div>
           </div>
 
           <div class="flex gap-4 items-start">
             <div class="w-8 h-8 rounded-full bg-primary-500/20 flex items-center justify-center text-primary-500 shrink-0 font-bold">2</div>
             <div>
-              <p class="text-sm font-bold text-foreground uppercase tracking-tight">Sin límites</p>
-              <p class="text-xs text-muted">No hay límite de daño diario. ¡Todo el esfuerzo que pongas ayudará a derrotar al boss más rápido!</p>
+              <p class="text-sm font-bold text-foreground uppercase tracking-tight">{{ i18nStore.t('battle_help_title2') }}</p>
+              <p class="text-xs text-muted">{{ i18nStore.t('battle_help_desc2') }}</p>
             </div>
           </div>
 

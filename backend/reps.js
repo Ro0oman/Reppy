@@ -6,6 +6,7 @@ import { recalculateUserStats } from './utils/stats.js';
 import { trackCoinTransaction } from './utils/transactions.js';
 import { syncBossHealth } from './utils/boss.js';
 import { getLocalDateString } from './utils/date.js';
+import { calculateDamage } from './utils/damage.js';
 
 
 const router = express.Router();
@@ -87,8 +88,12 @@ router.post('/', authenticate, async (req, res) => {
     if (bossRes.rows.length > 0) {
       const boss = bossRes.rows[0];
       
-      const damageMultiplier = getBossDamageMultiplier(exercise_type);
-      actualDamageDealt = count * damageMultiplier;
+      // Get user with full stats for damage calculation
+      const userFullRes = await query('SELECT * FROM users WHERE id = $1', [userId]);
+      const user = userFullRes.rows[0];
+      
+      const dmgResult = calculateDamage(user, count, exercise_type);
+      actualDamageDealt = dmgResult.totalDamage;
       const newHp = Math.max(0, boss.current_hp - actualDamageDealt);
       
       await query(`UPDATE boss_fights SET current_hp = $1 WHERE id = $2`, [newHp, boss.id]);
@@ -120,10 +125,18 @@ router.post('/', authenticate, async (req, res) => {
       }
     }
 
-    // 4. Update the actual record with boss_damage_dealt
+    // 4. Update the actual record with boss_damage_dealt and metadata
     await query(`UPDATE reps SET boss_damage_dealt = $1 WHERE id = $2`, [actualDamageDealt, result.rows[0].id]);
 
-    res.json({ ...result.rows[0], earnedCoins, boss_damage_dealt: actualDamageDealt });
+    const dmgInfo = calculateDamage(await query('SELECT * FROM users WHERE id = $1', [userId]).then(r => r.rows[0]), count, exercise_type);
+
+    res.json({ 
+      ...result.rows[0], 
+      earnedCoins, 
+      boss_damage_dealt: actualDamageDealt,
+      is_crit: dmgInfo.isCrit,
+      magic_bonus: dmgInfo.magicBonus
+    });
   } catch (error) {
     console.error('Error adding reps:', error);
     res.status(500).json({ message: 'Error adding reps', error: error.message });

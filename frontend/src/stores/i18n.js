@@ -323,6 +323,25 @@ const translations = {
     not_found_title: 'AREA RESTRICTED (404)',
     not_found_desc: 'The protocol you are looking for has been moved or deleted from the mainframe.',
     not_found_btn: 'RETURN TO SAFE ZONE',
+
+    // Battle Overhaul Modal
+    battle_overhaul_title: 'BATTLE PROTOCOL OVERHAUL',
+    battle_overhaul_subtitle: 'ENHANCED RPG DAMAGE SYSTEM ACTIVE',
+    battle_overhaul_str_desc: 'Increase base damage and physical impact.',
+    battle_overhaul_pwr_desc: 'Increase Critical Damage and magical energy.',
+    battle_overhaul_agi_desc: 'Increase the random chance of Critical Hits.',
+    battle_overhaul_summary: 'Your RPG stats (STR, PWR, AGI) and Global Level now combine to calculate massive damage. High levels can deal 100+ damage per rep!',
+    battle_overhaul_boss_hint: 'Bosses have been strengthened to match your new power.',
+    battle_overhaul_btn: 'ENGAGE BATTLE',
+    stat_str: 'STRENGTH',
+    stat_pwr: 'POWER',
+    stat_agi: 'AGILITY',
+    
+    battle_help_title1: 'Statistical Impact',
+    battle_help_desc1: 'Your Strength (STR) and Level now multiply your damage output. Stronger athletes deal more damage per rep.',
+    battle_help_title2: 'Critical Variance',
+    battle_help_desc2: 'Your Agility (AGI) increases the chance of Critical Hits, while Power (PWR) increases their damage.',
+    boss_status: 'Boss Status',
   },
   es: {
     // Landing
@@ -645,6 +664,25 @@ const translations = {
     not_found_title: 'ÁREA RESTRINGIDA (404)',
     not_found_desc: 'El protocolo que buscas ha sido movido o eliminado del mainframe.',
     not_found_btn: 'VOLVER A ZONA SEGURA',
+
+    // Battle Overhaul Modal
+    battle_overhaul_title: 'ACTUALIZACIÓN DEL SISTEMA DE BATALLA',
+    battle_overhaul_subtitle: 'SISTEMA DE DAÑO RPG MEJORADO ACTIVO',
+    battle_overhaul_str_desc: 'Aumenta el daño base y el impacto físico.',
+    battle_overhaul_pwr_desc: 'Aumenta el daño crítico y la energía mágica.',
+    battle_overhaul_agi_desc: 'Aumenta la probabilidad aleatoria de golpes críticos.',
+    battle_overhaul_summary: 'Tus estadísticas RPG (STR, PWR, AGI) y tu Nivel Global ahora se combinan para calcular daños masivos. ¡Los niveles altos pueden infligir más de 100 de daño por rep!',
+    battle_overhaul_boss_hint: 'Los bosses se han fortalecido para igualar tu nuevo poder.',
+    battle_overhaul_btn: 'ENTRAR EN BATALLA',
+    stat_str: 'FUERZA',
+    stat_pwr: 'PODER',
+    stat_agi: 'AGILIDAD',
+    
+    battle_help_title1: 'Impacto Estadístico',
+    battle_help_desc1: 'Tu Fuerza (STR) y Nivel ahora multiplican tu daño. Los atletas más fuertes infligen más daño por rep.',
+    battle_help_title2: 'Varianza Crítica',
+    battle_help_desc2: 'Tu Agilidad (AGI) aumenta la probabilidad de Críticos, mientras que el Poder (PWR) aumenta su daño.',
+    boss_status: 'Estado del Boss',
   }
 };
 

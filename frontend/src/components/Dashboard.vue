@@ -164,6 +164,12 @@
         </div>
       </div>
     </div>
+
+    <!-- Battle Overhaul Welcome Modal -->
+    <DamageOverhaulModal 
+      :show="showDamageModal" 
+      @close="handleCloseDamageModal" 
+    />
   </div>
 </template>
 
@@ -182,6 +188,7 @@ import RepsInput from './RepsInput.vue';
 import ExerciseSelector from './ExerciseSelector.vue';
 import BossHealth from './BossHealth.vue';
 import RadialProgress from './RadialProgress.vue';
+import DamageOverhaulModal from './DamageOverhaulModal.vue';
 
 const emit = defineEmits(['viewProfile']);
 const authStore = useAuthStore();
@@ -197,6 +204,7 @@ const editValue = ref(0);
 const bossHealthRef = ref(null);
 const isLoading = ref(false);
 const activeYear = ref(2026);
+const showDamageModal = ref(false);
 
 const stats = reactive({
   streak: 0,
@@ -243,6 +251,11 @@ const fetchData = async () => {
     stats.bodyWeight = statsRes.data.bodyWeight || 75;
 
     if (bossHealthRef.value) bossHealthRef.value.refresh();
+
+    // Check for damage overhaul modal
+    if (authStore.user && !authStore.user.has_seen_damage_overhaul) {
+      showDamageModal.value = true;
+    }
   } catch (error) {
     console.error('Error fetching data:', error);
   } finally {
@@ -294,6 +307,13 @@ const confirmDelete = (id) => {
 };
 
 let refreshInterval = null;
+
+const handleCloseDamageModal = () => {
+  showDamageModal.value = false;
+  if (authStore.user) {
+    authStore.user.has_seen_damage_overhaul = true;
+  }
+};
 
 onMounted(() => {
   fetchData();
