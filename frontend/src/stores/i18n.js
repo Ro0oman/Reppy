@@ -189,24 +189,24 @@ const translations = {
     codex_lv_up: 'Level Up:',
 
     codex_str_name: 'STRENGTH',
-    codex_str_quote: 'Lifting the weight of the world.',
-    codex_str_desc: 'Scales with total load. Influenced by body mass and added resistance.',
-    codex_str_action: 'Do more sets with extra weight.',
+    codex_str_quote: 'Pure destructive power.',
+    codex_str_desc: 'Measures your total strength. Increases when you add extra weight to your exercises (e.g., weighted workouts).',
+    codex_str_action: 'Add extra weight to improve.',
 
     codex_pwr_name: 'POWER',
     codex_pwr_quote: 'Explosive critical impact.',
-    codex_pwr_desc: 'Rewards absolute intensity. Based on your highest resistance recorded in a single set.',
-    codex_pwr_action: 'Move faster or lift heavier.',
+    codex_pwr_desc: 'Measures your peak effort in a single set. Increases by pushing your body to the limit in intensity.',
+    codex_pwr_action: 'Do harder variations or max sets.',
 
     codex_end_name: 'ENDURANCE',
-    codex_end_quote: 'Infinite fuel cell.',
-    codex_end_desc: 'Purity of stamina. Scales with the total volume of repetitions performed across protocols.',
-    codex_end_action: 'Do more total reps every day.',
+    codex_end_quote: 'Your energy tank.',
+    codex_end_desc: 'Measures your overall stamina. Increases by accumulating a high number of repetitions throughout the day.',
+    codex_end_action: 'Accumulate more daily reps.',
 
     codex_agi_name: 'AGILITY',
-    codex_agi_quote: 'Zero metabolic drag.',
-    codex_agi_desc: 'Tactical consistency. Earned through active streaks and protocol variety.',
-    codex_agi_action: 'Maintain streak & varied protocols.',
+    codex_agi_quote: 'Unshakable determination.',
+    codex_agi_desc: 'Measures your discipline. Increases by keeping a streak of active days and diversifying your routine.',
+    codex_agi_action: 'Keep your daily streak alive.',
 
     // Shop Categories
     shop_tab_titles: 'TITLES',
@@ -530,24 +530,24 @@ const translations = {
     codex_lv_up: 'Mejora:',
 
     codex_str_name: 'FUERZA',
-    codex_str_quote: 'Cargando con el peso del mundo.',
-    codex_str_desc: 'Escala con la carga total. Influenciada por la masa corporal y resistencia añadida.',
-    codex_str_action: 'Haz más series con peso extra.',
+    codex_str_quote: 'El poder destructivo puro.',
+    codex_str_desc: 'Mide tu fuerza total. Aumenta al añadir peso a tus ejercicios (ej: usando lastre).',
+    codex_str_action: 'Añade lastre para mejorar.',
 
     codex_pwr_name: 'PODER',
     codex_pwr_quote: 'Impacto crítico explosivo.',
-    codex_pwr_desc: 'Recompensa la intensidad absoluta. Basada en tu resistencia máxima en una serie.',
-    codex_pwr_action: 'Muévete más rápido o levanta más pesado.',
+    codex_pwr_desc: 'Mide tu capacidad de esfuerzo máximo en una sola serie. Aumenta llevando tu cuerpo al límite en tiempo o intensidad.',
+    codex_pwr_action: 'Haz variantes más difíciles.',
 
     codex_end_name: 'RESISTENCIA',
-    codex_end_quote: 'Célula de energía infinita.',
-    codex_end_desc: 'Pureza de estamina. Escala con el volumen total de repeticiones de los protocolos.',
-    codex_end_action: 'Haz más repeticiones totales cada día.',
+    codex_end_quote: 'Tu tanque de energía.',
+    codex_end_desc: 'Mide tu aguante general. Aumenta entrenando múltiples repeticiones de tus protocolos durante cada día.',
+    codex_end_action: 'Acumula más repeticiones diarias.',
 
     codex_agi_name: 'AGILIDAD',
-    codex_agi_quote: 'Cero fricción metabólica.',
-    codex_agi_desc: 'Consistencia táctica. Se gana con rachas activas y variedad de protocolos.',
-    codex_agi_action: 'Mantén tu racha y varía los protocolos.',
+    codex_agi_quote: 'Determinación constante.',
+    codex_agi_desc: 'Mide tu disciplina y constancia. Aumenta manteniendo tu racha de días activos y diversificando tu entrenamiento.',
+    codex_agi_action: 'Mantén tu racha activa.',
 
     // Shop Categories
     shop_tab_titles: 'TÍTULOS',

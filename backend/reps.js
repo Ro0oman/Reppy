@@ -126,7 +126,7 @@ router.post('/', authenticate, async (req, res) => {
     }
 
     // 4. Update the actual record with boss_damage_dealt and metadata
-    await query(`UPDATE reps SET boss_damage_dealt = $1 WHERE id = $2`, [actualDamageDealt, result.rows[0].id]);
+    await query(`UPDATE reps SET boss_damage_dealt = COALESCE(boss_damage_dealt, 0) + $1 WHERE id = $2`, [actualDamageDealt, result.rows[0].id]);
 
     const dmgInfo = calculateDamage(await query('SELECT * FROM users WHERE id = $1', [userId]).then(r => r.rows[0]), count, exercise_type);
 
@@ -306,9 +306,11 @@ router.put('/:id', authenticate, async (req, res) => {
 
     if (bossRes.rows.length > 0) {
       const boss = bossRes.rows[0];
+      const userFullRes = await query('SELECT * FROM users WHERE id = $1', [userId]);
+      const user = userFullRes.rows[0];
       
-      const damageMultiplier = getBossDamageMultiplier(oldRep.exercise_type);
-      newBossDamageDealt = count * damageMultiplier;
+      const dmgResult = calculateDamage(user, count, oldRep.exercise_type);
+      newBossDamageDealt = dmgResult.totalDamage;
 
       const bossHpChange = newBossDamageDealt - oldRep.boss_damage_dealt;
       const newBossHp = Math.min(boss.total_hp, Math.max(0, boss.current_hp - bossHpChange));

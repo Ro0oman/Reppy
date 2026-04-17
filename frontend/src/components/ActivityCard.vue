@@ -92,7 +92,7 @@
             <p class="text-[10px] font-black text-primary-500 uppercase tracking-widest leading-none">BOSS ASSAULT</p>
             <p class="text-sm font-black text-foreground uppercase tracking-tight mt-1">
               {{ isOwn ? 'Has infligido' : activity.user_name + ' ha infligido' }} 
-              <span class="text-primary-500">{{ totalBossDamage }}</span> de daño
+              <span class="text-primary-500">{{ totalBossDamage }}</span> de daño en esta sesión
             </p>
           </div>
         </div>

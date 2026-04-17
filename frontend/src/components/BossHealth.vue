@@ -27,7 +27,10 @@
             <div class="space-y-1">
               <div class="flex items-center justify-center md:justify-start gap-2">
                 <span class="text-[7px] font-black uppercase tracking-[0.3em] text-primary-500 bg-primary-500/10 px-2 py-0.5 rounded-md">Sector Activo</span>
-                <button @click="showHelp = true" class="w-4 h-4 rounded-full bg-muted/10 flex items-center justify-center text-foreground text-[10px] font-bold hover:bg-primary-500 hover:text-white transition-colors">?</button>
+                <button @click="showHelp = true" class="w-4 h-4 rounded-full bg-muted/10 flex items-center justify-center text-foreground text-[10px] font-bold hover:bg-primary-500 hover:text-white transition-colors" title="Manual de Batalla">?</button>
+                <button @click="showCodex = true" class="text-[7px] font-black uppercase tracking-[0.3em] text-orange-500 bg-orange-500/10 hover:bg-orange-500/20 px-2 py-0.5 rounded-md transition-colors flex items-center gap-1" title="Guía de Evolución RPG">
+                   <span>📖</span> GUÍA RPG
+                </button>
               </div>
               <h3 class="text-4xl font-black italic tracking-tighter text-foreground uppercase leading-none">{{ boss.name }}</h3>
               <p v-if="isDefeated" class="text-[8px] bg-emerald-500 text-black px-2 py-0.5 rounded-full font-black uppercase tracking-widest w-fit mx-auto md:mx-0">Neutralizado</p>
@@ -173,6 +176,9 @@
   
   <!-- Boss History Modal -->
   <BossHistoryModal v-if="boss" :show="showHistory" :boss-id="boss.id" @close="showHistory = false" />
+
+  <!-- RPG Info Modal (The Codex) -->
+  <CodexModal :show="showCodex" @close="showCodex = false" />
 </template>
 
 <script setup>
@@ -184,6 +190,7 @@ import { History } from 'lucide-vue-next';
 import { formatNumber } from '../utils/numberUtils';
 import confetti from 'canvas-confetti';
 import BossHistoryModal from './BossHistoryModal.vue';
+import CodexModal from './CodexModal.vue';
 
 const boss = ref(null);
 const nextBoss = ref(null);
@@ -194,6 +201,7 @@ const dailyDamage = ref(0);
 const chestsClaimed = ref(0);
 const showHelp = ref(false);
 const showHistory = ref(false);
+const showCodex = ref(false);
 const authStore = useAuthStore();
 const notificationStore = useNotificationStore();
 const topDamageDealer = ref(null);
