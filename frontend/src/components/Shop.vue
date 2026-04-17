@@ -79,7 +79,8 @@
           <div 
             v-for="item in bundleItems" 
             :key="item.id"
-            class="card-stats p-0 flex flex-col group/item bg-yellow-500/5 border-yellow-500/20 hover:border-yellow-500/50 shadow-[0_0_50px_rgba(234,179,8,0.05)] overflow-hidden relative"
+            @click="openBundleModal(item)"
+            class="card-stats p-0 flex flex-col group/item bg-yellow-500/5 border-yellow-500/20 hover:border-yellow-500/50 shadow-[0_0_50px_rgba(234,179,8,0.05)] overflow-hidden relative cursor-pointer"
             :class="getCardClass(item)"
           >
             <!-- Gold Glow Detail -->
@@ -136,7 +137,7 @@
 
                 <button 
                   v-if="!item.owned"
-                  @click="buyItem(item)"
+                  @click.stop="buyItem(item)"
                   :disabled="!canAfford(item) || buying"
                   class="bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-20 shadow-lg shadow-yellow-500/20 active:scale-95"
                 >
@@ -438,6 +439,70 @@
       </section>
     </div>
   </div>
+
+  <!-- Bundle Detail Modal -->
+  <Transition
+    enter-active-class="transition duration-300 ease-out"
+    enter-from-class="opacity-0"
+    enter-to-class="opacity-100"
+    leave-active-class="transition duration-200 ease-in"
+    leave-from-class="opacity-100"
+    leave-to-class="opacity-0"
+  >
+    <div v-if="showBundleModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-xl" @click.self="showBundleModal = false">
+      <div class="glass max-w-xl w-full p-8 rounded-[2.5rem] border border-yellow-500/30 shadow-[0_0_80px_rgba(234,179,8,0.1)] relative overflow-hidden flex flex-col max-h-[90vh] animate-in slide-in-from-bottom-4 zoom-in-95 duration-300">
+        <!-- Background Glow -->
+        <div class="absolute -top-32 -right-32 w-64 h-64 bg-yellow-400/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <!-- Close Button -->
+        <button @click="showBundleModal = false" class="absolute top-8 right-8 p-3 bg-white/5 hover:bg-white/10 rounded-2xl transition-all group">
+           <X class="w-6 h-6 text-muted group-hover:text-foreground" />
+        </button>
+
+        <!-- Header -->
+        <div class="mb-10 pr-12">
+          <span class="text-[10px] font-black uppercase tracking-[0.4em] text-yellow-500 mb-2 block">MODULE_CONTENTS</span>
+          <h2 class="text-3xl font-black italic tracking-tighter text-foreground uppercase leading-none">{{ selectedBundle?.name }}</h2>
+          <p class="text-xs text-muted font-medium mt-3 leading-relaxed">{{ selectedBundle?.description }}</p>
+        </div>
+
+        <!-- Items List -->
+        <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-3 pb-4">
+          <div v-for="item in selectedBundleItems" :key="item.id" class="flex items-center gap-4 p-4 bg-white/5 border border-white/5 rounded-2xl group hover:border-yellow-500/20 transition-all">
+            <div class="w-16 h-16 bg-black/40 rounded-xl border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+               <component :is="item.type === 'title' ? Type : item.type === 'border' ? Frame : item.type === 'post_background' ? LayoutGrid : Sparkles" class="w-6 h-6 text-muted group-hover:text-yellow-500 transition-colors" />
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between mb-1">
+                <h4 class="text-sm font-black text-foreground">{{ item.name }}</h4>
+                <span class="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-lg border" :class="getRarityBadge(item).classes">{{ getRarityBadge(item).label }}</span>
+              </div>
+              <p class="text-[10px] text-muted font-medium uppercase tracking-widest">{{ item.type.replace('_', ' ') }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-8 pt-8 border-t border-white/10 flex items-center justify-between gap-6">
+          <div class="flex flex-col">
+            <span class="text-[10px] font-black text-muted uppercase tracking-widest mb-1">BUNDLE_COST</span>
+            <div class="flex items-baseline gap-2">
+              <span class="text-2xl font-black text-yellow-500 tabular-nums">{{ selectedBundle?.price }}</span>
+              <span class="text-[10px] font-black text-muted uppercase tracking-widest">RC</span>
+            </div>
+          </div>
+          
+          <button 
+            @click="buyItem(selectedBundle); showBundleModal = false"
+            :disabled="!canAfford(selectedBundle) || buying || selectedBundle?.owned"
+            class="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black py-4 rounded-2xl text-[12px] font-black uppercase tracking-[0.2em] transition-all disabled:opacity-20 shadow-xl shadow-yellow-500/20 active:scale-95"
+          >
+            {{ selectedBundle?.owned ? 'ACQUIRED' : 'INITIATE ACQUISITION' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </Transition>
 </template>
 
 <script setup>
@@ -446,7 +511,7 @@ import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
-import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Check, Swords } from 'lucide-vue-next';
+import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Check, Swords, X } from 'lucide-vue-next';
 import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
 
@@ -460,6 +525,9 @@ const buying = ref(false);
 const nowMs = ref(Date.now());
 const showSeasonal = ref(false);
 const showDropdown = ref(false);
+const showBundleModal = ref(false);
+const selectedBundle = ref(null);
+const selectedBundleItems = ref([]);
 let countdownTimer = null;
 
 const selectedCategory = ref('all');
@@ -582,6 +650,13 @@ const equipItem = async (item) => {
   } catch (error) {
     notificationStore.notify('Activation failed', 'error');
   }
+};
+
+const openBundleModal = (bundle) => {
+  selectedBundle.value = bundle;
+  const ids = bundle.bundle_items.split(',').map(id => parseInt(id.trim()));
+  selectedBundleItems.value = items.value.filter(i => ids.includes(i.id));
+  showBundleModal.value = true;
 };
 
 onMounted(() => {
