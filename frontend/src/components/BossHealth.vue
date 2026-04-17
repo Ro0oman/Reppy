@@ -15,36 +15,36 @@
           <History class="w-6 h-6" />
       </div>
       
-      <div class="relative z-10 p-6 md:p-10 flex flex-col justify-center">
+      <div class="relative z-10 p-5 md:p-7 flex flex-col justify-center">
 
         <!-- Top Status & Actions -->
-        <div class="flex flex-wrap items-center gap-3 mb-6">
-           <span class="px-4 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-500 text-[9px] md:text-[10px] font-black tracking-[0.3em] uppercase backdrop-blur-sm">
+        <div class="flex flex-wrap items-center gap-2 mb-5">
+           <span class="px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-500 text-[8px] md:text-[9px] font-black tracking-[0.3em] uppercase backdrop-blur-sm">
               CLASE: SECTOR ACTIVO
            </span>
-           <button @click.stop="showCodex = true" class="px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 text-[9px] md:text-[10px] font-black tracking-[0.3em] uppercase hover:bg-orange-500/20 hover:border-orange-500/40 transition-all backdrop-blur-sm flex items-center gap-2">
-              <span>📖</span> GUÍA RPG
+           <button @click.stop="showCodex = true" class="px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 text-[8px] md:text-[9px] font-black tracking-[0.3em] uppercase hover:bg-orange-500/20 hover:border-orange-500/40 transition-all backdrop-blur-sm flex items-center gap-1.5">
+              <span>📖</span> ¿CÓMO HAGO MÁS DAÑO?
            </button>
            <button @click.stop="showHelp = true" class="w-7 h-7 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/50 text-[10px] font-bold hover:bg-white hover:text-black transition-colors" title="Manual de Batalla">?</button>
         </div>
 
         <!-- Boss Info & Avatar -->
-        <div class="flex flex-col md:flex-row gap-6 md:gap-10 items-center md:items-start mb-10">
+        <div class="flex flex-col md:flex-row gap-5 md:gap-6 items-center md:items-start mb-6">
            <!-- Portrait -->
            <div class="relative shrink-0 group/img">
               <div class="absolute inset-0 bg-primary-500/30 blur-[40px] rounded-full opacity-60 group-hover/img:opacity-100 transition-opacity duration-700"></div>
-              <div class="w-32 h-32 md:w-48 md:h-48 rounded-[2.5rem] border border-white/10 bg-black/40 shadow-2xl overflow-hidden relative z-10">
+              <div class="w-24 h-24 md:w-32 md:h-32 rounded-[2rem] border border-white/10 bg-black/40 shadow-2xl overflow-hidden relative z-10">
                  <img v-if="boss.image_url" :src="boss.image_url" :alt="boss.name" class="w-full h-full object-cover transition-all duration-700" :class="isDefeated ? 'grayscale opacity-30 mix-blend-luminosity' : 'group-hover/img:scale-105 saturate-150'" />
                  <span v-else class="text-6xl font-black italic text-white/20 absolute inset-0 flex items-center justify-center">?</span>
               </div>
            </div>
 
            <!-- Name & Quote -->
-           <div class="flex-1 text-center md:text-left space-y-4">
-              <h3 class="text-4xl md:text-6xl lg:text-7xl font-black italic tracking-tighter text-white uppercase leading-none drop-shadow-2xl">
+           <div class="flex-1 text-center md:text-left space-y-3 mt-2 md:mt-0">
+              <h3 class="text-3xl md:text-4xl lg:text-5xl font-black italic tracking-tighter text-white uppercase leading-none drop-shadow-2xl">
                  {{ boss.name }}
               </h3>
-              <p v-if="boss.active_phrase && !isDefeated" class="text-primary-500 font-medium italic text-sm md:text-lg pl-4 border-l-2 border-primary-500">
+              <p v-if="boss.active_phrase && !isDefeated" class="text-primary-500 font-medium italic text-xs md:text-sm pl-3 border-l-2 border-primary-500">
                 "{{ boss.active_phrase }}"
               </p>
               <div v-if="isDefeated" class="inline-block mt-4">
@@ -56,11 +56,11 @@
         </div>
 
         <!-- Cinematic Health Bar -->
-        <div class="w-full relative mb-10">
-           <div class="flex justify-between items-end mb-3">
-              <span class="text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-white/50">Integridad del Objetivo</span>
+        <div class="w-full relative mb-6">
+           <div class="flex justify-between items-end mb-2">
+              <span class="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-white/50">Integridad del Objetivo</span>
               <div class="text-right">
-                 <span class="text-3xl md:text-5xl font-black text-white leading-none tracking-tighter shadow-black drop-shadow-md">{{ formatNumber(boss.current_hp) }}</span>
+                 <span class="text-2xl md:text-3xl font-black text-white leading-none tracking-tighter shadow-black drop-shadow-md">{{ formatNumber(boss.current_hp) }}</span>
                  <span class="text-[10px] md:text-xs font-black text-primary-500/70 ml-2 tracking-widest">/ {{ formatNumber(boss.total_hp) }} HP</span>
               </div>
            </div>
@@ -85,36 +85,36 @@
         </div>
 
         <!-- Damage Stats (Premium HUD Modules) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" v-if="authStore.isAuthenticated">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3" v-if="authStore.isAuthenticated">
            
            <!-- Tu Daño Total -->
-           <div class="relative p-5 md:p-6 rounded-[2rem] bg-black/40 border border-white/5 overflow-hidden group/card hover:border-primary-500/30 transition-all duration-500">
+           <div class="relative p-4 md:p-5 rounded-[1.5rem] bg-black/40 border border-white/5 overflow-hidden group/card hover:border-primary-500/30 transition-all duration-500">
               <div class="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
               <div class="relative z-10">
-                 <span class="text-[8px] md:text-[9px] font-black tracking-[0.3em] uppercase text-white/40 block mb-1">Tu Daño Histórico</span>
-                 <div class="text-3xl md:text-4xl font-black text-white tracking-tighter">{{ formatNumber(personalDamage) }}<span class="text-xs font-bold text-primary-500/60 ml-2 tracking-widest">DMG</span></div>
+                 <span class="text-[7px] md:text-[8px] font-black tracking-[0.3em] uppercase text-white/40 block mb-1">Tu Daño Histórico</span>
+                 <div class="text-2xl md:text-3xl font-black text-white tracking-tighter">{{ formatNumber(personalDamage) }}<span class="text-[10px] font-bold text-primary-500/60 ml-1 tracking-widest">DMG</span></div>
               </div>
            </div>
 
            <!-- Daño Hoy -->
-           <div class="relative p-5 md:p-6 rounded-[2rem] bg-black/40 border border-white/5 overflow-hidden group/card hover:border-emerald-500/30 transition-all duration-500">
+           <div class="relative p-4 md:p-5 rounded-[1.5rem] bg-black/40 border border-white/5 overflow-hidden group/card hover:border-emerald-500/30 transition-all duration-500">
               <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
               <div class="relative z-10 flex flex-col justify-between h-full">
-                 <span class="text-[8px] md:text-[9px] font-black tracking-[0.3em] uppercase text-white/40 block mb-1">Daño Realizado Hoy</span>
-                 <div class="flex items-end gap-2">
-                    <div class="text-3xl md:text-4xl font-black text-emerald-400 tracking-tighter">{{ formatNumber(dailyDamage) }}</div>
-                    <span class="text-xs font-bold text-emerald-500/50 mb-1 tracking-widest">DMG</span>
+                 <span class="text-[7px] md:text-[8px] font-black tracking-[0.3em] uppercase text-white/40 block mb-1">Daño Realizado Hoy</span>
+                 <div class="flex items-end gap-1.5">
+                    <div class="text-2xl md:text-3xl font-black text-emerald-400 tracking-tighter">{{ formatNumber(dailyDamage) }}</div>
+                    <span class="text-[10px] font-bold text-emerald-500/50 mb-1 tracking-widest">DMG</span>
                  </div>
               </div>
            </div>
 
            <!-- Top Daño -->
-           <div v-if="topDamageDealer" class="relative p-5 md:p-6 rounded-[2rem] bg-black/40 border border-white/5 overflow-hidden group/card hover:border-amber-500/30 transition-all duration-500 flex flex-col">
+           <div v-if="topDamageDealer" class="relative p-4 md:p-5 rounded-[1.5rem] bg-black/40 border border-white/5 overflow-hidden group/card hover:border-amber-500/30 transition-all duration-500 flex flex-col">
               <div class="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
               <div class="relative z-10 flex-1 flex flex-col justify-between">
-                 <span class="text-[8px] md:text-[9px] font-black tracking-[0.3em] uppercase text-white/40 block mb-1">Dominación (Top 1)</span>
+                 <span class="text-[7px] md:text-[8px] font-black tracking-[0.3em] uppercase text-white/40 block mb-1">Dominación (Top 1)</span>
                  <div>
-                    <div class="text-xl md:text-2xl font-black text-amber-500 tracking-tighter truncate uppercase" :title="topDamageDealer.id === authStore.user?.id ? 'TÚ' : topDamageDealer.name">
+                    <div class="text-lg md:text-xl font-black text-amber-500 tracking-tighter truncate uppercase" :title="topDamageDealer.id === authStore.user?.id ? 'TÚ' : topDamageDealer.name">
                        {{ topDamageDealer.id === authStore.user?.id ? 'TÚ' : topDamageDealer.name }}
                     </div>
                     <div class="text-[10px] font-bold text-white/30 uppercase tracking-widest mt-0.5">{{ formatNumber(topDamageDealer.damage_dealt) }} DMG</div>
