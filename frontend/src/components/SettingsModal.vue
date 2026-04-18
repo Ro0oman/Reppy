@@ -7,7 +7,7 @@
     leave-from-class="opacity-100"
     leave-to-class="opacity-0"
   >
-    <div v-if="show" class="fixed inset-0 z-[150] flex justify-center items-start overflow-y-auto p-4 md:p-8 bg-background/80 backdrop-blur-xl" @click.self="$emit('close')">
+    <div v-if="show" class="fixed inset-0 z-[150] flex justify-center items-start overflow-y-auto overscroll-contain p-4 md:p-8 bg-background/80 backdrop-blur-xl" style="touch-action: none;" @click.self="$emit('close')">
       <div class="glass max-w-xl w-full p-8 md:p-12 rounded-[2.5rem] border border-border shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh] animate-in slide-in-from-bottom-4 zoom-in-95 duration-300 my-auto">
         <!-- Background Detail -->
         <div class="absolute -top-32 -right-32 w-64 h-64 bg-primary-500/5 rounded-full blur-[100px] pointer-events-none"></div>
@@ -96,7 +96,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onUnmounted } from 'vue';
 import { X, Sun, Moon, Monitor, LogOut, ChevronRight } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useThemeStore } from '../stores/theme';
@@ -122,6 +122,15 @@ const saving = ref(false);
 watch(() => props.initialData, (newVal) => {
   form.value = { ...newVal };
 }, { deep: true });
+
+// Fix #99: Prevent background scroll when modal is open
+watch(() => props.show, (val) => {
+  document.body.style.overflow = val ? 'hidden' : '';
+}, { immediate: true });
+
+onUnmounted(() => {
+  document.body.style.overflow = '';
+});
 
 const save = async () => {
   saving.value = true;
