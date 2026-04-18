@@ -71,7 +71,7 @@
           
           <!-- RPG Metrics (The Attributes Grid) -->
           <div class="flex flex-col xl:flex-row items-center xl:items-end gap-10 w-full mt-8">
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-2xl">
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 w-full max-w-3xl">
               <div v-for="attr in attributes" :key="attr.key" 
                   class="p-4 rounded-xl border border-border bg-surface/20 group/attr transition-all"
                   :class="getAttrColor(attr.lvl)">
@@ -82,12 +82,19 @@
                 </div>
               </div>
             </div>
+            <div class="flex items-center gap-3 shrink-0">
             <button @click="showInfoModal = true" 
                    :title="i18nStore.t('profile_guide_title')"
-                   class="flex items-center gap-3 bg-surface/5 px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[9px] font-black tracking-widest h-fit shrink-0">
+                   class="flex items-center gap-3 bg-surface/5 px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[9px] font-black tracking-widest h-fit">
               <HelpCircle class="w-4 h-4" />
               CODEX INFO
             </button>
+            <router-link v-if="isOwnProfile" to="/inventory"
+                   class="flex items-center gap-3 bg-primary-500/10 px-6 py-4 rounded-xl border border-primary-500/30 hover:border-primary-500/60 transition-all text-primary-500 hover:text-primary-400 uppercase text-[9px] font-black tracking-widest h-fit">
+              <Zap class="w-4 h-4" />
+              VER ATRIBUTOS
+            </router-link>
+          </div>
           </div>
         </div>
         
@@ -314,10 +321,12 @@ const getIconForType = (type) => {
 };
 
 const attributes = computed(() => [
-  { key: 'STR', xp: user.value.str_xp || 0, lvl: user.value.str_lvl || 1, labelColor: 'text-red-500' },
-  { key: 'PWR', xp: user.value.pwr_xp || 0, lvl: user.value.pwr_lvl || 1, labelColor: 'text-orange-500' },
+  { key: 'STR', xp: user.value.str_xp || 0, lvl: user.value.str_lvl || 1, labelColor: 'text-orange-500' },
+  { key: 'DEX', xp: user.value.dex_xp || 0, lvl: user.value.dex_lvl || 1, labelColor: 'text-cyan-400' },
   { key: 'END', xp: user.value.end_xp || 0, lvl: user.value.end_lvl || 1, labelColor: 'text-emerald-500' },
-  { key: 'AGI', xp: user.value.agi_xp || 0, lvl: user.value.agi_lvl || 1, labelColor: 'text-blue-500' }
+  { key: 'VIG', xp: user.value.vig_xp || 0, lvl: user.value.vig_lvl || 1, labelColor: 'text-red-500' },
+  { key: 'INT', xp: user.value.int_xp || 0, lvl: user.value.int_lvl || 1, labelColor: 'text-blue-400' },
+  { key: 'FTH', xp: user.value.fth_xp || 0, lvl: user.value.fth_lvl || 1, labelColor: 'text-yellow-400' },
 ]);
 
 const getAttrColor = (lvl) => {
