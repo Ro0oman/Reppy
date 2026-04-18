@@ -103,7 +103,7 @@
               <div class="space-y-3">
                 <p class="text-[9px] font-black text-muted uppercase tracking-[0.2em]">CÓMO MEJORAR ESTE ATRIBUTO</p>
                 <div class="flex flex-col gap-2">
-                   <router-link v-for="link in selectedStat.links" :key="link.to" :to="link.to"
+                   <router-link v-for="link in selectedStat.links" :key="link.to" :to="link.to" @click="selectedStat = null"
                     class="w-full py-4 bg-primary-500 rounded-2xl text-[10px] font-black text-white hover:bg-primary-600 shadow-lg shadow-primary-500/20 active:scale-95 transition-all flex items-center justify-center gap-2 uppercase tracking-widest">
                     <ExternalLink class="w-3.5 h-3.5" /> {{ link.label }}
                    </router-link>
