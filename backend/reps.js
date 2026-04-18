@@ -2,7 +2,7 @@ import express from 'express';
 import { query } from './db.js';
 import { authenticate } from './middleware.js';
 import { getExerciseRewards, getBossDamageMultiplier } from './utils/rewards.js';
-import { recalculateUserStats } from './utils/stats.js';
+import { recalculateUserStats, augmentUserWithLevels } from './utils/stats.js';
 import { trackCoinTransaction } from './utils/transactions.js';
 import { syncBossHealth } from './utils/boss.js';
 import { getLocalDateString } from './utils/date.js';
@@ -78,7 +78,7 @@ router.post('/', authenticate, async (req, res) => {
 
     // 3. Atacar al Boss Global Activo (si existe - Secuencial)
     const bossRes = await query(
-      `SELECT id, current_hp, total_hp FROM boss_fights 
+      `SELECT id, current_hp, total_hp, weakness_stat FROM boss_fights 
        WHERE status != 'defeated' 
        ORDER BY order_index ASC LIMIT 1`
     );
@@ -90,9 +90,10 @@ router.post('/', authenticate, async (req, res) => {
       
       // Get user with full stats for damage calculation
       const userFullRes = await query('SELECT * FROM users WHERE id = $1', [userId]);
-      const user = userFullRes.rows[0];
+      const userRaw = userFullRes.rows[0];
+      const user = augmentUserWithLevels(userRaw);
       
-      const dmgResult = calculateDamage(user, count, exercise_type);
+      const dmgResult = calculateDamage(user, count, exercise_type, boss);
       actualDamageDealt = dmgResult.totalDamage;
       const newHp = Math.max(0, boss.current_hp - actualDamageDealt);
       
@@ -299,7 +300,7 @@ router.put('/:id', authenticate, async (req, res) => {
 
     // Find active boss
     const bossRes = await query(
-      `SELECT id, current_hp, total_hp FROM boss_fights 
+      `SELECT id, current_hp, total_hp, weakness_stat FROM boss_fights 
        WHERE status != 'defeated' 
        ORDER BY order_index ASC LIMIT 1`
     );
@@ -307,9 +308,10 @@ router.put('/:id', authenticate, async (req, res) => {
     if (bossRes.rows.length > 0) {
       const boss = bossRes.rows[0];
       const userFullRes = await query('SELECT * FROM users WHERE id = $1', [userId]);
-      const user = userFullRes.rows[0];
+      const userRaw = userFullRes.rows[0];
+      const user = augmentUserWithLevels(userRaw);
       
-      const dmgResult = calculateDamage(user, count, oldRep.exercise_type);
+      const dmgResult = calculateDamage(user, count, oldRep.exercise_type, boss);
       newBossDamageDealt = dmgResult.totalDamage;
 
       const bossHpChange = newBossDamageDealt - oldRep.boss_damage_dealt;

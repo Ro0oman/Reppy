@@ -26,6 +26,9 @@
               <span>📖</span> {{ i18nStore.t('boss_how_damage') }}
            </button>
            <button @click.stop="showHelp = true" class="w-7 h-7 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/50 text-[10px] font-bold hover:bg-white hover:text-black transition-colors" :title="i18nStore.t('boss_battle_manual')">?</button>
+           <span v-if="boss.weakness_stat" class="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[8px] md:text-[9px] font-black tracking-[0.3em] uppercase backdrop-blur-sm flex items-center gap-1">
+              <span>⚡</span> {{ i18nStore.t('boss_weakness') }}: {{ boss.weakness_stat }}
+           </span>
         </div>
 
         <!-- Boss Info & Avatar -->

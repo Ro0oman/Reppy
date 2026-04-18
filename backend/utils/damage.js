@@ -17,9 +17,10 @@
  * @param {Object} user User object containing levels and stats
  * @param {number} reps Number of repetitions
  * @param {string} type Exercise type (pullups, pushups, etc.)
- * @returns {Object} { totalDamage, isCrit, magicBonus, baseDamage }
+ * @param {Object} boss Optional boss object to check for weaknesses
+ * @returns {Object} { totalDamage, isCrit, magicBonus, baseDamage, weaknessBonus }
  */
-export const calculateDamage = (user, reps, type) => {
+export const calculateDamage = (user, reps, type, boss = null) => {
   // 1. Determine Exercise Multiplier (BUFFED)
   let exerciseMult = 3.0; // Base: Pullups
   const t = type?.toLowerCase();
@@ -29,7 +30,7 @@ export const calculateDamage = (user, reps, type) => {
   else if (t === 'dips') exerciseMult = 4.0;
   else if (t === 'pushups') exerciseMult = 2.0;
   
-  // 2. Extract Stats & Levels (6-Stat System)
+  // 2. Extract Stats & Levels (Augmented user expected)
   const glvl = parseInt(user.current_level) || 1;
   const strLvl = parseInt(user.str_lvl) || 1;
   const dexLvl = parseInt(user.dex_lvl) || 1;
@@ -49,13 +50,13 @@ export const calculateDamage = (user, reps, type) => {
   const strScale = 1 + (strLvl / 25);
   const endScale = 1 + (endLvl / 50);
   
-  // Flat Divine Bonus (FTH)
-  const divineBonus = fthLvl * 15;
+  // Divine Scaling (FTH) - BUFFED
+  const fthScale = 1 + (fthLvl / 40);
+  const divineBonus = fthLvl * 25; // Base flat bonus
 
-  let damageBeforeCrit = (baseDamage * levelMult * intBonus * strScale * endScale) + divineBonus;
+  let damageBeforeCrit = (baseDamage * levelMult * intBonus * strScale * endScale * fthScale) + divineBonus;
 
   // 4. Critical Hit Roll (DEX & VIG)
-  // DEX is primary for crit, VIG adds minor stability
   const critChance = (dexLvl * 2.5) + (vigLvl * 0.5);
   const isCrit = (Math.random() * 100) < Math.min(80, critChance); 
   
@@ -63,9 +64,24 @@ export const calculateDamage = (user, reps, type) => {
   let critMult = 1;
   
   if (isCrit) {
-    // DEX scales the crit multiplier
     critMult = 2.0 + (dexLvl * 0.1); 
     finalDamage = damageBeforeCrit * critMult;
+  }
+
+  // 5. Boss Weakness Logic
+  let weaknessBonus = 1.0;
+  if (boss && boss.weakness_stat) {
+    const w = boss.weakness_stat.toLowerCase();
+    
+    // If user has leveled up the stat the boss is weak to, they deal extra damage
+    // The bonus scales with the level of that stat
+    const weaknessLevel = parseInt(user[`${w}_lvl`]) || 1;
+    if (weaknessLevel > 1) {
+       // 50% base bonus if weakness matched, plus 2% extra per level in that stat
+       weaknessBonus = 1.5 + (weaknessLevel * 0.02);
+    }
+    
+    finalDamage *= weaknessBonus;
   }
 
   return {
@@ -73,7 +89,8 @@ export const calculateDamage = (user, reps, type) => {
     isCrit,
     divineBonus: Math.round(divineBonus),
     baseDamage: Math.round(baseDamage),
-    critMultiplier: parseFloat(critMult.toFixed(2))
+    critMultiplier: parseFloat(critMult.toFixed(2)),
+    weaknessBonus: parseFloat(weaknessBonus.toFixed(2))
   };
 };
 

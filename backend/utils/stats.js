@@ -12,7 +12,31 @@ import { getLocalDateString } from './date.js';
  * - PWR XP: floor(maxWeight * 25)
  * - END XP: floor(totalReps * 5)
  * - AGI XP: floor((streak * 40) + (varietyCount * 75))
+ * - END XP: floor(totalReps * 5)
+ * - AGI XP: floor((streak * 40) + (varietyCount * 75))
  */
+
+export const getStatLevel = (xp) => Math.floor((xp || 0) / 100) + 1;
+
+/**
+ * Augments a user object from the DB with calculated level fields.
+ * e.g. str_xp -> str_lvl
+ */
+export const augmentUserWithLevels = (user) => {
+  if (!user) return null;
+  
+  return {
+    ...user,
+    str_lvl: getStatLevel(user.str_xp),
+    dex_lvl: getStatLevel(user.dex_xp),
+    end_lvl: getStatLevel(user.end_xp),
+    vig_lvl: getStatLevel(user.vig_xp),
+    int_lvl: getStatLevel(user.int_xp),
+    fth_lvl: getStatLevel(user.fth_xp),
+    current_level: Math.floor((user.total_xp || 0) / 1000) + 1
+  };
+};
+
 export const recalculateUserStats = async (userId) => {
   try {
     // 1. Get user data for level tracking
@@ -75,14 +99,20 @@ export const recalculateUserStats = async (userId) => {
     const fthXP = Math.floor(Number(fthRes.rows[0]?.total_dmg || 0) / 50);
 
     // VIG: Resilience (mapped from streak and consistency)
-    const vigXP = Math.floor((streak * 100) + (varietyCount * 50));
-
-    // DEX: Skill (mapped from power/technical moves)
-    const dexXP = pwrXP; // Calculated above as calculated_pwr_xp
+    const baseVigXP = Math.floor((streak * 100) + (varietyCount * 50));
 
     // Core Stats (STR, END)
-    const strXP = Math.floor(totalVolume * 0.05);
-    const endXP = Math.floor(totalReps * 5);
+    const baseStrXP = Math.floor(totalVolume * 0.05);
+    const baseEndXP = Math.floor(totalReps * 5);
+
+    // INT BONUS: Knowledge makes training more efficient
+    const intLvl = getStatLevel(intXP);
+    const intBonus = 1 + ((intLvl - 1) * 0.05); // +5% XP gain per level above 1
+
+    const strXP = Math.round(baseStrXP * intBonus);
+    const dexXP = Math.round(pwrXP * intBonus);
+    const endXP = Math.round(baseEndXP * intBonus);
+    const vigXP = Math.round(baseVigXP * intBonus);
 
     // Total XP for Character Level
     const totalXP = strXP + dexXP + endXP + vigXP + intXP + fthXP;

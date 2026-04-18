@@ -83,6 +83,7 @@ CREATE TABLE IF NOT EXISTS boss_fights (
     tier1_chest_unlocked BOOLEAN DEFAULT false,
     tier2_chest_unlocked BOOLEAN DEFAULT false,
     tier3_chest_unlocked BOOLEAN DEFAULT false,
+    weakness_stat VARCHAR(50) DEFAULT 'str', -- 'str', 'dex', 'end', 'vig', 'int', 'fth'
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -141,6 +142,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS int_xp INTEGER DEFAULT 0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS fth_xp INTEGER DEFAULT 0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS dex_xp INTEGER DEFAULT 0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS vig_xp INTEGER DEFAULT 0;
+ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS weakness_stat VARCHAR(50) DEFAULT 'str';
 
 -- Grant 1 chest to all existing users (Safety Update)
 UPDATE users SET boss_chests = GREATEST(boss_chests, 1) WHERE boss_chests IS NULL OR boss_chests = 0;
