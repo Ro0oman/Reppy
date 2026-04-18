@@ -79,42 +79,81 @@
         </div>
       </div>
 
-      <!-- Stat Detail Modal (Clash Royale Detail View) -->
-      <Transition name="fade">
-        <div v-if="selectedStat" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-sm" @click.self="selectedStat = null">
-          <div class="bg-surface border border-primary-500/30 rounded-t-[2.5rem] sm:rounded-[2.5rem] w-full max-w-sm max-h-[88vh] overflow-y-auto animate-in shadow-[0_0_100px_rgba(0,0,0,0.8)] relative">
-            <!-- Close Button -->
-            <button @click="selectedStat = null" class="sticky top-4 float-right mr-4 z-20 p-2 text-muted hover:text-white transition-colors">
-              <X class="w-6 h-6" />
-            </button>
-            <div class="p-8 space-y-8 text-center">
-              <div class="mx-auto p-8 rounded-[2rem] bg-gradient-radial from-primary-500/10 via-transparent to-transparent inline-block">
-                <component :is="selectedStat.icon" class="w-16 h-16" :class="selectedStat.color" />
-              </div>
-              <div class="space-y-4">
-                <h3 class="text-3xl font-black text-foreground uppercase italic tracking-tighter">{{ selectedStat.name }}</h3>
-                <p class="text-muted text-sm font-medium leading-relaxed px-4">{{ selectedStat.description }}</p>
-                <div class="py-4 px-6 bg-foreground/5 rounded-2xl border border-white/5 text-[11px] font-black text-primary-500 uppercase tracking-widest italic">
-                  Efecto: {{ selectedStat.effect }}
-                </div>
+      <!-- Stat Detail Modal (Codex Integration Style) -->
+      <Teleport to="body">
+        <Transition name="fade">
+          <div v-if="selectedStat" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md px-4" @click.self="selectedStat = null">
+            <div class="bg-surface border rounded-[2.5rem] w-full max-w-lg max-h-[85vh] overflow-y-auto animate-in shadow-2xl relative"
+                 :class="selectedStat.borderColor">
+              
+              <!-- Close Button -->
+              <button @click="selectedStat = null" class="absolute top-6 right-6 z-20 p-2 text-muted hover:text-white transition-colors bg-white/5 rounded-full">
+                <X class="w-5 h-5" />
+              </button>
+
+              <!-- Decorative Stat Background Icon -->
+              <div class="absolute -top-12 -left-12 opacity-[0.03] rotate-12 pointer-events-none">
+                <component :is="selectedStat.icon" class="w-64 h-64" />
               </div>
 
-              <!-- Improve Links -->
-              <div class="space-y-3">
-                <p class="text-[9px] font-black text-muted uppercase tracking-[0.2em]">CÓMO MEJORAR ESTE ATRIBUTO</p>
-                <div class="flex flex-col gap-2">
-                   <router-link v-for="link in selectedStat.links" :key="link.to" :to="link.to" @click="selectedStat = null"
-                    class="w-full py-4 bg-primary-500 rounded-2xl text-[10px] font-black text-white hover:bg-primary-600 shadow-lg shadow-primary-500/20 active:scale-95 transition-all flex items-center justify-center gap-2 uppercase tracking-widest">
-                    <ExternalLink class="w-3.5 h-3.5" /> {{ link.label }}
-                   </router-link>
+              <div class="p-8 sm:p-12 space-y-10 relative z-10">
+                <!-- Header Section -->
+                <div class="flex flex-col items-center text-center space-y-6">
+                  <div class="p-6 rounded-3xl bg-gradient-to-br transition-all duration-500" 
+                       :class="[selectedStat.bgLight, 'ring-1 ring-inset ' + selectedStat.borderColor.replace('border-', 'ring-') + '/20 shadow-lg']">
+                    <component :is="selectedStat.icon" class="w-16 h-16 drop-shadow-[0_0_15px_rgba(var(--primary-500-rgb),0.5)]" :class="selectedStat.color" />
+                  </div>
+                  
+                  <div class="space-y-2">
+                    <h3 class="text-3xl sm:text-4xl font-black text-foreground uppercase italic tracking-tighter leading-none">
+                      {{ selectedStat.name }}
+                    </h3>
+                  </div>
+                </div>
+
+                <!-- Description and Effect -->
+                <div class="space-y-6">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="p-4 rounded-2xl bg-foreground/[0.03] border border-white/5 space-y-1">
+                      <p class="text-[8px] font-black text-muted uppercase tracking-widest">MECHANICAL EFFECT</p>
+                      <p class="text-xs font-black text-foreground uppercase italic tracking-tight">{{ selectedStat.effectLabel }}</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-foreground/[0.03] border border-white/5 space-y-1 text-right sm:text-right">
+                      <p class="text-[8px] font-black text-muted uppercase tracking-widest">HOW TO UPGRADE</p>
+                      <p class="text-xs font-black text-primary-500 uppercase italic tracking-tight">{{ selectedStat.action }}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Upgrade Link (CTA) -->
+                <div v-if="selectedStat.links && selectedStat.links.length > 0" class="pt-4">
+                  <router-link 
+                    v-for="link in selectedStat.links" 
+                    :key="link.to" 
+                    :to="link.to" 
+                    @click="selectedStat = null"
+                    class="group relative w-full py-5 rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 shadow-xl"
+                    :class="['bg-gradient-to-r ' + selectedStat.gradient, 'shadow-' + selectedStat.key + '-500/20']"
+                  >
+                    <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <component :is="link.icon || Zap" class="w-5 h-5 text-white animate-pulse" />
+                    <span class="text-sm font-black text-white uppercase tracking-[0.15em] italic">
+                      {{ link.label }}
+                    </span>
+                    <ChevronRight class="w-4 h-4 text-white/70 group-hover:translate-x-1 transition-transform" />
+                  </router-link>
+                </div>
+
+                <div class="text-center pb-8">
+                  <button @click="selectedStat = null" class="text-[9px] font-black text-muted/50 hover:text-foreground uppercase tracking-[0.2em] transition-colors py-2">
+                    DISMISS DATA
+                  </button>
                 </div>
               </div>
-
-              <button @click="selectedStat = null" class="text-[10px] font-black text-muted hover:text-foreground uppercase tracking-widest p-2">CERRAR DETALLES</button>
             </div>
           </div>
-        </div>
-      </Transition>
+        </Transition>
+      </Teleport>
     </div>
 
     <!-- TAB: GEAR (Clash Royale Style Grid) -->
@@ -227,7 +266,8 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import { 
   Package, Frame, Type, Check, Sparkles, Archive, Zap, TrendingUp, 
-  Dumbbell, Sword, Heart, Brain, Church, Trophy, ExternalLink, Activity, X, ChevronDown
+  Dumbbell, Sword, Heart, Brain, Church, Trophy, ExternalLink, Activity, X, 
+  ChevronDown, Flame, BookOpen, Swords, Info, ChevronRight
 } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
@@ -256,63 +296,93 @@ const toggleCategory = (type) => {
 const rpgStats = computed(() => [
   {
     key: 'str',
-    name: 'FUERZA (STR)',
+    name: i18n.t('codex_str_name'),
+    quote: i18n.t('codex_str_quote'),
+    description: i18n.t('codex_str_desc'),
+    action: i18n.t('codex_str_action'),
     xpKey: 'str_xp',
     icon: Dumbbell,
     color: 'text-orange-500',
-    description: 'Aumenta el daño base y el escalado de ejercicios pesados como Muscleups y Dominadas Lastradas.',
-    effect: '+ Daño Físico',
-    links: [{ label: 'Entrenar Fuerza', to: '/?exercise=weighted_pullups' }]
+    borderColor: 'border-orange-500',
+    bgLight: 'bg-orange-500/10',
+    gradient: 'from-orange-500 to-red-600',
+    effectLabel: i18n.t('battle_overhaul_str_desc'),
+    links: [{ label: i18n.locale === 'es' ? 'ENTRENAR FUERZA' : 'TRAIN STRENGTH', to: '/?exercise=weighted_pullups', icon: Zap }]
   },
   {
     key: 'dex',
-    name: 'DESTREZA (DEX)',
+    name: i18n.t('codex_dex_name'),
+    quote: i18n.t('codex_dex_quote'),
+    description: i18n.t('codex_dex_desc'),
+    action: i18n.t('codex_dex_action'),
     xpKey: 'dex_xp',
     icon: Sword,
     color: 'text-cyan-400',
-    description: 'Aumenta tu probabilidad de Golpe Crítico y el multiplicador de daño crítico. Se mejora con técnica y variedad.',
-    effect: '+ Prob. Crítico & Crit Dam',
-    links: [{ label: 'Mejorar Técnica', to: '/?exercise=muscleups' }]
+    borderColor: 'border-cyan-400',
+    bgLight: 'bg-cyan-400/10',
+    gradient: 'from-cyan-400 to-blue-500',
+    effectLabel: i18n.t('battle_overhaul_dex_desc'),
+    links: [{ label: i18n.locale === 'es' ? 'MEJORAR TÉCNICA' : 'IMPROVE TECHNIQUE', to: '/?exercise=muscleups', icon: Swords }]
   },
   {
     key: 'end',
-    name: 'RESISTENCIA (END)',
+    name: i18n.t('codex_end_name'),
+    quote: i18n.t('codex_end_quote'),
+    description: i18n.t('codex_end_desc'),
+    action: i18n.t('codex_end_action'),
     xpKey: 'end_xp',
     icon: Activity,
     color: 'text-green-400',
-    description: 'Escalado secundario de daño basado en el volumen total de repeticiones. Ideal para series largas.',
-    effect: '+ Damage Momentum',
-    links: [{ label: 'Aumentar Volumen', to: '/?exercise=pushups' }]
+    borderColor: 'border-green-400',
+    bgLight: 'bg-green-400/10',
+    gradient: 'from-green-400 to-emerald-600',
+    effectLabel: i18n.t('battle_overhaul_end_desc'),
+    links: [{ label: i18n.locale === 'es' ? 'AUMENTAR VOLUMEN' : 'BOOST VOLUME', to: '/?exercise=pushups', icon: TrendingUp }]
   },
   {
     key: 'vig',
-    name: 'VIGOR (VIG)',
+    name: i18n.t('codex_vig_name'),
+    quote: i18n.t('codex_vig_quote'),
+    description: i18n.t('codex_vig_desc'),
+    action: i18n.t('codex_vig_action'),
     xpKey: 'vig_xp',
     icon: Heart,
     color: 'text-red-500',
-    description: 'Aumenta tu resiliencia ante el daño y aporta estabilidad a tus golpes críticos. Se gana con Rachas de entrenamiento.',
-    effect: '+ Crit Stability',
-    links: [{ label: 'Mantener Racha', to: '/' }]
+    borderColor: 'border-red-500',
+    bgLight: 'bg-red-500/10',
+    gradient: 'from-red-500 to-pink-600',
+    effectLabel: i18n.t('battle_overhaul_vig_desc'),
+    links: [{ label: i18n.locale === 'es' ? 'MANTENER RACHA' : 'KEEP STREAK', to: '/', icon: Flame }]
   },
   {
     key: 'int',
-    name: 'INTELECTO (INT)',
+    name: i18n.t('codex_int_name'),
+    quote: i18n.t('codex_int_quote'),
+    description: i18n.t('codex_int_desc'),
+    action: i18n.t('codex_int_action'),
     xpKey: 'int_xp',
     icon: Brain,
     color: 'text-blue-400',
-    description: 'Eficiencia en el entrenamiento. Mejora el multiplicador de Nivel Global. Se gana leyendo artículos del Blog.',
-    effect: '+ Multipl. de Eficiencia',
-    links: [{ label: 'Ganar Conocimiento', to: '/blog' }]
+    borderColor: 'border-blue-400',
+    bgLight: 'bg-blue-400/10',
+    gradient: 'from-blue-400 to-indigo-600',
+    effectLabel: i18n.t('battle_overhaul_int_desc'),
+    links: [{ label: i18n.locale === 'es' ? 'GANAR CONOCIMIENTO' : 'ACQUIRE KNOWLEDGE', to: '/blog', icon: BookOpen }]
   },
   {
     key: 'fth',
-    name: 'FE (FTH)',
+    name: i18n.t('codex_fth_name'),
+    quote: i18n.t('codex_fth_quote'),
+    description: i18n.t('codex_fth_desc'),
+    action: i18n.t('codex_fth_action'),
     xpKey: 'fth_xp',
     icon: Church,
     color: 'text-yellow-400',
-    description: 'Daño Sagrado adicional. Tu participación en Boss Battles pasadas alimenta tu aura divina actual.',
-    effect: '+ Divine Bonus Damage',
-    links: [{ label: 'Unirse al Raid', to: '/' }]
+    borderColor: 'border-yellow-400',
+    bgLight: 'bg-yellow-400/10',
+    gradient: 'from-yellow-400 to-orange-500',
+    effectLabel: i18n.t('battle_overhaul_fth_desc'),
+    links: [{ label: i18n.locale === 'es' ? 'UNIRSE AL RAID' : 'JOIN RAID', to: '/', icon: Sparkles }]
   }
 ]);
 

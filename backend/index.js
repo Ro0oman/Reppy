@@ -204,6 +204,13 @@ apiRouter.get('/db/init', async (req, res) => {
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
           UNIQUE(user_id_1, user_id_2)
       )`,
+      `CREATE TABLE IF NOT EXISTS user_read_blogs (
+          id SERIAL PRIMARY KEY,
+          user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+          post_slug VARCHAR(255) NOT NULL,
+          read_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE(user_id, post_slug)
+      )`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE`,
       `UPDATE users SET is_admin = TRUE WHERE email = 'romainot99@gmail.com'`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS daily_boss_damage INTEGER DEFAULT 0`,

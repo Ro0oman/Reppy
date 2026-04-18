@@ -59,6 +59,14 @@
             <p class="text-sm text-muted/60 leading-relaxed line-clamp-3">
               {{ post.locales[i18n.locale]?.excerpt || post.locales.en.excerpt }}
             </p>
+
+            <!-- Knowledge Acquired Badge -->
+            <div v-if="isRead(post.slug)" class="pt-4 mt-auto border-t border-primary-500/10 flex items-center gap-2">
+              <div class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></div>
+              <span class="text-[9px] font-black text-primary-500 uppercase tracking-[0.2em] italic">
+                {{ i18n.t('intelecto_adquirido') }}
+              </span>
+            </div>
           </div>
         </router-link>
       </div>
@@ -110,10 +118,18 @@
 import { ref, computed, reactive } from 'vue';
 import { blogPosts } from '../blogPosts';
 import { useI18nStore } from '../stores/i18n';
+import { useAuthStore } from '../stores/auth';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-vue-next';
 import LanguageToggle from './LanguageToggle.vue';
 
 const i18n = useI18nStore();
+const authStore = useAuthStore();
+
+const isRead = (slug) => {
+  if (!authStore.user || !authStore.user.read_blogs) return false;
+  return authStore.user.read_blogs.includes(slug);
+};
+
 const currentPage = ref(1);
 const postsPerPage = 10;
 const loadedImages = reactive({});

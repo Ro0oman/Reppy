@@ -28,9 +28,15 @@
           <span class="text-[10px] font-black tracking-widest text-muted uppercase">{{ formattedDate }}</span>
         </div>
         
-        <h1 class="text-4xl md:text-7xl font-black text-foreground tracking-tight leading-[1.1] mb-8 animate-in">
+        <h1 class="text-4xl md:text-7xl font-black text-foreground tracking-tight leading-[1.1] mb-4 animate-in">
           {{ post.title }}
         </h1>
+
+        <!-- Knowledge Acquired Badge -->
+        <div v-if="isRead" class="inline-flex items-center gap-2 px-6 py-2 bg-primary/20 border-2 border-primary/40 rounded-2xl animate-pulse shadow-[0_0_30px_rgba(var(--primary-500-rgb),0.2)]">
+          <BookOpenCheck class="w-5 h-5 text-primary" />
+          <span class="text-[11px] font-black tracking-[0.2em] text-primary uppercase italic">{{ i18n.t('intelecto_adquirido') }}</span>
+        </div>
 
         <div class="flex items-center justify-center gap-4 text-sm text-muted font-medium animate-in-delay">
           <div class="flex items-center gap-2">
@@ -239,20 +245,30 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { 
   Calendar, User, Clock, ChevronRight, 
   ArrowUpRight, Share2, Twitter, Facebook, Linkedin, MessageCircle,
-  List as ListIcon, Loader2
+  List as ListIcon, Loader2, BookOpenCheck
 } from 'lucide-vue-next';
 import { marked } from 'marked';
 import { blogPosts } from '../blogPosts';
 import { useI18nStore } from '../stores/i18n';
+import { useAuthStore } from '../stores/auth';
+import { useNotificationStore } from '../stores/notification';
+import axios from 'axios';
 
 const route = useRoute();
 const router = useRouter();
 const i18n = useI18nStore();
+const authStore = useAuthStore();
+const notificationStore = useNotificationStore();
+
+const isRead = computed(() => {
+  if (!authStore.user || !authStore.user.read_blogs) return false;
+  return authStore.user.read_blogs.includes(route.params.slug);
+});
 
 const imageLoaded = ref(false);
 const pillarLoaded = ref(false);
@@ -464,8 +480,12 @@ const recordBlogRead = async () => {
   const slug = route.params.slug;
   if (!slug) return;
   try {
-    await axios.post('/api/blog-tracking/read', { slug });
-    console.log('[REPPY_RPG] INT XP awarded for reading:', slug);
+    const response = await axios.post('/api/blog-tracking/read', { slug });
+    if (response.data.isFirstRead) {
+      console.log('[REPPY_RPG] INT XP awarded for reading:', slug);
+      notificationStore.notify(i18n.t('blog_xp_gained'), 'success');
+      await authStore.fetchProfile();
+    }
   } catch (error) {
     // Silently fail if not logged in or already read
   }

@@ -64,7 +64,7 @@
         </div>
 
         <!-- Result Terminal View -->
-        <div v-if="finished" class="p-8 md:p-12 text-center animate-in-up flex flex-col items-center">
+        <div v-if="finished" class="p-8 md:p-12 text-center animate-in-up flex flex-col items-center pb-32 md:pb-12">
           <div class="mb-6 md:mb-8 inline-flex items-center gap-4 px-6 py-2 rounded-xl bg-neon-lime/10 border border-neon-lime/20 shadow-[0_0_30px_rgba(204,255,0,0.05)]">
             <Trophy class="w-4 h-4 md:w-5 md:h-5 text-neon-lime" />
             <span class="text-[9px] md:text-[10px] font-black text-neon-lime uppercase tracking-[0.4em] font-tight">PROTOCOL SUCCESSFUL</span>

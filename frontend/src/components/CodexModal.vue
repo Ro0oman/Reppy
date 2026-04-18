@@ -54,7 +54,7 @@
         </div>
 
         <!-- Right Content Area: Active Stat Details -->
-        <div class="flex-1 relative flex flex-col justify-center p-6 sm:p-8 md:p-16 overflow-hidden z-20">
+        <div class="flex-1 relative flex flex-col justify-center p-6 sm:p-8 md:p-16 overflow-hidden z-20 pb-32 md:pb-16">
           
           <!-- Huge Background Decorative Icon -->
           <Transition name="fade-scale" mode="out-in">
@@ -70,11 +70,6 @@
             <div :key="activeTab" class="relative z-10 max-w-xl">
               <!-- Header -->
               <div class="mb-6 md:mb-8">
-                <div class="flex items-center gap-3 mb-4">
-                  <div class="px-3 py-1 rounded-full bg-black/40 border backdrop-blur-sm" :class="activeDesc.borderActive">
-                    <span class="text-[10px] font-black uppercase tracking-widest" :class="activeDesc.iconColor">CLASE: {{ activeTab }}</span>
-                  </div>
-                </div>
                 <h4 class="text-4xl md:text-6xl font-black uppercase tracking-tighter italic leading-none drop-shadow-2xl" :class="activeDesc.iconColor">
                   {{ i18nStore.t('codex_' + activeDesc.key.toLowerCase() + '_name') }}
                 </h4>
@@ -82,18 +77,10 @@
 
               <!-- Content Group -->
               <div class="space-y-6 md:space-y-8">
-                <div class="relative pl-6 border-l-2" :class="activeDesc.borderLeft">
-                  <p class="text-lg md:text-2xl font-light italic text-white/80 leading-snug">
-                    "{{ i18nStore.t('codex_' + activeDesc.key.toLowerCase() + '_quote') }}"
-                  </p>
-                </div>
 
-                <p class="text-sm md:text-base text-white/60 font-medium leading-relaxed">
-                  {{ i18nStore.t('codex_' + activeDesc.key.toLowerCase() + '_desc') }}
-                </p>
 
                 <!-- Action/Improvement Module -->
-                <div class="mt-12 p-6 md:p-8 rounded-[2rem] bg-black/40 border shadow-2xl relative overflow-hidden group" :class="activeDesc.borderActive">
+                <div class="mt-12 p-6 md:p-8 rounded-[2rem] bg-black/40 border shadow-2xl relative overflow-hidden group mb-24 md:mb-0" :class="activeDesc.borderActive">
                   <div class="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-10 transition-opacity duration-700" :class="activeDesc.gradient"></div>
                   
                   <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -121,7 +108,10 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useI18nStore } from '../stores/i18n';
-import { X as XIcon, Sword, Zap, Heart, Shield } from 'lucide-vue-next';
+import { 
+  X as XIcon, Sword, Zap, Heart, Shield, 
+  Dumbbell, Activity, Brain, Church 
+} from 'lucide-vue-next';
 
 const props = defineProps({
   show: {
@@ -138,47 +128,69 @@ const activeTab = ref('STR');
 const attributeDescriptions = [
   { 
     key: 'STR', 
-    icon: Sword, 
-    iconColor: 'text-red-500', 
-    bgActive: 'bg-red-500/10',
-    borderActive: 'border-red-500/30',
-    borderLeft: 'border-red-500',
-    bgAccent: 'bg-red-500',
-    buttonIconBg: 'shadow-[0_0_15px_rgba(239,68,68,0.4)]',
-    gradient: 'from-red-500 to-orange-500'
-  },
-  { 
-    key: 'PWR', 
-    icon: Zap, 
+    icon: Dumbbell, 
     iconColor: 'text-orange-500', 
     bgActive: 'bg-orange-500/10',
     borderActive: 'border-orange-500/30',
     borderLeft: 'border-orange-500',
     bgAccent: 'bg-orange-500',
     buttonIconBg: 'shadow-[0_0_15px_rgba(249,115,22,0.4)]',
-    gradient: 'from-orange-500 to-yellow-500'
+    gradient: 'from-orange-500 to-red-600'
+  },
+  { 
+    key: 'DEX', 
+    icon: Sword, 
+    iconColor: 'text-cyan-400', 
+    bgActive: 'bg-cyan-400/10',
+    borderActive: 'border-cyan-400/30',
+    borderLeft: 'border-cyan-400',
+    bgAccent: 'bg-cyan-400',
+    buttonIconBg: 'shadow-[0_0_15px_rgba(34,211,238,0.4)]',
+    gradient: 'from-cyan-400 to-blue-500'
   },
   { 
     key: 'END', 
-    icon: Heart, 
-    iconColor: 'text-emerald-500', 
-    bgActive: 'bg-emerald-500/10',
-    borderActive: 'border-emerald-500/30',
-    borderLeft: 'border-emerald-500',
-    bgAccent: 'bg-emerald-500',
-    buttonIconBg: 'shadow-[0_0_15px_rgba(16,185,129,0.4)]',
-    gradient: 'from-emerald-500 to-teal-500'
+    icon: Activity, 
+    iconColor: 'text-green-400', 
+    bgActive: 'bg-green-400/10',
+    borderActive: 'border-green-400/30',
+    borderLeft: 'border-green-400',
+    bgAccent: 'bg-green-400',
+    buttonIconBg: 'shadow-[0_0_15px_rgba(74,222,128,0.4)]',
+    gradient: 'from-green-400 to-emerald-600'
   },
   { 
-    key: 'AGI', 
-    icon: Shield, 
-    iconColor: 'text-blue-500', 
-    bgActive: 'bg-blue-500/10',
-    borderActive: 'border-blue-500/30',
-    borderLeft: 'border-blue-500',
-    bgAccent: 'bg-blue-500',
-    buttonIconBg: 'shadow-[0_0_15px_rgba(59,130,246,0.4)]',
-    gradient: 'from-blue-500 to-indigo-500'
+    key: 'VIG', 
+    icon: Heart, 
+    iconColor: 'text-red-500', 
+    bgActive: 'bg-red-500/10',
+    borderActive: 'border-red-500/30',
+    borderLeft: 'border-red-500',
+    bgAccent: 'bg-red-500',
+    buttonIconBg: 'shadow-[0_0_15px_rgba(239,68,68,0.4)]',
+    gradient: 'from-red-500 to-rose-600'
+  },
+  { 
+    key: 'INT', 
+    icon: Brain, 
+    iconColor: 'text-blue-400', 
+    bgActive: 'bg-blue-400/10',
+    borderActive: 'border-blue-400/30',
+    borderLeft: 'border-blue-400',
+    bgAccent: 'bg-blue-400',
+    buttonIconBg: 'shadow-[0_0_15px_rgba(96,165,250,0.4)]',
+    gradient: 'from-blue-400 to-indigo-600'
+  },
+  { 
+    key: 'FTH', 
+    icon: Church, 
+    iconColor: 'text-yellow-400', 
+    bgActive: 'bg-yellow-400/10',
+    borderActive: 'border-yellow-400/30',
+    borderLeft: 'border-yellow-400',
+    bgAccent: 'bg-yellow-400',
+    buttonIconBg: 'shadow-[0_0_15px_rgba(250,204,21,0.4)]',
+    gradient: 'from-yellow-400 to-amber-600'
   }
 ];
 

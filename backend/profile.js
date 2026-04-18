@@ -63,6 +63,13 @@ router.get('/:id', async (req, res) => {
       [userId]
     );
 
+    // Get read blogs list for indicators
+    const readBlogsRes = await query(
+      'SELECT post_slug FROM user_read_blogs WHERE user_id = $1',
+      [userId]
+    );
+    const readBlogs = readBlogsRes.rows.map(r => r.post_slug);
+
     // Calculate favorite exercise
     const favResult = await query(
       'SELECT exercise_type, SUM(count) as total FROM reps WHERE user_id = $1 GROUP BY exercise_type ORDER BY total DESC LIMIT 1',
@@ -108,6 +115,7 @@ router.get('/:id', async (req, res) => {
         ...user,
         title_name: finalTitleName,
         title_css: finalTitleCss,
+        read_blogs: readBlogs,
         str_xp, pwr_xp, end_xp, agi_xp, 
         total_xp: totalXP,
         str_lvl: getLevel(str_xp),

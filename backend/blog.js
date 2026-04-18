@@ -2,6 +2,7 @@ import express from 'express';
 import { query } from './db.js';
 import { authenticate } from './middleware.js';
 import { recalculateUserStats } from './utils/stats.js';
+import { blogData } from './blogData.js';
 
 const router = express.Router();
 
@@ -15,20 +16,36 @@ router.post('/read', authenticate, async (req, res) => {
   }
 
   try {
+    // 0. Validate slug against blogData
+    const isValid = blogData.some(p => p.slug === slug);
+    if (!isValid) {
+      return res.status(404).json({ message: 'Invalid blog slug' });
+    }
+
     // 1. Record the read event (ignore if already read)
-    await query(
+    const readRes = await query(
       `INSERT INTO user_read_blogs (user_id, post_slug) 
        VALUES ($1, $2) 
-       ON CONFLICT (user_id, post_slug) DO NOTHING`,
+       ON CONFLICT (user_id, post_slug) DO NOTHING
+       RETURNING id`,
       [userId, slug]
     );
 
-    // 2. Add INT XP (e.g., 50 XP per unique post read)
-    // We don't do it directly here, we tell recalculateUserStats to handle it 
-    // based on the count of read blogs.
-    await recalculateUserStats(userId);
+    const isFirstRead = readRes.rows.length > 0;
 
-    res.json({ message: 'Blog read recorded' });
+    // 2. Add INT XP (e.g., 100 XP per unique post read)
+    // Only recalculate if it's the first time they read this post
+    if (isFirstRead) {
+      const newStats = await recalculateUserStats(userId);
+      return res.json({ 
+        message: 'Blog read recorded! INT XP awarded.', 
+        isFirstRead: true,
+        intXP: newStats.intXP,
+        totalXP: newStats.totalXP 
+      });
+    }
+
+    res.json({ message: 'Blog read recorded (already read)', isFirstRead: false });
   } catch (error) {
     console.error('Error recording blog read:', error);
     res.status(500).json({ message: 'Error recording blog read' });

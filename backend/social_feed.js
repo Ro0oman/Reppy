@@ -1,5 +1,6 @@
 import express from 'express';
 import { query } from './db.js';
+import pool from './db.js';
 import { authenticate } from './middleware.js';
 import { createNotification } from './utils/notifications.js';
 
@@ -81,18 +82,19 @@ router.post('/like', authenticate, async (req, res) => {
   const { userId: TargetUserId, date } = req.body;
   const myUserId = req.user.id;
 
+  const client = await pool.connect();
   try {
-    await query('BEGIN');
+    await client.query('BEGIN');
 
     // 1. Ensure summary exists
-    let summaryRes = await query(
+    let summaryRes = await client.query(
       'SELECT id FROM daily_summaries WHERE user_id = $1 AND date = $2',
       [TargetUserId, date]
     );
 
     let summaryId;
     if (summaryRes.rows.length === 0) {
-      const newSummary = await query(
+      const newSummary = await client.query(
         'INSERT INTO daily_summaries (user_id, date) VALUES ($1, $2) RETURNING id',
         [TargetUserId, date]
       );
@@ -102,28 +104,28 @@ router.post('/like', authenticate, async (req, res) => {
     }
 
     // 2. Toggle Like
-    const existingLike = await query(
+    const existingLike = await client.query(
       'SELECT 1 FROM summary_interactions WHERE summary_id = $1 AND user_id = $2 AND type = $3',
       [summaryId, myUserId, 'LIKE']
     );
 
     if (existingLike.rows.length > 0) {
-      await query(
+      await client.query(
         'DELETE FROM summary_interactions WHERE summary_id = $1 AND user_id = $2 AND type = $3',
         [summaryId, myUserId, 'LIKE']
       );
-      await query('COMMIT');
+      await client.query('COMMIT');
       return res.json({ liked: false });
     } else {
-      await query(
+      await client.query(
         'INSERT INTO summary_interactions (summary_id, user_id, type) VALUES ($1, $2, $3)',
         [summaryId, myUserId, 'LIKE']
       );
-      await query('COMMIT');
+      await client.query('COMMIT');
       
       const cleanDate = typeof date === 'string' ? date.substring(0, 10) : date;
 
-      // Trigger Notification
+      // Trigger Notification (Safe to do after commit and with local query)
       await createNotification(
         TargetUserId, 
         'LIKE', 
@@ -136,9 +138,11 @@ router.post('/like', authenticate, async (req, res) => {
       return res.json({ liked: true });
     }
   } catch (error) {
-    await query('ROLLBACK');
+    if (client) await client.query('ROLLBACK');
     console.error('Error toggling like:', error);
     res.status(500).json({ message: 'Error toggling like' });
+  } finally {
+    client.release();
   }
 });
 
@@ -154,18 +158,19 @@ router.post('/comment', authenticate, async (req, res) => {
     return res.status(400).json({ message: 'Comment cannot be empty' });
   }
 
+  const client = await pool.connect();
   try {
-    await query('BEGIN');
+    await client.query('BEGIN');
 
     // 1. Ensure summary exists
-    let summaryRes = await query(
+    let summaryRes = await client.query(
       'SELECT id FROM daily_summaries WHERE user_id = $1 AND date = $2',
       [targetUserId, date]
     );
 
     let summaryId;
     if (summaryRes.rows.length === 0) {
-      const newSummary = await query(
+      const newSummary = await client.query(
         'INSERT INTO daily_summaries (user_id, date) VALUES ($1, $2) RETURNING id',
         [targetUserId, date]
       );
@@ -175,17 +180,15 @@ router.post('/comment', authenticate, async (req, res) => {
     }
 
     // 2. Insert Comment
-    const result = await query(
+    const result = await client.query(
       `INSERT INTO summary_interactions (summary_id, user_id, type, content) 
        VALUES ($1, $2, 'COMMENT', $3) RETURNING *`,
       [summaryId, myUserId, content]
     );
 
-    const userRes = await query('SELECT name FROM users WHERE id = $1', [myUserId]);
-    const ownerRes = await query('SELECT name FROM users WHERE id = $1', [targetUserId]);
-    const ownerName = ownerRes.rows[0]?.name || 'un atleta';
+    const userRes = await client.query('SELECT name FROM users WHERE id = $1', [myUserId]);
     
-    await query('COMMIT');
+    await client.query('COMMIT');
 
     const cleanDate = typeof date === 'string' ? date.substring(0, 10) : date;
 
@@ -206,9 +209,11 @@ router.post('/comment', authenticate, async (req, res) => {
       user_name: userRes.rows[0].name 
     });
   } catch (error) {
-    await query('ROLLBACK');
+    if (client) await client.query('ROLLBACK');
     console.error('Error adding comment:', error);
     res.status(500).json({ message: 'Error adding comment' });
+  } finally {
+    client.release();
   }
 });
 

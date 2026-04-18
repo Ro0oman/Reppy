@@ -78,7 +78,10 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { useI18nStore } from '../stores/i18n';
 import { Zap } from 'lucide-vue-next';
+
+const i18n = useI18nStore();
 
 const props = defineProps({
   level: { type: Number, default: 1 },

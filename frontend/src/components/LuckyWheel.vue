@@ -80,7 +80,7 @@
 
       </div>
 
-      <div class="p-6 bg-zinc-50 dark:bg-black/20 border-t border-zinc-200 dark:border-white/5 flex justify-center">
+      <div class="p-6 bg-zinc-50 dark:bg-black/20 border-t border-zinc-200 dark:border-white/5 flex justify-center pb-12 sm:pb-6">
         <button @click="$emit('close')" :disabled="spinning" class="text-xs font-black text-zinc-400 hover:text-zinc-900 dark:hover:text-white uppercase tracking-widest transition-all">
           {{ i18n.t('wheel_btn_close') }}
         </button>
