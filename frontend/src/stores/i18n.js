@@ -356,8 +356,8 @@ const translations = {
 
     codex_dex_name: 'DEXTERITY',
     codex_dex_quote: 'Precision over force.',
-    codex_dex_desc: 'Increases your Critical Hit chance and critical damage multiplier. Improved through technique and variety.',
-    codex_dex_action: 'Complete variety of exercises with clean technique.',
+    codex_dex_desc: 'Increases Critical Hit chance and the damage they deal. Every level significantly boosts your impact against Bosses.',
+    codex_dex_action: 'Muscle-ups and Weighted Pull-ups: You gain 10 base XP + extra weight per rep.',
 
     codex_end_name: 'ENDURANCE',
     codex_end_quote: 'The fire that never goes out.',
@@ -1020,8 +1020,8 @@ const translations = {
 
     codex_dex_name: 'DESTREZA',
     codex_dex_quote: 'Precisión sobre fuerza.',
-    codex_dex_desc: 'Aumenta tu probabilidad de Golpe Crítico y el multiplicador de daño crítico. Se mejora con técnica y variedad.',
-    codex_dex_action: 'Completa variedad de ejercicios con técnica limpia.',
+    codex_dex_desc: 'Aumenta tu probabilidad de Golpe Crítico y el multiplicador de daño crítico. Cada nivel potencia masivamente tu daño contra el Boss.',
+    codex_dex_action: 'Muscle-ups y Dominadas Lastradas: Ganás 10 XP base + el peso extra añadido por repetición.',
 
     codex_end_name: 'RESISTENCIA',
     codex_end_quote: 'El fuego que nunca se apaga.',
