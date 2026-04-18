@@ -169,9 +169,9 @@ const handleLike = async (activity) => {
             date: activity.date
         });
         
-        // Update local state reactive
+        // Fix #101: like_count from SQL COUNT(*) is bigint (string in JS), cast to Number first
         activity.user_has_liked = res.data.liked;
-        activity.like_count += res.data.liked ? 1 : -1;
+        activity.like_count = Number(activity.like_count) + (res.data.liked ? 1 : -1);
     } catch (e) {
         console.error('Error liking:', e);
     }
