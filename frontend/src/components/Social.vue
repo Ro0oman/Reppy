@@ -88,7 +88,7 @@
 
           <div class="space-y-4">
             <TransitionGroup name="list">
-              <button v-for="user in searchResults" :key="user.id"
+              <div v-for="user in searchResults" :key="user.id"
                 @click="$emit('viewProfile', user.id)"
                 :title="i18n.locale === 'es' ? `Ver perfil de ${user.name}` : `View ${user.name}'s profile`"
                 class="w-full text-left bg-foreground/[0.02] border border-border p-5 rounded-3xl flex items-center justify-between hover:bg-foreground/[0.04] transition-all group cursor-pointer active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-primary-500/50 outline-none">
@@ -110,7 +110,7 @@
                   <UserPlus class="w-3.5 h-3.5" />
                   {{ i18n.t('btn_add_friend') }}
                 </button>
-              </button>
+              </div>
             </TransitionGroup>
 
             <div v-if="searchQuery && !loadingSearch && searchResults.length === 0"
@@ -130,7 +130,7 @@
 
           <div class="grid grid-cols-1 gap-4">
             <TransitionGroup name="list">
-              <button v-for="friend in friends" :key="friend.id"
+              <div v-for="friend in friends" :key="friend.id"
                 @click="$emit('viewProfile', friend.id)"
                 :title="i18n.locale === 'es' ? `Ver perfil de ${friend.name}` : `View ${friend.name}'s profile`"
                 class="w-full text-left bg-foreground/[0.02] border border-border hover:border-primary-500/30 group p-6 rounded-[2rem] flex items-center justify-between transition-all cursor-pointer active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-primary-500/50 outline-none">
@@ -160,7 +160,7 @@
                   class="h-10 w-10 bg-foreground/5 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
                   <ChevronRight class="w-5 h-5 text-primary-500" />
                 </div>
-              </button>
+              </div>
             </TransitionGroup>
 
             <div v-if="friends.length === 0"

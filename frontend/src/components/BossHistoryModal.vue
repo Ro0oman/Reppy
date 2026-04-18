@@ -87,6 +87,7 @@
 import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
 import { X, Inbox, Loader2 } from 'lucide-vue-next';
+import { useI18nStore } from '../stores/i18n';
 import AvatarFrame from './AvatarFrame.vue';
 
 const props = defineProps({
@@ -99,6 +100,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close']);
 
+const i18n = useI18nStore();
 const loading = ref(true);
 const boss = ref(null);
 const contributors = ref([]);
