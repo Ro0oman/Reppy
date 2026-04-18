@@ -30,14 +30,7 @@ import { watch } from 'vue';
 
 const damageStore = useDamageStore();
 
-// Play sound whenever a new damage is added
-watch(() => damageStore.activeDamages.length, (newLen, oldLen) => {
-  if (newLen > oldLen) {
-    const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-10.mp3'); 
-    audio.volume = 0.4;
-    audio.play().catch(e => console.warn('[AUDIO_BLOCKED] User interaction required for sound'));
-  }
-});
+// Audio logic moved to interaction points (RepsInput.vue) to comply with browser policies
 
 const getDamageColor = (type) => {
   const colors = {

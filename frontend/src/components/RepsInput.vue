@@ -102,6 +102,16 @@ const loading = ref(false);
 
 const addReps = async (count) => {
   if (!count || loading.value) return;
+  
+  // Play hit sound immediately on user gesture to avoid browser block
+  try {
+    const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-10.mp3');
+    audio.volume = 0.3;
+    audio.play();
+  } catch (e) {
+    console.warn('[AUDIO_BLOCKED] Sound play failed', e);
+  }
+
   loading.value = true;
   try {
     const today = getLocalDateString();
