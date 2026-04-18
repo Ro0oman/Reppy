@@ -63,8 +63,10 @@ const handleKeydown = (e) => {
 watch(() => store.confirmVisible, (visible) => {
   if (visible) {
     window.addEventListener('keydown', handleKeydown);
+    document.body.style.overflow = 'hidden';
   } else {
     window.removeEventListener('keydown', handleKeydown);
+    document.body.style.overflow = '';
   }
 });
 

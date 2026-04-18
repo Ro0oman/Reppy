@@ -280,6 +280,15 @@ const canSpinToday = ref(false);
 const showCoinsInfo = ref(false);
 const showNotifications = ref(false);
 
+// Global Scroll Lock for App-level modals
+watch([showRoulette, showCoinsInfo], ([roulette, coins]) => {
+  if (roulette || coins) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
+});
+
 const handleBellClick = () => {
   if (window.innerWidth < 1024) {
     // Mobile/Tablet: Redirect to page

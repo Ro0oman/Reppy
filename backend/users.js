@@ -13,7 +13,7 @@ router.get('/me', authenticate, async (req, res) => {
     await autoGrantPendingChests(req.user.id);
 
     const result = await query(
-      `SELECT u.id, u.name, u.email, u.avatar_url, u.total_reps, u.is_private, u.has_seen_easter_modal, u.has_seen_damage_overhaul, u.daily_goal, u.body_weight, u.reppy_coins, u.boss_chests, u.level_chests, u.str_xp, u.pwr_xp, u.end_xp, u.agi_xp, u.total_xp, u.current_level, u.equipped_title_id, u.equipped_border_id, u.equipped_avatar_id, u.equipped_background_id, u.equipped_post_background_id, u.is_admin, u.theme,
+      `SELECT u.id, u.name, u.email, u.avatar_url, u.total_reps, u.is_private, u.has_seen_easter_modal, u.has_seen_damage_overhaul, u.daily_goal, u.body_weight, u.reppy_coins, u.boss_chests, u.level_chests, u.str_xp, u.dex_xp, u.end_xp, u.vig_xp, u.int_xp, u.fth_xp, u.total_xp, u.current_level, u.equipped_title_id, u.equipped_border_id, u.equipped_avatar_id, u.equipped_background_id, u.equipped_post_background_id, u.is_admin, u.theme,
               t.name as title_name, t.css_value as title_css,
               b.css_value as border_css,
               a.css_value as avatar_css,
@@ -26,7 +26,14 @@ router.get('/me', authenticate, async (req, res) => {
        WHERE u.id = $1`,
       [req.user.id]
     );
-    res.json(result.rows[0]);
+
+    if (result.rows.length === 0) return res.status(404).json({ message: 'User not found' });
+    
+    const user = result.rows[0];
+    // Calculate derived stats
+    user.xp_into_level = (user.total_xp || 0) % 1000;
+    
+    res.json(user);
   } catch (error) {
     console.error('Error fetching profile:', error);
     res.status(500).json({ message: 'Error fetching profile' });

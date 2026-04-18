@@ -29,35 +29,49 @@ export const calculateDamage = (user, reps, type) => {
   else if (t === 'dips') exerciseMult = 4.0;
   else if (t === 'pushups') exerciseMult = 2.0;
   
-  // 2. Extract Stats & Levels
+  // 2. Extract Stats & Levels (6-Stat System)
   const glvl = parseInt(user.current_level) || 1;
   const strLvl = parseInt(user.str_lvl) || 1;
-  const pwrLvl = parseInt(user.pwr_lvl) || 1;
-  const agiLvl = parseInt(user.agi_lvl) || 1;
+  const dexLvl = parseInt(user.dex_lvl) || 1;
+  const endLvl = parseInt(user.end_lvl) || 1;
+  const vigLvl = parseInt(user.vig_lvl) || 1;
+  const intLvl = parseInt(user.int_lvl) || 1;
+  const fthLvl = parseInt(user.fth_lvl) || 1;
 
-  // 3. Base & Level Scaling (BUFFED)
+  // 3. Scaling Formula (Dark Souls Style)
   const baseDamage = reps * exerciseMult;
-  const levelMult = 1 + (glvl / 2); // Faster progression: Level 30 = 16x multiplier
-  const magicBonus = (strLvl + pwrLvl) * 10; // Massive flat bonus for high stats
+  
+  // Level & INT Efficiency
+  const levelMult = 1 + (glvl / 2); 
+  const intBonus = 1 + (intLvl / 50); // Knowledge makes you more efficient
+  
+  // Physical Scaling (STR & END)
+  const strScale = 1 + (strLvl / 25);
+  const endScale = 1 + (endLvl / 50);
+  
+  // Flat Divine Bonus (FTH)
+  const divineBonus = fthLvl * 15;
 
-  let damageBeforeCrit = (baseDamage * levelMult) + magicBonus;
+  let damageBeforeCrit = (baseDamage * levelMult * intBonus * strScale * endScale) + divineBonus;
 
-  // 4. Critical Hit Roll (BUFFED)
-  const critChance = (agiLvl * 1.5) + (pwrLvl * 0.5);
-  const isCrit = (Math.random() * 100) < Math.min(65, critChance); 
+  // 4. Critical Hit Roll (DEX & VIG)
+  // DEX is primary for crit, VIG adds minor stability
+  const critChance = (dexLvl * 2.5) + (vigLvl * 0.5);
+  const isCrit = (Math.random() * 100) < Math.min(80, critChance); 
   
   let finalDamage = damageBeforeCrit;
   let critMult = 1;
   
   if (isCrit) {
-    critMult = 2.5 + (pwrLvl * 0.1); // High crit base and stat scale
+    // DEX scales the crit multiplier
+    critMult = 2.0 + (dexLvl * 0.1); 
     finalDamage = damageBeforeCrit * critMult;
   }
 
   return {
     totalDamage: Math.round(finalDamage),
     isCrit,
-    magicBonus: Math.round(magicBonus),
+    divineBonus: Math.round(divineBonus),
     baseDamage: Math.round(baseDamage),
     critMultiplier: parseFloat(critMult.toFixed(2))
   };

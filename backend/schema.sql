@@ -22,6 +22,10 @@ CREATE TABLE IF NOT EXISTS users (
     daily_goal INTEGER DEFAULT 50,
     has_seen_easter_modal BOOLEAN DEFAULT false,
     boss_chests INTEGER DEFAULT 1,
+    int_xp INTEGER DEFAULT 0,
+    fth_xp INTEGER DEFAULT 0,
+    dex_xp INTEGER DEFAULT 0,
+    vig_xp INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -103,6 +107,15 @@ CREATE TABLE IF NOT EXISTS coin_transactions (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Blog Tracking for Intelligence (INT)
+CREATE TABLE IF NOT EXISTS user_read_blogs (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    post_slug VARCHAR(255) NOT NULL,
+    read_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, post_slug)
+);
+
 -- Index for better performance
 CREATE INDEX IF NOT EXISTS idx_reps_user_date ON reps(user_id, date);
 CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(user_id_1, user_id_2);
@@ -124,6 +137,10 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_easter_modal BOOLEAN DEFAULT
 ALTER TABLE users ADD COLUMN IF NOT EXISTS level_chests INTEGER DEFAULT 0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS current_level INTEGER DEFAULT 1;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS level_chests_claimed INTEGER DEFAULT 1;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS int_xp INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS fth_xp INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS dex_xp INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS vig_xp INTEGER DEFAULT 0;
 
 -- Grant 1 chest to all existing users (Safety Update)
 UPDATE users SET boss_chests = GREATEST(boss_chests, 1) WHERE boss_chests IS NULL OR boss_chests = 0;

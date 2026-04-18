@@ -460,9 +460,23 @@ const shareWhatsapp = () => {
   window.open(whatsappUrl, '_blank');
 };
 
+const recordBlogRead = async () => {
+  const slug = route.params.slug;
+  if (!slug) return;
+  try {
+    await axios.post('/api/blog-tracking/read', { slug });
+    console.log('[REPPY_RPG] INT XP awarded for reading:', slug);
+  } catch (error) {
+    // Silently fail if not logged in or already read
+  }
+};
+
 onMounted(() => {
   window.addEventListener('scroll', updateScroll);
   
+  // RPG: Track Blog Read
+  recordBlogRead();
+
   // Set SEO tags manually
   document.title = `${post.value.title} | Reppy Blog`;
   
@@ -490,6 +504,11 @@ onMounted(() => {
   addOg('og:description', post.value.excerpt);
   addOg('og:image', post.value.image);
   addOg('og:type', 'article');
+});
+
+// Watch for slug changes to record reads on navigation
+watch(() => route.params.slug, () => {
+  recordBlogRead();
 });
 
 onUnmounted(() => {

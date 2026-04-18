@@ -21,6 +21,7 @@ import notificationRoutes from './notifications.js';
 import { query } from './db.js';
 import { blogData } from './blogData.js';
 import adminRoutes from './admin.js';
+import blogRoutes from './blog.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -58,6 +59,7 @@ apiRouter.use('/boss', bossRoutes);
 apiRouter.use('/profile', profileRoutes);
 apiRouter.use('/roulette', rouletteRoutes);
 apiRouter.use('/admin', adminRoutes);
+apiRouter.use('/blog-tracking', blogRoutes);
 
 // Health check (within router)
 apiRouter.get('/health', (req, res) => {

@@ -206,6 +206,15 @@ const isLoading = ref(false);
 const activeYear = ref(2026);
 const showDamageModal = ref(false);
 
+// Scroll lock when damage modal is active
+watch(showDamageModal, (val) => {
+  if (val) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
+});
+
 const stats = reactive({
   streak: 0,
   topMonth: 'N/A',
@@ -316,6 +325,13 @@ const handleCloseDamageModal = () => {
 };
 
 onMounted(() => {
+  // Check for exercise pre-selection from query params
+  const urlParams = new URLSearchParams(window.location.search);
+  const exerciseParam = urlParams.get('exercise');
+  if (exerciseParam) {
+    activeExercise.value = exerciseParam;
+  }
+
   fetchData();
   // Auto-refresh every 60 seconds to keep boss HP and leaderboard updated
   refreshInterval = setInterval(fetchData, 60000);

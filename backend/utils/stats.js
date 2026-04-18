@@ -64,18 +64,34 @@ export const recalculateUserStats = async (userId) => {
       }
     }
 
-    // 3. Apply XP Formulas
+    // 3. New Stat Logic (6-Stat System)
+    
+    // INT: Knowledge (Blog Reads) - 100 XP per unique article
+    const intRes = await query('SELECT COUNT(*)::int as read_count FROM user_read_blogs WHERE user_id = $1', [userId]);
+    const intXP = (intRes.rows[0]?.read_count || 0) * 100;
+
+    // FTH: Community/Faith (Total Boss Damage) - 1 XP per 50 damage dealt historically
+    const fthRes = await query('SELECT SUM(damage_dealt)::bigint as total_dmg FROM event_participants WHERE user_id = $1', [userId]);
+    const fthXP = Math.floor(Number(fthRes.rows[0]?.total_dmg || 0) / 50);
+
+    // VIG: Resilience (mapped from streak and consistency)
+    const vigXP = Math.floor((streak * 100) + (varietyCount * 50));
+
+    // DEX: Skill (mapped from power/technical moves)
+    const dexXP = pwrXP; // Calculated above as calculated_pwr_xp
+
+    // Core Stats (STR, END)
     const strXP = Math.floor(totalVolume * 0.05);
     const endXP = Math.floor(totalReps * 5);
-    const agiXP = Math.floor((streak * 40) + (varietyCount * 75));
-    const totalXP = strXP + pwrXP + endXP + agiXP;
+
+    // Total XP for Character Level
+    const totalXP = strXP + dexXP + endXP + vigXP + intXP + fthXP;
 
     // 4. Character Level Calculation (Hardcore: 1000 XP per level)
     const newLevel = Math.floor(totalXP / 1000) + 1;
     const xpIntoLevel = totalXP % 1000;
     
     // 5. Reward Logic (Every level reached gives a chest)
-    // We compare with level_chests_claimed to ensure we only reward each level once
     let additionalChests = 0;
     let newLevelChestsClaimed = user.level_chests_claimed || 1;
 
@@ -83,7 +99,6 @@ export const recalculateUserStats = async (userId) => {
       additionalChests = newLevel - newLevelChestsClaimed;
       newLevelChestsClaimed = newLevel;
 
-      // Trigger Level Up Notification
       await createNotification(
         userId,
         'LEVEL_UP',
@@ -92,7 +107,6 @@ export const recalculateUserStats = async (userId) => {
         newLevel.toString()
       );
 
-      // Trigger New Chest Notification
       await createNotification(
         userId,
         'NEW_CHEST',
@@ -108,22 +122,34 @@ export const recalculateUserStats = async (userId) => {
       SET 
         total_reps = $2,
         str_xp = $3,
-        pwr_xp = $4,
+        dex_xp = $4,
         end_xp = $5,
-        agi_xp = $6,
-        total_xp = $3::int + $4::int + $5::int + $6::int,
-        current_level = $7,
-        level_chests = COALESCE(level_chests, 0) + $8,
-        level_chests_claimed = $9
+        vig_xp = $6,
+        int_xp = $7,
+        fth_xp = $8,
+        total_xp = $9,
+        current_level = $10,
+        level_chests = COALESCE(level_chests, 0) + $11,
+        level_chests_claimed = $12
       WHERE id = $1
-    `, [userId, totalReps, strXP, pwrXP, endXP, agiXP, newLevel, additionalChests, newLevelChestsClaimed]);
+    `, [
+      userId, 
+      totalReps, 
+      strXP, dexXP, endXP, vigXP, intXP, fthXP, 
+      totalXP, 
+      newLevel, 
+      additionalChests, 
+      newLevelChestsClaimed
+    ]);
 
     return {
       totalReps,
       strXP,
-      pwrXP,
+      dexXP,
       endXP,
-      agiXP,
+      vigXP,
+      intXP,
+      fthXP,
       totalXP,
       currentLevel: newLevel,
       xpIntoLevel,
