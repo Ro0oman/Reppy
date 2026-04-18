@@ -81,10 +81,10 @@
 
       <!-- Stat Detail Modal (Clash Royale Detail View) -->
       <Transition name="fade">
-        <div v-if="selectedStat" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" @click.self="selectedStat = null">
-          <div class="bg-surface border border-primary-500/30 rounded-[2.5rem] w-full max-w-sm overflow-hidden animate-in shadow-[0_0_100px_rgba(0,0,0,0.8)] relative">
+        <div v-if="selectedStat" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-sm" @click.self="selectedStat = null">
+          <div class="bg-surface border border-primary-500/30 rounded-t-[2.5rem] sm:rounded-[2.5rem] w-full max-w-sm max-h-[88vh] overflow-y-auto animate-in shadow-[0_0_100px_rgba(0,0,0,0.8)] relative">
             <!-- Close Button -->
-            <button @click="selectedStat = null" class="absolute top-6 right-6 z-20 p-2 text-muted hover:text-white transition-colors">
+            <button @click="selectedStat = null" class="sticky top-4 float-right mr-4 z-20 p-2 text-muted hover:text-white transition-colors">
               <X class="w-6 h-6" />
             </button>
             <div class="p-8 space-y-8 text-center">
@@ -158,13 +158,26 @@
       </div>
 
       <!-- Item Grids by Type -->
-      <div v-else v-for="(items, type) in groupedItems" :key="type" class="space-y-6">
-        <div class="flex items-center gap-4">
-          <h2 class="text-xs font-black text-foreground uppercase tracking-[0.3em] font-industrial border-b-2 border-primary-500 pb-1">{{ type === 'title' ? 'DESIGNACIONES' : type === 'border' ? 'MARCOS' : 'ESCENARIOS' }}</h2>
-          <div class="flex-1 h-px bg-white/5"></div>
-        </div>
+      <div v-else v-for="(items, type) in groupedItems" :key="type" class="space-y-3">
+        <!-- Category Dropdown Header -->
+        <button 
+          @click="toggleCategory(type)"
+          class="w-full flex items-center justify-between px-4 py-3 bg-surface/40 border border-white/5 rounded-2xl hover:border-primary-500/20 transition-all group"
+        >
+          <div class="flex items-center gap-3">
+            <div class="h-1 w-6 bg-primary-500 rounded-full"></div>
+            <h2 class="text-xs font-black text-foreground uppercase tracking-[0.3em] font-industrial">{{ type === 'title' ? 'DESIGNACIONES' : type === 'border' ? 'MARCOS' : 'ESCENARIOS' }}</h2>
+            <span class="text-[9px] font-black text-muted bg-surface px-2 py-0.5 rounded-full">{{ items.length }}</span>
+          </div>
+          <ChevronDown 
+            class="w-4 h-4 text-muted transition-transform duration-300" 
+            :class="openCategories[type] !== false ? 'rotate-180' : ''"
+          />
+        </button>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <!-- Collapsible Grid -->
+        <Transition name="slide-down">
+          <div v-if="openCategories[type] !== false" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-2">
           <div v-for="item in items" :key="item.id" 
             @click="toggleEquip(item)"
             class="clash-card group" 
@@ -194,7 +207,8 @@
                </div>
             </div>
           </div>
-        </div>
+          </div>
+        </Transition>
       </div>
     </div>
 
@@ -213,7 +227,7 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import { 
   Package, Frame, Type, Check, Sparkles, Archive, Zap, TrendingUp, 
-  Dumbbell, Sword, Heart, Brain, Church, Trophy, ExternalLink, Activity, X
+  Dumbbell, Sword, Heart, Brain, Church, Trophy, ExternalLink, Activity, X, ChevronDown
 } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
@@ -232,6 +246,12 @@ const loading = ref(true);
 
 const activeTab = ref('stats');
 const selectedStat = ref(null);
+const openCategories = ref({}); // tracks open/closed state per category type
+
+const toggleCategory = (type) => {
+  // default is open (undefined = truthy), so first click closes
+  openCategories.value[type] = openCategories.value[type] === false ? true : false;
+};
 
 const rpgStats = computed(() => [
   {
@@ -446,4 +466,20 @@ onMounted(async () => {
 /* Dark Mode Overrides for inner content */
 :deep(.clash-card h4) { color: #1a1a1a; }
 :deep(.clash-card p) { color: #4a4a4a; }
+
+/* Collapsible category transition */
+.slide-down-enter-active, .slide-down-leave-active {
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+.slide-down-enter-from, .slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+  max-height: 0;
+}
+.slide-down-enter-to, .slide-down-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 2000px;
+}
 </style>

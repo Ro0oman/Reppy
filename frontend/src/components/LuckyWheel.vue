@@ -95,6 +95,7 @@ import { Sparkles } from 'lucide-vue-next';
 import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
+import { useI18nStore } from '../stores/i18n';
 import confetti from 'canvas-confetti';
 
 const props = defineProps({
@@ -105,6 +106,7 @@ const emit = defineEmits(['close', 'spun']);
 
 const authStore = useAuthStore();
 const notificationStore = useNotificationStore();
+const i18n = useI18nStore();
 
 const spinning = ref(false);
 const canSpin = ref(true);
