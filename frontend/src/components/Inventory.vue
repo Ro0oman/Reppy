@@ -210,6 +210,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { Package, Frame, Type, Check, Sparkles, Archive, Zap, TrendingUp } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
+import { useI18nStore } from '../stores/i18n';
 import { useNotificationStore } from '../stores/notification';
 import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
@@ -217,6 +218,7 @@ import ChestOpening from './ChestOpening.vue';
 import axios from 'axios';
 
 const authStore = useAuthStore();
+const i18n = useI18nStore();
 const emit = defineEmits(['start', 'viewProfile']);
 const notificationStore = useNotificationStore();
 const inventory = ref([]);
