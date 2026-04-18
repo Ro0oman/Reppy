@@ -532,6 +532,9 @@ const translations = {
     btn_lock: 'Lock',
     btn_equip: 'Equip',
     btn_on: 'ON',
+    settings_title: 'Profile Settings',
+    settings_success: 'Profile settings updated successfully.',
+    settings_error: 'Failed to update settings.',
 
     // Profile specific
     profile_decrypting: 'DECRYPTING PROFILE...',
@@ -1194,6 +1197,9 @@ const translations = {
     btn_lock: 'Bloqueado',
     btn_equip: 'Equipar',
     btn_on: 'Activado',
+    settings_title: 'Ajustes de Perfil',
+    settings_success: 'Ajustes de perfil actualizados con éxito.',
+    settings_error: 'Error al actualizar los ajustes.',
 
     // Profile specific
     profile_decrypting: 'DESCRIPTANDO PERFIL...',
