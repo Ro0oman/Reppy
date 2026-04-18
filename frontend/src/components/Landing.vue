@@ -422,12 +422,12 @@
             <ArrowUp class="w-12 h-12 text-primary-500/20 group-hover:scale-125 transition-transform" />
           </div>
           <div class="p-8 space-y-4 flex-grow flex flex-col">
-            <span class="text-[10px] font-black text-muted uppercase tracking-widest">Guía de Entrenamiento</span>
+            <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18n.t('article_guide_tag') }}</span>
             <h3 class="text-xl font-bold text-foreground group-hover:text-primary-500 transition-colors leading-tight">
-              Cómo hacer tu primera dominada: Guía Maestra
+              {{ i18n.t('article_title1') }}
             </h3>
             <p class="text-sm text-muted/60 leading-relaxed line-clamp-2">
-              Protocolos de progresión desde cero hasta dominar la barra.
+              {{ i18n.t('article_desc1') }}
             </p>
           </div>
         </router-link>
@@ -438,12 +438,12 @@
             <Sword class="w-12 h-12 text-accent/20 group-hover:scale-125 transition-transform" />
           </div>
           <div class="p-8 space-y-4 flex-grow flex flex-col">
-            <span class="text-[10px] font-black text-muted uppercase tracking-widest">Ecosistema RPG</span>
+            <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18n.t('feat_evolution_title') }}</span>
             <h3 class="text-xl font-bold text-foreground group-hover:text-accent transition-colors leading-tight">
-              Gamificación y Calistenia: Por qué funciona Reppy
+              {{ i18n.t('article_title2') }}
             </h3>
             <p class="text-sm text-muted/60 leading-relaxed line-clamp-2">
-              La ciencia detrás de los puntos de experiencia y la motivación en el fitness.
+              {{ i18n.t('article_desc2') }}
             </p>
           </div>
         </router-link>
@@ -635,54 +635,14 @@ onMounted(() => {
 });
 
 const faqs = computed(() => [
-  {
-    q: i18n.locale === 'es' ? '¿Reppy es gratis?' : 'Is Reppy free?',
-    a: i18n.locale === 'es' 
-      ? 'Sí, Reppy es 100% gratuito. Puedes registrarte con Google y empezar a contar tus repeticiones de calistenia sin ningún coste.'
-      : 'Yes, Reppy is 100% free. You can sign up with Google and start counting your calisthenics reps at no cost.'
-  },
-  {
-    q: i18n.locale === 'es' ? '¿Qué ejercicios puedo registrar?' : 'What exercises can I track?',
-    a: i18n.locale === 'es'
-      ? 'Puedes registrar dominadas (pull-ups), flexiones (push-ups), fondos (dips), muscle ups y dominadas con lastre (weighted pull-ups).'
-      : 'You can track pull-ups, push-ups, dips, muscle ups, and weighted pull-ups.'
-  },
-  {
-    q: i18n.locale === 'es' ? '¿Cómo funciona el sistema RPG?' : 'How does the RPG system work?',
-    a: i18n.locale === 'es'
-      ? 'Cada repetición te da Reppy Coins y experiencia en 4 atributos: Fuerza (STR), Potencia (PWR), Resistencia (END) y Agilidad (AGI). Puedes gastar las monedas en la tienda para comprar títulos, marcos y efectos exclusivos.'
-      : 'Every rep gives you Reppy Coins and XP in 4 attributes: Strength (STR), Power (PWR), Endurance (END), and Agility (AGI). You can spend coins in the shop to buy exclusive titles, borders, and effects.'
-  },
-  {
-    q: i18n.locale === 'es' ? '¿Qué son los Boss Fights?' : 'What are Boss Fights?',
-    a: i18n.locale === 'es'
-      ? 'Son eventos comunitarios donde todos los usuarios luchan contra un boss épico. Cada repetición que registras inflige daño al boss. Al derrotarlo, toda la comunidad desbloquea cofres con recompensas exclusivas.'
-      : 'They are community events where all users fight against an epic boss. Every rep you log deals damage to the boss. Upon defeat, the entire community unlocks chests with exclusive rewards.'
-  },
-  {
-    q: i18n.locale === 'es' ? '¿Puedo ver mi progreso de entrenamiento?' : 'Can I see my training progress?',
-    a: i18n.locale === 'es'
-      ? 'Sí. Reppy incluye un heatmap de actividad estilo GitHub donde ves todos tus días de entrenamiento, además de estadísticas de racha, volumen total y progreso diario con metas personalizadas.'
-      : 'Yes. Reppy includes a GitHub-style activity heatmap where you can see all your training days, plus streak stats, total volume, and daily progress with custom goals.'
-  },
-  {
-    q: i18n.locale === 'es' ? '¿Puedo competir con otros usuarios?' : 'Can I compete with other users?',
-    a: i18n.locale === 'es'
-      ? 'Sí. Reppy tiene rankings globales filtrados por día, semana, mes y total. También puedes añadir amigos y ver un ranking privado con tu círculo de entrenamiento.'
-      : 'Yes. Reppy has global rankings filtered by day, week, month, and all-time. You can also add friends and see a private ranking with your inner circle.'
-  },
-  {
-    q: i18n.locale === 'es' ? '¿Funciona en el móvil?' : 'Does it work on mobile?',
-    a: i18n.locale === 'es'
-      ? 'Sí. Reppy está optimizado para móvil con una interfaz responsive y una barra de navegación inferior para acceso rápido a todas las secciones.'
-      : 'Yes. Reppy is mobile-optimized with a responsive interface and a bottom navigation bar for quick access to all sections.'
-  },
-  {
-    q: i18n.locale === 'es' ? '¿Necesito descargar algo?' : 'Do I need to download anything?',
-    a: i18n.locale === 'es'
-      ? 'No. Reppy es una web app que funciona directamente en tu navegador. No necesitas descargar nada. Compatible con Chrome, Firefox, Safari y Edge.'
-      : 'No. Reppy is a web app that runs directly in your browser. You don\'t need to download anything. Compatible with Chrome, Firefox, Safari, and Edge.'
-  }
+  { q: i18n.t('faq_q1'), a: i18n.t('faq_a1') },
+  { q: i18n.t('faq_q2'), a: i18n.t('faq_a2') },
+  { q: i18n.t('faq_q3'), a: i18n.t('faq_a3') },
+  { q: i18n.t('faq_q4'), a: i18n.t('faq_a4') },
+  { q: i18n.t('faq_q5'), a: i18n.t('faq_a5') },
+  { q: i18n.t('faq_q6'), a: i18n.t('faq_a6') },
+  { q: i18n.t('faq_q7'), a: i18n.t('faq_a7') },
+  { q: i18n.t('faq_q8'), a: i18n.t('faq_a8') }
 ]);
 
 onMounted(async () => {
