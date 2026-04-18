@@ -129,8 +129,8 @@
           </div>
           <div class="space-y-2 text-center md:text-left">
             <span class="text-[10px] font-black uppercase tracking-widest text-primary">{{ i18n.t('master_guide') || 'Guía Maestra' }}</span>
-            <h4 class="text-xl font-bold text-foreground">Aprende la técnica completa en: {{ (relatedPillar.locales[i18n.locale] || relatedPillar.locales.en).title }}</h4>
-            <router-link :to="`/blog/${relatedPillar.slug}`" class="inline-block text-sm font-black text-primary hover:underline">Leer Guía Definitiva &rarr;</router-link>
+            <h4 class="text-xl font-bold text-foreground">{{ i18n.t('blog_learn_more') }} {{ (relatedPillar.locales[i18n.locale] || relatedPillar.locales.en).title }}</h4>
+            <router-link :to="`/blog/${relatedPillar.slug}`" class="inline-block text-sm font-black text-primary hover:underline">{{ i18n.t('blog_read_ultimate') }} &rarr;</router-link>
           </div>
         </div>
       </main>

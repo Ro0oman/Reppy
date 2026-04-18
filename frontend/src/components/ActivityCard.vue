@@ -91,8 +91,8 @@
           <div>
             <p class="text-[10px] font-black text-primary-500 uppercase tracking-widest leading-none">BOSS ASSAULT</p>
             <p class="text-sm font-black text-foreground uppercase tracking-tight mt-1">
-              {{ isOwn ? 'Has infligido' : activity.user_name + ' ha infligido' }} 
-              <span class="text-primary-500">{{ totalBossDamage }}</span> de daño en esta sesión
+              {{ isOwn ? i18n.t('activity_inflicted_you') : activity.user_name + ' ' + i18n.t('activity_has_inflicted') }} 
+              <span class="text-primary-500">{{ totalBossDamage }}</span> {{ i18n.t('activity_damage_session') }}
             </p>
           </div>
         </div>
@@ -135,7 +135,7 @@
         <input 
           v-model="commentText" 
           @keyup.enter="submitComment"
-          placeholder="Escribe un comentario operativo..." 
+          :placeholder="i18n.t('activity_comment_hint')" 
           class="flex-1 bg-surface/10 border border-border rounded-xl px-4 py-2 text-xs font-medium focus:outline-none focus:border-primary-500/50 transition-all"
         />
         <button @click="submitComment" class="p-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-all disabled:opacity-50" :disabled="!commentText.trim()">
@@ -154,7 +154,7 @@
                   <p class="text-xs text-foreground/90 leading-tight font-medium">{{ comment.content }}</p>
               </div>
           </div>
-          <p v-if="!loadingComments && comments.length === 0" class="text-[10px] text-center text-muted uppercase tracking-widest py-4 opacity-40">No records yet</p>
+          <p v-if="!loadingComments && comments.length === 0" class="text-[10px] text-center text-muted uppercase tracking-widest py-4 opacity-40">{{ i18n.t('activity_no_records') }}</p>
       </div>
     </div>
   </div>
@@ -237,24 +237,22 @@ const shareActivity = async () => {
         const shareUrl = `${baseUrl}?user=${props.activity.user_id}&date=${props.activity.date}`;
         
         const shareData = {
-            title: 'Reppy - Protocolo de Entrenamiento',
-            text: i18n.locale === 'es' 
-                ? `Echa un vistazo al entrenamiento de ${props.activity.user_name} en Reppy` 
-                : `Check out ${props.activity.user_name}'s workout on Reppy`,
+            title: i18n.t('activity_share_title'),
+            text: i18n.t('activity_share_msg').replace('{name}', props.activity.user_name),
             url: shareUrl
         };
 
         if (navigator.share) {
             await navigator.share(shareData);
-            notificationStore.notify(i18n.locale === 'es' ? '¡Compartido con éxito!' : 'Shared successfully!', 'success');
+            notificationStore.notify(i18n.t('activity_shared'), 'success');
         } else {
             await navigator.clipboard.writeText(shareUrl);
-            notificationStore.notify(i18n.locale === 'es' ? '¡Enlace de entrenamiento copiado!' : 'Workout link copied!', 'success');
+            notificationStore.notify(i18n.t('activity_copied'), 'success');
         }
     } catch (e) {
         if (e.name !== 'AbortError') {
             console.error('Error sharing:', e);
-            notificationStore.notify(i18n.locale === 'es' ? 'Error al compartir' : 'Error sharing', 'error');
+            notificationStore.notify(i18n.t('activity_error_share'), 'error');
         }
     }
 };

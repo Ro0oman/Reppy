@@ -29,7 +29,7 @@
             <div v-if="nav.id === 'inventory' && authStore.user?.boss_chests > 0" 
               class="absolute top-1.5 right-2 w-2 h-2 bg-primary-500 rounded-full border-2 border-surface"></div>
           </router-link>
-          
+          <router-link v-if="authStore.user?.role === 'admin'" to="/admin"
             class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500 hover:bg-indigo-500/10 transition-all font-industrial">
             {{ i18n.t('economy_admin') }}
           </router-link>
@@ -164,7 +164,6 @@
     <!-- Global Interface Components -->
     <NotificationToast />
     <ConfirmDialog />
-    <WelcomeModal :show="showEasterModal" @close="showEasterModal = false" />
     <LuckyWheel :show="showRoulette" @close="showRoulette = false" @spun="onSpun" />
     <DamageNumbers />
 
@@ -262,7 +261,6 @@ import { useNotificationsStore } from './stores/notifications';
 // Components
 import AvatarFrame from './components/AvatarFrame.vue'
 import BackgroundEffect from './components/BackgroundEffect.vue'
-import WelcomeModal from './components/WelcomeModal.vue'
 import LuckyWheel from './components/LuckyWheel.vue'
 import LevelBar from './components/LevelBar.vue'
 import NotificationToast from './components/NotificationToast.vue'
@@ -277,7 +275,6 @@ const notifStore = useNotificationsStore();
 const router = useRouter();
 const route = useRoute();
 
-const showEasterModal = ref(false);
 const showRoulette = ref(false);
 const canSpinToday = ref(false);
 const showCoinsInfo = ref(false);
@@ -345,7 +342,9 @@ watch(() => authStore.isAuthenticated, (val) => {
     authStore.fetchProfile();
     checkRoulette();
     notifStore.fetchNotifications();
-    if (authStore.user && !authStore.user.has_seen_easter_modal) showEasterModal.value = true;
+    if (authStore.user && !authStore.user.has_seen_easter_modal) {
+      // Logic removed
+    }
   }
 }, { immediate: true });
 
@@ -353,7 +352,9 @@ onMounted(async () => {
   if (authStore.isAuthenticated) {
     checkRoulette();
     notifStore.fetchNotifications();
-    if (authStore.user && !authStore.user.has_seen_easter_modal) showEasterModal.value = true;
+    if (authStore.user && !authStore.user.has_seen_easter_modal) {
+      // Logic removed
+    }
   }
 });
 </script>

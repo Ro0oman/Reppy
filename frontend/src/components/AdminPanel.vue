@@ -3,9 +3,9 @@
     <div class="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
       <div>
         <h1 class="text-4xl font-black text-zinc-900 dark:text-white uppercase tracking-tighter italic">
-          Panel de <span class="text-primary-600">Administración</span>
+          {{ i18n.t('admin_title_start') }} <span class="text-primary-600">{{ i18n.t('admin_title_end') }}</span>
         </h1>
-        <p class="text-zinc-500 dark:text-zinc-400 mt-1 font-medium">Gestiona la economía y los eventos globales.</p>
+        <p class="text-zinc-500 dark:text-zinc-400 mt-1 font-medium">{{ i18n.t('admin_subtitle') }}</p>
       </div>
       
       <div class="flex p-1 bg-zinc-100 dark:bg-white/5 rounded-2xl border border-zinc-200 dark:border-white/10 self-start">
@@ -21,10 +21,10 @@
     <div v-if="activeTab === 'cosmetics'" class="space-y-8">
       <div class="glass p-8 rounded-[2.5rem] border-white/10">
         <div class="space-y-1.5 mb-6">
-          <label class="text-[10px] uppercase font-black text-zinc-500 tracking-widest">{{ editingCosmeticId ? 'Editar' : 'Nuevo' }} Cosmético</label>
+          <label class="text-[10px] uppercase font-black text-zinc-500 tracking-widest">{{ editingCosmeticId ? i18n.t('admin_edit_cosmetic') : i18n.t('admin_new_cosmetic') }}</label>
           <h2 class="text-xl font-bold text-white flex items-center gap-2">
             <Sparkles class="w-5 h-5 text-primary-500" />
-            {{ editingCosmeticId ? 'Actualizar' : 'Crear' }} Cosmético
+            {{ editingCosmeticId ? i18n.t('admin_update_cosmetic') : i18n.t('admin_create_cosmetic') }}
           </h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -68,10 +68,10 @@
         </div>
         <div class="flex gap-4 mt-8">
           <button @click="createCosmetic" class="flex-1 bg-primary-600 hover:bg-primary-500 text-white font-black uppercase tracking-widest px-8 py-4 rounded-2xl transition-all shadow-xl shadow-primary-600/20">
-            {{ editingCosmeticId ? 'Actualizar' : 'Guardar' }} Cosmético
+            {{ editingCosmeticId ? i18n.t('admin_update_cosmetic') : i18n.t('admin_save_cosmetic') }}
           </button>
           <button v-if="editingCosmeticId" @click="cancelEditCosmetic" class="px-8 py-4 bg-white/5 hover:bg-white/10 text-white font-black uppercase tracking-widest rounded-2xl transition-all border border-white/10">
-            Cancelar
+            {{ i18n.t('admin_cancel') }}
           </button>
         </div>
       </div>
@@ -110,7 +110,7 @@
       <div class="glass p-8 rounded-[2.5rem] border-white/10">
         <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
           <Target class="w-5 h-5 text-primary-500" />
-          Nuevo Boss de Temporada
+          {{ i18n.t('admin_new_boss') }}
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-1.5">
@@ -139,7 +139,7 @@
           </div>
         </div>
         <button @click="createBoss" class="mt-8 bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest px-8 py-4 rounded-2xl w-full md:w-auto transition-all shadow-xl shadow-indigo-600/20">
-          Programar Evento
+          {{ i18n.t('admin_schedule_event') }}
         </button>
       </div>
 
@@ -179,6 +179,9 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { Sparkles, Target, Trash2, Edit2, Calendar } from 'lucide-vue-next';
 import { useNotificationStore } from '../stores/notification';
+import { useI18nStore } from '../stores/i18n';
+
+const i18n = useI18nStore();
 
 const notificationStore = useNotificationStore();
 const activeTab = ref('cosmetics');
@@ -307,9 +310,9 @@ const getBossStatus = (boss) => {
   const now = new Date();
   const start = new Date(boss.start_date);
   const end = new Date(boss.end_date);
-  if (now < start) return 'Próximamente';
-  if (now > end) return 'Finalizado';
-  return 'Activo';
+  if (now < start) return i18n.t('admin_status_upcoming');
+  if (now > end) return i18n.t('admin_status_finished');
+  return i18n.t('admin_status_active');
 };
 
 const getBossStatusClass = (boss) => {
@@ -320,7 +323,7 @@ const getBossStatusClass = (boss) => {
 };
 
 const formatDate = (dateStr) => {
-  return new Date(dateStr).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+  return new Date(dateStr).toLocaleDateString(i18n.locale === 'es' ? 'es-ES' : 'en-US', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
 };
 
 onMounted(() => {

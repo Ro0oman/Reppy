@@ -8,9 +8,9 @@
           <Sparkles class="w-6 h-6 text-primary-600" />
         </div>
         <h2 class="text-3xl font-black text-zinc-900 dark:text-white uppercase tracking-tighter italic leading-none">
-          Giro <span class="text-primary-600">Diario</span>
+          {{ i18n.t('wheel_title_start') }} <span class="text-primary-600">{{ i18n.t('wheel_title_end') }}</span>
         </h2>
-        <p class="text-zinc-500 dark:text-zinc-400 font-medium text-sm mt-2">Prueba tu suerte para ganar recompensas.</p>
+        <p class="text-zinc-500 dark:text-zinc-400 font-medium text-sm mt-2">{{ i18n.t('wheel_subtitle') }}</p>
       </div>
 
       <div class="p-8 flex flex-col items-center">
@@ -56,7 +56,7 @@
             :disabled="spinning || !canSpin"
             class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white dark:bg-zinc-800 shadow-2xl border-4 border-primary-500 flex items-center justify-center z-30 transition-all disabled:opacity-50 disabled:grayscale"
           >
-            <span class="text-[10px] font-black text-primary-600 uppercase tracking-tighter">{{ spinning ? '...' : 'GIRAR' }}</span>
+            <span class="text-[10px] font-black text-primary-600 uppercase tracking-tighter">{{ spinning ? i18n.t('wheel_btn_spinning') : i18n.t('wheel_btn_spin') }}</span>
           </button>
         </div>
 
@@ -73,7 +73,7 @@
           <div v-else-if="!canSpin && !spinning" class="text-center">
             <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1 italic">{{ i18n.t('wheel_return_tomorrow') }}</p>
             <div class="bg-zinc-100 dark:bg-white/5 px-6 py-2 rounded-xl border border-zinc-200 dark:border-white/10">
-               <span class="text-sm font-bold text-zinc-400">Ya has realizado tu giro diario</span>
+               <span class="text-sm font-bold text-zinc-400">{{ i18n.t('wheel_already_spun') }}</span>
             </div>
           </div>
         </div>
@@ -82,7 +82,7 @@
 
       <div class="p-6 bg-zinc-50 dark:bg-black/20 border-t border-zinc-200 dark:border-white/5 flex justify-center">
         <button @click="$emit('close')" :disabled="spinning" class="text-xs font-black text-zinc-400 hover:text-zinc-900 dark:hover:text-white uppercase tracking-widest transition-all">
-          Cerrar
+          {{ i18n.t('wheel_btn_close') }}
         </button>
       </div>
     </div>
