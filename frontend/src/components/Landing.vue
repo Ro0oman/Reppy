@@ -596,7 +596,7 @@ import axios from 'axios';
 import { 
   Activity, Trophy, Users, Sword, Flame, Plus, 
   ArrowUp, ArrowDown, ArrowDownUp, Dumbbell, ChevronDown,
-  Github, Star, MessageCircle
+  Github, Star, MessageCircle, Target
 } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
