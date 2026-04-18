@@ -91,13 +91,15 @@ router.get('/:id', async (req, res) => {
     );
 
     // RPG CALCULATIONS - Now handled by shared utility
-    const stats = await recalculateUserStats(userId);
-    const { strXP: str_xp, pwrXP: pwr_xp, endXP: end_xp, agiXP: agi_xp, streak, totalVolume } = stats;
+    const statsResult = await recalculateUserStats(userId);
+    const { 
+      strXP, dexXP, endXP, vigXP, intXP, fthXP, 
+      totalXP, streak, totalVolume 
+    } = statsResult;
 
     const getLevel = (xp) => Math.floor((xp || 0) / 100) + 1;
 
     // Dynamic Title Selection
-    const totalXP = str_xp + pwr_xp + end_xp + agi_xp;
     let dynamicTitle = 'Novato de Midgard';
     if (totalXP > 40000) dynamicTitle = 'Espectro de Reppy';
     else if (totalXP > 15000) dynamicTitle = 'Dios de la Guerra';
@@ -116,12 +118,19 @@ router.get('/:id', async (req, res) => {
         title_name: finalTitleName,
         title_css: finalTitleCss,
         read_blogs: readBlogs,
-        str_xp, pwr_xp, end_xp, agi_xp, 
+        str_xp: strXP,
+        dex_xp: dexXP,
+        end_xp: endXP,
+        vig_xp: vigXP,
+        int_xp: intXP,
+        fth_xp: fthXP,
         total_xp: totalXP,
-        str_lvl: getLevel(str_xp),
-        pwr_lvl: getLevel(pwr_xp),
-        end_lvl: getLevel(end_xp),
-        agi_lvl: getLevel(agi_xp)
+        str_lvl: getLevel(strXP),
+        dex_lvl: getLevel(dexXP),
+        end_lvl: getLevel(endXP),
+        vig_lvl: getLevel(vigXP),
+        int_lvl: getLevel(intXP),
+        fth_lvl: getLevel(fthXP)
       },
       heatmap: heatmapResult.rows || [],
       stats: { totalReps, streak, favExercise, totalXP, totalVolume, breakdown: breakdownRes.rows || [] },
