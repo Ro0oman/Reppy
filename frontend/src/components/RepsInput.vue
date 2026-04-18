@@ -103,13 +103,19 @@ const loading = ref(false);
 const addReps = async (count) => {
   if (!count || loading.value) return;
   
-  // Play hit sound immediately on user gesture to avoid browser block
+  // Use a more robust audio source from a high-uptime CDN (Mixkit preview)
   try {
-    const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-10.mp3');
+    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
     audio.volume = 0.3;
-    audio.play();
+    const playPromise = audio.play();
+    
+    if (playPromise !== undefined) {
+      playPromise.catch(e => {
+        console.warn('[AUDIO_BLOCKED] Interaction required or playback error:', e.name);
+      });
+    }
   } catch (e) {
-    console.warn('[AUDIO_BLOCKED] Sound play failed', e);
+    console.warn('[AUDIO_INIT_ERROR] Sound initialization failed', e);
   }
 
   loading.value = true;

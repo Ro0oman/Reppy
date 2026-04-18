@@ -16,7 +16,18 @@ import { getLocalDateString } from './date.js';
  * - AGI XP: floor((streak * 40) + (varietyCount * 75))
  */
 
-export const getStatLevel = (xp) => Math.floor((xp || 0) / 100) + 1;
+export const getStatLevel = (xp) => {
+  if (!xp || xp <= 0) return 1;
+  // Quadratic formula: XP = 100 * (L-1) * L / 2
+  // Solving for L: L = (1 + sqrt(1 + 0.08 * XP)) / 2
+  const level = (1 + Math.sqrt(1 + 0.08 * xp)) / 2;
+  return Math.floor(level);
+};
+
+export const getXPForLevel = (level, factor = 100) => {
+  if (level <= 1) return 0;
+  return (factor * (level - 1) * level) / 2;
+};
 
 /**
  * Augments a user object from the DB with calculated level fields.
@@ -117,10 +128,17 @@ export const recalculateUserStats = async (userId) => {
     // Total XP for Character Level
     const totalXP = strXP + dexXP + endXP + vigXP + intXP + fthXP;
 
-    // 4. Character Level Calculation (Hardcore: 1000 XP per level)
-    const newLevel = Math.floor(totalXP / 1000) + 1;
-    const xpIntoLevel = totalXP % 1000;
+    // 4. Character Level Calculation (Dynamic Quadratic: base 1000)
+    // L = (1 + sqrt(1 + 8 * totalXP / 1000)) / 2
+    const levelFloat = (1 + Math.sqrt(1 + 0.008 * totalXP)) / 2;
+    const newLevel = Math.floor(levelFloat);
     
+    const xpCurrentLevelStart = getXPForLevel(newLevel, 1000);
+    const xpNextLevelStart = getXPForLevel(newLevel + 1, 1000);
+    
+    const xpIntoLevel = totalXP - xpCurrentLevelStart;
+    const xpForNextLevel = xpNextLevelStart - xpCurrentLevelStart;
+
     // 5. Reward Logic (Every level reached gives a chest)
     let additionalChests = 0;
     let newLevelChestsClaimed = user.level_chests_claimed || 1;
@@ -183,7 +201,7 @@ export const recalculateUserStats = async (userId) => {
       totalXP,
       currentLevel: newLevel,
       xpIntoLevel,
-      xpForNextLevel: 1000,
+      xpForNextLevel,
       streak,
       totalVolume
     };

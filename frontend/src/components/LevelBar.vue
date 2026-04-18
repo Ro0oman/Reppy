@@ -46,21 +46,16 @@
 
           <div class="space-y-3">
             <div class="flex justify-between items-end">
-              <span class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">XP TOTAL</span>
-              <span class="text-xs font-black text-white text-precision tabular-nums">{{ currentXp }} / {{ (level + 1) * nextLevelXp }}</span>
-            </div>
-            
-            <div class="flex justify-between items-end">
               <span class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">PROGRESO NIVEL</span>
               <div class="flex items-baseline gap-1">
-                <span class="text-sm font-black text-primary-500 text-precision">{{ currentXp % nextLevelXp }}</span>
+                <span class="text-xs font-black text-white text-precision tabular-nums">{{ currentXp }} / {{ nextLevelXp }}</span>
                 <span class="text-[8px] font-bold text-zinc-500 text-precision">XP</span>
               </div>
             </div>
- 
+             
             <div class="flex justify-between items-end">
               <span class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">RESTANTE</span>
-              <span class="text-xs font-black text-neon-lime text-precision tabular-nums">{{ nextLevelXp - (currentXp % nextLevelXp) }} XP</span>
+              <span class="text-xs font-black text-neon-lime text-precision tabular-nums">{{ Math.max(0, nextLevelXp - currentXp) }} XP</span>
             </div>
           </div>
 
@@ -93,9 +88,8 @@ const showTooltip = ref(false);
 
 const progress = computed(() => {
   if (!props.nextLevelXp) return 0;
-  // Based on 1000 XP threshold as implemented in backend
-  const currentLevelXP = props.currentXp % props.nextLevelXp;
-  return Math.min(100, (currentLevelXP / props.nextLevelXp) * 100);
+  // Using relative XP values passed from backend
+  return Math.min(100, (props.currentXp / props.nextLevelXp) * 100);
 });
 </script>
 

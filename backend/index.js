@@ -36,7 +36,7 @@ app.use(helmet({
       "img-src": ["'self'", "data:", "https://www.google-analytics.com", "https://www.googletagmanager.com", "https://static.wikia.nocookie.net", "*"],
       "frame-src": ["'self'", "https://accounts.google.com/"],
       "style-src": ["'self'", "'unsafe-inline'", "https://accounts.google.com/gsi/style"],
-      "media-src": ["'self'", "https://www.soundjay.com"]
+      "media-src": ["'self'", "https://www.soundjay.com", "https://assets.mixkit.co"]
     },
   },
 }));

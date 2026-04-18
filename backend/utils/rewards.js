@@ -18,11 +18,11 @@ export const getExerciseRewards = (type, count) => {
     statToUpgrade = 'str_xp'; 
   } else if (type === 'weighted_pullups') { 
     coinMultiplier = 3; 
-    statToUpgrade = 'pwr_xp'; 
+    statToUpgrade = 'dex_xp'; 
   } else if (type === 'muscleups') { 
     coinMultiplier = 5; 
-    statToUpgrade = 'pwr_xp'; 
-    extraStatToUpgrade = 'agi_xp'; 
+    statToUpgrade = 'dex_xp'; 
+    extraStatToUpgrade = 'vig_xp'; 
   }
 
   return {

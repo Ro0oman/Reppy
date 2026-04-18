@@ -3,6 +3,7 @@ import { query } from './db.js';
 import { authenticate } from './middleware.js';
 import { autoGrantPendingChests } from './utils/bossRewards.js';
 import { compressAvatar } from './utils/image.js';
+import { getXPForLevel } from './utils/stats.js';
 
 const router = express.Router();
 
@@ -30,8 +31,14 @@ router.get('/me', authenticate, async (req, res) => {
     if (result.rows.length === 0) return res.status(404).json({ message: 'User not found' });
     
     const user = result.rows[0];
-    // Calculate derived stats
-    user.xp_into_level = (user.total_xp || 0) % 1000;
+    // Calculate derived stats using quadratic logic
+    const level = user.current_level || 1;
+    const totalXp = user.total_xp || 0;
+    const xpCurrentLevelStart = getXPForLevel(level, 1000);
+    const xpNextLevelStart = getXPForLevel(level + 1, 1000);
+    
+    user.xp_into_level = totalXp - xpCurrentLevelStart;
+    user.xp_for_next_level = xpNextLevelStart - xpCurrentLevelStart;
     
     res.json(user);
   } catch (error) {

@@ -360,7 +360,7 @@ router.put('/:id', authenticate, async (req, res) => {
 
     // Record the transaction (positive or negative)
     if (diffCoins !== 0) {
-      await trackCoinTransaction(userId, diffCoins, 'EXERCISE', `Ajuste por edición de ${exercise_type}`);
+      await trackCoinTransaction(userId, diffCoins, 'EXERCISE', `Ajuste por edición de ${oldRep.exercise_type}`);
     }
 
     // Recalculate everything to stay in sync

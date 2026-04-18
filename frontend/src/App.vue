@@ -80,8 +80,8 @@
               <div class="hidden sm:block">
                 <LevelBar 
                   :level="authStore.user?.current_level || 1" 
-                  :current-xp="authStore.user?.total_xp || 0" 
-                  :next-level-xp="1000" 
+                  :current-xp="authStore.user?.xp_into_level || 0" 
+                  :next-level-xp="authStore.user?.xp_for_next_level || 1000" 
                 />
               </div>
             </div>
