@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-6 p-2 sm:p-4 rounded-3xl overflow-hidden relative">
+  <div class="flex flex-col gap-6 p-2 sm:p-4 rounded-3xl relative">
     
     <!-- Timeframe & Filter Controls -->
     <div class="flex flex-col gap-4 relative z-10 px-2">
@@ -47,7 +47,8 @@
         class="flex flex-col items-center group cursor-pointer transition-all active:scale-95 outline-none focus:ring-2 focus:ring-primary-500/50 rounded-2xl p-2">
         <div class="relative mb-3">
           <div class="p-1 rounded-full bg-gradient-to-b from-zinc-300 to-zinc-600 shadow-xl ring-2 ring-zinc-500/20">
-            <AvatarFrame :src="podiumUsers[1].avatar_url" :border-css="podiumUsers[1].border_css" :avatar-css="podiumUsers[1].avatar_css" :size="72" />
+            <AvatarFrame :src="podiumUsers[1].avatar_url" :border-css="podiumUsers[1].border_css" :avatar-css="podiumUsers[1].avatar_css" :size="56" class="sm:hidden" />
+            <AvatarFrame :src="podiumUsers[1].avatar_url" :border-css="podiumUsers[1].border_css" :avatar-css="podiumUsers[1].avatar_css" :size="72" class="hidden sm:block" />
           </div>
           <div class="absolute -bottom-2 -right-1 w-6 h-6 bg-muted rounded-full flex items-center justify-center border-2 border-background shadow-lg">
              <span class="text-[10px] font-black text-white">02</span>
@@ -69,7 +70,8 @@
         <div class="relative mb-4">
           <div class="absolute -top-10 left-1/2 -translate-x-1/2 text-4xl animate-bounce duration-[2000ms]">👑</div>
           <div class="p-1.5 rounded-full bg-gradient-to-br from-primary-400 via-primary-500 to-primary-700 shadow-[0_0_40px_rgba(255,69,0,0.2)] ring-4 ring-primary-500/20">
-            <AvatarFrame :src="podiumUsers[0].avatar_url" :border-css="podiumUsers[0].border_css" :avatar-css="podiumUsers[0].avatar_css" :size="100" />
+            <AvatarFrame :src="podiumUsers[0].avatar_url" :border-css="podiumUsers[0].border_css" :avatar-css="podiumUsers[0].avatar_css" :size="72" class="sm:hidden" />
+            <AvatarFrame :src="podiumUsers[0].avatar_url" :border-css="podiumUsers[0].border_css" :avatar-css="podiumUsers[0].avatar_css" :size="100" class="hidden sm:block" />
           </div>
           <div class="absolute -bottom-2 -right-1 w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center border-4 border-background shadow-xl">
              <span class="text-xs font-black text-white">01</span>
@@ -90,7 +92,8 @@
         class="flex flex-col items-center group cursor-pointer transition-all active:scale-95 outline-none focus:ring-2 focus:ring-primary-500/50 rounded-2xl p-2">
         <div class="relative mb-3">
           <div class="p-1 rounded-full bg-gradient-to-b from-orange-400 to-orange-900 shadow-xl ring-2 ring-orange-500/20">
-            <AvatarFrame :src="podiumUsers[2].avatar_url" :border-css="podiumUsers[2].border_css" :avatar-css="podiumUsers[2].avatar_css" :size="72" />
+            <AvatarFrame :src="podiumUsers[2].avatar_url" :border-css="podiumUsers[2].border_css" :avatar-css="podiumUsers[2].avatar_css" :size="56" class="sm:hidden" />
+            <AvatarFrame :src="podiumUsers[2].avatar_url" :border-css="podiumUsers[2].border_css" :avatar-css="podiumUsers[2].avatar_css" :size="72" class="hidden sm:block" />
           </div>
           <div class="absolute -bottom-2 -right-1 w-6 h-6 bg-orange-950 rounded-full flex items-center justify-center border-2 border-background shadow-lg">
              <span class="text-[10px] font-black text-white">03</span>
@@ -128,11 +131,11 @@
 
           <!-- User Info -->
           <div class="min-w-0 flex-1">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 min-w-0 font-tight">
               <div class="text-sm font-black text-foreground truncate group-hover:text-primary-400 transition-colors tracking-tight uppercase italic leading-none font-tight text-left">
                 {{ user.id === authStore.user?.id ? i18n.t('lb_you') : user.name }}
               </div>
-              <div class="flex items-center gap-1 bg-foreground/5 px-1.5 py-0.5 rounded border border-border/30">
+              <div class="flex items-center gap-1 bg-foreground/5 px-1.5 py-0.5 rounded border border-border/30 shrink-0">
                 <span class="text-[6px] font-black text-primary-500/80 tracking-widest">LVL</span>
                 <span class="text-[8px] font-black text-foreground italic">{{ user.current_level }}</span>
               </div>
@@ -197,7 +200,7 @@ const props = defineProps({
 
 const emit = defineEmits(['viewProfile']);
 
-const type = ref(authStore.isAuthenticated ? 'friends' : 'global');
+const type = ref('global');
 const timeframe = ref('all');
 const users = ref([]);
 const loading = ref(false);

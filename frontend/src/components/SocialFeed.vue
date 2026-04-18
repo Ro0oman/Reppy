@@ -5,14 +5,14 @@
       <div class="flex gap-4">
         <button 
           @click="filter = 'global'; resetFeed()"
-          class="px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all"
+          class="px-4 sm:px-6 py-2 sm:py-2.5 rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] transition-all"
           :class="filter === 'global' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'bg-surface/5 text-muted hover:bg-surface/10'"
         >
           GLOBAL.PROTOCOLS
         </button>
         <button 
           @click="filter = 'following'; resetFeed()"
-          class="px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all"
+          class="px-4 sm:px-6 py-2 sm:py-2.5 rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] transition-all"
           :class="filter === 'following' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'bg-surface/5 text-muted hover:bg-surface/10'"
         >
           FOLLOWING.ONLY

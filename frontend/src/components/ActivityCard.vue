@@ -36,10 +36,10 @@
             <span class="text-[9px] font-black italic">{{ activity.current_level }}</span>
           </div>
         </div>
-        <div>
-          <h4 class="text-lg font-black text-foreground uppercase tracking-tight leading-none flex items-center gap-2">
-            {{ activity.user_name }}
-            <span class="text-[10px] font-normal text-muted lowercase tracking-normal bg-foreground/5 px-2 py-0.5 rounded-full">{{ timeAgo }}</span>
+        <div class="min-w-0 flex-1">
+          <h4 class="text-base sm:text-lg font-black text-foreground uppercase tracking-tight leading-none flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+            <span class="truncate">{{ activity.user_name }}</span>
+            <span class="text-[9px] sm:text-[10px] font-normal text-muted lowercase tracking-normal bg-foreground/5 px-2 py-0.5 rounded-full w-fit">{{ timeAgo }}</span>
           </h4>
         </div>
       </div>

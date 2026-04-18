@@ -18,19 +18,19 @@
       <div class="flex items-center gap-2 p-1.5 bg-surface/10 border border-border/40 rounded-[2rem] w-fit">
         <button 
           @click="activeTab = 'feed'"
-          class="px-8 py-3 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-3"
+          class="px-4 sm:px-8 py-2.5 sm:py-3 rounded-[1.5rem] text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-2 sm:gap-3"
           :class="activeTab === 'feed' ? 'bg-primary-500 text-white shadow-xl shadow-primary-500/20' : 'text-muted hover:text-foreground hover:bg-white/5'"
         >
-          <Activity class="w-4 h-4" />
-          {{ i18n.t('social_wall') }}
+          <Activity class="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          <span class="truncate">{{ i18n.t('social_wall') }}</span>
         </button>
         <button 
           @click="activeTab = 'rankings'"
-          class="px-8 py-3 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-3"
+          class="px-4 sm:px-8 py-2.5 sm:py-3 rounded-[1.5rem] text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-2 sm:gap-3"
           :class="activeTab === 'rankings' ? 'bg-primary-500 text-white shadow-xl shadow-primary-500/20' : 'text-muted hover:text-foreground hover:bg-white/5'"
         >
-          <Trophy class="w-4 h-4" />
-          {{ i18n.t('rankings') }}
+          <Trophy class="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          <span class="truncate">{{ i18n.t('rankings') }}</span>
         </button>
       </div>
     </div>
@@ -142,10 +142,10 @@
                       <Check class="w-3 h-3 text-white" />
                     </div>
                   </div>
-                  <div>
-                    <div class="flex items-center gap-3">
-                      <p class="text-xl font-black text-foreground tracking-tight group-hover:text-primary-500 transition-colors uppercase italic font-industrial drop-shadow-sm">{{ friend.name }}</p>
-                      <div class="flex items-center gap-1.5 bg-primary-500/10 px-2 py-0.5 rounded-lg border border-primary-500/30">
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-2 min-w-0 flex-1">
+                      <p class="text-lg sm:text-xl font-black text-foreground tracking-tight group-hover:text-primary-500 transition-colors uppercase italic font-industrial truncate">{{ friend.name }}</p>
+                      <div class="flex items-center gap-1.5 bg-primary-500/10 px-2 py-0.5 rounded-lg border border-primary-500/30 shrink-0">
                         <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest">LVL</span>
                         <span class="text-[10px] font-black text-foreground italic">{{ friend.current_level }}</span>
                       </div>
