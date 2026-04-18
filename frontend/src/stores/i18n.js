@@ -229,7 +229,14 @@ const translations = {
     faq_q7: 'Does it work on mobile?',
     faq_a7: 'Yes. Reppy is mobile-optimized with a responsive UI and a quick-access bottom navigation dock.',
     faq_q8: 'Do I need to download anything?',
-    faq_a8: 'No. Reppy is a Progressive Web App. You can access it via browser or add it to your home screen for a native experience.',
+    faq_a8: 'No. Reppy is a web app that works in your browser. Compatible with Chrome, Firefox, Safari, and Edge.',
+    
+    // Articles
+    article_guide_tag: 'Training Guide',
+    article_title1: 'How to do your first pull-up: Master Guide',
+    article_desc1: 'Progression protocols from zero to mastering the bar.',
+    article_title2: 'Gamification & Calisthenics: Why Reppy Works',
+    article_desc2: 'The science behind experience points and motivation in fitness.',
     
     // Privacy
     privacy_settings: 'Privacy Settings',
@@ -834,7 +841,14 @@ const translations = {
     faq_q7: '¿Funciona en el móvil?',
     faq_a7: 'Sí. Reppy está optimizado para móvil con una interfaz responsive y una barra de navegación inferior de acceso rápido.',
     faq_q8: '¿Necesito descargar algo?',
-    faq_a8: 'No. Reppy es una PWA. Puedes acceder vía navegador o añadirlo a tu pantalla de inicio para una experiencia nativa.',
+    faq_a8: 'No. Reppy es una web app que funciona en tu navegador. Compatible con Chrome, Firefox, Safari y Edge.',
+
+    // Articles
+    article_guide_tag: 'Guía de Entrenamiento',
+    article_title1: 'Cómo hacer tu primera dominada: Guía Maestra',
+    article_desc1: 'Protocolos de progresión desde cero hasta dominar la barra.',
+    article_title2: 'Gamificación y Calistenia: Por qué funciona Reppy',
+    article_desc2: 'La ciencia detrás de los puntos de experiencia y la motivación en el fitness.',
 
     // Privacy
     privacy_settings: 'Ajustes de Privacidad',
