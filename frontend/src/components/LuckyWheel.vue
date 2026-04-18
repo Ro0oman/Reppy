@@ -1,8 +1,8 @@
 <template>
-  <div v-if="show" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-zinc-950/80 backdrop-blur-md" @click="!spinning && $emit('close')"></div>
+  <div v-if="show" class="fixed inset-0 z-[100] flex justify-center items-start overflow-y-auto p-4 md:p-8">
+    <div class="fixed inset-0 bg-zinc-950/80 backdrop-blur-md" @click="!spinning && $emit('close')"></div>
     
-    <div class="relative bg-white dark:bg-zinc-900 w-full max-w-sm rounded-[2.5rem] shadow-2xl border border-white/10 overflow-hidden transform transition-all animate-in fade-in duration-300">
+    <div class="relative bg-white dark:bg-zinc-900 w-full max-w-sm rounded-[2.5rem] shadow-2xl border border-white/10 overflow-hidden transform transition-all animate-in fade-in duration-300 my-auto">
       <div class="px-8 pt-8 text-center">
         <div class="inline-flex p-3 bg-primary-500/10 rounded-2xl mb-4">
           <Sparkles class="w-6 h-6 text-primary-600" />
@@ -71,7 +71,7 @@
             </div>
           </div>
           <div v-else-if="!canSpin && !spinning" class="text-center">
-            <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1 italic">Vuelve mañana</p>
+            <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1 italic">{{ i18n.t('wheel_return_tomorrow') }}</p>
             <div class="bg-zinc-100 dark:bg-white/5 px-6 py-2 rounded-xl border border-zinc-200 dark:border-white/10">
                <span class="text-sm font-bold text-zinc-400">Ya has realizado tu giro diario</span>
             </div>
@@ -143,8 +143,8 @@ const getTextCoords = (index) => {
 
 const getPrizeText = (prize) => {
   if (prize.type === 'coins') return `+${prize.value} REPPY COINS`;
-  if (prize.type === 'special') return prize.item ? `¡${prize.item.name}! 🏆` : '¡OBJETO LEGENDARIO!';
-  return 'INTÉNTALO MAÑANA';
+  if (prize.type === 'special') return prize.item ? `¡${prize.item.name}! 🏆` : i18n.t('wheel_legendary');
+  return i18n.t('wheel_try_tomorrow');
 };
 
 const spinWheel = async () => {
@@ -188,9 +188,9 @@ const spinWheel = async () => {
           origin: { y: 0.6 },
           colors: ['#4F46E5', '#8B5CF6', '#F59E0B']
         });
-        notificationStore.notify('¡Felicidades por tu premio!', 'success');
+        notificationStore.notify(i18n.t('wheel_congrats'), 'success');
       } else {
-        notificationStore.notify('Vuelve mañana para más suerte', 'info');
+        notificationStore.notify(i18n.t('wheel_return_info'), 'info');
       }
 
       emit('spun');

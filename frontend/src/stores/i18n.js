@@ -93,6 +93,10 @@ const translations = {
     lb_rank: 'Rank',
     lb_view_full: 'View Full Leaderboard',
     lb_empty: 'No legends found yet.',
+    lb_you: 'YOU',
+    lb_pro_athlete: 'PRO ATHLETE',
+    lb_data_null: 'PROTOCOL DATA NULL',
+    lb_level: 'LEVEL',
     
     // Timeframes
     tf_today: 'Today',
@@ -108,6 +112,124 @@ const translations = {
     stats_protocol_goal: 'Protocol Goal',
     stats_per_day: 'PER DAY',
     stats_total_reps: 'TOTAL REPS',
+
+    // Boss Battle
+    boss_class_active: 'CLASS: ACTIVE SECTOR',
+    boss_how_damage: 'HOW DO I DEAL MORE DAMAGE?',
+    boss_battle_manual: 'BATTLE MANUAL',
+    boss_protocol_complete: 'DOWN PROTOCOL COMPLETED',
+    boss_target_integrity: 'TARGET INTEGRITY',
+    boss_neutralized: '0% INTEGRITY - TARGET NEUTRALIZED',
+    boss_hist_damage: 'Your Historical Damage',
+    boss_today_damage: 'Damage Dealt Today',
+    boss_domination: 'Domination (Top 1)',
+    boss_req_damage: 'DAMAGE REQUIRED:',
+    boss_claim_loot: 'CLAIM LOOT',
+    boss_reward_acquired: 'REWARD_ACQUIRED',
+    boss_login_to_damage: 'Sign in to log damage and access loot',
+    boss_next_protocol: 'Next Protocol',
+    boss_locked: 'Locked 🔒',
+    boss_op_manual: 'Operations Manual',
+    boss_community_event: 'Community Event',
+    boss_reward_chest: 'Reward Chest',
+    boss_reward_desc: 'By defeating the boss, you unlock a chest with a guaranteed Season (or Normal) item.',
+    boss_close_manual: 'Close Manual',
+    boss_active_now: 'Current Active Boss',
+    boss_refresh_hint: 'Refresh page to see new phrases',
+    battle_help_title1: 'UNIFIED ATTACK',
+    battle_help_desc1: 'Every rep you track deals damage to the boss. Pull-ups, push-ups and dips all count toward victory.',
+    battle_help_title2: 'PROGRESSION & LORE',
+    battle_help_desc2: 'Defeating bosses advances the community storyline and unlocks new sectors in the Reppy world.',
+     economy_title: 'ECONOMY.CODEX',
+    economy_subtitle: 'Resource allocation protocol',
+    economy_revenue: 'REVENUE GENERATION',
+    economy_legendary: 'LEGENDARY DROPS',
+    economy_rep: 'RC / REP',
+    economy_status_optimal: 'System Status: Optimal',
+    economy_privacy: 'Privacy Protocol',
+    economy_star_github: 'STAR ON GITHUB',
+    economy_admin: 'ADMIN.CMD',
+    economy_history_title: 'Protocol Coins History',
+    economy_my_profile: 'My Profile',
+    economy_reppy_core: 'Reppy Core © 2026',
+
+    // Exercise Names
+    ex_pullups_std: 'Pullups (Standard)',
+    ex_pushups_std: 'Pushups (Standard)',
+    ex_dips_std: 'Dips (Standard)',
+    ex_weighted_pullups: 'Weighted Pullups',
+    ex_muscle_ups: 'Muscle Ups',
+
+    // Login
+    login_title: 'Sign In',
+    login_welcome: 'Welcome to Reppy',
+    login_subtitle: 'SYSTEM ACCESS PROTOCOL',
+    login_password: 'Password',
+    login_email: 'Email',
+    login_name: 'Full Name',
+    login_name_placeholder: 'ex: John Doe',
+    login_or_continue: 'OR CONTINUE WITH',
+    login_btn_login: 'Identify',
+    login_btn_signup: 'Create Account',
+    login_btn_register: 'Register',
+    login_btn_back: 'Back',
+
+    // Welcome Modal
+    welcome_damage: 'DAMAGE',
+    welcome_bonus: '+ Critical Bonus (AGI) and Global Multiplier',
+
+    // Shop
+    shop_prev: 'Previous Page',
+    shop_next: 'Next Page',
+    shop_go_to: 'Go to page',
+
+    // Profile
+    profile_guide_title: 'Evolution Protocol Guide',
+    profile_file_too_large: 'File too large (Max 2MB)',
+    profile_updated: 'Biometric core updated',
+
+    // Notifications
+    notif_anomalies: 'ANOMALIES DETECTED',
+    notif_close: 'Close Notification',
+
+    // Lucky Wheel
+    wheel_return_tomorrow: 'Come back tomorrow',
+    wheel_legendary: 'LEGENDARY ITEM!',
+    wheel_try_tomorrow: 'TRY AGAIN TOMORROW',
+    wheel_congrats: 'Congratulations on your prize!',
+    wheel_return_info: 'Come back tomorrow for more luck',
+
+    // Level Bar
+    level_xp_info: 'Earn XP to gain LOOT CHESTS. Every rep counts.',
+
+    // Inventory
+    inv_common_chest_desc: 'Earned through physical evolution. Decrypt for common gear and gold.',
+    inv_boss_chest_desc: 'Discovered after defeating anomalies. Decrypt for legendary loot.',
+
+    // Dashboard
+    dash_max_month: 'Max Month',
+    dash_max_month_tooltip: 'Maximum volume achieved in a single month',
+
+    // Boss History
+    boss_hist_modal_title: 'DAMAGE HISTORY',
+
+    // FAQ
+    faq_q1: 'Is Reppy free?',
+    faq_a1: 'Yes, Reppy is 100% free. You can sign up with Google and start tracking your calisthenics reps at no cost.',
+    faq_q2: 'What exercises can I track?',
+    faq_a2: 'You can track standard calisthenics movements: Pullups, Pushups, Dips, Muscle Ups, and Weighted Pullups. Each deals a different amount of damage to bosses.',
+    faq_q3: 'How does the RPG system work?',
+    faq_a3: 'Every rep gives you Reppy Coins and XP in 4 attributes: Strength (STR), Power (PWR), Endurance (END), and Agility (AGI). Spend coins in the shop for exclusive titles, frames, and effects.',
+    faq_q4: 'What are Boss Fights?',
+    faq_a4: 'They are community events where everyone fights an epic boss. Every rep you track deals damage. When defeated, the entire community unlocks exclusive loot chests.',
+    faq_q5: 'Can I see my training progress?',
+    faq_a5: 'Yes. Reppy includes a GitHub-style activity heatmap, streak stats, total volume, and daily progress targets.',
+    faq_q6: 'Can I compete with others?',
+    faq_a6: 'Yes. Global rankings are filtered by day, week, month, and all-time. You can also add friends for a private leaderboard.',
+    faq_q7: 'Does it work on mobile?',
+    faq_a7: 'Yes. Reppy is mobile-optimized with a responsive UI and a quick-access bottom navigation dock.',
+    faq_q8: 'Do I need to download anything?',
+    faq_a8: 'No. Reppy is a Progressive Web App. You can access it via browser or add it to your home screen for a native experience.',
     
     // Privacy
     privacy_settings: 'Privacy Settings',
@@ -342,6 +464,147 @@ const translations = {
     battle_help_title2: 'Critical Variance',
     battle_help_desc2: 'Your Agility (AGI) increases the chance of Critical Hits, while Power (PWR) increases their damage.',
     boss_status: 'Boss Status',
+    btn_cancel: 'Cancel',
+    btn_confirm: 'Confirm',
+    battle_overhaul_boss_alert: 'BOSS HP x10 INCREASE',
+    codex_close: 'Close Protocol',
+
+    // New common buttons
+    btn_save: 'Save Changes',
+    btn_acquired: 'Acquired',
+    btn_acquire: 'Acquire',
+    btn_get: 'Get',
+    btn_lock: 'Lock',
+    btn_equip: 'Equip',
+    btn_on: 'ON',
+
+    // Profile specific
+    profile_decrypting: 'DECRYPTING PROFILE...',
+    profile_recruit: 'RECRUIT',
+    profile_xp_to_next: 'XP TO NEXT LVL',
+    profile_reward_protocol: '🎁 REWARD PROTOCOL',
+    profile_reward_desc: 'Level up reward chests are added automatically to your inventory.',
+    profile_activity_audit: 'ACTIVITY AUDIT',
+    profile_rc_history: 'REPPY COINS HISTORY',
+    profile_no_transactions: 'NO_TRANSACTIONS_RECORDED',
+    profile_load_more: 'LOAD MORE TRANSACTIONS',
+    profile_loading: 'COMMUNICATION...',
+
+    // Shop specific
+    shop_armory_title: 'ARMORY',
+    shop_armory_subtitle: 'Equip your legend with elite protocol cosmetics.',
+    shop_reppy_coins: 'REPPY COINS',
+    shop_elite_pack: 'ELITE_PACK',
+    shop_special_deal: 'Special Deal',
+    shop_permanent_protocol: 'PERMANENT PROTOCOL',
+    shop_screen_preview: 'SCRN.PRVW',
+    shop_post_preview: 'POST.PRVW',
+    shop_decrypt_at: 'DECRYPT AT',
+    shop_module_contents: 'MODULE_CONTENTS',
+    shop_bundle_cost: 'BUNDLE_COST',
+    shop_initiate_acquisition: 'INITIATE ACQUISITION',
+    
+    // Roulette
+    roulette_exe_available: 'ROULETTE.EXE AVAILABLE',
+    feat_yield_title: 'EXCEPTIONAL YIELD',
+    boss_anomaly: 'BOSS ANOMALIES',
+    monthly_projection: 'MONTHLY PROJECTION',
+    active_yield_desc: 'ACTIVE OPERATIVES YIELD',
+
+    // Social & Community
+    community: 'COMMUNITY',
+    community_subtitle: 'SYNCHRONIZE WITH THE CORE ELITE.',
+    social_wall: 'SOCIAL WALL',
+    rankings: 'RANKINGS',
+    global_rankings: 'GLOBAL.RANKINGS',
+    find_operatives: 'FIND_OPERATIVES',
+    inner_circle: 'INNER_CIRCLE',
+    reps_collected: 'REPS COLLECTED',
+    reps_scaled: 'REPS SCALED',
+    protocol_label: 'Protocol',
+    live_sync: 'LIVE RANKING SYNCHRONIZATION',
+    friend_added: 'Friend added successfully!',
+    friend_add_failed: 'Failed to add friend',
+
+    // Landing Page
+    landing_hero_title: 'DOMINATE EVERY',
+    landing_hero_span: 'REP',
+    landing_hero_subtitle: 'The first calisthenics platform with an RPG system. Every rep counts. Every boss falls. Your legend begins today.',
+    btn_join_now: 'JOIN NOW',
+    btn_continue_adventure: 'CONTINUE ADVENTURE',
+    landing_stats_reps: 'Reps Tracked',
+    landing_stats_bosses: 'Bosses Slain',
+    landing_stats_cost: 'Free Forever',
+    landing_stats_score: 'User Score',
+    landing_bento_rpg_title: 'INTEGRATED RPG SYSTEM',
+    landing_bento_rpg_desc: 'Level up your STR, PWR, END, and AGI attributes with every rep. Unlock exclusive cosmetics and prove your status.',
+    landing_bento_ranking_title: 'GLOBAL RANKING',
+    landing_bento_ranking_desc: 'Compete for Top 1 on the global leaderboard.',
+    landing_bento_consistency_title: 'CONSISTENCY',
+    landing_bento_community_title: 'COMMUNITY',
+    landing_guia_title: 'Complete Guide to Progress in Calisthenics',
+    landing_guia_subtitle: 'Everything you need to know about bodyweight training',
+    landing_final_cta_title: 'Start your legend today',
+    landing_final_cta_desc: 'Join the Reppy calisthenics community. Track push-ups, dips, and muscle-ups. 100% free, forever.',
+    btn_create_account_free: 'Create your free account forever',
+
+    // Landing Article
+    landing_art_intro_title: 'Introduction to Street Workout',
+    landing_art_intro_p1: 'Calisthenics, also known as street workout, is an ancient discipline that focuses on using your own body weight to gain strength, agility, and muscle control. Unlike conventional weight training, calisthenics requires brutal intermuscular coordination and exceptional relative strength (strength per pound of weight).',
+    landing_art_intro_p2: 'In recent years, the popularity of this sport has exploded thanks to its accessibility. All you need is a pull-up bar and willpower. However, this simplicity is a double-edged sword: it is very easy to get lost in the routine and not see results if strict records are not kept. This is where a calisthenics tracker like Reppy makes the difference.',
+    landing_art_pullups_title: 'Mastering the Bar: The Pull-Up Path',
+    landing_art_pullups_p1: 'Pull-ups are undoubtedly the king of calisthenics exercises for the upper body. They involve the latissimus dorsi, traps, rhomboids, biceps, and of course, the core. Performing your first pull-up is an initiation rite for any athlete. But how do you go from 1 to 10, or 10 to 20?',
+    landing_art_pullups_p2: 'The key lies in total training volume. Do not look for muscle failure in every set. Instead, perform multiple sets leaving 1 or 2 repetitions in reserve (RPE 8). By using Reppy to count your pull-ups, you will see that adding small sets throughout the day or during training drastically increases your total weekly volume. This controlled fatigue accumulation is what generates the neural and muscular adaptations necessary to progress.',
+    landing_art_psych_title: 'The Psychology of Fitness: Gamification',
+    landing_art_psych_p1: 'Why is it so hard for us to go train but we can spend hours leveling up in a video game? The answer lies in the immediate feedback loop. In the gym, results take months to see. In an RPG, you see your experience bar rise after every combat.',
+    landing_art_psych_p2: 'At Reppy we have hacked this system. By converting every push-up and pull-up into "damage" dealt to a boss or experience for your character, we create immediate satisfaction that keeps your motivation through the roof. You no longer train just for your physical health, but so that your athlete profile reflects the effort you are putting in. This social and gamified component reduces the abandonment rate by more than 60% according to our internal community studies.',
+    landing_art_nutri_title: 'Nutrition and Rest in Calisthenics',
+    landing_art_nutri_p1: 'No rep counter can save you if you do not rest and eat correctly. Muscle tissue is damaged during training and repaired (grows) during sleep. Make sure to consume at least 1.8g of protein per kilo of weight and sleep between 7 and 9 hours daily.',
+    landing_art_nutri_p2: 'Remember that in calisthenics, your body weight is your resistance. If you gain unnecessary fat, your pull-ups will become harder. Maintaining a slight but controlled calorie surplus is ideal for gaining strength without sacrificing your agility (AGI) on the bar. Use the coins you earn in Reppy as a reminder that effort has rewards, both virtual and physical.',
+    landing_art_concl_title: 'Conclusion: The Future of Your Training',
+    landing_art_concl_p1: 'The path to a strong and functional body has no shortcuts, but it does have tools that make it more bearable. Reppy is not just an application; it is your partner on the bars, your record of life, and your community. Whether you are a beginner looking for your first push-up or an expert looking for Top 1 in the muscle up rankings, we are here to count every one of your victories.',
+    landing_art_concl_p2: 'No more training in the dark. It\'s time to play seriously. It\'s time for Reppy.',
+
+    // Landing Features
+    landing_feat_heatmap_title: 'Activity Heatmap',
+    landing_feat_heatmap_desc: 'Visualize your training consistency with a GitHub-style graph. See at a glance which days you trained pull-ups, push-ups or dips. Filter by exercise and full year.',
+    landing_feat_rankings_title: 'Global Rankings',
+    landing_feat_rankings_desc: 'Compete in the world ranking for pull-ups and calisthenics. Filter by today, week, month or all-time. Rise in position and prove who is the best.',
+    landing_feat_social_title: 'Social Community',
+    landing_feat_social_desc: 'Add friends, visit their public profiles and compare your calisthenics progress. Create your training circle and stay motivated.',
+    
+    // Boss Fights
+    landing_boss_title: 'Community Boss Fights',
+    landing_boss_desc: 'Participate in global events where the entire community fights an epic boss. Every pull-up, push-up, or dip you log deals damage. When the community defeats it, everyone wins chests with legendary rewards.',
+    landing_boss_how: 'How do they work?',
+    landing_boss_step1_title: 'A Boss Appears',
+    landing_boss_step1_desc: 'A boss with thousands of health points appears during a temporary event. The whole community can participate.',
+    landing_boss_step2_title: 'Log Reps',
+    landing_boss_step2_desc: 'Every pull-up, push-up or dip you do deals damage. Watch the health bar drop in real-time.',
+    landing_boss_step3_title: 'Win Rewards',
+    landing_boss_step3_desc: 'When the boss falls, all participants unlock chests with exclusive titles, frames, and effects.',
+
+    // How to Use
+    landing_how_title: 'How it works',
+    landing_how_subtitle: 'Start tracking your pull-ups and push-ups in 3 steps',
+    landing_how_step1_title: 'Sign up with Google',
+    landing_how_step1_desc: 'No password, no complications. One click with your Google account and you\'re in.',
+    landing_how_step2_title: 'Track your Reps',
+    landing_how_step2_desc: 'Select pull-ups, push-ups, dips or muscle ups. Input the number and hit add. They count now.',
+    landing_how_step3_title: 'Compete and Level Up',
+    landing_how_step3_desc: 'Earn coins, raise your global ranking, buy cosmetics in the shop and defeat bosses with the community.',
+
+    // FAQ & LB
+    landing_faq_title: 'Frequently Asked Questions',
+    landing_lb_title_main: 'Global Ranking',
+    landing_lb_subtitle_main: 'Real-time pull-up and calisthenics ranking',
+    landing_lb_live: 'LIVE RANKING',
+    landing_lb_preparing: 'Preparing Ranking...',
+    landing_lb_join: 'JOIN THE RANKING',
+    landing_footer_copy: 'REPPY © 2026',
+    landing_footer_free: 'Free Calisthenics App',
+    landing_footer_exercises: 'Pull-ups · Push-ups · Dips',
+    landing_footer_desc: 'Reppy is a calisthenics tracker with an RPG system to log pull-ups, push-ups, dips, muscle ups and weighted pull-ups. Available in English and Spanish.',
   },
   es: {
     // Landing
@@ -435,6 +698,10 @@ const translations = {
     lb_rank: 'Rango',
     lb_view_full: 'Ver Tabla Completa',
     lb_empty: 'Aún no hay leyendas.',
+    lb_you: 'TÚ',
+    lb_pro_athlete: 'ATLETA PRO',
+    lb_data_null: 'DATOS DE PROTOCOLO NULOS',
+    lb_level: 'NIVEL',
 
     // Timeframes
     tf_today: 'Hoy',
@@ -450,6 +717,124 @@ const translations = {
     stats_protocol_goal: 'Meta del Protocolo',
     stats_per_day: 'POR DÍA',
     stats_total_reps: 'REPS TOTALES',
+
+    // Boss Battle
+    boss_class_active: 'CLASE: SECTOR ACTIVO',
+    boss_how_damage: '¿CÓMO HAGO MÁS DAÑO?',
+    boss_battle_manual: 'MANUAL DE BATALLA',
+    boss_protocol_complete: 'PROTOCOLO DE CAÍDA COMPLETADO',
+    boss_target_integrity: 'INTEGRIDAD DEL OBJETIVO',
+    boss_neutralized: '0% INTEGRIDAD - OBJETIVO NEUTRALIZADO',
+    boss_hist_damage: 'Tu Daño Histórico',
+    boss_today_damage: 'Daño Realizado Hoy',
+    boss_domination: 'Dominación (Top 1)',
+    boss_req_damage: 'DAÑO REQUERIDO:',
+    boss_claim_loot: 'RECLAMAR BOTÍN',
+    boss_reward_acquired: 'RECOMPENSA_ADQUIRIDA',
+    boss_login_to_damage: 'Inicia sesión para registrar tu daño y acceder al botín',
+    boss_next_protocol: 'Próximo Protocolo',
+    boss_locked: 'Bloqueado 🔒',
+    boss_op_manual: 'Manual de Operaciones',
+    boss_community_event: 'Evento de la Comunidad',
+    boss_reward_chest: 'Cofre de Recompensa',
+    boss_reward_desc: 'Al derrotar al boss, desbloqueas un cofre con un objeto de Temporada (o Normal) garantizado.',
+    boss_close_manual: 'Cerrar Manual',
+    boss_active_now: 'Boss Actual Activo',
+    boss_refresh_hint: 'Actualiza la página para ver nuevas frases',
+    battle_help_title1: 'ATAQUE UNIFICADO',
+    battle_help_desc1: 'Cada repetición que registras inflige daño al boss. Dominadas, flexiones y fondos cuentan para la victoria.',
+    battle_help_title2: 'PROGRESIÓN E HISTORIA',
+    battle_help_desc2: 'Derrotar bosses avanza la historia de la comunidad y desbloquea nuevos sectores en el mundo Reppy.',
+    economy_title: 'ECONOMÍA.CODEX',
+    economy_subtitle: 'Protoclo de asignación de recursos',
+    economy_revenue: 'GENERACIÓN DE INGRESOS',
+    economy_legendary: 'DROPS LEGENDARIOS',
+    economy_rep: 'RC / REP',
+    economy_status_optimal: 'Estado del Sistema: Óptimo',
+    economy_privacy: 'Protocolo de Privacidad',
+    economy_star_github: 'ESTRELLA EN GITHUB',
+    economy_admin: 'ADMIN.CMD',
+    economy_history_title: 'Historial de Monedas',
+    economy_my_profile: 'Mi Perfil',
+    economy_reppy_core: 'Reppy Core © 2026',
+
+    // Exercise Names
+    ex_pullups_std: 'Dominadas (Estándar)',
+    ex_pushups_std: 'Flexiones (Estándar)',
+    ex_dips_std: 'Fondos (Estándar)',
+    ex_weighted_pullups: 'Dominadas Lastradas',
+    ex_muscle_ups: 'Muscle Ups',
+
+    // Login
+    login_title: 'Iniciar Sesión',
+    login_welcome: 'Bienvenido a Reppy',
+    login_subtitle: 'PROTOCOLO DE ACCESO AL SISTEMA',
+    login_password: 'Contraseña',
+    login_email: 'Email',
+    login_name: 'Nombre completo',
+    login_name_placeholder: 'Ej: John Doe',
+    login_or_continue: 'O CONTINÚA CON',
+    login_btn_login: 'Identificarse',
+    login_btn_signup: 'Crear Cuenta',
+    login_btn_register: 'Registrarse',
+    login_btn_back: 'Volver',
+
+    // Welcome Modal
+    welcome_damage: 'DAÑO',
+    welcome_bonus: '+ Bonus por Críticos (AGI) y Multiplicador Global',
+
+    // Shop
+    shop_prev: 'Página Anterior',
+    shop_next: 'Siguiente Página',
+    shop_go_to: 'Ir a la página',
+
+    // Profile
+    profile_guide_title: 'Guía del Protocolo de Evolución',
+    profile_file_too_large: 'Archivo demasiado grande (Máx 2MB)',
+    profile_updated: 'Bio-núcleo actualizado',
+
+    // Notifications
+    notif_anomalies: 'ANOMALÍAS DETECTADAS',
+    notif_close: 'Cerrar Notificación',
+
+    // Lucky Wheel
+    wheel_return_tomorrow: 'Vuelve mañana',
+    wheel_legendary: '¡OBJETO LEGENDARIO!',
+    wheel_try_tomorrow: 'INTÉNTALO MAÑANA',
+    wheel_congrats: '¡Felicidades por tu premio!',
+    wheel_return_info: 'Vuelve mañana para más suerte',
+
+    // Level Bar
+    level_xp_info: 'Consigue XP para ganar COFRES DE BOTÍN. Cada repetición suma.',
+
+    // Inventory
+    inv_common_chest_desc: 'Ganados por evolución física. Descifra para equipo común y oro.',
+    inv_boss_chest_desc: 'Descubiertos tras derrotar anomalías. Descifra para botín legendario.',
+
+    // Dashboard
+    dash_max_month: 'Máximo Mes',
+    dash_max_month_tooltip: 'Máximo volumen conseguido en un solo mes',
+
+    // Boss History
+    boss_hist_modal_title: 'HISTÓRICO DE DAÑO',
+
+    // FAQ
+    faq_q1: '¿Reppy es gratis?',
+    faq_a1: 'Sí, Reppy es 100% gratuito. Puedes registrarte con Google y empezar a contar tus repeticiones de calistenia sin ningún coste.',
+    faq_q2: '¿Qué ejercicios puedo registrar?',
+    faq_a2: 'Puedes registrar movimientos estándar: Dominadas, Flexiones, Fondos, Muscle Ups y Dominadas Lastradas. Cada uno inflige un daño distinto a los bosses.',
+    faq_q3: '¿Cómo funciona el sistema RPG?',
+    faq_a3: 'Cada repetición te da Reppy Coins y experiencia en 4 atributos: Fuerza (STR), Potencia (PWR), Resistencia (END) y Agilidad (AGI). Puedes gastar las monedas en la tienda para comprar títulos, marcos y efectos exclusivos.',
+    faq_q4: '¿Qué son los Boss Fights?',
+    faq_a4: 'Son eventos comunitarios donde toda la comunidad lucha contra un boss épico. Cada repetición inflige daño. Al derrotarlo, todos desbloquean cofres con recompensas exclusivas.',
+    faq_q5: '¿Puedo ver mi progreso de entrenamiento?',
+    faq_a5: 'Sí. Reppy incluye un heatmap de actividad estilo GitHub, estadísticas de racha, volumen total y metas diarias personalizadas.',
+    faq_q6: '¿Puedo competir con otros?',
+    faq_a6: 'Sí. Los rankings globales se filtran por día, semana, mes y total. También puedes añadir amigos para ver un ranking privado.',
+    faq_q7: '¿Funciona en el móvil?',
+    faq_a7: 'Sí. Reppy está optimizado para móvil con una interfaz responsive y una barra de navegación inferior de acceso rápido.',
+    faq_q8: '¿Necesito descargar algo?',
+    faq_a8: 'No. Reppy es una PWA. Puedes acceder vía navegador o añadirlo a tu pantalla de inicio para una experiencia nativa.',
 
     // Privacy
     privacy_settings: 'Ajustes de Privacidad',
@@ -683,6 +1068,150 @@ const translations = {
     battle_help_title2: 'Varianza Crítica',
     battle_help_desc2: 'Tu Agilidad (AGI) aumenta la probabilidad de Críticos, mientras que el Poder (PWR) aumenta su daño.',
     boss_status: 'Estado del Boss',
+    btn_cancel: 'Cancelar',
+    btn_confirm: 'Confirmar',
+    battle_overhaul_boss_alert: 'AUMENTO DE VIDA DE BOSS x10',
+    codex_close: 'Cerrar Protocolo',
+
+    // New common buttons
+    btn_save: 'Guardar Cambios',
+    btn_acquired: 'Adquirido',
+    btn_acquire: 'Adquirir',
+    btn_get: 'Obtener',
+    btn_lock: 'Bloqueado',
+    btn_equip: 'Equipar',
+    btn_on: 'Activado',
+
+    // Profile specific
+    profile_decrypting: 'DESCRIPTANDO PERFIL...',
+    profile_recruit: 'RECLUTA',
+    profile_xp_to_next: 'XP PARA SIG. NIVEL',
+    profile_reward_protocol: '🎁 PROTOCOLO DE RECOMPENSA',
+    profile_reward_desc: 'Los cofres de recompensa por subir de nivel se añaden automáticamente al inventario.',
+    profile_activity_audit: 'AUDITORÍA DE ACTIVIDAD',
+    profile_rc_history: 'HISTORIAL DE REPPY COINS',
+    profile_no_transactions: 'SIN_TRANSACCIONES_REGISTRADAS',
+    profile_load_more: 'CARGAR MÁS TRANSACCIONES',
+    profile_loading: 'COMUNICANDO...',
+
+    // Shop specific
+    shop_armory_title: 'ARMERÍA',
+    shop_armory_subtitle: 'Equipa a tu leyenda con cosméticos de protocolo de élite.',
+    shop_reppy_coins: 'REPPY COINS',
+    shop_elite_pack: 'ELITE_PACK',
+    shop_special_deal: 'Oferta Especial',
+    shop_permanent_protocol: 'PROTOCOLO PERMANENTE',
+    shop_screen_preview: 'VISTA.SCRN',
+    shop_post_preview: 'VISTA.POST',
+    shop_decrypt_at: 'DESCIFRAR EN',
+    shop_module_contents: 'CONTENIDO_MÓDULO',
+    shop_bundle_cost: 'COSTE_PACK',
+    shop_initiate_acquisition: 'INICIAR ADQUISICIÓN',
+
+    // Roulette
+    roulette_exe_available: 'ROULETTE.EXE DISPONIBLE',
+    feat_yield_title: 'RENDIMIENTO EXCEPCIONAL',
+    boss_anomaly: 'ANOMALÍAS DE BOSS',
+    monthly_projection: 'PROYECCIÓN MENSUAL',
+    active_yield_desc: 'RENDIMIENTO OPERATIVO ACTIVO',
+    profile_loading: 'COMUNICACIÓN...',
+    feat_heatmap_title: 'MAPA DE CALOR DE DISTRIBUCIÓN',
+    stats_active_days: 'Activo 365 Días',
+
+    // Social & Community
+    community: 'COMUNIDAD',
+    community_subtitle: 'SINCRONIZA CON LA ÉLITE.',
+    social_wall: 'MURO SOCIAL',
+    rankings: 'CLASIFICACIONES',
+    global_rankings: 'CLASIFICACIONES GLOBALES',
+    find_operatives: 'BUSCAR OPERATIVOS',
+    inner_circle: 'CÍRCULO INTERNO',
+    reps_collected: 'REPS COLECTADAS',
+    reps_scaled: 'REPS ESCALADAS',
+    protocol_label: 'Protocolo',
+    live_sync: 'SINCRONIZACIÓN DE RANGOS EN VIVO',
+    friend_added: '¡Amigo añadido con éxito!',
+    friend_add_failed: 'Error al añadir amigo',
+
+    // Landing Page
+    landing_hero_title: 'DOMINA CADA',
+    landing_hero_span: 'REPETICIÓN',
+    landing_hero_subtitle: 'La primera plataforma de calistenia con sistema RPG. Cada dominada cuenta. Cada boss cae. Tu leyenda empieza hoy.',
+    btn_join_now: 'UNIRSE AHORA',
+    btn_continue_adventure: 'CONTINUAR AVENTURA',
+    landing_stats_reps: 'Repeticiones',
+    landing_stats_bosses: 'Bosses Derrotados',
+    landing_stats_cost: 'Sin Coste',
+    landing_stats_score: 'Puntuación',
+    landing_bento_rpg_title: 'SISTEMA RPG INTEGRADO',
+    landing_bento_rpg_desc: 'Sube de nivel tus atributos STR, PWR, END y AGI con cada repetición. Desbloquea cosméticos exclusivos y demuestra tu estatus.',
+    landing_bento_ranking_title: 'RANKING MUNDIAL',
+    landing_bento_ranking_desc: 'Compite por el Top 1 en la clasificación global.',
+    landing_bento_consistency_title: 'CONSISTENCIA',
+    landing_bento_community_title: 'COMUNIDAD',
+    landing_guia_title: 'Guía Completa para Progresar en Calistenia',
+    landing_guia_subtitle: 'Todo lo que necesitas saber sobre el entrenamiento de peso corporal',
+    landing_final_cta_title: 'Empieza tu leyenda hoy',
+    landing_final_cta_desc: 'Únete a la comunidad de calistenia de Reppy. Registra flexiones, fondos y muscle ups. 100% gratis, para siempre.',
+    btn_create_account_free: 'Crea tu cuenta gratis para siempre',
+
+    // Landing Article
+    landing_art_intro_title: 'Introducción al Street Workout',
+    landing_art_intro_p1: 'La calistenia, también conocida como street workout, es una disciplina milenaria que se centra en el uso exclusivo del propio peso corporal para ganar fuerza, agilidad y control muscular. A diferencia del entrenamiento con pesas convencional, la calistenia requiere una coordinación intermuscular brutal y una fuerza relativa excepcional.',
+    landing_art_intro_p2: 'En los últimos años, la popularidad de este deporte ha explotado gracias a su accesibilidad. Todo lo que necesitas es una barra de dominadas y voluntad. Sin embargo, esta simplicidad es un arma de doble filo: es muy fácil perderse en la rutina y no ver resultados si no se lleva un registro estricto. Aquí es donde un tracker de calistenia como Reppy marca la diferencia.',
+    landing_art_pullups_title: 'Dominando la Barra: El Camino del Pull-Up',
+    landing_art_pullups_p1: 'Las dominadas son, sin duda, el ejercicio rey de la calistenia para el tren superior. Involucran el dorsal ancho, los trapecios, los romboides, los bíceps y, por supuesto, el core. Realizar tu primera dominada es el rito de iniciación de cualquier atleta. Pero, ¿cómo pasar de 1 a 10, o de 10 a 20?',
+    landing_art_pullups_p2: 'La clave reside en el volumen total de entrenamiento. No busques el fallo muscular en cada serie. En su lugar, realiza múltiples series dejando 1 o 2 repeticiones en recámara (RPE 8). Al usar Reppy para contar tus dominadas, podrás ver que sumando pequeñas series a lo largo del día o del entrenamiento, tu volumen total semanal aumenta drásticamente. Esta acumulación de fatiga controlada es lo que genera las adaptaciones neurales y musculares necesarias para progresar.',
+    landing_art_psych_title: 'La Psicología del Fitness: Gamificación',
+    landing_art_psych_p1: '¿Por qué nos cuesta tanto ir a entrenar pero podemos pasar horas subiendo de nivel en un videojuego? La respuesta está en el bucle de retroalimentación inmediata. En el gimnasio, los resultados tardan meses en verse. En un RPG, ves tu barra de experiencia subir tras cada combate.',
+    landing_art_psych_p2: 'En Reppy hemos hackeado este sistema. Al convertir cada flexión de brazos y cada dominada en "daño" infligido a un boss o en experiencia para tu personaje, creamos una satisfacción inmediata que mantiene tu motivación por las nubes. Ya no entrenas solo por tu salud física, sino para que tu perfil de atleta refleje el esfuerzo que estás poniendo. Este componente social y gamificado reduce la tasa de abandono en más de un 60% según nuestros estudios internos de comunidad.',
+    landing_art_nutri_title: 'Nutrición y Descanso en Calistenia',
+    landing_art_nutri_p1: 'Ningún contador de repeticiones podrá salvarte si no descansas y te alimentas correctamente. El tejido muscular se daña durante el entrenamiento y se repara (crecer) durante el sueño. Asegúrate de consumir al menos 1.8g de proteína por kilo de peso y de dormir entre 7 y 9 horas diarias.',
+    landing_art_nutri_p2: 'Recuerda que en calistenia, el peso corporal es tu resistencia. Si ganas grasa innecesaria, tus dominadas se volverán más difíciles. Mantener un superávit calórico ligero pero controlado es ideal para ganar fuerza sin sacrificar tu agilidad (AGI) en la barra. Usa las monedas que ganes en Reppy como un recordatorio de que el esfuerzo tiene recompensa, tanto virtual como física.',
+    landing_art_concl_title: 'Conclusión: El Futuro de tu Entrenamiento',
+    landing_art_concl_p1: 'El camino hacia un cuerpo fuerte y funcional no tiene atajos, pero sí herramientas que lo hacen más llevadero. Reppy no es solo una aplicación; es tu compañero de barras, tu registro de vida y tu comunidad. Ya seas un principiante buscando su primera flexión o un experto buscando el Top 1 en el ranking de muscle ups, estamos aquí para contar cada una de tus victorias.',
+    landing_art_concl_p2: 'Se acabó el entrenar a ciegas. Es hora de jugar en serio. Es hora de Reppy.',
+
+    // Landing Features
+    landing_feat_heatmap_title: 'Heatmap de Actividad',
+    landing_feat_heatmap_desc: 'Visualiza tu consistencia de entrenamiento con un gráfico estilo GitHub. Ve de un vistazo qué días entrenaste dominadas, flexiones o fondos. Filtra por ejercicio y año completo.',
+    landing_feat_rankings_title: 'Rankings Globales',
+    landing_feat_rankings_desc: 'Compite en el ranking mundial de dominadas y calistenia. Filtra por hoy, semana, mes o total. Sube de posición y demuestra quién es el mejor.',
+    landing_feat_social_title: 'Comunidad Social',
+    landing_feat_social_desc: 'Añade amigos, visita sus perfiles públicos y compara tu progreso de calistenia. Crea tu círculo de entrenamiento y mantén la motivación.',
+    
+    // Boss Fights
+    landing_boss_title: 'Boss Fights Comunitarios',
+    landing_boss_desc: 'Participate en eventos globales donde toda la comunidad lucha contra un boss épico. Cada dominada, flexión o fondo que registras inflige daño. Cuando la comunidad lo derrota, todos ganan cofres con recompensas legendarias.',
+    landing_boss_how: '¿Cómo funcionan?',
+    landing_boss_step1_title: 'Aparece un Boss',
+    landing_boss_step1_desc: 'Un boss con miles de puntos de vida aparece durante un evento temporal. Toda la comunidad puede participar.',
+    landing_boss_step2_title: 'Registra Repeticiones',
+    landing_boss_step2_desc: 'Cada dominada, flexión o fondo que haces inflige daño al boss. Ve la barra de vida bajar en tiempo real.',
+    landing_boss_step3_title: 'Gana Recompensas',
+    landing_boss_step3_desc: 'Cuando el boss cae, todos los participantes desbloquean cofres con títulos, marcos de avatar y efectos exclusivos.',
+
+    // How to Use
+    landing_how_title: 'Cómo funciona',
+    landing_how_subtitle: 'Empieza a contar tus dominadas y flexiones en 3 pasos',
+    landing_how_step1_title: 'Regístrate con Google',
+    landing_how_step1_desc: 'Sin contraseña, sin complicaciones. Un clic con tu cuenta de Google y ya estás dentro.',
+    landing_how_step2_title: 'Registra tus Repeticiones',
+    landing_how_step2_desc: 'Selecciona dominadas, flexiones, fondos o muscle ups. Pon el número y dale a añadir. Ya cuentan.',
+    landing_how_step3_title: 'Compite y Sube de Nivel',
+    landing_how_step3_desc: 'Gana monedas, sube tu ranking global, compra cosméticos en la tienda y derrota bosses con la comunidad.',
+
+    // FAQ & LB
+    landing_faq_title: 'Preguntas Frecuentes',
+    landing_lb_title_main: 'Clasificación Global',
+    landing_lb_subtitle_main: 'Ranking de dominadas y calistenia en tiempo real',
+    landing_lb_live: 'LIVE RANKING',
+    landing_lb_preparing: 'Preparando Ranking...',
+    landing_lb_join: 'UNIRSE AL RANKING',
+    landing_footer_copy: 'REPPY © 2026',
+    landing_footer_free: 'App de Calistenia Gratuita',
+    landing_footer_exercises: 'Dominadas · Flexiones · Fondos',
+    landing_footer_desc: 'Reppy es un tracker de calistenia con sistema RPG para registrar dominadas, flexiones, fondos, muscle ups y dominadas con lastre. Disponible en español e inglés.',
   }
 };
 

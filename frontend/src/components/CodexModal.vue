@@ -1,11 +1,11 @@
 <template>
   <Teleport to="body">
     <div v-if="show" 
-         class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/90 backdrop-blur-xl animate-in fade-in duration-500"
+         class="fixed inset-0 z-[100] flex justify-center items-start overflow-y-auto p-4 sm:p-6 md:p-8 bg-black/90 backdrop-blur-xl animate-in fade-in duration-500"
          @click.self="emit('close')">
       
       <!-- Main Container -->
-      <div class="w-full max-w-4xl bg-surface/30 border border-white/10 rounded-[2.5rem] shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col md:flex-row h-auto md:h-[600px] animate-in slide-in-from-bottom-8 duration-700 select-none">
+      <div class="w-full max-w-4xl bg-surface/30 border border-white/10 rounded-[2.5rem] shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col md:flex-row h-auto md:h-[600px] animate-in slide-in-from-bottom-8 duration-700 select-none my-auto">
         
         <!-- Ambient Background Glow -->
         <div class="absolute inset-0 pointer-events-none transition-colors duration-1000 opacity-20" :class="activeDesc.bgAccent"></div>
@@ -54,7 +54,7 @@
         </div>
 
         <!-- Right Content Area: Active Stat Details -->
-        <div class="flex-1 relative flex flex-col justify-center p-8 md:p-16 overflow-hidden z-20">
+        <div class="flex-1 relative flex flex-col justify-center p-6 sm:p-8 md:p-16 overflow-hidden z-20">
           
           <!-- Huge Background Decorative Icon -->
           <Transition name="fade-scale" mode="out-in">
@@ -69,13 +69,13 @@
           <Transition name="slide-up" mode="out-in">
             <div :key="activeTab" class="relative z-10 max-w-xl">
               <!-- Header -->
-              <div class="mb-8">
+              <div class="mb-6 md:mb-8">
                 <div class="flex items-center gap-3 mb-4">
                   <div class="px-3 py-1 rounded-full bg-black/40 border backdrop-blur-sm" :class="activeDesc.borderActive">
                     <span class="text-[10px] font-black uppercase tracking-widest" :class="activeDesc.iconColor">CLASE: {{ activeTab }}</span>
                   </div>
                 </div>
-                <h4 class="text-5xl md:text-6xl font-black uppercase tracking-tighter italic leading-none drop-shadow-2xl" :class="activeDesc.iconColor">
+                <h4 class="text-4xl md:text-6xl font-black uppercase tracking-tighter italic leading-none drop-shadow-2xl" :class="activeDesc.iconColor">
                   {{ i18nStore.t('codex_' + activeDesc.key.toLowerCase() + '_name') }}
                 </h4>
               </div>
@@ -83,7 +83,7 @@
               <!-- Content Group -->
               <div class="space-y-6 md:space-y-8">
                 <div class="relative pl-6 border-l-2" :class="activeDesc.borderLeft">
-                  <p class="text-xl md:text-2xl font-light italic text-white/80 leading-snug">
+                  <p class="text-lg md:text-2xl font-light italic text-white/80 leading-snug">
                     "{{ i18nStore.t('codex_' + activeDesc.key.toLowerCase() + '_quote') }}"
                   </p>
                 </div>

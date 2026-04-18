@@ -1,19 +1,19 @@
 <template>
   <Transition name="modal">
     <div v-if="store.confirmVisible" 
-         class="fixed inset-0 z-[110] flex items-center justify-center px-4"
+         class="fixed inset-0 z-[110] flex justify-center items-start overflow-y-auto p-4 md:p-8"
          role="alertdialog"
          aria-modal="true"
          :aria-labelledby="store.confirmTitle"
     >
       <!-- Backdrop -->
-      <button class="absolute inset-0 bg-[#030303]/80 backdrop-blur-sm cursor-default outline-none" 
+      <button class="fixed inset-0 bg-[#030303]/80 backdrop-blur-sm cursor-default outline-none" 
               aria-hidden="true"
               tabindex="-1"
               @click="store.handleCancel"></button>
       
       <!-- Dialog -->
-      <div class="glass w-full max-w-sm rounded-[2.5rem] p-8 border border-border relative z-10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden group">
+      <div class="glass w-full max-w-sm rounded-[2.5rem] p-8 border border-border relative z-10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden group my-auto">
         <div class="absolute inset-0 bg-primary-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
         
         <div class="flex flex-col items-center text-center space-y-6 relative z-10">

@@ -3,7 +3,7 @@
     <!-- Back Button -->
     <button @click="$emit('back')" class="absolute top-8 left-8 flex items-center gap-2.5 text-muted hover:text-primary-500 transition-colors z-50 group">
       <ChevronLeft class="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-      <span class="text-[11px] font-bold tracking-tight">Volver</span>
+      <span class="text-[11px] font-bold tracking-tight">{{ i18n.t('login_btn_back') }}</span>
     </button>
 
     <div class="w-full max-w-md mt-10 space-y-12 animate-in">
@@ -15,9 +15,9 @@
         </div>
         <div class="space-y-1">
           <h1 class="text-4xl font-bold tracking-tight text-foreground">
-            Bienvenido a Reppy<span class="text-primary-500">.</span>
+            {{ i18n.t('login_welcome') }}<span class="text-primary-500">.</span>
           </h1>
-          <p class="text-[11px] font-bold text-muted/60 tracking-tight">ACCESO AL SISTEMA DE ENTRENAMIENTO</p>
+          <p class="text-[11px] font-bold text-muted/60 tracking-tight">{{ i18n.t('login_subtitle') }}</p>
         </div>
       </div>
 
@@ -31,7 +31,7 @@
             :class="mode === 'login' ? 'text-foreground' : 'text-muted hover:text-foreground'"
           >
             <span v-if="mode === 'login'" class="absolute inset-0 bg-surface border border-border/40 rounded-xl shadow-sm"></span>
-            Iniciar Sesión
+            {{ i18n.t('login_title') }}
           </button>
           <button 
             @click="mode = 'signup'" 
@@ -39,7 +39,7 @@
             :class="mode === 'signup' ? 'text-foreground' : 'text-muted hover:text-foreground'"
           >
             <span v-if="mode === 'signup'" class="absolute inset-0 bg-surface border border-border/40 rounded-xl shadow-sm"></span>
-            Registrarse
+            {{ i18n.t('login_btn_register') }}
           </button>
         </div>
 
@@ -54,18 +54,18 @@
         <!-- Manual Form -->
         <form @submit.prevent="handleSubmit" class="space-y-6 mb-8">
           <div v-if="mode === 'signup'" class="space-y-2">
-            <label class="text-[11px] font-bold text-muted/60 px-1 tracking-tight">Nombre completo</label>
+            <label class="text-[11px] font-bold text-muted/60 px-1 tracking-tight">{{ i18n.t('login_name') }}</label>
             <input 
               v-model="form.name" 
               type="text" 
-              placeholder="Ej: John Doe"
+              :placeholder="i18n.t('login_name_placeholder')"
               required
               class="w-full bg-surface border border-border/40 rounded-2xl px-5 py-4 text-foreground font-bold focus:border-primary-500/50 outline-none transition-all shadow-sm"
             />
           </div>
           
           <div class="space-y-2">
-            <label class="text-[11px] font-bold text-muted/60 px-1 tracking-tight">Email</label>
+            <label class="text-[11px] font-bold text-muted/60 px-1 tracking-tight">{{ i18n.t('login_email') }}</label>
             <input 
               v-model="form.email" 
               type="email" 
@@ -76,7 +76,7 @@
           </div>
 
           <div class="space-y-2">
-            <label class="text-[11px] font-bold text-muted/60 px-1 tracking-tight">Contraseña</label>
+            <label class="text-[11px] font-bold text-muted/60 px-1 tracking-tight">{{ i18n.t('login_password') }}</label>
             <input 
               v-model="form.password" 
               type="password" 
@@ -92,14 +92,14 @@
             class="btn-reppy w-full !py-5 shadow-xl disabled:opacity-20 disabled:grayscale disabled:scale-100 mt-4"
           >
             <Loader2 v-if="loading" class="w-5 h-5 animate-spin" />
-            <span v-else>{{ mode === 'login' ? 'Identificarse' : 'Crear Cuenta' }}</span>
+            <span v-else>{{ mode === 'login' ? i18n.t('login_btn_login') : i18n.t('login_btn_signup') }}</span>
           </button>
         </form>
 
         <!-- OR Divider -->
         <div class="relative flex items-center gap-4 mb-10">
           <div class="flex-1 h-px bg-border/40"></div>
-          <span class="text-[10px] font-bold text-muted/30 tracking-widest">O CONTINÚA CON</span>
+          <span class="text-[10px] font-bold text-muted/30 tracking-widest">{{ i18n.t('login_or_continue') }}</span>
           <div class="flex-1 h-px bg-border/40"></div>
         </div>
         

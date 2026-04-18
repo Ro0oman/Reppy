@@ -1,88 +1,86 @@
 <template>
   <Transition name="fade">
     <div v-if="show" 
-         class="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-hidden"
+         class="fixed inset-0 z-[100] flex justify-center items-start overflow-y-auto p-4 md:p-8"
          role="dialog"
          aria-modal="true"
     >
       <!-- Backdrop -->
-      <div class="absolute inset-0 bg-background/80 backdrop-blur-xl" @click="close"></div>
+      <div class="fixed inset-0 bg-black/90 backdrop-blur-md" @click="close"></div>
 
       <!-- Content Card -->
-      <div class="relative max-w-2xl w-full bg-surface/40 backdrop-blur-3xl border border-border rounded-[2.5rem] shadow-[0_0_100px_rgba(255,69,0,0.15)] p-8 md:p-12 overflow-hidden animate-in">
+      <div class="relative max-w-lg w-full bg-zinc-900 border border-white/10 rounded-[2.5rem] shadow-[0_0_100px_rgba(255,69,0,0.3)] p-8 md:p-10 overflow-hidden animate-in my-auto">
         
-        <!-- Decorative Background Element -->
+        <!-- Glow accents -->
         <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary-500/20 rounded-full blur-[100px] pointer-events-none"></div>
-        <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-red-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-        <!-- Header -->
-        <div class="relative z-10 space-y-2 mb-10 text-center">
-          <div class="flex items-center justify-center gap-4 mb-4">
-             <Sword class="w-8 h-8 text-primary-500" />
-             <h2 class="text-4xl font-black text-foreground uppercase tracking-tighter italic font-industrial">
-                {{ i18n.t('battle_overhaul_title') }}<span class="text-primary-500">.</span>
-             </h2>
-             <Sparkles class="w-8 h-8 text-primary-500" />
-          </div>
-          <p class="text-[10px] font-black text-neon-lime uppercase tracking-[0.4em]">{{ i18n.t('battle_overhaul_subtitle') }}</p>
+        <!-- Header: Compact -->
+        <div class="relative z-10 text-center mb-8">
+          <h2 class="text-3xl font-black text-white italic uppercase tracking-tighter leading-none mb-2">
+            {{ i18n.t('battle_overhaul_title') }}<span class="text-primary-500">.</span>
+          </h2>
+          <p class="text-[9px] font-black text-neon-lime uppercase tracking-[0.3em]">{{ i18n.t('battle_overhaul_subtitle') }}</p>
         </div>
 
-        <!-- Mechanics Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10 mb-10">
-           <!-- Strength -->
-           <div class="p-6 rounded-3xl bg-white/5 border border-white/5 space-y-4 hover:border-red-500/30 transition-all group">
-              <div class="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
-                 <Dumbbell class="w-6 h-6" />
+        <!-- Stat Orbs: Small and centered -->
+        <div class="flex justify-center gap-6 md:gap-8 mb-10 relative z-10">
+           <!-- STR -->
+           <div class="flex flex-col items-center gap-2 group">
+              <div class="w-14 h-14 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform shadow-lg shadow-red-500/5">
+                 <Dumbbell class="w-7 h-7" />
               </div>
-              <div>
-                 <h4 class="text-xs font-black uppercase text-foreground tracking-widest">{{ i18n.t('stat_str') }}</h4>
-                 <p class="text-[10px] text-muted leading-relaxed mt-2">{{ i18n.t('battle_overhaul_str_desc') }}</p>
-              </div>
+              <span class="text-[10px] font-black uppercase text-zinc-500 tracking-widest group-hover:text-red-500 transition-colors">STR</span>
            </div>
 
-           <!-- Power -->
-           <div class="p-6 rounded-3xl bg-white/5 border border-white/5 space-y-4 hover:border-orange-500/30 transition-all group">
-              <div class="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center text-orange-500 group-hover:scale-110 transition-transform">
-                 <Zap class="w-6 h-6" />
+           <!-- PWR -->
+           <div class="flex flex-col items-center gap-2 group">
+              <div class="w-14 h-14 bg-orange-500/10 border border-orange-500/20 rounded-2xl flex items-center justify-center text-orange-500 group-hover:scale-110 transition-transform shadow-lg shadow-orange-500/5">
+                 <Zap class="w-7 h-7" />
               </div>
-              <div>
-                 <h4 class="text-xs font-black uppercase text-foreground tracking-widest">{{ i18n.t('stat_pwr') }}</h4>
-                 <p class="text-[10px] text-muted leading-relaxed mt-2">{{ i18n.t('battle_overhaul_pwr_desc') }}</p>
-              </div>
+              <span class="text-[10px] font-black uppercase text-zinc-500 tracking-widest group-hover:text-orange-500 transition-colors">PWR</span>
            </div>
 
-           <!-- Agility -->
-           <div class="p-6 rounded-3xl bg-white/5 border border-white/5 space-y-4 hover:border-blue-500/30 transition-all group">
-              <div class="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
-                 <Target class="w-6 h-6" />
+           <!-- AGI -->
+           <div class="flex flex-col items-center gap-2 group">
+              <div class="w-14 h-14 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform shadow-lg shadow-blue-500/5">
+                 <Target class="w-7 h-7" />
               </div>
-              <div>
-                 <h4 class="text-xs font-black uppercase text-foreground tracking-widest">{{ i18n.t('stat_agi') }}</h4>
-                 <p class="text-[10px] text-muted leading-relaxed mt-2">{{ i18n.t('battle_overhaul_agi_desc') }}</p>
-              </div>
+              <span class="text-[10px] font-black uppercase text-zinc-500 tracking-widest group-hover:text-blue-500 transition-colors">AGI</span>
            </div>
         </div>
 
-        <!-- Explanation Text -->
-        <div class="bg-black/20 border border-white/5 rounded-3xl p-6 relative z-10 space-y-4">
-           <div class="flex items-start gap-4">
-              <div class="p-2 bg-primary-500/10 rounded-lg text-primary-500">
-                 <Info class="w-4 h-4" />
+        <!-- Visual Formula: More graphic -->
+        <div class="bg-black/40 border border-white/5 rounded-3xl p-6 relative z-10 mb-8 flex flex-col items-center gap-4">
+           <div class="flex items-center gap-4 text-zinc-500">
+              <div class="flex items-center gap-2 bg-zinc-800/50 p-2 rounded-xl text-white">
+                 <Dumbbell class="w-4 h-4 text-red-500" />
+                 <span class="text-xs font-black italic">+</span>
+                 <Zap class="w-4 h-4 text-orange-500" />
+                 <span class="text-xs font-black italic">+</span>
+                 <Target class="w-4 h-4 text-blue-500" />
               </div>
-              <p class="text-xs text-foreground/80 leading-relaxed italic">
-                 "{{ i18n.t('battle_overhaul_summary') }}"
-              </p>
+              <span class="text-xs font-black italic">=</span>
+              <div class="p-2 bg-primary-500/20 rounded-xl border border-primary-500/30">
+                 <Sword class="w-5 h-5 text-primary-500" />
+              </div>
            </div>
-           <div class="pt-4 border-t border-white/5 flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
-              <span class="text-muted">{{ i18n.t('battle_overhaul_boss_hint') }}</span>
-              <span class="text-red-500">10X HP INCREASE</span>
+           <p class="text-center text-[11px] text-zinc-400 font-medium leading-relaxed max-w-[240px] italic">
+             "{{ i18n.t('battle_overhaul_summary') }}"
+           </p>
+        </div>
+
+        <!-- Alert badge -->
+        <div class="flex justify-center mb-10 relative z-10">
+           <div class="inline-flex items-center gap-2 px-4 py-2 bg-red-600/10 border border-red-500/20 rounded-full">
+              <div class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></div>
+              <span class="text-[9px] font-black text-red-500 uppercase tracking-widest">{{ i18n.t('battle_overhaul_boss_alert') }}</span>
            </div>
         </div>
 
-        <!-- Controls -->
-        <div class="relative z-10 mt-10 text-center">
+        <!-- Smaller Button -->
+        <div class="relative z-10 text-center">
            <button @click="close" 
-             class="px-12 py-5 bg-primary-500 hover:bg-primary-600 text-white font-black uppercase tracking-[0.3em] text-xs rounded-3xl shadow-2xl shadow-primary-500/30 transition-all active:scale-95">
+             class="group relative inline-flex items-center justify-center px-10 py-4 bg-primary-500 hover:bg-primary-600 text-white font-black uppercase tracking-[0.3em] text-[10px] rounded-2xl shadow-xl shadow-primary-500/20 transition-all active:scale-95">
              {{ i18n.t('battle_overhaul_btn') }}
            </button>
         </div>

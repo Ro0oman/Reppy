@@ -67,7 +67,7 @@
           <!-- Mini Stats Bar Info -->
           <div class="pt-3 border-t border-white/10 mt-1">
             <p class="text-[8px] font-bold text-zinc-400 uppercase tracking-widest leading-relaxed text-center">
-              Consigue XP para ganar <span class="text-primary-500 font-black">COFRES DE BOTÍN</span>. Cada repetición suma.
+              {{ i18n.t('level_xp_info') }}
             </p>
           </div>
         </div>

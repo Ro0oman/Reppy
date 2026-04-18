@@ -84,14 +84,14 @@
           </div>
 
           <!-- 3. Peak Volume -->
-          <div class="card-stats flex flex-col justify-between group/pb min-h-[160px]" title="Máximo volumen conseguido en un solo mes">
+          <div class="card-stats flex flex-col justify-between group/pb min-h-[160px]" :title="i18n.t('dash_max_month_tooltip')">
             <div class="flex items-center justify-between">
               <span class="text-[11px] font-bold tracking-tight text-muted/60">Volumen Pico</span>
               <Activity class="w-4 h-4 text-accent" />
             </div>
             <div class="mt-4">
               <span class="text-5xl font-bold text-foreground tracking-tighter leading-none">{{ stats.topMonthCount }}</span>
-              <p class="text-[11px] font-bold text-accent tracking-tight mt-1">Máximo Mes</p>
+              <p class="text-[11px] font-bold text-accent tracking-tight mt-1">{{ i18n.t('dash_max_month') }}</p>
             </div>
           </div>
 

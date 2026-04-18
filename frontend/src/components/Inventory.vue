@@ -27,7 +27,7 @@
           </div>
           <div class="space-y-2">
             <h2 class="text-3xl font-black text-industrial text-foreground uppercase italic tracking-tighter">COFRES DE <span class="text-cyan-500">NIVEL</span></h2>
-            <p class="text-muted font-bold uppercase tracking-widest text-[10px]">Ganados por evolución física. Descifra para equipo común y oro.</p>
+            <p class="text-muted font-bold uppercase tracking-widest text-[10px]">{{ i18n.t('inv_common_chest_desc') }}</p>
           </div>
         </div>
         
@@ -60,7 +60,7 @@
           </div>
           <div class="space-y-2">
             <h2 class="text-3xl font-black text-industrial text-foreground uppercase italic tracking-tighter">COFRES DE <span class="text-primary-500">TEMPORADA</span></h2>
-            <p class="text-muted font-bold uppercase tracking-widest text-[10px]">Descubiertos tras derrotar anomalías. Descifra para botín legendario.</p>
+            <p class="text-muted font-bold uppercase tracking-widest text-[10px]">{{ i18n.t('inv_boss_chest_desc') }}</p>
           </div>
         </div>
         

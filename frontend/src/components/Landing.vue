@@ -32,13 +32,11 @@
         <!-- H1: High-Impact Typography -->
         <div class="space-y-6">
           <h1 class="text-6xl md:text-[8.5rem] font-black tracking-tighter text-foreground leading-[0.85] uppercase italic animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
-            DOMINA CADA <br/> <span class="bg-gradient-to-r from-primary-500 to-rose-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(255,69,0,0.2)]">REPETICIÓN</span>
+            {{ i18n.t('landing_hero_title') }} <br/> <span class="bg-gradient-to-r from-primary-500 to-rose-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(255,69,0,0.2)]">{{ i18n.t('landing_hero_span') }}</span>
           </h1>
           
           <p class="max-w-2xl mx-auto text-xl md:text-2xl text-muted font-medium tracking-tight leading-relaxed animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-400">
-            {{ i18n.locale === 'es' 
-              ? 'La primera plataforma de calistenia con sistema RPG. Cada dominada cuenta. Cada boss cae. Tu leyenda empieza hoy.' 
-              : 'The first calisthenics platform with an RPG system. Every rep counts. Every boss falls. Your legend begins today.' }}
+            {{ i18n.t('landing_hero_subtitle') }}
           </p>
         </div>
 
@@ -46,7 +44,7 @@
         <div class="flex flex-col sm:flex-row items-center gap-6 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-600">
           <button @click="$emit('start')" class="group relative px-12 py-6 bg-primary-500 text-white rounded-[2rem] font-black uppercase tracking-widest overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-primary-500/20">
             <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-            <span class="relative z-10 text-lg">{{ authStore.isAuthenticated ? 'CONTINUAR AVENTURA' : 'UNIRSE AHORA' }}</span>
+            <span class="relative z-10 text-lg">{{ authStore.isAuthenticated ? i18n.t('btn_continue_adventure') : i18n.t('btn_join_now') }}</span>
           </button>
           
           <a href="https://github.com/Ro0oman/Reppy" target="_blank"
@@ -63,19 +61,19 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-24 pt-12 animate-in fade-in duration-1000 delay-1000">
           <div class="flex flex-col gap-1">
             <span class="text-3xl font-black text-foreground tracking-tighter italic">1.2M+</span>
-            <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">Repeticiones</span>
+            <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_reps') }}</span>
           </div>
           <div class="flex flex-col gap-1">
             <span class="text-3xl font-black text-foreground tracking-tighter italic">450+</span>
-            <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">Bosses Derrotados</span>
+            <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_bosses') }}</span>
           </div>
           <div class="flex flex-col gap-1">
              <span class="text-3xl font-black text-foreground tracking-tighter italic">100%</span>
-             <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">Sin Coste</span>
+             <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_cost') }}</span>
           </div>
           <div class="flex flex-col gap-1">
              <span class="text-3xl font-black text-foreground tracking-tighter italic">4.9/5</span>
-             <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">Puntuación</span>
+             <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_score') }}</span>
           </div>
         </div>
       </div>
@@ -97,11 +95,9 @@
             <div class="w-16 h-16 bg-primary-500/10 rounded-2xl flex items-center justify-center text-primary-500">
                <Trophy class="w-8 h-8" />
             </div>
-            <h3 class="text-4xl md:text-5xl font-black italic tracking-tighter text-foreground uppercase leading-none">SISTEMA <br/><span class="text-primary-500">RPG</span> INTEGRADO</h3>
+            <h3 class="text-4xl md:text-5xl font-black italic tracking-tighter text-foreground uppercase leading-none">{{ i18n.t('landing_bento_rpg_title') }}</h3>
             <p class="text-xl text-muted font-medium leading-relaxed max-w-md">
-              {{ i18n.locale === 'es' 
-                ? 'Sube de nivel tus atributos STR, PWR, END y AGI con cada repetición. Desbloquea cosméticos exclusivos y demuestra tu estatus.' 
-                : 'Level up your STR, PWR, END, and AGI attributes with every rep. Unlock exclusive cosmetics and prove your status.' }}
+              {{ i18n.t('landing_bento_rpg_desc') }}
             </p>
           </div>
           <div class="relative z-10 grid grid-cols-2 gap-4 pt-8">
@@ -119,8 +115,8 @@
           <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-500/15 rounded-full blur-[80px]"></div>
           <div class="relative z-10 flex items-start justify-between">
             <div class="space-y-2">
-              <h3 class="text-2xl font-black text-foreground uppercase italic tracking-tight">RANKING MUNDIAL</h3>
-              <p class="text-sm text-muted font-medium max-w-[200px]">Compite por el Top 1 en la clasificación global.</p>
+              <h3 class="text-2xl font-black text-foreground uppercase italic tracking-tight">{{ i18n.t('landing_bento_ranking_title') }}</h3>
+              <p class="text-sm text-muted font-medium max-w-[200px]">{{ i18n.t('landing_bento_ranking_desc') }}</p>
             </div>
             <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500">
                <Users class="w-6 h-6" />
@@ -137,7 +133,7 @@
               <div class="w-10 h-10 bg-neon-lime/10 rounded-xl flex items-center justify-center text-neon-lime">
                  <Activity class="w-5 h-5" />
               </div>
-              <h3 class="text-lg font-black text-foreground uppercase italic tracking-tight">CONSISTENCIA</h3>
+              <h3 class="text-lg font-black text-foreground uppercase italic tracking-tight">{{ i18n.t('landing_bento_consistency_title') }}</h3>
            </div>
            <div class="grid grid-cols-4 gap-1 opacity-40">
               <div v-for="i in 16" :key="i" class="aspect-square bg-neon-lime/30 rounded-sm"></div>
@@ -150,7 +146,7 @@
               <div class="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500">
                  <MessageCircle class="w-5 h-5" />
               </div>
-              <h3 class="text-lg font-black text-foreground uppercase italic tracking-tight">COMUNIDAD</h3>
+              <h3 class="text-lg font-black text-foreground uppercase italic tracking-tight">{{ i18n.t('landing_bento_community_title') }}</h3>
            </div>
            <div class="flex -space-x-3">
               <div v-for="i in 4" :key="i" class="w-8 h-8 rounded-full border-2 border-background bg-surface flex items-center justify-center text-[8px] font-black">U{{i}}</div>
@@ -168,99 +164,52 @@
     <section class="max-w-4xl w-full px-6 py-20 md:py-32 space-y-16" id="guia-calistenia">
       <div class="text-center space-y-6">
         <h2 class="text-4xl md:text-7xl font-bold tracking-tight text-foreground leading-none">
-          Guía Completa para <span class="text-primary-500">Progresar</span> en Calistenia
+          {{ i18n.t('landing_guia_title') }}
         </h2>
-        <p class="text-lg text-muted/60 font-bold tracking-[0.3em] uppercase">Todo lo que necesitas saber sobre el entrenamiento de peso corporal</p>
+        <p class="text-lg text-muted/60 font-bold tracking-[0.3em] uppercase">{{ i18n.t('landing_guia_subtitle') }}</p>
       </div>
 
       <div class="prose prose-invert prose-lg max-w-none space-y-12 text-muted/80 leading-loose font-medium">
         <div class="space-y-6">
           <h3 class="text-3xl font-black text-foreground flex items-center gap-4 uppercase italic tracking-tight">
             <Dumbbell class="w-8 h-8 text-primary-500" />
-            Introducción al Street Workout
+            {{ i18n.t('landing_art_intro_title') }}
           </h3>
-          <p>
-            La calistenia, también conocida como street workout, es una disciplina milenaria que se centra en el 
-            uso exclusivo del propio peso corporal para ganar fuerza, agilidad y control muscular. A diferencia 
-            del entrenamiento con pesas convencional, la calistenia requiere una coordinación intermuscular brutal y 
-            una fuerza relativa (fuerza por kilo de peso) excepcional.
-          </p>
-          <p>
-            En los últimos años, la popularidad de este deporte ha explotado gracias a su accesibilidad. Todo lo 
-            que necesitas es una barra de dominadas y voluntad. Sin embargo, esta simplicidad es un arma de doble 
-            filo: es muy fácil perderse en la rutina y no ver resultados si no se lleva un registro estricto. 
-            Aquí es donde un <strong>tracker de calistenia</strong> como Reppy marca la diferencia.
-          </p>
+          <p>{{ i18n.t('landing_art_intro_p1') }}</p>
+          <p>{{ i18n.t('landing_art_intro_p2') }}</p>
         </div>
 
         <div class="space-y-6">
           <h3 class="text-3xl font-black text-foreground flex items-center gap-4 uppercase italic tracking-tight">
             <ArrowUp class="w-8 h-8 text-rose-500" />
-            Dominando la Barra: El Camino del Pull-Up
+            {{ i18n.t('landing_art_pullups_title') }}
           </h3>
-          <p>
-            Las dominadas son, sin duda, el ejercicio rey de la calistenia para el tren superior. Involucran el dorsal 
-            ancho, los trapecios, los romboides, los bíceps y, por supuesto, el core. Realizar tu primera dominada 
-            es el rito de iniciación de cualquier atleta. Pero, ¿cómo pasar de 1 a 10, o de 10 a 20?
-          </p>
-          <p>
-            La clave reside en el <strong>volumen total de entrenamiento</strong>. No busques el fallo muscular 
-            en cada serie. En su lugar, realiza múltiples series dejando 1 o 2 repeticiones en recámara (RPE 8). 
-            Al usar Reppy para contar tus dominadas, podrás ver que sumando pequeñas series a lo largo del día o 
-            del entrenamiento, tu volumen total semanal aumenta drásticamente. Esta acumulación de fatiga controlada 
-            es lo que genera las adaptaciones neurales y musculares necesarias para progresar.
-          </p>
+          <p>{{ i18n.t('landing_art_pullups_p1') }}</p>
+          <p>{{ i18n.t('landing_art_pullups_p2') }}</p>
         </div>
 
         <div class="space-y-6">
           <h3 class="text-3xl font-black text-foreground flex items-center gap-4 uppercase italic tracking-tight">
             <Flame class="w-8 h-8 text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.3)]" />
-            La Psicología del Fitness: Gamificación
+            {{ i18n.t('landing_art_psych_title') }}
           </h3>
-          <p>
-            ¿Por qué nos cuesta tanto ir a entrenar pero podemos pasar horas subiendo de nivel en un videojuego? 
-            La respuesta está en el bucle de retroalimentación inmediata. En el gimnasio, los resultados tardan 
-            meses en verse. En un RPG, ves tu barra de experiencia subir tras cada combate.
-          </p>
-          <p>
-            En Reppy hemos hackeado este sistema. Al convertir cada <strong>flexión de brazos</strong> y cada 
-            dominada en "daño" infligido a un boss o en experiencia para tu personaje, creamos una satisfacción 
-            inmediata que mantiene tu motivación por las nubes. Ya no entrenas solo por tu salud física, sino 
-            para que tu perfil de atleta refleje el esfuerzo que estás poniendo. Este componente social y 
-            gamificado reduce la tasa de abandono en más de un 60% según nuestros estudios internos de comunidad.
-          </p>
+          <p>{{ i18n.t('landing_art_psych_p1') }}</p>
+          <p>{{ i18n.t('landing_art_psych_p2') }}</p>
         </div>
 
         <div class="space-y-6">
           <h3 class="text-3xl font-black text-foreground flex items-center gap-4 uppercase italic tracking-tight">
             <Target class="w-8 h-8 text-neon-lime" />
-            Nutrición y Descanso en Calistenia
+            {{ i18n.t('landing_art_nutri_title') }}
           </h3>
-          <p>
-            Ningún <strong>contador de repeticiones</strong> podrá salvarte si no descansas y te alimentas 
-            correctamente. El tejido muscular se daña durante el entrenamiento y se repara (crecer) durante el sueño. 
-            Asegúrate de consumir al menos 1.8g de proteína por kilo de peso y de dormir entre 7 y 9 horas diarias.
-          </p>
-          <p>
-            Recuerda que en calistenia, el peso corporal es tu resistencia. Si ganas grasa innecesaria, tus dominadas 
-            se volverán más difíciles. Mantener un superávit calórico ligero pero controlado es ideal para ganar 
-            fuerza sin sacrificar tu agilidad (AGI) en la barra. Usa las monedas que ganes en Reppy como un recordatorio 
-            de que el esfuerzo tiene recompensa, tanto virtual como física.
-          </p>
+          <p>{{ i18n.t('landing_art_nutri_p1') }}</p>
+          <p>{{ i18n.t('landing_art_nutri_p2') }}</p>
         </div>
 
         <div class="bg-primary-500/5 p-10 rounded-4xl border border-primary-500/10 space-y-6">
-           <h3 class="text-2xl font-bold text-primary-500">Conclusión: El Futuro de tu Entrenamiento</h3>
-           <p>
-             El camino hacia un cuerpo fuerte y funcional no tiene atajos, pero sí herramientas que lo hacen 
-             más llevadero. Reppy no es solo una aplicación; es tu compañero de barras, tu registro de vida 
-             y tu comunidad. Ya seas un principiante buscando su primera flexión o un experto buscando el 
-             Top 1 en el ranking de muscle ups, estamos aquí para contar cada una de tus victorias.
-           </p>
-           <p class="font-black text-foreground">
-             Se acabó el entrenar a ciegas. Es hora de jugar en serio. 
-             Es hora de Reppy.
-           </p>
+           <h3 class="text-2xl font-bold text-primary-500">{{ i18n.t('landing_art_concl_title') }}</h3>
+           <p>{{ i18n.t('landing_art_concl_p1') }}</p>
+           <p class="font-black text-foreground">{{ i18n.t('landing_art_concl_p2') }}</p>
         </div>
       </div>
     </section>
@@ -274,11 +223,9 @@
           <Activity class="w-8 h-8" />
         </div>
         <div class="space-y-4">
-          <h3 class="text-2xl font-bold text-foreground tracking-tight">Heatmap de Actividad</h3>
+          <h3 class="text-2xl font-bold text-foreground tracking-tight">{{ i18n.t('landing_feat_heatmap_title') }}</h3>
           <p class="text-muted/60 font-medium text-sm leading-relaxed">
-            Visualiza tu consistencia de entrenamiento con un gráfico estilo GitHub. 
-            Ve de un vistazo qué días entrenaste <strong>dominadas</strong>, <strong>flexiones</strong> o <strong>fondos</strong>. 
-            Filtra por ejercicio y año completo.
+            {{ i18n.t('landing_feat_heatmap_desc') }}
           </p>
         </div>
         <div class="h-1.5 w-full bg-surface-dark/10 rounded-full overflow-hidden">
@@ -291,10 +238,9 @@
           <Trophy class="w-8 h-8" />
         </div>
         <div class="space-y-4">
-          <h3 class="text-2xl font-bold text-foreground tracking-tight">Rankings Globales</h3>
+          <h3 class="text-2xl font-bold text-foreground tracking-tight">{{ i18n.t('landing_feat_rankings_title') }}</h3>
           <p class="text-muted/60 font-medium text-sm leading-relaxed">
-            Compite en el <strong>ranking mundial de dominadas</strong> y calistenia. 
-            Filtra por hoy, semana, mes o total. Sube de posición y demuestra quién es el mejor.
+            {{ i18n.t('landing_feat_rankings_desc') }}
           </p>
         </div>
         <div class="h-1.5 w-full bg-surface-dark/10 rounded-full overflow-hidden">
@@ -307,10 +253,9 @@
           <Users class="w-8 h-8" />
         </div>
         <div class="space-y-4">
-          <h3 class="text-2xl font-bold text-foreground tracking-tight">Comunidad Social</h3>
+          <h3 class="text-2xl font-bold text-foreground tracking-tight">{{ i18n.t('landing_feat_social_title') }}</h3>
           <p class="text-muted/60 font-medium text-sm leading-relaxed">
-            Añade amigos, visita sus perfiles públicos y compara tu progreso de <strong>calistenia</strong>. 
-            Crea tu círculo de entrenamiento y mantén la motivación.
+            {{ i18n.t('landing_feat_social_desc') }}
           </p>
         </div>
         <div class="h-1.5 w-full bg-surface-dark/10 rounded-full overflow-hidden">
@@ -325,11 +270,10 @@
     <section class="max-w-5xl w-full px-6 py-16 md:py-24 space-y-16" id="sistema-rpg">
       <div class="text-center space-y-6">
         <h2 class="text-4xl md:text-6xl font-bold tracking-tight text-foreground leading-none">
-          Sistema <span class="text-primary-500">RPG</span> de Fitness
+          {{ i18n.t('landing_bento_rpg_title') }}
         </h2>
         <p class="text-lg text-muted max-w-3xl mx-auto leading-relaxed font-medium">
-          Reppy no es un simple contador de repeticiones. Cada dominada que haces te da experiencia 
-          en 4 atributos de personaje, como en un videojuego RPG.
+          {{ i18n.t('landing_bento_rpg_desc') }}
         </p>
       </div>
 
@@ -339,11 +283,10 @@
             <div class="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center">
               <span class="text-red-500 font-black text-lg">STR</span>
             </div>
-            <h3 class="text-xl font-bold text-foreground">Fuerza (Strength)</h3>
+            <h3 class="text-xl font-bold text-foreground">{{ i18n.locale === 'es' ? 'Fuerza' : 'Strength' }} (Strength)</h3>
           </div>
           <p class="text-muted/60 text-sm leading-relaxed">
-            Sube con cada set de <strong>dominadas</strong> y <strong>flexiones</strong>. 
-            Refleja tu volumen total y consistencia de entrenamiento.
+            {{ i18n.locale === 'es' ? 'Sube con cada set de dominadas y flexiones. Refleja tu volumen total y consistencia de entrenamiento.' : 'Increases with every set of pull-ups and push-ups. Reflects your total volume and training consistency.' }}
           </p>
         </div>
 
@@ -352,11 +295,10 @@
             <div class="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center">
               <span class="text-orange-500 font-black text-lg">PWR</span>
             </div>
-            <h3 class="text-xl font-bold text-foreground">Potencia (Power)</h3>
+            <h3 class="text-xl font-bold text-foreground">{{ i18n.locale === 'es' ? 'Potencia' : 'Power' }} (Power)</h3>
           </div>
           <p class="text-muted/60 text-sm leading-relaxed">
-            Se gana con ejercicios de alta intensidad: <strong>muscle ups</strong> y <strong>dominadas con lastre</strong>. 
-            Para los atletas más serios.
+            {{ i18n.locale === 'es' ? 'Se gana con ejercicios de alta intensidad: muscle ups y dominadas con lastre. Para los atletas más serios.' : 'Earned with high-intensity exercises: muscle ups and weighted pull-ups. For the most serious athletes.' }}
           </p>
         </div>
 
@@ -365,11 +307,10 @@
             <div class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
               <span class="text-green-500 font-black text-lg">END</span>
             </div>
-            <h3 class="text-xl font-bold text-foreground">Resistencia (Endurance)</h3>
+            <h3 class="text-xl font-bold text-foreground">{{ i18n.locale === 'es' ? 'Resistencia' : 'Endurance' }} (Endurance)</h3>
           </div>
           <p class="text-muted/60 text-sm leading-relaxed">
-            Mide tu capacidad de mantener volumen de <strong>calistenia</strong> en el tiempo. 
-            Más repeticiones sostenidas = más resistencia.
+            {{ i18n.locale === 'es' ? 'Mide tu capacidad de mantener volumen de calistenia en el tiempo. Más repeticiones sostenidas = más resistencia.' : 'Measures your ability to maintain calisthenics volume over time. More sustained reps = more endurance.' }}
           </p>
         </div>
 
@@ -378,11 +319,10 @@
             <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
               <span class="text-blue-500 font-black text-lg">AGI</span>
             </div>
-            <h3 class="text-xl font-bold text-foreground">Agilidad (Agility)</h3>
+            <h3 class="text-xl font-bold text-foreground">{{ i18n.locale === 'es' ? 'Agilidad' : 'Agility' }} (Agility)</h3>
           </div>
           <p class="text-muted/60 text-sm leading-relaxed">
-            Se recompensa por la constancia diaria y rachas de entrenamiento. 
-            Entrena todos los días para subir tu agilidad al máximo.
+            {{ i18n.locale === 'es' ? 'Se recompensa por la constancia diaria y rachas de entrenamiento. Entrena todos los días para subir tu agilidad al máximo.' : 'Rewarded for daily consistency and training streaks. Train every day to max out your agility.' }}
           </p>
         </div>
       </div>
@@ -394,12 +334,10 @@
     <section class="max-w-5xl w-full px-6 py-16 md:py-24 space-y-12" id="boss-fights">
       <div class="text-center space-y-6">
         <h2 class="text-4xl md:text-6xl font-bold tracking-tight text-foreground leading-none">
-          Boss Fights <span class="text-primary-500">Comunitarios</span>
+          {{ i18n.t('landing_boss_title') }}
         </h2>
         <p class="text-lg text-muted max-w-3xl mx-auto leading-relaxed font-medium">
-          Participa en eventos globales donde toda la comunidad lucha contra un boss épico. 
-          Cada <strong>dominada</strong>, <strong>flexión</strong> o <strong>fondo</strong> que registras 
-          inflige daño al boss. Cuando la comunidad lo derrota, todos ganan cofres con recompensas legendarias.
+          {{ i18n.t('landing_boss_desc') }}
         </p>
       </div>
 
@@ -408,31 +346,28 @@
           <div class="p-4 bg-primary-500/10 rounded-2xl">
             <Sword class="w-10 h-10 text-primary-500" />
           </div>
-          <h3 class="text-2xl font-bold text-foreground">¿Cómo funcionan?</h3>
+          <h3 class="text-2xl font-bold text-foreground">{{ i18n.t('landing_boss_how') }}</h3>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
           <div class="space-y-3">
             <span class="text-4xl font-black text-primary-500">01</span>
-            <h4 class="text-foreground font-bold">Aparece un Boss</h4>
+            <h4 class="text-foreground font-bold">{{ i18n.t('landing_boss_step1_title') }}</h4>
             <p class="text-muted/60 text-sm leading-relaxed">
-              Un boss con miles de puntos de vida aparece durante un evento temporal. 
-              Toda la comunidad puede participar.
+              {{ i18n.t('landing_boss_step1_desc') }}
             </p>
           </div>
           <div class="space-y-3">
             <span class="text-4xl font-black text-primary-500">02</span>
-            <h4 class="text-foreground font-bold">Registra Repeticiones</h4>
+            <h4 class="text-foreground font-bold">{{ i18n.t('landing_boss_step2_title') }}</h4>
             <p class="text-muted/60 text-sm leading-relaxed">
-              Cada dominada, flexión o fondo que haces inflige daño al boss.
-              Ve la barra de vida bajar en tiempo real.
+              {{ i18n.t('landing_boss_step2_desc') }}
             </p>
           </div>
           <div class="space-y-3">
             <span class="text-4xl font-black text-primary-500">03</span>
-            <h4 class="text-foreground font-bold">Gana Recompensas</h4>
+            <h4 class="text-foreground font-bold">{{ i18n.t('landing_boss_step3_title') }}</h4>
             <p class="text-muted/60 text-sm leading-relaxed">
-              Cuando el boss cae, todos los participantes desbloquean cofres 
-              con títulos, marcos de avatar y efectos exclusivos.
+              {{ i18n.t('landing_boss_step3_desc') }}
             </p>
           </div>
         </div>
@@ -521,10 +456,10 @@
     <section class="max-w-5xl w-full px-6 py-16 md:py-24 space-y-12" id="como-funciona">
       <div class="text-center space-y-6">
         <h2 class="text-4xl md:text-6xl font-bold tracking-tight text-foreground leading-none">
-          Cómo <span class="text-primary-500">funciona</span>
+          {{ i18n.t('landing_how_title') }}
         </h2>
         <p class="text-lg text-muted max-w-2xl mx-auto leading-relaxed font-medium">
-          Empieza a contar tus dominadas y flexiones en 3 pasos
+          {{ i18n.t('landing_how_subtitle') }}
         </p>
       </div>
 
@@ -533,9 +468,9 @@
           <div class="w-16 h-16 bg-primary-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-primary-500/20">
             <span class="text-3xl font-black text-white">1</span>
           </div>
-          <h3 class="text-lg font-bold text-foreground">Regístrate con Google</h3>
+          <h3 class="text-lg font-bold text-foreground">{{ i18n.t('landing_how_step1_title') }}</h3>
           <p class="text-muted/60 font-medium text-sm leading-relaxed">
-            Sin contraseña, sin complicaciones. Un clic con tu cuenta de Google y ya estás dentro.
+            {{ i18n.t('landing_how_step1_desc') }}
           </p>
         </div>
 
@@ -543,9 +478,9 @@
           <div class="w-16 h-16 bg-primary-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-primary-500/20">
             <span class="text-3xl font-black text-white">2</span>
           </div>
-          <h3 class="text-lg font-bold text-foreground">Registra tus Repeticiones</h3>
+          <h3 class="text-lg font-bold text-foreground">{{ i18n.t('landing_how_step2_title') }}</h3>
           <p class="text-muted/60 font-medium text-sm leading-relaxed">
-            Selecciona dominadas, flexiones, fondos o muscle ups. Pon el número y dale a añadir. Ya cuentan.
+            {{ i18n.t('landing_how_step2_desc') }}
           </p>
         </div>
 
@@ -553,9 +488,9 @@
           <div class="w-16 h-16 bg-primary-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-primary-500/20">
             <span class="text-3xl font-black text-white">3</span>
           </div>
-          <h3 class="text-lg font-bold text-foreground">Compite y Sube de Nivel</h3>
+          <h3 class="text-lg font-bold text-foreground">{{ i18n.t('landing_how_step3_title') }}</h3>
           <p class="text-muted/60 font-medium text-sm leading-relaxed">
-            Gana monedas, sube tu ranking global, compra cosméticos en la tienda y derrota bosses con la comunidad.
+            {{ i18n.t('landing_how_step3_desc') }}
           </p>
         </div>
       </div>
@@ -567,7 +502,7 @@
     <section class="max-w-4xl w-full px-6 py-16 md:py-24 space-y-12" id="preguntas-frecuentes">
       <div class="text-center space-y-4">
         <h2 class="text-4xl md:text-6xl font-bold tracking-tight text-foreground leading-none">
-          Preguntas <span class="text-primary-500">Frecuentes</span>
+          {{ i18n.t('landing_faq_title') }}
         </h2>
       </div>
 
@@ -589,19 +524,19 @@
     ═══════════════════════════════════════════════════════════ -->
     <section class="max-w-5xl w-full px-6 py-16 md:py-32 space-y-16" id="ranking">
       <div class="text-center space-y-4">
-        <h2 class="text-5xl md:text-7xl font-bold tracking-tight text-foreground leading-none">Clasificación Global</h2>
-        <p class="text-muted/40 font-bold tracking-[0.2em] text-[11px] uppercase">Ranking de dominadas y calistenia en tiempo real</p>
+        <h2 class="text-5xl md:text-7xl font-bold tracking-tight text-foreground leading-none">{{ i18n.t('landing_lb_title_main') }}</h2>
+        <p class="text-muted/40 font-bold tracking-[0.2em] text-[11px] uppercase">{{ i18n.t('landing_lb_subtitle_main') }}</p>
       </div>
       
       <div class="card-stats !p-0 overflow-hidden border-white/5">
          <div class="p-8 bg-white/5 border-b border-white/5">
-            <span class="text-[10px] font-black text-primary-500 uppercase tracking-[0.5em]">LIVE RANKING</span>
+            <span class="text-[10px] font-black text-primary-500 uppercase tracking-[0.5em]">{{ i18n.t('landing_lb_live') }}</span>
          </div>
          <div ref="leaderboardTrigger" class="min-h-[400px]">
            <Leaderboard v-if="shouldLoadLeaderboard" />
            <div v-else class="py-24 flex flex-col items-center gap-4">
              <div class="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-             <span class="text-[10px] font-black text-muted uppercase tracking-[0.4em]">Preparando Ranking...</span>
+             <span class="text-[10px] font-black text-muted uppercase tracking-0.4em]">{{ i18n.t('landing_lb_preparing') }}</span>
            </div>
          </div>
       </div>
@@ -611,7 +546,7 @@
           @click="$emit('start')"
           class="text-xs font-black text-primary-500 uppercase tracking-[0.5em] hover:text-white transition-all group"
         >
-          UNIRSE AL RANKING <span class="inline-block group-hover:translate-x-2 transition-transform">&rarr;</span>
+          {{ i18n.t('landing_lb_join') }} <span class="inline-block group-hover:translate-x-2 transition-transform">&rarr;</span>
         </button>
       </div>
     </section>
@@ -621,17 +556,16 @@
     ═══════════════════════════════════════════════════════════ -->
     <section class="max-w-4xl w-full px-6 py-20 md:py-32 text-center space-y-10">
       <h2 class="text-4xl md:text-6xl font-bold tracking-tight text-foreground leading-tight">
-        Empieza tu <span class="text-primary-500">leyenda</span> hoy
+        {{ i18n.t('landing_final_cta_title') }}
       </h2>
       <p class="text-lg text-muted max-w-2xl mx-auto leading-relaxed font-medium">
-        Únete a la comunidad de calistenia de Reppy. Registra flexiones, fondos y muscle ups. 
-        100% gratis, para siempre.
+        {{ i18n.t('landing_final_cta_desc') }}
       </p>
       <button 
         @click="$emit('start')"
         class="btn-reppy !text-xl !px-16 !py-6 shadow-[0_20px_40px_rgba(var(--primary),0.2)]"
       >
-        Crea tu cuenta gratis para siempre
+        {{ i18n.t('btn_create_account_free') }}
       </button>
     </section>
 
@@ -639,18 +573,17 @@
     <footer class="w-full py-24 border-t border-border/40 text-center space-y-8">
       <div class="max-w-5xl mx-auto px-6 space-y-6">
         <div class="flex flex-col md:flex-row justify-center items-center gap-10 text-muted/30">
-          <span class="text-[11px] font-bold tracking-[0.4em] uppercase">REPPY © 2026</span>
+          <span class="text-[11px] font-bold tracking-[0.4em] uppercase">{{ i18n.t('landing_footer_copy') }}</span>
           <div class="w-1 h-1 bg-border/40 rounded-full hidden md:block"></div>
-          <span class="text-[11px] font-bold tracking-[0.4em] uppercase">App de Calistenia Gratuita</span>
+          <span class="text-[11px] font-bold tracking-[0.4em] uppercase">{{ i18n.t('landing_footer_free') }}</span>
           <div class="w-1 h-1 bg-border/40 rounded-full hidden md:block"></div>
-          <span class="text-[11px] font-bold tracking-[0.4em] uppercase">Dominadas · Flexiones · Fondos</span>
+          <span class="text-[11px] font-bold tracking-[0.4em] uppercase">{{ i18n.t('landing_footer_exercises') }}</span>
         </div>
         <div class="flex justify-center gap-6">
           <router-link to="/blog" class="text-[10px] font-black text-muted hover:text-primary transition-all uppercase tracking-widest">Blog</router-link>
         </div>
         <p class="text-[10px] text-muted/20 max-w-lg mx-auto leading-relaxed">
-          Reppy es un tracker de calistenia con sistema RPG para registrar dominadas, flexiones, 
-          fondos, muscle ups y dominadas con lastre. Disponible en español e inglés.
+          {{ i18n.t('landing_footer_desc') }}
         </p>
       </div>
     </footer>

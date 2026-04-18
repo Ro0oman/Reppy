@@ -33,7 +33,7 @@
           </div>
           
           <button @click="store.hide" 
-                  :title="i18n.locale === 'es' ? 'Cerrar Notificación' : 'Close Notification'"
+                  :title="i18n.t('notif_close')"
                   class="text-muted hover:text-foreground transition-colors p-1">
             <X class="w-4 h-4" />
           </button>

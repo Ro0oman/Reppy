@@ -11,7 +11,7 @@
           :class="type === 'friends' ? 'text-foreground' : 'text-muted hover:text-foreground'"
         >
           <span v-if="type === 'friends'" class="absolute inset-0 bg-foreground/5 border border-border rounded-lg"></span>
-          FRIENDS
+          {{ i18n.t('lb_friends') }}
         </button>
         <button 
           @click="type = 'global'"
@@ -19,7 +19,7 @@
           :class="type === 'global' ? 'text-foreground' : 'text-muted hover:text-foreground'"
         >
           <span v-if="type === 'global'" class="absolute inset-0 bg-foreground/5 border border-border rounded-lg"></span>
-          GLOBAL
+          {{ i18n.t('lb_global') }}
         </button>
       </div>
 
@@ -33,7 +33,7 @@
           :class="timeframe === tf ? 'text-primary-500' : 'text-muted hover:text-foreground'"
         >
           <span v-if="timeframe === tf" class="absolute inset-0 bg-foreground/5 border border-border rounded-lg"></span>
-          {{ tf }}
+          {{ i18n.t('tf_' + tf) }}
         </button>
       </div>
     </div>
@@ -77,7 +77,7 @@
         </div>
         <p class="text-xs font-black text-foreground uppercase tracking-widest truncate w-28 text-center mb-0.5 leading-tight font-tight">{{ podiumUsers[0].name }}</p>
         <div class="flex items-center gap-2 mb-1.5 bg-primary-500/10 px-2.5 py-1 rounded-lg border border-primary-500/30 shadow-[0_0_15px_rgba(255,69,0,0.1)]">
-           <span class="text-[8px] font-black text-primary-500 uppercase tracking-[0.2em]">LEVEL</span>
+           <span class="text-[8px] font-black text-primary-500 uppercase tracking-[0.2em]">{{ i18n.t('lb_level') }}</span>
            <span class="text-xs font-black text-foreground italic leading-none">{{ podiumUsers[0].current_level }}</span>
         </div>
         <span class="text-2xl font-black text-primary-500 italic text-precision drop-shadow-lg">{{ podiumUsers[0].total_reps }}</span>
@@ -130,7 +130,7 @@
           <div class="min-w-0 flex-1">
             <div class="flex items-center gap-2">
               <div class="text-sm font-black text-foreground truncate group-hover:text-primary-400 transition-colors tracking-tight uppercase italic leading-none font-tight text-left">
-                {{ user.id === authStore.user?.id ? 'YOU' : user.name }}
+                {{ user.id === authStore.user?.id ? i18n.t('lb_you') : user.name }}
               </div>
               <div class="flex items-center gap-1 bg-foreground/5 px-1.5 py-0.5 rounded border border-border/30">
                 <span class="text-[6px] font-black text-primary-500/80 tracking-widest">LVL</span>
@@ -141,7 +141,7 @@
               </span>
             </div>
             <p class="text-[8px] text-muted font-bold uppercase tracking-widest mt-1 text-left">
-              PRO ATLETA
+              {{ i18n.t('lb_pro_athlete') }}
             </p>
           </div>
         </div>
@@ -151,7 +151,7 @@
           <span class="text-xl font-black text-foreground group-hover:text-primary-500 transition-colors italic text-precision leading-none">
             {{ user.total_reps }}
           </span>
-          <p class="text-[7px] font-black text-muted uppercase tracking-widest mt-1 opacity-60 leading-none">REPS</p>
+          <p class="text-[7px] font-black text-muted uppercase tracking-widest mt-1 opacity-60 leading-none">{{ i18n.t('stats_reps') }}</p>
         </div>
       </button>
       
@@ -173,7 +173,7 @@
       
       <div v-if="!loading && users.length === 0" class="py-24 text-center opacity-30">
         <Users class="w-10 h-10 mx-auto mb-4 text-muted" />
-        <p class="text-[10px] font-black text-muted uppercase tracking-widest leading-none">PROTOCOL DATA NULL</p>
+        <p class="text-[10px] font-black text-muted uppercase tracking-widest leading-none">{{ i18n.t('lb_data_null') }}</p>
       </div>
     </div>
   </div>

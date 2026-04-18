@@ -22,7 +22,7 @@
           :class="activeTab === 'feed' ? 'bg-primary-500 text-white shadow-xl shadow-primary-500/20' : 'text-muted hover:text-foreground hover:bg-white/5'"
         >
           <Activity class="w-4 h-4" />
-          {{ i18n.locale === 'es' ? 'Muro Social' : 'Social Wall' }}
+          {{ i18n.t('social_wall') }}
         </button>
         <button 
           @click="activeTab = 'rankings'"
@@ -30,7 +30,7 @@
           :class="activeTab === 'rankings' ? 'bg-primary-500 text-white shadow-xl shadow-primary-500/20' : 'text-muted hover:text-foreground hover:bg-white/5'"
         >
           <Trophy class="w-4 h-4" />
-          {{ i18n.locale === 'es' ? 'Clasificaciones' : 'Rankings' }}
+          {{ i18n.t('rankings') }}
         </button>
       </div>
     </div>
@@ -44,7 +44,7 @@
       <div class="space-y-6">
         <div class="flex items-center gap-3 px-2">
           <Trophy class="w-4 h-4 text-primary-500" />
-          <h3 class="text-xs font-black uppercase tracking-[0.4em] text-muted">GLOBAL.RANKINGS</h3>
+          <h3 class="text-xs font-black uppercase tracking-[0.4em] text-muted">{{ i18n.t('global_rankings') }}</h3>
         </div>
         
         <div class="card-stats !p-0 overflow-hidden border-border bg-surface/20 backdrop-blur-sm">
@@ -55,9 +55,9 @@
                </div>
                <div>
                  <h3 class="text-lg font-black text-industrial uppercase text-foreground tracking-tight leading-none">
-                   {{ activeExerciseLabel }} <span class="text-muted/60">Protocol</span>
+                   {{ activeExerciseLabel }} <span class="text-muted/60">{{ i18n.t('protocol_label') }}</span>
                  </h3>
-                 <p class="text-[9px] font-black text-muted uppercase tracking-widest mt-1">Live ranking synchronization</p>
+                 <p class="text-[9px] font-black text-muted uppercase tracking-widest mt-1">{{ i18n.t('live_sync') }}</p>
                </div>
             </div>
             <ExerciseSelector v-model="activeExercise" class="!bg-transparent !p-0 w-full md:w-auto" />
@@ -75,7 +75,7 @@
         <section class="space-y-6">
           <div class="flex items-center gap-2">
             <Search class="w-4 h-4 text-primary-500" />
-            <h3 class="text-xs font-black uppercase tracking-[0.4em] text-muted">FIND_OPERATIVES</h3>
+            <h3 class="text-xs font-black uppercase tracking-[0.4em] text-muted">{{ i18n.t('find_operatives') }}</h3>
           </div>
 
           <div class="relative group">
@@ -102,7 +102,7 @@
                         <span class="text-[8px] font-black text-foreground italic">{{ user.current_level }}</span>
                       </div>
                     </div>
-                    <p class="text-[9px] text-muted font-black uppercase tracking-[0.2em] mt-1.5 opacity-70">{{ user.total_reps }} REPS COLLECTED</p>
+                    <p class="text-[9px] text-muted font-black uppercase tracking-[0.2em] mt-1.5 opacity-70">{{ user.total_reps }} {{ i18n.t('reps_collected') }}</p>
                   </div>
                 </div>
                 <button @click.stop="addFriend(user.id)"
@@ -125,7 +125,7 @@
         <section class="space-y-6">
           <div class="flex items-center gap-2">
             <Heart class="w-4 h-4 text-primary-500 fill-primary-500/20" />
-            <h3 class="text-xs font-black uppercase tracking-[0.4em] text-muted">INNER_CIRCLE</h3>
+            <h3 class="text-xs font-black uppercase tracking-[0.4em] text-muted">{{ i18n.t('inner_circle') }}</h3>
           </div>
 
           <div class="grid grid-cols-1 gap-4">
@@ -152,7 +152,7 @@
                     </div>
                     <div class="flex items-center gap-3 mt-1.5">
                       <Trophy class="w-3 h-3 text-primary-500 drop-shadow-[0_0_5px_rgba(255,69,0,0.5)]" />
-                      <p class="text-[10px] font-black uppercase text-muted tracking-[0.2em] opacity-80">{{ friend.total_reps }} REPS SCALED</p>
+                      <p class="text-[10px] font-black uppercase text-muted tracking-[0.2em] opacity-80">{{ friend.total_reps }} {{ i18n.t('reps_scaled') }}</p>
                     </div>
                   </div>
                 </div>
@@ -227,10 +227,10 @@ const addFriend = async (friendId) => {
     await axios.post('/api/social/add', { friendId });
     fetchFriends();
     searchResults.value = searchResults.value.filter(u => u.id !== friendId);
-    notificationStore.notify('Friend added successfully!', 'success');
+    notificationStore.notify(i18n.t('friend_added'), 'success');
   } catch (error) {
     console.error('Error adding friend:', error);
-    notificationStore.notify('Failed to add friend', 'error');
+    notificationStore.notify(i18n.t('friend_add_failed'), 'error');
   }
 };
 

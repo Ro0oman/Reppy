@@ -1,6 +1,6 @@
 <template>
-  <div v-if="show" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-xl animate-in fade-in duration-300" @click.self="$emit('close')">
-    <div class="glass max-w-2xl w-full p-8 rounded-[2.5rem] border border-border shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden flex flex-col max-h-[90vh]">
+  <div v-if="show" class="fixed inset-0 z-[100] flex justify-center items-start overflow-y-auto p-4 md:p-8 bg-background/80 backdrop-blur-xl animate-in fade-in duration-300" @click.self="$emit('close')">
+    <div class="glass max-w-2xl w-full p-8 rounded-[2.5rem] border border-border shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden flex flex-col max-h-[90vh] my-auto">
       <!-- Background Glow -->
       <div class="absolute -top-32 -right-32 w-64 h-64 bg-primary-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
@@ -16,7 +16,7 @@
             <span v-else class="text-4xl font-black italic text-muted">?</span>
         </div>
         <div class="space-y-1">
-          <span class="text-[10px] font-black uppercase tracking-[0.4em] text-primary-500">HISTÓRICO DE DAÑO</span>
+          <span class="text-[10px] font-black uppercase tracking-[0.4em] text-primary-500">{{ i18n.t('boss_hist_modal_title') }}</span>
           <h2 class="text-3xl font-black italic tracking-tighter text-foreground uppercase italic">{{ boss?.name || 'BOSS' }}</h2>
           <div class="flex items-center gap-4 text-[10px] font-black text-muted uppercase tracking-widest">
               <span>{{ boss?.total_hp?.toLocaleString() }} HP</span>

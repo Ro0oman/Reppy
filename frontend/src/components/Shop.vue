@@ -5,9 +5,9 @@
     <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
       <div>
         <h1 class="text-4xl font-black text-industrial tracking-tighter text-foreground">
-          ARMORY<span class="text-primary-500">.</span>
+          {{ i18n.t('shop_armory_title') }}<span class="text-primary-500">.</span>
         </h1>
-        <p class="text-muted mt-2 font-bold uppercase tracking-widest text-[10px]">Equip your legend with elite protocol cosmetics.</p>
+        <p class="text-muted mt-2 font-bold uppercase tracking-widest text-[10px]">{{ i18n.t('shop_armory_subtitle') }}</p>
       </div>
       
       <!-- Currency Display (Precision Pill) -->
@@ -17,7 +17,7 @@
         </div>
         <div class="flex flex-col">
           <span class="text-3xl font-black text-precision text-foreground tracking-tighter leading-none">{{ authStore.user?.reppy_coins || 0 }}</span>
-          <span class="text-[8px] uppercase tracking-[0.3em] text-primary-500/70 font-black mt-1">REPPY COINS</span>
+          <span class="text-[8px] uppercase tracking-[0.3em] text-primary-500/70 font-black mt-1">{{ i18n.t('shop_reppy_coins') }}</span>
         </div>
       </div>
     </div>
@@ -95,7 +95,7 @@
             <!-- Header Info -->
             <div class="p-4 pb-0 flex items-start justify-between z-10">
               <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-yellow-500/20 text-yellow-500 bg-yellow-500/10">
-                ELITE_PACK
+                {{ i18n.t('shop_elite_pack') }}
               </span>
               <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border" :class="getRarityBadge(item).classes">
                 {{ getRarityBadge(item).label }}
@@ -128,16 +128,16 @@
               <div class="flex items-center justify-between mt-4">
                 <div v-if="item.owned" class="flex items-center gap-1.5 text-neon-lime">
                   <Check class="w-3.5 h-3.5" />
-                  <span class="text-[8px] font-black uppercase tracking-widest leading-none">ACQUIRED</span>
+                  <span class="text-[8px] font-black uppercase tracking-widest leading-none">{{ i18n.t('btn_acquired') }}</span>
                 </div>
                 <div v-else class="flex flex-col">
                   <div v-if="item.original_price" class="flex items-center gap-2 mb-0.5">
                     <span class="text-[10px] font-black text-muted line-through tracking-tighter">{{ item.original_price }}</span>
-                    <span class="text-[8px] font-black bg-yellow-500/20 text-yellow-500 px-1.5 rounded uppercase">Special Deal</span>
+                    <span class="text-[8px] font-black bg-yellow-500/20 text-yellow-500 px-1.5 rounded uppercase">{{ i18n.t('shop_special_deal') }}</span>
                   </div>
                   <div class="flex items-baseline gap-1">
                     <span class="text-xl font-black text-precision text-yellow-500">{{ item.price }}</span>
-                    <span class="text-[8px] font-black text-muted uppercase tracking-widest">RC</span>
+                    <span class="text-[8px] font-black text-muted uppercase tracking-widest">{{ i18n.t('stats_reps') }}</span>
                   </div>
                 </div>
 
@@ -147,7 +147,7 @@
                   :disabled="!canAfford(item) || buying"
                   class="bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-20 shadow-lg shadow-yellow-500/20 active:scale-95"
                 >
-                  ACQUIRE
+                  {{ i18n.t('btn_acquire') }}
                 </button>
               </div>
             </div>
@@ -158,7 +158,7 @@
       <!-- Main Collection -->
       <section>
         <div class="flex items-center gap-4 mb-10">
-          <h2 class="text-xl font-black text-industrial text-foreground tracking-tight italic">PERMANENT PROTOCOL</h2>
+          <h2 class="text-xl font-black text-industrial text-foreground tracking-tight italic">{{ i18n.t('shop_permanent_protocol') }}</h2>
           <div class="h-px flex-1 bg-gradient-to-r from-muted/20 to-transparent"></div>
         </div>
 
@@ -216,7 +216,7 @@
                   <!-- Screen Overlay Effect -->
                   <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none"></div>
                   <div class="absolute inset-0 opacity-20 pointer-events-none h-[200%] animate-scanline" style="background: linear-gradient(to bottom, transparent 50%, rgba(34, 211, 238, 0.5) 50.5%, transparent 51%); background-size: 100% 4px;"></div>
-                  <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">SCRN.PRVW</div>
+                  <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">{{ i18n.t('shop_screen_preview') }}</div>
                </div>
                <div v-if="item.type === 'post_background'" class="w-full h-full relative group/post-bg overflow-hidden flex items-center justify-center">
                   <div class="w-[90%] h-[80%] bg-black border border-border rounded-lg relative overflow-hidden flex flex-col p-2 gap-2 shadow-2xl shop-preview">
@@ -238,7 +238,7 @@
                        <div class="w-2/3 h-2 bg-foreground/5 rounded"></div>
                      </div>
                   </div>
-                  <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">POST.PRVW</div>
+                  <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">{{ i18n.t('shop_post_preview') }}</div>
                </div>
             </div>
 
@@ -248,7 +248,7 @@
               <p class="text-[10px] text-muted font-medium line-clamp-2 mb-4 leading-relaxed">{{ item.description }}</p>
               
               <div v-if="!item.is_unlocked" class="px-2 py-1.5 bg-red-500/5 border border-red-500/10 rounded-lg">
-                <p class="text-[7px] font-black uppercase tracking-widest text-red-500/70">DECRYPT AT: {{ getCountdown(item) }}</p>
+                <p class="text-[7px] font-black uppercase tracking-widest text-red-500/70">{{ i18n.t('shop_decrypt_at') }}: {{ getCountdown(item) }}</p>
               </div>
             </div>
 
@@ -278,7 +278,7 @@
                   :disabled="!canAfford(item) || buying || !item.is_unlocked"
                   class="btn-reppy !px-4 !py-2 !text-[8px] disabled:opacity-20 disabled:grayscale disabled:scale-100"
                 >
-                  {{ item.is_unlocked ? 'GET' : 'LOCK' }}
+                  {{ item.is_unlocked ? i18n.t('btn_get') : i18n.t('btn_lock') }}
                 </button>
                 
                 <button 
@@ -288,7 +288,7 @@
                   class="px-4 py-2 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all"
                   :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-neon-lime text-black shadow-lg shadow-neon-lime/20'"
                 >
-                  {{ isEquipped(item) ? 'ON' : 'EQUIP' }}
+                  {{ isEquipped(item) ? i18n.t('btn_on') : i18n.t('btn_equip') }}
                 </button>
               </div>
             </div>
@@ -304,8 +304,8 @@
             <button 
               @click="currentPage > 1 && (currentPage--)"
               :disabled="currentPage === 1"
-              :title="i18n.locale === 'es' ? 'Página Anterior' : 'Previous Page'"
-              :aria-label="i18n.locale === 'es' ? 'Página Anterior' : 'Previous Page'"
+              :title="i18n.t('shop_prev')"
+              :aria-label="i18n.t('shop_prev')"
               class="p-5 bg-surface/60 border border-border rounded-2xl hover:border-primary-500/30 disabled:opacity-20 transition-all group/prev shadow-xl active:scale-95"
             >
               <ChevronLeft class="w-5 h-5 group-hover/prev:-translate-x-1 transition-transform" />
@@ -316,7 +316,7 @@
                 v-for="p in totalPages" 
                 :key="p"
                 @click="currentPage = p"
-                :title="i18n.locale === 'es' ? `Ir a la página ${p}` : `Go to page ${p}`"
+                :title="`${i18n.t('shop_go_to')} ${p}`"
                 class="w-12 h-12 flex items-center justify-center rounded-2xl text-[11px] font-black tracking-widest transition-all border-2"
                 :class="currentPage === p ? 'bg-primary-500 text-white border-primary-500 shadow-[0_0_25px_rgba(255,69,0,0.3)]' : 'bg-surface/40 text-muted border-border hover:border-primary-500/40 hover:text-foreground active:scale-90'"
               >
@@ -327,8 +327,8 @@
             <button 
               @click="currentPage < totalPages && (currentPage++)"
               :disabled="currentPage === totalPages"
-              :title="i18n.locale === 'es' ? 'Siguiente Página' : 'Next Page'"
-              :aria-label="i18n.locale === 'es' ? 'Siguiente Página' : 'Next Page'"
+              :title="i18n.t('shop_next')"
+              :aria-label="i18n.t('shop_next')"
               class="p-5 bg-surface/60 border border-border rounded-2xl hover:border-primary-500/30 disabled:opacity-20 transition-all group/next shadow-xl active:scale-95"
             >
               <ChevronRight class="w-5 h-5 group-hover/next:translate-x-1 transition-transform" />
@@ -359,8 +359,8 @@
               <Sparkles class="w-7 h-7 text-primary-500" />
             </div>
             <div class="text-left">
-              <h2 class="text-2xl font-black text-industrial text-foreground tracking-tight uppercase">SEASONAL PROTOCOL</h2>
-              <p class="text-[10px] text-muted font-bold tracking-widest uppercase">Special event rewards & milestone artifacts.</p>
+              <h2 class="text-2xl font-black text-industrial text-foreground tracking-tight uppercase">{{ i18n.t('shop_seasonal_title') || 'SEASONAL PROTOCOL' }}</h2>
+              <p class="text-[10px] text-muted font-bold tracking-widest uppercase">{{ i18n.t('shop_seasonal_subtitle') || 'Special event rewards & milestone artifacts.' }}</p>
             </div>
           </div>
           <ChevronDown 
@@ -400,7 +400,7 @@
                     <BackgroundEffect :background-css="item.css_value" is-preview class="!absolute !inset-0 !w-full !h-full transition-transform duration-700 group-hover/item:scale-110" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none"></div>
                     <div class="absolute inset-0 opacity-20 pointer-events-none h-[200%] animate-scanline" style="background: linear-gradient(to bottom, transparent 50%, rgba(34, 211, 238, 0.5) 50.5%, transparent 51%); background-size: 100% 4px;"></div>
-                    <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">SCRN.PRVW</div>
+                    <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">{{ i18n.t('shop_screen_preview') }}</div>
                  </div>
                  <div v-if="item.type === 'post_background'" class="w-full h-full relative group/post-bg overflow-hidden flex items-center justify-center">
                     <div class="w-[90%] h-[80%] bg-black border border-border rounded-lg relative overflow-hidden flex flex-col p-2 gap-2 shadow-2xl shop-preview">
@@ -425,7 +425,7 @@
                           </div>
                         </div>
                     </div>
-                    <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">POST.PRVW</div>
+                    <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">{{ i18n.t('shop_post_preview') }}</div>
                  </div>
               </div>
               <div class="p-4 pt-2 flex-1">
@@ -434,9 +434,9 @@
               </div>
               <div class="p-4 pt-0 mt-auto border-t border-border bg-foreground/[0.01]">
                 <div class="flex items-center justify-between mt-4">
-                  <div v-if="item.owned" class="flex items-center gap-1 text-neon-lime"><Check class="w-3.5 h-3.5" /><span class="text-[8px] font-black uppercase tracking-widest leading-none">ACQUIRED</span></div>
+                  <div v-if="item.owned" class="flex items-center gap-1 text-neon-lime"><Check class="w-3.5 h-3.5" /><span class="text-[8px] font-black uppercase tracking-widest leading-none">{{ i18n.t('btn_acquired') }}</span></div>
                   <div v-else class="text-[8px] font-black uppercase tracking-widest text-primary-500/60 leading-none">SPECIAL</div>
-                  <button v-if="item.owned" @click="equipItem(item)" :disabled="isEquipped(item)" class="px-4 py-2 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all" :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-neon-lime text-black shadow-lg shadow-neon-lime/20'">{{ isEquipped(item) ? 'ON' : 'EQUIP' }}</button>
+                  <button v-if="item.owned" @click="equipItem(item)" :disabled="isEquipped(item)" class="px-4 py-2 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all" :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-neon-lime text-black shadow-lg shadow-neon-lime/20'">{{ isEquipped(item) ? i18n.t('btn_on') : i18n.t('btn_equip') }}</button>
                 </div>
               </div>
             </div>
@@ -455,8 +455,8 @@
     leave-from-class="opacity-100"
     leave-to-class="opacity-0"
   >
-    <div v-if="showBundleModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-xl" @click.self="showBundleModal = false">
-      <div class="glass max-w-xl w-full p-8 rounded-[2.5rem] border border-yellow-500/30 shadow-[0_0_80px_rgba(234,179,8,0.1)] relative overflow-hidden flex flex-col max-h-[90vh] animate-in slide-in-from-bottom-4 zoom-in-95 duration-300">
+    <div v-if="showBundleModal" class="fixed inset-0 z-[100] flex justify-center items-start overflow-y-auto p-4 md:p-8 bg-background/80 backdrop-blur-xl" @click.self="showBundleModal = false">
+      <div class="glass max-w-xl w-full p-8 rounded-[2.5rem] border border-yellow-500/30 shadow-[0_0_80px_rgba(234,179,8,0.1)] relative overflow-hidden flex flex-col max-h-[90vh] animate-in slide-in-from-bottom-4 zoom-in-95 duration-300 my-auto">
         <!-- Background Glow -->
         <div class="absolute -top-32 -right-32 w-64 h-64 bg-yellow-400/10 rounded-full blur-[100px] pointer-events-none"></div>
 
@@ -467,7 +467,7 @@
 
         <!-- Header -->
         <div class="mb-10 pr-12">
-          <span class="text-[10px] font-black uppercase tracking-[0.4em] text-yellow-500 mb-2 block">MODULE_CONTENTS</span>
+          <span class="text-[10px] font-black uppercase tracking-[0.4em] text-yellow-500 mb-2 block">{{ i18n.t('shop_module_contents') }}</span>
           <h2 class="text-3xl font-black italic tracking-tighter text-foreground uppercase leading-none">{{ selectedBundle?.name }}</h2>
           <p class="text-xs text-muted font-medium mt-3 leading-relaxed">{{ selectedBundle?.description }}</p>
         </div>
@@ -491,7 +491,7 @@
         <!-- Footer -->
         <div class="mt-8 pt-8 border-t border-white/10 flex items-center justify-between gap-6">
           <div class="flex flex-col">
-            <span class="text-[10px] font-black text-muted uppercase tracking-widest mb-1">BUNDLE_COST</span>
+            <span class="text-[10px] font-black text-muted uppercase tracking-widest mb-1">{{ i18n.t('shop_bundle_cost') }}</span>
             <div class="flex items-baseline gap-2">
               <span class="text-2xl font-black text-yellow-500 tabular-nums">{{ selectedBundle?.price }}</span>
               <span class="text-[10px] font-black text-muted uppercase tracking-widest">RC</span>
@@ -503,7 +503,7 @@
             :disabled="!canAfford(selectedBundle) || buying || selectedBundle?.owned"
             class="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black py-4 rounded-2xl text-[12px] font-black uppercase tracking-[0.2em] transition-all disabled:opacity-20 shadow-xl shadow-yellow-500/20 active:scale-95"
           >
-            {{ selectedBundle?.owned ? 'ACQUIRED' : 'INITIATE ACQUISITION' }}
+            {{ selectedBundle?.owned ? i18n.t('btn_acquired') : i18n.t('shop_initiate_acquisition') }}
           </button>
         </div>
       </div>

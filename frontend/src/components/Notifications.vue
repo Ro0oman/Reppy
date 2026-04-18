@@ -9,7 +9,7 @@
       <div class="px-8 py-6 border-b border-border/40 flex items-center justify-between bg-foreground/[0.02]">
         <div class="flex items-center gap-4">
           <Bell class="w-5 h-5 text-primary-500" />
-          <span class="text-xs font-black uppercase tracking-widest text-foreground">ANOMALÍAS DETECTADAS: {{ store.unreadCount }}</span>
+          <span class="text-xs font-black uppercase tracking-widest text-foreground">{{ i18n.t('notif_anomalies') }}: {{ store.unreadCount }}</span>
         </div>
         <button 
           v-if="store.unreadCount > 0"
