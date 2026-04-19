@@ -1,169 +1,172 @@
 <template>
-  <div class="max-w-7xl mx-auto w-full px-4 space-y-8 pb-32 pt-0">
-    <!-- Top Header: Tools & Boss -->
-    <ExerciseSelector v-model="activeExercise" class="w-full" />
+  <div class="max-w-7xl mx-auto w-full px-4 space-y-12 pb-32 pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <!-- 1. Mission Control Header -->
+    <header class="flex flex-col gap-8">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="flex items-center gap-6">
+          <!-- Compact Daily Progress -->
+          <div class="relative shrink-0 transition-transform duration-500 hover:scale-105">
+             <RadialProgress 
+              :progress="(todayProgress / stats.dailyGoal) * 100" 
+              :size="80"
+              class="drop-shadow-[0_0_20px_rgba(255,69,0,0.1)]"
+            >
+              <div class="flex flex-col items-center">
+                <span class="text-xl font-black tracking-tighter text-white italic leading-none">
+                  {{ Math.round((todayProgress / stats.dailyGoal) * 100) }}%
+                </span>
+                <span class="text-[7px] font-black text-primary-500 uppercase tracking-widest mt-0.5">OBJETIVO</span>
+              </div>
+            </RadialProgress>
+          </div>
 
-    <!-- Phase 0: Central Operations (60/40 Split) -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-      <!-- Action Center (Reps Input) -->
-      <div class="space-y-4">
-        <h3 class="text-[13px] font-bold flex items-center gap-2.5 text-foreground/70 px-2 tracking-tight">
-          <Zap class="w-4 h-4 text-primary-500" />
-          {{ i18n.t('log_pullups') }}
-        </h3>
-        <div v-if="activeExercise === 'all'" class="card-stats p-8 flex flex-col items-center justify-center text-center space-y-4 opacity-50 border-dashed border-border min-h-[360px]">
-          <Globe class="w-12 h-12 text-muted" />
-          <p class="text-[10px] font-black text-muted uppercase tracking-widest leading-relaxed">
-            {{ i18n.t('dash_global_view_active') }}
-          </p>
+          <div>
+            <h2 class="text-4xl font-black tracking-tighter text-foreground italic uppercase leading-none">Command Hub</h2>
+            <div class="flex items-center gap-2 mt-2">
+              <div class="flex items-center gap-1.5 bg-primary-500/10 px-2 py-0.5 rounded-full border border-primary-500/20">
+                <Target class="w-3 h-3 text-primary-500" />
+                <span class="text-[9px] font-black text-primary-500 uppercase tracking-widest">{{ todayProgress }} / {{ stats.dailyGoal }} REPS</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <RepsInput v-else :exercise-type="activeExercise" @updated="fetchData" class="min-h-[360px]" />
+        <ExerciseSelector v-model="activeExercise" class="w-full md:w-auto" />
       </div>
+    </header>
 
-      <!-- Activity Stream (Heatmap) -->
+    <!-- 2. The Hero: Active Session -->
+    <section class="max-w-4xl mx-auto w-full">
+      <div v-if="activeExercise === 'all'" class="bg-surface/10 backdrop-blur-2xl border border-dashed border-white/10 rounded-[3rem] flex flex-col items-center justify-center text-center p-20 opacity-40">
+        <Globe class="w-16 h-16 text-muted mb-6" />
+        <h3 class="text-xl font-black uppercase tracking-tighter">{{ i18n.t('dash_global_view_active') }}</h3>
+        <p class="text-xs text-muted/60 max-w-[200px] mx-auto mt-2 italic">Select a specific protocol to log data</p>
+      </div>
+      <RepsInput v-else :exercise-type="activeExercise" @updated="fetchData" class="w-full" />
+    </section>
+
+    <!-- 3. Global Intel & Metrics -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      <!-- Boss Intel -->
       <div class="lg:col-span-2 space-y-4">
-        <h3 class="text-[13px] font-bold flex items-center gap-2.5 text-foreground/70 px-2 tracking-tight">
-          <Activity class="w-4 h-4 text-primary-500" />
-          {{ i18n.t('activity_stream') }}
-        </h3>
-        <Heatmap 
-          :data="heatmapData" 
-          :key="`${activeExercise}-${activeYear}`" 
-          :loading="isLoading"
-          :selected-year="activeYear"
-          :exercise-label="activeExerciseLabel"
-          class="bg-surface/20 backdrop-blur-3xl border border-white/5 rounded-[2rem] p-8 h-full transition-opacity duration-300" 
-          :class="isLoading ? 'opacity-50' : 'opacity-100'"
-        />
-      </div>
-    </div>
-
-    <!-- Secondary Layer: Boss & Analytics -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-      <!-- Tactical Status (Community Boss) -->
-      <div class="space-y-4">
-        <h3 class="text-[13px] font-bold flex items-center gap-2.5 text-foreground/70 px-2 tracking-tight">
+        <div class="flex items-center gap-3 px-2">
           <Zap class="w-4 h-4 text-primary-500" />
-          {{ i18n.t('dash_boss_status') }}
-        </h3>
+          <h3 class="text-xs font-black uppercase tracking-widest text-muted/60">{{ i18n.t('dash_boss_status') }}</h3>
+        </div>
         <BossHealth ref="bossHealthRef" />
       </div>
 
-      <!-- Daily Progress & Bento -->
-      <div class="space-y-4">
-        <h3 class="text-[13px] font-bold flex items-center gap-2.5 text-foreground/70 px-2 tracking-tight">
-          <Target class="w-4 h-4 text-primary-500" />
-          {{ i18n.t('goal_progress') }}
-        </h3>
-        <div class="bento-grid !grid-cols-1 xl:!grid-cols-2">
-          <!-- 1. Primary Progress -->
-          <div class="card-stats xl:col-span-2 xl:row-span-2 flex flex-col items-center justify-center gap-8 group/goal min-h-[380px]">
-            <RadialProgress :progress="(todayProgress / stats.dailyGoal) * 100" :size="220">
-              <div class="flex flex-col items-center">
-                <span class="text-6xl font-bold tracking-tighter text-foreground">
-                  {{ todayProgress }}
-                </span>
-                <span class="text-[11px] font-bold text-muted/60 tracking-wider">/ {{ stats.dailyGoal }} REPS</span>
+      <!-- Quick Metrics Bento -->
+      <div class="grid grid-cols-1 gap-4 h-full">
+         <!-- Streak -->
+         <div class="bg-surface/10 backdrop-blur-xl border border-white/5 rounded-[2rem] p-8 flex flex-col justify-between group">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-black text-muted/40 uppercase tracking-widest">{{ i18n.t('dash_streak') }}</span>
+              <Flame class="w-4 h-4 text-primary-500" />
+            </div>
+            <div class="mt-4">
+              <span class="text-5xl font-black text-white italic tracking-tighter">{{ stats.streak }}</span>
+              <p class="text-[10px] font-black text-primary-500 uppercase tracking-widest mt-1">{{ i18n.t('stats_days') }}</p>
+            </div>
+         </div>
+
+         <div class="grid grid-cols-2 gap-4">
+            <!-- Peak -->
+            <div class="bg-surface/10 backdrop-blur-xl border border-white/5 rounded-[2rem] p-6 flex flex-col justify-between group">
+              <Activity class="w-3.5 h-3.5 text-accent mb-4" />
+              <div>
+                <span class="text-3xl font-black text-white italic tracking-tighter">{{ stats.topMonthCount }}</span>
+                <p class="text-[9px] font-black text-muted/40 uppercase tracking-widest mt-1">{{ i18n.t('dash_max_month') }}</p>
               </div>
-            </RadialProgress>
-            <p class="text-[10px] font-bold text-muted text-center px-4">
-              {{ todayProgress >= stats.dailyGoal ? i18n.t('dash_goal_achieved') : i18n.t('dash_analyzing_performance') }}
-            </p>
-          </div>
-
-          <!-- 2. Streak -->
-          <div class="card-stats flex flex-col justify-between group/streak min-h-[160px]">
-             <div class="flex items-center justify-between">
-               <span class="text-[11px] font-bold tracking-tight text-muted/60">{{ i18n.t('dash_streak') }}</span>
-               <Flame class="w-4 h-4 text-primary-500" />
-             </div>
-             <div class="mt-4">
-               <span class="text-5xl font-bold text-foreground tracking-tighter leading-none">{{ stats.streak }}</span>
-               <p class="text-[11px] font-bold text-primary-500 tracking-tight mt-1">{{ i18n.t('stats_days') }}</p>
-             </div>
-          </div>
-
-          <!-- 3. Peak Volume -->
-          <div class="card-stats flex flex-col justify-between group/pb min-h-[160px]" :title="i18n.t('dash_max_month_tooltip')">
-            <div class="flex items-center justify-between">
-               <span class="text-[11px] font-bold tracking-tight text-muted/60">{{ i18n.t('dash_peak_volume') }}</span>
-              <Activity class="w-4 h-4 text-accent" />
             </div>
-            <div class="mt-4">
-              <span class="text-5xl font-bold text-foreground tracking-tighter leading-none">{{ stats.topMonthCount }}</span>
-              <p class="text-[11px] font-bold text-accent tracking-tight mt-1">{{ i18n.t('dash_max_month') }}</p>
+            <!-- Tonnage -->
+            <div class="bg-surface/10 backdrop-blur-xl border border-white/5 rounded-[2rem] p-6 flex flex-col justify-between group">
+              <Trophy class="w-3.5 h-3.5 text-primary-500 mb-4" />
+              <div>
+                <span class="text-3xl font-black text-white italic tracking-tighter">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</span>
+                <p class="text-[9px] font-black text-muted/40 uppercase tracking-widest mt-1">{{ i18n.t('dash_tons_moved') }}</p>
+              </div>
             </div>
-          </div>
-
-          <!-- 4. Total Tonnage -->
-          <div class="card-stats flex flex-col justify-between group/tonnage min-h-[160px]" :title="i18n.t('dash_total_tonnage_tooltip')">
-            <div class="flex items-center justify-between">
-               <span class="text-[11px] font-bold tracking-tight text-muted/60">{{ i18n.t('dash_total_tonnage') }}</span>
-              <Trophy class="w-4 h-4 text-primary-500" />
-            </div>
-            <div class="mt-4">
-              <span class="text-5xl font-bold text-foreground tracking-tighter leading-none">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</span>
-               <p class="text-[11px] font-bold text-primary-500 tracking-tight mt-1">{{ i18n.t('dash_tons_moved') }}</p>
-            </div>
-          </div>
-        </div>
+         </div>
       </div>
-    </div>
+    </section>
 
-
-    <!-- Phase 3: Historical Stream -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <!-- Recent Logs -->
-      <div class="space-y-4">
-        <h3 class="text-[13px] font-bold flex items-center gap-2.5 text-foreground/70 px-2 tracking-tight">
-          <History class="w-4 h-4 text-primary-500" />
+    <!-- 4. Combat Analytics (Tabbed) -->
+    <section class="space-y-6">
+      <div class="flex items-center justify-center p-1 bg-surface/20 backdrop-blur-xl border border-white/5 rounded-2xl w-fit mx-auto">
+        <button 
+          @click="activeTab = 'heatmap'"
+          class="px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+          :class="activeTab === 'heatmap' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-muted/40 hover:text-foreground'"
+        >
+          {{ i18n.t('activity_stream') }}
+        </button>
+        <button 
+          @click="activeTab = 'history'"
+          class="px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+          :class="activeTab === 'history' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-muted/40 hover:text-foreground'"
+        >
           {{ i18n.t('dash_history_title') }}
-        </h3>
-        <div class="card-stats !p-0 h-[380px] overflow-hidden flex flex-col shadow-2xl">
-          <div class="overflow-y-auto scrollbar-hide flex-1">
+        </button>
+      </div>
+
+      <transition name="fade" mode="out-in">
+        <div v-if="activeTab === 'heatmap'" key="heatmap" class="bg-surface/5 backdrop-blur-3xl border border-white/5 rounded-[3rem] p-8 sm:p-12">
+          <Heatmap 
+            :data="heatmapData" 
+            :key="`${activeExercise}-${activeYear}`" 
+            :loading="isLoading"
+            :selected-year="activeYear"
+            :exercise-label="activeExerciseLabel"
+            class="transition-opacity duration-300"
+            :class="isLoading ? 'opacity-50' : 'opacity-100'"
+          />
+        </div>
+
+        <div v-else key="history" class="bg-surface/5 backdrop-blur-3xl border border-white/5 rounded-[3rem] overflow-hidden">
+          <div class="overflow-x-auto">
             <table class="w-full text-left">
-              <thead class="sticky top-0 bg-surface/90 backdrop-blur-md z-10">
-                <tr class="text-muted text-[9px] uppercase font-black tracking-[0.2em] border-b border-border/10">
-                  <th class="px-8 py-5">Timestamp</th>
-                  <th class="px-8 py-5 text-right">Magnitude</th>
+              <thead>
+                <tr class="text-muted/40 text-[9px] uppercase font-black tracking-[0.3em] border-b border-white/5">
+                  <th class="px-10 py-6">Timestamp</th>
+                  <th class="px-10 py-6 text-right">Magnitude</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-border/5">
-                <tr v-for="rep in reps" :key="rep.id" class="group hover:bg-primary-500/5 transition-colors">
-                  <td class="px-8 py-5">
-                    <span class="text-[13px] font-medium text-muted/80 group-hover:text-foreground transition-colors">
+              <tbody class="divide-y divide-white/[0.02]">
+                <tr v-for="rep in reps" :key="rep.id" class="group hover:bg-white/[0.02] transition-colors">
+                  <td class="px-10 py-6">
+                    <span class="text-xs font-bold text-muted/60 group-hover:text-foreground transition-colors uppercase tracking-tight">
                       {{ formatDate(rep.date) }}
                     </span>
                   </td>
-                  <td class="px-8 py-5 text-right">
+                  <td class="px-10 py-6 text-right">
                     <div v-if="editingId === rep.id" class="flex items-center justify-end gap-3">
                       <input v-model.number="editValue" type="number"
-                        class="w-20 bg-surface/60 border border-primary-500/30 rounded-xl px-2 py-1.5 text-right font-bold focus:outline-none text-foreground"
+                        class="w-20 bg-surface/60 border border-primary-500/30 rounded-xl px-2 py-1.5 text-right font-black italic focus:outline-none text-foreground"
                         @keyup.enter="saveEdit(rep.id)" />
                       <button @click="saveEdit(rep.id)" class="text-primary-500"><Check class="w-4 h-4" /></button>
                     </div>
-                    <div v-else class="flex items-center justify-end gap-5">
-                      <span @click="startEdit(rep)" class="text-2xl font-bold tracking-tight text-foreground cursor-pointer hover:text-primary-500 transition-colors">
+                    <div v-else class="flex items-center justify-end gap-6">
+                      <span @click="startEdit(rep)" class="text-2xl font-black italic tracking-tighter text-white cursor-pointer hover:text-primary-500 transition-colors">
                         {{ rep.count }}
                       </span>
-                      <button @click="confirmDelete(rep.id)" class="opacity-0 group-hover:opacity-100 text-muted/40 hover:text-red-500 transition-all">
+                      <button @click="confirmDelete(rep.id)" class="opacity-0 group-hover:opacity-100 text-muted/20 hover:text-red-500 transition-all">
                         <Trash2 class="w-4.5 h-4.5" />
                       </button>
                     </div>
                   </td>
                 </tr>
                 <tr v-if="reps.length === 0">
-                  <td colspan="2" class="py-20 text-center opacity-20">
-                    <Inbox class="w-10 h-10 mx-auto mb-4" />
-                    <span class="text-[10px] font-black uppercase tracking-widest">{{ i18n.t('dash_protocol_null') }}</span>
+                  <td colspan="2" class="py-24 text-center">
+                    <Inbox class="w-12 h-12 mx-auto mb-4 text-muted/20" />
+                    <span class="text-[10px] font-black uppercase tracking-[0.3em] text-muted/20">{{ i18n.t('dash_protocol_null') }}</span>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
-      </div>
-    </div>
+      </transition>
+    </section>
 
     <!-- Battle Overhaul Welcome Modal -->
     <DamageOverhaulModal 
@@ -205,6 +208,7 @@ const bossHealthRef = ref(null);
 const isLoading = ref(false);
 const activeYear = ref(2026);
 const showDamageModal = ref(false);
+const activeTab = ref('heatmap');
 
 // Scroll lock when damage modal is active
 watch(showDamageModal, (val) => {
@@ -347,4 +351,15 @@ onUnmounted(() => {
 .text-precision { font-family: 'JetBrains Mono', monospace; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
 </style>

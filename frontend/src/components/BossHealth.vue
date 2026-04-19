@@ -4,8 +4,8 @@
     
     <!-- Active Boss Card (Codex Style) -->
     <div @click="authStore.isAuthenticated && (showHistory = true)" 
-         class="w-full bg-surface/30 border border-white/10 rounded-[2.5rem] shadow-[0_0_80px_rgba(236,72,153,0.1)] relative overflow-hidden group transition-all duration-700 cursor-pointer"
-         :class="authStore.isAuthenticated ? 'hover:border-primary-500/40 hover:shadow-[0_0_100px_rgba(236,72,153,0.2)]' : 'cursor-default'">
+         class="w-full bg-surface/5 backdrop-blur-2xl border border-white/5 rounded-[3rem] shadow-[0_0_80px_rgba(236,72,153,0.05)] relative overflow-hidden group transition-all duration-700 cursor-pointer"
+         :class="authStore.isAuthenticated ? 'hover:border-primary-500/20 hover:shadow-[0_0_100px_rgba(236,72,153,0.1)]' : 'cursor-default'">
       
       <!-- Ambient Background Glow -->
       <div class="absolute inset-0 pointer-events-none opacity-20 bg-gradient-to-br from-primary-500/20 via-transparent to-transparent group-hover:opacity-40 transition-opacity duration-700"></div>
@@ -91,43 +91,42 @@
            </div>
         </div>
 
-        <!-- Damage Stats (Premium HUD Modules) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3" v-if="authStore.isAuthenticated">
+         <div class="grid grid-cols-1 md:grid-cols-3 gap-3" v-if="authStore.isAuthenticated">
            
            <!-- Tu Daño Total -->
-           <div class="relative p-4 md:p-5 rounded-[1.5rem] bg-black/40 border border-white/5 overflow-hidden group/card hover:border-primary-500/30 transition-all duration-500">
+           <div class="relative p-5 rounded-2xl bg-white/[0.02] border border-white/5 overflow-hidden group/card hover:border-primary-500/20 transition-all duration-500">
               <div class="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
               <div class="relative z-10">
-                 <span class="text-[7px] md:text-[8px] font-black tracking-[0.3em] uppercase text-white/40 block mb-1">{{ i18nStore.t('boss_hist_damage') }}</span>
-                 <div class="text-2xl md:text-3xl font-black text-white tracking-tighter">{{ formatNumber(personalDamage) }}<span class="text-[10px] font-bold text-primary-500/60 ml-1 tracking-widest">{{ i18nStore.t('boss_dmg_label') }}</span></div>
+                 <span class="text-[8px] font-black tracking-[0.3em] uppercase text-white/20 block mb-1">{{ i18nStore.t('boss_hist_damage') }}</span>
+                 <div class="text-3xl font-black text-white italic tracking-tighter">{{ formatNumber(personalDamage) }}<span class="text-[10px] font-black text-primary-500/40 ml-1 tracking-widest uppercase">{{ i18nStore.t('boss_dmg_label') }}</span></div>
               </div>
            </div>
 
            <!-- Daño Hoy -->
-           <div class="relative p-4 md:p-5 rounded-[1.5rem] bg-black/40 border border-white/5 overflow-hidden group/card hover:border-emerald-500/30 transition-all duration-500">
+           <div class="relative p-5 rounded-2xl bg-white/[0.02] border border-white/5 overflow-hidden group/card hover:border-emerald-500/20 transition-all duration-500">
               <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
               <div class="relative z-10 flex flex-col justify-between h-full">
-                 <span class="text-[7px] md:text-[8px] font-black tracking-[0.3em] uppercase text-white/40 block mb-1">{{ i18nStore.t('boss_today_damage') }}</span>
+                 <span class="text-[8px] font-black tracking-[0.3em] uppercase text-white/20 block mb-1">{{ i18nStore.t('boss_today_damage') }}</span>
                  <div class="flex items-end gap-1.5">
-                    <div class="text-2xl md:text-3xl font-black text-emerald-400 tracking-tighter">{{ formatNumber(dailyDamage) }}</div>
-                    <span class="text-[10px] font-bold text-emerald-500/50 mb-1 tracking-widest">{{ i18nStore.t('boss_dmg_label') }}</span>
+                    <div class="text-3xl font-black text-emerald-400 italic tracking-tighter">{{ formatNumber(dailyDamage) }}</div>
+                    <span class="text-[10px] font-black text-emerald-500/30 mb-1 tracking-widest uppercase">{{ i18nStore.t('boss_dmg_label') }}</span>
                  </div>
               </div>
            </div>
 
            <!-- Top Daño -->
-           <div v-if="topDamageDealer" class="relative p-4 md:p-5 rounded-[1.5rem] bg-black/40 border border-white/5 overflow-hidden group/card hover:border-amber-500/30 transition-all duration-500 flex flex-col">
+           <div v-if="topDamageDealer" class="relative p-5 rounded-2xl bg-white/[0.02] border border-white/5 overflow-hidden group/card hover:border-amber-500/20 transition-all duration-500 flex flex-col">
               <div class="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
               <div class="relative z-10 flex-1 flex flex-col justify-between">
-                 <span class="text-[7px] md:text-[8px] font-black tracking-[0.3em] uppercase text-white/40 block mb-1">{{ i18nStore.t('boss_domination') }}</span>
+                 <span class="text-[8px] font-black tracking-[0.3em] uppercase text-white/20 block mb-1">{{ i18nStore.t('boss_domination') }}</span>
                  <div>
-                        {{ topDamageDealer.id === authStore.user?.id ? i18nStore.t('lb_you') : topDamageDealer.name }}
-                    <div class="text-[10px] font-bold text-white/30 uppercase tracking-widest mt-0.5">{{ formatNumber(topDamageDealer.damage_dealt) }} {{ i18nStore.t('boss_dmg_label') }}</div>
+                    <span class="text-sm font-black text-white/80 uppercase tracking-tight italic">{{ topDamageDealer.id === authStore.user?.id ? i18nStore.t('lb_you') : topDamageDealer.name }}</span>
+                    <div class="text-[10px] font-black text-white/20 uppercase tracking-widest mt-0.5">{{ formatNumber(topDamageDealer.damage_dealt) }} {{ i18nStore.t('boss_dmg_label') }}</div>
                  </div>
               </div>
            </div>
            
-        </div>
+         </div>
 
         <!-- Footer Call To Action -->
         <div class="mt-8 flex flex-col md:flex-row items-center justify-between gap-4 border-t border-white/5 pt-6">

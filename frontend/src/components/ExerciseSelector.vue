@@ -1,20 +1,20 @@
 <template>
-  <div class="flex flex-wrap items-center justify-center gap-1 p-1 bg-surface/40 backdrop-blur-3xl rounded-[1.5rem] shadow-xl">
-    <button 
-      v-for="ex in exercises" :key="ex.id"
-      @click="$emit('update:modelValue', ex.id)"
-      :title="i18n.locale === 'es' ? `Filtrar por ${i18n.t(ex.id)}` : `Filter by ${i18n.t(ex.id)}`"
-      class="group relative flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-5 py-3 rounded-2xl transition-all duration-400 overflow-hidden min-w-[100px] sm:min-w-[130px]"
-      :class="modelValue === ex.id 
-        ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20 z-10' 
-        : 'text-muted hover:text-foreground hover:bg-surface/10'"
-    >
-      <!-- Background Shimmer on Hover -->
-      <div v-if="modelValue !== ex.id" class="absolute inset-x-0 bottom-0 h-0.5 bg-primary-500/20 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-      
-       <component :is="ex.icon" :class="['w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-500', modelValue === ex.id ? '' : 'group-hover:scale-110']" />
-      <span class="text-[9px] sm:text-[12px] font-black tracking-tighter sm:tracking-tight font-tight text-center leading-none uppercase">{{ i18n.t(ex.id) }}</span>
-    </button>
+  <div class="relative group/selector">
+    <div class="flex items-center justify-start gap-1 p-1 bg-surface/20 backdrop-blur-xl rounded-2xl border border-white/5 overflow-x-auto scrollbar-hide mask-fade-right">
+      <button 
+        v-for="ex in exercises" :key="ex.id"
+        @click="$emit('update:modelValue', ex.id)"
+        :title="i18n.locale === 'es' ? `Filtrar por ${i18n.t(ex.id)}` : `Filter by ${i18n.t(ex.id)}`"
+        class="group relative flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl transition-all duration-300 whitespace-nowrap"
+        :class="modelValue === ex.id 
+          ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' 
+          : 'text-muted/60 hover:text-foreground hover:bg-white/5'"
+      >
+        <component :is="ex.icon" :class="['w-4 h-4 transition-transform duration-300', modelValue === ex.id ? 'scale-110' : 'group-hover:scale-110']" />
+        <span class="text-[11px] font-bold tracking-tight uppercase">{{ i18n.t(ex.id) }}</span>
+      </button>
+    </div>
+    <!-- Simple right arrow indicator on mobile if scrolled (optional, but gradient is better) -->
   </div>
 </template>
 
@@ -44,5 +44,18 @@ const exercises = [
 </script>
 
 <style scoped>
-.font-tight { font-family: 'Inter Tight', sans-serif; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+.mask-fade-right {
+  mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+}
+
+@media (min-width: 768px) {
+  .mask-fade-right {
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+}
 </style>
