@@ -20,6 +20,7 @@
           <router-link v-for="nav in navLinks" :key="nav.id"
             :to="'/' + nav.id" 
             :title="i18n.t(nav.label) || nav.fallback"
+            @mouseenter="playHoverBlip"
             class="px-4 py-2 rounded-2xl text-[13px] font-semibold transition-all relative group flex items-center gap-2.5"
             :class="$route.name === nav.id ? 'text-foreground bg-primary-500/5' : 'text-muted hover:text-foreground hover:bg-surface/10'">
             <component :is="nav.icon" class="w-4 h-4" :class="$route.name === nav.id ? 'text-primary-500' : ''" />
@@ -64,6 +65,14 @@
                 <NotificationsDropdown @close="showNotifications = false" />
               </div>
             </div>
+
+            <!-- Mute Toggle -->
+            <button @click="toggleMute(); playClickBlip();" 
+                    :title="isMuted() ? 'Unmute' : 'Mute'"
+                    class="p-2 sm:p-2.5 rounded-xl transition-all group bg-surface/5 border border-border hover:bg-surface/10">
+              <component :is="isMuted() ? VolumeX : Volume2" 
+                         class="w-4.5 h-4.5 sm:w-5 sm:h-5 text-muted group-hover:text-primary-500 transition-colors" />
+            </button>
 
             <!-- Language Switcher -->
             <div class="hidden sm:block">
@@ -127,6 +136,7 @@
         <router-link v-for="nav in mobileNavLinks" :key="nav.id"
           :to="{ name: nav.id, params: nav.id === 'profile' ? { userId: authStore.user?.id } : {} }" 
           :title="i18n.t(nav.label)"
+          @mouseenter="playHoverBlip"
           class="flex flex-col items-center justify-center gap-1.5 flex-1 h-full transition-all relative group"
           :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted hover:text-foreground'">
           
@@ -241,10 +251,11 @@
 import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
-import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Bell, User, Dices } from 'lucide-vue-next';
+import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Bell, User, Dices, Volume2, VolumeX } from 'lucide-vue-next';
 import { useAuthStore } from './stores/auth';
 import { useI18nStore } from './stores/i18n';
 import { useNotificationsStore } from './stores/notifications';
+import { useAudio } from './composables/useAudio';
 
 // Components
 import AvatarFrame from './components/AvatarFrame.vue'
@@ -258,6 +269,7 @@ import NotificationsDropdown from './components/NotificationsDropdown.vue'
 import LanguageToggle from './components/LanguageToggle.vue'
 
 const authStore = useAuthStore();
+const { playHoverBlip, toggleMute, isMuted, playClickBlip } = useAudio();
 const i18n = useI18nStore();
 const notifStore = useNotificationsStore();
 const router = useRouter();

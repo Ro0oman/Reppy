@@ -164,41 +164,49 @@
           <div class="h-px flex-1 bg-gradient-to-l from-transparent to-white/10"></div>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 relative">
+          <!-- Decorative HUD elements -->
+          <div class="absolute -top-10 -right-4 w-32 h-32 border-r border-t border-primary-500/10 rounded-tr-3xl pointer-events-none hidden md:block"></div>
+          <div class="absolute -bottom-10 -left-4 w-32 h-32 border-l border-b border-primary-500/10 rounded-bl-3xl pointer-events-none hidden md:block"></div>
+          
           <div v-for="slot in loadoutSlots" :key="slot.type" 
-               class="relative group rounded-2xl bg-surface/10 border border-white/5 p-4 flex flex-col items-center justify-center gap-3 min-h-[140px] transition-all hover:bg-white/5">
+               class="relative group rounded-2xl bg-surface/10 border border-white/5 p-4 flex flex-col items-center justify-center gap-3 min-h-[140px] transition-all hover:bg-white/5 overflow-hidden">
             
-            <div class="absolute top-2 left-2 text-[6px] font-mono text-muted/50 uppercase">{{ slot.label }}</div>
+            <!-- Scanning Line -->
+            <div class="absolute inset-x-0 h-px bg-primary-500/20 top-0 group-hover:top-full transition-all duration-[2s] ease-linear pointer-events-none z-10"></div>
+            
+            <div class="absolute top-2 left-2 text-[6px] font-mono text-muted/50 uppercase tracking-widest">{{ slot.label }}</div>
+            <div class="absolute bottom-2 right-2 text-[5px] font-mono text-muted/30 uppercase tracking-widest">UNIT_0{{ loadoutSlots.indexOf(slot) + 1 }}</div>
             
             <!-- Slot Content -->
-            <div v-if="getEquippedItem(slot.type)" class="flex flex-col items-center gap-2">
-              <div class="scale-75 origin-center">
-                <AvatarFrame v-if="slot.type === 'border'" :src="authStore.user?.avatar_url" :border-css="getEquippedItem(slot.type).css_value" :size="50" />
+            <div v-if="getEquippedItem(slot.type)" class="flex flex-col items-center gap-2 relative z-20">
+              <div class="scale-90 origin-center transition-transform group-hover:scale-105 duration-500">
+                <AvatarFrame v-if="slot.type === 'border'" :src="authStore.user?.avatar_url" :border-css="getEquippedItem(slot.type).css_value" :size="55" />
                 <div v-else-if="slot.type === 'title'" class="text-center px-1">
-                  <h4 class="text-[10px] font-black uppercase italic leading-tight" :class="getEquippedItem(slot.type).css_value">{{ getEquippedItem(slot.type).name }}</h4>
+                  <h4 class="text-[11px] font-black uppercase italic leading-tight" :class="getEquippedItem(slot.type).css_value">{{ getEquippedItem(slot.type).name }}</h4>
                 </div>
-                <div v-else-if="slot.type === 'background'" class="w-12 h-12 rounded-lg overflow-hidden border border-white/10 relative">
+                <div v-else-if="slot.type === 'background'" class="w-14 h-14 rounded-xl overflow-hidden border border-white/10 relative shadow-2xl">
                    <BackgroundEffect :background-css="getEquippedItem(slot.type).css_value" is-preview class="!absolute !inset-0" />
                 </div>
-                <div v-else-if="slot.type === 'post_background'" class="w-12 h-12 rounded-lg overflow-hidden border border-white/10 relative">
+                <div v-else-if="slot.type === 'post_background'" class="w-14 h-14 rounded-xl overflow-hidden border border-white/10 relative shadow-2xl">
                    <div :class="getEquippedItem(slot.type).css_value" class="absolute inset-0"></div>
                 </div>
-                <div v-else-if="slot.type === 'avatar'" class="w-12 h-12 rounded-lg overflow-hidden border border-white/10 relative">
-                   <div :class="getEquippedItem(slot.type).css_value" class="absolute inset-0"></div>
+                <div v-else-if="slot.type === 'avatar'" class="w-14 h-14 rounded-xl overflow-hidden border border-white/10 relative shadow-2xl">
+                   <div :class="getEquippedItem(slot.type).css_value" class="absolute inset-0 shadow-inner"></div>
                 </div>
               </div>
-              <span class="text-[8px] font-black text-foreground uppercase truncate w-24 text-center">{{ getEquippedItem(slot.type).name }}</span>
+              <span class="text-[8px] font-black text-foreground uppercase truncate w-24 text-center tracking-tighter">{{ getEquippedItem(slot.type).name }}</span>
             </div>
 
             <!-- Empty Slot State -->
-            <div v-else class="flex flex-col items-center gap-2 opacity-20">
+            <div v-else class="flex flex-col items-center gap-2 opacity-10 group-hover:opacity-20 transition-opacity">
               <component :is="slot.icon" class="w-8 h-8 text-muted" />
-              <span class="text-[8px] font-black text-muted uppercase">OFFLINE</span>
+              <span class="text-[8px] font-black text-muted uppercase tracking-[0.2em]">OFFLINE</span>
             </div>
 
             <!-- Glow based on rarity -->
             <div v-if="getEquippedItem(slot.type)" 
-                 class="absolute inset-0 rounded-2xl border border-primary-500/20 shadow-[0_0_20px_rgba(255,69,0,0.1)] pointer-events-none"></div>
+                 class="absolute inset-0 rounded-2xl border border-primary-500/20 shadow-[0_0_20px_rgba(255,69,0,0.1)] pointer-events-none group-hover:border-primary-500/40 transition-colors"></div>
           </div>
         </div>
       </div>
@@ -226,7 +234,24 @@
         </div>
 
         <!-- Nexus Item Stash -->
-        <div v-else class="space-y-16">
+        <div v-else class="space-y-12">
+          <!-- Stash Filter Tabs -->
+          <div class="flex items-center justify-start gap-2 p-1 bg-surface/10 backdrop-blur-xl border border-white/5 rounded-2xl overflow-x-auto scrollbar-hide">
+            <button v-for="tab in [
+              { id: 'all', label: 'ALL_GEAR' },
+              { id: 'cores', label: 'NEURAL_FRAMES' },
+              { id: 'titles', label: 'COMBAT_TITLES' },
+              { id: 'hud', label: 'HUD_LAYOUTS' },
+              { id: 'themes', label: 'FEED_THEMES' },
+              { id: 'consumables', label: 'CONSUMABLES' }
+            ]" :key="tab.id"
+              @click="activeStashTab = tab.id"
+              class="px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all whitespace-nowrap"
+              :class="activeStashTab === tab.id ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-muted/60 hover:text-foreground hover:bg-white/5'">
+              {{ tab.label }}
+            </button>
+          </div>
+
           <div v-for="(items, type) in groupedItems" :key="type" class="space-y-6">
             <!-- Category Header -->
             <div class="flex items-center gap-6 px-4">
@@ -412,7 +437,9 @@ import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
 import ChestOpening from './ChestOpening.vue';
 import axios from 'axios';
+import { useAudio } from '../composables/useAudio';
 
+const { playZip, playEquipBlip, playClickBlip } = useAudio();
 const authStore = useAuthStore();
 const i18n = useI18nStore();
 const emit = defineEmits(['start', 'viewProfile']);
@@ -677,6 +704,7 @@ const isEquipped = (item) => {
 const toggleEquip = async (item) => {
   const alreadyEquipped = isEquipped(item);
   const targetId = alreadyEquipped ? 0 : item.id;
+  playEquipBlip();
   try {
     await axios.post(`/api/shop/equip/${targetId}?type=${item.type}`);
     if (item.type === 'title') { authStore.user.equipped_title_id = alreadyEquipped ? null : item.id; authStore.user.title_css = alreadyEquipped ? '' : item.css_value; authStore.user.title_name = alreadyEquipped ? '' : item.name; }
@@ -729,6 +757,7 @@ const hasNewInventoryOverall = computed(() => {
 });
 
 onMounted(async () => {
+  playZip();
   await Promise.all([fetchInventory(), authStore.fetchProfile()]);
   // Removed automatic global markSeen timeout
 });
@@ -789,9 +818,28 @@ onMounted(async () => {
   box-shadow: 0 0 30px -5px rgba(255, 69, 0, 0.2), 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
+/* Rarity-specific styles */
+.rarity-common .nexus-slot-inner { border-color: rgba(143, 161, 179, 0.1); }
+.rarity-rare .nexus-slot-inner { border-color: rgba(59, 130, 246, 0.2); }
+.rarity-epic .nexus-slot-inner { border-color: rgba(163, 77, 244, 0.2); }
+.rarity-legendary .nexus-slot-inner { 
+  border-color: rgba(255, 157, 0, 0.4);
+  background: linear-gradient(to bottom, rgba(255, 157, 0, 0.05), rgba(15, 15, 15, 0.6));
+}
+
 .nexus-slot:hover .nexus-slot-inner {
   border-color: var(--item-glow);
   box-shadow: 0 0 40px -10px var(--item-glow), 0 8px 32px rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nexus-slot.equipped .nexus-slot-inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 69, 0, 0.3);
+  border-radius: 1.5rem;
+  pointer-events: none;
 }
 
 /* Animations */

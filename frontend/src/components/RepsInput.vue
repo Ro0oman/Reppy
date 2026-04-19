@@ -88,9 +88,10 @@ import { Zap, Check } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useNotificationStore } from '../stores/notification';
 import { useDamageStore } from '../stores/damage';
-import { useAuthStore } from '../stores/auth';
 import { getLocalDateString } from '../utils/dateUtils.js';
+import { useAudio } from '../composables/useAudio';
 
+const { playHit } = useAudio();
 const props = defineProps({
   exerciseType: {
     type: String,
@@ -113,21 +114,7 @@ const loading = ref(false);
 const addReps = async (count) => {
   if (!count || loading.value) return;
   
-  // Use a more robust audio source from a high-uptime CDN (Mixkit preview)
-  try {
-    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
-    audio.volume = 0.3;
-    const playPromise = audio.play();
-    
-    if (playPromise !== undefined) {
-      playPromise.catch(e => {
-        console.warn('[AUDIO_BLOCKED] Interaction required or playback error:', e.name);
-      });
-    }
-  } catch (e) {
-    console.warn('[AUDIO_INIT_ERROR] Sound initialization failed', e);
-  }
-
+  playHit();
   loading.value = true;
   try {
     const today = getLocalDateString();

@@ -104,6 +104,9 @@ import { X, Trophy, Sparkles, Zap, Coins } from 'lucide-vue-next';
 import BackgroundEffect from './BackgroundEffect.vue';
 import confetti from 'canvas-confetti';
 
+import { useAudio } from '../composables/useAudio';
+
+const { playChest, playClickBlip } = useAudio();
 const props = defineProps({
   show: Boolean,
   reward: Object,
@@ -120,6 +123,7 @@ const winningIndex = 32;
 
 onMounted(async () => {
   if (props.show) {
+    playClickBlip();
     startAnimation();
   }
 });
@@ -156,6 +160,7 @@ const startAnimation = async () => {
 
     setTimeout(() => {
       finished.value = true;
+      playChest();
       confetti({
         particleCount: isMobile ? 100 : 200,
         spread: 90,

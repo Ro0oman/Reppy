@@ -1,12 +1,12 @@
 <template>
    <div 
     :id="'activity-' + activity.user_id + '-' + activity.date"
-    class="reddit-card group relative overflow-hidden flex flex-col gap-0 border-border/40 backdrop-blur-md transition-all duration-300"
+    class="reddit-card group relative overflow-hidden flex flex-col gap-0 border border-white/10 backdrop-blur-xl transition-all duration-300"
     :class="[
-      activity.post_background_css ? 'bg-black border-primary-500/20' : 'bg-[#0b1416] hover:bg-[#121c1f] border-border/20',
-      highlighted ? 'ring-1 ring-primary-500 shadow-[0_0_20px_rgba(255,69,0,0.1)]' : ''
+      activity.post_background_css ? 'bg-black/60 shadow-[0_8px_32px_rgba(0,0,0,0.5)]' : 'bg-surface/30 hover:bg-surface/40 hover:border-white/20 shadow-xl',
+      highlighted ? 'ring-1 ring-primary-500 shadow-[0_0_20px_rgba(255,69,0,0.2)] scale-[1.01]' : ''
     ]"
-    style="border-radius: 12px; margin-bottom: 12px;"
+    style="border-radius: 20px; margin-bottom: 16px;"
   >
     <!-- Background Enhancement Layer (Moved to root for full coverage) -->
     <div v-if="activity.post_background_css" class="absolute inset-0 pointer-events-none overflow-hidden z-0 rounded-[12px]">

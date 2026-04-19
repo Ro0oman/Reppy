@@ -66,8 +66,17 @@ export const useAuthStore = defineStore('auth', {
     async fetchProfile() {
       try {
         const response = await axios.get('/api/users/me');
+        const oldLevel = this.user?.current_level;
         this.user = response.data;
         localStorage.setItem('user', JSON.stringify(this.user));
+        
+        // Detect Level Up
+        if (oldLevel && this.user.current_level > oldLevel) {
+          const { useAudioStore } = await import('./audio');
+          const audioStore = useAudioStore();
+          audioStore.play('level_up');
+        }
+        
         return this.user;
       } catch (error) {
         console.error('Fetch profile failed:', error);
