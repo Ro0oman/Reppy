@@ -47,6 +47,14 @@
               }"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent"></div>
+            
+            <!-- Prominent Image Checkmark -->
+            <div 
+              v-if="isRead(post.slug)" 
+              class="absolute top-4 right-4 w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center shadow-lg shadow-primary-500/40 border-2 border-white/30 z-20 animate-in group-hover:scale-110 transition-transform"
+            >
+              <CheckCircle2 class="w-6 h-6 text-white" />
+            </div>
           </div>
           <div class="p-8 space-y-4 flex-grow flex flex-col">
             <div class="flex items-center justify-between">
@@ -62,7 +70,7 @@
 
             <!-- Knowledge Acquired Badge -->
             <div v-if="isRead(post.slug)" class="pt-4 mt-auto border-t border-primary-500/10 flex items-center gap-2">
-              <div class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></div>
+              <CheckCircle2 class="w-3.5 h-3.5 text-primary-500" />
               <span class="text-[9px] font-black text-primary-500 uppercase tracking-[0.2em] italic">
                 {{ i18n.t('intelecto_adquirido') }}
               </span>
@@ -119,7 +127,7 @@ import { ref, computed, reactive } from 'vue';
 import { blogPosts } from '../blogPosts';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
-import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-vue-next';
+import { ChevronLeft, ChevronRight, Loader2, CheckCircle2 } from 'lucide-vue-next';
 import LanguageToggle from './LanguageToggle.vue';
 
 const i18n = useI18nStore();

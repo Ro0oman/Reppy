@@ -35,6 +35,7 @@
         <!-- Knowledge Acquired Badge -->
         <div v-if="isRead" class="inline-flex items-center gap-2 px-6 py-2 bg-primary/20 border-2 border-primary/40 rounded-2xl animate-pulse shadow-[0_0_30px_rgba(var(--primary-500-rgb),0.2)]">
           <BookOpenCheck class="w-5 h-5 text-primary" />
+          <CheckCircle2 class="w-4 h-4 text-primary" />
           <span class="text-[11px] font-black tracking-[0.2em] text-primary uppercase italic">{{ i18n.t('intelecto_adquirido') }}</span>
         </div>
 
@@ -250,7 +251,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { 
   Calendar, User, Clock, ChevronRight, 
   ArrowUpRight, Share2, Twitter, Facebook, Linkedin, MessageCircle,
-  List as ListIcon, Loader2, BookOpenCheck
+  List as ListIcon, Loader2, BookOpenCheck, CheckCircle2
 } from 'lucide-vue-next';
 import { marked } from 'marked';
 import { blogPosts } from '../blogPosts';

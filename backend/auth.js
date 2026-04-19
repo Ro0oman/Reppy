@@ -42,6 +42,13 @@ router.post('/google', async (req, res) => {
 
     const sessionToken = generateToken(user.id, user.is_admin);
 
+    // Get read blogs list
+    const readBlogsRes = await query(
+      'SELECT post_slug FROM user_read_blogs WHERE user_id = $1',
+      [user.id]
+    );
+    const readBlogs = readBlogsRes.rows.map(r => r.post_slug);
+
     res.json({
       token: sessionToken,
       user: {
@@ -53,7 +60,8 @@ router.post('/google', async (req, res) => {
         is_private: user.is_private,
         has_seen_easter_modal: user.has_seen_easter_modal,
         is_admin: user.is_admin,
-        theme: user.theme
+        theme: user.theme,
+        read_blogs: readBlogs
       }
     });
   } catch (error) {
@@ -99,7 +107,8 @@ router.post('/signup', async (req, res) => {
         is_private: user.is_private,
         has_seen_easter_modal: user.has_seen_easter_modal,
         is_admin: user.is_admin,
-        theme: user.theme
+        theme: user.theme,
+        read_blogs: []
       }
     });
   } catch (error) {
@@ -131,6 +140,13 @@ router.post('/login', async (req, res) => {
 
     const token = generateToken(user.id, user.is_admin);
 
+    // Get read blogs list
+    const readBlogsRes = await query(
+      'SELECT post_slug FROM user_read_blogs WHERE user_id = $1',
+      [user.id]
+    );
+    const readBlogs = readBlogsRes.rows.map(r => r.post_slug);
+
     res.json({
       token,
       user: {
@@ -142,7 +158,8 @@ router.post('/login', async (req, res) => {
         is_private: user.is_private,
         has_seen_easter_modal: user.has_seen_easter_modal,
         is_admin: user.is_admin,
-        theme: user.theme
+        theme: user.theme,
+        read_blogs: readBlogs
       }
     });
   } catch (error) {

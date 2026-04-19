@@ -54,10 +54,10 @@
                 <!-- XP Needed Info -->
                 <div class="flex items-center gap-2 mt-1">
                   <div class="h-1 w-24 bg-surface rounded-full overflow-hidden border border-white/5">
-                    <div class="h-full bg-primary-500 transition-all duration-1000" :style="{ width: `${ ( (user.total_xp || 0) % 1000 / 1000 ) * 100 }%` }"></div>
+                    <div class="h-full bg-primary-500 transition-all duration-1000" :style="{ width: `${((user.xp_into_level || 0) / (user.xp_for_next_level || 1000)) * 100}%` }"></div>
                   </div>
                   <span class="text-[8px] font-black text-muted uppercase tracking-tighter">
-                    {{ 1000 - ((user.total_xp || 0) % 1000) }} {{ i18nStore.t('profile_xp_to_next') }}
+                    {{ (user.xp_for_next_level || 1000) - (user.xp_into_level || 0) }} {{ i18nStore.t('profile_xp_to_next') }}
                   </span>
                 </div>
               </div>

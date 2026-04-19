@@ -16,11 +16,22 @@ import { getLocalDateString } from './date.js';
  * - AGI XP: floor((streak * 40) + (varietyCount * 75))
  */
 
+/**
+ * Quadratic level formula for stats (base factor 100)
+ */
 export const getStatLevel = (xp) => {
   if (!xp || xp <= 0) return 1;
-  // Quadratic formula: XP = 100 * (L-1) * L / 2
-  // Solving for L: L = (1 + sqrt(1 + 0.08 * XP)) / 2
   const level = (1 + Math.sqrt(1 + 0.08 * xp)) / 2;
+  return Math.floor(level);
+};
+
+/**
+ * Quadratic level formula for global character level (base factor 1000)
+ */
+export const getGlobalLevel = (xp) => {
+  if (!xp || xp <= 0) return 1;
+  // L = (1 + sqrt(1 + 8 * XP / 1000)) / 2
+  const level = (1 + Math.sqrt(1 + 0.008 * xp)) / 2;
   return Math.floor(level);
 };
 
@@ -31,22 +42,38 @@ export const getXPForLevel = (level, factor = 100) => {
 
 /**
  * Augments a user object from the DB with calculated level fields.
- * e.g. str_xp -> str_lvl
  */
 export const augmentUserWithLevels = (user) => {
   if (!user) return null;
   
-  return {
+  const level = user.current_level || getGlobalLevel(user.total_xp);
+  const totalXp = user.total_xp || 0;
+  const xpCurrentLevelStart = getXPForLevel(level, 1000);
+  const xpNextLevelStart = getXPForLevel(level + 1, 1000);
+
+  const stats = ['str', 'dex', 'end', 'vig', 'int', 'fth'];
+  const augmented = {
     ...user,
-    str_lvl: getStatLevel(user.str_xp),
-    dex_lvl: getStatLevel(user.dex_xp),
-    end_lvl: getStatLevel(user.end_xp),
-    vig_lvl: getStatLevel(user.vig_xp),
-    int_lvl: getStatLevel(user.int_xp),
-    fth_lvl: getStatLevel(user.fth_xp),
-    current_level: Math.floor((user.total_xp || 0) / 1000) + 1
+    current_level: level,
+    xp_into_level: totalXp - xpCurrentLevelStart,
+    xp_for_next_level: xpNextLevelStart - xpCurrentLevelStart
   };
+
+  stats.forEach(stat => {
+    const xp = user[`${stat}_xp`] || 0;
+    const lvl = getStatLevel(xp);
+    const lvlStart = getXPForLevel(lvl, 100);
+    const lvlNext = getXPForLevel(lvl + 1, 100);
+    
+    augmented[`${stat}_lvl`] = lvl;
+    augmented[`${stat}_xp_into_level`] = xp - lvlStart;
+    augmented[`${stat}_xp_for_next_level`] = lvlNext - lvlStart;
+  });
+
+  return augmented;
 };
+
+
 
 export const recalculateUserStats = async (userId) => {
   try {

@@ -404,6 +404,14 @@
             />
             <div class="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent"></div>
             <span class="absolute bottom-4 left-4 px-3 py-1 bg-primary-500 text-[9px] font-black text-white uppercase tracking-widest rounded-lg">{{ i18n.t('trending') }}</span>
+
+            <!-- Prominent Image Checkmark -->
+            <div 
+              v-if="isRead(p.slug)" 
+              class="absolute top-4 right-4 w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center shadow-lg shadow-primary-500/40 border-2 border-white/30 z-20 animate-in group-hover:scale-110 transition-transform"
+            >
+              <CheckCircle2 class="w-6 h-6 text-white" />
+            </div>
           </div>
           <div class="p-8 space-y-4 flex-grow flex flex-col">
             <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ p.date }}</span>
@@ -413,6 +421,12 @@
             <p class="text-sm text-muted/60 leading-relaxed line-clamp-2">
               {{ p.locales[i18n.locale]?.excerpt || p.locales.en.excerpt }}
             </p>
+            <div v-if="isRead(p.slug)" class="pt-2 mt-auto border-t border-primary-500/10 flex items-center gap-2">
+              <CheckCircle2 class="w-3 h-3 text-primary-500" />
+              <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest italic leading-none">
+                {{ i18n.t('intelecto_adquirido') }}
+              </span>
+            </div>
           </div>
         </router-link>
 
@@ -596,7 +610,7 @@ import axios from 'axios';
 import { 
   Activity, Trophy, Users, Sword, Flame, Plus, 
   ArrowUp, ArrowDown, ArrowDownUp, Dumbbell, ChevronDown,
-  Github, Star, MessageCircle, Target
+  Github, Star, MessageCircle, Target, CheckCircle2
 } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
@@ -611,6 +625,11 @@ const i18n = useI18nStore();
 const authStore = useAuthStore();
 const leaderboardTrigger = ref(null);
 const shouldLoadLeaderboard = ref(false);
+
+const isRead = (slug) => {
+  if (!authStore.user || !authStore.user.read_blogs) return false;
+  return authStore.user.read_blogs.includes(slug);
+};
 
 const latestPosts = computed(() => {
   const today = new Date();

@@ -54,11 +54,11 @@
             <div class="space-y-2">
               <div class="h-4 bg-surface/60 rounded-full border border-white/5 overflow-hidden shadow-inner">
                 <div class="h-full bg-primary-500 shadow-[0_0_20px_rgba(255,69,0,0.5)] transition-all duration-1000" 
-                  :style="{ width: `${(authStore.user?.xp_into_level || 0) / 10}%` }"></div>
+                  :style="{ width: `${((authStore.user?.xp_into_level || 0) / (authStore.user?.xp_for_next_level || 1000)) * 100}%` }"></div>
               </div>
               <div class="flex justify-between text-[9px] font-black text-muted uppercase tracking-widest italic">
-                <span>XP: {{ authStore.user?.xp_into_level || 0 }}</span>
-                <span>{{ i18n.t('inv_next_level') }}: 1000</span>
+                <span>{{ i18n.t('xp_label') }}: {{ authStore.user?.xp_into_level || 0 }}</span>
+                <span>{{ i18n.t('inv_next_level') }}: {{ authStore.user?.xp_for_next_level || 1000 }}</span>
               </div>
             </div>
           </div>
@@ -75,9 +75,25 @@
             <div class="p-4 rounded-2xl bg-surface shadow-xl border border-white/5 group-hover:scale-110 transition-transform">
               <component :is="stat.icon" class="w-6 h-6" :class="stat.color" />
             </div>
-            <div>
-              <span class="text-[10px] font-black text-muted uppercase tracking-widest block">{{ stat.name }}</span>
-              <span class="text-3xl font-black text-foreground tracking-tighter italic">{{ authStore.user?.[stat.xpKey] || 0 }}</span>
+            <div class="space-y-3 w-full">
+              <div>
+                <span class="text-[10px] font-black text-muted uppercase tracking-widest block">{{ stat.name }}</span>
+                <span class="text-3xl font-black text-foreground tracking-tighter italic">{{ authStore.user?.[stat.lvlKey] || 1 }}</span>
+              </div>
+              
+              <!-- Mini Progress Bar -->
+              <div class="space-y-1.5">
+                <div class="h-1.5 w-full bg-black/40 rounded-full overflow-hidden border border-white/5 relative">
+                  <div 
+                    class="absolute inset-y-0 left-0 bg-primary-500 shadow-[0_0_10px_rgba(255,69,0,0.3)] transition-all duration-1000"
+                    :style="{ width: `${((authStore.user?.[stat.xpIntoKey] || 0) / (authStore.user?.[stat.xpForKey] || 100)) * 100}%` }"
+                  ></div>
+                </div>
+                <div class="flex justify-between items-center text-[7px] font-black text-muted uppercase tracking-widest italic tabular-nums">
+                  <span>{{ authStore.user?.[stat.xpIntoKey] || 0 }} {{ i18n.t('xp_label') }}</span>
+                  <span class="text-primary-500/60">{{ (authStore.user?.[stat.xpForKey] || 100) - (authStore.user?.[stat.xpIntoKey] || 0) }} {{ i18n.t('inv_xp_left') }}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -353,6 +369,9 @@ const rpgStats = computed(() => [
     description: i18n.t('codex_str_desc'),
     action: i18n.t('codex_str_action'),
     xpKey: 'str_xp',
+    lvlKey: 'str_lvl',
+    xpIntoKey: 'str_xp_into_level',
+    xpForKey: 'str_xp_for_next_level',
     icon: Dumbbell,
     color: 'text-orange-500',
     borderColor: 'border-orange-500',
@@ -368,6 +387,9 @@ const rpgStats = computed(() => [
     description: i18n.t('codex_dex_desc'),
     action: i18n.t('codex_dex_action'),
     xpKey: 'dex_xp',
+    lvlKey: 'dex_lvl',
+    xpIntoKey: 'dex_xp_into_level',
+    xpForKey: 'dex_xp_for_next_level',
     icon: Sword,
     color: 'text-cyan-400',
     borderColor: 'border-cyan-400',
@@ -383,6 +405,9 @@ const rpgStats = computed(() => [
     description: i18n.t('codex_end_desc'),
     action: i18n.t('codex_end_action'),
     xpKey: 'end_xp',
+    lvlKey: 'end_lvl',
+    xpIntoKey: 'end_xp_into_level',
+    xpForKey: 'end_xp_for_next_level',
     icon: Activity,
     color: 'text-green-400',
     borderColor: 'border-green-400',
@@ -398,6 +423,9 @@ const rpgStats = computed(() => [
     description: i18n.t('codex_vig_desc'),
     action: i18n.t('codex_vig_action'),
     xpKey: 'vig_xp',
+    lvlKey: 'vig_lvl',
+    xpIntoKey: 'vig_xp_into_level',
+    xpForKey: 'vig_xp_for_next_level',
     icon: Heart,
     color: 'text-red-500',
     borderColor: 'border-red-500',
@@ -413,6 +441,9 @@ const rpgStats = computed(() => [
     description: i18n.t('codex_int_desc'),
     action: i18n.t('codex_int_action'),
     xpKey: 'int_xp',
+    lvlKey: 'int_lvl',
+    xpIntoKey: 'int_xp_into_level',
+    xpForKey: 'int_xp_for_next_level',
     icon: Brain,
     color: 'text-blue-400',
     borderColor: 'border-blue-400',
@@ -428,6 +459,9 @@ const rpgStats = computed(() => [
     description: i18n.t('codex_fth_desc'),
     action: i18n.t('codex_fth_action'),
     xpKey: 'fth_xp',
+    lvlKey: 'fth_lvl',
+    xpIntoKey: 'fth_xp_into_level',
+    xpForKey: 'fth_xp_for_next_level',
     icon: Church,
     color: 'text-yellow-400',
     borderColor: 'border-yellow-400',

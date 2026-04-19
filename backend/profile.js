@@ -1,6 +1,6 @@
 import express from 'express';
 import { query } from './db.js';
-import { recalculateUserStats } from './utils/stats.js';
+import { recalculateUserStats, getStatLevel, getGlobalLevel, getXPForLevel } from './utils/stats.js';
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ router.get('/:id', async (req, res) => {
   try {
     const userResult = await query(`
         SELECT u.id, u.name, u.email, u.avatar_url, u.reppy_coins, u.daily_goal,
-               u.str_xp, u.pwr_xp, u.end_xp, u.agi_xp, u.total_xp, u.body_weight, u.is_private,
+               u.str_xp, u.dex_xp, u.end_xp, u.vig_xp, u.int_xp, u.fth_xp, u.total_xp, u.body_weight, u.is_private,
                u.current_level, u.level_chests_claimed, u.level_chests,
                u.damage_multiplier, u.damage_multiplier_expiry,
                u.equipped_title_id, u.equipped_border_id, u.equipped_background_id, u.equipped_post_background_id,
@@ -32,7 +32,7 @@ router.get('/:id', async (req, res) => {
       console.log(`[PROFILE_API] User ${userId} not found`);
       return res.status(404).json({ message: 'User not found' });
     }
-    const user = userResult.rows[0];
+    const userRaw = userResult.rows[0];
 
     const isGlobal = type === 'all';
     const typeFilter = isGlobal ? '' : 'AND exercise_type = $2';
@@ -72,11 +72,11 @@ router.get('/:id', async (req, res) => {
     const readBlogs = readBlogsRes.rows.map(r => r.post_slug);
 
     // Check for new inventory items
-    const newItemsRes = await query(
-      'SELECT count(*) FROM user_inventory WHERE user_id = $1 AND is_new = TRUE',
+    const hasNewInventoryRes = await query(
+      'SELECT EXISTS(SELECT 1 FROM user_inventory WHERE user_id = $1 AND is_new = TRUE)',
       [userId]
     );
-    const hasNewInventory = parseInt(newItemsRes.rows[0]?.count || 0) > 0;
+    const hasNewInventory = hasNewInventoryRes.rows[0].exists;
 
     // Calculate favorite exercise
     const favResult = await query(
@@ -102,10 +102,8 @@ router.get('/:id', async (req, res) => {
     const statsResult = await recalculateUserStats(userId);
     const { 
       strXP, dexXP, endXP, vigXP, intXP, fthXP, 
-      totalXP, streak, totalVolume 
+      totalXP, currentLevel, xpIntoLevel, xpForNextLevel, streak, totalVolume 
     } = statsResult;
-
-    const getLevel = (xp) => Math.floor((xp || 0) / 100) + 1;
 
     // Dynamic Title Selection
     let dynamicTitle = 'Novato de Midgard';
@@ -115,14 +113,14 @@ router.get('/:id', async (req, res) => {
     else if (totalXP > 1500) dynamicTitle = 'Asesino de Dragones';
     else if (totalXP > 500) dynamicTitle = 'Guerrero Espartano';
 
-    const finalTitleName = user.title_name ? user.title_name : dynamicTitle;
-    const finalTitleCss = user.title_name ? user.title_css : '';
+    const finalTitleName = userRaw.title_name ? userRaw.title_name : dynamicTitle;
+    const finalTitleCss = userRaw.title_name ? userRaw.title_css : '';
 
     console.log(`[PROFILE_API] SUCCESS for ${userId} - Title: ${finalTitleName} XP: ${totalXP}`);
     
     res.json({
       user: {
-        ...user,
+        ...userRaw,
         title_name: finalTitleName,
         title_css: finalTitleCss,
         read_blogs: readBlogs,
@@ -133,13 +131,15 @@ router.get('/:id', async (req, res) => {
         int_xp: intXP,
         fth_xp: fthXP,
         total_xp: totalXP,
-        str_lvl: getLevel(strXP),
-        dex_lvl: getLevel(dexXP),
-        end_lvl: getLevel(endXP),
-        vig_lvl: getLevel(vigXP),
-        int_lvl: getLevel(intXP),
-        int_lvl: getLevel(intXP),
-        fth_lvl: getLevel(fthXP),
+        str_lvl: getStatLevel(strXP),
+        dex_lvl: getStatLevel(dexXP),
+        end_lvl: getStatLevel(endXP),
+        vig_lvl: getStatLevel(vigXP),
+        int_lvl: getStatLevel(intXP),
+        fth_lvl: getStatLevel(fthXP),
+        current_level: currentLevel,
+        xp_into_level: xpIntoLevel,
+        xp_for_next_level: xpForNextLevel,
         has_new_inventory: hasNewInventory
       },
       heatmap: heatmapResult.rows || [],
