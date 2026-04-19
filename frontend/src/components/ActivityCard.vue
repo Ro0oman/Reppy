@@ -33,10 +33,19 @@
       </div>
       <div class="flex items-center gap-1.5 min-w-0">
         <span class="text-[11px] font-bold text-foreground truncate">{{ activity.user_name }}</span>
-        <span class="text-[10px] text-muted">•</span>
-        <span class="text-[10px] text-muted whitespace-nowrap">{{ timeAgo }}</span>
       </div>
+
       <div class="flex-1"></div>
+      
+      <!-- User Badges (Rank & Streak) moved to the right -->
+      <div class="flex items-center gap-1.5 shrink-0">
+        <div v-if="activity.global_rank" class="px-1.5 py-0.5 bg-yellow-500/10 border border-yellow-500/20 rounded-md">
+          <span class="text-[8px] font-black text-yellow-500 uppercase">RANKING #{{ activity.global_rank }}</span>
+        </div>
+        <div v-if="activity.real_streak > 1" class="px-1.5 py-0.5 bg-orange-500/10 border border-orange-500/20 rounded-md">
+          <span class="text-[8px] font-black text-orange-500 uppercase tracking-tighter">{{ activity.real_streak }} DÍAS DE RACHA</span>
+        </div>
+      </div>
       <div v-if="isHot" class="flex items-center gap-1 px-2 py-0.5 bg-red-500/10 border border-red-500/20 rounded-full">
         <Flame class="w-3 h-3 text-red-500" />
         <span class="text-[9px] font-black text-red-500">HOT</span>
@@ -52,55 +61,46 @@
       </div>
 
       <!-- Hero Balanced Stats (The "Media" of the post) -->
-      <div class="rounded-xl overflow-hidden border border-border/30 bg-black/40 relative">
-        <div class="grid grid-cols-2 divide-x divide-border/20 py-8 relative z-10">
+      <div class="rounded-xl overflow-hidden border border-border/10 bg-black/20 relative">
+        <div class="grid grid-cols-2 divide-x divide-border/10 py-4 relative z-10">
           <!-- Reps -->
           <div class="flex flex-col items-center justify-center">
-            <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">{{ i18n.t('activity_reps_session') || 'REPS' }}</p>
-            <div class="flex items-center gap-2">
-              <span class="text-4xl font-black italic tracking-tighter text-foreground drop-shadow-sm">{{ animatedReps }}</span>
-              <Dumbbell class="w-4 h-4 text-primary-500/40" />
+            <p class="text-[8px] font-black text-muted uppercase tracking-widest mb-0.5">{{ i18n.t('activity_reps_session') || 'REPS' }}</p>
+            <div class="flex items-center gap-1.5">
+              <span class="text-2xl font-black italic tracking-tighter text-foreground drop-shadow-sm">{{ animatedReps }}</span>
+              <Dumbbell class="w-3 h-3 text-primary-500/30" />
             </div>
           </div>
           <!-- Damage -->
           <div class="flex flex-col items-center justify-center">
-            <p class="text-[9px] font-black text-primary-500 uppercase tracking-widest mb-1">{{ i18n.t('activity_damage_session') }}</p>
-            <div class="flex items-center gap-2">
-              <span class="text-4xl font-black italic tracking-tighter text-foreground drop-shadow-sm">{{ animatedDamage }}</span>
-              <Swords class="w-4 h-4 text-primary-500/40" />
+            <p class="text-[8px] font-black text-primary-500 uppercase tracking-widest mb-0.5">{{ i18n.t('activity_damage_session') }}</p>
+            <div class="flex items-center gap-1.5">
+              <span class="text-2xl font-black italic tracking-tighter text-foreground drop-shadow-sm">{{ animatedDamage }}</span>
+              <Swords class="w-3 h-3 text-primary-500/30" />
             </div>
           </div>
         </div>
 
-        <!-- Mini performance badges overlayed at bottom of media -->
-        <div class="flex flex-wrap justify-center gap-1.5 pb-3 px-4 relative z-10">
-          <div class="px-2 py-0.5 bg-black/60 backdrop-blur-md rounded text-[9px] font-bold text-muted border border-border/20 whitespace-nowrap">
-            {{ i18n.t('activity_top_dated').replace('{n}', activity.daily_rank_percentile || 10).replace('{date}', formattedShortDate) }}
-          </div>
-          
-          <!-- New Rank Badge (If top 10) -->
-          <div v-if="activity.daily_rank <= 10" class="px-2 py-0.5 bg-yellow-500/10 backdrop-blur-md rounded text-[9px] font-black text-yellow-500 border border-yellow-500/20 whitespace-nowrap">
-            {{ i18n.t('activity_rank_top').replace('{n}', activity.daily_rank) }}
-          </div>
-
-          <!-- Personal Best Badge -->
-          <div v-if="activity.is_personal_best" class="px-2 py-0.5 bg-primary-500/10 backdrop-blur-md rounded text-[9px] font-black text-primary-500 border border-primary-500/20 animate-pulse whitespace-nowrap">
+        <!-- Personal Best Badge overlayed -->
+        <div v-if="activity.is_personal_best" class="flex justify-center pb-2 px-4 relative z-10">
+          <div class="px-2 py-0.5 bg-primary-500/10 backdrop-blur-md rounded text-[9px] font-black text-primary-500 border border-primary-500/20 animate-pulse whitespace-nowrap">
             <Flame class="w-2.5 h-2.5 inline mr-1" />
             {{ i18n.t('activity_personal_record') }}
-          </div>
-
-          <div v-if="activity.real_streak > 1" class="px-2 py-0.5 bg-black/60 backdrop-blur-md rounded text-[9px] font-bold text-primary-500 border border-border/20">
-            {{ activity.real_streak }}D RACHA
           </div>
         </div>
       </div>
 
-      <!-- Exercise tags -->
-      <div class="flex flex-wrap gap-1.5">
+      <!-- Exercise tags HIGHLIGHTED -->
+      <div class="flex flex-wrap gap-2">
         <div v-for="ex in activity.exercises" :key="ex.exercise_type" 
-             class="px-2 py-1 bg-foreground/[0.05] rounded-md text-[10px] font-bold flex items-center gap-2 border border-border/10">
-          <span class="text-primary-500 uppercase">{{ i18n.t(ex.exercise_type).substring(0,3) }}</span>
-          <span class="text-foreground">{{ ex.count }}</span>
+             class="px-3 py-1.5 rounded-lg text-[11px] font-black flex items-center gap-2.5 border transition-all"
+             :class="ex.is_pr ? 'bg-amber-500/10 border-amber-500/30 text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.2)]' : 'bg-surface border-border/20 text-foreground'"
+        >
+          <span class="uppercase italic tracking-tighter" :class="ex.is_pr ? 'text-amber-500' : 'text-primary-500'">{{ i18n.t(ex.exercise_type) }}</span>
+          <span class="text-sm font-black">{{ ex.count }}</span>
+          
+          <!-- PR Trophy -->
+          <Trophy v-if="ex.is_pr" class="w-3.5 h-3.5 text-amber-500 animate-pulse" />
         </div>
       </div>
     </div>
@@ -128,7 +128,7 @@
         class="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-foreground/[0.05] transition-colors"
       >
         <MessageSquare class="w-4 h-4 text-muted" />
-        <span class="text-[11px] font-bold text-muted">{{ i18n.t('activity_comments_count').replace('{n}', activity.comment_count) }}</span>
+        <span class="text-[11px] font-bold text-muted">{{ activity.comment_count }}</span>
       </button>
 
       <!-- Share Button -->
@@ -145,7 +145,6 @@
       <!-- Boss contribution small indicator -->
       <div v-if="totalBossDamage > 0" class="flex items-center gap-2 px-3 opacity-60 scale-75">
         <Swords class="w-3 h-3 text-primary-500" />
-        <span class="text-[10px] font-black text-primary-500 uppercase">{{ i18n.t('activity_boss_contrib').replace('{n}', bossContribution) }}</span>
       </div>
     </div>
 

@@ -88,6 +88,7 @@ router.get('/feed', authenticate, async (req, res) => {
             u.name as user_name,
             u.avatar_url,
             u.current_level,
+            u.total_reps,
             b.css_value as border_css,
             a.css_value as avatar_css,
             pb.css_value as post_background_css,
@@ -105,7 +106,14 @@ router.get('/feed', authenticate, async (req, res) => {
                 'count', r.count,
                 'boss_damage', r.boss_damage_dealt,
                 'active_multiplier', r.active_multiplier,
-                'historical_total', (SELECT SUM(count) FROM reps WHERE user_id = r.user_id AND exercise_type = r.exercise_type AND date <= r.date)
+                'historical_total', (SELECT SUM(count) FROM reps WHERE user_id = r.user_id AND exercise_type = r.exercise_type AND date <= r.date),
+                'is_pr', NOT EXISTS (
+                    SELECT 1 FROM reps r_old 
+                    WHERE r_old.user_id = u.id 
+                    AND r_old.exercise_type = r.exercise_type 
+                    AND r_old.date < r.date 
+                    AND r_old.count >= r.count
+                )
             )) as exercises,
             (SELECT COUNT(*) FROM summary_interactions WHERE summary_id = ds.id AND type = 'LIKE') as like_count,
             (SELECT COUNT(*) FROM summary_interactions WHERE summary_id = ds.id AND type = 'COMMENT') as comment_count,
@@ -118,7 +126,7 @@ router.get('/feed', authenticate, async (req, res) => {
         LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
         LEFT JOIN cosmetics pb ON u.equipped_post_background_id = pb.id
         ${whereClause}
-        GROUP BY u.id, r.date, ds.id, b.css_value, a.css_value, pb.css_value
+        GROUP BY u.id, r.date, ds.id, b.css_value, a.css_value, pb.css_value, u.total_reps
       )
       SELECT 
         f.*,
@@ -126,18 +134,30 @@ router.get('/feed', authenticate, async (req, res) => {
         (SELECT SUM(count) FROM reps WHERE user_id = f.user_id AND date = f.date::date) as total_reps_today,
         -- Total Damage Today
         (SELECT SUM(boss_damage_dealt) FROM reps WHERE user_id = f.user_id AND date = f.date::date) as total_damage_today,
-        -- Daily Rank (Position 1, 2, 3...) based on reps that specific day
-        (SELECT COUNT(*) FROM daily_stats ds2 
-         WHERE ds2.date = f.date::date AND ds2.day_reps > (SELECT SUM(count) FROM reps WHERE user_id = f.user_id AND date = f.date::date)
-        ) + 1 as daily_rank,
-        -- Percentile Ranking (Reps vs Others that Specific Day)
+        -- Global Rank (Position 1, 2, 3...) based on total_reps (ALL exercises, lifetime)
+        (SELECT COUNT(*) FROM users u2 
+         WHERE u2.total_reps > f.total_reps AND u2.is_private = false
+        ) + 1 as global_rank,
+        -- Percentile Ranking (Global)
         COALESCE(
           ROUND(100.0 * (
-            SELECT COUNT(*) FROM daily_stats ds3 
-            WHERE ds3.date = f.date::date AND ds3.day_reps < (SELECT SUM(count) FROM reps WHERE user_id = f.user_id AND date = f.date::date)
-          ) / NULLIF((SELECT COUNT(*) FROM daily_stats ds4 WHERE ds4.date = f.date::date), 0)),
+            SELECT COUNT(*) FROM users u3 
+            WHERE u3.total_reps < f.total_reps AND u3.is_private = false
+          ) / NULLIF((SELECT COUNT(*) FROM users u4 WHERE u4.is_private = false), 0)),
           10
-        ) as daily_rank_percentile,
+        ) as global_rank_percentile,
+        -- Positions Climbed (Rank before this session vs Rank after)
+        GREATEST(0, (
+            (SELECT COUNT(*) FROM users u_climb 
+             WHERE u_climb.total_reps > (f.total_reps - (SELECT COALESCE(SUM(count), 0) FROM reps WHERE user_id = f.user_id AND date = f.date::date))
+             AND u_climb.is_private = false
+            ) + 1
+        ) - (
+            (SELECT COUNT(*) FROM users u_climb2 
+             WHERE u_climb2.total_reps > f.total_reps
+             AND u_climb2.is_private = false
+            ) + 1
+        )) as rank_climb,
         -- Personal Best (PB) check: Are today's reps higher than any previous day?
         EXISTS (
           SELECT 1 

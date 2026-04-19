@@ -1,29 +1,5 @@
 <template>
   <div class="space-y-12">
-    <!-- Feed Tabs & Controls -->
-    <div class="flex items-center justify-between border-b border-border/40 pb-6">
-      <div class="flex gap-4">
-        <button 
-          @click="filter = 'global'; resetFeed()"
-          class="px-4 sm:px-6 py-2 sm:py-2.5 rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] transition-all"
-          :class="filter === 'global' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'bg-surface/5 text-muted hover:bg-surface/10'"
-        >
-          GLOBAL.PROTOCOLS
-        </button>
-        <button 
-          @click="filter = 'following'; resetFeed()"
-          class="px-4 sm:px-6 py-2 sm:py-2.5 rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] transition-all"
-          :class="filter === 'following' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'bg-surface/5 text-muted hover:bg-surface/10'"
-        >
-          FOLLOWING.ONLY
-        </button>
-      </div>
-
-      <div class="hidden sm:flex items-center gap-2">
-         <div class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></div>
-         <span class="text-[9px] font-black text-muted uppercase tracking-[0.3em]">LIVE DATA STREAM</span>
-      </div>
-    </div>
 
     <!-- Feed Content -->
     <div class="space-y-8 min-h-[600px] relative">

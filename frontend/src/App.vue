@@ -86,18 +86,6 @@
               </div>
             </div>
 
-            <!-- Profile Entry -->
-            <button @click="openProfile(authStore.user.id)" 
-                    :title="i18n.t('economy_my_profile')"
-                    class="flex items-center gap-3 transition-all p-1 hover:bg-surface/10 rounded-2xl">
-              <div class="text-right hidden md:flex flex-col items-end">
-                <p class="text-xs font-bold text-foreground leading-none">{{ authStore.user?.name }}</p>
-                <span v-if="authStore.user?.title_name" class="text-[9px] font-medium text-primary-500 mt-1">
-                  {{ authStore.user?.title_name }}
-                </span>
-              </div>
-              <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :avatar-css="authStore.user?.avatar_css" :size="40" />
-            </button>
           </div>
         </div>
       </div>
