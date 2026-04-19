@@ -22,8 +22,7 @@
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.10.1",
     "pg": "^8.20.0",
-    "sharp": "^0.34.5",
-    "@img/sharp-linux-x64": "^0.34.5"
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
