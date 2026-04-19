@@ -94,6 +94,10 @@
               {{ isOwn ? i18n.t('activity_inflicted_you') : activity.user_name + ' ' + i18n.t('activity_has_inflicted') }} 
               <span class="text-primary-500">{{ totalBossDamage }}</span> {{ i18n.t('activity_damage_session') }}
             </p>
+            <div v-if="hasActiveBoost" class="mt-2 flex items-center gap-1.5 px-2.5 py-1 bg-yellow-500/20 border border-yellow-500/40 rounded-full w-fit animate-pulse-subtle">
+               <Zap class="w-3 h-3 text-yellow-500 fill-current" />
+               <span class="text-[8px] font-black text-yellow-500 uppercase tracking-widest">{{ i18n.t('activity_boost_active') }} (x{{ activeMultiplierDisplay }})</span>
+            </div>
           </div>
         </div>
         <ChevronRight class="w-4 h-4 text-primary-500 group-hover/boss:translate-x-1 transition-transform" />
@@ -165,7 +169,7 @@ import { ref, computed, watch } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
 import AvatarFrame from './AvatarFrame.vue';
-import { Heart, MessageSquare, Share2, Edit3, Send, Swords, ChevronRight, Trophy } from 'lucide-vue-next';
+import { Heart, MessageSquare, Share2, Edit3, Send, Swords, ChevronRight, Trophy, Zap } from 'lucide-vue-next';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
 import { useNotificationStore } from '../stores/notification';
@@ -219,6 +223,17 @@ const milestones = computed(() => {
 
 const totalBossDamage = computed(() => {
   return props.activity.exercises.reduce((sum, ex) => sum + (ex.boss_damage || 0), 0);
+});
+
+const hasActiveBoost = computed(() => {
+  return props.activity.exercises.some(ex => parseFloat(ex.active_multiplier) > 1.0);
+});
+
+const activeMultiplierDisplay = computed(() => {
+  const multipliers = props.activity.exercises
+    .map(ex => parseFloat(ex.active_multiplier) || 1.0)
+    .filter(m => m > 1.0);
+  return multipliers.length > 0 ? Math.max(...multipliers).toFixed(1) : '1.0';
 });
 
 const timeAgo = computed(() => {

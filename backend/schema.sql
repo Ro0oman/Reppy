@@ -38,6 +38,8 @@ CREATE TABLE IF NOT EXISTS reps (
     date DATE NOT NULL DEFAULT CURRENT_DATE,
     exercise_type VARCHAR(50) DEFAULT 'pullups',
     added_weight DECIMAL DEFAULT 0.0,
+    boss_damage_dealt INTEGER DEFAULT 0,
+    active_multiplier DECIMAL DEFAULT 1.0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(user_id, date, exercise_type)
 );

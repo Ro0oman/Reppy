@@ -49,6 +49,7 @@ router.get('/feed', authenticate, async (req, res) => {
               'exercise_type', r.exercise_type,
               'count', r.count,
               'boss_damage', r.boss_damage_dealt,
+              'active_multiplier', r.active_multiplier,
               'historical_total', (SELECT SUM(count) FROM reps WHERE user_id = r.user_id AND exercise_type = r.exercise_type AND date <= r.date)
           )) as exercises,
           (SELECT COUNT(*) FROM summary_interactions WHERE summary_id = ds.id AND type = 'LIKE') as like_count,

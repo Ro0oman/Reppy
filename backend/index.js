@@ -160,6 +160,7 @@ apiRouter.get('/db/init', async (req, res) => {
           UNIQUE(user_id, date, exercise_type)
       )`,
       `ALTER TABLE reps ADD COLUMN IF NOT EXISTS boss_damage_dealt INTEGER DEFAULT 0`,
+      `ALTER TABLE reps ADD COLUMN IF NOT EXISTS active_multiplier DECIMAL DEFAULT 1.0`,
       `CREATE TABLE IF NOT EXISTS cosmetics (
           id SERIAL PRIMARY KEY,
           name VARCHAR(255) UNIQUE NOT NULL,

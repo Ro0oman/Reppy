@@ -210,7 +210,14 @@
           <div class="flex items-center gap-3">
             <div class="h-1 w-6 bg-primary-500 rounded-full"></div>
             <h2 class="text-xs font-black text-foreground uppercase tracking-[0.3em] font-industrial">
-              {{ type === 'title' ? 'DESIGNACIONES' : type === 'border' ? 'MARCOS' : type === 'background' ? 'ESCENARIOS' : 'CONSUMIBLES' }}
+              {{ 
+                type === 'title' ? 'Titulos' : 
+                type === 'border' ? 'MARCOS' : 
+                type === 'background' ? 'Fondos' : 
+                type === 'post_background' ? 'FONDOS DE MURO' : 
+                type === 'avatar' ? 'EFECTOS DE AVATAR' : 
+                'CONSUMIBLES' 
+              }}
             </h2>
             <span class="text-[9px] font-black text-muted bg-surface px-2 py-0.5 rounded-full">{{ items.length }}</span>
             <div v-if="items.some(i => i.is_new)" class="w-2 h-2 bg-primary-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(255,69,0,0.5)]"></div>
@@ -243,6 +250,22 @@
                   </div>
                   <div v-else-if="type === 'background'" class="w-full h-full">
                      <BackgroundEffect :background-css="item.css_value" is-preview class="!absolute !inset-0" />
+                  </div>
+                  <div v-else-if="type === 'post_background'" class="w-full h-full relative group-hover:scale-110 transition-transform">
+                     <div :class="item.css_value" class="absolute inset-0"></div>
+                     <!-- Decorative Mock Post Element -->
+                     <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="w-3/4 h-1/2 bg-surface/60 backdrop-blur-sm rounded-lg border border-white/10 shadow-2xl flex flex-col p-2 gap-1">
+                           <div class="h-1.5 w-1/2 bg-white/20 rounded-full"></div>
+                           <div class="h-1.5 w-3/4 bg-white/10 rounded-full"></div>
+                        </div>
+                     </div>
+                  </div>
+                  <div v-else-if="type === 'avatar'" class="relative group-hover:scale-110 transition-transform">
+                     <div class="w-16 h-16 rounded-2xl overflow-hidden border-2 border-white/10 relative">
+                        <img :src="authStore.user?.avatar_url" class="w-full h-full object-cover blur-[1px] opacity-50" />
+                        <div :class="item.css_value" class="absolute inset-0"></div>
+                     </div>
                   </div>
                   <div v-else-if="type === 'consumable'" class="flex flex-col items-center gap-2">
                      <div class="relative">
@@ -482,6 +505,7 @@ const isEquipped = (item) => {
   if (item.type === 'title') return authStore.user?.equipped_title_id === item.id;
   if (item.type === 'border') return authStore.user?.equipped_border_id === item.id;
   if (item.type === 'background') return authStore.user?.equipped_background_id === item.id;
+  if (item.type === 'post_background') return authStore.user?.equipped_post_background_id === item.id;
   if (item.type === 'avatar') return authStore.user?.equipped_avatar_id === item.id;
   return false;
 };
@@ -494,6 +518,7 @@ const toggleEquip = async (item) => {
     if (item.type === 'title') { authStore.user.equipped_title_id = alreadyEquipped ? null : item.id; authStore.user.title_css = alreadyEquipped ? '' : item.css_value; authStore.user.title_name = alreadyEquipped ? '' : item.name; }
     else if (item.type === 'border') { authStore.user.equipped_border_id = alreadyEquipped ? null : item.id; authStore.user.border_css = alreadyEquipped ? '' : item.css_value; }
     else if (item.type === 'background') { authStore.user.equipped_background_id = alreadyEquipped ? null : item.id; authStore.user.background_css = alreadyEquipped ? '' : item.css_value; }
+    else if (item.type === 'post_background') { authStore.user.equipped_post_background_id = alreadyEquipped ? null : item.id; authStore.user.post_background_css = alreadyEquipped ? '' : item.css_value; }
     else if (item.type === 'avatar') { authStore.user.equipped_avatar_id = alreadyEquipped ? null : item.id; authStore.user.avatar_css = alreadyEquipped ? '' : item.css_value; }
     notificationStore.notify(alreadyEquipped ? 'Deactivated' : 'Activated', 'success');
   } catch (err) { notificationStore.notify('Activation error', 'error'); }

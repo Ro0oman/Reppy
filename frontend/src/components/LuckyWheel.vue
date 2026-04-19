@@ -114,14 +114,14 @@ const rotation = ref(0);
 const prizeResult = ref(null);
 
 const rewards = [
-  { id: 0, name: '20 🪙', bgColor: '#FBBF24' },
-  { id: 1, name: '50 🪙', bgColor: '#F59E0B' },
-  { id: 2, name: '100 🪙', bgColor: '#D97706' },
-  { id: 3, name: '200 🪙', bgColor: '#B45309' },
-  { id: 4, name: '400 🪙', bgColor: '#4F46E5' }, // Win big
-  { id: 5, name: 'NADA', bgColor: '#71717A' },
-  { id: 6, name: 'MUY NADA', bgColor: '#52525B' },
-  { id: 7, name: '⭐ ITEM', bgColor: '#8B5CF6' } // Special
+  { id: 0, name: '200 🪙', bgColor: '#FBBF24' },
+  { id: 1, name: '500 🪙', bgColor: '#F59E0B' },
+  { id: 2, name: '200 🪙', bgColor: '#D97706' },
+  { id: 3, name: '800 🪙', bgColor: '#B45309' },
+  { id: 4, name: '500 🪙', bgColor: '#4F46E5' }, 
+  { id: 5, name: '2500 🪙', bgColor: '#EF4444' }, // Jackpot
+  { id: 6, name: '🧪 x1.5', bgColor: '#10B981' }, // Strength Potion
+  { id: 7, name: 'NADA', bgColor: '#71717A' }
 ];
 
 // SVG Helpers
@@ -145,7 +145,7 @@ const getTextCoords = (index) => {
 
 const getPrizeText = (prize) => {
   if (prize.type === 'coins') return `+${prize.value} REPPY COINS`;
-  if (prize.type === 'special') return prize.item ? `¡${prize.item.name}! 🏆` : i18n.t('wheel_legendary');
+  if (prize.type === 'consumable') return prize.item ? `¡${prize.item.name}! 🏆` : i18n.t('wheel_legendary');
   return i18n.t('wheel_try_tomorrow');
 };
 

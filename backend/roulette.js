@@ -52,15 +52,14 @@ router.post('/spin', authenticate, async (req, res) => {
     // 2. Define Prized with Weights
     // Total weights = 100
     const prizes = [
-      { id: 0, value: 20, weight: 25, type: 'coins' },
-      { id: 1, value: 50, weight: 20, type: 'coins' },
-      { id: 2, value: 100, weight: 15, type: 'coins' },
-      { id: 3, value: 200, weight: 10, type: 'coins' },
-      { id: 4, value: 400, weight: 5, type: 'coins' },
-      { id: 5, value: 0, weight: 5, type: 'nothing', msg: 'Sigue entrenando!' },
-      { id: 6, rarity: 'common', weight: 10, type: 'consumable', label: 'Poción Común (x1.5)' },
-      { id: 7, rarity: 'rare', weight: 7, type: 'consumable', label: 'Poción Rara (x2.0)' },
-      { id: 8, rarity: 'legendary', weight: 3, type: 'consumable', label: 'Poción Legendaria (x3.0)' }
+      { id: 0, value: 200, weight: 30, type: 'coins' },
+      { id: 1, value: 500, weight: 20, type: 'coins' },
+      { id: 2, value: 200, weight: 15, type: 'coins' },
+      { id: 3, value: 800, weight: 12, type: 'coins' },
+      { id: 4, value: 500, weight: 8, type: 'coins' },
+      { id: 5, value: 2500, weight: 2, type: 'coins' },
+      { id: 6, rarity: 'common', weight: 8, type: 'consumable', label: 'Poción de Fuerza (x1.5)' },
+      { id: 7, value: 0, weight: 5, type: 'nothing', msg: 'Sigue entrenando!' }
     ];
 
     // Pick a prize

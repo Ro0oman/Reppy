@@ -261,6 +261,7 @@ const translations = {
     activity_share_msg: "Check out {name}'s workout on Reppy",
     activity_error_share: 'Error sharing',
     activity_comment_hint: 'Write a tactical comment...',
+    activity_boost_active: 'BUFF ACTIVE',
     
     // Articles
     article_guide_tag: 'Training Guide',
@@ -971,6 +972,7 @@ const translations = {
     activity_share_msg: 'Echa un vistazo al entrenamiento de {name} en Reppy',
     activity_error_share: 'Error al compartir',
     activity_comment_hint: 'Escribe un comentario operativo...',
+    activity_boost_active: 'POTENCIADOR ACTIVO',
 
     // Ejercicios
     pullups: 'Dominadas',
