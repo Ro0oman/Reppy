@@ -261,23 +261,23 @@
               <div class="flex items-center justify-between mt-4">
                 <div v-if="item.owned && item.type !== 'consumable'" class="flex items-center gap-1.5 text-neon-lime">
                   <Check class="w-3.5 h-3.5" />
-                  <span class="text-[8px] font-black uppercase tracking-widest leading-none">ACQUIRED</span>
+                  <span class="text-[8px] font-black uppercase tracking-widest leading-none">{{ i18n.t('btn_acquired') }}</span>
                 </div>
                 <div v-else-if="item.owned && item.type === 'consumable'" class="flex items-center gap-1.5 text-primary-500">
                   <Package class="w-3.5 h-3.5" />
-                  <span class="text-[8px] font-black uppercase tracking-widest leading-none">STOCK: {{ item.quantity }}</span>
+                  <span class="text-[8px] font-black uppercase tracking-widest leading-none">{{ i18n.t('shop_stock') }}: {{ item.quantity }}</span>
                 </div>
                 <div v-else-if="item.price > 0" class="flex flex-col">
                   <div v-if="item.original_price" class="flex items-center gap-2 mb-0.5">
                     <span class="text-[9px] font-black text-muted line-through tracking-tighter">{{ item.original_price }}</span>
-                    <span class="text-[7px] font-black bg-primary-500/20 text-primary-500 px-1 rounded">40% OFF</span>
+                    <span class="text-[7px] font-black bg-primary-500/20 text-primary-500 px-1 rounded">{{ i18n.t('shop_special_deal') }}</span>
                   </div>
                   <div class="flex items-baseline gap-1">
                     <span class="text-base font-black text-precision" :class="canAfford(item) ? 'text-primary-500' : 'text-muted'">{{ item.price }}</span>
-                    <span class="text-[7px] font-black text-muted uppercase tracking-widest">COINS</span>
+                    <span class="text-[7px] font-black text-muted uppercase tracking-widest">{{ i18n.t('shop_reppy_coins') }}</span>
                   </div>
                 </div>
-                <div v-else class="text-[8px] font-black uppercase tracking-widest text-primary-500/60 leading-none">EVENT</div>
+                <div v-else class="text-[8px] font-black uppercase tracking-widest text-primary-500/60 leading-none">{{ i18n.t('shop_event_badge') }}</div>
 
                 <!-- Action Button -->
                 <button 
@@ -345,7 +345,7 @@
           
           <div class="flex flex-col items-center gap-2 relative z-10">
             <p class="text-[10px] font-black text-industrial text-foreground/40 uppercase tracking-[0.5em] italic">
-              UNIT_PAGE <span class="text-primary-500">{{ currentPage }}</span> // TOTAL_CHUNKS: {{ totalPages }}
+              {{ i18n.t('shop_unit_page') }} <span class="text-primary-500">{{ currentPage }}</span> // {{ i18n.t('shop_total_chunks') }}: {{ totalPages }}
             </p>
             <div class="flex gap-1">
               <div v-for="d in totalPages" :key="d" 
@@ -367,8 +367,8 @@
               <Sparkles class="w-7 h-7 text-primary-500" />
             </div>
             <div class="text-left">
-              <h2 class="text-2xl font-black text-industrial text-foreground tracking-tight uppercase">{{ i18n.t('shop_seasonal_title') || 'SEASONAL PROTOCOL' }}</h2>
-              <p class="text-[10px] text-muted font-bold tracking-widest uppercase">{{ i18n.t('shop_seasonal_subtitle') || 'Special event rewards & milestone artifacts.' }}</p>
+              <h2 class="text-2xl font-black text-industrial text-foreground tracking-tight uppercase">{{ i18n.t('shop_seasonal_title') }}</h2>
+              <p class="text-[10px] text-muted font-bold tracking-widest uppercase">{{ i18n.t('shop_seasonal_subtitle') }}</p>
             </div>
           </div>
           <ChevronDown 
@@ -397,7 +397,7 @@
                  <div class="w-12 h-12 bg-surface/60 rounded-full flex items-center justify-center border border-border"><span class="text-xl">🔒</span></div>
               </div>
               <div class="p-4 pb-0 flex items-start justify-between z-10">
-                <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-primary-500/20 text-primary-500 bg-primary-500/5">SEASONAL</span>
+                <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-primary-500/20 text-primary-500 bg-primary-500/5">{{ i18n.t('shop_seasonal_badge') }}</span>
                 <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border" :class="getRarityBadge(item).classes">{{ getRarityBadge(item).label }}</span>
               </div>
               <div class="h-32 flex items-center justify-center m-4 mb-2 bg-surface rounded-2xl border border-border relative overflow-hidden group-hover/item:border-primary-500/20 transition-colors shadow-inner">
@@ -443,7 +443,7 @@
               <div class="p-4 pt-0 mt-auto border-t border-border bg-foreground/[0.01]">
                 <div class="flex items-center justify-between mt-4">
                   <div v-if="item.owned" class="flex items-center gap-1 text-neon-lime"><Check class="w-3.5 h-3.5" /><span class="text-[8px] font-black uppercase tracking-widest leading-none">{{ i18n.t('btn_acquired') }}</span></div>
-                  <div v-else class="text-[8px] font-black uppercase tracking-widest text-primary-500/60 leading-none">SPECIAL</div>
+                  <div v-else class="text-[8px] font-black uppercase tracking-widest text-primary-500/60 leading-none">{{ i18n.t('shop_special_badge') }}</div>
                   <button v-if="item.owned" @click="equipItem(item)" :disabled="isEquipped(item)" class="px-4 py-2 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all" :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-neon-lime text-black shadow-lg shadow-neon-lime/20'">{{ isEquipped(item) ? i18n.t('btn_on') : i18n.t('btn_equip') }}</button>
                 </div>
               </div>

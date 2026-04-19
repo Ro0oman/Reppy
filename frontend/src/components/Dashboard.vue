@@ -14,7 +14,7 @@
         <div v-if="activeExercise === 'all'" class="card-stats p-8 flex flex-col items-center justify-center text-center space-y-4 opacity-50 border-dashed border-border min-h-[360px]">
           <Globe class="w-12 h-12 text-muted" />
           <p class="text-[10px] font-black text-muted uppercase tracking-widest leading-relaxed">
-            Global view active. <br /> Select a protocol to log volume.
+            {{ i18n.t('dash_global_view_active') }}
           </p>
         </div>
         <RepsInput v-else :exercise-type="activeExercise" @updated="fetchData" class="min-h-[360px]" />
@@ -44,7 +44,7 @@
       <div class="space-y-4">
         <h3 class="text-[13px] font-bold flex items-center gap-2.5 text-foreground/70 px-2 tracking-tight">
           <Zap class="w-4 h-4 text-primary-500" />
-          Estado del Boss
+          {{ i18n.t('dash_boss_status') }}
         </h3>
         <BossHealth ref="bossHealthRef" />
       </div>
@@ -67,14 +67,14 @@
               </div>
             </RadialProgress>
             <p class="text-[10px] font-bold text-muted text-center px-4">
-              {{ todayProgress >= stats.dailyGoal ? 'Goal achieved.' : 'Analyzing performance...' }}
+              {{ todayProgress >= stats.dailyGoal ? i18n.t('dash_goal_achieved') : i18n.t('dash_analyzing_performance') }}
             </p>
           </div>
 
           <!-- 2. Streak -->
           <div class="card-stats flex flex-col justify-between group/streak min-h-[160px]">
              <div class="flex items-center justify-between">
-               <span class="text-[11px] font-bold tracking-tight text-muted/60">Racha</span>
+               <span class="text-[11px] font-bold tracking-tight text-muted/60">{{ i18n.t('dash_streak') }}</span>
                <Flame class="w-4 h-4 text-primary-500" />
              </div>
              <div class="mt-4">
@@ -86,7 +86,7 @@
           <!-- 3. Peak Volume -->
           <div class="card-stats flex flex-col justify-between group/pb min-h-[160px]" :title="i18n.t('dash_max_month_tooltip')">
             <div class="flex items-center justify-between">
-              <span class="text-[11px] font-bold tracking-tight text-muted/60">Volumen Pico</span>
+               <span class="text-[11px] font-bold tracking-tight text-muted/60">{{ i18n.t('dash_peak_volume') }}</span>
               <Activity class="w-4 h-4 text-accent" />
             </div>
             <div class="mt-4">
@@ -96,14 +96,14 @@
           </div>
 
           <!-- 4. Total Tonnage -->
-          <div class="card-stats flex flex-col justify-between group/tonnage min-h-[160px]" title="Tonelaje total desplazado (Repeticiones x Resistencia)">
+          <div class="card-stats flex flex-col justify-between group/tonnage min-h-[160px]" :title="i18n.t('dash_total_tonnage_tooltip')">
             <div class="flex items-center justify-between">
-              <span class="text-[11px] font-bold tracking-tight text-muted/60">Tonelaje Total</span>
+               <span class="text-[11px] font-bold tracking-tight text-muted/60">{{ i18n.t('dash_total_tonnage') }}</span>
               <Trophy class="w-4 h-4 text-primary-500" />
             </div>
             <div class="mt-4">
               <span class="text-5xl font-bold text-foreground tracking-tighter leading-none">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</span>
-              <p class="text-[11px] font-bold text-primary-500 tracking-tight mt-1">TONS MOVIMIENTOS</p>
+               <p class="text-[11px] font-bold text-primary-500 tracking-tight mt-1">{{ i18n.t('dash_tons_moved') }}</p>
             </div>
           </div>
         </div>
@@ -117,7 +117,7 @@
       <div class="space-y-4">
         <h3 class="text-[13px] font-bold flex items-center gap-2.5 text-foreground/70 px-2 tracking-tight">
           <History class="w-4 h-4 text-primary-500" />
-          Historial de actividad
+          {{ i18n.t('dash_history_title') }}
         </h3>
         <div class="card-stats !p-0 h-[380px] overflow-hidden flex flex-col shadow-2xl">
           <div class="overflow-y-auto scrollbar-hide flex-1">
@@ -155,7 +155,7 @@
                 <tr v-if="reps.length === 0">
                   <td colspan="2" class="py-20 text-center opacity-20">
                     <Inbox class="w-10 h-10 mx-auto mb-4" />
-                    <span class="text-[10px] font-black uppercase tracking-widest">Protocol Null</span>
+                    <span class="text-[10px] font-black uppercase tracking-widest">{{ i18n.t('dash_protocol_null') }}</span>
                   </td>
                 </tr>
               </tbody>

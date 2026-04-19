@@ -3,11 +3,11 @@
     <!-- Premium Header -->
     <div class="text-center space-y-2">
       <h1 class="text-3xl md:text-5xl font-black text-industrial tracking-tighter text-foreground uppercase italic">
-        INVENTARIO<span class="text-primary-500">.</span>RPG
+        {{ i18n.t('inv_title') }}<span class="text-primary-500">.</span>
       </h1>
       <div class="flex items-center justify-center gap-4">
         <div class="h-1 w-12 bg-primary-500 rounded-full"></div>
-        <p class="text-[9px] font-black text-muted uppercase tracking-[0.4em] font-tight">Gestiona tus atributos y equipamiento</p>
+        <p class="text-[9px] font-black text-muted uppercase tracking-[0.4em] font-tight">{{ i18n.t('inv_subtitle') }}</p>
         <div class="h-1 w-12 bg-primary-500 rounded-full"></div>
       </div>
     </div>
@@ -17,13 +17,13 @@
       <button @click="activeTab = 'stats'" 
         class="flex-1 py-3 px-6 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
         :class="activeTab === 'stats' ? 'bg-primary-500 text-white shadow-lg' : 'text-muted hover:text-foreground'">
-        <Zap class="w-3.5 h-3.5" /> ATRIBUTOS
+        <Zap class="w-3.5 h-3.5" /> {{ i18n.t('inv_tab_stats') }}
       </button>
       <button @click="activeTab = 'gear'" 
         class="flex-1 py-3 px-6 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 relative"
         :class="activeTab === 'gear' ? 'bg-primary-500 text-white shadow-lg' : 'text-muted hover:text-foreground'">
         <Package class="w-3.5 h-3.5" /> 
-        EQUIPO
+        {{ i18n.t('inv_tab_gear') }}
         <!-- Notification Dot (Absolute to avoid flex issues) -->
         <span v-if="hasNewInventoryOverall && activeTab !== 'gear'" 
               class="absolute top-2 right-4 h-2.5 w-2.5 rounded-full bg-red-500 ring-4 ring-red-500/20 animate-pulse"></span>
@@ -48,8 +48,8 @@
           </div>
           <div class="flex-1 space-y-4 text-center md:text-left">
             <div>
-              <h2 class="text-2xl font-black text-foreground uppercase tracking-tighter italic">Nivel de Personaje</h2>
-              <p class="text-[10px] font-bold text-muted uppercase tracking-widest">Sube de nivel para ganar cofres y poder destructivo</p>
+              <h2 class="text-2xl font-black text-foreground uppercase tracking-tighter italic">{{ i18n.t('inv_level_card_title') }}</h2>
+              <p class="text-[10px] font-bold text-muted uppercase tracking-widest">{{ i18n.t('inv_level_card_subtitle') }}</p>
             </div>
             <div class="space-y-2">
               <div class="h-4 bg-surface/60 rounded-full border border-white/5 overflow-hidden shadow-inner">
@@ -58,7 +58,7 @@
               </div>
               <div class="flex justify-between text-[9px] font-black text-muted uppercase tracking-widest italic">
                 <span>XP: {{ authStore.user?.xp_into_level || 0 }}</span>
-                <span>SIGUIENTE NIVEL: 1000</span>
+                <span>{{ i18n.t('inv_next_level') }}: 1000</span>
               </div>
             </div>
           </div>
@@ -150,7 +150,7 @@
 
                 <div class="text-center pb-8">
                   <button @click="selectedStat = null" class="text-[9px] font-black text-muted/50 hover:text-foreground uppercase tracking-[0.2em] transition-colors py-2">
-                    DISMISS DATA
+                    {{ i18n.t('inv_dismiss_data') }}
                   </button>
                 </div>
               </div>
@@ -169,8 +169,8 @@
           <div class="flex items-center gap-4 text-left">
             <div class="p-3 bg-cyan-500/20 rounded-2xl"><TrendingUp class="w-6 h-6 text-cyan-500" /></div>
             <div>
-              <p class="text-[10px] font-black text-cyan-500 uppercase tracking-widest">COFRE DE NIVEL</p>
-              <h4 class="text-xl font-black text-foreground italic">{{ authStore.user.level_chests }} DISPONIBLES</h4>
+              <p class="text-[10px] font-black text-cyan-500 uppercase tracking-widest">{{ i18n.t('inv_level_chest') }}</p>
+              <h4 class="text-xl font-black text-foreground italic">{{ authStore.user.level_chests }} {{ i18n.t('inv_available') }}</h4>
             </div>
           </div>
           <Zap class="w-5 h-5 text-cyan-500 animate-pulse" />
@@ -181,8 +181,8 @@
           <div class="flex items-center gap-4 text-left">
             <div class="p-3 bg-primary-500/20 rounded-2xl"><Archive class="w-6 h-6 text-primary-500" /></div>
             <div>
-              <p class="text-[10px] font-black text-primary-500 uppercase tracking-widest">COFRE MECÁNICO</p>
-              <h4 class="text-xl font-black text-foreground italic">{{ authStore.user.boss_chests }} DISPONIBLES</h4>
+              <p class="text-[10px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('inv_boss_chest') }}</p>
+              <h4 class="text-xl font-black text-foreground italic">{{ authStore.user.boss_chests }} {{ i18n.t('inv_available') }}</h4>
             </div>
           </div>
           <Sparkles class="w-5 h-5 text-primary-500 animate-pulse" />
@@ -196,8 +196,8 @@
 
       <div v-else-if="inventory.length === 0" class="card-stats py-32 text-center border-dashed border-white/5 opacity-50">
         <Package class="w-16 h-16 mx-auto mb-6 text-muted" />
-        <h3 class="text-2xl font-black uppercase italic tracking-tighter">Armería Vacía</h3>
-        <p class="text-[10px] font-bold text-muted uppercase tracking-[0.3em] mt-2">Derrota bosses para obtener equipo legendario</p>
+        <h3 class="text-2xl font-black uppercase italic tracking-tighter">{{ i18n.t('inv_empty_title') }}</h3>
+        <p class="text-[10px] font-bold text-muted uppercase tracking-[0.3em] mt-2">{{ i18n.t('inv_empty_desc') }}</p>
       </div>
 
       <!-- Item Grids by Type -->
@@ -211,12 +211,12 @@
             <div class="h-1 w-6 bg-primary-500 rounded-full"></div>
             <h2 class="text-xs font-black text-foreground uppercase tracking-[0.3em] font-industrial">
               {{ 
-                type === 'title' ? 'Titulos' : 
-                type === 'border' ? 'MARCOS' : 
-                type === 'background' ? 'Fondos' : 
-                type === 'post_background' ? 'FONDOS DE MURO' : 
-                type === 'avatar' ? 'EFECTOS DE AVATAR' : 
-                'CONSUMIBLES' 
+                type === 'title' ? i18n.t('inv_cat_titles') : 
+                type === 'border' ? i18n.t('inv_cat_borders') : 
+                type === 'background' ? i18n.t('inv_cat_backgrounds') : 
+                type === 'post_background' ? i18n.t('inv_cat_post_backgrounds') : 
+                type === 'avatar' ? i18n.t('inv_cat_avatar_effects') : 
+                i18n.t('inv_cat_consumables') 
               }}
             </h2>
             <span class="text-[9px] font-black text-muted bg-surface px-2 py-0.5 rounded-full">{{ items.length }}</span>
@@ -238,7 +238,7 @@
             :class="[isEquipped(item) ? 'equipped' : '', `rarity-${item.rarity || 'common'}`]">
             
             <div class="clash-card-inner">
-               <div v-if="item.is_new" class="absolute top-2 right-2 z-20 px-2 py-0.5 rounded-full bg-neon-lime text-[7px] font-black text-black uppercase tracking-widest animate-pulse">NUEVO</div>
+               <div v-if="item.is_new" class="absolute top-2 right-2 z-20 px-2 py-0.5 rounded-full bg-neon-lime text-[7px] font-black text-black uppercase tracking-widest animate-pulse">{{ i18n.t('inv_new_badge') }}</div>
                
                <!-- Card Display -->
                <div class="h-32 flex items-center justify-center p-4 relative overflow-hidden bg-black/40">
@@ -285,7 +285,7 @@
                   <div v-if="type === 'consumable'" class="pb-1">
                      <button @click.stop="handleActivate(item)" 
                         class="w-full py-2 bg-primary-500 hover:bg-primary-600 text-white text-[8px] font-black uppercase tracking-widest rounded-lg transition-all shadow-lg active:scale-95">
-                        ACTIVAR x{{ item.css_value }}
+                        {{ i18n.t('btn_activate') }} x{{ item.css_value }}
                      </button>
                   </div>
                   <h4 v-else class="text-[10px] font-black text-foreground truncate uppercase text-center italic">{{ item.name }}</h4>

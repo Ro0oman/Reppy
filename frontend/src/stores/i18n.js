@@ -195,20 +195,8 @@ const translations = {
 
     // Lucky Wheel
     wheel_title_start: 'Lucky',
-    admin_title_start: 'Administration',
-    admin_title_end: 'Panel',
-    admin_subtitle: 'Manage the economy and global events.',
-    admin_new_cosmetic: 'New Cosmetic',
-    admin_edit_cosmetic: 'Edit Cosmetic',
-    admin_save_cosmetic: 'Save Cosmetic',
-    admin_update_cosmetic: 'Update Cosmetic',
-    admin_create_cosmetic: 'Create Cosmetic',
-    admin_cancel: 'Cancel',
-    admin_new_boss: 'New Seasonal Boss',
-    admin_schedule_event: 'Schedule Event',
-    admin_status_active: 'Active',
-    admin_status_upcoming: 'Upcoming',
-    admin_status_finished: 'Finished',
+    wheel_title_end: 'Wheel',
+    wheel_subtitle: 'Spin daily to win coins, chests, and power-ups.',
     wheel_btn_spin: 'SPIN',
     wheel_btn_spinning: '...',
     wheel_already_spun: "You've already used your daily spin",
@@ -216,7 +204,15 @@ const translations = {
     wheel_legendary: 'LEGENDARY ITEM!',
     wheel_try_tomorrow: 'TRY AGAIN TOMORROW',
     wheel_congrats: 'Congratulations on your prize!',
-    wheel_return_info: 'Come back tomorrow for more luck',
+    wheel_return_tomorrow: 'Cya tomorrow for more luck',
+    wheel_nothing: 'NOTHING',
+    wheel_coins: 'REPPY COINS',
+    wheel_potion: 'POWER POTION',
+    wheel_level_chest: 'LEVEL CHEST',
+    wheel_new_balance: 'New balance',
+    wheel_prizemsg_coins: '+{value} REPPY COINS',
+    wheel_prizemsg_item: '¡{name}! 🏆',
+    wheel_prizemsg_chest: '¡Level Chest! 🎁',
 
     // Level Bar
     level_xp_info: 'Earn XP to gain LOOT CHESTS. Every rep counts.',
@@ -228,6 +224,7 @@ const translations = {
     // Dashboard
     dash_max_month: 'Max Month',
     dash_max_month_tooltip: 'Maximum volume achieved in a single month',
+    dash_total_tonnage_tooltip: 'Total tonnage moved (Reps x Resistance)',
 
     // Boss History
     boss_hist_modal_title: 'DAMAGE HISTORY',
@@ -662,13 +659,72 @@ const translations = {
     landing_faq_title: 'Frequently Asked Questions',
     landing_lb_title_main: 'Global Ranking',
     landing_lb_subtitle_main: 'Real-time pull-up and calisthenics ranking',
-    landing_lb_live: 'LIVE RANKING',
-    landing_lb_preparing: 'Preparing Ranking...',
     landing_lb_join: 'JOIN THE RANKING',
     landing_footer_copy: 'REPPY © 2026',
     landing_footer_free: 'Free Calisthenics App',
     landing_footer_exercises: 'Pull-ups · Push-ups · Dips',
     landing_footer_desc: 'Reppy is a calisthenics tracker with an RPG system to log pull-ups, push-ups, dips, muscle ups and weighted pull-ups. Available in English and Spanish.',
+
+    // Additional Shop/UI
+    shop_seasonal_title: 'SEASONAL PROTOCOL',
+    shop_seasonal_subtitle: 'Special event rewards & milestone artifacts.',
+    shop_stock: 'STOCK',
+    shop_event_badge: 'EVENT',
+    shop_special_badge: 'SPECIAL',
+    shop_seasonal_badge: 'SEASONAL',
+    shop_unit_page: 'UNIT_PAGE',
+    shop_total_chunks: 'TOTAL_CHUNKS',
+    shop_tab_post_backgrounds: 'POSTS',
+
+    // Additional Inventory
+    inv_title: 'INVENTORY.RPG',
+    inv_subtitle: 'Manage your attributes and gear',
+    inv_tab_stats: 'ATTRIBUTES',
+    inv_tab_gear: 'GEAR',
+    inv_level_card_title: 'Character Level',
+    inv_level_card_subtitle: 'Level up to earn chests and destructive power',
+    inv_next_level: 'NEXT LEVEL',
+    inv_empty_title: 'Empty Armory',
+    inv_empty_desc: 'Defeat bosses to get legendary gear',
+    inv_level_chest: 'LEVEL CHEST',
+    inv_boss_chest: 'MECHANICAL CHEST',
+    inv_available: 'AVAILABLE',
+    inv_new_badge: 'NEW',
+    inv_cat_titles: 'Titles',
+    inv_cat_borders: 'BORDERS',
+    inv_cat_backgrounds: 'Wallpapers',
+    inv_cat_post_backgrounds: 'WALL BACKGROUNDS',
+    inv_cat_avatar_effects: 'AVATAR EFFECTS',
+    inv_cat_consumables: 'CONSUMABLES',
+    inv_dismiss_data: 'DISMISS DATA',
+
+    // Additional Dashboard
+    dash_global_view_active: 'Global view active. Select a protocol to log volume.',
+    dash_boss_status: 'Boss Status',
+    dash_goal_achieved: 'Goal achieved.',
+    dash_analyzing_performance: 'Analyzing performance...',
+    dash_streak: 'Streak',
+    dash_peak_volume: 'Peak Volume',
+    dash_total_tonnage: 'Total Tonnage',
+    dash_history_title: 'Activity History',
+    dash_tons_moved: 'TONS MOVED',
+    dash_protocol_null: 'Protocol Null',
+
+    // Reps Input
+    rep_protocol_active: 'Protocol {type} active',
+    rep_manual_entry: 'Manual entry',
+    rep_additional_weight: 'Additional load (Kg)',
+
+    // Boss
+    battle_history: 'Battle History',
+    boss_dmg_label: 'DMG',
+    boss_damage_active: 'DMG ACTIVE',
+    boss_assault: 'BOSS ASSAULT',
+
+    // Activity Card
+    activity_level_label: 'LVL',
+    activity_reps_label: 'REPS',
+    activity_milestone_msg: '{threshold} total {exercise}!',
   },
   es: {
     // Landing
@@ -863,29 +919,25 @@ const translations = {
     notif_close: 'Cerrar Notificación',
 
     // Lucky Wheel
-    wheel_title_start: 'Giro',
-    admin_title_start: 'Panel de',
-    admin_title_end: 'Administración',
-    admin_subtitle: 'Gestiona la economía y los eventos globales.',
-    admin_new_cosmetic: 'Nuevo Cosmético',
-    admin_edit_cosmetic: 'Editar Cosmético',
-    admin_save_cosmetic: 'Guardar Cosmético',
-    admin_update_cosmetic: 'Actualizar Cosmético',
-    admin_create_cosmetic: 'Crear Cosmético',
-    admin_cancel: 'Cancelar',
-    admin_new_boss: 'Nuevo Boss de Temporada',
-    admin_schedule_event: 'Programar Evento',
-    admin_status_active: 'Activo',
-    admin_status_upcoming: 'Próximamente',
-    admin_status_finished: 'Finalizado',
+    wheel_title_start: 'Ruleta',
+    wheel_title_end: 'Diaria',
+    wheel_subtitle: 'Gira el dial para ganar monedas, cofres y bufos.',
     wheel_btn_spin: 'GIRAR',
     wheel_btn_spinning: '...',
-    wheel_already_spun: 'Ya has realizado tu giro diario',
+    wheel_already_spun: "Ya has usado tu giro diario",
     wheel_btn_close: 'Cerrar',
     wheel_legendary: '¡OBJETO LEGENDARIO!',
-    wheel_try_tomorrow: 'INTÉNTALO MAÑANA',
+    wheel_try_tomorrow: 'VUELVE MAÑANA',
     wheel_congrats: '¡Felicidades por tu premio!',
-    wheel_return_info: 'Vuelve mañana para más suerte',
+    wheel_return_tomorrow: 'Mañana más y mejor suerte',
+    wheel_nothing: 'NADA',
+    wheel_coins: 'MONEDAS',
+    wheel_potion: 'POCIÓN DE PODER',
+    wheel_level_chest: 'COFRE DE NIVEL',
+    wheel_new_balance: 'Nuevo saldo',
+    wheel_prizemsg_coins: '+{value} MONEDAS',
+    wheel_prizemsg_item: '¡{name}! 🏆',
+    wheel_prizemsg_chest: '¡Cofre de Nivel! 🎁',
 
     // Level Bar
     level_xp_info: 'Consigue XP para ganar COFRES DE BOTÍN. Cada repetición suma.',
@@ -897,6 +949,7 @@ const translations = {
     // Dashboard
     dash_max_month: 'Máximo Mes',
     dash_max_month_tooltip: 'Máximo volumen conseguido en un solo mes',
+    dash_total_tonnage_tooltip: 'Tonelaje total desplazado (Repeticiones x Resistencia)',
 
     // Boss History
     boss_hist_modal_title: 'HISTÓRICO DE DAÑO',
@@ -1347,6 +1400,67 @@ const translations = {
     landing_footer_exercises: 'Dominadas · Flexiones · Fondos',
     landing_footer_desc: 'Reppy es un tracker de calistenia con sistema RPG para registrar dominadas, flexiones, fondos, muscle ups y dominadas con lastre. Disponible en español e inglés.',
     cat_consumable: 'Consumibles',
+
+    // Additional Shop/UI
+    shop_seasonal_title: 'PROTOCOLO ESTACIONAL',
+    shop_seasonal_subtitle: 'Recompensas de eventos especiales y artefactos de hitos.',
+    shop_stock: 'STOCK',
+    shop_event_badge: 'EVENTO',
+    shop_special_badge: 'ESPECIAL',
+    shop_seasonal_badge: 'ESTACIONAL',
+    shop_unit_page: 'PÁGINA_UNIDAD',
+    shop_total_chunks: 'BLOQUES_TOTALES',
+    shop_tab_post_backgrounds: 'MURO',
+
+    // Additional Inventory
+    inv_title: 'INVENTARIO.RPG',
+    inv_subtitle: 'Gestiona tus atributos y equipamiento',
+    inv_tab_stats: 'ATRIBUTOS',
+    inv_tab_gear: 'EQUIPO',
+    inv_level_card_title: 'Nivel de Personaje',
+    inv_level_card_subtitle: 'Sube de nivel para ganar cofres y poder destructivo',
+    inv_next_level: 'SIGUIENTE NIVEL',
+    inv_empty_title: 'Armería Vacía',
+    inv_empty_desc: 'Derrota bosses para obtener equipo legendario',
+    inv_level_chest: 'COFRE DE NIVEL',
+    inv_boss_chest: 'COFRE MECÁNICO',
+    inv_available: 'DISPONIBLES',
+    inv_new_badge: 'NUEVO',
+    inv_cat_titles: 'Títulos',
+    inv_cat_borders: 'MARCOS',
+    inv_cat_backgrounds: 'Fondos',
+    inv_cat_post_backgrounds: 'FONDOS DE MURO',
+    inv_cat_avatar_effects: 'EFECTOS DE AVATAR',
+    inv_cat_consumables: 'CONSUMIBLES',
+    inv_dismiss_data: 'DESCARTAR DATOS',
+
+    // Additional Dashboard
+    dash_global_view_active: 'Vista global activa. Selecciona un protocolo para registrar volumen.',
+    dash_boss_status: 'Estado del Boss',
+    dash_goal_achieved: 'Meta conseguida.',
+    dash_analyzing_performance: 'Analizando rendimiento...',
+    dash_streak: 'Racha',
+    dash_peak_volume: 'Volumen Pico',
+    dash_total_tonnage: 'Tonelaje Total',
+    dash_history_title: 'Historial de actividad',
+    dash_tons_moved: 'TONS MOVIMIENTOS',
+    dash_protocol_null: 'Protocolo Nulo',
+
+    // Reps Input
+    rep_protocol_active: 'Protocolo {type} activo',
+    rep_manual_entry: 'Entrada manual',
+    rep_additional_weight: 'Carga adicional (Kg)',
+
+    // Boss
+    battle_history: 'Historial de Batalla',
+    boss_dmg_label: 'DMG',
+    boss_damage_active: 'DAÑO ACTIVO',
+    boss_assault: 'ASALTO AL BOSS',
+
+    // Activity Card
+    activity_level_label: 'LVL',
+    activity_reps_label: 'REPS',
+    activity_milestone_msg: '¡{threshold} {exercise} totales!',
   }
 };
 

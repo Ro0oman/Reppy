@@ -37,7 +37,7 @@
               <text 
                 :x="getTextCoords(index).x" 
                 :y="getTextCoords(index).y" 
-                :transform="`rotate(${index * 45 + 22.5}, ${getTextCoords(index).x}, ${getTextCoords(index).y})`"
+                :transform="`rotate(${getCumulativeAngle(index) + (p.size / 2)}, ${getTextCoords(index).x}, ${getTextCoords(index).y})`"
                 fill="white" 
                 font-size="4" 
                 font-weight="900" 
@@ -114,20 +114,25 @@ const rotation = ref(0);
 const prizeResult = ref(null);
 
 const rewards = [
-  { id: 0, name: '200 🪙', bgColor: '#FBBF24' },
-  { id: 1, name: '500 🪙', bgColor: '#F59E0B' },
-  { id: 2, name: '200 🪙', bgColor: '#D97706' },
-  { id: 3, name: '800 🪙', bgColor: '#B45309' },
-  { id: 4, name: '500 🪙', bgColor: '#4F46E5' }, 
-  { id: 5, name: '2500 🪙', bgColor: '#EF4444' }, // Jackpot
-  { id: 6, name: '🧪 x1.5', bgColor: '#10B981' }, // Strength Potion
-  { id: 7, name: 'NADA', bgColor: '#71717A' }
+  { id: 0, name: '200 🪙', bgColor: '#FBBF24', size: 55 },
+  { id: 1, name: '500 🪙', bgColor: '#F59E0B', size: 55 },
+  { id: 2, name: '800 🪙', bgColor: '#D97706', size: 55 },
+  { id: 3, name: '1000 🪙', bgColor: '#B45309', size: 45 },
+  { id: 4, name: '1500 🪙', bgColor: '#4F46E5', size: 45 }, 
+  { id: 5, name: '2500 🪙', bgColor: '#EF4444', size: 30 }, // Jackpot
+  { id: 6, name: '🧪 x1.5', bgColor: '#10B981', size: 35 }, // Strength Potion
+  { id: 7, name: '🎁 LVL', bgColor: '#8B5CF6', size: 40 } // Chest
 ];
+
+// Helper to get cumulative angles
+const getCumulativeAngle = (index) => {
+  return rewards.slice(0, index).reduce((sum, r) => sum + r.size, 0);
+};
 
 // SVG Helpers
 const getSegmentPath = (index) => {
-  const startAngle = index * 45;
-  const endAngle = (index + 1) * 45;
+  const startAngle = getCumulativeAngle(index);
+  const endAngle = startAngle + rewards[index].size;
   const x1 = 50 + 50 * Math.cos((Math.PI * (startAngle - 90)) / 180);
   const y1 = 50 + 50 * Math.sin((Math.PI * (startAngle - 90)) / 180);
   const x2 = 50 + 50 * Math.cos((Math.PI * (endAngle - 90)) / 180);
@@ -136,16 +141,18 @@ const getSegmentPath = (index) => {
 };
 
 const getTextCoords = (index) => {
-  const angle = (index * 45) + 22.5 - 90;
+  const startAngle = getCumulativeAngle(index);
+  const centerXAngle = startAngle + (rewards[index].size / 2) - 90;
   return {
-    x: 50 + 35 * Math.cos((Math.PI * angle) / 180),
-    y: 50 + 35 * Math.sin((Math.PI * angle) / 180)
+    x: 50 + 35 * Math.cos((Math.PI * centerXAngle) / 180),
+    y: 50 + 35 * Math.sin((Math.PI * centerXAngle) / 180)
   };
 };
 
 const getPrizeText = (prize) => {
-  if (prize.type === 'coins') return `+${prize.value} REPPY COINS`;
-  if (prize.type === 'consumable') return prize.item ? `¡${prize.item.name}! 🏆` : i18n.t('wheel_legendary');
+  if (prize.type === 'coins') return i18n.t('wheel_prizemsg_coins', { value: prize.value });
+  if (prize.type === 'consumable') return i18n.t('wheel_prizemsg_item', { name: prize.item ? prize.item.name : i18n.t('wheel_potion') });
+  if (prize.type === 'chest') return i18n.t('wheel_prizemsg_chest');
   return i18n.t('wheel_try_tomorrow');
 };
 
@@ -160,17 +167,17 @@ const spinWheel = async () => {
     prizeResult.value = null;
 
     // Calculate rotation
-    // Add 5-10 full spins + the segment offset
-    // Important: we subtract the segment angle from 360 since it spins clockwise
     const extraSpins = 5 + Math.floor(Math.random() * 5);
-    const segmentAngle = 45;
     const targetId = data.prize.id;
     
-    // Rotation = (Current Full Rotations) + (Extra Full Spins) + (Adjustment to land on targetId)
-    // The pointer is at top (0 deg). Target segment 'targetId' starts at targetId * 45.
-    // To land targetId at top, we need to rotate by 360 - (targetId * 45) - 22.5 offset
+    // Find the center of the target segment
+    const targetStartAngle = getCumulativeAngle(targetId);
+    const targetCenterAngle = targetStartAngle + (rewards[targetId].size / 2);
+    
+    // Rotation = (Current Full Rotations) + (Extra Full Spins) + (Adjustment to land on targetCenterAngle at the top pointer)
+    // The pointer is at top (0 deg). To land targetCenterAngle at top, we rotate by 360 - targetCenterAngle
     const currentBase = Math.floor(rotation.value / 360) * 360;
-    const targetRotation = currentBase + (extraSpins * 360) + (360 - (targetId * segmentAngle) - 22.5);
+    const targetRotation = currentBase + (extraSpins * 360) + (360 - targetCenterAngle);
     
     rotation.value = targetRotation;
 

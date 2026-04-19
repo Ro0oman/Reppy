@@ -32,7 +32,7 @@
             :size="60" 
           />
           <div class="absolute -bottom-1 -right-1 bg-background border border-border px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-lg">
-            <span class="text-[7px] font-black text-primary-500 uppercase tracking-widest">LVL</span>
+            <span class="text-[7px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('activity_level_label') }}</span>
             <span class="text-[9px] font-black italic">{{ activity.current_level }}</span>
           </div>
         </div>
@@ -74,7 +74,7 @@
           <span class="text-[8px] font-black text-primary-500 uppercase tracking-[0.2em]">{{ i18n.t(ex.exercise_type) }}</span>
           <div class="flex items-baseline gap-1">
             <span class="text-2xl font-black text-foreground leading-none">{{ ex.count }}</span>
-            <span class="text-[10px] font-black text-muted uppercase">REPS</span>
+            <span class="text-[10px] font-black text-muted uppercase">{{ i18n.t('activity_reps_label') }}</span>
           </div>
         </div>
       </div>
@@ -89,7 +89,7 @@
             <Swords class="w-4 h-4 text-white" />
           </div>
           <div>
-            <p class="text-[10px] font-black text-primary-500 uppercase tracking-widest leading-none">BOSS ASSAULT</p>
+            <p class="text-[10px] font-black text-primary-500 uppercase tracking-widest leading-none">{{ i18n.t('boss_assault') }}</p>
             <p class="text-sm font-black text-foreground uppercase tracking-tight mt-1">
               {{ isOwn ? i18n.t('activity_inflicted_you') : activity.user_name + ' ' + i18n.t('activity_has_inflicted') }} 
               <span class="text-primary-500">{{ totalBossDamage }}</span> {{ i18n.t('activity_damage_session') }}
@@ -211,9 +211,10 @@ const milestones = computed(() => {
         list.push({
           type: ex.exercise_type,
           value: threshold,
-          label: i18n.locale === 'es' 
-            ? `¡${threshold} ${i18n.t(ex.exercise_type)} totales!` 
-            : `${threshold} total ${i18n.t(ex.exercise_type)}!`
+          label: i18n.t('activity_milestone_msg', { 
+            threshold, 
+            exercise: i18n.t(ex.exercise_type) 
+          })
         });
       }
     });

@@ -12,7 +12,7 @@
           <h3 class="text-2xl font-bold tracking-tight text-foreground">{{ activeLabel }}</h3>
           <div class="flex items-center gap-2 mt-0.5">
             <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-            <p class="text-[11px] font-bold text-muted/60 tracking-tight">Protocolo {{ exerciseType.replace('_', ' ') }} activo</p>
+            <p class="text-[11px] font-bold text-muted/60 tracking-tight">{{ i18n.t('rep_protocol_active', { type: exerciseType.replace('_', ' ') }) }}</p>
           </div>
         </div>
       </div>
@@ -34,7 +34,7 @@
     <!-- Custom Input Area -->
     <div class="space-y-6 relative z-10">
       <div class="relative group/input">
-        <label class="text-[11px] font-bold text-muted/60 mb-2 block px-1 tracking-tight">Entrada manual</label>
+        <label class="text-[11px] font-bold text-muted/60 mb-2 block px-1 tracking-tight">{{ i18n.t('rep_manual_entry') }}</label>
         <div class="flex gap-4">
           <div class="relative flex-1">
             <input 
@@ -56,7 +56,7 @@
 
       <!-- Added Weight Input (Conditional) -->
       <div v-if="exerciseType === 'weighted_pullups'" class="animate-in fade-in slide-in-from-top-4 duration-500">
-        <label class="text-[11px] font-bold text-accent mb-2 block px-1 tracking-tight">Carga adicional (Kg)</label>
+        <label class="text-[11px] font-bold text-accent mb-2 block px-1 tracking-tight">{{ i18n.t('rep_additional_weight') }}</label>
         <div class="relative group/weight">
           <input 
             v-model.number="addedWeight"

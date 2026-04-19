@@ -11,7 +11,7 @@
       <div class="absolute inset-0 pointer-events-none opacity-20 bg-gradient-to-br from-primary-500/20 via-transparent to-transparent group-hover:opacity-40 transition-opacity duration-700"></div>
       
       <!-- History Icon Hint (Authenticated only) -->
-      <div v-if="authStore.isAuthenticated" class="absolute top-6 right-6 text-white/20 group-hover:text-primary-500 transition-colors z-20" :title="i18nStore.t('battle_history') || 'Battle History'">
+      <div v-if="authStore.isAuthenticated" class="absolute top-6 right-6 text-white/20 group-hover:text-primary-500 transition-colors z-20" :title="i18nStore.t('battle_history')">
           <History class="w-6 h-6" />
       </div>
       
@@ -31,7 +31,7 @@
            </span>
            <span v-if="authStore.user?.damage_multiplier > 1.0" 
              class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[8px] md:text-[9px] font-black tracking-[0.3em] uppercase backdrop-blur-sm flex items-center gap-1.5 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-              <span>🚀</span> x{{ authStore.user.damage_multiplier }} DMG ACTIVE
+              <span>🚀</span> x{{ authStore.user.damage_multiplier }} {{ i18nStore.t('boss_damage_active') }}
            </span>
         </div>
 
@@ -99,7 +99,7 @@
               <div class="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
               <div class="relative z-10">
                  <span class="text-[7px] md:text-[8px] font-black tracking-[0.3em] uppercase text-white/40 block mb-1">{{ i18nStore.t('boss_hist_damage') }}</span>
-                 <div class="text-2xl md:text-3xl font-black text-white tracking-tighter">{{ formatNumber(personalDamage) }}<span class="text-[10px] font-bold text-primary-500/60 ml-1 tracking-widest">DMG</span></div>
+                 <div class="text-2xl md:text-3xl font-black text-white tracking-tighter">{{ formatNumber(personalDamage) }}<span class="text-[10px] font-bold text-primary-500/60 ml-1 tracking-widest">{{ i18nStore.t('boss_dmg_label') }}</span></div>
               </div>
            </div>
 
@@ -110,7 +110,7 @@
                  <span class="text-[7px] md:text-[8px] font-black tracking-[0.3em] uppercase text-white/40 block mb-1">{{ i18nStore.t('boss_today_damage') }}</span>
                  <div class="flex items-end gap-1.5">
                     <div class="text-2xl md:text-3xl font-black text-emerald-400 tracking-tighter">{{ formatNumber(dailyDamage) }}</div>
-                    <span class="text-[10px] font-bold text-emerald-500/50 mb-1 tracking-widest">DMG</span>
+                    <span class="text-[10px] font-bold text-emerald-500/50 mb-1 tracking-widest">{{ i18nStore.t('boss_dmg_label') }}</span>
                  </div>
               </div>
            </div>
@@ -122,7 +122,7 @@
                  <span class="text-[7px] md:text-[8px] font-black tracking-[0.3em] uppercase text-white/40 block mb-1">{{ i18nStore.t('boss_domination') }}</span>
                  <div>
                         {{ topDamageDealer.id === authStore.user?.id ? i18nStore.t('lb_you') : topDamageDealer.name }}
-                    <div class="text-[10px] font-bold text-white/30 uppercase tracking-widest mt-0.5">{{ formatNumber(topDamageDealer.damage_dealt) }} DMG</div>
+                    <div class="text-[10px] font-bold text-white/30 uppercase tracking-widest mt-0.5">{{ formatNumber(topDamageDealer.damage_dealt) }} {{ i18nStore.t('boss_dmg_label') }}</div>
                  </div>
               </div>
            </div>
