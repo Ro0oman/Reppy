@@ -174,46 +174,46 @@
 
     <!-- Help Modal Overlay -->
     <div v-if="showHelp" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-in fade-in duration-500" @click.self="showHelp = false">
-      <div class="w-full max-w-2xl bg-surface/30 border border-white/10 rounded-[2.5rem] shadow-[0_0_100px_rgba(0,0,0,0.8)] relative p-8 md:p-12 animate-in slide-in-from-bottom-8 duration-700 select-none overflow-hidden">
+      <div class="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-surface/30 border border-white/10 rounded-3xl md:rounded-[2.5rem] shadow-[0_0_100px_rgba(0,0,0,0.8)] relative p-6 md:p-12 animate-in slide-in-from-bottom-8 duration-700 select-none scrollbar-hide">
         
         <div class="absolute -top-32 -right-32 w-96 h-96 bg-primary-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-        <button @click="showHelp = false" class="absolute top-6 right-6 p-3 bg-white/5 hover:bg-white/10 rounded-2xl text-white/50 hover:text-white transition-all">
-          <XIcon class="w-5 h-5" />
+        <button @click="showHelp = false" class="absolute top-4 right-4 md:top-6 md:right-6 p-2 md:p-3 bg-white/5 hover:bg-white/10 rounded-xl md:rounded-2xl text-white/50 hover:text-white transition-all z-20">
+          <XIcon class="w-4 h-4 md:w-5 md:h-5" />
         </button>
         
-        <div class="mb-10 relative z-10">
-          <span class="text-[10px] font-black uppercase tracking-[0.4em] text-primary-500 bg-primary-500/10 px-3 py-1.5 rounded-full border border-primary-500/20">{{ i18nStore.t('boss_op_manual') }}</span>
-          <h2 class="text-3xl md:text-5xl font-black tracking-tighter text-white uppercase italic mt-6 leading-none">{{ i18nStore.t('boss_community_event') }}<span class="text-primary-500">.</span></h2>
+        <div class="mb-8 md:mb-10 relative z-10">
+          <span class="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] md:tracking-[0.4em] text-primary-500 bg-primary-500/10 px-3 py-1.5 rounded-full border border-primary-500/20">{{ i18nStore.t('boss_op_manual') }}</span>
+          <h2 class="text-2xl md:text-5xl font-black tracking-tighter text-white uppercase italic mt-4 md:mt-6 leading-tight md:leading-none">{{ i18nStore.t('boss_community_event') }}<span class="text-primary-500">.</span></h2>
         </div>
 
-        <div class="space-y-6 relative z-10">
-          <div class="p-6 rounded-[1.5rem] bg-black/40 border border-white/5 flex gap-5 items-start">
-            <div class="w-10 h-10 rounded-2xl bg-primary-500/10 border border-primary-500/30 flex items-center justify-center text-primary-500 shrink-0 font-black text-lg">1</div>
+        <div class="space-y-4 md:space-y-6 relative z-10">
+          <div class="p-4 md:p-6 rounded-2xl md:rounded-[1.5rem] bg-black/40 border border-white/5 flex gap-4 md:gap-5 items-start">
+            <div class="w-8 h-8 md:w-10 md:h-10 rounded-xl md:rounded-2xl bg-primary-500/10 border border-primary-500/30 flex items-center justify-center text-primary-500 shrink-0 font-black text-base md:text-lg">1</div>
             <div>
-              <p class="text-sm font-black text-white uppercase tracking-widest mb-1">{{ i18nStore.t('battle_help_title1') }}</p>
-              <p class="text-xs text-white/50 leading-relaxed font-medium">{{ i18nStore.t('battle_help_desc1') }}</p>
+              <p class="text-xs md:text-sm font-black text-white uppercase tracking-widest mb-1">{{ i18nStore.t('battle_help_title1') }}</p>
+              <p class="text-[10px] md:text-xs text-white/50 leading-relaxed font-medium">{{ i18nStore.t('battle_help_desc1') }}</p>
             </div>
           </div>
 
-          <div class="p-6 rounded-[1.5rem] bg-black/40 border border-white/5 flex gap-5 items-start">
-            <div class="w-10 h-10 rounded-2xl bg-primary-500/10 border border-primary-500/30 flex items-center justify-center text-primary-500 shrink-0 font-black text-lg">2</div>
+          <div class="p-4 md:p-6 rounded-2xl md:rounded-[1.5rem] bg-black/40 border border-white/5 flex gap-4 md:gap-5 items-start">
+            <div class="w-8 h-8 md:w-10 md:h-10 rounded-xl md:rounded-2xl bg-primary-500/10 border border-primary-500/30 flex items-center justify-center text-primary-500 shrink-0 font-black text-base md:text-lg">2</div>
             <div>
-              <p class="text-sm font-black text-white uppercase tracking-widest mb-1">{{ i18nStore.t('battle_help_title2') }}</p>
-              <p class="text-xs text-white/50 leading-relaxed font-medium">{{ i18nStore.t('battle_help_desc2') }}</p>
+              <p class="text-xs md:text-sm font-black text-white uppercase tracking-widest mb-1">{{ i18nStore.t('battle_help_title2') }}</p>
+              <p class="text-[10px] md:text-xs text-white/50 leading-relaxed font-medium">{{ i18nStore.t('battle_help_desc2') }}</p>
             </div>
           </div>
 
-          <div class="p-6 rounded-[1.5rem] bg-black/40 border border-white/5 flex gap-5 items-start">
-            <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-500 shrink-0 font-black text-lg text-[20px]">🎁</div>
+          <div class="p-4 md:p-6 rounded-2xl md:rounded-[1.5rem] bg-black/40 border border-white/5 flex gap-4 md:gap-5 items-start">
+            <div class="w-8 h-8 md:w-10 md:h-10 rounded-xl md:rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-500 shrink-0 font-black text-lg">🎁</div>
             <div>
-              <p class="text-sm font-black text-emerald-500 uppercase tracking-widest mb-1">{{ i18nStore.t('boss_reward_chest') }}</p>
-              <p class="text-xs text-white/50 leading-relaxed font-medium">{{ i18nStore.t('boss_reward_desc') }}</p>
+              <p class="text-xs md:text-sm font-black text-emerald-500 uppercase tracking-widest mb-1">{{ i18nStore.t('boss_reward_chest') }}</p>
+              <p class="text-[10px] md:text-xs text-white/50 leading-relaxed font-medium">{{ i18nStore.t('boss_reward_desc') }}</p>
             </div>
           </div>
         </div>
 
-        <button @click="showHelp = false" class="w-full mt-10 p-5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black uppercase tracking-[0.3em] text-xs rounded-2xl transition-all relative z-10 flex items-center justify-center gap-2">
+        <button @click="showHelp = false" class="w-full mt-8 md:mt-10 p-4 md:p-5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black uppercase tracking-[0.2em] md:tracking-[0.3em] text-[10px] md:text-xs rounded-xl md:rounded-2xl transition-all relative z-10 flex items-center justify-center gap-2">
           {{ i18nStore.t('boss_close_manual') }}
         </button>
       </div>
