@@ -1,18 +1,37 @@
 <template>
   <div class="max-w-5xl mx-auto w-full px-4 pt-12 pb-32 space-y-12">
-    <!-- Header -->
-    <div class="space-y-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-2xl sm:text-4xl font-black tracking-tighter text-foreground uppercase italic truncate drop-shadow-[0_0_15px_rgba(255,255,255,0.05)]">
-            {{ i18n.t('community') }}<span class="text-primary-500">.</span>CORE
-          </h2>
-          <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em] mt-2 opacity-80">{{ i18n.t('community_subtitle') }}</p>
-        </div>
-        <div class="p-4 bg-primary-500/10 border border-primary-500/20 rounded-2xl shadow-[0_0_30px_rgba(255,69,0,0.1)]">
-          <Users class="w-6 h-6 text-primary-500" />
+    <div class="space-y-8">
+      <!-- Premium Hero Header -->
+      <div class="relative overflow-hidden p-8 sm:p-12 bg-surface/10 border border-border/40 rounded-[3rem] backdrop-blur-md group">
+        <div class="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent"></div>
+        <div class="absolute -top-12 -right-12 w-48 h-48 bg-primary-500/10 rounded-full blur-3xl transition-all group-hover:bg-primary-500/20"></div>
+        
+        <div class="relative z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-8">
+          <div class="space-y-2">
+            <div class="flex items-center gap-3">
+              <div class="w-2 h-8 bg-primary-500 rounded-full"></div>
+              <h2 class="text-3xl sm:text-5xl font-black tracking-tighter text-foreground uppercase italic leading-none">
+                {{ i18n.t('community') }}<span class="text-primary-500">.</span>HUB
+              </h2>
+            </div>
+            <p class="text-[10px] sm:text-xs font-black text-muted uppercase tracking-[0.5em] pl-5 opacity-70">{{ i18n.t('community_subtitle') }}</p>
+          </div>
+          
+          <div class="flex items-center gap-6 bg-foreground/[0.03] p-4 rounded-3xl border border-white/5 backdrop-blur-xl">
+             <div class="text-center px-4 border-r border-border/50">
+                <p class="text-[8px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('active_users') || 'OPERATIVOS' }}</p>
+                <p class="text-lg font-black text-foreground mt-1">{{ socialStats.activeUsers || '...' }}</p>
+             </div>
+             <div class="text-center px-4">
+                <p class="text-[8px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('boss_raid') || 'RAID STATUS' }}</p>
+                <p class="text-lg font-black mt-1" :class="socialStats.raidStatus === 'ACTIVE' ? 'text-green-500' : 'text-zinc-500'">
+                  {{ socialStats.raidStatus || 'IDLE' }}
+                </p>
+             </div>
+          </div>
         </div>
       </div>
+
 
       <!-- Tab Navigation -->
       <div class="flex items-center gap-2 p-1.5 bg-surface/10 border border-border/40 rounded-[2rem] w-fit">
@@ -243,7 +262,21 @@ const fetchFriends = async () => {
   }
 };
 
-onMounted(fetchFriends);
+const socialStats = ref({ activeUsers: 0, raidStatus: 'IDLE' });
+
+const fetchSocialStats = async () => {
+  try {
+    const res = await axios.get('/api/social-feed/stats');
+    socialStats.value = res.data;
+  } catch (e) {
+    console.error('Error fetching social stats:', e);
+  }
+};
+
+onMounted(() => {
+  fetchFriends();
+  fetchSocialStats();
+});
 </script>
 
 <style scoped>

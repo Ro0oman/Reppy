@@ -38,6 +38,7 @@ export const calculateDamage = (user, reps, type, boss = null) => {
   const vigLvl = parseInt(user.vig_lvl) || 1;
   const intLvl = parseInt(user.int_lvl) || 1;
   const fthLvl = parseInt(user.fth_lvl) || 1;
+  const chaLvl = parseInt(user.cha_lvl) || 1;
 
   // 3. Scaling Formula (Dark Souls Style)
   const baseDamage = reps * exerciseMult;
@@ -45,6 +46,7 @@ export const calculateDamage = (user, reps, type, boss = null) => {
   // Level & INT Efficiency
   const levelMult = 1 + (glvl / 2); 
   const intBonus = 1 + (intLvl / 50); // Knowledge makes you more efficient
+  const chaBonus = 1 + (chaLvl / 100); // Social influence boost
   
   // Physical Scaling (STR & END)
   const strScale = 1 + (strLvl / 25);
@@ -54,7 +56,7 @@ export const calculateDamage = (user, reps, type, boss = null) => {
   const fthScale = 1 + (fthLvl / 40);
   const divineBonus = fthLvl * 25; // Base flat bonus
 
-  let damageBeforeCrit = (baseDamage * levelMult * intBonus * strScale * endScale * fthScale) + divineBonus;
+  let damageBeforeCrit = (baseDamage * levelMult * intBonus * chaBonus * strScale * endScale * fthScale) + divineBonus;
 
   // 4. Critical Hit Roll (DEX & VIG)
   const critChance = (dexLvl * 2.5) + (vigLvl * 0.5);

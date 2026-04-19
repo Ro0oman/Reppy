@@ -78,7 +78,9 @@ const translations = {
     
     // Social
     community: 'Community',
-    community_subtitle: 'Connect with fellow legends and track their progress.',
+    community_subtitle: 'Synchronize with fellow legends and track their progress.',
+    active_users: 'ACTIVE OPERATIVES',
+    boss_raid: 'RAID STATUS',
     find_friends: 'Find Friends',
     search_placeholder: 'Search enthusiasts...',
     btn_add_friend: 'Add',
@@ -378,6 +380,10 @@ const translations = {
     codex_fth_quote: 'The bar provides, the iron judge.',
     codex_fth_desc: 'Divine damage and community aura. Increases your Holy damage multiplier and provides extra flat damage bonuses.',
     codex_fth_action: 'Participate in Boss Battles. Every 50 damage dealt grants 1 XP.',
+    codex_cha_name: 'CHARISMA',
+    codex_cha_quote: 'Your aura precedes you.',
+    codex_cha_desc: 'Social impact and damage multiplier. Earned by interacting with the community.',
+    codex_cha_action: 'Like or comment on posts in the social feed.',
     blog_xp_gained: 'Knowledge acquired! +100 INT XP earned.',
     intelecto_adquirido: 'KNOWLEDGE ACQUIRED',
     blog_read_congrats: 'Protocol complete: Intellect increased.',
@@ -506,13 +512,15 @@ const translations = {
     battle_overhaul_end_desc: 'Increase stamina and volume scaling.',
     battle_overhaul_vig_desc: 'Increase resilience and critical stability.',
     battle_overhaul_int_desc: 'Improve efficiency and level multipliers.',
+    battle_overhaul_cha_desc: 'Increase global damage multiplier.',
     battle_overhaul_fth_desc: 'Unleash Holy Damage and divine bonuses.',
-    battle_overhaul_summary: 'Your 6 RPG stats and Global Level now combine for massive impact. High levels can deal 100+ damage per rep!',
+    battle_overhaul_summary: 'Your 7 RPG stats and Global Level now combine for massive impact. High levels can deal 100+ damage per rep!',
     battle_overhaul_boss_hint: 'Bosses have been strengthened to match your new power.',
     battle_overhaul_btn: 'ENGAGE BATTLE',
     stat_str: 'STRENGTH',
     stat_pwr: 'POWER',
     stat_agi: 'AGILITY',
+    stat_cha: 'CHARISMA',
     
     battle_help_title1: 'Statistical Impact',
     battle_help_desc1: 'Your Strength (STR) and Level now multiply your damage output. Stronger athletes deal more damage per rep.',
@@ -805,7 +813,9 @@ const translations = {
     
     // Social
     community: 'Comunidad',
-    community_subtitle: 'Conecta con otros leyendas y sigue su progreso.',
+    community_subtitle: 'Sincroniza con otras leyendas y sigue su progreso.',
+    active_users: 'OPERATIVOS ACTIVOS',
+    boss_raid: 'ESTADO DE RAID',
     find_friends: 'Buscar Amigos',
     search_placeholder: 'Buscar entusiastas...',
     btn_add_friend: 'Añadir',
@@ -1465,6 +1475,12 @@ const translations = {
     activity_level_label: 'LVL',
     activity_reps_label: 'REPS',
     activity_milestone_msg: '¡{threshold} {exercise} totales!',
+    codex_cha_name: 'CARISMA',
+    codex_cha_quote: 'Tu aura te precede.',
+    codex_cha_desc: 'Impacto social y multiplicador de daño. Se gana interactuando con la comunidad.',
+    codex_cha_action: 'Da like o comenta en las publicaciones del feed social.',
+    battle_overhaul_cha_desc: 'Aumenta el multiplicador global de daño.',
+    stat_cha: 'CARISMA',
   }
 };
 

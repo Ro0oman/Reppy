@@ -330,7 +330,7 @@ import { ref, onMounted, computed, watch } from 'vue';
 import { 
   Package, Frame, Type, Check, Sparkles, Archive, Zap, TrendingUp, 
   Dumbbell, Sword, Heart, Brain, Church, Trophy, ExternalLink, Activity, X, 
-  ChevronDown, Flame, BookOpen, Swords, Info, ChevronRight
+  ChevronDown, Flame, BookOpen, Swords, Info, ChevronRight, Users
 } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
@@ -469,6 +469,24 @@ const rpgStats = computed(() => [
     gradient: 'from-yellow-400 to-orange-500',
     effectLabel: i18n.t('battle_overhaul_fth_desc'),
     links: [{ label: i18n.locale === 'es' ? 'UNIRSE AL RAID' : 'JOIN RAID', to: '/', icon: Sparkles }]
+  },
+  {
+    key: 'cha',
+    name: i18n.t('codex_cha_name'),
+    quote: i18n.t('codex_cha_quote'),
+    description: i18n.t('codex_cha_desc'),
+    action: i18n.t('codex_cha_action'),
+    xpKey: 'cha_xp',
+    lvlKey: 'cha_lvl',
+    xpIntoKey: 'cha_xp_into_level',
+    xpForKey: 'cha_xp_for_next_level',
+    icon: Sparkles,
+    color: 'text-pink-400',
+    borderColor: 'border-pink-400',
+    bgLight: 'bg-pink-400/10',
+    gradient: 'from-pink-400 to-fuchsia-600',
+    effectLabel: i18n.t('battle_overhaul_cha_desc'),
+    links: [{ label: i18n.locale === 'es' ? 'CONECTAR' : 'CONNECT', to: '/social', icon: Users }]
   }
 ]);
 

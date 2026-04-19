@@ -1,135 +1,135 @@
 <template>
-  <div 
+   <div 
     :id="'activity-' + activity.user_id + '-' + activity.date"
-    class="card-stats group relative overflow-hidden flex flex-col gap-6 p-6 sm:p-8 border-border backdrop-blur-md transition-all duration-700"
+    class="reddit-card group relative overflow-hidden flex flex-col gap-0 border-border/40 backdrop-blur-md transition-all duration-300"
     :class="[
-      activity.post_background_css ? 'bg-black' : 'bg-surface/20',
-      highlighted ? 'ring-2 ring-primary-500 shadow-[0_0_30px_rgba(255,69,0,0.15)] bg-primary-500/[0.05] border-primary-500/50 scale-[1.01]' : 'hover:border-primary-500/30 hover:shadow-[0_0_40px_rgba(255,69,0,0.05)]'
+      activity.post_background_css ? 'bg-black border-primary-500/20' : 'bg-[#0b1416] hover:bg-[#121c1f] border-border/20',
+      highlighted ? 'ring-1 ring-primary-500 shadow-[0_0_20px_rgba(255,69,0,0.1)]' : ''
     ]"
+    style="border-radius: 12px; margin-bottom: 12px;"
   >
-    <!-- Background Enhancement Layer -->
-    <div v-if="activity.post_background_css" class="absolute inset-0 pointer-events-none overflow-hidden z-0">
-      <div class="absolute inset-0 transition-opacity duration-1000 opacity-90" :class="activity.post_background_css"></div>
-      
-      <!-- Specialized Overlays for specific backgrounds -->
-      <div v-if="activity.post_background_css === 'post-bg-matrix'" class="absolute inset-0 z-10">
-        <div v-for="i in 20" :key="i" class="matrix-column" :style="{ left: (i-1)*5 + '%', animationDelay: (i*0.2) + 's', opacity: 0.8, height: '150px' }"></div>
+    <!-- Reddit-style Top Meta Bar -->
+    <div class="px-4 py-3 flex items-center gap-2 relative z-10">
+      <div class="relative cursor-pointer hover:scale-105 transition-transform" @click="$emit('viewProfile', activity.user_id)">
+        <AvatarFrame 
+          :src="activity.avatar_url" 
+          :border-css="activity.border_css" 
+          :avatar-css="activity.avatar_css" 
+          :size="28" 
+        />
       </div>
-      <div v-if="activity.post_background_css === 'post-bg-inferno'" class="absolute inset-0 z-10">
-        <div v-for="i in 30" :key="i" class="ember" :style="{ left: (Math.sin(i)*50 + 50) + '%', animationDelay: (i*0.2) + 's', opacity: 0.9, width: '3px', height: '3px' }"></div>
+      <div class="flex items-center gap-1.5 min-w-0">
+        <span class="text-[11px] font-bold text-foreground truncate">{{ activity.user_name }}</span>
+        <span class="text-[10px] text-muted">•</span>
+        <span class="text-[10px] text-muted whitespace-nowrap">{{ timeAgo }}</span>
+      </div>
+      <div class="flex-1"></div>
+      <div v-if="isHot" class="flex items-center gap-1 px-2 py-0.5 bg-red-500/10 border border-red-500/20 rounded-full">
+        <Flame class="w-3 h-3 text-red-500" />
+        <span class="text-[9px] font-black text-red-500">HOT</span>
       </div>
     </div>
-    
-    <!-- Header: User & Info -->
-    <div class="flex items-start justify-between gap-4 relative z-10 p-4 rounded-2xl"
-         :class="activity.post_background_css ? 'bg-background/10' : ''">
-      <div class="flex items-center gap-4">
-        <div class="relative cursor-pointer hover:scale-105 transition-transform" @click="$emit('viewProfile', activity.user_id)">
-          <AvatarFrame 
-            :src="activity.avatar_url" 
-            :border-css="activity.border_css" 
-            :avatar-css="activity.avatar_css" 
-            :size="60" 
-          />
-          <div class="absolute -bottom-1 -right-1 bg-background border border-border px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-lg">
-            <span class="text-[7px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('activity_level_label') }}</span>
-            <span class="text-[9px] font-black italic">{{ activity.current_level }}</span>
+
+    <!-- Main Content Area -->
+    <div class="px-4 pb-4 space-y-3 relative z-10">
+      <!-- Title & Text -->
+      <div class="space-y-1">
+        <h3 v-if="activity.title" class="text-lg font-bold text-foreground leading-tight">{{ activity.title }}</h3>
+        <p v-if="activity.description" class="text-sm text-foreground/80 leading-snug">{{ activity.description }}</p>
+      </div>
+
+      <!-- Hero Balanced Stats (The "Media" of the post) -->
+      <div class="rounded-xl overflow-hidden border border-border/30 bg-black/40 relative">
+        <!-- Background Overlay if cosmetic -->
+        <div v-if="activity.post_background_css" class="absolute inset-0 pointer-events-none opacity-40" :class="activity.post_background_css"></div>
+
+        <div class="grid grid-cols-2 divide-x divide-border/20 py-8 relative z-10">
+          <!-- Reps -->
+          <div class="flex flex-col items-center justify-center">
+            <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">{{ i18n.t('activity_reps_session') || 'REPS' }}</p>
+            <div class="flex items-center gap-2">
+              <span class="text-4xl font-black italic tracking-tighter text-foreground drop-shadow-sm">{{ animatedReps }}</span>
+              <Dumbbell class="w-4 h-4 text-primary-500/40" />
+            </div>
           </div>
-        </div>
-        <div class="min-w-0 flex-1">
-          <h4 class="text-base sm:text-lg font-black text-foreground uppercase tracking-tight leading-none flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-            <span class="truncate">{{ activity.user_name }}</span>
-            <span class="text-[9px] sm:text-[10px] font-normal text-muted lowercase tracking-normal bg-foreground/5 px-2 py-0.5 rounded-full w-fit">{{ timeAgo }}</span>
-          </h4>
-        </div>
-      </div>
-
-      <!-- Action: Edit Title/Desc (Only if own) -->
-      <button v-if="isOwn" @click="$emit('edit')" class="p-2.5 rounded-xl bg-surface/5 hover:bg-primary-500/10 border border-border transition-all">
-        <Edit3 class="w-4 h-4 text-muted hover:text-primary-500" />
-      </button>
-    </div>
-
-    <!-- Content: Stats & Badges -->
-    <div class="space-y-6 relative z-10 p-4 rounded-2xl"
-         :class="activity.post_background_css ? 'bg-background/10' : ''">
-      <div v-if="activity.title || activity.description" class="space-y-2">
-        <h3 v-if="activity.title" class="text-xl font-black text-foreground tracking-tight italic uppercase">{{ activity.title }}</h3>
-        <p v-if="activity.description" class="text-sm text-muted/80 leading-relaxed font-medium">{{ activity.description }}</p>
-      </div>
-
-      <!-- Milestones (if any) -->
-      <div v-if="milestones.length > 0" class="flex flex-wrap gap-2">
-        <div v-for="m in milestones" :key="m.type + m.value" 
-             class="px-3 py-1.5 bg-yellow-500/10 border border-yellow-500/30 rounded-lg flex items-center gap-2 animate-bounce-subtle">
-          <Trophy class="w-3 h-3 text-yellow-500" />
-          <span class="text-[9px] font-black text-foreground uppercase tracking-wider">{{ m.label }}</span>
-        </div>
-      </div>
-
-      <!-- Grid of Exercises -->
-      <div class="grid gap-3" :class="activity.exercises.length === 1 ? 'grid-cols-1' : 'grid-cols-2 sm:grid-cols-3'">
-        <div v-for="ex in activity.exercises" :key="ex.exercise_type" 
-             class="p-4 bg-foreground/[0.03] border border-border/50 rounded-2xl flex flex-col gap-1 group/item hover:bg-foreground/[0.05] transition-all">
-          <span class="text-[8px] font-black text-primary-500 uppercase tracking-[0.2em]">{{ i18n.t(ex.exercise_type) }}</span>
-          <div class="flex items-baseline gap-1">
-            <span class="text-2xl font-black text-foreground leading-none">{{ ex.count }}</span>
-            <span class="text-[10px] font-black text-muted uppercase">{{ i18n.t('activity_reps_label') }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Boss Damage Callout (if any) -->
-      <div v-if="totalBossDamage > 0" 
-           class="p-4 bg-primary-500/10 border border-primary-500/20 rounded-2xl flex items-center justify-between group/boss cursor-pointer overflow-hidden relative"
-           @click="$router.push('/dashboard')">
-        <div class="absolute inset-0 bg-gradient-to-r from-primary-500/10 to-transparent translate-x-[-100%] group-hover/boss:translate-x-[0%] transition-transform duration-1000"></div>
-        <div class="flex items-center gap-3 relative z-10">
-          <div class="p-2 bg-primary-500 rounded-lg shadow-lg shadow-primary-500/20">
-            <Swords class="w-4 h-4 text-white" />
-          </div>
-          <div>
-            <p class="text-[10px] font-black text-primary-500 uppercase tracking-widest leading-none">{{ i18n.t('boss_assault') }}</p>
-            <p class="text-sm font-black text-foreground uppercase tracking-tight mt-1">
-              {{ isOwn ? i18n.t('activity_inflicted_you') : activity.user_name + ' ' + i18n.t('activity_has_inflicted') }} 
-              <span class="text-primary-500">{{ totalBossDamage }}</span> {{ i18n.t('activity_damage_session') }}
-            </p>
-            <div v-if="hasActiveBoost" class="mt-2 flex items-center gap-1.5 px-2.5 py-1 bg-yellow-500/20 border border-yellow-500/40 rounded-full w-fit animate-pulse-subtle">
-               <Zap class="w-3 h-3 text-yellow-500 fill-current" />
-               <span class="text-[8px] font-black text-yellow-500 uppercase tracking-widest">{{ i18n.t('activity_boost_active') }} (x{{ activeMultiplierDisplay }})</span>
+          <!-- Damage -->
+          <div class="flex flex-col items-center justify-center">
+            <p class="text-[9px] font-black text-primary-500 uppercase tracking-widest mb-1">{{ i18n.t('activity_damage_session') }}</p>
+            <div class="flex items-center gap-2">
+              <span class="text-4xl font-black italic tracking-tighter text-foreground drop-shadow-sm">{{ animatedDamage }}</span>
+              <Swords class="w-4 h-4 text-primary-500/40" />
             </div>
           </div>
         </div>
-        <ChevronRight class="w-4 h-4 text-primary-500 group-hover/boss:translate-x-1 transition-transform" />
+
+        <!-- Mini performance badges overlayed at bottom of media -->
+        <div class="flex justify-center gap-1.5 pb-3">
+          <div class="px-2 py-0.5 bg-black/60 backdrop-blur-md rounded text-[9px] font-bold text-muted border border-border/20">
+            TOP {{ activity.daily_rank_percentile }}%
+          </div>
+          <div class="px-2 py-0.5 bg-black/60 backdrop-blur-md rounded text-[9px] font-bold border border-border/20"
+               :class="activity.performance_vs_avg > 100 ? 'text-green-500' : 'text-muted'">
+            {{ activity.performance_vs_avg }}% AVG
+          </div>
+          <div v-if="activity.real_streak > 0" class="px-2 py-0.5 bg-black/60 backdrop-blur-md rounded text-[9px] font-bold text-primary-500 border border-border/20">
+            {{ activity.real_streak }}D RACHA
+          </div>
+        </div>
+      </div>
+
+      <!-- Exercise tags -->
+      <div class="flex flex-wrap gap-1.5">
+        <div v-for="ex in activity.exercises" :key="ex.exercise_type" 
+             class="px-2 py-1 bg-foreground/[0.05] rounded-md text-[10px] font-bold flex items-center gap-2 border border-border/10">
+          <span class="text-primary-500 uppercase">{{ i18n.t(ex.exercise_type).substring(0,3) }}</span>
+          <span class="text-foreground">{{ ex.count }}</span>
+        </div>
       </div>
     </div>
 
-    <!-- Interactions Footer -->
-    <div class="flex items-center justify-between pt-4 border-t border-border/40 relative z-10 p-4 -mx-4 rounded-b-2xl"
-         :class="activity.post_background_css ? 'bg-background/20 backdrop-blur-sm' : ''">
-      <div class="flex items-center gap-6">
+    <!-- Reddit-style Action Bar -->
+    <div class="px-2 py-2 flex items-center gap-1 border-t border-border/10 relative z-10 h-10">
+      <!-- Vote Cluster -->
+      <div class="flex items-center bg-foreground/[0.05] rounded-full px-1 mr-2 scale-90">
         <button 
           @click="$emit('toggleLike')"
-          class="flex items-center gap-2 group/like outline-none focus:ring-2 focus:ring-primary-500/20 rounded-lg py-1"
+          class="p-1.5 rounded-full transition-colors"
+          :class="activity.user_has_liked ? 'text-primary-500' : 'text-muted hover:bg-foreground/10 hover:text-primary-500'"
         >
-          <div class="p-2 rounded-xl transition-all" :class="activity.user_has_liked ? 'bg-red-500/10 text-red-500' : 'bg-surface/5 text-muted group-hover/like:text-red-500 group-hover/like:bg-red-500/5'">
-            <Heart class="w-5 h-5 transition-transform" :class="activity.user_has_liked ? 'fill-current scale-110' : 'group-active/like:scale-125'" />
-          </div>
-          <span class="text-xs font-black" :class="activity.user_has_liked ? 'text-foreground' : 'text-muted'">{{ activity.like_count }}</span>
+          <ArrowBigUp class="w-5 h-5" :class="activity.user_has_liked ? 'fill-current' : ''" />
         </button>
-
-        <button @click="showComments = !showComments" class="flex items-center gap-2 group/comment outline-none py-1">
-          <div class="p-2 rounded-xl bg-surface/5 text-muted group-hover/comment:text-primary-500 group-hover/comment:bg-primary-500/5 transition-all">
-            <MessageSquare class="w-5 h-5" />
-          </div>
-          <span class="text-xs font-black text-muted group-hover/comment:text-foreground transition-colors">{{ activity.comment_count }}</span>
+        <span class="text-[11px] font-black min-w-[20px] text-center" :class="activity.user_has_liked ? 'text-primary-500' : 'text-foreground'">
+          {{ activity.like_count }}
+        </span>
+        <button class="p-1.5 rounded-full text-muted hover:bg-foreground/10 hover:text-blue-500 transition-colors">
+          <ArrowBigDown class="w-5 h-5" />
         </button>
       </div>
 
-      <div class="flex -space-x-2">
-        <button @click="shareActivity" class="w-8 h-8 rounded-full bg-surface/5 border border-border flex items-center justify-center hover:bg-primary-500/10 hover:border-primary-500/30 transition-all">
-            <Share2 class="w-4 h-4 text-muted hover:text-primary-500" />
-        </button>
+      <!-- Comments Button -->
+      <button 
+        @click="showComments = !showComments"
+        class="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-foreground/[0.05] transition-colors"
+      >
+        <MessageSquare class="w-4 h-4 text-muted" />
+        <span class="text-[11px] font-bold text-muted">{{ activity.comment_count }} Comments</span>
+      </button>
+
+      <!-- Share Button -->
+      <button 
+        @click="shareActivity"
+        class="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-foreground/[0.05] transition-colors"
+      >
+        <Share2 class="w-4 h-4 text-muted" />
+        <span class="text-[11px] font-bold text-muted">Share</span>
+      </button>
+
+      <div class="flex-1"></div>
+
+      <!-- Boss contribution small indicator -->
+      <div v-if="totalBossDamage > 0" class="flex items-center gap-2 px-3 opacity-60 scale-75">
+        <Swords class="w-3 h-3 text-primary-500" />
+        <span class="text-[10px] font-black text-primary-500 uppercase">{{ bossContribution }}% BOSS</span>
       </div>
     </div>
 
@@ -142,8 +142,9 @@
           :placeholder="i18n.t('activity_comment_hint')" 
           class="flex-1 bg-surface/10 border border-border rounded-xl px-4 py-2 text-xs font-medium focus:outline-none focus:border-primary-500/50 transition-all"
         />
-        <button @click="submitComment" class="p-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-all disabled:opacity-50" :disabled="!commentText.trim()">
-          <Send class="w-4 h-4" />
+        <button @click="submitComment" class="p-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-all disabled:opacity-50 flex items-center justify-center min-w-[40px]" :disabled="!commentText.trim() || submittingComment">
+          <Loader2 v-if="submittingComment" class="w-4 h-4 animate-spin" />
+          <Send v-else class="w-4 h-4" />
         </button>
       </div>
 
@@ -165,11 +166,16 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
 import AvatarFrame from './AvatarFrame.vue';
-import { Heart, MessageSquare, Share2, Edit3, Send, Swords, ChevronRight, Trophy, Zap } from 'lucide-vue-next';
+import { 
+    Heart, MessageSquare, Share2, Edit3, Send, 
+    Swords, ChevronRight, Trophy, Zap, 
+    Flame, TrendingUp, Loader2, Dumbbell,
+    ArrowBigUp, ArrowBigDown
+} from 'lucide-vue-next';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
 import { useNotificationStore } from '../stores/notification';
@@ -193,6 +199,7 @@ const showComments = ref(false);
 const commentText = ref('');
 const comments = ref([]);
 const loadingComments = ref(false);
+const submittingComment = ref(false);
 
 const isOwn = computed(() => props.activity.user_id === authStore.user?.id);
 
@@ -246,6 +253,50 @@ const timeAgo = computed(() => {
   });
 });
 
+const bossContribution = computed(() => {
+    // Simulated contribution % based on damage
+    return Math.min(10, Math.ceil(totalBossDamage.value / 500)).toFixed(1);
+});
+
+const isHot = computed(() => props.activity.like_count >= 5 || props.activity.comment_count >= 3);
+const isRecord = computed(() => milestones.value.length > 0);
+
+const animatedDamage = ref(0);
+const animatedReps = ref(0);
+
+onMounted(() => {
+    // Animate Damage
+    const endDamage = Number(props.activity.total_damage_today) || 0;
+    if (endDamage > 0) {
+        let startD = 0;
+        const timerD = setInterval(() => {
+            startD += Math.ceil(endDamage / 30);
+            if (startD >= endDamage) {
+                animatedDamage.value = endDamage;
+                clearInterval(timerD);
+            } else {
+                animatedDamage.value = startD;
+            }
+        }, 30);
+    }
+
+    // Animate Reps
+    const endReps = Number(props.activity.total_reps_today) || 0;
+    if (endReps > 0) {
+        let startR = 0;
+        const timerR = setInterval(() => {
+            startR += Math.ceil(endReps / 30);
+            if (startR >= endReps) {
+                animatedReps.value = endReps;
+                clearInterval(timerR);
+            } else {
+                animatedReps.value = startR;
+            }
+        }, 30);
+    }
+});
+
+
 const shareActivity = async () => {
     try {
         const baseUrl = window.location.origin + '/social';
@@ -290,7 +341,8 @@ const fetchComments = async () => {
 };
 
 const submitComment = async () => {
-    if (!commentText.value.trim()) return;
+    if (!commentText.value.trim() || submittingComment.value) return;
+    submittingComment.value = true;
     try {
         const res = await axios.post('/api/social-feed/comment', {
             targetUserId: props.activity.user_id,
@@ -299,9 +351,14 @@ const submitComment = async () => {
         });
         comments.value.push(res.data);
         commentText.value = '';
+        props.activity.comment_count = (Number(props.activity.comment_count) || 0) + 1;
+        notificationStore.notify('🔥 +20 CARISMA XP', 'success');
+        authStore.fetchProfile();
         emit('commentAdded');
     } catch (e) {
         console.error('Error adding comment:', e);
+    } finally {
+        submittingComment.value = false;
     }
 };
 

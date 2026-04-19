@@ -70,6 +70,15 @@ export const augmentUserWithLevels = (user) => {
     augmented[`${stat}_xp_for_next_level`] = lvlNext - lvlStart;
   });
 
+  // Include charisma
+  const chaXp = user.cha_xp || 0;
+  const chaLvl = getStatLevel(chaXp);
+  const chaStart = getXPForLevel(chaLvl, 100);
+  const chaNext = getXPForLevel(chaLvl + 1, 100);
+  augmented.cha_lvl = chaLvl;
+  augmented.cha_xp_into_level = chaXp - chaStart;
+  augmented.cha_xp_for_next_level = chaNext - chaStart;
+
   return augmented;
 };
 
@@ -78,7 +87,7 @@ export const augmentUserWithLevels = (user) => {
 export const recalculateUserStats = async (userId) => {
   try {
     // 1. Get user data for level tracking
-    const userRes = await query('SELECT body_weight, current_level, level_chests_claimed, level_chests FROM users WHERE id = $1', [userId]);
+    const userRes = await query('SELECT body_weight, current_level, level_chests_claimed, level_chests, cha_xp FROM users WHERE id = $1', [userId]);
     if (userRes.rows.length === 0) return;
     const user = userRes.rows[0];
     const bodyWeight = parseFloat(user.body_weight) || 75.0;
@@ -153,7 +162,8 @@ export const recalculateUserStats = async (userId) => {
     const vigXP = Math.round(baseVigXP * intBonus);
 
     // Total XP for Character Level
-    const totalXP = strXP + dexXP + endXP + vigXP + intXP + fthXP;
+    const chaXP = user.cha_xp || 0;
+    const totalXP = strXP + dexXP + endXP + vigXP + intXP + fthXP + chaXP;
 
     // 4. Character Level Calculation (Dynamic Quadratic: base 1000)
     // L = (1 + sqrt(1 + 8 * totalXP / 1000)) / 2
@@ -225,6 +235,7 @@ export const recalculateUserStats = async (userId) => {
       vigXP,
       intXP,
       fthXP,
+      chaXP,
       totalXP,
       currentLevel: newLevel,
       xpIntoLevel,

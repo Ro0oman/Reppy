@@ -31,7 +31,7 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-      "connect-src": ["'self'", "https://*.google-analytics.com", "https://www.google-analytics.com"],
+      "connect-src": ["'self'", "https://*.google-analytics.com", "https://www.google-analytics.com", "https://accounts.google.com"],
       "script-src": ["'self'", "'unsafe-inline'", "https://www.googletagmanager.com", "https://www.google-analytics.com"],
       "img-src": ["'self'", "data:", "https://www.google-analytics.com", "https://www.googletagmanager.com", "https://static.wikia.nocookie.net", "*"],
       "frame-src": ["'self'", "https://accounts.google.com/"],

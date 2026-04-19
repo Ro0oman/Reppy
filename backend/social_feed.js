@@ -3,8 +3,35 @@ import { query } from './db.js';
 import pool from './db.js';
 import { authenticate } from './middleware.js';
 import { createNotification } from './utils/notifications.js';
+import { recalculateUserStats } from './utils/stats.js';
 
 const router = express.Router();
+
+/**
+ * GET /api/social-feed/stats
+ * Returns general stats for the social hub header.
+ */
+router.get('/stats', authenticate, async (req, res) => {
+  try {
+    const userCountRes = await query('SELECT COUNT(*) as count FROM users');
+    const activeBossRes = await query(`
+      SELECT name, status 
+      FROM boss_fights 
+      WHERE status = 'active' 
+      ORDER BY order_index ASC 
+      LIMIT 1
+    `);
+
+    res.json({
+      activeUsers: parseInt(userCountRes.rows[0].count),
+      raidStatus: activeBossRes.rows.length > 0 ? 'ACTIVE' : 'IDLE',
+      bossName: activeBossRes.rows.length > 0 ? activeBossRes.rows[0].name : null
+    });
+  } catch (error) {
+    console.error('Error fetching social stats:', error);
+    res.status(500).json({ message: 'Error fetching social stats' });
+  }
+});
 
 /**
  * GET /api/social/feed
@@ -33,37 +60,87 @@ router.get('/feed', authenticate, async (req, res) => {
     }
 
     const feedRes = await query(`
+      WITH daily_stats AS (
+        -- Calculate total reps and damage for every user/date combination
+        SELECT 
+          user_id, 
+          date, 
+          SUM(count)::int as day_reps,
+          SUM(boss_damage_dealt)::int as day_damage
+        FROM reps
+        GROUP BY user_id, date
+      ),
+      feed_base AS (
+        SELECT 
+            u.id as user_id,
+            u.name as user_name,
+            u.avatar_url,
+            u.current_level,
+            b.css_value as border_css,
+            a.css_value as avatar_css,
+            pb.css_value as post_background_css,
+            TO_CHAR(r.date, 'YYYY-MM-DD') as date,
+            ds.id as summary_id,
+            ds.title,
+            ds.description,
+            u.cha_xp,
+            (SELECT COUNT(*) 
+             FROM reps r2 
+             WHERE r2.user_id = u.id AND r2.date > r.date - INTERVAL '7 days' AND r2.date < r.date
+            ) as activity_7d,
+            JSON_AGG(JSON_BUILD_OBJECT(
+                'exercise_type', r.exercise_type,
+                'count', r.count,
+                'boss_damage', r.boss_damage_dealt,
+                'active_multiplier', r.active_multiplier,
+                'historical_total', (SELECT SUM(count) FROM reps WHERE user_id = r.user_id AND exercise_type = r.exercise_type AND date <= r.date)
+            )) as exercises,
+            (SELECT COUNT(*) FROM summary_interactions WHERE summary_id = ds.id AND type = 'LIKE') as like_count,
+            (SELECT COUNT(*) FROM summary_interactions WHERE summary_id = ds.id AND type = 'COMMENT') as comment_count,
+            EXISTS(SELECT 1 FROM summary_interactions WHERE summary_id = ds.id AND user_id = $1 AND type = 'LIKE') as user_has_liked,
+            (SELECT name FROM boss_fights WHERE status = 'active' ORDER BY order_index ASC LIMIT 1) as active_boss_name
+        FROM reps r
+        JOIN users u ON r.user_id = u.id
+        LEFT JOIN daily_summaries ds ON ds.user_id = r.user_id AND ds.date = r.date
+        LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
+        LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
+        LEFT JOIN cosmetics pb ON u.equipped_post_background_id = pb.id
+        ${whereClause}
+        GROUP BY u.id, r.date, ds.id, b.css_value, a.css_value, pb.css_value
+      )
       SELECT 
-          u.id as user_id,
-          u.name as user_name,
-          u.avatar_url,
-          u.current_level,
-          b.css_value as border_css,
-          a.css_value as avatar_css,
-          pb.css_value as post_background_css,
-          TO_CHAR(r.date, 'YYYY-MM-DD') as date,
-          ds.id as summary_id,
-          ds.title,
-          ds.description,
-          JSON_AGG(JSON_BUILD_OBJECT(
-              'exercise_type', r.exercise_type,
-              'count', r.count,
-              'boss_damage', r.boss_damage_dealt,
-              'active_multiplier', r.active_multiplier,
-              'historical_total', (SELECT SUM(count) FROM reps WHERE user_id = r.user_id AND exercise_type = r.exercise_type AND date <= r.date)
-          )) as exercises,
-          (SELECT COUNT(*) FROM summary_interactions WHERE summary_id = ds.id AND type = 'LIKE') as like_count,
-          (SELECT COUNT(*) FROM summary_interactions WHERE summary_id = ds.id AND type = 'COMMENT') as comment_count,
-          EXISTS(SELECT 1 FROM summary_interactions WHERE summary_id = ds.id AND user_id = $1 AND type = 'LIKE') as user_has_liked
-      FROM reps r
-      JOIN users u ON r.user_id = u.id
-      LEFT JOIN daily_summaries ds ON ds.user_id = r.user_id AND ds.date = r.date
-      LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
-      LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
-      LEFT JOIN cosmetics pb ON u.equipped_post_background_id = pb.id
-      ${whereClause}
-      GROUP BY u.id, r.date, ds.id, b.css_value, a.css_value, pb.css_value
-      ORDER BY r.date DESC, MAX(r.created_at) DESC
+        f.*,
+        -- Total Reps Today
+        (SELECT SUM(count) FROM reps WHERE user_id = f.user_id AND date = f.date::date) as total_reps_today,
+        -- Total Damage Today
+        (SELECT SUM(boss_damage_dealt) FROM reps WHERE user_id = f.user_id AND date = f.date::date) as total_damage_today,
+        -- Percentile Ranking (Reps vs Others Today)
+        COALESCE(
+          ROUND(100.0 * (
+            SELECT COUNT(*) FROM daily_stats ds2 
+            WHERE ds2.date = f.date::date AND ds2.day_reps < (SELECT SUM(count) FROM reps WHERE user_id = f.user_id AND date = f.date::date)
+          ) / NULLIF((SELECT COUNT(*) FROM daily_stats ds3 WHERE ds3.date = f.date::date), 0)),
+          10
+        ) as daily_rank_percentile,
+        -- Performance vs Last 7 Days Average
+        COALESCE(
+          ROUND(100.0 * (SELECT SUM(count) FROM reps WHERE user_id = f.user_id AND date = f.date::date) / 
+          NULLIF((SELECT SUM(count)/7.0 FROM reps WHERE user_id = f.user_id AND date > f.date::date - INTERVAL '7 days' AND date < f.date::date), 0)),
+          100
+        ) as performance_vs_avg,
+        -- Current Streak Calculation (Real consecutive days until this post)
+        (
+          WITH RECURSIVE streak_calc AS (
+            SELECT f.date::date as streak_date
+            UNION
+            SELECT (sc.streak_date - INTERVAL '1 day')::date
+            FROM streak_calc sc
+            JOIN daily_stats ds ON ds.user_id = f.user_id AND ds.date = (sc.streak_date - INTERVAL '1 day')::date
+          )
+          SELECT COUNT(*) FROM streak_calc
+        ) as real_streak
+      FROM feed_base f
+      ORDER BY f.date DESC, f.summary_id DESC
       LIMIT ${limit} OFFSET $2
     `, params);
 
@@ -136,6 +213,10 @@ router.post('/like', authenticate, async (req, res) => {
         TargetUserId
       );
 
+      // Reward Charisma XP for Liking
+      await query('UPDATE users SET cha_xp = cha_xp + 5 WHERE id = $1', [myUserId]);
+      await recalculateUserStats(myUserId);
+
       return res.json({ liked: true });
     }
   } catch (error) {
@@ -190,6 +271,10 @@ router.post('/comment', authenticate, async (req, res) => {
     const userRes = await client.query('SELECT name FROM users WHERE id = $1', [myUserId]);
     
     await client.query('COMMIT');
+
+    // Reward Charisma XP for Commenting (After commit to avoid deadlocks)
+    await query('UPDATE users SET cha_xp = cha_xp + 20 WHERE id = $1', [myUserId]);
+    await recalculateUserStats(myUserId);
 
     const cleanDate = typeof date === 'string' ? date.substring(0, 10) : date;
 

@@ -327,6 +327,7 @@ const attributes = computed(() => [
   { key: 'VIG', xp: user.value.vig_xp || 0, lvl: user.value.vig_lvl || 1, labelColor: 'text-red-500' },
   { key: 'INT', xp: user.value.int_xp || 0, lvl: user.value.int_lvl || 1, labelColor: 'text-blue-400' },
   { key: 'FTH', xp: user.value.fth_xp || 0, lvl: user.value.fth_lvl || 1, labelColor: 'text-yellow-400' },
+  { key: 'CHA', xp: user.value.cha_xp || 0, lvl: user.value.cha_lvl || 1, labelColor: 'text-pink-400' },
 ]);
 
 const getAttrColor = (lvl) => {

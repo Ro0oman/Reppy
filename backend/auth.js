@@ -60,6 +60,7 @@ router.post('/google', async (req, res) => {
         is_private: user.is_private,
         has_seen_easter_modal: user.has_seen_easter_modal,
         is_admin: user.is_admin,
+        cha_xp: user.cha_xp,
         theme: user.theme,
         read_blogs: readBlogs
       }
@@ -107,6 +108,7 @@ router.post('/signup', async (req, res) => {
         is_private: user.is_private,
         has_seen_easter_modal: user.has_seen_easter_modal,
         is_admin: user.is_admin,
+        cha_xp: user.cha_xp,
         theme: user.theme,
         read_blogs: []
       }
@@ -158,6 +160,7 @@ router.post('/login', async (req, res) => {
         is_private: user.is_private,
         has_seen_easter_modal: user.has_seen_easter_modal,
         is_admin: user.is_admin,
+        cha_xp: user.cha_xp,
         theme: user.theme,
         read_blogs: readBlogs
       }

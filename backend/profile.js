@@ -63,6 +63,7 @@ router.get('/:id', async (req, res) => {
        ORDER BY created_at DESC LIMIT 20`,
       [userId]
     );
+    
 
     // Get read blogs list for indicators
     const readBlogsRes = await query(
@@ -101,7 +102,7 @@ router.get('/:id', async (req, res) => {
     // RPG CALCULATIONS - Now handled by shared utility
     const statsResult = await recalculateUserStats(userId);
     const { 
-      strXP, dexXP, endXP, vigXP, intXP, fthXP, 
+      strXP, dexXP, endXP, vigXP, intXP, fthXP, chaXP,
       totalXP, currentLevel, xpIntoLevel, xpForNextLevel, streak, totalVolume 
     } = statsResult;
 
@@ -130,6 +131,7 @@ router.get('/:id', async (req, res) => {
         vig_xp: vigXP,
         int_xp: intXP,
         fth_xp: fthXP,
+        cha_xp: chaXP,
         total_xp: totalXP,
         str_lvl: getStatLevel(strXP),
         dex_lvl: getStatLevel(dexXP),
@@ -137,6 +139,9 @@ router.get('/:id', async (req, res) => {
         vig_lvl: getStatLevel(vigXP),
         int_lvl: getStatLevel(intXP),
         fth_lvl: getStatLevel(fthXP),
+        cha_lvl: getStatLevel(chaXP),
+        cha_xp_into_level: chaXP - getXPForLevel(getStatLevel(chaXP), 100),
+        cha_xp_for_next_level: getXPForLevel(getStatLevel(chaXP) + 1, 100) - getXPForLevel(getStatLevel(chaXP), 100),
         current_level: currentLevel,
         xp_into_level: xpIntoLevel,
         xp_for_next_level: xpForNextLevel,

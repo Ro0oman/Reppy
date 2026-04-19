@@ -172,6 +172,11 @@ const handleLike = async (activity) => {
         // Fix #101: like_count from SQL COUNT(*) is bigint (string in JS), cast to Number first
         activity.user_has_liked = res.data.liked;
         activity.like_count = Number(activity.like_count) + (res.data.liked ? 1 : -1);
+
+        if (res.data.liked) {
+            notificationStore.notify('🔥 +5 CARISMA XP', 'success');
+            authStore.fetchProfile();
+        }
     } catch (e) {
         console.error('Error liking:', e);
     }
