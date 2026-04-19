@@ -29,6 +29,10 @@
            <span v-if="boss.weakness_stat" class="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[8px] md:text-[9px] font-black tracking-[0.3em] uppercase backdrop-blur-sm flex items-center gap-1">
               <span>⚡</span> {{ i18nStore.t('boss_weakness') }}: {{ boss.weakness_stat }}
            </span>
+           <span v-if="authStore.user?.damage_multiplier > 1.0" 
+             class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[8px] md:text-[9px] font-black tracking-[0.3em] uppercase backdrop-blur-sm flex items-center gap-1.5 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+              <span>🚀</span> x{{ authStore.user.damage_multiplier }} DMG ACTIVE
+           </span>
         </div>
 
         <!-- Boss Info & Avatar -->

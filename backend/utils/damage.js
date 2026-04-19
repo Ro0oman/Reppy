@@ -84,13 +84,24 @@ export const calculateDamage = (user, reps, type, boss = null) => {
     finalDamage *= weaknessBonus;
   }
 
+  // 6. Active Consumable Multiplier
+  let activeMultiplier = 1.0;
+  if (user.damage_multiplier && user.damage_multiplier_expiry) {
+    const expiry = new Date(user.damage_multiplier_expiry);
+    if (expiry > new Date()) {
+      activeMultiplier = parseFloat(user.damage_multiplier) || 1.0;
+      finalDamage *= activeMultiplier;
+    }
+  }
+
   return {
     totalDamage: Math.round(finalDamage),
     isCrit,
     divineBonus: Math.round(divineBonus),
     baseDamage: Math.round(baseDamage),
     critMultiplier: parseFloat(critMult.toFixed(2)),
-    weaknessBonus: parseFloat(weaknessBonus.toFixed(2))
+    weaknessBonus: parseFloat(weaknessBonus.toFixed(2)),
+    activeMultiplier: parseFloat(activeMultiplier.toFixed(2))
   };
 };
 

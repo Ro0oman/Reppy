@@ -14,19 +14,20 @@ router.get('/cosmetics', authenticate, async (req, res) => {
       LEFT JOIN user_inventory ui ON c.id = ui.cosmetic_id AND ui.user_id = $1
       ORDER BY c.price ASC, c.id ASC
     `, [req.user.id]);
-    const inventoryRes = await query('SELECT cosmetic_id, is_new FROM user_inventory WHERE user_id = $1', [req.user.id]);
+    const inventoryRes = await query('SELECT cosmetic_id, is_new, quantity FROM user_inventory WHERE user_id = $1', [req.user.id]);
     
     const inventoryMap = {};
     inventoryRes.rows.forEach(row => {
-      inventoryMap[row.cosmetic_id] = { owned: true, is_new: row.is_new };
+      inventoryMap[row.cosmetic_id] = { owned: true, is_new: row.is_new, quantity: row.quantity || 1 };
     });
     
     const shopItems = cosmeticsRes.rows.map((item, index) => {
-      const invData = inventoryMap[item.id] || { owned: false, is_new: false };
+      const invData = inventoryMap[item.id] || { owned: false, is_new: false, quantity: 0 };
       return {
         ...item,
         owned: invData.owned,
         is_new: invData.is_new,
+        quantity: invData.quantity,
         roadmap_position: index + 1,
         unlock_at: item.created_at,
         is_unlocked: true,
@@ -70,7 +71,7 @@ router.post('/buy/:id', authenticate, async (req, res) => {
 
     // Check inventory
     const inventoryRes = await query('SELECT * FROM user_inventory WHERE user_id = $1 AND cosmetic_id = $2', [userId, cosmeticId]);
-    if (inventoryRes.rows.length > 0) {
+    if (inventoryRes.rows.length > 0 && item.type !== 'consumable') {
       return res.status(400).json({ message: 'UNIT DETECTED: PROTOCOL ALREADY ACQUIRED' });
     }
 
@@ -101,8 +102,12 @@ router.post('/buy/:id', authenticate, async (req, res) => {
       // Also add the bundle itself to inventory so we know they bought it
       await query('INSERT INTO user_inventory (user_id, cosmetic_id) VALUES ($1, $2)', [userId, cosmeticId]);
     } else {
-      // Regular Item Purchase
-      await query('INSERT INTO user_inventory (user_id, cosmetic_id) VALUES ($1, $2)', [userId, cosmeticId]);
+      // Regular Item Purchase OR Consumable
+      if (item.type === 'consumable' && inventoryRes.rows.length > 0) {
+        await query('UPDATE user_inventory SET quantity = quantity + 1, is_new = TRUE WHERE user_id = $1 AND cosmetic_id = $2', [userId, cosmeticId]);
+      } else {
+        await query('INSERT INTO user_inventory (user_id, cosmetic_id, quantity) VALUES ($1, $2, 1)', [userId, cosmeticId]);
+      }
     }
 
     await query('UPDATE users SET reppy_coins = reppy_coins - $1 WHERE id = $2', [item.price, userId]);
@@ -168,5 +173,79 @@ router.post('/equip/:id', authenticate, async (req, res) => {
   }
 });
 
+
+// Activate consumable
+router.post('/activate/:id', authenticate, async (req, res) => {
+  const cosmeticId = parseInt(req.params.id);
+  const userId = req.user.id;
+
+  try {
+    const itemRes = await query('SELECT * FROM cosmetics WHERE id = $1', [cosmeticId]);
+    if (itemRes.rows.length === 0) return res.status(404).json({ message: 'Item no encontrado' });
+    const item = itemRes.rows[0];
+
+    if (item.type !== 'consumable') {
+      return res.status(400).json({ message: 'Este objeto no es un consumible' });
+    }
+
+    // Check ownership and quantity
+    const invRes = await query('SELECT * FROM user_inventory WHERE user_id = $1 AND cosmetic_id = $2', [userId, cosmeticId]);
+    if (invRes.rows.length === 0 || invRes.rows[0].quantity <= 0) {
+      return res.status(403).json({ message: 'No tienes este objeto en tu inventario' });
+    }
+
+    const multiplier = parseFloat(item.css_value) || 1.5;
+
+    await query('BEGIN');
+
+    // 1. Update user bonus (Resetting the 24h timer)
+    await query(`
+      UPDATE users 
+      SET damage_multiplier = $1, 
+          damage_multiplier_expiry = CURRENT_TIMESTAMP + INTERVAL '24 hours' 
+      WHERE id = $2
+    `, [multiplier, userId]);
+
+    // 2. Consume item
+    if (invRes.rows[0].quantity > 1) {
+      await query('UPDATE user_inventory SET quantity = quantity - 1 WHERE user_id = $1 AND cosmetic_id = $2', [userId, cosmeticId]);
+    } else {
+      await query('DELETE FROM user_inventory WHERE user_id = $1 AND cosmetic_id = $2', [userId, cosmeticId]);
+    }
+
+    // 3. Post to social feed (Optional: simplified as description update or standalone)
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const summaryRes = await query('SELECT id FROM daily_summaries WHERE user_id = $1 AND date = $2', [userId, today]);
+      if (summaryRes.rows.length > 0) {
+        await query(`
+          UPDATE daily_summaries 
+          SET description = COALESCE(description, '') || '\n\n🚀 [POTENCIADOR ACTIVADO]: ' || $1 || ' (Bonus x' || $2 || ' durante 24h)'
+          WHERE id = $3
+        `, [item.name, multiplier, summaryRes.rows[0].id]);
+      } else {
+        await query(`
+          INSERT INTO daily_summaries (user_id, date, title, description)
+          VALUES ($1, $2, 'Preparación para el Combate', '¡He activado un ' || $3 || '! Daño x' || $4 || ' durante las próximas 24 horas.')
+        `, [userId, today, item.name, multiplier]);
+      }
+    } catch (socialErr) {
+      console.error('Error updating social feed for consumable:', socialErr);
+    }
+
+    await query('COMMIT');
+
+    res.json({ 
+      message: `${item.name} activado con éxito`, 
+      multiplier,
+      expiry: new Date(Date.now() + 24 * 60 * 60 * 1000)
+    });
+
+  } catch (error) {
+    await query('ROLLBACK');
+    console.error('Error activating consumable:', error);
+    res.status(500).json({ message: 'Error al activar el consumible' });
+  }
+});
 
 export default router;

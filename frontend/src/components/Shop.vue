@@ -218,6 +218,10 @@
                   <div class="absolute inset-0 opacity-20 pointer-events-none h-[200%] animate-scanline" style="background: linear-gradient(to bottom, transparent 50%, rgba(34, 211, 238, 0.5) 50.5%, transparent 51%); background-size: 100% 4px;"></div>
                   <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">{{ i18n.t('shop_screen_preview') }}</div>
                </div>
+               <div v-if="item.type === 'consumable'" class="flex flex-col items-center gap-2">
+                  <Flame class="w-10 h-10 text-primary-500 animate-pulse" />
+                  <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest">BOOST x{{ item.css_value }}</span>
+               </div>
                <div v-if="item.type === 'post_background'" class="w-full h-full relative group/post-bg overflow-hidden flex items-center justify-center">
                   <div class="w-[90%] h-[80%] bg-black border border-border rounded-lg relative overflow-hidden flex flex-col p-2 gap-2 shadow-2xl shop-preview">
                      <div class="w-full h-full absolute inset-0 z-0" :class="item.css_value"></div>
@@ -255,9 +259,13 @@
             <!-- Action Footer -->
             <div class="p-4 pt-0 mt-auto border-t border-border bg-foreground/[0.01]">
               <div class="flex items-center justify-between mt-4">
-                <div v-if="item.owned" class="flex items-center gap-1.5 text-neon-lime">
+                <div v-if="item.owned && item.type !== 'consumable'" class="flex items-center gap-1.5 text-neon-lime">
                   <Check class="w-3.5 h-3.5" />
                   <span class="text-[8px] font-black uppercase tracking-widest leading-none">ACQUIRED</span>
+                </div>
+                <div v-else-if="item.owned && item.type === 'consumable'" class="flex items-center gap-1.5 text-primary-500">
+                  <Package class="w-3.5 h-3.5" />
+                  <span class="text-[8px] font-black uppercase tracking-widest leading-none">STOCK: {{ item.quantity }}</span>
                 </div>
                 <div v-else-if="item.price > 0" class="flex flex-col">
                   <div v-if="item.original_price" class="flex items-center gap-2 mb-0.5">
@@ -273,7 +281,7 @@
 
                 <!-- Action Button -->
                 <button 
-                  v-if="!item.owned && item.price > 0"
+                  v-if="(!item.owned || item.type === 'consumable') && item.price > 0"
                   @click="buyItem(item)"
                   :disabled="!canAfford(item) || buying || !item.is_unlocked"
                   class="btn-reppy !px-4 !py-2 !text-[8px] disabled:opacity-20 disabled:grayscale disabled:scale-100"
@@ -283,12 +291,12 @@
                 
                 <button 
                   v-if="item.owned && item.type !== 'bundle'"
-                  @click="equipItem(item)"
-                  :disabled="isEquipped(item)"
+                  @click="item.type === 'consumable' ? activateConsumable(item) : equipItem(item)"
+                  :disabled="item.type !== 'consumable' && isEquipped(item)"
                   class="px-4 py-2 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all"
-                  :class="isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-neon-lime text-black shadow-lg shadow-neon-lime/20'"
+                  :class="item.type === 'consumable' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : (isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-neon-lime text-black shadow-lg shadow-neon-lime/20')"
                 >
-                  {{ isEquipped(item) ? i18n.t('btn_on') : i18n.t('btn_equip') }}
+                  {{ item.type === 'consumable' ? i18n.t('btn_activate') : (isEquipped(item) ? i18n.t('btn_on') : i18n.t('btn_equip')) }}
                 </button>
               </div>
             </div>
@@ -518,7 +526,7 @@ import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
-import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Check, Swords, X } from 'lucide-vue-next';
+import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Check, Swords, X, Flame, Package } from 'lucide-vue-next';
 import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
 
@@ -550,6 +558,7 @@ const categories = [
   { id: 'border', label: 'cat_border', icon: Frame },
   { id: 'avatar', label: 'cat_avatar', icon: Sparkles },
   { id: 'background', label: 'cat_background', icon: Sparkles },
+  { id: 'consumable', label: 'cat_consumable', icon: Flame },
   { id: 'post_background', label: 'shop_tab_post_backgrounds', icon: LayoutGrid }
 ];
 
@@ -657,6 +666,19 @@ const equipItem = async (item) => {
     notificationStore.notify(`${item.name} active`, 'success');
   } catch (error) {
     notificationStore.notify('Activation failed', 'error');
+  }
+};
+
+const activateConsumable = async (item) => {
+  try {
+    const res = await axios.post(`/api/shop/activate/${item.id}`);
+    notificationStore.notify(i18n.t('consumable_activated'), 'success');
+    // Refresh user data to get new multiplier
+    await authStore.fetchProfile();
+    // Refresh shop to update quantities
+    await checkShop();
+  } catch (error) {
+    notificationStore.notify(error.response?.data?.message || 'Activation failed', 'error');
   }
 };
 

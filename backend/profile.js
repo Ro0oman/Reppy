@@ -14,6 +14,7 @@ router.get('/:id', async (req, res) => {
         SELECT u.id, u.name, u.email, u.avatar_url, u.reppy_coins, u.daily_goal,
                u.str_xp, u.pwr_xp, u.end_xp, u.agi_xp, u.total_xp, u.body_weight, u.is_private,
                u.current_level, u.level_chests_claimed, u.level_chests,
+               u.damage_multiplier, u.damage_multiplier_expiry,
                u.equipped_title_id, u.equipped_border_id, u.equipped_background_id, u.equipped_post_background_id,
                cTitle.name as title_name, cTitle.css_value as title_css,
                cBorder.name as border_name, cBorder.css_value as border_css,
@@ -69,6 +70,13 @@ router.get('/:id', async (req, res) => {
       [userId]
     );
     const readBlogs = readBlogsRes.rows.map(r => r.post_slug);
+
+    // Check for new inventory items
+    const newItemsRes = await query(
+      'SELECT count(*) FROM user_inventory WHERE user_id = $1 AND is_new = TRUE',
+      [userId]
+    );
+    const hasNewInventory = parseInt(newItemsRes.rows[0]?.count || 0) > 0;
 
     // Calculate favorite exercise
     const favResult = await query(
@@ -130,7 +138,9 @@ router.get('/:id', async (req, res) => {
         end_lvl: getLevel(endXP),
         vig_lvl: getLevel(vigXP),
         int_lvl: getLevel(intXP),
-        fth_lvl: getLevel(fthXP)
+        int_lvl: getLevel(intXP),
+        fth_lvl: getLevel(fthXP),
+        has_new_inventory: hasNewInventory
       },
       heatmap: heatmapResult.rows || [],
       stats: { totalReps, streak, favExercise, totalXP, totalVolume, breakdown: breakdownRes.rows || [] },

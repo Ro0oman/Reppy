@@ -339,6 +339,7 @@ const translations = {
     cat_avatar: 'Avatars',
     cat_background: 'Interface Screens',
     cat_bundle: 'Welcome Packs',
+    cat_consumable: 'Consumables',
 
     // Exercise Mastery
     exercise_mastery: 'Exercise Mastery',
@@ -533,6 +534,9 @@ const translations = {
     btn_lock: 'Lock',
     btn_equip: 'Equip',
     btn_on: 'ON',
+    btn_activate: 'Activate',
+    consumable_activated: 'Booster Activated',
+    damage_boost: 'Damage Boost',
     settings_title: 'Profile Settings',
     settings_success: 'Profile settings updated successfully.',
     settings_error: 'Failed to update settings.',
@@ -1198,9 +1202,11 @@ const translations = {
     btn_acquired: 'Adquirido',
     btn_acquire: 'Adquirir',
     btn_get: 'Obtener',
-    btn_lock: 'Bloqueado',
     btn_equip: 'Equipar',
     btn_on: 'Activado',
+    btn_activate: 'Activar',
+    consumable_activated: 'Potenciador Activado',
+    damage_boost: 'Bono de Daño',
     settings_title: 'Ajustes de Perfil',
     settings_success: 'Ajustes de perfil actualizados con éxito.',
     settings_error: 'Error al actualizar los ajustes.',
@@ -1338,6 +1344,7 @@ const translations = {
     landing_footer_free: 'App de Calistenia Gratuita',
     landing_footer_exercises: 'Dominadas · Flexiones · Fondos',
     landing_footer_desc: 'Reppy es un tracker de calistenia con sistema RPG para registrar dominadas, flexiones, fondos, muscle ups y dominadas con lastre. Disponible en español e inglés.',
+    cat_consumable: 'Consumibles',
   }
 };
 

@@ -20,9 +20,13 @@
         <Zap class="w-3.5 h-3.5" /> ATRIBUTOS
       </button>
       <button @click="activeTab = 'gear'" 
-        class="flex-1 py-3 px-6 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+        class="flex-1 py-3 px-6 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 relative"
         :class="activeTab === 'gear' ? 'bg-primary-500 text-white shadow-lg' : 'text-muted hover:text-foreground'">
-        <Package class="w-3.5 h-3.5" /> EQUIPO
+        <Package class="w-3.5 h-3.5" /> 
+        EQUIPO
+        <!-- Notification Dot (Absolute to avoid flex issues) -->
+        <span v-if="hasNewInventoryOverall && activeTab !== 'gear'" 
+              class="absolute top-2 right-4 h-2.5 w-2.5 rounded-full bg-red-500 ring-4 ring-red-500/20 animate-pulse"></span>
       </button>
     </div>
 
@@ -205,8 +209,11 @@
         >
           <div class="flex items-center gap-3">
             <div class="h-1 w-6 bg-primary-500 rounded-full"></div>
-            <h2 class="text-xs font-black text-foreground uppercase tracking-[0.3em] font-industrial">{{ type === 'title' ? 'DESIGNACIONES' : type === 'border' ? 'MARCOS' : 'ESCENARIOS' }}</h2>
+            <h2 class="text-xs font-black text-foreground uppercase tracking-[0.3em] font-industrial">
+              {{ type === 'title' ? 'DESIGNACIONES' : type === 'border' ? 'MARCOS' : type === 'background' ? 'ESCENARIOS' : 'CONSUMIBLES' }}
+            </h2>
             <span class="text-[9px] font-black text-muted bg-surface px-2 py-0.5 rounded-full">{{ items.length }}</span>
+            <div v-if="items.some(i => i.is_new)" class="w-2 h-2 bg-primary-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(255,69,0,0.5)]"></div>
           </div>
           <ChevronDown 
             class="w-4 h-4 text-muted transition-transform duration-300" 
@@ -219,6 +226,7 @@
           <div v-if="openCategories[type] !== false" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-2">
           <div v-for="item in items" :key="item.id" 
             @click="toggleEquip(item)"
+            @mouseenter="markSeen(item)"
             class="clash-card group" 
             :class="[isEquipped(item) ? 'equipped' : '', `rarity-${item.rarity || 'common'}`]">
             
@@ -236,12 +244,28 @@
                   <div v-else-if="type === 'background'" class="w-full h-full">
                      <BackgroundEffect :background-css="item.css_value" is-preview class="!absolute !inset-0" />
                   </div>
+                  <div v-else-if="type === 'consumable'" class="flex flex-col items-center gap-2">
+                     <div class="relative">
+                        <Flame class="w-12 h-12 text-primary-500 animate-pulse" />
+                        <div class="absolute -top-1 -right-1 bg-foreground text-background text-[10px] font-black px-1.5 py-0.5 rounded-md border-2 border-surface shadow-lg">
+                           x{{ item.quantity }}
+                        </div>
+                     </div>
+                     <span class="text-[9px] font-black text-primary-500/80 tracking-widest uppercase">DMG BONUS</span>
+                  </div>
                </div>
 
                <!-- Bottom Info -->
                <div class="p-3 bg-surface/60 space-y-1 relative">
                   <div v-if="isEquipped(item)" class="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 bg-primary-500 rounded-lg flex items-center justify-center border-4 border-surface shadow-xl"><Check class="w-3 h-3 text-white" /></div>
-                  <h4 class="text-[10px] font-black text-foreground truncate uppercase text-center italic">{{ item.name }}</h4>
+                  
+                  <div v-if="type === 'consumable'" class="pb-1">
+                     <button @click.stop="handleActivate(item)" 
+                        class="w-full py-2 bg-primary-500 hover:bg-primary-600 text-white text-[8px] font-black uppercase tracking-widest rounded-lg transition-all shadow-lg active:scale-95">
+                        ACTIVAR x{{ item.css_value }}
+                     </button>
+                  </div>
+                  <h4 v-else class="text-[10px] font-black text-foreground truncate uppercase text-center italic">{{ item.name }}</h4>
                   <div class="text-[7px] font-black text-muted uppercase text-center tracking-widest">{{ item.rarity || 'common' }}</div>
                </div>
             </div>
@@ -290,7 +314,12 @@ const openCategories = ref({}); // tracks open/closed state per category type
 
 const toggleCategory = (type) => {
   // default is open (undefined = truthy), so first click closes
-  openCategories.value[type] = openCategories.value[type] === false ? true : false;
+  const isOpening = openCategories.value[type] === false;
+  openCategories.value[type] = isOpening ? true : false;
+  
+  if (isOpening) {
+    markCategorySeen(type);
+  }
 };
 
 const rpgStats = computed(() => [
@@ -470,15 +499,49 @@ const toggleEquip = async (item) => {
   } catch (err) { notificationStore.notify('Activation error', 'error'); }
 };
 
+const handleActivate = async (item) => {
+  try {
+    const res = await axios.post(`/api/shop/activate/${item.id}`);
+    notificationStore.notify(res.data.message, 'success');
+    await fetchInventory();
+    await authStore.fetchProfile();
+  } catch (err) {
+    notificationStore.notify(err.response?.data?.message || 'Error al activar', 'error');
+  }
+};
+
+const markCategorySeen = async (type) => {
+  const newItems = groupedItems.value[type]?.filter(i => i.is_new) || [];
+  if (newItems.length === 0) return;
+  
+  try {
+    // Mark all as seen sequentially to be safe, though parallel is faster
+    await Promise.all(newItems.map(item => markSeen(item)));
+    // After marking all as seen, refresh the main profile flag
+    await authStore.fetchProfile();
+  } catch (e) {
+    console.error('Error marking category as seen:', e);
+  }
+};
+
 const markSeen = async (item) => {
   if (!item.is_new) return;
-  try { await axios.post(`/api/shop/mark-seen/${item.id}`); item.is_new = false; } 
+  try { 
+    await axios.post(`/api/shop/mark-seen/${item.id}`); 
+    item.is_new = false; 
+    // Silently refresh profile to update navbar dot
+    authStore.fetchProfile();
+  } 
   catch (e) { console.error('Signalling error:', e); }
 };
 
+const hasNewInventoryOverall = computed(() => {
+  return (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory);
+});
+
 onMounted(async () => {
   await Promise.all([fetchInventory(), authStore.fetchProfile()]);
-  setTimeout(() => { inventory.value.forEach(item => { if (item.is_new) markSeen(item); }); }, 3000);
+  // Removed automatic global markSeen timeout
 });
 </script>
 

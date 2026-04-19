@@ -26,6 +26,8 @@ CREATE TABLE IF NOT EXISTS users (
     fth_xp INTEGER DEFAULT 0,
     dex_xp INTEGER DEFAULT 0,
     vig_xp INTEGER DEFAULT 0,
+    damage_multiplier DECIMAL DEFAULT 1.0,
+    damage_multiplier_expiry TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -66,6 +68,8 @@ CREATE TABLE IF NOT EXISTS user_inventory (
     id SERIAL PRIMARY KEY,
     user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
     cosmetic_id INTEGER REFERENCES cosmetics(id) ON DELETE CASCADE,
+    quantity INTEGER DEFAULT 1,
+    is_new BOOLEAN DEFAULT TRUE,
     acquired_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(user_id, cosmetic_id)
 );
@@ -149,4 +153,10 @@ UPDATE users SET boss_chests = GREATEST(boss_chests, 1) WHERE boss_chests IS NUL
 UPDATE users SET level_chests = GREATEST(level_chests, 0) WHERE level_chests IS NULL;
 UPDATE users SET current_level = GREATEST(current_level, 1) WHERE current_level IS NULL OR current_level = 0;
 UPDATE users SET level_chests_claimed = GREATEST(level_chests_claimed, 1) WHERE level_chests_claimed IS NULL OR level_chests_claimed = 0;
+
+-- Damage & Consumables Update
+ALTER TABLE users ADD COLUMN IF NOT EXISTS damage_multiplier DECIMAL DEFAULT 1.0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS damage_multiplier_expiry TIMESTAMP WITH TIME ZONE;
+ALTER TABLE user_inventory ADD COLUMN IF NOT EXISTS quantity INTEGER DEFAULT 1;
+ALTER TABLE user_inventory ADD COLUMN IF NOT EXISTS is_new BOOLEAN DEFAULT TRUE;
 

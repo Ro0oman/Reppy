@@ -26,8 +26,8 @@
             {{ i18n.t(nav.label) || nav.fallback }}
             
             <!-- Notification Dot -->
-            <div v-if="nav.id === 'inventory' && authStore.user?.boss_chests > 0" 
-              class="absolute top-1.5 right-2 w-2 h-2 bg-primary-500 rounded-full border-2 border-surface"></div>
+            <div v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory)" 
+              class="absolute top-1.5 right-2 w-2 h-2 bg-primary-500 rounded-full border-2 border-surface shadow-[0_0_10px_rgba(255,69,0,0.5)]"></div>
           </router-link>
           <router-link v-if="authStore.user?.role === 'admin'" to="/admin"
             class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500 hover:bg-indigo-500/10 transition-all font-industrial">
@@ -150,8 +150,8 @@
             <component :is="nav.icon" class="w-6 h-6 transition-transform group-active:scale-90" :class="$route.name === nav.id ? 'fill-primary-500/10' : ''" />
             
             <!-- Contextual Badges -->
-            <div v-if="nav.id === 'inventory' && authStore.user?.boss_chests > 0" 
-                 class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-primary-500 rounded-full border-2 border-background animate-pulse"></div>
+            <div v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory)" 
+                 class="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full border border-surface shadow-[0_0_10px_rgba(59,130,246,0.5)] animate-pulse"></div>
           </div>
 
           <span class="text-[9px] font-black uppercase tracking-widest opacity-60 group-hover:opacity-100 transition-opacity" :class="$route.name === nav.id ? 'opacity-100' : ''">
