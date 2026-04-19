@@ -8,6 +8,19 @@
     ]"
     style="border-radius: 12px; margin-bottom: 12px;"
   >
+    <!-- Background Enhancement Layer (Moved to root for full coverage) -->
+    <div v-if="activity.post_background_css" class="absolute inset-0 pointer-events-none overflow-hidden z-0 rounded-[12px]">
+      <div class="absolute inset-0 transition-opacity duration-1000 opacity-60" :class="activity.post_background_css"></div>
+      
+      <!-- Specialized Overlays (Restored for premium feel) -->
+      <div v-if="activity.post_background_css === 'post-bg-matrix'" class="absolute inset-0 z-10 opacity-30">
+        <div v-for="i in 15" :key="i" class="matrix-column" :style="{ left: (i-1)*7 + '%', animationDelay: (i*0.2) + 's', height: '100px' }"></div>
+      </div>
+      <div v-if="activity.post_background_css === 'post-bg-inferno'" class="absolute inset-0 z-10 opacity-30">
+        <div v-for="i in 20" :key="i" class="ember" :style="{ left: (Math.sin(i)*50 + 50) + '%', animationDelay: (i*0.2) + 's', width: '2px', height: '2px' }"></div>
+      </div>
+    </div>
+
     <!-- Reddit-style Top Meta Bar -->
     <div class="px-4 py-3 flex items-center gap-2 relative z-10">
       <div class="relative cursor-pointer hover:scale-105 transition-transform" @click="$emit('viewProfile', activity.user_id)">
@@ -40,9 +53,6 @@
 
       <!-- Hero Balanced Stats (The "Media" of the post) -->
       <div class="rounded-xl overflow-hidden border border-border/30 bg-black/40 relative">
-        <!-- Background Overlay if cosmetic -->
-        <div v-if="activity.post_background_css" class="absolute inset-0 pointer-events-none opacity-40" :class="activity.post_background_css"></div>
-
         <div class="grid grid-cols-2 divide-x divide-border/20 py-8 relative z-10">
           <!-- Reps -->
           <div class="flex flex-col items-center justify-center">
@@ -63,15 +73,23 @@
         </div>
 
         <!-- Mini performance badges overlayed at bottom of media -->
-        <div class="flex justify-center gap-1.5 pb-3">
-          <div class="px-2 py-0.5 bg-black/60 backdrop-blur-md rounded text-[9px] font-bold text-muted border border-border/20">
-            TOP {{ activity.daily_rank_percentile }}%
+        <div class="flex flex-wrap justify-center gap-1.5 pb-3 px-4 relative z-10">
+          <div class="px-2 py-0.5 bg-black/60 backdrop-blur-md rounded text-[9px] font-bold text-muted border border-border/20 whitespace-nowrap">
+            {{ i18n.t('activity_top_dated').replace('{n}', activity.daily_rank_percentile || 10).replace('{date}', formattedShortDate) }}
           </div>
-          <div class="px-2 py-0.5 bg-black/60 backdrop-blur-md rounded text-[9px] font-bold border border-border/20"
-               :class="activity.performance_vs_avg > 100 ? 'text-green-500' : 'text-muted'">
-            {{ activity.performance_vs_avg }}% AVG
+          
+          <!-- New Rank Badge (If top 10) -->
+          <div v-if="activity.daily_rank <= 10" class="px-2 py-0.5 bg-yellow-500/10 backdrop-blur-md rounded text-[9px] font-black text-yellow-500 border border-yellow-500/20 whitespace-nowrap">
+            {{ i18n.t('activity_rank_top').replace('{n}', activity.daily_rank) }}
           </div>
-          <div v-if="activity.real_streak > 0" class="px-2 py-0.5 bg-black/60 backdrop-blur-md rounded text-[9px] font-bold text-primary-500 border border-border/20">
+
+          <!-- Personal Best Badge -->
+          <div v-if="activity.is_personal_best" class="px-2 py-0.5 bg-primary-500/10 backdrop-blur-md rounded text-[9px] font-black text-primary-500 border border-primary-500/20 animate-pulse whitespace-nowrap">
+            <Flame class="w-2.5 h-2.5 inline mr-1" />
+            {{ i18n.t('activity_personal_record') }}
+          </div>
+
+          <div v-if="activity.real_streak > 1" class="px-2 py-0.5 bg-black/60 backdrop-blur-md rounded text-[9px] font-bold text-primary-500 border border-border/20">
             {{ activity.real_streak }}D RACHA
           </div>
         </div>
@@ -90,20 +108,18 @@
     <!-- Reddit-style Action Bar -->
     <div class="px-2 py-2 flex items-center gap-1 border-t border-border/10 relative z-10 h-10">
       <!-- Vote Cluster -->
-      <div class="flex items-center bg-foreground/[0.05] rounded-full px-1 mr-2 scale-90">
+      <div class="flex items-center bg-foreground/[0.05] rounded-full px-1 mr-2 scale-90 relative transition-all"
+           :class="activity.user_has_liked ? 'shadow-[0_0_10px_rgba(255,69,0,0.2)] bg-primary-500/10' : ''">
         <button 
           @click="$emit('toggleLike')"
-          class="p-1.5 rounded-full transition-colors"
-          :class="activity.user_has_liked ? 'text-primary-500' : 'text-muted hover:bg-foreground/10 hover:text-primary-500'"
+          class="p-1.5 rounded-full transition-all duration-300"
+          :class="activity.user_has_liked ? 'text-primary-500 scale-110' : 'text-muted hover:bg-foreground/10 hover:text-primary-500'"
         >
           <ArrowBigUp class="w-5 h-5" :class="activity.user_has_liked ? 'fill-current' : ''" />
         </button>
-        <span class="text-[11px] font-black min-w-[20px] text-center" :class="activity.user_has_liked ? 'text-primary-500' : 'text-foreground'">
+        <span class="text-[11px] font-black min-w-[20px] text-center transition-colors" :class="activity.user_has_liked ? 'text-primary-500' : 'text-foreground'">
           {{ activity.like_count }}
         </span>
-        <button class="p-1.5 rounded-full text-muted hover:bg-foreground/10 hover:text-blue-500 transition-colors">
-          <ArrowBigDown class="w-5 h-5" />
-        </button>
       </div>
 
       <!-- Comments Button -->
@@ -112,7 +128,7 @@
         class="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-foreground/[0.05] transition-colors"
       >
         <MessageSquare class="w-4 h-4 text-muted" />
-        <span class="text-[11px] font-bold text-muted">{{ activity.comment_count }} Comments</span>
+        <span class="text-[11px] font-bold text-muted">{{ i18n.t('activity_comments_count').replace('{n}', activity.comment_count) }}</span>
       </button>
 
       <!-- Share Button -->
@@ -121,7 +137,7 @@
         class="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-foreground/[0.05] transition-colors"
       >
         <Share2 class="w-4 h-4 text-muted" />
-        <span class="text-[11px] font-bold text-muted">Share</span>
+        <span class="text-[11px] font-bold text-muted">{{ i18n.t('activity_share_label') }}</span>
       </button>
 
       <div class="flex-1"></div>
@@ -129,7 +145,7 @@
       <!-- Boss contribution small indicator -->
       <div v-if="totalBossDamage > 0" class="flex items-center gap-2 px-3 opacity-60 scale-75">
         <Swords class="w-3 h-3 text-primary-500" />
-        <span class="text-[10px] font-black text-primary-500 uppercase">{{ bossContribution }}% BOSS</span>
+        <span class="text-[10px] font-black text-primary-500 uppercase">{{ i18n.t('activity_boss_contrib').replace('{n}', bossContribution) }}</span>
       </div>
     </div>
 
@@ -174,7 +190,7 @@ import {
     Heart, MessageSquare, Share2, Edit3, Send, 
     Swords, ChevronRight, Trophy, Zap, 
     Flame, TrendingUp, Loader2, Dumbbell,
-    ArrowBigUp, ArrowBigDown
+    ArrowBigUp
 } from 'lucide-vue-next';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
@@ -251,6 +267,15 @@ const timeAgo = computed(() => {
     addSuffix: true, 
     locale: i18n.locale === 'es' ? es : enUS 
   });
+});
+
+const formattedShortDate = computed(() => {
+    if (!props.activity.date) return '';
+    const date = new Date(props.activity.date + 'T12:00:00');
+    return date.toLocaleDateString(i18n.locale === 'es' ? 'es-ES' : 'en-US', {
+        day: 'numeric',
+        month: 'short'
+    }).toUpperCase();
 });
 
 const bossContribution = computed(() => {

@@ -6,6 +6,18 @@ import { createNotification } from './utils/notifications.js';
 import { recalculateUserStats } from './utils/stats.js';
 
 const router = express.Router();
+const SOCIAL_XP_DAILY_CAP = 200;
+
+// Ensure local xp rewards tracking table exists
+pool.query(`
+  CREATE TABLE IF NOT EXISTS social_xp_rewards (
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    summary_id INTEGER REFERENCES daily_summaries(id) ON DELETE CASCADE,
+    action_type VARCHAR(50), -- 'LIKE', 'COMMENT'
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, summary_id, action_type)
+  )
+`).catch(err => console.error('Error creating social_xp_rewards table:', err));
 
 /**
  * GET /api/social-feed/stats
@@ -114,20 +126,26 @@ router.get('/feed', authenticate, async (req, res) => {
         (SELECT SUM(count) FROM reps WHERE user_id = f.user_id AND date = f.date::date) as total_reps_today,
         -- Total Damage Today
         (SELECT SUM(boss_damage_dealt) FROM reps WHERE user_id = f.user_id AND date = f.date::date) as total_damage_today,
-        -- Percentile Ranking (Reps vs Others Today)
+        -- Daily Rank (Position 1, 2, 3...) based on reps that specific day
+        (SELECT COUNT(*) FROM daily_stats ds2 
+         WHERE ds2.date = f.date::date AND ds2.day_reps > (SELECT SUM(count) FROM reps WHERE user_id = f.user_id AND date = f.date::date)
+        ) + 1 as daily_rank,
+        -- Percentile Ranking (Reps vs Others that Specific Day)
         COALESCE(
           ROUND(100.0 * (
-            SELECT COUNT(*) FROM daily_stats ds2 
-            WHERE ds2.date = f.date::date AND ds2.day_reps < (SELECT SUM(count) FROM reps WHERE user_id = f.user_id AND date = f.date::date)
-          ) / NULLIF((SELECT COUNT(*) FROM daily_stats ds3 WHERE ds3.date = f.date::date), 0)),
+            SELECT COUNT(*) FROM daily_stats ds3 
+            WHERE ds3.date = f.date::date AND ds3.day_reps < (SELECT SUM(count) FROM reps WHERE user_id = f.user_id AND date = f.date::date)
+          ) / NULLIF((SELECT COUNT(*) FROM daily_stats ds4 WHERE ds4.date = f.date::date), 0)),
           10
         ) as daily_rank_percentile,
-        -- Performance vs Last 7 Days Average
-        COALESCE(
-          ROUND(100.0 * (SELECT SUM(count) FROM reps WHERE user_id = f.user_id AND date = f.date::date) / 
-          NULLIF((SELECT SUM(count)/7.0 FROM reps WHERE user_id = f.user_id AND date > f.date::date - INTERVAL '7 days' AND date < f.date::date), 0)),
-          100
-        ) as performance_vs_avg,
+        -- Personal Best (PB) check: Are today's reps higher than any previous day?
+        EXISTS (
+          SELECT 1 
+          FROM daily_stats ds_pb 
+          WHERE ds_pb.user_id = f.user_id 
+          AND ds_pb.date < f.date::date
+          HAVING (SELECT SUM(count) FROM reps WHERE user_id = f.user_id AND date = f.date::date) > COALESCE(MAX(ds_pb.day_reps), 0)
+        ) as is_personal_best,
         -- Current Streak Calculation (Real consecutive days until this post)
         (
           WITH RECURSIVE streak_calc AS (
@@ -199,25 +217,49 @@ router.post('/like', authenticate, async (req, res) => {
         'INSERT INTO summary_interactions (summary_id, user_id, type) VALUES ($1, $2, $3)',
         [summaryId, myUserId, 'LIKE']
       );
-      await client.query('COMMIT');
-      
-      const cleanDate = typeof date === 'string' ? date.substring(0, 10) : date;
-
-      // Trigger Notification (Safe to do after commit and with local query)
-      await createNotification(
-        TargetUserId, 
-        'LIKE', 
-        myUserId, 
-        'le ha dado like a tu entrenamiento', 
-        cleanDate,
-        TargetUserId
+      // Check daily cap and unique reward eligibility
+      const dailyXpRes = await client.query(
+        `SELECT COALESCE(SUM(xp_amount), 0) as total 
+         FROM (
+           SELECT 5 as xp_amount FROM social_xp_rewards WHERE user_id = $1 AND action_type = 'LIKE' AND created_at > CURRENT_DATE
+           UNION ALL
+           SELECT 20 as xp_amount FROM social_xp_rewards WHERE user_id = $1 AND action_type = 'COMMENT' AND created_at > CURRENT_DATE
+         ) as daily_xp`,
+        [myUserId]
       );
-
-      // Reward Charisma XP for Liking
-      await query('UPDATE users SET cha_xp = cha_xp + 5 WHERE id = $1', [myUserId]);
-      await recalculateUserStats(myUserId);
-
-      return res.json({ liked: true });
+      
+      const currentDailyXp = parseInt(dailyXpRes.rows[0].total);
+      
+      if (currentDailyXp < SOCIAL_XP_DAILY_CAP) {
+        // Try to record reward (will fail if already rewarded for this summary due to PK)
+        try {
+          await client.query(
+            'INSERT INTO social_xp_rewards (user_id, summary_id, action_type) VALUES ($1, $2, $3)',
+            [myUserId, summaryId, 'LIKE']
+          );
+          
+          // Reward Charisma XP
+          await client.query('UPDATE users SET cha_xp = cha_xp + 5 WHERE id = $1', [myUserId]);
+          // Note: we'll recalculate after commit
+          await client.query('COMMIT');
+          await recalculateUserStats(myUserId);
+          
+          const cleanDate = typeof date === 'string' ? date.substring(0, 10) : date;
+          await createNotification(TargetUserId, 'LIKE', myUserId, 'le ha dado like a tu entrenamiento', cleanDate, TargetUserId);
+          
+          return res.json({ liked: true, rewarded: true });
+        } catch (e) {
+          // Already rewarded for this post, just commit the like but no XP
+          await client.query('COMMIT');
+          const cleanDate = typeof date === 'string' ? date.substring(0, 10) : date;
+          await createNotification(TargetUserId, 'LIKE', myUserId, 'le ha dado like a tu entrenamiento', cleanDate, TargetUserId);
+          return res.json({ liked: true, rewarded: false });
+        }
+      } else {
+        // Cap reached, no XP
+        await client.query('COMMIT');
+        return res.json({ liked: true, rewarded: false, cap_reached: true });
+      }
     }
   } catch (error) {
     if (client) await client.query('ROLLBACK');
@@ -270,11 +312,38 @@ router.post('/comment', authenticate, async (req, res) => {
 
     const userRes = await client.query('SELECT name FROM users WHERE id = $1', [myUserId]);
     
+    // Check daily cap and unique reward eligibility for commenting
+    const dailyXpRes = await client.query(
+        `SELECT COALESCE(SUM(xp_amount), 0) as total 
+         FROM (
+           SELECT 5 as xp_amount FROM social_xp_rewards WHERE user_id = $1 AND action_type = 'LIKE' AND created_at > CURRENT_DATE
+           UNION ALL
+           SELECT 20 as xp_amount FROM social_xp_rewards WHERE user_id = $1 AND action_type = 'COMMENT' AND created_at > CURRENT_DATE
+         ) as daily_xp`,
+        [myUserId]
+    );
+    
+    const currentDailyXp = parseInt(dailyXpRes.rows[0].total);
+    let rewarded = false;
+
+    if (currentDailyXp < SOCIAL_XP_DAILY_CAP) {
+        try {
+            await client.query(
+                'INSERT INTO social_xp_rewards (user_id, summary_id, action_type) VALUES ($1, $2, $3)',
+                [myUserId, summaryId, 'COMMENT']
+            );
+            await client.query('UPDATE users SET cha_xp = cha_xp + 20 WHERE id = $1', [myUserId]);
+            rewarded = true;
+        } catch (e) {
+            // Already rewarded for this post's comments
+        }
+    }
+
     await client.query('COMMIT');
 
-    // Reward Charisma XP for Commenting (After commit to avoid deadlocks)
-    await query('UPDATE users SET cha_xp = cha_xp + 20 WHERE id = $1', [myUserId]);
-    await recalculateUserStats(myUserId);
+    if (rewarded) {
+        await recalculateUserStats(myUserId);
+    }
 
     const cleanDate = typeof date === 'string' ? date.substring(0, 10) : date;
 
