@@ -30,16 +30,16 @@
   }
 
   .dark {
-    /* Dark Theme (Clean Obsidian) */
-    --background: 224 25% 4%;      /* Real Obsidian #0A0B0D */
-    --surface: 224 20% 8%;         /* #121417 */
-    --card: 224 15% 12%;           /* Glossy card */
-    --card-alpha: 0.6;
+    /* Dark Theme (Clean Obsidian - Precision Redesign) */
+    --background: 240 10% 4%;      /* #09090B */
+    --surface: 240 10% 8%;         /* #121215 */
+    --card: 240 10% 8.5%;          /* Slightly lighter card #151518 */
+    --card-alpha: 0.8;
     --foreground: 210 20% 98%;     /* Crisp white-blue */
     --muted: 215 15% 65%;          /* Soft metal gray */
-    --border: 215 20% 20%;
-    --border-alpha: 0.4;
-    --ring: 215 100% 55% / 0.4;
+    --border: 240 5% 15%;          /* #27272A */
+    --border-alpha: 0.6;
+    --ring: 221 83% 53% / 0.4;     /* Blue-500 shadow */
 
     /* Heatmap Levels (Dark - Blue/Emerald) */
     --heatmap-bg: 224 25% 4%;
@@ -264,6 +264,46 @@
   @keyframes ticker {
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
+  }
+
+  /* Precision UI Classes */
+  .ranking-1-gold {
+    position: relative;
+    background: linear-gradient(135deg, #121215 0%, #1a1a1e 100%) !important;
+    overflow: visible !important;
+  }
+
+  .ranking-1-gold::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    padding: 1px;
+    background: linear-gradient(to right, #F59E0B, #FEF3C7, #F59E0B);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .ranking-1-gold::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 60px; height: 60px;
+    background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.2), transparent);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .tab-indicator-neon {
+    box-shadow: 0 0 15px hsla(var(--primary) / 0.8), 0 0 5px hsla(var(--primary) / 0.4);
+  }
+
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
   }
 }
 

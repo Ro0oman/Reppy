@@ -142,10 +142,13 @@
           
           <!-- Modern Active Indicator -->
           <div v-if="$route.name === nav.id" 
-               class="absolute -top-2 w-10 h-1 bg-primary-500 rounded-full shadow-[0_0_15px_rgba(236,72,153,0.8)] animate-in fade-in zoom-in duration-500"></div>
+               class="absolute -top-2 w-12 h-1 bg-primary-500 rounded-full shadow-[0_0_20px_rgba(255,69,0,0.8)] animate-in fade-in zoom-in duration-500"></div>
           
           <div class="relative">
-            <component :is="nav.icon" class="w-6 h-6 transition-transform group-active:scale-90" :class="$route.name === nav.id ? 'fill-primary-500/10' : ''" />
+            <!-- Background Glow for Active Icon -->
+            <div v-if="$route.name === nav.id" class="absolute inset-0 bg-primary-500/20 blur-xl rounded-full scale-150 animate-pulse"></div>
+            
+            <component :is="nav.icon" class="w-6 h-6 transition-transform group-active:scale-90 relative z-10" :class="$route.name === nav.id ? 'text-primary-500 drop-shadow-[0_0_10px_rgba(255,69,0,0.5)]' : ''" />
             
             <!-- Contextual Badges -->
             <div v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory)" 

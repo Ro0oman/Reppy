@@ -21,130 +21,137 @@
       </div>
     </div>
 
-    <!-- Reddit-style Top Meta Bar -->
-    <div class="px-4 py-3 flex items-center gap-2 relative z-10">
-      <div class="relative cursor-pointer hover:scale-105 transition-transform" @click="$emit('viewProfile', activity.user_id)">
-        <AvatarFrame 
-          :src="activity.avatar_url" 
-          :border-css="activity.border_css" 
-          :avatar-css="activity.avatar_css" 
-          :size="28" 
-        />
-      </div>
-      <div class="flex items-center gap-1.5 min-w-0">
-        <span class="text-[11px] font-bold text-foreground truncate">{{ activity.user_name }}</span>
+    <!-- Layer A: Header (Fusion & Precision) -->
+    <div class="px-4 py-3 flex items-center justify-between relative z-10">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="relative cursor-pointer hover:scale-105 transition-transform shrink-0" @click="$emit('viewProfile', activity.user_id)">
+          <AvatarFrame 
+            :src="activity.avatar_url" 
+            :border-css="activity.border_css" 
+            :avatar-css="activity.avatar_css" 
+            :size="32" 
+          />
+        </div>
+        <div class="flex flex-col min-w-0">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-semibold text-foreground tracking-tight truncate leading-tight">{{ activity.user_name }}</span>
+            <div v-if="activity.real_streak > 1" 
+                 class="flex items-center gap-1 px-1.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded text-[9px] font-black text-emerald-500 uppercase tracking-tighter shrink-0"
+                 :class="activity.real_streak > 5 ? 'animate-pulse' : ''">
+              {{ activity.real_streak }}D 🔥
+            </div>
+          </div>
+          <span class="text-[9px] text-muted font-medium uppercase tracking-widest opacity-60">{{ timeAgo }}</span>
+        </div>
       </div>
 
-      <div class="flex-1"></div>
-      
-      <!-- User Badges (Rank & Streak) moved to the right -->
-      <div class="flex items-center gap-1.5 shrink-0">
-        <div v-if="activity.global_rank" class="px-1.5 py-0.5 bg-yellow-500/10 border border-yellow-500/20 rounded-md">
-          <span class="text-[8px] font-black text-yellow-500 uppercase">RANKING #{{ activity.global_rank }}</span>
-        </div>
-        <div v-if="activity.real_streak > 1" class="px-1.5 py-0.5 bg-orange-500/10 border border-orange-500/20 rounded-md">
-          <span class="text-[8px] font-black text-orange-500 uppercase tracking-tighter">{{ activity.real_streak }} DÍAS DE RACHA</span>
-        </div>
-      </div>
-      <div v-if="isHot" class="flex items-center gap-1 px-2 py-0.5 bg-red-500/10 border border-red-500/20 rounded-full">
-        <Flame class="w-3 h-3 text-red-500" />
-        <span class="text-[9px] font-black text-red-500">HOT</span>
-      </div>
+      <!-- Rank Badge (Pill Style) -->
+      <div v-if="activity.global_rank" 
+     class="px-2.5 py-1 rounded-full flex items-center gap-1.5 shrink-0 border transition-all duration-300"
+     :class="rankStyles">
+  
+  <Crown v-if="activity.global_rank === 1" class="w-3 h-3 drop-shadow-[0_0_3px_rgba(245,158,11,0.8)]" />
+  <Trophy v-else-if="activity.global_rank <= 3" class="w-3 h-3" />
+  <TrendingUp v-else class="w-3 h-3 opacity-40" />
+  
+  <span class="text-[10px] font-black uppercase tracking-widest italic">
+    RANKING #{{ activity.global_rank }}
+  </span>
+</div>
+
+
     </div>
 
     <!-- Main Content Area -->
     <div class="px-4 pb-4 space-y-3 relative z-10">
-      <!-- Title & Text -->
+      <!-- Title & Text (Truncated) -->
       <div class="space-y-1">
-        <h3 v-if="activity.title" class="text-lg font-bold text-foreground leading-tight">{{ activity.title }}</h3>
-        <p v-if="activity.description" class="text-sm text-foreground/80 leading-snug">{{ activity.description }}</p>
+        <h3 v-if="activity.title" class="text-sm font-bold text-foreground leading-tight">{{ activity.title }}</h3>
+        <div v-if="activity.description" class="relative group/desc">
+          <p class="text-[13px] text-foreground/80 leading-snug transition-all" :class="isExpanded ? '' : 'line-clamp-2'">{{ activity.description }}</p>
+          <button v-if="activity.description.length > 80" @click="isExpanded = !isExpanded" 
+                  class="text-[9px] font-black text-primary-500 mt-1 uppercase tracking-[0.2em] hover:text-primary-400 transition-colors">
+            {{ isExpanded ? 'RECOGER DATA' : 'LEER MÁS' }}
+          </button>
+        </div>
       </div>
 
-      <!-- Hero Balanced Stats (The "Media" of the post) -->
-      <div class="rounded-xl overflow-hidden border border-border/10 bg-black/20 relative">
-        <div class="grid grid-cols-2 divide-x divide-border/10 py-4 relative z-10">
+      <!-- Layer B: El "Hero" de Datos (Split View) -->
+      <div class="rounded-2xl overflow-hidden border border-border/10 bg-black/40 relative backdrop-blur-md">
+        <div class="flex items-center divide-x divide-border/20 py-3 relative z-10">
           <!-- Reps -->
-          <div class="flex flex-col items-center justify-center">
-            <p class="text-[8px] font-black text-muted uppercase tracking-widest mb-0.5">{{ i18n.t('activity_reps_session') || 'REPS' }}</p>
-            <div class="flex items-center gap-1.5">
-              <span class="text-2xl font-black italic tracking-tighter text-foreground drop-shadow-sm">{{ animatedReps }}</span>
-              <Dumbbell class="w-3 h-3 text-primary-500/30" />
+          <div class="flex-1 flex flex-col items-center justify-center py-1">
+            <p class="text-[10px] font-bold text-muted/60 uppercase tracking-[0.05em] mb-1.5">{{ i18n.t('activity_reps_session') }}</p>
+            <div class="flex items-baseline gap-1">
+              <span class="text-2xl font-bold tabular-nums text-foreground tracking-tight">{{ animatedReps }}</span>
+              <Dumbbell class="w-3 h-3 text-muted/20" />
             </div>
           </div>
-          <!-- Damage -->
-          <div class="flex flex-col items-center justify-center">
-            <p class="text-[8px] font-black text-primary-500 uppercase tracking-widest mb-0.5">{{ i18n.t('activity_damage_session') }}</p>
-            <div class="flex items-center gap-1.5">
-              <span class="text-2xl font-black italic tracking-tighter text-foreground drop-shadow-sm">{{ animatedDamage }}</span>
-              <Swords class="w-3 h-3 text-primary-500/30" />
+          <!-- Damage (Dato Rey) -->
+          <div class="flex-1 flex flex-col items-center justify-center py-1 bg-primary-500/5 overflow-hidden">
+            <p class="text-[10px] font-bold text-primary-500 uppercase tracking-[0.05em] mb-1.5">{{ i18n.t('activity_damage_session') }}</p>
+            <div class="flex items-baseline gap-1">
+              <span class="text-3xl font-bold tabular-nums text-primary-500 tracking-tight drop-shadow-[0_0_12px_rgba(59,130,246,0.4)]">{{ animatedDamage }}</span>
+              <Swords class="w-3.5 h-3.5 text-primary-500 opacity-60" />
             </div>
           </div>
         </div>
 
         <!-- Personal Best Badge overlayed -->
-        <div v-if="activity.is_personal_best" class="flex justify-center pb-2 px-4 relative z-10">
-          <div class="px-2 py-0.5 bg-primary-500/10 backdrop-blur-md rounded text-[9px] font-black text-primary-500 border border-primary-500/20 animate-pulse whitespace-nowrap">
-            <Flame class="w-2.5 h-2.5 inline mr-1" />
-            {{ i18n.t('activity_personal_record') }}
-          </div>
+        <div v-if="activity.is_personal_best" class="absolute top-0 right-0 p-2">
+          <Flame class="w-4 h-4 text-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
         </div>
       </div>
 
-      <!-- Exercise tags HIGHLIGHTED -->
-      <div class="flex flex-wrap gap-2">
+      <!-- Layer C: Tags (Compact & Wrap) -->
+      <div class="flex flex-wrap gap-2 pt-1 border-t border-white/5">
         <div v-for="ex in activity.exercises" :key="ex.exercise_type" 
-             class="px-3 py-1.5 rounded-lg text-[11px] font-black flex items-center gap-2.5 border transition-all"
-             :class="ex.is_pr ? 'bg-amber-500/10 border-amber-500/30 text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.2)]' : 'bg-surface border-border/20 text-foreground'"
+             class="h-6 px-3 rounded-full text-[11px] font-medium flex items-center gap-2 border transition-all shrink-0"
+             :class="ex.is_pr ? 'bg-amber-500/10 border-amber-500/30 text-amber-500' : 'bg-white/5 border-white/5 text-muted hover:bg-white/10'"
         >
-          <span class="uppercase italic tracking-tighter" :class="ex.is_pr ? 'text-amber-500' : 'text-primary-500'">{{ i18n.t(ex.exercise_type) }}</span>
-          <span class="text-sm font-black">{{ ex.count }}</span>
-          
-          <!-- PR Trophy -->
-          <Trophy v-if="ex.is_pr" class="w-3.5 h-3.5 text-amber-500 animate-pulse" />
+          <span class="uppercase tracking-tight">{{ i18n.t(ex.exercise_type) }}</span>
+          <span class="font-bold tabular-nums">{{ ex.count }}</span>
+          <Trophy v-if="ex.is_pr" class="w-2.5 h-2.5 text-amber-500" />
         </div>
       </div>
     </div>
 
-    <!-- Reddit-style Action Bar -->
-    <div class="px-2 py-2 flex items-center gap-1 border-t border-border/10 relative z-10 h-10">
-      <!-- Vote Cluster -->
-      <div class="flex items-center bg-foreground/[0.05] rounded-full px-1 mr-2 scale-90 relative transition-all"
-           :class="activity.user_has_liked ? 'shadow-[0_0_10px_rgba(255,69,0,0.2)] bg-primary-500/10' : ''">
+    <!-- Footer Action Bar (Thumb-Friendly 44px) -->
+    <div class="px-2 py-1 flex items-center justify-between border-t border-border/10 relative z-10 bg-black/20 h-11">
+      <div class="flex items-center h-full">
+        <!-- Like -->
         <button 
-          @click="$emit('toggleLike')"
-          class="p-1.5 rounded-full transition-all duration-300"
-          :class="activity.user_has_liked ? 'text-primary-500 scale-110' : 'text-muted hover:bg-foreground/10 hover:text-primary-500'"
+          @click="toggleLike"
+          class="w-12 h-full flex items-center justify-center transition-all active:scale-90 group/btn"
+          :class="activity.user_has_liked ? 'text-primary-500' : 'text-muted'"
         >
-          <ArrowBigUp class="w-5 h-5" :class="activity.user_has_liked ? 'fill-current' : ''" />
+          <div class="relative">
+            <div v-if="activity.user_has_liked" class="absolute inset-0 bg-primary-500/20 blur-lg rounded-full animate-pulse"></div>
+            <ArrowBigUp class="w-6 h-6 relative z-10" :class="activity.user_has_liked ? 'fill-current' : ''" />
+          </div>
+          <span class="text-[11px] font-bold ml-1 tabular-nums">{{ activity.like_count }}</span>
         </button>
-        <span class="text-[11px] font-black min-w-[20px] text-center transition-colors" :class="activity.user_has_liked ? 'text-primary-500' : 'text-foreground'">
-          {{ activity.like_count }}
-        </span>
+
+        <!-- Comments -->
+        <button 
+          @click="showComments = !showComments"
+          class="w-12 h-full flex items-center justify-center gap-1.5 transition-all text-muted active:scale-95 px-2"
+        >
+          <MessageSquare class="w-5 h-5" />
+          <span class="text-[11px] font-bold tabular-nums">{{ activity.comment_count }}</span>
+        </button>
+
+        <!-- Share -->
+        <button 
+          @click="shareActivity"
+          class="w-12 h-full flex items-center justify-center transition-all text-muted active:scale-95"
+        >
+          <Share2 class="w-5 h-5" />
+        </button>
       </div>
 
-      <!-- Comments Button -->
-      <button 
-        @click="showComments = !showComments"
-        class="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-foreground/[0.05] transition-colors"
-      >
-        <MessageSquare class="w-4 h-4 text-muted" />
-        <span class="text-[11px] font-bold text-muted">{{ activity.comment_count }}</span>
-      </button>
-
-      <!-- Share Button -->
-      <button 
-        @click="shareActivity"
-        class="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-foreground/[0.05] transition-colors"
-      >
-        <Share2 class="w-4 h-4 text-muted" />
-        <span class="text-[11px] font-bold text-muted">{{ i18n.t('activity_share_label') }}</span>
-      </button>
-
-      <div class="flex-1"></div>
-
-      <!-- Boss contribution small indicator -->
-      <div v-if="totalBossDamage > 0" class="flex items-center gap-2 px-3 opacity-60 scale-75">
-        <Swords class="w-3 h-3 text-primary-500" />
+      <div class="flex items-center gap-2 pr-4 opacity-40 scale-90">
+        <Swords class="w-4 h-4" />
       </div>
     </div>
 
@@ -189,7 +196,7 @@ import {
     Heart, MessageSquare, Share2, Edit3, Send, 
     Swords, ChevronRight, Trophy, Zap, 
     Flame, TrendingUp, Loader2, Dumbbell,
-    ArrowBigUp
+    ArrowBigUp, Crown
 } from 'lucide-vue-next';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
@@ -203,6 +210,8 @@ const props = defineProps({
   highlighted: Boolean
 });
 
+
+
 const emit = defineEmits(['toggleLike', 'viewProfile', 'edit', 'commentAdded']);
 
 const authStore = useAuthStore();
@@ -211,6 +220,7 @@ const notificationStore = useNotificationStore();
 const route = useRoute();
 
 const showComments = ref(false);
+const isExpanded = ref(false);
 const commentText = ref('');
 const comments = ref([]);
 const loadingComments = ref(false);
@@ -277,6 +287,7 @@ const formattedShortDate = computed(() => {
     }).toUpperCase();
 });
 
+
 const bossContribution = computed(() => {
     // Simulated contribution % based on damage
     return Math.min(10, Math.ceil(totalBossDamage.value / 500)).toFixed(1);
@@ -285,38 +296,74 @@ const bossContribution = computed(() => {
 const isHot = computed(() => props.activity.like_count >= 5 || props.activity.comment_count >= 3);
 const isRecord = computed(() => milestones.value.length > 0);
 
+// SUSTITUYE LAS DOS VERSIONES DE rankStyles POR ESTA SOLA:
+const rankStyles = computed(() => {
+  const rank = props.activity.global_rank;
+  if (!rank) return 'bg-white/5 border-white/10 text-muted';
+
+  switch (rank) {
+    case 1: // ORO SOLIDO PREMIUM
+      return 'bg-[#F59E0B] text-black border-[#F59E0B] shadow-[0_0_15px_rgba(245,158,11,0.4)]';
+    case 2: // PLATA
+      return 'bg-[#E2E8F0] text-black border-[#E2E8F0] shadow-[0_0_15px_rgba(226,232,240,0.3)]';
+    case 3: // BRONCE
+      return 'bg-[#B45309] text-white border-[#B45309] shadow-[0_0_15px_rgba(180,83,9,0.3)]';
+    default: // RESTO DE RANKINGS
+      return 'bg-white/5 border-white/10 text-muted/60';
+  }
+});
+
 const animatedDamage = ref(0);
 const animatedReps = ref(0);
 
+const toggleLike = () => {
+  if (navigator.vibrate) navigator.vibrate(10);
+  emit('toggleLike');
+};
+
 onMounted(() => {
-    // Animate Damage
+    // Animate Damage (300ms duration, easeOutExpo feel)
     const endDamage = Number(props.activity.total_damage_today) || 0;
     if (endDamage > 0) {
-        let startD = 0;
-        const timerD = setInterval(() => {
-            startD += Math.ceil(endDamage / 30);
-            if (startD >= endDamage) {
-                animatedDamage.value = endDamage;
-                clearInterval(timerD);
-            } else {
-                animatedDamage.value = startD;
-            }
-        }, 30);
+        let currentD = 0;
+        const duration = 400; // ms
+        const startTime = Date.now();
+        
+        const animateD = () => {
+            const now = Date.now();
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // easeOutExpo: 1 - 2^(-10 * x)
+            const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+            
+            animatedDamage.value = Math.floor(endDamage * easeProgress);
+            
+            if (progress < 1) requestAnimationFrame(animateD);
+            else animatedDamage.value = endDamage;
+        };
+        requestAnimationFrame(animateD);
     }
 
     // Animate Reps
     const endReps = Number(props.activity.total_reps_today) || 0;
     if (endReps > 0) {
-        let startR = 0;
-        const timerR = setInterval(() => {
-            startR += Math.ceil(endReps / 30);
-            if (startR >= endReps) {
-                animatedReps.value = endReps;
-                clearInterval(timerR);
-            } else {
-                animatedReps.value = startR;
-            }
-        }, 30);
+        let currentR = 0;
+        const duration = 400;
+        const startTime = Date.now();
+        
+        const animateR = () => {
+            const now = Date.now();
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+            
+            animatedReps.value = Math.floor(endReps * easeProgress);
+            
+            if (progress < 1) requestAnimationFrame(animateR);
+            else animatedReps.value = endReps;
+        };
+        requestAnimationFrame(animateR);
     }
 });
 
@@ -413,5 +460,13 @@ watch(() => props.highlighted, (newVal) => {
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(var(--primary-500-rgb), 0.2);
   border-radius: 10px;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 </style>

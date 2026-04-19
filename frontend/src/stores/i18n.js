@@ -736,8 +736,8 @@ const translations = {
 
     // Activity Card
     activity_level_label: 'LVL',
-    activity_reps_session: 'TOTAL REPS',
-    activity_damage_session: 'BOSS DAMAGE',
+    activity_reps_session: 'REPS',
+    activity_damage_session: 'DAMAGE',
     activity_milestone_msg: '{threshold} total {exercise}!',
     activity_personal_record: 'PERSONAL RECORD',
     activity_rank_top: 'RANK #{n} GLOBAL',
@@ -1493,8 +1493,8 @@ const translations = {
     codex_cha_action: 'Da like o comenta en las publicaciones del feed social.',
     battle_overhaul_cha_desc: 'Aumenta el multiplicador global de daño.',
     stat_cha: 'CARISMA',
-    activity_reps_session: 'REPETICIONES',
-    activity_damage_session: 'DAÑO A BOSS',
+    activity_reps_session: 'REPS',
+    activity_damage_session: 'DAÑO',
     activity_personal_record: 'RÉCORD PERSONAL',
     activity_rank_top: 'RANK #{n} GLOBAL',
     activity_top_dated: 'TOP {n}% ({date})',

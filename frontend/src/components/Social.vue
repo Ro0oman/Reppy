@@ -1,8 +1,8 @@
 <template>
-  <div class="max-w-5xl mx-auto w-full px-4 pt-6 pb-32 space-y-8">
+  <div class="max-w-5xl mx-auto w-full px-4 pt-6 pb-32 space-y-8 relative">
     <div class="space-y-4">
       <!-- Community Hub simplified title -->
-      <div class="flex flex-col gap-1 pt-2">
+      <div class="flex flex-col gap-1 pt-2 relative">
           <h1 class="text-xl font-black text-foreground uppercase italic tracking-tighter">{{ i18n.t('community') }}.HUB</h1>
           <p class="text-[10px] text-muted uppercase tracking-widest opacity-60">{{ i18n.t('community_subtitle') }}</p>
       </div>
@@ -18,8 +18,8 @@
           <Activity class="w-3.5 h-3.5" :class="activeTab === 'feed' ? 'animate-pulse' : ''" />
           <span class="truncate">{{ i18n.t('social_wall') }}</span>
           
-          <!-- Tactical Highlight Bar -->
-          <div v-if="activeTab === 'feed'" class="absolute bottom-0 inset-x-4 h-[2px] bg-primary-500 shadow-[0_0_15px_rgba(255,69,0,0.8)]"></div>
+          <!-- Tactical Highlight Bar (Neon Precision) -->
+          <div v-if="activeTab === 'feed'" class="absolute bottom-0 inset-x-4 h-[2px] bg-primary-500 tab-indicator-neon transition-all duration-300"></div>
         </button>
 
         <div class="h-4 w-px bg-white/10 hidden sm:block"></div>
@@ -32,8 +32,8 @@
           <Trophy class="w-3.5 h-3.5" :class="activeTab === 'rankings' ? 'animate-pulse' : ''" />
           <span class="truncate">{{ i18n.t('rankings') }}</span>
           
-          <!-- Tactical Highlight Bar -->
-          <div v-if="activeTab === 'rankings'" class="absolute bottom-0 inset-x-4 h-[2px] bg-primary-500 shadow-[0_0_15px_rgba(255,69,0,0.8)]"></div>
+          <!-- Tactical Highlight Bar (Neon Precision) -->
+          <div v-if="activeTab === 'rankings'" class="absolute bottom-0 inset-x-4 h-[2px] bg-primary-500 tab-indicator-neon transition-all duration-300"></div>
         </button>
       </div>
     </div>
@@ -202,6 +202,23 @@ const activeExerciseLabel = computed(() => {
   return i18n.t(activeExercise.value);
 });
 
+const activeBoss = ref(null);
+const bossHealthPercent = computed(() => {
+  if (!activeBoss.value || !activeBoss.value.total_hp) return 0;
+  return (activeBoss.value.current_hp / activeBoss.value.total_hp) * 100;
+});
+
+const fetchActiveBoss = async () => {
+  try {
+    const res = await axios.get('/api/boss/active');
+    if (res.data && res.data.boss) {
+      activeBoss.value = res.data.boss;
+    }
+  } catch (e) {
+    console.error('Error fetching boss for health bar:', e);
+  }
+};
+
 const searchUsers = async () => {
   if (!searchQuery.value) {
     searchResults.value = [];
@@ -253,6 +270,7 @@ const fetchSocialStats = async () => {
 onMounted(() => {
   fetchFriends();
   fetchSocialStats();
+  fetchActiveBoss();
 });
 </script>
 
