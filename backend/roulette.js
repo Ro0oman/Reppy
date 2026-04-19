@@ -52,14 +52,15 @@ router.post('/spin', authenticate, async (req, res) => {
     // 2. Define Prized with Weights
     // Total weights = 100
     const prizes = [
-      { id: 0, value: 20, weight: 30, type: 'coins' },
-      { id: 1, value: 50, weight: 25, type: 'coins' },
-      { id: 2, value: 100, weight: 20, type: 'coins' },
+      { id: 0, value: 20, weight: 25, type: 'coins' },
+      { id: 1, value: 50, weight: 20, type: 'coins' },
+      { id: 2, value: 100, weight: 15, type: 'coins' },
       { id: 3, value: 200, weight: 10, type: 'coins' },
       { id: 4, value: 400, weight: 5, type: 'coins' },
       { id: 5, value: 0, weight: 5, type: 'nothing', msg: 'Sigue entrenando!' },
-      { id: 6, value: 0, weight: 3, type: 'nothing', msg: 'Mala suerte...' },
-      { id: 7, value: 'special', weight: 2, type: 'special' }
+      { id: 6, rarity: 'common', weight: 10, type: 'consumable', label: 'Poción Común (x1.5)' },
+      { id: 7, rarity: 'rare', weight: 7, type: 'consumable', label: 'Poción Rara (x2.0)' },
+      { id: 8, rarity: 'legendary', weight: 3, type: 'consumable', label: 'Poción Legendaria (x3.0)' }
     ];
 
     // Pick a prize
@@ -86,26 +87,29 @@ router.post('/spin', authenticate, async (req, res) => {
     if (selectedPrize.type === 'coins') {
       await query('UPDATE users SET reppy_coins = reppy_coins + $1 WHERE id = $2', [selectedPrize.value, userId]);
       await trackCoinTransaction(userId, selectedPrize.value, 'ROULETTE', `Premio de la Ruleta Diaria`);
-    } else if (selectedPrize.type === 'special') {
-      // Grant random unowned cosmetic
-      const unownedRes = await query(
-        `SELECT * FROM cosmetics 
-         WHERE id NOT IN (SELECT cosmetic_id FROM user_inventory WHERE user_id = $1)
-         LIMIT 1`,
-        [userId]
-      );
-
-      if (unownedRes.rows.length > 0) {
-        const item = unownedRes.rows[0];
-        await query('INSERT INTO user_inventory (user_id, cosmetic_id) VALUES ($1, $2)', [userId, item.id]);
+    } else if (selectedPrize.type === 'consumable') {
+      // Find the specific cosmetic ID
+      const cosmeticRes = await query('SELECT id, name FROM cosmetics WHERE type = \'consumable\' AND rarity = $1', [selectedPrize.rarity]);
+      
+      if (cosmeticRes.rows.length > 0) {
+        const item = cosmeticRes.rows[0];
+        
+        // Check if user already has it to update quantity
+        const invRes = await query('SELECT * FROM user_inventory WHERE user_id = $1 AND cosmetic_id = $2', [userId, item.id]);
+        
+        if (invRes.rows.length > 0) {
+          await query('UPDATE user_inventory SET quantity = quantity + 1, is_new = TRUE WHERE user_id = $1 AND cosmetic_id = $2', [userId, item.id]);
+        } else {
+          await query('INSERT INTO user_inventory (user_id, cosmetic_id, quantity) VALUES ($1, $2, 1)', [userId, item.id]);
+        }
+        
         result.item = item;
       } else {
-        // Backup prize: 500 coins
+        // Fallback: 500 coins if item not found (safety)
         await query('UPDATE users SET reppy_coins = reppy_coins + 500 WHERE id = $1', [userId]);
-        await trackCoinTransaction(userId, 500, 'ROULETTE', 'Ruleta: Bono Especial (Todo Coleccionado)');
+        await trackCoinTransaction(userId, 500, 'ROULETTE', 'Ruleta: Bono Especial (Fallback)');
         result.type = 'coins';
         result.value = 500;
-        result.message = '¡Todos los objetos obtenidos! +500 Reppy Coins';
       }
     }
 
