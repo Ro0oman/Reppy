@@ -1,110 +1,89 @@
 <template>
-  <div class="flex flex-col gap-6 p-2 sm:p-4 rounded-3xl relative">
+  <div class="flex flex-col gap-4 p-2 relative">
     
-    <!-- Timeframe & Filter Controls -->
-    <div class="flex flex-col gap-4 relative z-10 px-2">
-      <!-- Friends vs Global Switcher -->
-      <div v-if="authStore.isAuthenticated" class="flex p-1 bg-surface/40 rounded-xl border border-border mx-auto w-full max-w-md">
+    <!-- Timeframe & Filter Controls (Tactical & Compact) -->
+    <div class="flex flex-col sm:flex-row items-center gap-2 relative z-10 px-1">
+      <!-- Friends vs Global -->
+      <div v-if="authStore.isAuthenticated" class="flex p-0.5 bg-black/40 rounded-lg border border-white/5 w-full sm:w-auto">
         <button 
           @click="type = 'friends'"
-          class="flex-1 py-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all rounded-lg relative z-10"
-          :class="type === 'friends' ? 'text-foreground' : 'text-muted hover:text-foreground'"
+          class="flex-1 sm:px-4 py-1.5 text-[9px] font-black uppercase tracking-widest transition-all rounded-md relative z-10"
+          :class="type === 'friends' ? 'text-primary-400 bg-white/5' : 'text-muted/60 hover:text-foreground'"
         >
-          <span v-if="type === 'friends'" class="absolute inset-0 bg-foreground/5 border border-border rounded-lg"></span>
           {{ i18n.t('lb_friends') }}
         </button>
         <button 
           @click="type = 'global'"
-          class="flex-1 py-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all rounded-lg relative z-10"
-          :class="type === 'global' ? 'text-foreground' : 'text-muted hover:text-foreground'"
+          class="flex-1 sm:px-4 py-1.5 text-[9px] font-black uppercase tracking-widest transition-all rounded-md relative z-10"
+          :class="type === 'global' ? 'text-primary-400 bg-white/5' : 'text-muted/60 hover:text-foreground'"
         >
-          <span v-if="type === 'global'" class="absolute inset-0 bg-foreground/5 border border-border rounded-lg"></span>
           {{ i18n.t('lb_global') }}
         </button>
       </div>
 
-      <!-- Timeframe Segmented Control (Industrial Dock) -->
-      <div class="flex gap-1 p-1 bg-surface/40 border border-border rounded-xl overflow-x-auto no-scrollbar">
+      <!-- Timeframe -->
+      <div class="flex flex-1 p-0.5 bg-black/40 border border-white/5 rounded-lg overflow-x-auto no-scrollbar w-full">
         <button 
           v-for="tf in ['today', 'week', 'month', 'year', 'all']" 
           :key="tf"
           @click="timeframe = tf"
-          class="flex-shrink-0 min-w-[70px] py-1.5 text-[9px] font-black uppercase tracking-widest transition-all rounded-lg relative z-10"
-          :class="timeframe === tf ? 'text-primary-500' : 'text-muted hover:text-foreground'"
+          class="flex-1 min-w-[50px] py-1.5 text-[8px] font-black uppercase tracking-widest transition-all rounded-md relative z-10"
+          :class="timeframe === tf ? 'text-primary-400 bg-white/5' : 'text-muted/60 hover:text-foreground'"
         >
-          <span v-if="timeframe === tf" class="absolute inset-0 bg-foreground/5 border border-border rounded-lg"></span>
           {{ i18n.t('tf_' + tf) }}
         </button>
       </div>
     </div>
 
-    <!-- Podium Section (Top 3) -->
-    <div v-if="!loading && podiumUsers.length > 0" class="flex items-end justify-center gap-2 sm:gap-8 mt-12 mb-16 relative z-10">
+    <!-- Podium Section (Flatter & Horizontal) -->
+    <div v-if="!loading && podiumUsers.length > 0" class="flex items-center justify-center gap-4 sm:gap-12 py-4 mb-2 relative z-10 bg-foreground/[0.02] rounded-2xl border border-white/5">
       <!-- 2nd Place -->
       <button v-if="podiumUsers[1]" 
         @click="$emit('viewProfile', podiumUsers[1].id)"
-        :title="i18n.locale === 'es' ? `Ver perfil de ${podiumUsers[1].name}` : `View ${podiumUsers[1].name}'s profile`"
-        class="flex flex-col items-center group cursor-pointer transition-all active:scale-95 outline-none focus:ring-2 focus:ring-primary-500/50 rounded-2xl p-2">
-        <div class="relative mb-3">
-          <div class="p-1 rounded-full bg-gradient-to-b from-zinc-300 to-zinc-600 shadow-xl ring-2 ring-zinc-500/20">
-            <AvatarFrame :src="podiumUsers[1].avatar_url" :border-css="podiumUsers[1].border_css" :avatar-css="podiumUsers[1].avatar_css" :size="56" class="sm:hidden" />
-            <AvatarFrame :src="podiumUsers[1].avatar_url" :border-css="podiumUsers[1].border_css" :avatar-css="podiumUsers[1].avatar_css" :size="72" class="hidden sm:block" />
+        class="flex flex-col items-center group cursor-pointer transition-all active:scale-95 outline-none rounded-xl p-1">
+        <div class="relative mb-2">
+          <div class="p-0.5 rounded-full bg-zinc-500/20 ring-1 ring-zinc-500/40">
+            <AvatarFrame :src="podiumUsers[1].avatar_url" :border-css="podiumUsers[1].border_css" :avatar-css="podiumUsers[1].avatar_css" :size="48" />
           </div>
-          <div class="absolute -bottom-2 -right-1 w-6 h-6 bg-muted rounded-full flex items-center justify-center border-2 border-background shadow-lg">
-             <span class="text-[10px] font-black text-white">02</span>
+          <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-zinc-600 rounded-full flex items-center justify-center border border-background shadow-lg">
+             <span class="text-[8px] font-black text-white">2</span>
           </div>
         </div>
-        <p class="text-[10px] font-black text-muted uppercase tracking-tighter truncate w-20 text-center mb-0.5 font-tight">{{ podiumUsers[1].name }}</p>
-        <div class="flex items-center gap-1.5 mb-1 bg-surface/40 px-1.5 py-0.5 rounded-md border border-border/30">
-           <span class="text-[7px] font-black text-primary-500 uppercase tracking-widest">LVL</span>
-           <span class="text-[9px] font-black text-foreground italic">{{ podiumUsers[1].current_level }}</span>
-        </div>
-        <span class="text-sm font-black text-foreground italic text-precision">{{ podiumUsers[1].total_reps }}</span>
+        <p class="text-[9px] font-black text-muted uppercase tracking-tighter truncate w-16 text-center leading-none">{{ podiumUsers[1].name }}</p>
+        <span class="text-xs font-black text-foreground italic mt-1">{{ podiumUsers[1].total_reps }}</span>
       </button>
 
-      <!-- 1st Place (Center) -->
+      <!-- 1st Place -->
       <button v-if="podiumUsers[0]" 
         @click="$emit('viewProfile', podiumUsers[0].id)"
-        :title="i18n.locale === 'es' ? `Ver perfil de ${podiumUsers[0].name}` : `View ${podiumUsers[0].name}'s profile`"
-        class="flex flex-col items-center group cursor-pointer transition-all -mt-8 active:scale-95 outline-none focus:ring-2 focus:ring-primary-500/50 rounded-2xl p-2 px-6">
-        <div class="relative mb-4">
-          <div class="absolute -top-10 left-1/2 -translate-x-1/2 text-4xl animate-bounce duration-[2000ms]">👑</div>
-          <div class="p-1.5 rounded-full bg-gradient-to-br from-primary-400 via-primary-500 to-primary-700 shadow-[0_0_40px_rgba(255,69,0,0.2)] ring-4 ring-primary-500/20">
-            <AvatarFrame :src="podiumUsers[0].avatar_url" :border-css="podiumUsers[0].border_css" :avatar-css="podiumUsers[0].avatar_css" :size="72" class="sm:hidden" />
-            <AvatarFrame :src="podiumUsers[0].avatar_url" :border-css="podiumUsers[0].border_css" :avatar-css="podiumUsers[0].avatar_css" :size="100" class="hidden sm:block" />
+        class="flex flex-col items-center group cursor-pointer transition-all active:scale-95 outline-none rounded-xl p-1 scale-110">
+        <div class="relative mb-2">
+          <div class="absolute -top-4 left-1/2 -translate-x-1/2 text-xl drop-shadow-lg">👑</div>
+          <div class="p-1 rounded-full bg-primary-500/20 ring-2 ring-primary-500/40 shadow-[0_0_20px_rgba(255,69,0,0.15)]">
+            <AvatarFrame :src="podiumUsers[0].avatar_url" :border-css="podiumUsers[0].border_css" :avatar-css="podiumUsers[0].avatar_css" :size="60" />
           </div>
-          <div class="absolute -bottom-2 -right-1 w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center border-4 border-background shadow-xl">
-             <span class="text-xs font-black text-white">01</span>
+          <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center border-2 border-background shadow-xl">
+             <span class="text-[10px] font-black text-white">1</span>
           </div>
         </div>
-        <p class="text-xs font-black text-foreground uppercase tracking-widest truncate w-28 text-center mb-0.5 leading-tight font-tight">{{ podiumUsers[0].name }}</p>
-        <div class="flex items-center gap-2 mb-1.5 bg-primary-500/10 px-2.5 py-1 rounded-lg border border-primary-500/30 shadow-[0_0_15px_rgba(255,69,0,0.1)]">
-           <span class="text-[8px] font-black text-primary-500 uppercase tracking-[0.2em]">{{ i18n.t('lb_level') }}</span>
-           <span class="text-xs font-black text-foreground italic leading-none">{{ podiumUsers[0].current_level }}</span>
-        </div>
-        <span class="text-2xl font-black text-primary-500 italic text-precision drop-shadow-lg">{{ podiumUsers[0].total_reps }}</span>
+        <p class="text-[10px] font-black text-foreground uppercase tracking-widest truncate w-20 text-center leading-none">{{ podiumUsers[0].name }}</p>
+        <span class="text-lg font-black text-primary-500 italic drop-shadow-lg leading-none mt-1">{{ podiumUsers[0].total_reps }}</span>
       </button>
 
       <!-- 3rd Place -->
       <button v-if="podiumUsers[2]" 
         @click="$emit('viewProfile', podiumUsers[2].id)"
-        :title="i18n.locale === 'es' ? `Ver perfil de ${podiumUsers[2].name}` : `View ${podiumUsers[2].name}'s profile`"
-        class="flex flex-col items-center group cursor-pointer transition-all active:scale-95 outline-none focus:ring-2 focus:ring-primary-500/50 rounded-2xl p-2">
-        <div class="relative mb-3">
-          <div class="p-1 rounded-full bg-gradient-to-b from-orange-400 to-orange-900 shadow-xl ring-2 ring-orange-500/20">
-            <AvatarFrame :src="podiumUsers[2].avatar_url" :border-css="podiumUsers[2].border_css" :avatar-css="podiumUsers[2].avatar_css" :size="56" class="sm:hidden" />
-            <AvatarFrame :src="podiumUsers[2].avatar_url" :border-css="podiumUsers[2].border_css" :avatar-css="podiumUsers[2].avatar_css" :size="72" class="hidden sm:block" />
+        class="flex flex-col items-center group cursor-pointer transition-all active:scale-95 outline-none rounded-xl p-1">
+        <div class="relative mb-2">
+          <div class="p-0.5 rounded-full bg-orange-900/20 ring-1 ring-orange-900/40">
+            <AvatarFrame :src="podiumUsers[2].avatar_url" :border-css="podiumUsers[2].border_css" :avatar-css="podiumUsers[2].avatar_css" :size="48" />
           </div>
-          <div class="absolute -bottom-2 -right-1 w-6 h-6 bg-orange-950 rounded-full flex items-center justify-center border-2 border-background shadow-lg">
-             <span class="text-[10px] font-black text-white">03</span>
+          <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-orange-800 rounded-full flex items-center justify-center border border-background shadow-lg">
+             <span class="text-[8px] font-black text-white">3</span>
           </div>
         </div>
-        <p class="text-[10px] font-black text-muted uppercase tracking-tighter truncate w-20 text-center mb-0.5 font-tight">{{ podiumUsers[2].name }}</p>
-        <div class="flex items-center gap-1.5 mb-1 bg-surface/40 px-1.5 py-0.5 rounded-md border border-border/30">
-           <span class="text-[7px] font-black text-primary-500 uppercase tracking-widest">LVL</span>
-           <span class="text-[9px] font-black text-foreground italic">{{ podiumUsers[2].current_level }}</span>
-        </div>
-        <span class="text-sm font-black text-foreground italic text-precision">{{ podiumUsers[2].total_reps }}</span>
+        <p class="text-[9px] font-black text-muted uppercase tracking-tighter truncate w-16 text-center leading-none">{{ podiumUsers[2].name }}</p>
+        <span class="text-xs font-black text-foreground italic mt-1">{{ podiumUsers[2].total_reps }}</span>
       </button>
     </div>
     

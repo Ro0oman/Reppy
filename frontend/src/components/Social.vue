@@ -42,33 +42,26 @@
     <SocialFeed v-if="activeTab === 'feed'" @viewProfile="$emit('viewProfile', $event)" />
 
     <!-- Rankings Tab (Combined Search + Leaderboard) -->
-    <div v-else class="space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div v-else class="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <!-- Rankings Section -->
-      <div class="space-y-6">
-        <div class="flex items-center gap-3 px-2">
-          <Trophy class="w-4 h-4 text-primary-500" />
-          <h3 class="text-xs font-black uppercase tracking-[0.4em] text-muted">{{ i18n.t('global_rankings') }}</h3>
-        </div>
-        
+      <div class="space-y-4">
         <div class="card-stats !p-0 overflow-hidden border-border bg-surface/20 backdrop-blur-sm">
-          <div class="p-4 sm:p-6 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-6 bg-foreground/[0.02]">
-            <div class="flex items-center gap-4">
-               <div class="w-10 h-10 bg-primary-500/10 rounded-xl flex items-center justify-center">
-                 <BarChart3 class="w-5 h-5 text-primary-500" />
-               </div>
+          <div class="p-4 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4 bg-foreground/[0.02]">
+            <div class="flex items-center gap-3">
+               <BarChart3 class="w-4 h-4 text-primary-500" />
                <div>
-                 <h3 class="text-lg font-black text-industrial uppercase text-foreground tracking-tight leading-none">
-                   {{ activeExerciseLabel }} <span class="text-muted/60">{{ i18n.t('protocol_label') }}</span>
+                 <h3 class="text-sm font-black text-industrial uppercase text-foreground tracking-tight leading-none">
+                   {{ activeExerciseLabel }} <span class="text-muted/60 text-[10px]">{{ i18n.t('protocol_label') }}</span>
                  </h3>
-                 <p class="text-[9px] font-black text-muted uppercase tracking-widest mt-1">{{ i18n.t('live_sync') }}</p>
+                 <p class="text-[8px] font-black text-muted uppercase tracking-[0.2em] mt-1 opacity-50">{{ i18n.t('live_sync') }}</p>
                </div>
             </div>
-            <ExerciseSelector v-model="activeExercise" class="!bg-transparent !p-0 w-full md:w-auto" />
+            <ExerciseSelector v-model="activeExercise" class="!bg-transparent !p-0 w-full md:w-auto scale-90 md:origin-right" />
           </div>
           <Leaderboard 
             :exercise-type="activeExercise"
             @viewProfile="$emit('viewProfile', $event)"
-            class="min-h-[400px]"
+            class="min-h-[300px]"
           />
         </div>
       </div>
