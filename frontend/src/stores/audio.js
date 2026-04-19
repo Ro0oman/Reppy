@@ -5,7 +5,8 @@ export const useAudioStore = defineStore('audio', {
     isMuted: localStorage.getItem('reppy_audio_muted') === 'true',
     volume: 0.5,
     sounds: {},
-    audioContext: null
+    audioContext: null,
+    lastPlayTime: {} // Throttle tracking
   }),
   actions: {
     toggleMute() {
@@ -26,17 +27,21 @@ export const useAudioStore = defineStore('audio', {
     play(soundName) {
       if (this.isMuted) return;
       
-      // Resuming context on any play attempt (gesture based)
+      // Safety: Prevent rapid-fire duplicate sounds (standard throttle)
+      const now = Date.now();
+      if (this.lastPlayTime[soundName] && now - this.lastPlayTime[soundName] < 80) {
+        return;
+      }
+      this.lastPlayTime[soundName] = now;
+
       this.resumeContext();
 
-      // If sound is already loaded, play it
       if (this.sounds[soundName]) {
         this.sounds[soundName].currentTime = 0;
-        this.sounds[soundName].play().catch(() => {}); // Silently fail if blocked
+        this.sounds[soundName].play().catch(() => {});
         return;
       }
       
-      // Load and play
       const audio = new Audio(`/audio/${soundName}.mp3`);
       audio.volume = this.volume;
       this.sounds[soundName] = audio;

@@ -115,8 +115,8 @@ const loading = ref(false);
 const addReps = async (count) => {
   if (!count || loading.value) return;
   
-  playHit();
   loading.value = true;
+  playHit();
   try {
     const today = getLocalDateString();
     const res = await axios.post('/api/reps', {

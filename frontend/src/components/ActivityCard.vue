@@ -34,7 +34,7 @@
         </div>
         <div class="flex flex-col min-w-0">
           <div class="flex items-center gap-2">
-            <span class="text-m font-semibold text-foreground tracking-tight truncate leading-tight">{{ activity.user_name }}</span>
+            <span class="text-sm font-semibold text-foreground tracking-tight truncate leading-tight">{{ activity.user_name }}</span>
             <div v-if="activity.real_streak > 1" 
                  class="flex items-center gap-1 px-1.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded text-[11px] font-black text-emerald-500 uppercase tracking-tighter shrink-0"
                  :class="activity.real_streak > 5 ? 'animate-pulse' : ''">
@@ -162,7 +162,7 @@
           v-model="commentText" 
           @keyup.enter="submitComment"
           :placeholder="i18n.t('activity_comment_hint')" 
-          class="flex-1 bg-surface/10 border border-border rounded-xl px-4 py-2 text-xs font-medium focus:outline-none focus:border-primary-500/50 transition-all"
+          class="flex-1 bg-surface/10 border border-border rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:border-primary-500/50 transition-all"
         />
         <button @click="submitComment" class="p-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-all disabled:opacity-50 flex items-center justify-center min-w-[40px]" :disabled="!commentText.trim() || submittingComment">
           <Loader2 v-if="submittingComment" class="w-4 h-4 animate-spin" />

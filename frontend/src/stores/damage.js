@@ -15,7 +15,6 @@ export const useDamageStore = defineStore('damage', {
       if (now - this.lastDamageTime < 1000) return;
       
       this.lastDamageTime = now;
-      audioStore.play('hit');
       const id = now + Math.random();
       // Generate random position near the center/target area
       const x = 50 + (Math.random() * 20 - 10);

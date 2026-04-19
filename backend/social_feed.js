@@ -4,6 +4,7 @@ import pool from './db.js';
 import { authenticate } from './middleware.js';
 import { createNotification } from './utils/notifications.js';
 import { recalculateUserStats } from './utils/stats.js';
+import { getLocalDateString } from './utils/date.js';
 
 const router = express.Router();
 const SOCIAL_XP_DAILY_CAP = 200;
@@ -121,12 +122,15 @@ router.get('/feed', authenticate, async (req, res) => {
             (SELECT name FROM boss_fights WHERE status = 'active' ORDER BY order_index ASC LIMIT 1) as active_boss_name
         FROM reps r
         JOIN users u ON r.user_id = u.id
-        LEFT JOIN daily_summaries ds ON ds.user_id = r.user_id AND ds.date = r.date
+        LEFT JOIN daily_summaries ds ON ds.user_id = r.user_id AND ds.date::date = r.date::date
         LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
         LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
         LEFT JOIN cosmetics pb ON u.equipped_post_background_id = pb.id
         ${whereClause}
-        GROUP BY u.id, r.date, ds.id, b.css_value, a.css_value, pb.css_value, u.total_reps
+        GROUP BY 
+          u.id, r.date, ds.id, ds.title, ds.description,
+          b.css_value, a.css_value, pb.css_value, 
+          u.name, u.avatar_url, u.current_level, u.total_reps, u.cha_xp
       )
       SELECT 
         f.*,
