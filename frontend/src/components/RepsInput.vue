@@ -85,6 +85,7 @@
 import { ref, computed } from 'vue';
 import axios from 'axios';
 import { Zap, Check } from 'lucide-vue-next';
+import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
 import { useNotificationStore } from '../stores/notification';
 import { useDamageStore } from '../stores/damage';
