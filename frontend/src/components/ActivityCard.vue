@@ -34,11 +34,11 @@
         </div>
         <div class="flex flex-col min-w-0">
           <div class="flex items-center gap-2">
-            <span class="text-sm font-semibold text-foreground tracking-tight truncate leading-tight">{{ activity.user_name }}</span>
+            <span class="text-m font-semibold text-foreground tracking-tight truncate leading-tight">{{ activity.user_name }}</span>
             <div v-if="activity.real_streak > 1" 
-                 class="flex items-center gap-1 px-1.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded text-[9px] font-black text-emerald-500 uppercase tracking-tighter shrink-0"
+                 class="flex items-center gap-1 px-1.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded text-[11px] font-black text-emerald-500 uppercase tracking-tighter shrink-0"
                  :class="activity.real_streak > 5 ? 'animate-pulse' : ''">
-              {{ activity.real_streak }}D 🔥
+              {{ activity.real_streak }}🔥
             </div>
           </div>
           <span class="text-[9px] text-muted font-medium uppercase tracking-widest opacity-60">{{ timeAgo }}</span>

@@ -140,9 +140,6 @@
           class="flex flex-col items-center justify-center gap-1.5 flex-1 h-full transition-all relative group"
           :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted hover:text-foreground'">
           
-          <!-- Modern Active Indicator -->
-          <div v-if="$route.name === nav.id" 
-               class="absolute -top-2 w-12 h-1 bg-primary-500 rounded-full shadow-[0_0_20px_rgba(255,69,0,0.8)] animate-in fade-in zoom-in duration-500"></div>
           
           <div class="relative">
             <!-- Background Glow for Active Icon -->
