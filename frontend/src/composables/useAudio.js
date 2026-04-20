@@ -11,7 +11,6 @@ export function useAudio() {
   
   // High-tech tactical blips (generated via code, no assets needed)
   const playClickBlip = () => audioStore.playBlip(1200, 0.05, 'square');
-  const playHoverBlip = () => audioStore.playBlip(800, 0.03, 'sine');
   const playEquipBlip = () => audioStore.playBlip(1500, 0.1, 'triangle');
 
   return {
@@ -21,7 +20,6 @@ export function useAudio() {
     playLevelUp,
     playChest,
     playClickBlip,
-    playHoverBlip,
     playEquipBlip,
     toggleMute: audioStore.toggleMute,
     isMuted: () => audioStore.isMuted

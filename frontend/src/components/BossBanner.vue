@@ -48,7 +48,7 @@ import { useI18nStore } from '../stores/i18n';
 const i18n = useI18nStore();
 
 const CACHE_KEY = 'reppy_last_boss';
-const cachedBoss = localStorage.getItem(CACHE_KEY);
+const cachedBoss = !import.meta.env.SSR && localStorage.getItem(CACHE_KEY);
 
 const boss = ref(cachedBoss ? JSON.parse(cachedBoss) : null);
 const loading = ref(!boss.value);
@@ -67,7 +67,9 @@ const fetchBoss = async (force = false) => {
     const res = await axios.get('/api/boss/active');
     if (res.data && res.data.boss) {
       boss.value = res.data.boss;
-      localStorage.setItem(CACHE_KEY, JSON.stringify(boss.value));
+      if (!import.meta.env.SSR) {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(boss.value));
+      }
       lastFetchTime = now;
     } else {
       boss.value = null;
@@ -80,9 +82,11 @@ const fetchBoss = async (force = false) => {
 };
 
 onMounted(() => {
-  setTimeout(() => {
-    fetchBoss();
-  }, 0);
+  if (!import.meta.env.SSR) {
+    setTimeout(() => {
+      fetchBoss();
+    }, 0);
+  }
 });
 </script>
 

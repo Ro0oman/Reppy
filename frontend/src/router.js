@@ -14,13 +14,17 @@ const AdminPanel = () => import('./components/AdminPanel.vue')
 const ExerciseLanding = () => import('./components/ExerciseLanding.vue')
 const Notifications = () => import('./components/Notifications.vue')
 const BlogList = () => import('./components/BlogList.vue')
+const Codex = () => import('./components/Codex.vue')
 const NotFound = () => import('./components/NotFound.vue')
 
-const routes = [
-  // Redirección de la raíz vacía a la versión en español por defecto
+export const routes = [
+  // Redirección adaptativa de la raíz basada en detección de idioma
   { 
     path: '/', 
-    redirect: '/es' 
+    redirect: () => {
+      const i18n = useI18nStore();
+      return `/${i18n.locale || 'es'}`;
+    }
   },
   {
     path: '/:lang(es|en)',
@@ -57,6 +61,12 @@ const routes = [
         component: Shop, 
         name: 'shop',
         meta: { requiresAuth: true, title: 'Armería - Tienda de Cosméticos | Reppy' }
+      },
+      { 
+        path: 'codex', 
+        component: Codex, 
+        name: 'codex',
+        meta: { requiresAuth: true, title: 'The Codex - RPG Evolution | Reppy' }
       },
       { 
         path: 'inventory', 
@@ -145,92 +155,90 @@ const routes = [
   }
 ]
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-  scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition
-    } else {
-      return { top: 0 }
-    }
-  }
-})
-
 // Route Guards
-router.beforeEach(async (to, from, next) => {
-  const authStore = useAuthStore()
-  const i18n = useI18nStore()
-  
-  // 1. Sincronizar el idioma desde la URL
-  if (to.params.lang) {
-    i18n.setLocale(to.params.lang)
-  }
+export function setupRouterGuards(router) {
+  router.beforeEach(async (to, from, next) => {
+    const authStore = useAuthStore()
+    const i18n = useI18nStore()
+    
+    // 1. Sincronizar el idioma desde la URL
+    if (to.params.lang) {
+      await i18n.setLocale(to.params.lang)
+    }
 
-  // 2. Sincronizar Etiquetas SEO Globales (Canonical, Hreflang)
-  const baseUrl = 'https://reppy-weld.vercel.app'
-  const currentPath = to.path
-  const currentLang = to.params.lang || 'es'
-  
-  // Canonical
-  let canonical = document.querySelector('link[rel="canonical"]')
-  if (canonical) {
-    canonical.setAttribute('href', `${baseUrl}${currentPath}`)
-  }
+    // 2. Sincronizar Etiquetas SEO Globales (Canonical, Hreflang)
+    const baseUrl = 'https://reppy-weld.vercel.app'
+    const currentPath = to.path
+    const currentLang = to.params.lang || 'es'
+    
+    // Canonical (Client-only)
+    if (!import.meta.env.SSR) {
+      let canonical = document.querySelector('link[rel="canonical"]')
+      if (canonical) {
+        canonical.setAttribute('href', `${baseUrl}${currentPath}`)
+      }
+    }
 
-  // Hreflang alternates
-  const langs = ['es', 'en']
-  langs.forEach(l => {
-    let alt = document.querySelector(`link[hreflang="${l}"]`)
-    if (alt) {
-      const altPath = currentPath.replace(/^\/(es|en)/, `/${l}`)
-      alt.setAttribute('href', `${baseUrl}${altPath}`)
+    // Hreflang alternates (Client-only)
+    if (!import.meta.env.SSR) {
+      const langs = ['es', 'en']
+      langs.forEach(l => {
+        let alt = document.querySelector(`link[hreflang="${l}"]`)
+        if (alt) {
+          const altPath = currentPath.replace(/^\/(es|en)/, `/${l}`)
+          alt.setAttribute('href', `${baseUrl}${altPath}`)
+        }
+      })
+    }
+
+    // x-default (Client-only)
+    if (!import.meta.env.SSR) {
+      let xDefault = document.querySelector('link[hreflang="x-default"]')
+      if (xDefault) {
+        const esPath = currentPath.replace(/^\/(es|en)/, '/es')
+        xDefault.setAttribute('href', `${baseUrl}${esPath}`)
+      }
+    }
+
+    // 3. Configurar el título y descripción de la página
+    const title = to.meta.titleKey ? `${i18n.t(to.meta.titleKey)} | Reppy` : (to.meta.title || 'Reppy');
+    const description = to.meta.descriptionKey ? i18n.t(to.meta.descriptionKey) : 'Registra tus dominadas y flexiones, sube de nivel tus atributos RPG y compite en rankings globales.';
+    
+    if (!import.meta.env.SSR) {
+      document.title = title;
+    }
+    
+    // Meta tags dinámicos para descripción y redes sociales
+    const metas = {
+      'description': description,
+      'og:title': title,
+      'og:description': description,
+      'og:url': `${baseUrl}${currentPath}`,
+      'twitter:title': title,
+      'twitter:description': description
+    };
+
+    if (!import.meta.env.SSR) {
+      Object.entries(metas).forEach(([name, content]) => {
+        let el = document.querySelector(`meta[name="${name}"]`) || document.querySelector(`meta[property="${name}"]`);
+        if (el) el.setAttribute('content', content);
+      });
+    }
+
+    const isAuthenticated = authStore.isAuthenticated
+
+    if (to.meta.requiresAuth && !isAuthenticated) {
+      next({ name: 'login', params: { lang: currentLang } })
+    } else if (to.name === 'landing' && isAuthenticated) {
+      next({ name: 'social', params: { lang: currentLang } })
+    } else if (to.name === 'login' && isAuthenticated) {
+      next({ name: 'social', params: { lang: currentLang } })
+    } else if (to.name === 'dashboard' && !isAuthenticated) {
+      next()
+    } else if (to.meta.requiresAdmin && (!authStore.user || !authStore.user.is_admin)) {
+      next({ name: 'dashboard', params: { lang: currentLang } })
+    } else {
+      next()
     }
   })
-
-  // x-default
-  let xDefault = document.querySelector('link[hreflang="x-default"]')
-  if (xDefault) {
-    const esPath = currentPath.replace(/^\/(es|en)/, '/es')
-    xDefault.setAttribute('href', `${baseUrl}${esPath}`)
-  }
-
-  // 3. Configurar el título y descripción de la página
-  const title = to.meta.titleKey ? `${i18n.t(to.meta.titleKey)} | Reppy` : (to.meta.title || 'Reppy');
-  const description = to.meta.descriptionKey ? i18n.t(to.meta.descriptionKey) : 'Registra tus dominadas y flexiones, sube de nivel tus atributos RPG y compite en rankings globales.';
-  
-  document.title = title;
-  
-  // Meta tags dinámicos para descripción y redes sociales
-  const metas = {
-    'description': description,
-    'og:title': title,
-    'og:description': description,
-    'og:url': `${baseUrl}${currentPath}`,
-    'twitter:title': title,
-    'twitter:description': description
-  };
-
-  Object.entries(metas).forEach(([name, content]) => {
-    let el = document.querySelector(`meta[name="${name}"]`) || document.querySelector(`meta[property="${name}"]`);
-    if (el) el.setAttribute('content', content);
-  });
-
-  const isAuthenticated = authStore.isAuthenticated
-
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    next({ name: 'login', params: { lang: currentLang } })
-  } else if (to.name === 'landing' && isAuthenticated) {
-    next({ name: 'social', params: { lang: currentLang } })
-  } else if (to.name === 'login' && isAuthenticated) {
-    next({ name: 'social', params: { lang: currentLang } })
-  } else if (to.name === 'dashboard' && !isAuthenticated) {
-    next()
-  } else if (to.meta.requiresAdmin && (!authStore.user || !authStore.user.is_admin)) {
-    next({ name: 'dashboard', params: { lang: currentLang } })
-  } else {
-    next()
-  }
-})
-
-export default router
+}

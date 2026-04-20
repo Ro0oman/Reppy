@@ -11,7 +11,7 @@
     <nav class="w-full max-w-6xl px-6 pt-12 pb-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted/40">
       <router-link :to="`/${i18n.locale}`" class="hover:text-primary transition-colors">{{ i18n.t('nav_home') }}</router-link>
       <ChevronRight class="w-3 h-3 opacity-20" />
-      <router-link :to="`/${i18n.locale}/blog`" class="hover:text-primary transition-colors">Blog</router-link>
+      <router-link :to="`/${i18n.locale}/codex`" class="hover:text-primary transition-colors uppercase">{{ i18n.t('nav_codex') }}</router-link>
       <ChevronRight class="w-3 h-3 opacity-20" />
       <span class="text-foreground/60 truncate max-w-[200px] md:max-w-none">{{ post.title }}</span>
     </nav>
@@ -228,7 +228,10 @@
         <p class="text-muted text-lg max-w-xl mx-auto">{{ i18n.t('hero_subtitle') }}</p>
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
           <button @click="router.push(`/${i18n.locale}/login`)" class="btn-reppy !px-10">{{ i18n.t('start_free') }}</button>
-          <button @click="router.push(`/${i18n.locale}`)" class="text-sm font-bold text-muted hover:text-foreground transition-colors">{{ i18n.t('back_to_home') }} &rarr;</button>
+          <button @click="router.push(`/${i18n.locale}/codex`)" class="text-sm font-bold text-muted hover:text-foreground transition-all flex items-center gap-2">
+            <Book class="w-4 h-4" />
+            {{ i18n.t('back_to_codex') }}
+          </button>
         </div>
       </div>
     </section>

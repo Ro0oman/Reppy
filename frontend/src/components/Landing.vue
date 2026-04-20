@@ -20,60 +20,97 @@
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-rose-500/5 rounded-full blur-[200px] animate-pulse duration-[12s]"></div>
       </div>
       
-      <div class="relative z-10 max-w-6xl w-full flex flex-col items-center gap-12">
-        <!-- Floating Status Badge -->
-        <div class="animate-in fade-in slide-in-from-bottom-4 duration-1000">
-          <div class="inline-flex items-center gap-3 px-4 py-2 bg-foreground/5 border border-white/10 rounded-full backdrop-blur-md">
-            <span class="flex h-2 w-2 rounded-full bg-primary-500 animate-ping"></span>
-            <span class="text-[9px] font-black uppercase tracking-[0.3em] text-foreground/60">{{ authStore.isAuthenticated ? 'REPPY_ACTIVE' : 'READY_TO_TRAIN' }}</span>
-          </div>
-        </div>
-
-        <!-- H1: High-Impact Typography -->
-        <div class="space-y-6">
-          <h1 class="text-5xl md:text-7xl font-black tracking-tighter text-foreground leading-[0.95] uppercase italic animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
-            {{ i18n.t('landing_hero_title') }} <br/> <span class="bg-gradient-to-r from-primary-500 to-rose-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(255,69,0,0.2)] text-6xl md:text-8xl">{{ i18n.t('landing_hero_span') }}</span>
-          </h1>
-          
-          <p class="max-w-2xl mx-auto text-xl md:text-2xl text-muted font-medium tracking-tight leading-relaxed animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-400">
-            {{ i18n.t('landing_hero_subtitle') }}
-          </p>
-        </div>
-
-        <!-- Primary Actions -->
-        <div class="flex flex-col sm:flex-row items-center gap-6 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-600">
-          <button @click="$emit('start')" class="group relative px-12 py-6 bg-primary-500 text-white rounded-[2rem] font-black uppercase tracking-widest overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-primary-500/20">
-            <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-            <span class="relative z-10 text-lg">{{ authStore.isAuthenticated ? i18n.t('btn_continue_adventure') : i18n.t('btn_join_now') }}</span>
-          </button>
-          
-          <a href="https://github.com/Ro0oman/Reppy" target="_blank"
-             class="flex items-center gap-4 px-8 py-6 rounded-[2rem] bg-surface/30 hover:bg-surface/50 border border-white/5 backdrop-blur-2xl transition-all group">
-            <Github class="w-6 h-6 text-muted group-hover:text-primary-500 transition-all group-hover:rotate-12" />
-            <div class="flex flex-col items-start gap-0.5">
-              <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest leading-none">OPEN SOURCE</span>
-              <span class="text-sm font-black text-foreground uppercase tracking-tight">GITHUB REPPY</span>
+      <div class="relative z-10 max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <!-- Text Content -->
+        <div class="flex flex-col items-center lg:items-start text-center lg:text-left gap-10">
+          <div class="animate-in fade-in slide-in-from-bottom-4 duration-1000 w-fit">
+            <div class="inline-flex items-center gap-3 px-4 py-2 bg-foreground/5 border border-white/10 rounded-full backdrop-blur-md">
+              <span class="flex h-2 w-2 rounded-full bg-primary-500 animate-ping"></span>
+              <span class="text-[9px] font-black uppercase tracking-[0.3em] text-foreground/60">{{ authStore.isAuthenticated ? 'REPPY_ACTIVE' : 'READY_TO_TRAIN' }}</span>
             </div>
-          </a>
+          </div>
+
+          <div class="space-y-6">
+            <h1 class="text-6xl md:text-8xl font-black tracking-tighter text-foreground leading-[0.9] uppercase italic animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+              {{ i18n.t('landing_hero_title') }} <br/> <span class="bg-gradient-to-r from-primary-500 to-rose-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(255,69,0,0.2)]">{{ i18n.t('landing_hero_span') }}</span>
+            </h1>
+            
+            <p class="max-w-xl text-xl md:text-2xl text-muted font-medium tracking-tight leading-relaxed animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-400">
+              {{ i18n.t('landing_hero_subtitle') }}
+            </p>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-center gap-6 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-600">
+            <button @click="$emit('start')" class="group relative px-12 py-6 bg-primary-500 text-white rounded-[2rem] font-black uppercase tracking-widest overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-primary-500/20">
+              <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+              <span class="relative z-10 text-lg">{{ authStore.isAuthenticated ? i18n.t('btn_continue_adventure') : i18n.t('btn_join_now') }}</span>
+            </button>
+            
+            <a href="https://github.com/Ro0oman/Reppy" target="_blank"
+               class="flex items-center gap-4 px-8 py-6 rounded-[2rem] bg-surface/30 hover:bg-surface/50 border border-white/5 backdrop-blur-2xl transition-all group">
+              <Github class="w-6 h-6 text-muted group-hover:text-primary-500 transition-all group-hover:rotate-12" />
+              <div class="flex flex-col items-start gap-0.5">
+                <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest leading-none">OPEN SOURCE</span>
+                <span class="text-sm font-black text-foreground uppercase tracking-tight">GITHUB REPPY</span>
+              </div>
+            </a>
+          </div>
+
+          <!-- Hero Stats Teaser -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 pt-6 animate-in fade-in duration-1000 delay-1000">
+            <div class="flex flex-col gap-1">
+              <span class="text-3xl font-black text-foreground tracking-tighter italic">1.2M+</span>
+              <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_reps') }}</span>
+            </div>
+            <div class="flex flex-col gap-1">
+              <span class="text-3xl font-black text-foreground tracking-tighter italic">450+</span>
+              <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_bosses') }}</span>
+            </div>
+            <div class="flex flex-col hidden lg:flex flex-col gap-1">
+               <span class="text-3xl font-black text-foreground tracking-tighter italic">100%</span>
+               <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_cost') }}</span>
+            </div>
+            <div class="flex flex-col hidden lg:flex flex-col gap-1">
+               <span class="text-3xl font-black text-foreground tracking-tighter italic">4.9/5</span>
+               <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_score') }}</span>
+            </div>
+          </div>
         </div>
 
-        <!-- Hero Stats Teaser -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-24 pt-12 animate-in fade-in duration-1000 delay-1000">
-          <div class="flex flex-col gap-1">
-            <span class="text-3xl font-black text-foreground tracking-tighter italic">1.2M+</span>
-            <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_reps') }}</span>
+        <!-- Visual Hook: Dashboard Mockup -->
+        <div class="relative animate-in fade-in lg:slide-in-from-right-12 duration-1500 delay-500 justify-self-center lg:justify-self-end">
+          <div class="absolute -inset-4 bg-primary-500/20 blur-3xl rounded-full animate-pulse opacity-50"></div>
+          <div class="relative rounded-[3rem] overflow-hidden border border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.8)] backdrop-blur-xl rotate-3 group hover:rotate-0 transition-transform duration-700">
+            <img 
+              src="/assets/dashboard_mockup.png" 
+              alt="Reppy Dashboard Mockup" 
+              class="w-full max-w-[600px] h-auto object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+            />
           </div>
-          <div class="flex flex-col gap-1">
-            <span class="text-3xl font-black text-foreground tracking-tighter italic">450+</span>
-            <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_bosses') }}</span>
+          
+          <!-- Floating UI Elements (Badges) -->
+          <div class="absolute -top-6 -left-6 bg-surface/80 backdrop-blur-md border border-white/10 px-6 py-4 rounded-3xl shadow-xl animate-bounce duration-[3s]">
+             <div class="flex items-center gap-3">
+               <div class="w-8 h-8 bg-neon-lime/20 rounded-lg flex items-center justify-center">
+                 <Trophy class="w-4 h-4 text-neon-lime" />
+               </div>
+               <div>
+                 <span class="text-[8px] font-black text-muted uppercase block">TOP_PLAYER</span>
+                 <span class="text-xs font-black text-foreground uppercase tracking-tight">RANK_SHADOW</span>
+               </div>
+             </div>
           </div>
-          <div class="flex flex-col gap-1">
-             <span class="text-3xl font-black text-foreground tracking-tighter italic">100%</span>
-             <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_cost') }}</span>
-          </div>
-          <div class="flex flex-col gap-1">
-             <span class="text-3xl font-black text-foreground tracking-tighter italic">4.9/5</span>
-             <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_score') }}</span>
+          
+          <div class="absolute -bottom-10 -right-6 bg-surface/80 backdrop-blur-md border border-white/10 px-6 py-4 rounded-3xl shadow-xl animate-float duration-[4s]">
+             <div class="flex items-center gap-3">
+               <div class="w-8 h-8 bg-rose-500/20 rounded-lg flex items-center justify-center text-rose-500">
+                 <Activity class="w-4 h-4" />
+               </div>
+               <div>
+                 <span class="text-[8px] font-black text-muted uppercase block">DIFFICULTY: ELITE</span>
+                 <span class="text-xs font-black text-foreground uppercase tracking-tight italic">BOSS_BATTLE_LADY_MARIA</span>
+               </div>
+             </div>
           </div>
         </div>
       </div>
@@ -267,63 +304,84 @@
     <!-- ═══════════════════════════════════════════════════════════
          RPG SYSTEM — Long-form content section
     ═══════════════════════════════════════════════════════════ -->
-    <section class="max-w-5xl w-full px-6 py-16 md:py-24 space-y-16" id="sistema-rpg">
-      <div class="text-center space-y-6">
-        <h2 class="text-4xl md:text-6xl font-bold tracking-tight text-foreground leading-none">
-          {{ i18n.t('landing_bento_rpg_title') }}
-        </h2>
-        <p class="text-lg text-muted max-w-3xl mx-auto leading-relaxed font-medium">
-          {{ i18n.t('landing_bento_rpg_desc') }}
-        </p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="card-stats p-8 space-y-4 border-border/40">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center">
-              <span class="text-red-500 font-black text-lg">STR</span>
-            </div>
-            <h3 class="text-xl font-bold text-foreground">{{ i18n.locale === 'es' ? 'Fuerza' : 'Strength' }} (Strength)</h3>
-          </div>
-          <p class="text-muted/60 text-sm leading-relaxed">
-            {{ i18n.locale === 'es' ? 'Sube con cada set de dominadas y flexiones. Refleja tu volumen total y consistencia de entrenamiento.' : 'Increases with every set of pull-ups and push-ups. Reflects your total volume and training consistency.' }}
-          </p>
+    <section class="max-w-7xl w-full px-6 py-20 md:py-32 space-y-16" id="sistema-rpg">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <!-- Visual Hook: RPG Profile Mockup -->
+        <div class="relative order-2 lg:order-1 animate-in fade-in duration-1500 group">
+           <div class="absolute -inset-10 bg-rose-500/10 blur-[120px] rounded-full group-hover:bg-rose-500/20 transition-all"></div>
+           <div class="relative rounded-[3rem] overflow-hidden border border-white/5 shadow-2xl scale-105 lg:rotate-[-2deg] hover:rotate-0 transition-all duration-700">
+             <img 
+               src="/assets/profile_mockup.png" 
+               alt="Reppy Profile Mockup" 
+               class="w-full h-auto opacity-90 group-hover:opacity-100"
+             />
+           </div>
+           
+           <div class="absolute -top-10 -right-6 bg-accent/20 backdrop-blur-xl border border-white/10 p-6 rounded-3xl animate-float">
+              <Sword class="w-12 h-12 text-accent drop-shadow-[0_0_10px_rgba(var(--accent),0.5)]" />
+           </div>
         </div>
 
-        <div class="card-stats p-8 space-y-4 border-border/40">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center">
-              <span class="text-orange-500 font-black text-lg">PWR</span>
-            </div>
-            <h3 class="text-xl font-bold text-foreground">{{ i18n.locale === 'es' ? 'Potencia' : 'Power' }} (Power)</h3>
+        <!-- RPG Content -->
+        <div class="space-y-12 order-1 lg:order-2">
+          <div class="space-y-6">
+            <h2 class="text-4xl md:text-7xl font-bold tracking-tight text-foreground leading-none uppercase italic">
+              {{ i18n.t('landing_bento_rpg_title').split(' ')[0] }} <span class="text-primary-500">{{ i18n.t('landing_bento_rpg_title').split(' ').slice(1).join(' ') }}</span>
+            </h2>
+            <p class="text-xl text-muted leading-relaxed font-medium">
+              {{ i18n.t('landing_bento_rpg_desc') }}
+            </p>
           </div>
-          <p class="text-muted/60 text-sm leading-relaxed">
-            {{ i18n.locale === 'es' ? 'Se gana con ejercicios de alta intensidad: muscle ups y dominadas con lastre. Para los atletas más serios.' : 'Earned with high-intensity exercises: muscle ups and weighted pull-ups. For the most serious athletes.' }}
-          </p>
-        </div>
 
-        <div class="card-stats p-8 space-y-4 border-border/40">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
-              <span class="text-green-500 font-black text-lg">END</span>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="card-stats p-8 space-y-4 border-border/40 hover:bg-surface/60 transition-colors">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center">
+                  <Sword class="w-6 h-6 text-red-500" />
+                </div>
+                <h3 class="text-xl font-bold text-foreground">STR (Strength)</h3>
+              </div>
+              <p class="text-muted/60 text-sm leading-relaxed">
+                {{ i18n.locale === 'es' ? 'Sube con cada set de dominadas y flexiones. Refleja tu volumen total y fuerza bruta.' : 'Increases with every pull-up and push-up set. Reflects your total volume and raw power.' }}
+              </p>
             </div>
-            <h3 class="text-xl font-bold text-foreground">{{ i18n.locale === 'es' ? 'Resistencia' : 'Endurance' }} (Endurance)</h3>
-          </div>
-          <p class="text-muted/60 text-sm leading-relaxed">
-            {{ i18n.locale === 'es' ? 'Mide tu capacidad de mantener volumen de calistenia en el tiempo. Más repeticiones sostenidas = más resistencia.' : 'Measures your ability to maintain calisthenics volume over time. More sustained reps = more endurance.' }}
-          </p>
-        </div>
 
-        <div class="card-stats p-8 space-y-4 border-border/40">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
-              <span class="text-blue-500 font-black text-lg">AGI</span>
+            <div class="card-stats p-8 space-y-4 border-border/40 hover:bg-surface/60 transition-colors">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
+                  <Activity class="w-6 h-6 text-blue-500" />
+                </div>
+                <h3 class="text-xl font-bold text-foreground">DEX (Dexterity)</h3>
+              </div>
+              <p class="text-muted/60 text-sm leading-relaxed">
+                {{ i18n.locale === 'es' ? 'Se gana con ejercicios de alta intensidad: muscle ups y movimientos explosivos.' : 'Earned with high-intensity movements: muscle ups and explosive variations.' }}
+              </p>
             </div>
-            <h3 class="text-xl font-bold text-foreground">{{ i18n.locale === 'es' ? 'Agilidad' : 'Agility' }} (Agility)</h3>
+
+            <div class="card-stats p-8 space-y-4 border-border/40 hover:bg-surface/60 transition-colors">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
+                  <Flame class="w-6 h-6 text-green-500" />
+                </div>
+                <h3 class="text-xl font-bold text-foreground">VIG (Vigor)</h3>
+              </div>
+              <p class="text-muted/60 text-sm leading-relaxed">
+                {{ i18n.locale === 'es' ? 'Representa tu resiliencia y salud. Se aumenta manteniendo rachas diarias.' : 'Represents your resilience and health. Earned by maintaining daily training streaks.' }}
+              </p>
+            </div>
+
+            <div class="card-stats p-8 space-y-4 border-border/40 hover:bg-surface/60 transition-colors">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center">
+                  <Brain class="w-6 h-6 text-purple-500" />
+                </div>
+                <h3 class="text-xl font-bold text-foreground">INT (Intelligence)</h3>
+              </div>
+              <p class="text-muted/60 text-sm leading-relaxed">
+                {{ i18n.locale === 'es' ? 'Mejora tu eficiencia de entrenamiento. Se gana estudiando las guías tácticas del Códice.' : 'Improves training efficiency. Earned by studying tactical protocols in the Codex.' }}
+              </p>
+            </div>
           </div>
-          <p class="text-muted/60 text-sm leading-relaxed">
-            {{ i18n.locale === 'es' ? 'Se recompensa por la constancia diaria y rachas de entrenamiento. Entrena todos los días para subir tu agilidad al máximo.' : 'Rewarded for daily consistency and training streaks. Train every day to max out your agility.' }}
-          </p>
         </div>
       </div>
     </section>

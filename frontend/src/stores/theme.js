@@ -5,7 +5,7 @@ import axios from 'axios';
 
 export const useThemeStore = defineStore('theme', () => {
   const authStore = useAuthStore();
-  const theme = ref(localStorage.getItem('reppy_theme') || 'light');
+  const theme = ref((!import.meta.env.SSR && localStorage.getItem('reppy_theme')) || 'light');
 
   // Sync with DB if user theme changes (e.g., on login)
   watch(() => authStore.user?.theme, (newDbTheme) => {
@@ -16,27 +16,31 @@ export const useThemeStore = defineStore('theme', () => {
   });
 
   const applyTheme = (newTheme) => {
-    const root = document.documentElement;
-    const isDark = newTheme === 'dark' || 
-      (newTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    
-    if (isDark) {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
+    if (!import.meta.env.SSR) {
+      const root = document.documentElement;
+      const isDark = newTheme === 'dark' || 
+        (newTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      
+      if (isDark) {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
+      
+      localStorage.setItem('reppy_theme', newTheme);
     }
-    
-    localStorage.setItem('reppy_theme', newTheme);
   };
 
   // Initialize
   const init = () => {
-    applyTheme(theme.value);
-    
-    // Listen for system changes if in system mode
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-      if (theme.value === 'system') applyTheme('system');
-    });
+    if (!import.meta.env.SSR) {
+      applyTheme(theme.value);
+      
+      // Listen for system changes if in system mode
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if (theme.value === 'system') applyTheme('system');
+      });
+    }
   };
 
   const setTheme = async (newTheme) => {

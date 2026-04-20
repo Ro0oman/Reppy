@@ -20,7 +20,6 @@
           <router-link v-for="nav in navLinks" :key="nav.id"
             :to="`/${i18n.locale}/${nav.id}`" 
             :title="i18n.t(nav.label) || nav.fallback"
-            @mouseenter="playHoverBlip"
             class="px-4 py-2 rounded-2xl text-[13px] font-semibold transition-all relative group flex items-center gap-2.5"
             :class="$route.name === nav.id ? 'text-foreground bg-primary-500/5' : 'text-muted hover:text-foreground hover:bg-surface/10'">
             <component :is="nav.icon" class="w-4 h-4" :class="$route.name === nav.id ? 'text-primary-500' : ''" />
@@ -68,7 +67,7 @@
 
             <!-- Mute Toggle -->
             <button @click="toggleMute(); playClickBlip();" 
-                    :title="isMuted() ? 'Unmute' : 'Mute'"
+                    :title="isMuted() ? i18n.t('audio_unmute') : i18n.t('audio_mute')"
                     class="p-2 sm:p-2.5 rounded-xl transition-all group bg-surface/5 border border-border hover:bg-surface/10">
               <component :is="isMuted() ? VolumeX : Volume2" 
                          class="w-4.5 h-4.5 sm:w-5 sm:h-5 text-muted group-hover:text-primary-500 transition-colors" />
@@ -113,7 +112,7 @@
       <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 text-muted/40">
         <span class="text-[10px] font-medium tracking-wider">{{ i18n.t('economy_reppy_core') }}</span>
         <div class="flex items-center gap-6">
-          <router-link :to="`/${i18n.locale}/blog`" class="text-[10px] font-medium tracking-wider hover:text-primary-500 transition-colors">Blog</router-link>
+          <router-link :to="`/${i18n.locale}/blog`" class="text-[10px] font-medium tracking-wider hover:text-primary-500 transition-colors">{{ i18n.t('nav_blog') }}</router-link>
           <span class="text-[10px] font-medium tracking-wider">{{ i18n.t('economy_privacy') }}</span>
           <span class="text-[10px] font-medium tracking-wider">{{ i18n.t('economy_status_optimal') }}</span>
           
@@ -136,7 +135,6 @@
         <router-link v-for="nav in mobileNavLinks" :key="nav.id"
           :to="{ name: nav.id, params: { lang: i18n.locale, ...(nav.id === 'profile' ? { userId: authStore.user?.id } : {}) } }" 
           :title="i18n.t(nav.label)"
-          @mouseenter="playHoverBlip"
           class="flex flex-col items-center justify-center gap-1.5 flex-1 h-full transition-all relative group"
           :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted hover:text-foreground'">
           
@@ -251,7 +249,7 @@
 import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
-import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Bell, User, Dices, Volume2, VolumeX } from 'lucide-vue-next';
+import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Bell, User, Dices, Volume2, VolumeX, Book } from 'lucide-vue-next';
 import { useAuthStore } from './stores/auth';
 import { useI18nStore } from './stores/i18n';
 import { useNotificationsStore } from './stores/notifications';
@@ -269,7 +267,7 @@ import NotificationsDropdown from './components/NotificationsDropdown.vue'
 import LanguageToggle from './components/LanguageToggle.vue'
 
 const authStore = useAuthStore();
-const { playHoverBlip, toggleMute, isMuted, playClickBlip } = useAudio();
+const { toggleMute, isMuted, playClickBlip } = useAudio();
 const i18n = useI18nStore();
 const notifStore = useNotificationsStore();
 const router = useRouter();
@@ -282,10 +280,12 @@ const showNotifications = ref(false);
 
 // Global Scroll Lock for App-level modals
 watch([showRoulette, showCoinsInfo], ([roulette, coins]) => {
-  if (roulette || coins) {
-    document.body.style.overflow = 'hidden';
-  } else {
-    document.body.style.overflow = '';
+  if (!import.meta.env.SSR) {
+    if (roulette || coins) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
   }
 });
 
@@ -302,6 +302,7 @@ const handleBellClick = () => {
 const navLinks = [
   { id: 'social', label: 'nav_social', fallback: 'RANKINGS', icon: Users },
   { id: 'dashboard', label: 'nav_dashboard', fallback: 'DASHBOARD', icon: LayoutDashboard },
+  { id: 'codex', label: 'nav_codex', fallback: 'CODEX', icon: Book },
   { id: 'inventory', label: 'nav_inventory', fallback: 'GEAR', icon: Package },
   { id: 'shop', label: 'nav_shop', fallback: 'ARMORY', icon: Swords },
 ];
@@ -309,8 +310,9 @@ const navLinks = [
 const mobileNavLinks = [
   { id: 'dashboard', icon: LayoutDashboard, label: 'nav_dashboard' },
   { id: 'social', icon: Users, label: 'nav_social' },
-  { id: 'inventory', icon: Package, label: 'nav_gear' },
-  { id: 'shop', icon: Swords, label: 'nav_armory' },
+  { id: 'codex', icon: Book, label: 'nav_codex' },
+  { id: 'inventory', icon: Package, label: 'nav_inventory' },
+  { id: 'shop', icon: Swords, label: 'nav_shop' },
   { id: 'profile', icon: User, label: 'nav_profile' },
 ];
 
@@ -347,7 +349,7 @@ const onStartAction = () => {
 };
 
 watch(() => authStore.isAuthenticated, (val) => {
-  if (val) {
+  if (val && !import.meta.env.SSR) {
     authStore.fetchProfile();
     checkRoulette();
     notifStore.fetchNotifications();
@@ -358,7 +360,7 @@ watch(() => authStore.isAuthenticated, (val) => {
 }, { immediate: true });
 
 onMounted(async () => {
-  if (authStore.isAuthenticated) {
+  if (authStore.isAuthenticated && !import.meta.env.SSR) {
     checkRoulette();
     notifStore.fetchNotifications();
     if (authStore.user && !authStore.user.has_seen_easter_modal) {

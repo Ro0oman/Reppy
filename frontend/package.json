@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite",
     "sitemap": "node scripts/generate-sitemap.js",
-    "sync-blog": "cp ../backend/blogData.json ./src/blogPosts.json",
-    "build": "npm run sync-blog && npm run sitemap && vite build",
+    "sync-blog": "node -e \"const fs = require('fs'); fs.copyFileSync('../backend/blogData.json', './src/blogPosts.json')\"",
+    "build": "npm run sync-blog && npm run sitemap && vite-ssg build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -23,15 +23,16 @@
     "vue3-google-signin": "^2.1.1"
   },
   "optionalDependencies": {
+    "@esbuild/linux-x64": "^0.24.2",
     "@rolldown/binding-linux-x64-gnu": "0.13.2",
-    "lightningcss-linux-x64-gnu": "^1.29.1",
-    "@esbuild/linux-x64": "^0.24.2"
+    "lightningcss-linux-x64-gnu": "^1.29.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.5",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.17",
-    "vite": "^8.0.1"
+    "vite": "^8.0.1",
+    "vite-ssg": "^28.3.0"
   }
 }

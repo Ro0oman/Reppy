@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 
 export const useAudioStore = defineStore('audio', {
   state: () => ({
-    isMuted: localStorage.getItem('reppy_audio_muted') === 'true',
+    isMuted: (!import.meta.env.SSR && localStorage.getItem('reppy_audio_muted') === 'true'),
     volume: 0.5,
     sounds: {},
     audioContext: null,
@@ -11,10 +11,13 @@ export const useAudioStore = defineStore('audio', {
   actions: {
     toggleMute() {
       this.isMuted = !this.isMuted;
-      localStorage.setItem('reppy_audio_muted', this.isMuted.toString());
+      if (!import.meta.env.SSR) {
+        localStorage.setItem('reppy_audio_muted', this.isMuted.toString());
+      }
     },
     
     async resumeContext() {
+      if (import.meta.env.SSR) return null;
       if (!this.audioContext) {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
       }
@@ -25,6 +28,7 @@ export const useAudioStore = defineStore('audio', {
     },
 
     play(soundName) {
+      if (import.meta.env.SSR) return;
       if (this.isMuted) return;
       
       // Safety: Prevent rapid-fire duplicate sounds (standard throttle)

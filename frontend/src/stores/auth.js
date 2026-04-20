@@ -3,8 +3,8 @@ import axios from 'axios'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: JSON.parse(localStorage.getItem('user')) || null,
-    token: localStorage.getItem('token') || null,
+    user: (!import.meta.env.SSR && JSON.parse(localStorage.getItem('user'))) || null,
+    token: (!import.meta.env.SSR && localStorage.getItem('token')) || null,
     interceptorRegistered: false,
   }),
   getters: {
@@ -116,11 +116,15 @@ export const useAuthStore = defineStore('auth', {
     logout() {
       this.token = null;
       this.user = null;
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      if (!import.meta.env.SSR) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
       delete axios.defaults.headers.common['Authorization'];
     },
     init() {
+      if (import.meta.env.SSR) return;
+
       // 1. Check for stale session (> 48h) to avoid cached component errors
       const lastVisit = localStorage.getItem('reppy_last_visit');
       const now = Date.now();

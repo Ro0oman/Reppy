@@ -33,5 +33,27 @@ export default defineConfig({
         changeOrigin: true
       }
     }
+  },
+  ssgOptions: {
+    script: 'async',
+    formatting: 'minify',
+    includedRoutes() {
+      return [
+        '/',
+        '/es',
+        '/en',
+        '/es/blog',
+        '/en/blog',
+        '/es/contador-dominadas',
+        '/en/contador-dominadas',
+        '/es/contador-flexiones',
+        '/en/contador-flexiones',
+        '/es/app-calistenia',
+        '/en/app-calistenia'
+      ]
+    },
+    onFinished() {
+      console.log('🚀 [SSG] Static Site Generation complete.')
+    }
   }
 })

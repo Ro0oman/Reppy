@@ -204,8 +204,12 @@ const fetchLeaderboard = async () => {
   }
 };
 
-watch([type, timeframe, () => props.exerciseType], fetchLeaderboard);
-onMounted(fetchLeaderboard);
+watch([type, timeframe, () => props.exerciseType], () => {
+  if (!import.meta.env.SSR) fetchLeaderboard();
+});
+onMounted(() => {
+  if (!import.meta.env.SSR) fetchLeaderboard();
+});
 
 defineExpose({ refresh: fetchLeaderboard });
 </script>
