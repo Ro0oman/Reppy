@@ -20,101 +20,15 @@
     <!-- Interface Navigation -->
     <div class="flex items-center justify-center p-1.5 bg-surface/20 backdrop-blur-2xl border border-white/5 rounded-2xl max-w-sm mx-auto shadow-2xl relative">
       <div class="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent rounded-2xl pointer-events-none"></div>
-      <button @click="activeTab = 'stats'" 
-        class="flex-1 py-3 px-6 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 relative z-10"
-        :class="activeTab === 'stats' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-muted hover:text-foreground hover:bg-white/5'">
-        <Activity class="w-3.5 h-3.5" /> {{ i18n.t('inv_tab_stats') }}
-      </button>
-      <button @click="activeTab = 'gear'" 
-        class="flex-1 py-3 px-6 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 relative z-10"
-        :class="activeTab === 'gear' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-muted hover:text-foreground hover:bg-white/5'">
+      <div 
+        class="flex-1 py-3 px-6 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 relative z-10 bg-primary-500 text-white shadow-lg shadow-primary-500/20">
         <Package class="w-3.5 h-3.5" /> 
         {{ i18n.t('inv_tab_gear') }}
-        <span v-if="hasNewInventoryOverall && activeTab !== 'gear'" 
+        <span v-if="hasNewInventoryOverall" 
               class="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 border-2 border-surface animate-pulse"></span>
-      </button>
-    </div>
-
-    <!-- TAB: BIOMETRICS (Refined Stats) -->
-    <div v-if="activeTab === 'stats'" class="space-y-12 animate-in max-w-5xl mx-auto">
-      <!-- Elite Evolution Card -->
-      <div class="relative group p-1 rounded-[2.5rem] bg-gradient-to-br from-white/10 to-transparent border border-white/5 shadow-2xl overflow-hidden">
-        <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary-500/50 to-transparent"></div>
-        <div class="bg-surface/40 backdrop-blur-3xl rounded-[2.3rem] p-8 md:p-12 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden">
-          <!-- Decorative Scanning Line -->
-          <div class="absolute inset-0 pointer-events-none overflow-hidden opacity-20">
-             <div class="w-full h-1 bg-primary-500/20 shadow-[0_0_20px_rgba(255,69,0,0.5)] animate-scan"></div>
-          </div>
-          
-          <!-- Avatar Section -->
-          <div class="relative group/avatar">
-            <div class="w-32 h-32 rounded-[2rem] bg-black/40 border-2 border-primary-500/30 p-1 relative z-10 overflow-hidden transform group-hover/avatar:scale-105 transition-transform duration-500">
-               <img :src="authStore.user?.avatar_url" class="w-full h-full object-cover rounded-[1.8rem] opacity-80 group-hover/avatar:opacity-100 transition-opacity" />
-               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-            </div>
-            <!-- Level Badge -->
-            <div class="absolute -bottom-4 -right-4 w-14 h-14 bg-surface border-4 border-primary-500 rounded-2xl flex items-center justify-center shadow-2xl z-20">
-              <span class="text-xl font-black text-primary-500 italic">{{ authStore.user?.current_level || 1 }}</span>
-            </div>
-            <!-- Decorative Hex Grid -->
-            <div class="absolute -inset-4 border border-primary-500/10 rounded-[2.5rem] -z-10 animate-pulse"></div>
-          </div>
-
-          <!-- Rank Info -->
-          <div class="flex-1 space-y-6 w-full">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-              <div class="space-y-1">
-                <span class="text-[10px] font-black text-primary-500 tracking-[0.4em] uppercase">{{ i18n.t('inv_level_card_title') }}</span>
-                <h2 class="text-4xl font-black text-foreground italic tracking-tighter">{{ authStore.user?.display_name }}</h2>
-              </div>
-              <div class="text-right">
-                <span class="text-[9px] font-black text-muted tracking-widest uppercase">{{ i18n.t('inv_next_level') }}</span>
-                <p class="text-xl font-black text-foreground italic tabular-nums tracking-tighter">
-                  {{ authStore.user?.xp_for_next_level - authStore.user?.xp_into_level }} <span class="text-primary-500 text-sm">XP</span>
-                </p>
-              </div>
-            </div>
-            
-            <!-- Precision Progress Bar -->
-            <div class="space-y-3">
-              <div class="h-3 bg-black/40 rounded-full border border-white/5 overflow-hidden p-0.5 relative">
-                <div class="h-full bg-gradient-to-r from-primary-600 to-primary-400 rounded-full shadow-[0_0_15px_rgba(255,69,0,0.4)] transition-all duration-1000 relative overflow-hidden" 
-                  :style="{ width: `${((authStore.user?.xp_into_level || 0) / (authStore.user?.xp_for_next_level || 1000)) * 100}%` }">
-                  <div class="absolute inset-0 bg-white/20 animate-shimmer"></div>
-                </div>
-              </div>
-              <div class="flex justify-between text-[8px] font-black text-muted tracking-[0.2em] font-mono">
-                <span>PROGRESS_STATUS: ACTIVE</span>
-                <span class="text-foreground">[{{ Math.floor(((authStore.user?.xp_into_level || 0) / (authStore.user?.xp_for_next_level || 1000)) * 100) }}%]</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Attributes Grid (Tactical Slots) -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div v-for="stat in rpgStats" :key="stat.key" 
-          @click="selectedStat = stat"
-          class="tactical-stat-card p-6 bg-surface/20 border border-white/5 rounded-3xl group cursor-pointer hover:border-primary-500/30 transition-all active:scale-95">
-          <div class="flex flex-col gap-4">
-            <div class="flex justify-between items-start">
-              <div class="p-3 rounded-2xl bg-black/20 border border-white/5 group-hover:scale-110 transition-all">
-                <component :is="stat.icon" class="w-5 h-5" :class="stat.color" />
-              </div>
-              <div class="text-[8px] font-mono text-muted tracking-tighter italic">LVL.{{ authStore.user?.[stat.lvlKey] || 1 }}</div>
-            </div>
-            <div class="space-y-1">
-              <span class="text-[10px] font-black text-muted uppercase tracking-widest block">{{ stat.name }}</span>
-              <div class="h-1 w-full bg-black/40 rounded-full overflow-hidden mt-2">
-                <div class="h-full bg-primary-500 transition-all duration-700"
-                  :style="{ width: `${((authStore.user?.[stat.xpIntoKey] || 0) / (authStore.user?.[stat.xpForKey] || 100)) * 100}%` }"></div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
+
 
     <!-- TAB: TACTICAL GEAR (Armory Grid) -->
     <div v-if="activeTab === 'gear'" class="space-y-16 animate-in">
@@ -357,69 +271,6 @@
       @close="closeChestModal" 
     />
     
-    <!-- Stat Detail Modal (Codex Integration Style) -->
-    <Teleport to="body">
-      <Transition name="fade">
-        <div v-if="selectedStat" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md px-4" @click.self="selectedStat = null">
-          <div class="bg-surface border rounded-[2.5rem] w-full max-w-lg max-h-[85vh] overflow-y-auto animate-in shadow-2xl relative"
-               :class="selectedStat.borderColor">
-            <button @click="selectedStat = null" class="absolute top-6 right-6 z-20 p-2 text-muted hover:text-white transition-colors bg-white/5 rounded-full">
-              <X class="w-5 h-5" />
-            </button>
-            <div class="absolute -top-12 -left-12 opacity-[0.03] rotate-12 pointer-events-none">
-              <component :is="selectedStat.icon" class="w-64 h-64" />
-            </div>
-            <div class="p-8 sm:p-12 space-y-10 relative z-10">
-              <div class="flex flex-col items-center text-center space-y-6">
-                <div class="p-6 rounded-3xl bg-gradient-to-br transition-all duration-500 shadow-xl" 
-                     :class="[selectedStat.bgLight, 'ring-1 ring-inset ' + selectedStat.borderColor.replace('border-', 'ring-') + '/20']">
-                  <component :is="selectedStat.icon" class="w-16 h-16 drop-shadow-[0_0_15px_rgba(255,69,0,0.5)]" :class="selectedStat.color" />
-                </div>
-                <div class="space-y-2">
-                  <h3 class="text-3xl sm:text-4xl font-black text-foreground uppercase italic tracking-tighter leading-none">
-                    {{ selectedStat.name }}
-                  </h3>
-                </div>
-              </div>
-              <div class="space-y-6">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div class="p-4 rounded-2xl bg-foreground/[0.03] border border-white/5 space-y-1">
-                    <p class="text-[8px] font-black text-muted uppercase tracking-widest">MECHANICAL EFFECT</p>
-                    <p class="text-xs font-black text-foreground uppercase italic tracking-tight">{{ selectedStat.effectLabel }}</p>
-                  </div>
-                  <div class="p-4 rounded-2xl bg-foreground/[0.03] border border-white/5 space-y-1 text-right">
-                    <p class="text-[8px] font-black text-muted uppercase tracking-widest">HOW TO UPGRADE</p>
-                    <p class="text-xs font-black text-primary-500 uppercase italic tracking-tight">{{ selectedStat.action }}</p>
-                  </div>
-                </div>
-              </div>
-              <div v-if="selectedStat.links && selectedStat.links.length > 0" class="pt-4">
-                <router-link 
-                  v-for="link in selectedStat.links" 
-                  :key="link.to" 
-                  :to="link.to" 
-                  @click="selectedStat = null"
-                  class="group relative w-full py-5 rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 shadow-xl"
-                  :class="['bg-gradient-to-r ' + selectedStat.gradient, 'shadow-' + selectedStat.key + '-500/20']"
-                >
-                  <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <component :is="link.icon || Zap" class="w-5 h-5 text-white animate-pulse" />
-                  <span class="text-sm font-black text-white uppercase tracking-[0.15em] italic">
-                    {{ link.label }}
-                  </span>
-                  <ChevronRight class="w-4 h-4 text-white/70 group-hover:translate-x-1 transition-transform" />
-                </router-link>
-              </div>
-              <div class="text-center pb-8">
-                <button @click="selectedStat = null" class="text-[9px] font-black text-muted/50 hover:text-foreground uppercase tracking-[0.2em] transition-colors py-2">
-                  {{ i18n.t('inv_dismiss_data') }}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Transition>
-    </Teleport>
   </div>
 </template>
 

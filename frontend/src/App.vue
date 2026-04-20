@@ -130,28 +130,28 @@
 
     <!-- Mobile Bottom Operational Dock -->
     <nav v-if="authStore.isAuthenticated" 
-      class="lg:hidden fixed bottom-6 left-6 right-6 z-[60] bg-surface/80 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-2 transition-transform duration-500">
-      <div class="flex items-center justify-around h-16">
+      class="lg:hidden fixed bottom-6 left-4 right-4 z-[60] bg-surface/60 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-1.5 transition-all duration-500">
+      <div class="flex items-center justify-around h-14">
         <router-link v-for="nav in mobileNavLinks" :key="nav.id"
           :to="{ name: nav.id, params: { lang: i18n.locale, ...(nav.id === 'profile' ? { userId: authStore.user?.id } : {}) } }" 
           :title="i18n.t(nav.label)"
-          class="flex flex-col items-center justify-center gap-1.5 flex-1 h-full transition-all relative group"
+          class="flex flex-col items-center justify-center flex-1 h-full transition-all relative group"
           :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted hover:text-foreground'">
           
           
           <div class="relative">
             <!-- Background Glow for Active Icon -->
-            <div v-if="$route.name === nav.id" class="absolute inset-0 bg-primary-500/20 blur-xl rounded-full scale-150 animate-pulse"></div>
+            <div v-if="$route.name === nav.id" class="absolute inset-0 bg-primary-500/30 blur-xl rounded-full scale-125 animate-pulse"></div>
             
-            <component :is="nav.icon" class="w-6 h-6 transition-transform group-active:scale-90 relative z-10" :class="$route.name === nav.id ? 'text-primary-500 drop-shadow-[0_0_10px_rgba(255,69,0,0.5)]' : ''" />
+            <component :is="nav.icon" class="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-active:scale-90 relative z-10" :class="$route.name === nav.id ? 'text-primary-500 drop-shadow-[0_0_15px_rgba(255,69,0,0.6)]' : ''" />
             
             <!-- Contextual Badges -->
             <div v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory)" 
                  class="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full border border-surface shadow-[0_0_10px_rgba(59,130,246,0.5)] animate-pulse"></div>
           </div>
 
-          <span class="text-[9px] font-black uppercase tracking-widest opacity-60 group-hover:opacity-100 transition-opacity" :class="$route.name === nav.id ? 'opacity-100' : ''">
-            {{ i18n.t(nav.label) }}
+          <span class="text-[7.5px] xs:text-[9.5px] font-black uppercase tracking-tighter sm:tracking-widest mt-1 opacity-60 group-hover:opacity-100 transition-opacity text-center px-1" :class="$route.name === nav.id ? 'opacity-100 text-primary-500' : ''">
+            {{ nav.short || i18n.t(nav.label) }}
           </span>
         </router-link>
       </div>
@@ -308,12 +308,12 @@ const navLinks = [
 ];
 
 const mobileNavLinks = [
-  { id: 'dashboard', icon: LayoutDashboard, label: 'nav_dashboard' },
-  { id: 'social', icon: Users, label: 'nav_social' },
-  { id: 'codex', icon: Book, label: 'nav_codex' },
-  { id: 'inventory', icon: Package, label: 'nav_inventory' },
-  { id: 'shop', icon: Swords, label: 'nav_shop' },
-  { id: 'profile', icon: User, label: 'nav_profile' },
+  { id: 'dashboard', icon: LayoutDashboard, label: 'nav_dashboard', short: 'PANEL' },
+  { id: 'social', icon: Users, label: 'nav_social', short: 'SOCIAL' },
+  { id: 'codex', icon: Book, label: 'nav_codex', short: 'CÓDICE' },
+  { id: 'inventory', icon: Package, label: 'nav_inventory', short: 'EQUIPO' },
+  { id: 'shop', icon: Swords, label: 'nav_shop', short: 'TIENDA' },
+  { id: 'profile', icon: User, label: 'nav_profile', short: 'PERFIL' },
 ];
 
 const earnings = [
