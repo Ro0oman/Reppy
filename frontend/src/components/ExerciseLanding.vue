@@ -25,7 +25,7 @@
         <button @click="start" class="btn-reppy !text-lg !px-12 !py-5 shadow-xl uppercase">
           {{ authStore.isAuthenticated ? i18n.t('nav_go_dashboard') : i18n.t('btn_start') }}
         </button>
-        <router-link to="/" class="text-sm font-bold text-muted hover:text-foreground transition-colors">
+        <router-link :to="`/${i18n.locale}`" class="text-sm font-bold text-muted hover:text-foreground transition-colors">
           {{ i18n.t('back_to_home') }} &rarr;
         </router-link>
       </div>
@@ -101,11 +101,11 @@
 
     <!-- Footer link back -->
     <footer class="py-20 border-t border-border/40 w-full text-center">
-      <router-link to="/" class="text-xs font-black text-primary-500 hover:text-white transition-all uppercase tracking-widest">
+      <router-link :to="`/${i18n.locale}`" class="text-xs font-black text-primary-500 hover:text-white transition-all uppercase tracking-widest">
         &larr; {{ i18n.t('el_back_home') }}
       </router-link>
       <div class="mt-4">
-        <router-link to="/blog" class="text-[10px] font-black text-muted/40 hover:text-primary transition-all uppercase tracking-widest">{{ i18n.t('el_latest_blog') }}</router-link>
+        <router-link :to="`/${i18n.locale}/blog`" class="text-[10px] font-black text-muted/40 hover:text-primary transition-all uppercase tracking-widest">{{ i18n.t('el_latest_blog') }}</router-link>
       </div>
     </footer>
   </div>
@@ -131,9 +131,9 @@ const i18n = useI18nStore();
 
 const start = () => {
   if (authStore.isAuthenticated) {
-    router.push('/dashboard');
+    router.push(`/${i18n.locale}/dashboard`);
   } else {
-    router.push('/login');
+    router.push(`/${i18n.locale}/login`);
   }
 };
 

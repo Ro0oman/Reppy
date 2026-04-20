@@ -87,11 +87,13 @@ apiRouter.get('/sitemap', (req, res) => {
   const publishedPosts = blogData.filter(post => new Date(post.date) <= today);
   
   let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-  xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+  xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n`;
+
+  const languages = ['es', 'en'];
 
   // Static Routes
   const staticRoutes = [
-    { path: '/', priority: '1.0', changefreq: 'daily' },
+    { path: '', priority: '1.0', changefreq: 'daily' },
     { path: '/contador-dominadas', priority: '0.9', changefreq: 'weekly' },
     { path: '/contador-flexiones', priority: '0.9', changefreq: 'weekly' },
     { path: '/app-calistenia', priority: '0.8', changefreq: 'weekly' },
@@ -99,22 +101,34 @@ apiRouter.get('/sitemap', (req, res) => {
   ];
 
   staticRoutes.forEach(route => {
-    xml += `  <url>\n`;
-    xml += `    <loc>${BASE_URL}${route.path}</loc>\n`;
-    xml += `    <lastmod>${today.toISOString()}</lastmod>\n`;
-    xml += `    <changefreq>${route.changefreq}</changefreq>\n`;
-    xml += `    <priority>${route.priority}</priority>\n`;
-    xml += `  </url>\n`;
+    languages.forEach(lang => {
+      xml += `  <url>\n`;
+      xml += `    <loc>${BASE_URL}/${lang}${route.path}</loc>\n`;
+      xml += `    <lastmod>${today.toISOString()}</lastmod>\n`;
+      xml += `    <changefreq>${route.changefreq}</changefreq>\n`;
+      xml += `    <priority>${route.priority}</priority>\n`;
+      languages.forEach(altLang => {
+        xml += `    <xhtml:link rel="alternate" hreflang="${altLang}" href="${BASE_URL}/${altLang}${route.path}"/>\n`;
+      });
+      xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE_URL}/es${route.path}"/>\n`;
+      xml += `  </url>\n`;
+    });
   });
 
   // Dynamic Blog Posts
   publishedPosts.forEach(post => {
-    xml += `  <url>\n`;
-    xml += `    <loc>${BASE_URL}/blog/${post.slug}</loc>\n`;
-    xml += `    <lastmod>${new Date(post.date).toISOString()}</lastmod>\n`;
-    xml += `    <changefreq>monthly</changefreq>\n`;
-    xml += `    <priority>0.7</priority>\n`;
-    xml += `  </url>\n`;
+    languages.forEach(lang => {
+      xml += `  <url>\n`;
+      xml += `    <loc>${BASE_URL}/${lang}/blog/${post.slug}</loc>\n`;
+      xml += `    <lastmod>${new Date(post.date).toISOString()}</lastmod>\n`;
+      xml += `    <changefreq>monthly</changefreq>\n`;
+      xml += `    <priority>0.7</priority>\n`;
+      languages.forEach(altLang => {
+        xml += `    <xhtml:link rel="alternate" hreflang="${altLang}" href="${BASE_URL}/${altLang}/blog/${post.slug}"/>\n`;
+      });
+      xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE_URL}/es/blog/${post.slug}"/>\n`;
+      xml += `  </url>\n`;
+    });
   });
 
   xml += `</urlset>`;
@@ -122,6 +136,16 @@ apiRouter.get('/sitemap', (req, res) => {
   res.header('Content-Type', 'application/xml');
   res.send(xml);
 });
+
+// 2. Legacy Redirects (SEO preservation)
+apiRouter.get('/blog/:slug', (req, res, next) => {
+  // If it doesn't have a language prefix, redirect to Spanish (default)
+  res.redirect(301, `/es/blog/${req.params.slug}`);
+});
+
+apiRouter.get('/contador-flexiones', (req, res) => res.redirect(301, '/es/contador-flexiones'));
+apiRouter.get('/contador-dominadas', (req, res) => res.redirect(301, '/es/contador-dominadas'));
+apiRouter.get('/app-calistenia', (req, res) => res.redirect(301, '/es/app-calistenia'));
 
 // 2. Blog JSON API
 apiRouter.get('/blog', (req, res) => {

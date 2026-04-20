@@ -5,13 +5,13 @@
     <!-- Level Badge & Label -->
     <div class="flex items-end justify-between px-1">
       <div class="flex items-baseline gap-2">
-        <span class="text-[9px] font-black text-muted uppercase tracking-[0.2em] opacity-60">RANGO</span>
+        <span class="text-[9px] font-black text-muted uppercase tracking-[0.2em] opacity-60">{{ i18n.t('nav_rank') }}</span>
         <span class="text-2xl font-black text-foreground italic leading-none font-industrial tracking-tighter drop-shadow-md">
           {{ level }}
         </span>
       </div>
       <div class="flex flex-col items-end leading-none">
-        <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest mb-0.5">PROGRESO</span>
+        <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest mb-0.5">{{ i18n.t('nav_progress') }}</span>
         <span class="text-[10px] font-black text-foreground/80 text-precision tabular-nums">
           {{ Math.floor(progress) }}%
         </span>
@@ -41,12 +41,12 @@
         <div class="relative z-10 space-y-4">
           <div class="flex items-center gap-3 border-b border-white/10 pb-3">
             <Zap class="w-4 h-4 text-primary-500 animate-pulse" />
-            <p class="text-[10px] font-black text-white uppercase tracking-[0.3em] font-industrial">DETALLES DE RANGO</p>
+            <p class="text-[10px] font-black text-white uppercase tracking-[0.3em] font-industrial">{{ i18n.t('nav_rank_details') }}</p>
           </div>
 
           <div class="space-y-3">
             <div class="flex justify-between items-end">
-              <span class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">PROGRESO NIVEL</span>
+              <span class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">{{ i18n.t('nav_rank_progress') }}</span>
               <div class="flex items-baseline gap-1">
                 <span class="text-xs font-black text-white text-precision tabular-nums">{{ currentXp }} / {{ nextLevelXp }}</span>
                 <span class="text-[8px] font-bold text-zinc-500 text-precision">XP</span>
@@ -54,7 +54,7 @@
             </div>
              
             <div class="flex justify-between items-end">
-              <span class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">RESTANTE</span>
+              <span class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">{{ i18n.t('nav_remaining') }}</span>
               <span class="text-xs font-black text-neon-lime text-precision tabular-nums">{{ Math.max(0, nextLevelXp - currentXp) }} XP</span>
             </div>
           </div>

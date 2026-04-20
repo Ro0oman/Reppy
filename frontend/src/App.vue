@@ -10,7 +10,7 @@
       class="border-b border-border bg-surface/40 backdrop-blur-3xl sticky top-0 z-50 transition-all">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
         <!-- Logo Core -->
-        <router-link to="/dashboard" class="flex items-center gap-3 group cursor-pointer outline-none" :title="i18n.t('nav_dashboard')">
+        <router-link :to="`/${i18n.locale}/dashboard`" class="flex items-center gap-3 group cursor-pointer outline-none" :title="i18n.t('nav_dashboard')">
           <div class="w-10 h-10 bg-primary-500 rounded-2xl flex items-center justify-center font-bold text-white shadow-xl shadow-primary-500/20 transition-transform group-hover:scale-110 group-focus:scale-110 group-focus:ring-2 group-focus:ring-primary-500/50 shrink-0">R</div>
           <span class="text-2xl font-bold tracking-tight text-foreground font-industrial hidden xs:block">Reppy<span class="text-primary-500">.</span></span>
         </router-link>
@@ -18,7 +18,7 @@
         <!-- Desktop Navigation (Clean Links) -->
         <div class="hidden lg:flex items-center gap-1">
           <router-link v-for="nav in navLinks" :key="nav.id"
-            :to="'/' + nav.id" 
+            :to="`/${i18n.locale}/${nav.id}`" 
             :title="i18n.t(nav.label) || nav.fallback"
             @mouseenter="playHoverBlip"
             class="px-4 py-2 rounded-2xl text-[13px] font-semibold transition-all relative group flex items-center gap-2.5"
@@ -30,7 +30,7 @@
             <div v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory)" 
               class="absolute top-1.5 right-2 w-2 h-2 bg-primary-500 rounded-full border-2 border-surface shadow-[0_0_10px_rgba(255,69,0,0.5)]"></div>
           </router-link>
-          <router-link v-if="authStore.user?.role === 'admin'" to="/admin"
+          <router-link v-if="authStore.user?.role === 'admin'" :to="`/${i18n.locale}/admin`"
             class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500 hover:bg-indigo-500/10 transition-all font-industrial">
             {{ i18n.t('economy_admin') }}
           </router-link>
@@ -113,7 +113,7 @@
       <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 text-muted/40">
         <span class="text-[10px] font-medium tracking-wider">{{ i18n.t('economy_reppy_core') }}</span>
         <div class="flex items-center gap-6">
-          <router-link to="/blog" class="text-[10px] font-medium tracking-wider hover:text-primary-500 transition-colors">Blog</router-link>
+          <router-link :to="`/${i18n.locale}/blog`" class="text-[10px] font-medium tracking-wider hover:text-primary-500 transition-colors">Blog</router-link>
           <span class="text-[10px] font-medium tracking-wider">{{ i18n.t('economy_privacy') }}</span>
           <span class="text-[10px] font-medium tracking-wider">{{ i18n.t('economy_status_optimal') }}</span>
           
@@ -134,7 +134,7 @@
       class="lg:hidden fixed bottom-6 left-6 right-6 z-[60] bg-surface/80 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-2 transition-transform duration-500">
       <div class="flex items-center justify-around h-16">
         <router-link v-for="nav in mobileNavLinks" :key="nav.id"
-          :to="{ name: nav.id, params: nav.id === 'profile' ? { userId: authStore.user?.id } : {} }" 
+          :to="{ name: nav.id, params: { lang: i18n.locale, ...(nav.id === 'profile' ? { userId: authStore.user?.id } : {}) } }" 
           :title="i18n.t(nav.label)"
           @mouseenter="playHoverBlip"
           class="flex flex-col items-center justify-center gap-1.5 flex-1 h-full transition-all relative group"
@@ -340,9 +340,9 @@ const openProfile = (id) => {
 
 const onStartAction = () => {
   if (authStore.isAuthenticated) {
-    router.push('/social');
+    router.push(`/${i18n.locale}/social`);
   } else {
-    router.push('/login');
+    router.push(`/${i18n.locale}/login`);
   }
 };
 

@@ -9,9 +9,9 @@
     </div>
 
     <nav class="w-full max-w-6xl px-6 pt-12 pb-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted/40">
-      <router-link to="/" class="hover:text-primary transition-colors">{{ i18n.t('nav_home') }}</router-link>
+      <router-link :to="`/${i18n.locale}`" class="hover:text-primary transition-colors">{{ i18n.t('nav_home') }}</router-link>
       <ChevronRight class="w-3 h-3 opacity-20" />
-      <router-link to="/blog" class="hover:text-primary transition-colors">Blog</router-link>
+      <router-link :to="`/${i18n.locale}/blog`" class="hover:text-primary transition-colors">Blog</router-link>
       <ChevronRight class="w-3 h-3 opacity-20" />
       <span class="text-foreground/60 truncate max-w-[200px] md:max-w-none">{{ post.title }}</span>
     </nav>
@@ -148,7 +148,7 @@
           <h3 class="text-lg font-black text-foreground uppercase tracking-tight italic border-b border-border/40 pb-4">{{ i18n.t('related_protocols') }}</h3>
           
           <div class="space-y-6">
-            <router-link to="/contador-dominadas" class="group block space-y-2">
+            <router-link :to="`/${i18n.locale}/contador-dominadas`" class="group block space-y-2">
               <div class="flex items-center justify-between">
                 <span class="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{{ i18n.t('exercise_king') }}</span>
                 <ArrowUpRight class="w-4 h-4 text-muted group-hover:text-primary transition-all" />
@@ -157,7 +157,7 @@
               <p class="text-xs text-muted/60 leading-relaxed">{{ i18n.t('pullup_seo_desc') }}</p>
             </router-link>
 
-            <router-link to="/contador-flexiones" class="group block space-y-2">
+            <router-link :to="`/${i18n.locale}${ctaTarget}`" class="group block space-y-2">
               <div class="flex items-center justify-between">
                 <span class="text-[10px] font-black text-accent uppercase tracking-[0.2em]">{{ i18n.t('push_power') }}</span>
                 <ArrowUpRight class="w-4 h-4 text-muted group-hover:text-accent transition-all" />
@@ -166,7 +166,7 @@
               <p class="text-xs text-muted/60 leading-relaxed">{{ i18n.t('pushup_seo_desc') }}</p>
             </router-link>
 
-            <router-link to="/app-calistenia" class="group block space-y-2">
+            <router-link :to="`/${i18n.locale}/app-calistenia`" class="group block space-y-2">
               <div class="flex items-center justify-between">
                 <span class="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em]">{{ i18n.t('full_ecosystem') }}</span>
                 <ArrowUpRight class="w-4 h-4 text-muted group-hover:text-blue-500 transition-all" />
@@ -227,15 +227,15 @@
         <h2 class="text-3xl font-black text-foreground tracking-tight">{{ i18n.t('hero_subtitle') }}</h2>
         <p class="text-muted text-lg max-w-xl mx-auto">{{ i18n.t('hero_subtitle') }}</p>
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <button @click="router.push('/login')" class="btn-reppy !px-10">{{ i18n.t('start_free') }}</button>
-          <button @click="router.push('/')" class="text-sm font-bold text-muted hover:text-foreground transition-colors">{{ i18n.t('back_to_home') }} &rarr;</button>
+          <button @click="router.push(`/${i18n.locale}/login`)" class="btn-reppy !px-10">{{ i18n.t('start_free') }}</button>
+          <button @click="router.push(`/${i18n.locale}`)" class="text-sm font-bold text-muted hover:text-foreground transition-colors">{{ i18n.t('back_to_home') }} &rarr;</button>
         </div>
       </div>
     </section>
 
     <!-- Footer Mobile Navigation (Optional) -->
     <footer class="py-12 border-t border-border/40 w-full text-center mt-auto">
-      <router-link to="/" class="text-xs font-black text-muted hover:text-primary transition-all uppercase tracking-widest">
+      <router-link :to="`/${i18n.locale}`" class="text-xs font-black text-muted hover:text-primary transition-all uppercase tracking-widest">
         &copy; 2026 Reppy Ecosystem
       </router-link>
     </footer>
@@ -396,20 +396,83 @@ const formattedDate = computed(() => {
 // JSON-LD for SEO
 const jsonLdScript = computed(() => {
   if (!post.value) return '';
+  const postUrl = `https://reppy-weld.vercel.app/${i18n.locale}/blog/${route.params.slug}`;
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": post.value.title,
-    "image": [`https://reppy.vercel.app${post.value.image}`],
-    "datePublished": post.value.date,
+    "description": post.value.excerpt,
+    "image": [`https://reppy-weld.vercel.app${currentPost.value.image}`],
+    "datePublished": currentPost.value.date,
+    "dateModified": currentPost.value.date,
     "author": [{
+      "@type": "Person",
+      "name": currentPost.value.author,
+      "url": "https://reppy-weld.vercel.app"
+    }],
+    "publisher": {
       "@type": "Organization",
-      "name": "Reppy editorial",
-      "url": "https://reppy.vercel.app"
-    }]
+      "name": "Reppy",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://reppy-weld.vercel.app/favicon.svg"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": postUrl
+    }
   };
   return `<script type="application/ld+json">${JSON.stringify(structuredData)}<\/script>`;
 });
+
+// Dynamic SEO Tags
+const updateSEOMeta = () => {
+  if (!post.value) return;
+
+  const baseUrl = 'https://reppy-weld.vercel.app';
+  const postUrl = `${baseUrl}/${i18n.locale}/blog/${route.params.slug}`;
+  const title = `${post.value.title} | Reppy`;
+  const description = post.value.excerpt;
+  const image = `${baseUrl}${currentPost.value.image}`;
+
+  // Update Title
+  document.title = title;
+
+  // Update Meta Tags
+  const metas = {
+    'description': description,
+    'og:title': title,
+    'og:description': description,
+    'og:url': postUrl,
+    'og:image': image,
+    'twitter:title': title,
+    'twitter:description': description,
+    'twitter:image': image
+  };
+
+  Object.entries(metas).forEach(([name, content]) => {
+    let el = document.querySelector(`meta[name="${name}"]`) || document.querySelector(`meta[property="${name}"]`);
+    if (el) el.setAttribute('content', content);
+  });
+
+  // Canonical
+  let canonical = document.querySelector('link[rel="canonical"]');
+  if (canonical) canonical.setAttribute('href', postUrl);
+
+  // Alternate Hreflang
+  const langs = ['es', 'en'];
+  langs.forEach(l => {
+    let alt = document.querySelector(`link[hreflang="${l}"]`);
+    if (alt) alt.setAttribute('href', `${baseUrl}/${l}/blog/${route.params.slug}`);
+  });
+  
+  let xDefault = document.querySelector('link[hreflang="x-default"]');
+  if (xDefault) xDefault.setAttribute('href', `${baseUrl}/es/blog/${route.params.slug}`);
+};
+
+watch(() => i18n.locale, updateSEOMeta);
+watch(() => route.params.slug, updateSEOMeta);
 
 // Scroll Progress
 const scrollProgress = ref(0);

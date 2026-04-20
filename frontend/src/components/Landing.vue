@@ -387,14 +387,14 @@
             {{ i18n.t('news_subtitle') }}
           </p>
         </div>
-        <router-link to="/blog" class="text-xs font-black text-primary-500 uppercase tracking-[0.4em] hover:text-white transition-all">
+        <router-link :to="`/${i18n.locale}/blog`" class="text-xs font-black text-primary-500 uppercase tracking-[0.4em] hover:text-white transition-all">
           {{ i18n.t('view_all_articles') }} &rarr;
         </router-link>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <!-- Post Card 1 (Dynamic) -->
-        <router-link v-for="p in latestPosts" :key="p.slug" :to="`/blog/${p.slug}`" class="group card-stats !p-0 overflow-hidden flex flex-col border-border/40 hover:border-primary-500/40">
+        <router-link v-for="p in latestPosts" :key="p.slug" :to="`/${i18n.locale}/blog/${p.slug}`" class="group card-stats !p-0 overflow-hidden flex flex-col border-border/40 hover:border-primary-500/40">
           <div class="relative aspect-video overflow-hidden">
             <img 
               :src="p.image" 
@@ -431,7 +431,7 @@
         </router-link>
 
         <!-- Placeholder Post 2 (Internal for Exercise) -->
-        <router-link to="/contador-dominadas" class="group card-stats !p-0 overflow-hidden flex flex-col border-border/40">
+        <router-link :to="`/${i18n.locale}/contador-dominadas`" class="group card-stats !p-0 overflow-hidden flex flex-col border-border/40">
           <div class="relative aspect-video overflow-hidden bg-surface-dark/40 flex items-center justify-center p-12">
             <ArrowUp class="w-12 h-12 text-primary-500/20 group-hover:scale-125 transition-transform" />
           </div>
@@ -447,7 +447,7 @@
         </router-link>
 
         <!-- Placeholder Post 3 (Internal for General SEO) -->
-        <router-link to="/app-calistenia" class="group card-stats !p-0 overflow-hidden flex flex-col border-border/40">
+        <router-link :to="`/${i18n.locale}/app-calistenia`" class="group card-stats !p-0 overflow-hidden flex flex-col border-border/40">
           <div class="relative aspect-video overflow-hidden bg-surface-dark/40 flex items-center justify-center p-12">
             <Sword class="w-12 h-12 text-accent/20 group-hover:scale-125 transition-transform" />
           </div>
@@ -594,7 +594,7 @@
           <span class="text-[11px] font-bold tracking-[0.4em] uppercase">{{ i18n.t('landing_footer_exercises') }}</span>
         </div>
         <div class="flex justify-center gap-6">
-          <router-link to="/blog" class="text-[10px] font-black text-muted hover:text-primary transition-all uppercase tracking-widest">Blog</router-link>
+          <router-link :to="`/${i18n.locale}/blog`" class="text-[10px] font-black text-muted hover:text-primary transition-all uppercase tracking-widest">Blog</router-link>
         </div>
         <p class="text-[10px] text-muted/20 max-w-lg mx-auto leading-relaxed">
           {{ i18n.t('landing_footer_desc') }}

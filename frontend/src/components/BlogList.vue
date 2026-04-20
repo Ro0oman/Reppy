@@ -3,7 +3,7 @@
     
     <!-- Fixed Navigation Replacement (Aesthetic) -->
     <nav class="w-full max-w-7xl px-6 py-10 flex items-center justify-between z-10">
-      <router-link to="/" class="flex items-center gap-3 group">
+      <router-link :to="`/${i18n.locale}`" class="flex items-center gap-3 group">
         <div class="w-8 h-8 bg-primary-500 rounded-xl flex items-center justify-center font-bold text-white shadow-lg shadow-primary-500/20 transition-transform group-hover:scale-110">R</div>
         <span class="text-xl font-bold tracking-tight text-foreground">Reppy<span class="text-primary-500">.</span></span>
       </router-link>
@@ -26,7 +26,7 @@
         <router-link 
           v-for="post in paginatedPosts" 
           :key="post.slug" 
-          :to="`/blog/${post.slug}`" 
+          :to="`/${i18n.locale}/blog/${post.slug}`" 
           class="group card-stats !p-0 overflow-hidden flex flex-col border-border/40 hover:border-primary-500/40"
         >
           <div class="relative aspect-video overflow-hidden bg-surface-dark/20 flex items-center justify-center">
@@ -115,7 +115,7 @@
 
     <!-- Footer link back -->
     <footer class="py-20 border-t border-border/40 w-full text-center">
-      <router-link to="/" class="text-xs font-black text-primary-500 hover:text-white transition-all uppercase tracking-widest">
+      <router-link :to="`/${i18n.locale}`" class="text-xs font-black text-primary-500 hover:text-white transition-all uppercase tracking-widest">
         &larr; {{ i18n.t('el_back_home') }}
       </router-link>
     </footer>

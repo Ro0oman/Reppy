@@ -744,6 +744,11 @@ const translations = {
     activity_top_dated: 'TOP {n}% ({date})',
     activity_comments_count: '{n} Comments',
     activity_share_label: 'Share',
+    nav_rank: 'RANK',
+    nav_progress: 'PROGRESS',
+    nav_rank_details: 'RANK DETAILS',
+    nav_rank_progress: 'RANK PROGRESS',
+    nav_remaining: 'REMAINING',
   },
   es: {
     // Landing
@@ -1500,6 +1505,11 @@ const translations = {
     activity_top_dated: 'TOP {n}% ({date})',
     activity_comments_count: '{n} Comentarios',
     activity_share_label: 'Compartir',
+    nav_rank: 'RANGO',
+    nav_progress: 'PROGRESO',
+    nav_rank_details: 'DETALLES DE RANGO',
+    nav_rank_progress: 'PROGRESO NIVEL',
+    nav_remaining: 'RESTANTE',
   }
 };
 
