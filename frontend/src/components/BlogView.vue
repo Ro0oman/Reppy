@@ -254,7 +254,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { 
   Calendar, User, Clock, ChevronRight, 
   ArrowUpRight, Share2, Twitter, Facebook, Linkedin, MessageCircle,
-  List as ListIcon, Loader2, BookOpenCheck, CheckCircle2
+  List as ListIcon, Loader2, BookOpenCheck, CheckCircle2, Book
 } from 'lucide-vue-next';
 import { marked } from 'marked';
 import { blogPosts } from '../blogPosts';

@@ -89,15 +89,20 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <router-link 
           v-for="post in localizedPosts" 
           :key="post.slug"
           :to="`/${i18n.locale}/blog/${post.slug}`"
-          class="group bg-surface/10 border border-white/5 rounded-3xl overflow-hidden hover:bg-surface/20 hover:border-primary-500/30 transition-all flex flex-col"
+          class="group bg-surface/10 border border-white/5 rounded-3xl overflow-hidden hover:bg-surface/20 hover:border-primary-500/30 transition-all flex flex-col min-h-[220px] sm:min-h-0"
         >
-          <div class="aspect-video relative overflow-hidden">
-            <img :src="post.image" :alt="post.title" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+          <div class="aspect-video relative overflow-hidden bg-background/50">
+            <img 
+              :src="post.image" 
+              :alt="post.title" 
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+              @error="handleImageError"
+            />
             <div class="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-60"></div>
             
             <div v-if="isRead(post.slug)" class="absolute top-4 right-4 bg-neon-lime/20 backdrop-blur-md border border-neon-lime/40 px-3 py-1 rounded-full flex items-center gap-1.5">
@@ -116,10 +121,81 @@
                 <span class="text-[9px] font-black text-primary-500 uppercase tracking-widest">{{ post.category }}</span>
                 <span class="text-[9px] font-black text-muted uppercase tracking-widest">+100 INT XP</span>
               </div>
-              <h3 class="text-lg font-black text-foreground group-hover:text-primary-500 transition-colors line-clamp-2 uppercase italic tracking-tighter leading-tight">{{ post.title }}</h3>
+              <h3 class="text-[10px] sm:text-lg font-black text-foreground group-hover:text-primary-500 transition-colors line-clamp-2 uppercase italic tracking-tighter leading-tight">{{ post.title }}</h3>
             </div>
           </div>
         </router-link>
+      </div>
+
+      <!-- Upcoming Protocols Section -->
+      <div v-if="upcomingPosts.length > 0" class="pt-20 space-y-8">
+        <div class="flex items-center gap-3">
+          <div class="p-2 bg-muted/10 rounded-lg"><Timer class="w-4 h-4 text-muted" /></div>
+          <h2 class="text-xl font-black tracking-tighter text-muted italic uppercase leading-none">{{ i18n.locale === 'es' ? 'CRÓNICAS EN CAMINO' : 'UPCOMING CHRONICLES' }}</h2>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
+          <div 
+            v-for="post in upcomingPosts" 
+            :key="post.slug"
+            class="group bg-surface/5 border border-white/5 rounded-[2rem] overflow-hidden pointer-events-none flex flex-col relative aspect-[4/5] sm:aspect-auto"
+          >
+            <!-- 1. Technical Overlay (Scanlines & Matrix effect) -->
+            <div class="absolute inset-0 z-10 pointer-events-none opacity-30 px-4 py-6">
+              <div class="w-full h-full border border-white/5 rounded-2xl flex flex-col justify-between p-4">
+                <div class="flex justify-between items-start">
+                   <div class="w-2 h-2 border-t border-l border-white/40"></div>
+                   <div class="w-2 h-2 border-t border-r border-white/40"></div>
+                </div>
+                <div class="flex justify-between items-end">
+                   <div class="w-2 h-2 border-b border-l border-white/40"></div>
+                   <div class="w-2 h-2 border-b border-r border-white/40"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. The Image with Glitch/Blur -->
+            <div class="relative h-32 sm:h-48 overflow-hidden grayscale contrast-125 opacity-40">
+              <!-- Scanline animation -->
+              <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-10 bg-[length:100%_2px,3px_100%] pointer-events-none"></div>
+              
+              <img :src="post.image" :alt="post.title" class="w-full h-full object-cover blur-[2px]" />
+              <div class="absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background"></div>
+            </div>
+
+            <!-- 3. Central Lock System -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center gap-4 w-full px-4">
+              <div class="relative">
+                <!-- Glowing Rings -->
+                <div class="absolute inset-0 bg-primary-500/20 blur-2xl rounded-full scale-150 animate-pulse"></div>
+                <div class="relative w-12 h-12 sm:w-16 sm:h-16 bg-background/60 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center shadow-2xl ring-4 ring-white/5">
+                   <Lock class="w-5 h-5 sm:w-6 sm:h-6 text-muted/60" />
+                </div>
+              </div>
+              
+              <!-- Countdown Badge -->
+              <div class="bg-primary-500/10 backdrop-blur-md border border-primary-500/20 px-3 py-1.5 rounded-xl flex items-center gap-2 shadow-[0_0_20px_rgba(var(--primary-500-rgb),0.1)]">
+                 <Timer class="w-3 h-3 text-primary-500 animate-pulse" />
+                 <span class="text-[8px] sm:text-[10px] font-black text-primary-500 uppercase tracking-[0.2em] whitespace-nowrap">
+                   {{ i18n.locale === 'es' ? `T-MINUS ${post.daysLeft}D` : `T-MINUS ${post.daysLeft}D` }}
+                 </span>
+              </div>
+            </div>
+
+            <!-- 4. Footer Info -->
+            <div class="p-4 sm:p-6 mt-auto bg-background/40 backdrop-blur-sm border-t border-white/5 space-y-1 sm:space-y-2">
+              <span class="text-[7px] sm:text-[9px] font-black text-muted/30 uppercase tracking-[0.3em] block">{{ post.category }}</span>
+              <h3 class="text-[10px] sm:text-sm font-black text-muted/50 line-clamp-1 sm:line-clamp-2 uppercase italic tracking-tighter leading-tight">{{ post.title }}</h3>
+              
+              <div class="flex items-center gap-1.5 pt-2">
+                <div class="h-0.5 w-8 bg-white/5 rounded-full overflow-hidden">
+                   <div class="h-full bg-primary-500/20 w-1/3"></div>
+                </div>
+                <span class="text-[6px] font-black text-muted/20 uppercase tracking-widest">{{ i18n.locale === 'es' ? 'ENCRIPTADO' : 'ENCRYPTED' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -145,7 +221,9 @@ import {
   CheckCircle2, 
   ShieldAlert,
   Info,
-  ChevronRight
+  ChevronRight,
+  Lock,
+  Timer
 } from 'lucide-vue-next';
 import { ref, computed, onMounted } from 'vue';
 import { useAuthStore } from '../stores/auth';
@@ -187,15 +265,41 @@ const getStatXPMax = (statId) => {
 };
 
 const localizedPosts = computed(() => {
-  const now = new Date().toISOString().split('T')[0];
+  const now = new Date();
+  now.setHours(0, 0, 0, 0); // Normalize today to midnight for comparison
+  
   return blogPosts
-    .filter(post => post.date <= now) // Only released ones
+    .filter(post => new Date(post.date) <= now)
     .map(post => ({
       slug: post.slug,
       image: post.image,
       category: post.category,
       title: post.locales[i18n.locale]?.title || post.locales.en.title
     }));
+});
+
+const upcomingPosts = computed(() => {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  
+  const upcoming = blogPosts
+    .filter(post => new Date(post.date) > now)
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .slice(0, 3);
+    
+  return upcoming.map(post => {
+    const releaseDate = new Date(post.date);
+    const diffTime = releaseDate - now;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    return {
+      slug: post.slug,
+      image: post.image,
+      category: post.category,
+      title: post.locales[i18n.locale]?.title || post.locales.en.title,
+      daysLeft: diffDays
+    };
+  });
 });
 
 const isRead = (slug) => {
@@ -205,6 +309,11 @@ const isRead = (slug) => {
 const readPostsCount = computed(() => {
   return blogPosts.filter(p => isRead(p.slug)).length;
 });
+
+const handleImageError = (e) => {
+  // Production recovery for broken unsplash assets
+  e.target.src = 'https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?auto=format&fit=crop&w=1200&q=80';
+};
 
 onMounted(() => {
   if (authStore.isAuthenticated) {
