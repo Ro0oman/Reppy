@@ -693,6 +693,11 @@ const latestPosts = computed(() => {
   const today = new Date();
   return blogPosts
     .filter(p => new Date(p.date) <= today)
+    .sort((a, b) => {
+      if (a.isPillar && !b.isPillar) return -1;
+      if (!a.isPillar && b.isPillar) return 1;
+      return new Date(b.date) - new Date(a.date);
+    })
     .slice(0, 3);
 });
 

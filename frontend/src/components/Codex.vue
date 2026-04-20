@@ -84,7 +84,7 @@
            </div>
            <div class="text-center">
              <span class="text-[9px] font-black text-muted uppercase tracking-widest block mb-1">UNLOCKED</span>
-             <span class="text-xl font-black text-neon-lime">{{ readPostsCount  -1}}</span>
+             <span class="text-xl font-black text-neon-lime">{{ readPostsCount}}</span>
            </div>
         </div>
       </div>
@@ -271,11 +271,16 @@ const localizedPosts = computed(() => {
   return blogPosts
     .filter(post => new Date(post.date) <= now)
     .map(post => ({
-      slug: post.slug,
-      image: post.image,
-      category: post.category,
+      ...post,
       title: post.locales[i18n.locale]?.title || post.locales.en.title
-    }));
+    }))
+    .sort((a, b) => {
+      // Prioritize pillar posts
+      if (a.isPillar && !b.isPillar) return -1;
+      if (!a.isPillar && b.isPillar) return 1;
+      // Then sort by date
+      return new Date(b.date) - new Date(a.date);
+    });
 });
 
 const upcomingPosts = computed(() => {

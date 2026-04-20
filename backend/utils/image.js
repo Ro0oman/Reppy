@@ -22,14 +22,20 @@ export const compressAvatar = async (base64Str, size = 128) => {
         fit: 'cover',
         position: 'center'
       })
-      .webp({ quality: 80 })
+      .webp({ 
+        quality: 75, // Slightly lower quality for even better size reduction
+        effort: 6,   // Highest compression effort
+        lossless: false
+      })
       .toBuffer();
 
     // Convert back to base64
     return `data:image/webp;base64,${compressedBuffer.toString('base64')}`;
   } catch (error) {
     console.error('Image compression failed:', error);
-    // Return original if compression fails (safety fallback)
+    // If it's a URL (not base64), return it as is. 
+    // If it's a failed base64 compression, we still return the original 
+    // but the migration script will help us catch these.
     return base64Str;
   }
 };

@@ -102,6 +102,11 @@ const updateAvatar = async (req, res) => {
   
   if (!finalUrl) return res.status(400).json({ message: 'No avatar provided' });
 
+  // Safety check: Reject massive payloads before processing (5MB limit)
+  if (finalUrl.length > 5 * 1024 * 1024) {
+    return res.status(413).json({ message: 'Avatar image is too large. Please use a smaller file.' });
+  }
+
   // Only compress if it's a base64 string
   if (finalUrl.startsWith('data:image')) {
     finalUrl = await compressAvatar(finalUrl);
