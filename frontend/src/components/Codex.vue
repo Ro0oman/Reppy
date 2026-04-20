@@ -84,7 +84,7 @@
            </div>
            <div class="text-center">
              <span class="text-[9px] font-black text-muted uppercase tracking-widest block mb-1">UNLOCKED</span>
-             <span class="text-xl font-black text-neon-lime">{{ readPostsCount }}</span>
+             <span class="text-xl font-black text-neon-lime">{{ readPostsCount  -1}}</span>
            </div>
         </div>
       </div>
