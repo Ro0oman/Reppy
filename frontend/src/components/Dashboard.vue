@@ -192,6 +192,7 @@ import ExerciseSelector from './ExerciseSelector.vue';
 import BossHealth from './BossHealth.vue';
 import RadialProgress from './RadialProgress.vue';
 import DamageOverhaulModal from './DamageOverhaulModal.vue';
+import { getLocalDateString } from '../utils/dateUtils.js';
 
 const emit = defineEmits(['viewProfile', 'start']);
 const authStore = useAuthStore();
@@ -233,9 +234,9 @@ const activeExerciseLabel = computed(() => {
 });
 
 const todayProgress = computed(() => {
-  const today = new Date().toLocaleDateString('en-CA');
+  const today = getLocalDateString();
   return reps.value
-    .filter(r => new Date(r.date).toLocaleDateString('en-CA') === today)
+    .filter(r => getLocalDateString(r.date) === today)
     .reduce((acc, curr) => acc + Number(curr.count), 0);
 });
 
@@ -277,7 +278,9 @@ const fetchData = async () => {
 };
 
 const formatDate = (dateStr) => {
-  return new Date(dateStr).toLocaleDateString(undefined, {
+  // Use '/' instead of '-' to force local timezone parsing if it's a YYYY-MM-DD string
+  const normalizedDate = typeof dateStr === 'string' ? dateStr.replace(/-/g, '/') : dateStr;
+  return new Date(normalizedDate).toLocaleDateString(undefined, {
     weekday: 'short', month: 'short', day: 'numeric'
   });
 };

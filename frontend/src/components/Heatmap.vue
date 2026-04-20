@@ -308,7 +308,8 @@ const getColorClass = (day) => {
 
 const formatDate = (dateStr, isSecondary = false) => {
   if (!dateStr) return '';
-  const d = new Date(dateStr);
+  const normalizedDate = typeof dateStr === 'string' ? dateStr.replace(/-/g, '/') : dateStr;
+  const d = new Date(normalizedDate);
   if (isSecondary) {
     return d.toLocaleDateString(undefined, {
       weekday: 'long',
