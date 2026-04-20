@@ -1,5 +1,39 @@
 [
   {
+    "slug": "rpg-mechanics-reppy-evolution",
+    "date": "2026-04-20",
+    "author": "Reppy Editorial",
+    "image": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80",
+    "category": "rpg",
+    "isPillar": true,
+    "locales": {
+      "es": {
+        "title": "RPG Mechanics: La Evolución del Ecosistema Reppy",
+        "excerpt": "Descubre las novedades que transformarán tu entrenamiento: Tienda Diaria, Sistema de Botín y la integración real de tus estadísticas en el combate contra los Bosses.",
+        "keywords": [
+          "rpg mechanics",
+          "reppy shop",
+          "loot system",
+          "fitness gamified",
+          "combat stats"
+        ],
+        "content": "# RPG Mechanics: La Evolución de tu Entrenamiento\n\nEl camino del guerrero en Reppy está a punto de volverse mucho más profundo. Durante las próximas semanas, implementaremos una serie de cambios estructurales que transformarán la forma en que interactúas con la plataforma. Ya no se trata solo de registrar repeticiones; se trata de construir un héroe.\n\n## 🛒 Tienda Diaria y Rotación de Ítems\nLa nueva [/shop](/shop) no será solo un catálogo estático. Introduciremos una **Tienda Diaria Rotativa** donde aparecerán ítems raros y ediciones limitadas que solo estarán disponibles por 24 horas. ¿Buscas ese marco legendario o una poción de XP? Tendrás que estar atento cada día.\n\n## 📦 Sistema de Cofres y Loot\nAl derrotar Bosses comunitarios o alcanzar hitos personales, desbloquearás **Cofres de Suministros**. Estos cofres contienen desde 'Reppy Coins' hasta consumibles raros. La emoción de abrir un cofre y descubrir qué botín has ganado añadirá una nueva capa de recompensa a cada gota de sudor.\n\n## ⚔️ Integración de Stats en Combate\nTus atributos de **Fuerza (STR)**, **Poder (PWR)** y **Agilidad (AGI)** finalmente tendrán un impacto directo en las Boss Fights. Próximamente, tener un nivel alto de STR aumentará tu daño base, mientras que la AGI podría permitirte realizar 'Critical Hits' que dupliquen el daño de tus repeticiones.\n\n**🔥 Prepárate:** Mantén tu racha alta y acumula todas las monedas que puedas. ¡La era de los RPG Mechanics en Reppy acaba de empezar!"
+      },
+      "en": {
+        "title": "RPG Mechanics: The Evolution of the Reppy Ecosystem",
+        "excerpt": "Discover the new features transforming your training: Daily Shop, Loot System, and the real integration of your stats in Boss combat.",
+        "keywords": [
+          "rpg mechanics",
+          "reppy shop",
+          "loot system",
+          "fitness gamified",
+          "combat stats"
+        ],
+        "content": "# RPG Mechanics: The Evolution of Your Training\n\nThe warrior's path in Reppy is about to get much deeper. Over the coming weeks, we will be implementing a series of structural changes that will transform how you interact with the platform. It's no longer just about logging reps; it's about building a hero.\n\n## 🛒 Daily Shop and Item Rotation\nThe new [/shop](/shop) won't be just a static catalog. We are introducing a **Daily Rotating Shop** where rare items and limited editions will appear for only 24 hours. Looking for 그 legendary frame or an XP potion? You'll have to keep an eye out every day.\n\n## 📦 Chests and Loot System\nBy defeating community Bosses or reaching personal milestones, you will unlock **Supply Chests**. These chests contain everything from 'Reppy Coins' to rare consumables. The thrill of opening a chest and discovering what loot you've earned will add a new layer of reward to every drop of sweat.\n\n## ⚔️ Stats Integration in Combat\nYour **Strength (STR)**, **Power (PWR)**, and **Agility (AGI)** attributes will finally have a direct impact on Boss Fights. Soon, having a high STR level will increase your base damage, while AGI could allow you to land 'Critical Hits' that double the damage of your reps.\n\n**🔥 Get Ready:** Keep your streak high and hoard as many coins as you can. The era of RPG Mechanics in Reppy has just begun!"
+      }
+    }
+  },
+  {
     "slug": "gero-arias-reto-112",
     "date": "2026-04-20",
     "author": "Reppy Editorial",

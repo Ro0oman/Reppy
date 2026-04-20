@@ -1,44 +1,44 @@
 <template>
-  <div class="min-h-screen bg-deep-abyss selection:bg-primary-500 overflow-x-hidden flex flex-col items-center font-industrial text-foreground relative">
+  <div class="min-h-screen bg-background selection:bg-primary/30 overflow-x-hidden flex flex-col items-center text-foreground relative">
     
-    <!-- Fixed Navigation Replacement (Aesthetic) -->
-    <nav class="w-full max-w-7xl px-6 py-10 flex items-center justify-between z-10">
+    <!-- Navigation -->
+    <nav class="w-full max-w-7xl px-6 py-10 flex items-center justify-between z-10 animate-in">
       <router-link :to="`/${i18n.locale}`" class="flex items-center gap-3 group">
-        <div class="w-8 h-8 bg-primary-500 rounded-xl flex items-center justify-center font-bold text-white shadow-lg shadow-primary-500/20 transition-transform group-hover:scale-110">R</div>
-        <span class="text-xl font-bold tracking-tight text-foreground">Reppy<span class="text-primary-500">.</span></span>
+        <div class="w-8 h-8 bg-primary rounded-xl flex items-center justify-center font-bold text-white shadow-lg shadow-primary/20 transition-transform group-hover:scale-110">R</div>
+        <span class="text-xl font-black tracking-tight text-foreground">Reppy<span class="text-primary group-hover:translate-x-0.5 transition-transform">.</span></span>
       </router-link>
       <LanguageToggle />
     </nav>
 
-    <!-- Header -->
-    <header class="max-w-7xl w-full px-6 py-20 text-left space-y-6">
-      <h1 class="text-5xl md:text-8xl font-black tracking-tight text-foreground leading-none uppercase italic">
-        {{ i18n.t('blog_list_title').split(' ')[0] }} <span class="text-primary-500">{{ i18n.t('blog_list_title').split(' ').slice(1).join(' ') }}</span>
+    <!-- Header (Large & Clean) -->
+    <header class="max-w-7xl w-full px-6 py-20 text-center space-y-8 animate-in">
+      <h1 class="text-5xl md:text-[10rem] font-black tracking-tighter text-foreground leading-none uppercase italic border-b-8 border-primary/20 pb-4 inline-block">
+        {{ i18n.t('nav_codex') }}
       </h1>
-      <p class="text-xl text-muted max-w-2xl leading-relaxed font-medium">
+      <p class="text-xl md:text-2xl text-muted max-w-3xl mx-auto leading-relaxed font-medium">
         {{ i18n.t('blog_list_subtitle') }}
       </p>
     </header>
 
-    <!-- Blog Grid -->
-    <section class="max-w-7xl w-full px-6 pb-32">
-      <div v-if="paginatedPosts.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <!-- Blog Grid (Focused) -->
+    <section class="max-w-7xl w-full px-6 pb-40">
+      <div v-if="paginatedPosts.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
         <router-link 
           v-for="post in paginatedPosts" 
           :key="post.slug" 
           :to="`/${i18n.locale}/blog/${post.slug}`" 
-          class="group card-stats !p-0 overflow-hidden flex flex-col border-border/40 hover:border-primary-500/40"
+          class="group flex flex-col space-y-8 animate-in"
         >
-          <div class="relative aspect-video overflow-hidden bg-surface-dark/20 flex items-center justify-center">
+          <div class="relative aspect-video overflow-hidden rounded-[2.5rem] bg-surface-dark/10 flex items-center justify-center border border-white/5 shadow-2xl transition-all duration-500 group-hover:shadow-primary/10">
             <!-- Loading Spinner -->
             <div v-if="!loadedImages[post.slug]" class="absolute inset-0 flex items-center justify-center">
-              <Loader2 class="w-8 h-8 text-primary-500/40 animate-spin" />
+              <Loader2 class="w-8 h-8 text-primary/40 animate-spin" />
             </div>
 
             <img 
               :src="post.image" 
               :alt="post.locales[i18n.locale]?.title" 
-              class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110" 
+              class="w-full h-full object-cover transition-all duration-1000 group-hover:scale-105" 
               :class="loadedImages[post.slug] ? 'opacity-100' : 'opacity-0'"
               @load="loadedImages[post.slug] = true"
               @error="(e) => { 
@@ -46,88 +46,93 @@
                 e.target.src = 'https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?auto=format&fit=crop&w=800&q=60';
               }"
             />
-            <div class="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent"></div>
             
-            <!-- Prominent Image Checkmark -->
+            <!-- Read Indicator Overlay -->
             <div 
               v-if="isRead(post.slug)" 
-              class="absolute top-4 right-4 w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center shadow-lg shadow-primary-500/40 border-2 border-white/30 z-20 animate-in group-hover:scale-110 transition-transform"
+              class="absolute top-6 right-6 w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/40 border-2 border-white/20 z-20 backdrop-blur-sm"
             >
               <CheckCircle2 class="w-6 h-6 text-white" />
             </div>
           </div>
-          <div class="p-8 space-y-4 flex-grow flex flex-col">
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ post.date }}</span>
-              <span class="text-[9px] font-black text-primary-500 uppercase tracking-widest bg-primary-500/10 px-2 py-0.5 rounded-md">{{ i18n.t('trending') }}</span>
+
+          <div class="space-y-4 px-4">
+            <div class="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.3em] text-primary/60">
+              <span class="bg-primary/5 px-3 py-1 rounded-full ring-1 ring-primary/20">{{ post.category }}</span>
+              <span class="opacity-30">•</span>
+              <span>{{ post.date }}</span>
             </div>
-            <h3 class="text-xl font-bold text-foreground group-hover:text-primary-500 transition-colors leading-tight">
+            
+            <h3 class="text-3xl md:text-4xl font-black text-foreground group-hover:text-primary transition-colors leading-tight tracking-tight">
               {{ post.locales[i18n.locale]?.title || post.locales.en.title }}
             </h3>
-            <p class="text-sm text-muted/60 leading-relaxed line-clamp-3">
+            
+            <p class="text-lg text-muted/60 leading-relaxed font-medium line-clamp-2 max-w-xl">
               {{ post.locales[i18n.locale]?.excerpt || post.locales.en.excerpt }}
             </p>
 
-            <!-- Knowledge Acquired Badge -->
-            <div v-if="isRead(post.slug)" class="pt-4 mt-auto border-t border-primary-500/10 flex items-center gap-2">
-              <CheckCircle2 class="w-3.5 h-3.5 text-primary-500" />
-              <span class="text-[9px] font-black text-primary-500 uppercase tracking-[0.2em] italic">
-                {{ i18n.t('intelecto_adquirido') }}
-              </span>
+            <div class="pt-4 flex items-center gap-3 text-primary group-hover:gap-5 transition-all">
+              <span class="text-xs font-black uppercase tracking-widest">{{ i18n.locale === 'es' ? 'Leer Protocolo' : 'Read Protocol' }}</span>
+              <ArrowRight class="w-5 h-5" />
             </div>
           </div>
         </router-link>
       </div>
 
-      <!-- Pagination -->
-      <div v-if="totalPages > 1" class="mt-20 flex flex-col items-center gap-6">
+      <!-- Empty State -->
+      <div v-else class="py-40 text-center space-y-6">
+        <Rocket class="w-16 h-16 text-primary/20 mx-auto animate-bounce" />
+        <p class="text-muted font-bold text-xl">{{ i18n.t('no_posts_found') || 'No se han encontrado protocolos.' }}</p>
+      </div>
+
+      <!-- Pagination (Modern Minimal) -->
+      <div v-if="totalPages > 1" class="mt-32 flex flex-col items-center gap-10">
         <div class="flex items-center gap-4">
           <button 
             @click="prevPage" 
             :disabled="currentPage === 1"
-            class="p-4 rounded-2xl bg-surface border border-border/40 text-muted hover:text-foreground disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+            class="p-6 rounded-full bg-surface border border-border/20 text-muted hover:text-foreground disabled:opacity-10 transition-all hover:scale-110 active:scale-95"
           >
             <ChevronLeft class="w-6 h-6" />
           </button>
           
-          <div class="flex gap-2">
+          <div class="flex gap-3">
             <span 
               v-for="p in totalPages" 
               :key="p"
-              class="w-2 h-2 rounded-full transition-all"
-              :class="currentPage === p ? 'bg-primary-500 w-8' : 'bg-border/40'"
+              @click="currentPage = p"
+              class="w-3 h-3 rounded-full cursor-pointer transition-all duration-500"
+              :class="currentPage === p ? 'bg-primary w-12' : 'bg-muted/20 hover:bg-muted/40'"
             ></span>
           </div>
 
           <button 
             @click="nextPage" 
             :disabled="currentPage === totalPages"
-            class="p-4 rounded-2xl bg-surface border border-border/40 text-muted hover:text-foreground disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+            class="p-6 rounded-full bg-surface border border-border/40 text-muted hover:text-foreground disabled:opacity-10 transition-all hover:scale-110 active:scale-95"
           >
             <ChevronRight class="w-6 h-6" />
           </button>
         </div>
-        <p class="text-[10px] font-black text-muted uppercase tracking-[0.3em]">
-          {{ i18n.t('nav_social').split(' ')[0] }} {{ currentPage }} / {{ totalPages }}
-        </p>
       </div>
     </section>
 
     <!-- Footer link back -->
-    <footer class="py-20 border-t border-border/40 w-full text-center">
-      <router-link :to="`/${i18n.locale}`" class="text-xs font-black text-primary-500 hover:text-white transition-all uppercase tracking-widest">
-        &larr; {{ i18n.t('el_back_home') }}
+    <footer class="py-20 border-t border-border/10 w-full flex flex-col items-center gap-8 bg-surface-dark/5">
+      <router-link :to="`/${i18n.locale}`" class="text-xs font-black text-muted hover:text-primary transition-all uppercase tracking-widest flex items-center gap-2 group">
+        <ArrowLeft class="w-4 h-4 group-hover:-translate-x-2 transition-transform" />
+        {{ i18n.t('el_back_home') }}
       </router-link>
     </footer>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, reactive } from 'vue';
+import { ref, computed, reactive, onMounted } from 'vue';
 import { blogPosts } from '../blogPosts';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
-import { ChevronLeft, ChevronRight, Loader2, CheckCircle2 } from 'lucide-vue-next';
+import { ChevronLeft, ChevronRight, Loader2, CheckCircle2, ArrowRight, ArrowLeft, Rocket } from 'lucide-vue-next';
 import LanguageToggle from './LanguageToggle.vue';
 
 const i18n = useI18nStore();
@@ -139,7 +144,7 @@ const isRead = (slug) => {
 };
 
 const currentPage = ref(1);
-const postsPerPage = 10;
+const postsPerPage = 6; // Fewer posts per page for better focus
 const loadedImages = reactive({});
 
 const sortedPosts = computed(() => {
@@ -147,10 +152,8 @@ const sortedPosts = computed(() => {
   return blogPosts
     .filter(post => new Date(post.date) <= today)
     .sort((a, b) => {
-      // Prioritize pillar posts (How to do my first X)
       if (a.isPillar && !b.isPillar) return -1;
       if (!a.isPillar && b.isPillar) return 1;
-      // Then sort by date
       return new Date(b.date) - new Date(a.date);
     });
 });
@@ -176,9 +179,18 @@ const prevPage = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 };
+
+onMounted(() => {
+  window.scrollTo(0, 0);
+});
 </script>
 
 <style scoped>
 .animate-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Ensure the background matches the Reppy theme but cleaner */
+.bg-background {
+  background-color: #0c0d0d; /* Reppy's deep abyss */
+}
 </style>
