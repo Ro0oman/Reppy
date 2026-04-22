@@ -140,20 +140,13 @@ export const routes = [
       }
     ]
   },
-  // Redirecciones Legadas (Legacy Redirects)
-  { path: '/blog', redirect: '/es/blog' },
-  { path: '/blog/:slug', redirect: '/es/blog/:slug' },
-  { path: '/contador-dominadas', redirect: '/es/contador-dominadas' },
-  { path: '/contador-flexiones', redirect: '/es/contador-flexiones' },
-  { path: '/app-calistenia', redirect: '/es/app-calistenia' },
-  
   {
     path: '/:pathMatch(.*)*',
     component: NotFound,
     name: 'not-found',
     meta: { titleKey: 'not_found_title' }
   }
-]
+];
 
 // Route Guards
 export function setupRouterGuards(router) {
@@ -161,7 +154,27 @@ export function setupRouterGuards(router) {
     const authStore = useAuthStore()
     const i18n = useI18nStore()
     
-    // 1. Sincronizar el idioma desde la URL
+    // 0. Redirect paths without locale prefix (e.g., /social -> /es/social)
+    // This allows using generic paths in redirects or code while maintaining localization
+    if (!to.params.lang && to.path !== '/') {
+      const currentLang = i18n.locale || 'es';
+      const knownPaths = [
+        'dashboard', 'social', 'shop', 'codex', 'inventory', 
+        'profile', 'admin', 'notifications', 'blog', 'login',
+        'contador-dominadas', 'contador-flexiones', 'app-calistenia'
+      ];
+      
+      const firstPart = to.path.split('/')[1];
+      if (knownPaths.includes(firstPart)) {
+        return next({ 
+          path: `/${currentLang}${to.path}`, 
+          query: to.query, 
+          hash: to.hash 
+        });
+      }
+    }
+
+    // 1. Sync language from URL if present
     if (to.params.lang) {
       await i18n.setLocale(to.params.lang)
     }
