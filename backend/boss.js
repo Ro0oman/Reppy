@@ -2,7 +2,6 @@ import express from 'express';
 import { query } from './db.js';
 import { authenticate, optionalAuthenticate } from './middleware.js';
 import { autoGrantPendingChests } from './utils/bossRewards.js';
-import { trackCoinTransaction } from './utils/transactions.js';
 
 import { getRandomPhrase } from './utils/bossPhrases.js';
 import { getLocalDateString } from './utils/date.js';
@@ -229,8 +228,7 @@ router.post('/open-chest', authenticate, async (req, res) => {
 
     await query('UPDATE users SET boss_chests = boss_chests - 1, reppy_coins = reppy_coins + $1 WHERE id = $2', [rewardCoins, userId]);
     
-    // Log the transaction
-    await trackCoinTransaction(userId, rewardCoins, 'CHEST_BOSS', rewardItem ? `Botín de Cofre: ${rewardItem.name}` : 'Recompensa de Cofre de Boss');
+    // Log the transaction (DEPRECATED: coin_transactions table removed)
 
     // Get dummy items for the reel animation
     const dummiesRes = await query(`
@@ -302,8 +300,7 @@ router.post('/open-level-chest', authenticate, async (req, res) => {
 
     await query('UPDATE users SET level_chests = level_chests - 1, reppy_coins = reppy_coins + $1 WHERE id = $2', [rewardCoins, userId]);
     
-    // Log the transaction
-    await trackCoinTransaction(userId, rewardCoins, 'CHEST_LVL', rewardItem ? `Recompensa de Nivel: ${rewardItem.name}` : 'Bono por subida de Nivel');
+    // Log the transaction (DEPRECATED: coin_transactions table removed)
 
     // Get dummy items for the reel animation (filtered to common items for thematic consistency)
     const dummiesRes = await query(`
