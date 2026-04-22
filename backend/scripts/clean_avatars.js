@@ -50,30 +50,31 @@ async function processImages() {
   for (const file of files) {
     const filePath = path.join(avatarsDir, file);
     
-    // 1. Process specific mappings
-    if (mapping[file]) {
-      const index = mapping[file];
+    // 1. Process anything that looks like an avatar (avatar_N.png, avatar_N.webp, or the messy ones in mapping)
+    const match = file.match(/^avatar_(\d+)\.(png|webp)$/);
+    const index = match ? match[1] : mapping[file];
+    
+    if (index) {
       const targetPath = path.join(avatarsDir, `avatar_${index}.webp`);
-      console.log(`Processing: ${file} -> avatar_${index}.webp`);
+      const tempPath = path.join(avatarsDir, `temp_avatar_${index}.webp`);
+      
+      console.log(`Re-compressing: ${file} -> avatar_${index}.webp`);
       
       try {
-        await sharp(filePath).resize(128, 128, { fit: 'cover' }).webp({ quality: 80 }).toFile(targetPath);
-        setTimeout(() => { try { fs.unlinkSync(filePath); } catch(e){} }, 100);
+        await sharp(filePath).resize(128, 128, { fit: 'cover' }).webp({ quality: 80 }).toFile(tempPath);
+        
+        // Remove original and rename temp
+        setTimeout(() => {
+            try { 
+                if (fs.existsSync(filePath)) fs.unlinkSync(filePath); 
+                fs.renameSync(tempPath, targetPath);
+            } catch(e){}
+        }, 200);
       } catch (err) { console.error(`Error processing ${file}:`, err); }
     } 
-    // 2. Convert remaining placeholder PNGs to WebP for consistency
-    else if (file.startsWith('avatar_') && file.endsWith('.png')) {
-      const index = file.match(/\d+/)[0];
-      const targetPath = path.join(avatarsDir, `avatar_${index}.webp`);
-      if (!fs.existsSync(targetPath)) {
-          console.log(`Converting placeholder: ${file} -> WebP`);
-          await sharp(filePath).webp({ quality: 50 }).toFile(targetPath);
-      }
-      try { fs.unlinkSync(filePath); } catch(e){}
-    }
-    // 3. Clean up junk
-    else if (file.includes('thumbnail') || file.includes('preview') || file.includes('removebg') || (file.endsWith('.jpg') && !file.startsWith('avatar_'))) {
-        console.log(`Cleaning up leftover fragment: ${file}`);
+    // 2. Clean up everything else that isn't a final .webp or is a messy named duplicate
+    else if (!file.startsWith('avatar_') || file.includes('preview') || file.includes('thumbnail')) {
+        console.log(`Cleaning up junk: ${file}`);
         try { fs.unlinkSync(filePath); } catch(e){}
     }
   }

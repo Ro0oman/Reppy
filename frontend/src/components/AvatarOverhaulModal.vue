@@ -33,7 +33,7 @@
 
         <!-- Feature Grid: 40 Icons Preview -->
         <div class="grid grid-cols-4 gap-3 mb-10 relative z-10 px-4">
-           <div v-for="i in [1, 2, 3, 4, 5, 6, 7, 31, 32, 33, 34, 35, 36, 37]" :key="i" class="aspect-square rounded-2xl overflow-hidden border border-white/10 opacity-60 hover:opacity-100 transition-opacity">
+           <div v-for="i in [1, 2, 3, 4, 5, 7, 31, 32, 33, 34, 35, 36, 37, 38]" :key="i" class="aspect-square rounded-2xl overflow-hidden border border-white/10 opacity-60 hover:opacity-100 transition-opacity">
               <img :src="`/img/avatars/avatar_${i}.webp`" class="w-full h-full object-cover" />
            </div>
         </div>

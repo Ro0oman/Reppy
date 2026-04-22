@@ -25,7 +25,7 @@ async function migrateAvatars() {
     // 2. Perform Migration
     // We assign a random icon (1-10) to each user
     console.log('Assigning random static icons to all users...');
-    const validIndices = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 16, 17, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40];
+    const validIndices = [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 14, 16, 17, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40];
     const updateRes = await client.query(`
       UPDATE users 
       SET avatar_url = '/img/avatars/avatar_' || (ARRAY[${validIndices.join(',')}]::int[])[floor(random() * ${validIndices.length} + 1)::int] || '.webp'

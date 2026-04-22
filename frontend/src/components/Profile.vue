@@ -280,7 +280,7 @@
              </div>
 
              <div class="grid grid-cols-3 md:grid-cols-6 gap-3">
-                <div v-for="i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 16, 17, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]" :key="i" 
+                <div v-for="i in [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 14, 16, 17, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]" :key="i" 
                      @click="selectAvatar(`/img/avatars/avatar_${i}.webp`)"
                      class="group relative cursor-pointer aspect-square rounded-2xl overflow-hidden border-2 transition-all hover:scale-110 active:scale-95"
                      :class="user.avatar_url === `/img/avatars/avatar_${i}.webp` ? 'border-primary-500 shadow-[0_0_15px_rgba(255,69,0,0.3)]' : 'border-white/5 hover:border-white/20'">
