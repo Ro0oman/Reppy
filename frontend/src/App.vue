@@ -16,14 +16,14 @@
         </router-link>
         
         <!-- Desktop Navigation (Clean Links) -->
-        <div class="hidden lg:flex items-center gap-1">
-          <router-link v-for="nav in navLinks" :key="nav.id"
-            :to="`/${i18n.locale}/${nav.id}`" 
-            :title="i18n.t(nav.label) || nav.fallback"
-            class="px-4 py-2 rounded-2xl text-[13px] font-semibold transition-all relative group flex items-center gap-2.5"
-            :class="$route.name === nav.id ? 'text-foreground bg-primary-500/5' : 'text-muted hover:text-foreground hover:bg-surface/10'">
-            <component :is="nav.icon" class="w-4 h-4" :class="$route.name === nav.id ? 'text-primary-500' : ''" />
-            {{ i18n.t(nav.label) || nav.fallback }}
+         <div class="hidden lg:flex items-center gap-1">
+           <router-link v-for="nav in navLinks" :key="nav.id"
+             :to="{ name: nav.id, params: { lang: i18n.locale, ...(nav.id === 'profile' ? { userId: authStore.user?.id } : {}) } }" 
+             :title="i18n.t(nav.label) || nav.fallback"
+             class="px-4 py-2 rounded-2xl text-[13px] font-semibold transition-all relative group flex items-center gap-2.5"
+             :class="$route.name === nav.id ? 'text-foreground bg-primary-500/5' : 'text-muted hover:text-foreground hover:bg-surface/10'">
+             <component :is="nav.icon" class="w-4 h-4" :class="$route.name === nav.id ? 'text-primary-500' : ''" />
+             {{ i18n.t(nav.label) || nav.fallback }}
             
             <!-- Notification Dot -->
             <div v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory)" 
@@ -305,6 +305,7 @@ const navLinks = [
   { id: 'codex', label: 'nav_codex', fallback: 'CODEX', icon: Book },
   { id: 'inventory', label: 'nav_inventory', fallback: 'GEAR', icon: Package },
   { id: 'shop', label: 'nav_shop', fallback: 'ARMORY', icon: Swords },
+  { id: 'profile', label: 'nav_profile', fallback: 'PROFILE', icon: User },
 ];
 
 const mobileNavLinks = [
