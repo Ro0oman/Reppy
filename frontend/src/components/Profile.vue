@@ -267,8 +267,8 @@
 
     <!-- NEW: Avatar Selector Modal -->
     <Teleport to="body">
-      <div v-if="showAvatarSelector" class="fixed inset-0 z-[1001] flex items-center justify-center p-4 bg-background/90 backdrop-blur-md" @click.self="showAvatarSelector = false">
-        <div class="card-stats max-w-2xl w-full p-8 md:p-12 border-border space-y-10 relative overflow-hidden">
+      <div v-if="showAvatarSelector" class="fixed inset-0 z-[1001] flex justify-center items-start overflow-y-auto p-4 md:p-8 bg-background/90 backdrop-blur-md" @click.self="showAvatarSelector = false">
+        <div class="card-stats max-w-2xl w-full p-6 md:p-12 border-border space-y-8 md:space-y-10 relative overflow-visible my-auto animate-in">
              <div class="flex items-center justify-between">
                 <div class="space-y-1">
                     <h2 class="text-2xl font-black text-industrial text-foreground uppercase italic tracking-tighter">SELECT<span class="text-primary-500">.</span>CLASS</h2>
@@ -279,7 +279,7 @@
                 </button>
              </div>
 
-             <div class="grid grid-cols-3 md:grid-cols-6 gap-3">
+             <div class="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
                 <div v-for="i in [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 14, 16, 17, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]" :key="i" 
                      @click="selectAvatar(`/img/avatars/avatar_${i}.webp`)"
                      class="group relative cursor-pointer aspect-square rounded-2xl overflow-hidden border-2 transition-all hover:scale-110 active:scale-95"
