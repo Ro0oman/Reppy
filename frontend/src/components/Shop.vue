@@ -218,8 +218,17 @@
                   <div class="absolute inset-0 opacity-20 pointer-events-none h-[200%] animate-scanline" style="background: linear-gradient(to bottom, transparent 50%, rgba(34, 211, 238, 0.5) 50.5%, transparent 51%); background-size: 100% 4px;"></div>
                   <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">{{ i18n.t('shop_screen_preview') }}</div>
                </div>
+               <div v-if="['head', 'weapon', 'armor', 'boots'].includes(item.type)" class="flex flex-col items-center gap-3">
+                  <div class="p-4 rounded-2xl bg-gradient-to-br border shadow-2xl transition-transform duration-500 group-hover/item:scale-110"
+                       :class="[getRarityBadge(item).classes, getRarityBadge(item).classes.includes('primary') ? 'from-primary-500/20 to-primary-500/5' : 'from-foreground/10 to-transparent']">
+                     <component :is="getSlotIcon(item.type)" class="w-12 h-12" :class="getRarityBadge(item).classes.split(' ')[0]" />
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[8px] font-black uppercase tracking-widest opacity-40">{{ item.type }}</span>
+                  </div>
+               </div>
                <div v-if="item.type === 'consumable'" class="flex flex-col items-center gap-2">
-                  <Flame class="w-10 h-10 text-primary-500 animate-pulse" />
+                  <FlaskConical class="w-10 h-10 text-primary-500 animate-pulse" />
                   <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest">BOOST x{{ item.css_value }}</span>
                </div>
                <div v-if="item.type === 'post_background'" class="w-full h-full relative group/post-bg overflow-hidden flex items-center justify-center">
@@ -484,7 +493,7 @@
         <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-3 pb-4">
           <div v-for="item in selectedBundleItems" :key="item.id" class="flex items-center gap-4 p-4 bg-white/5 border border-white/5 rounded-2xl group hover:border-yellow-500/20 transition-all">
             <div class="w-16 h-16 bg-black/40 rounded-xl border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
-               <component :is="item.type === 'title' ? Type : item.type === 'border' ? Frame : item.type === 'post_background' ? LayoutGrid : Sparkles" class="w-6 h-6 text-muted group-hover:text-yellow-500 transition-colors" />
+               <component :is="['head', 'weapon', 'armor', 'boots'].includes(item.type) ? getSlotIcon(item.type) : (item.type === 'title' ? Type : item.type === 'border' ? Frame : item.type === 'post_background' ? LayoutGrid : Sparkles)" class="w-6 h-6 text-muted group-hover:text-yellow-500 transition-colors" />
             </div>
             <div class="flex-1">
               <div class="flex items-center justify-between mb-1">
@@ -526,7 +535,7 @@ import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
-import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Check, Swords, X, Flame, Package } from 'lucide-vue-next';
+import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Check, Swords, X, Flame, Package, Sword, Shield, Footprints, Construction, FlaskConical, Zap } from 'lucide-vue-next';
 import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
 
@@ -554,12 +563,11 @@ const itemsPerPage = ref(15);
 const categories = [
   { id: 'all', label: 'cat_all', icon: Swords },
   { id: 'bundle', label: 'cat_bundle', icon: LayoutGrid },
-  { id: 'title', label: 'cat_title', icon: Type },
-  { id: 'border', label: 'cat_border', icon: Frame },
-  { id: 'avatar', label: 'cat_avatar', icon: Sparkles },
-  { id: 'background', label: 'cat_background', icon: Sparkles },
-  { id: 'consumable', label: 'cat_consumable', icon: Flame },
-  { id: 'post_background', label: 'shop_tab_post_backgrounds', icon: LayoutGrid }
+  { id: 'weapon', label: 'WEAPON', icon: Sword },
+  { id: 'head', label: 'HELMET', icon: Zap },
+  { id: 'armor', label: 'ARMOR', icon: Shield },
+  { id: 'boots', label: 'BOOTS', icon: Footprints },
+  { id: 'consumable', label: 'cat_consumable', icon: Flame }
 ];
 
 const filteredItems = computed(() => {
@@ -624,21 +632,35 @@ const isEquipped = (item) => {
 };
 
 const getRarityBadge = (item) => {
-  const rarity = item.rarity || 'common';
+  const rarity = item.rarity?.toLowerCase() || 'common';
   switch (rarity) {
-    case 'legendary': return { label: 'LEGEND', classes: 'text-primary-500 bg-primary-500/10 border-primary-500/30 shadow-[0_0_10px_rgba(255,69,0,0.2)]' };
-    case 'epic': return { label: 'EPIC', classes: 'text-purple-400 bg-purple-500/10 border-purple-500/30' };
-    case 'rare': return { label: 'RARE', classes: 'text-blue-400 bg-blue-500/10 border-blue-500/30' };
-    default: return { label: 'UNIT', classes: 'text-muted bg-foreground/5 border-border' };
+    case 'calistenico': return { label: 'CALISTÉNICO', classes: 'text-[#ccff00] bg-[#ccff00]/10 border-[#ccff00]/30 shadow-[0_0_10px_rgba(204,255,0,0.2)]' };
+    case 'legendary': return { label: 'LEGENDARIO', classes: 'text-primary-500 bg-primary-500/10 border-primary-500/30 shadow-[0_0_10px_rgba(255,69,0,0.2)]' };
+    case 'epic':
+    case 'especial': return { label: 'ESPECIAL', classes: 'text-purple-400 bg-purple-500/10 border-purple-500/30' };
+    case 'rare': return { label: 'RARO', classes: 'text-blue-400 bg-blue-500/10 border-blue-500/30' };
+    default: return { label: 'COMÚN', classes: 'text-muted bg-foreground/5 border-border' };
   }
 };
 
 const getCardClass = (item) => {
+  const r = item.rarity?.toLowerCase();
   if (isEquipped(item)) return '!border-neon-lime/40 shadow-[0_0_30px_rgba(204,255,0,0.05)]';
   if (item.owned) return 'border-border';
   if (!item.is_unlocked) return 'opacity-60 grayscale';
-  if (item.price >= 1200) return 'border-primary-500/30 hover:border-primary-500/60 shadow-[0_0_20px_rgba(255,69,0,0.05)]';
+  if (r === 'legendary') return 'border-primary-500/30 hover:border-primary-500/60 shadow-[0_0_20px_rgba(255,69,0,0.05)]';
+  if (r === 'calistenico') return 'border-[#ccff00]/30 hover:border-[#ccff00]/60 shadow-[0_0_25px_rgba(204,255,0,0.1)]';
   return 'border-border hover:border-foreground/20';
+};
+
+const getSlotIcon = (slot) => {
+  switch (slot) {
+    case 'head': return Construction;
+    case 'weapon': return Sword;
+    case 'armor': return Shield;
+    case 'boots': return Footprints;
+    default: return Sword;
+  }
 };
 
 const buyItem = async (item) => {

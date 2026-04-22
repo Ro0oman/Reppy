@@ -358,8 +358,15 @@ const getSlotIcon = (slot) => {
 
 const getRarityClass = (rarity, prefix = '') => {
   const r = rarity?.toLowerCase() || 'common';
-  if (prefix === 'bg') return `bg-rarity-${r}`;
-  return `rarity-${r}${r === 'legendary' ? ' glow-legendary' : ''}`;
+  let finalR = r;
+  if (r === 'epic') finalR = 'especial';
+  
+  if (prefix === 'bg') return `bg-rarity-${finalR}`;
+  
+  let classes = `rarity-${finalR}`;
+  if (finalR === 'legendary') classes += ' glow-legendary';
+  if (finalR === 'calistenico') classes += ' glow-calistenico';
+  return classes;
 };
 
 const animatedDamage = ref(0);

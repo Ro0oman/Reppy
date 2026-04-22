@@ -374,21 +374,41 @@ apiRouter.get('/db/init', async (req, res) => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )`,
       // Post Backgrounds Sync
-      `INSERT INTO cosmetics (name, description, type, price, css_value, rarity) 
-       SELECT 'Carbon Scan', 'Textura de carbono oscuro con línea de escaneo láser.', 'post_background', 1111, 'post-bg-carbon', 'rare'
-       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Carbon Scan')`,
-      `INSERT INTO cosmetics (name, description, type, price, css_value, rarity) 
-       SELECT 'Neon Pulse', 'Borde de neón con pulso reactivo.', 'post_background', 2222, 'post-bg-neon', 'epic'
-       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Neon Pulse')`,
-      `INSERT INTO cosmetics (name, description, type, price, css_value, rarity) 
-       SELECT 'Matrix Rain', '¿Ves el código? Lluvia de datos digital.', 'post_background', 3333, 'post-bg-matrix', 'legendary'
-       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Matrix Rain')`,
-      `INSERT INTO cosmetics (name, description, type, price, css_value, rarity) 
-       SELECT 'Inferno Core', 'Calor extremo y brasas ascendentes.', 'post_background', 4444, 'post-bg-inferno', 'legendary'
-       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Inferno Core')`,
-      `INSERT INTO cosmetics (name, description, type, price, css_value, rarity) 
-       SELECT 'Void Gravity', 'Punto de no retorno gravitacional.', 'post_background', 5555, 'post-bg-void', 'legendary'
-       WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Void Gravity')`
+      `INSERT INTO items (name, description, type, price, css_value, rarity) 
+       VALUES ('Carbon Scan', 'Textura de carbono oscuro con línea de escaneo láser.', 'post_background', 1111, 'post-bg-carbon', 'rare')
+       ON CONFLICT (name) DO UPDATE SET rarity = EXCLUDED.rarity`,
+      `INSERT INTO items (name, description, type, price, css_value, rarity) 
+       VALUES ('Neon Pulse', 'Borde de neón con pulso reactivo.', 'post_background', 2222, 'post-bg-neon', 'especial')
+       ON CONFLICT (name) DO UPDATE SET rarity = EXCLUDED.rarity`,
+      `INSERT INTO items (name, description, type, price, css_value, rarity) 
+       VALUES ('Matrix Rain', '¿Ves el código? Lluvia de datos digital.', 'post_background', 3333, 'post-bg-matrix', 'legendary')
+       ON CONFLICT (name) DO UPDATE SET rarity = EXCLUDED.rarity`,
+      `INSERT INTO items (name, description, type, price, css_value, rarity) 
+       VALUES ('Inferno Core', 'Calor extremo y brasas ascendentes.', 'post_background', 4444, 'post-bg-inferno', 'legendary')
+       ON CONFLICT (name) DO UPDATE SET rarity = EXCLUDED.rarity`,
+      `INSERT INTO items (name, description, type, price, css_value, rarity) 
+       VALUES ('Void Gravity', 'Punto de no retorno gravitacional.', 'post_background', 5555, 'post-bg-void', 'calistenico')
+       ON CONFLICT (name) DO UPDATE SET rarity = EXCLUDED.rarity`,
+      `INSERT INTO items (name, description, type, price, css_value, rarity) 
+       VALUES ('Calisthenics Legend', 'El rango máximo de la disciplina pura.', 'title', 9999, 'title-calistenico', 'calistenico')
+       ON CONFLICT (name) DO UPDATE SET rarity = EXCLUDED.rarity`,
+       
+      // RPG ITEMS SEEDING (One per rarity)
+      `INSERT INTO items (name, description, type, rarity, stats) 
+       VALUES ('Harrapos de Entrenamiento', 'Ropa vieja pero funcional para empezar.', 'armor', 'common', '{"end": 1}')
+       ON CONFLICT (name) DO UPDATE SET rarity = EXCLUDED.rarity, stats = EXCLUDED.stats`,
+      `INSERT INTO items (name, description, type, rarity, stats) 
+       VALUES ('Maza de Hierro', 'Pesada y contundente.', 'weapon', 'rare', '{"str": 3}')
+       ON CONFLICT (name) DO UPDATE SET rarity = EXCLUDED.rarity, stats = EXCLUDED.stats`,
+      `INSERT INTO items (name, description, type, rarity, stats) 
+       VALUES ('Casco de Élite', 'Protección avanzada para guerreros experimentados.', 'head', 'especial', '{"end": 5, "vig": 2}')
+       ON CONFLICT (name) DO UPDATE SET rarity = EXCLUDED.rarity, stats = EXCLUDED.stats`,
+      `INSERT INTO items (name, description, type, rarity, stats) 
+       VALUES ('Espada de Dragón', 'Forjada con fuego eterno.', 'weapon', 'legendary', '{"str": 10, "dex": 5}')
+       ON CONFLICT (name) DO UPDATE SET rarity = EXCLUDED.rarity, stats = EXCLUDED.stats`,
+      `INSERT INTO items (name, description, type, rarity, stats) 
+       VALUES ('Armadura del Dios Calisténico', 'La culminación del entrenamiento físico.', 'armor', 'calistenico', '{"str": 20, "end": 20, "vig": 20}')
+       ON CONFLICT (name) DO UPDATE SET rarity = EXCLUDED.rarity, stats = EXCLUDED.stats`
     ];
     
     for (const q of queries) {

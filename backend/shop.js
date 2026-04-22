@@ -12,7 +12,7 @@ router.get('/cosmetics', authenticate, async (req, res) => {
       SELECT i.* 
       FROM items i
       LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = $1
-      WHERE i.type NOT IN ('title', 'border', 'avatar', 'background', 'post_background', 'bundle')
+      WHERE i.type IN ('head', 'weapon', 'armor', 'boots', 'consumable', 'bundle')
       ORDER BY i.type ASC, i.id ASC
     `, [req.user.id]);
     const inventoryRes = await query('SELECT item_id, is_new, quantity FROM user_items WHERE user_id = $1', [req.user.id]);

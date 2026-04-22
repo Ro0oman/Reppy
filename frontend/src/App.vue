@@ -249,7 +249,7 @@
 import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
-import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Bell, User, Dices, Volume2, VolumeX, Book } from 'lucide-vue-next';
+import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Bell, User, Dices, Volume2, VolumeX, Book, ShoppingBag } from 'lucide-vue-next';
 import { useAuthStore } from './stores/auth';
 import { useI18nStore } from './stores/i18n';
 import { useNotificationsStore } from './stores/notifications';
@@ -304,7 +304,7 @@ const navLinks = [
   { id: 'dashboard', label: 'nav_dashboard', fallback: 'DASHBOARD', icon: LayoutDashboard },
   { id: 'codex', label: 'nav_codex', fallback: 'CODEX', icon: Book },
   { id: 'inventory', label: 'nav_inventory', fallback: 'GEAR', icon: Package },
-  { id: 'shop', label: 'nav_shop', fallback: 'ARMORY', icon: Swords },
+  { id: 'shop', label: 'nav_shop', fallback: 'ARMORY', icon: ShoppingBag },
   { id: 'profile', label: 'nav_profile', fallback: 'PROFILE', icon: User },
 ];
 
@@ -313,7 +313,7 @@ const mobileNavLinks = [
   { id: 'social', icon: Users, label: 'nav_social', short: 'SOCIAL' },
   { id: 'codex', icon: Book, label: 'nav_codex', short: 'CÓDICE' },
   { id: 'inventory', icon: Package, label: 'nav_inventory', short: 'EQUIPO' },
-  { id: 'shop', icon: Swords, label: 'nav_shop', short: 'TIENDA' },
+  { id: 'shop', icon: ShoppingBag, label: 'nav_shop', short: 'TIENDA' },
   { id: 'profile', icon: User, label: 'nav_profile', short: 'PERFIL' },
 ];
 

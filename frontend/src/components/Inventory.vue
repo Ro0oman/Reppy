@@ -249,7 +249,7 @@
                 @click="toggleEquip(item)"
                 @mouseenter="markSeen(item)"
                 class="nexus-slot group relative" 
-                :class="[isEquipped(item) ? 'equipped' : '', `rarity-${item.rarity || 'common'}`, item.rarity === 'legendary' ? 'glow-legendary' : '']">
+                :class="[isEquipped(item) ? 'equipped' : '', getRarityClass(item.rarity)]">
                 
                 <div class="nexus-slot-inner">
                    <!-- New Item Indicator -->
@@ -298,6 +298,10 @@
 
                     <!-- Info Badge -->
                     <div class="p-3 bg-surface/60 border-t border-white/5 relative overflow-hidden">
+                       <div class="flex items-center justify-between mb-1">
+                          <span class="text-[7px] font-black uppercase tracking-widest opacity-40">{{ type }}</span>
+                          <span class="text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border" :class="getRarityClass(item.rarity)">{{ getRarityLabel(item.rarity) }}</span>
+                       </div>
                        <div v-if="isEquipped(item)" class="absolute inset-0 bg-primary-500/10 flex items-center justify-center backdrop-blur-[1px]">
                           <div class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary-500 text-[7px] font-black text-white uppercase tracking-widest italic shadow-xl shadow-primary-500/20">
                             <Check class="w-2.5 h-2.5" /> LINKED
@@ -739,6 +743,30 @@ const markCategorySeen = async (type) => {
   }
 };
 
+const getRarityClass = (rarity) => {
+  const r = rarity?.toLowerCase() || 'common';
+  let finalR = r;
+  if (r === 'epic') finalR = 'especial';
+  
+  let classes = `rarity-${finalR}`;
+  if (finalR === 'legendary') classes += ' glow-legendary';
+  if (finalR === 'calistenico') classes += ' glow-calistenico';
+  return classes;
+};
+
+const getRarityLabel = (rarity) => {
+  const r = rarity?.toLowerCase() || 'common';
+  switch (r) {
+    case 'common': return 'COMÚN';
+    case 'rare': return 'RARO';
+    case 'epic':
+    case 'especial': return 'ESPECIAL';
+    case 'legendary': return 'LEGENDARIO';
+    case 'calistenico': return 'CALISTÉNICO';
+    default: return 'COMÚN';
+  }
+};
+
 const markSeen = async (item) => {
   if (!item.is_new) return;
   try { 
@@ -815,8 +843,9 @@ onUnmounted(() => {
 /* Rarity Effects */
 .rarity-common { --item-glow: rgba(148, 163, 184, 0.3); }
 .rarity-rare { --item-glow: rgba(96, 165, 250, 0.3); }
-.rarity-epic { --item-glow: rgba(168, 85, 247, 0.3); }
+.rarity-especial { --item-glow: rgba(168, 85, 247, 0.3); }
 .rarity-legendary { --item-glow: rgba(245, 158, 11, 0.4); }
+.rarity-calistenico { --item-glow: rgba(204, 255, 0, 0.5); }
 
 .nexus-slot.equipped .nexus-slot-inner {
   border-color: rgba(255, 69, 0, 0.4);
@@ -826,10 +855,14 @@ onUnmounted(() => {
 /* Rarity-specific styles */
 .rarity-common .nexus-slot-inner { border-color: rgba(148, 163, 184, 0.1); }
 .rarity-rare .nexus-slot-inner { border-color: rgba(96, 165, 250, 0.2); }
-.rarity-epic .nexus-slot-inner { border-color: rgba(168, 85, 247, 0.2); }
+.rarity-especial .nexus-slot-inner { border-color: rgba(168, 85, 247, 0.2); }
 .rarity-legendary .nexus-slot-inner { 
   border-color: rgba(245, 158, 11, 0.4);
   background: linear-gradient(to bottom, rgba(245, 158, 11, 0.05), rgba(15, 15, 15, 0.6));
+}
+.rarity-calistenico .nexus-slot-inner {
+  border-color: rgba(204, 255, 0, 0.4);
+  background: linear-gradient(to bottom, rgba(204, 255, 0, 0.1), rgba(15, 15, 15, 0.6));
 }
 
 .nexus-slot:hover .nexus-slot-inner {
