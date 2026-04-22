@@ -105,15 +105,6 @@ CREATE TABLE IF NOT EXISTS event_participants (
     UNIQUE(boss_fight_id, user_id)
 );
 
--- Coin Transactions Tracking
-CREATE TABLE IF NOT EXISTS coin_transactions (
-    id SERIAL PRIMARY KEY,
-    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-    amount INTEGER NOT NULL, -- Positive for rewards, Negative for purchases
-    source VARCHAR(50) NOT NULL, -- 'EXERCISE', 'CHEST_BOSS', 'CHEST_LVL', 'ROULETTE', 'PURCHASE'
-    description TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
 
 -- Blog Tracking for Intelligence (INT)
 CREATE TABLE IF NOT EXISTS user_read_blogs (

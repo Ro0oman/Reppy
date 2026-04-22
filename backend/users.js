@@ -2,7 +2,7 @@ import express from 'express';
 import { query } from './db.js';
 import { authenticate } from './middleware.js';
 import { autoGrantPendingChests } from './utils/bossRewards.js';
-import { compressAvatar } from './utils/image.js';
+
 import { recalculateUserStats, getXPForLevel, augmentUserWithLevels } from './utils/stats.js';
 
 const router = express.Router();
@@ -97,25 +97,19 @@ router.patch('/profile', authenticate, async (req, res) => {
 
 // Update avatar (specifically) - Supporting both PATCH and POST
 const updateAvatar = async (req, res) => {
-  const { avatar_url, avatarBase64 } = req.body;
-  let finalUrl = avatarBase64 || avatar_url;
+  const { avatar_url } = req.body;
   
-  if (!finalUrl) return res.status(400).json({ message: 'No avatar provided' });
-
-  // Safety check: Reject massive payloads before processing (5MB limit)
-  if (finalUrl.length > 5 * 1024 * 1024) {
-    return res.status(413).json({ message: 'Avatar image is too large. Please use a smaller file.' });
-  }
-
-  // Only compress if it's a base64 string
-  if (finalUrl.startsWith('data:image')) {
-    finalUrl = await compressAvatar(finalUrl);
+  // Only allow valid avatar paths
+  const validAvatars = Array.from({ length: 10 }, (_, i) => `/img/avatars/avatar_${i + 1}.webp`);
+  
+  if (!validAvatars.includes(avatar_url)) {
+    return res.status(400).json({ message: 'Invalid avatar selection' });
   }
 
   try {
     const result = await query(
       'UPDATE users SET avatar_url = $1 WHERE id = $2 RETURNING *',
-      [finalUrl, req.user.id]
+      [avatar_url, req.user.id]
     );
     res.json({ user: result.rows[0] });
   } catch (error) {

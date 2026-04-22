@@ -15,11 +15,10 @@
         <div class="relative group/avatar">
           <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :avatar-css="user.avatar_css" :size="160" />
           <button v-if="isOwnProfile" 
-                  @click="triggerAvatarUpload" 
-                  :title="i18nStore.locale === 'es' ? 'Editar Avatar' : 'Edit Avatar'"
+                  @click="showAvatarSelector = true" 
+                  :title="i18nStore.locale === 'es' ? 'Cambiar Clase/Icono' : 'Change Class/Icon'"
                   class="absolute -bottom-2 -right-2 p-4 bg-primary-500 rounded-2xl cursor-pointer hover:bg-primary-600 shadow-[0_0_20px_rgba(255,69,0,0.3)] text-white z-10 transition-all active:scale-90 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-4 focus:ring-offset-background">
-            <Camera class="w-5 h-5" />
-            <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/jpeg, image/png, image/webp" class="hidden" />
+            <UserIcon class="w-5 h-5" />
           </button>
         </div>
 
@@ -265,12 +264,45 @@
     <CodexModal :show="showInfoModal" @close="showInfoModal = false" />
     <!-- Issue 88: Settings Modal -->
     <SettingsModal :show="showSettingsModal" :initial-data="settingsForm" @close="showSettingsModal = false" @updated="onProfileUpdated" />
+
+    <!-- NEW: Avatar Selector Modal -->
+    <Teleport to="body">
+      <div v-if="showAvatarSelector" class="fixed inset-0 z-[1001] flex items-center justify-center p-4 bg-background/90 backdrop-blur-md" @click.self="showAvatarSelector = false">
+        <div class="card-stats max-w-2xl w-full p-8 md:p-12 border-border space-y-10 relative overflow-hidden">
+             <div class="flex items-center justify-between">
+                <div class="space-y-1">
+                    <h2 class="text-2xl font-black text-industrial text-foreground uppercase italic tracking-tighter">SELECT<span class="text-primary-500">.</span>CLASS</h2>
+                    <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em]">Choose your visual protocol identifier</p>
+                </div>
+                <button @click="showAvatarSelector = false" class="p-2 bg-surface/10 rounded-xl hover:bg-surface/20 transition-all">
+                    <XIcon class="w-5 h-5 text-foreground" />
+                </button>
+             </div>
+
+             <div class="grid grid-cols-5 gap-4">
+                <div v-for="i in 10" :key="i" 
+                     @click="selectAvatar(`/img/avatars/avatar_${i}.webp`)"
+                     class="group relative cursor-pointer aspect-square rounded-2xl overflow-hidden border-2 transition-all hover:scale-105 active:scale-95"
+                     :class="user.avatar_url === `/img/avatars/avatar_${i}.webp` ? 'border-primary-500 shadow-[0_0_15px_rgba(255,69,0,0.3)]' : 'border-white/5 hover:border-white/20'">
+                  <img :src="`/img/avatars/avatar_${i}.webp`" class="w-full h-full object-cover" />
+                  <div class="absolute inset-0 bg-primary-500/0 group-hover:bg-primary-500/10 transition-colors"></div>
+                  <!-- Label for Class Type (Visual only for now) -->
+                  <div class="absolute bottom-0 inset-x-0 bg-black/60 backdrop-blur-sm py-1">
+                     <p class="text-[7px] font-black text-white text-center uppercase tracking-tighter">{{ getClassLabel(i) }}</p>
+                  </div>
+                </div>
+             </div>
+
+             <p class="text-[9px] font-bold text-muted text-center uppercase tracking-widest opacity-40">RPG CLASSES LOCK UPON SELECTION</p>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
-import { Camera, Settings, LogOut, Activity, Flame, Trophy, HelpCircle, X as XIcon, Sword, Zap, Heart, Shield, Coins, Dumbbell, Target, Globe } from 'lucide-vue-next';
+import { Camera, Settings, LogOut, Activity, Flame, Trophy, HelpCircle, X as XIcon, Sword, Zap, Heart, Shield, Coins, Dumbbell, Target, Globe, User as UserIcon } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
@@ -300,8 +332,8 @@ const transactions = ref([]);
 const loading = ref(true);
 const activeExercise = ref('all');
 const showInfoModal = ref(false);
-const fileInput = ref(null);
 const showSettingsModal = ref(false);
+const showAvatarSelector = ref(false);
 
 // Pagination State
 const transactionsPage = ref(1);
@@ -340,31 +372,21 @@ const isOwnProfile = computed(() => !props.userId || props.userId === authStore.
 
 const settingsForm = ref({ name: '', daily_goal: 0, body_weight: 0 });
 
-const triggerAvatarUpload = () => { if (fileInput.value) fileInput.value.click(); };
-
-const handleFileUpload = async (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  // Issue 90: Check size (e.g. 2MB limit)
-  if (file.size > 2 * 1024 * 1024) {
-    notificationStore.notify(i18nStore.t('profile_file_too_large'), 'error');
-    return;
+const selectAvatar = async (url) => {
+  try {
+    const res = await axios.post('/api/users/avatar', { avatar_url: url });
+    user.value.avatar_url = url;
+    authStore.user.avatar_url = url;
+    notificationStore.notify(i18nStore.t('profile_updated'), 'success');
+    showAvatarSelector.value = false;
+  } catch (err) {
+    notificationStore.notify('Error updating avatar protocol', 'error');
   }
+};
 
-  const reader = new FileReader();
-  reader.onload = async (e) => {
-    try {
-      const res = await axios.post('/api/users/avatar', { avatarBase64: e.target.result });
-      authStore.user.avatar_url = res.data.avatarUrl;
-      if (isOwnProfile.value) user.value.avatar_url = res.data.avatarUrl;
-      notificationStore.notify(i18nStore.t('profile_updated'), 'success');
-    } catch (err) { 
-      const msg = err.response?.data?.error || (i18nStore.locale === 'es' ? 'Error al sincronizar avatar' : 'Avatar sync error');
-      notificationStore.notify(msg, 'error'); 
-    }
-  };
-  reader.readAsDataURL(file);
+const getClassLabel = (i) => {
+  const classes = ['Warrior', 'Mage', 'Rogue', 'Paladin', 'Ranger', 'Necro', 'Barbarian', 'Monk', 'Druid', 'Valkyrie'];
+  return classes[i-1] || 'Recruit';
 };
 
 const onProfileUpdated = (updatedUser) => {

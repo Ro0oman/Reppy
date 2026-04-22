@@ -56,13 +56,6 @@ router.get('/:id', async (req, res) => {
       params
     );
 
-    const transactions = await query(
-      `SELECT amount, source, description, created_at 
-       FROM coin_transactions 
-       WHERE user_id = $1 
-       ORDER BY created_at DESC LIMIT 20`,
-      [userId]
-    );
     
 
     // Get read blogs list for indicators
@@ -149,8 +142,7 @@ router.get('/:id', async (req, res) => {
       },
       heatmap: heatmapResult.rows || [],
       stats: { totalReps, streak, favExercise, totalXP, totalVolume, breakdown: breakdownRes.rows || [] },
-      recentLogs: recentLogs.rows || [],
-      transactions: transactions.rows || []
+      recentLogs: recentLogs.rows || []
     });
   } catch (error) {
     console.error('CRITICAL ERROR IN /api/profile/[id]:', error.message);

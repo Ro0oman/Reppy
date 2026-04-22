@@ -3,7 +3,7 @@ import { query } from './db.js';
 import { authenticate } from './middleware.js';
 import { getExerciseRewards, getBossDamageMultiplier } from './utils/rewards.js';
 import { recalculateUserStats, augmentUserWithLevels } from './utils/stats.js';
-import { trackCoinTransaction } from './utils/transactions.js';
+
 import { syncBossHealth } from './utils/boss.js';
 import { getLocalDateString } from './utils/date.js';
 import { calculateDamage } from './utils/damage.js';
@@ -68,8 +68,6 @@ router.post('/', authenticate, async (req, res) => {
     
     await query(userUpdateQuery, [count, earnedCoins, userId]);
 
-    // Record the transaction in the history
-    await trackCoinTransaction(userId, earnedCoins, 'EXERCISE', `Recompensa por ${count} ${exercise_type}`);
 
     // Update ALL XP stats and total_reps based on history (Aggregate Truth)
     await recalculateUserStats(userId);
@@ -368,10 +366,6 @@ router.put('/:id', authenticate, async (req, res) => {
 
     await query(userUpdateQuery, [diffCount, diffCoins, userId]);
 
-    // Record the transaction (positive or negative)
-    if (diffCoins !== 0) {
-      await trackCoinTransaction(userId, diffCoins, 'EXERCISE', `Ajuste por edición de ${oldRep.exercise_type}`);
-    }
 
     // Recalculate everything to stay in sync
     await recalculateUserStats(userId);
@@ -460,8 +454,6 @@ router.delete('/:id', authenticate, async (req, res) => {
 
     await query(userUpdateQuery, [oldRep.count, rewards.coins, userId]);
 
-    // Record the transaction (negative)
-    await trackCoinTransaction(userId, -rewards.coins, 'EXERCISE', `Eliminación de ${oldRep.count} ${oldRep.exercise_type}`);
 
     // Recalculate stats after deletion to ensure Level and XP drop correctly
     await recalculateUserStats(userId);

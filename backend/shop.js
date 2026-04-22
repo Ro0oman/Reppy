@@ -1,7 +1,7 @@
 import express from 'express';
 import { query } from './db.js';
 import { authenticate } from './middleware.js';
-import { trackCoinTransaction } from './utils/transactions.js';
+
 
 const router = express.Router();
 // Get available cosmetics
@@ -112,8 +112,6 @@ router.post('/buy/:id', authenticate, async (req, res) => {
 
     await query('UPDATE users SET reppy_coins = reppy_coins - $1 WHERE id = $2', [item.price, userId]);
     
-    // Log the transaction (negative amount)
-    await trackCoinTransaction(userId, -item.price, 'PURCHASE', `Compra de: ${item.name}`);
     
     await query('COMMIT');
 

@@ -1,7 +1,7 @@
 import express from 'express';
 import { query } from './db.js';
 import { authenticate, optionalAuthenticate } from './middleware.js';
-import { trackCoinTransaction } from './utils/transactions.js';
+
 
 const router = express.Router();
 
@@ -85,7 +85,7 @@ router.post('/spin', authenticate, async (req, res) => {
     // 4. Process Prize
     if (selectedPrize.type === 'coins') {
       await query('UPDATE users SET reppy_coins = reppy_coins + $1 WHERE id = $2', [selectedPrize.value, userId]);
-      await trackCoinTransaction(userId, selectedPrize.value, 'ROULETTE', `Premio de la Ruleta Diaria`);
+
     } else if (selectedPrize.type === 'chest') {
       await query('UPDATE users SET level_chests = level_chests + 1 WHERE id = $1', [userId]);
     } else if (selectedPrize.type === 'consumable') {
@@ -119,7 +119,7 @@ router.post('/spin', authenticate, async (req, res) => {
       } else {
         // Ultimate Fallback: 500 coins if nothing found
         await query('UPDATE users SET reppy_coins = reppy_coins + 500 WHERE id = $1', [userId]);
-        await trackCoinTransaction(userId, 500, 'ROULETTE', 'Ruleta: Bono Especial (Fallback)');
+
         result.type = 'coins';
         result.value = 500;
       }

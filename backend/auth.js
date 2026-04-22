@@ -35,7 +35,7 @@ router.post('/google', async (req, res) => {
     if (!user) {
       userResult = await query(
         'INSERT INTO users (id, name, email, avatar_url, theme) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-        [sub, name, email, picture, 'light']
+        [sub, name, email, '/img/avatars/avatar_1.webp', 'light']
       );
       user = userResult.rows[0];
     }
@@ -87,11 +87,9 @@ router.post('/signup', async (req, res) => {
 
     const id = `user_${crypto.randomUUID()}`;
     const passwordHash = await bcrypt.hash(password, 10);
-    const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=f97316&color=fff`;
-
     const result = await query(
       'INSERT INTO users (id, name, email, password_hash, avatar_url, theme) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [id, name, email, passwordHash, defaultAvatar, 'light']
+      [id, name, email, passwordHash, '/img/avatars/avatar_1.webp', 'light']
     );
 
     const user = result.rows[0];
