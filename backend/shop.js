@@ -81,9 +81,30 @@ router.post('/buy/:id', authenticate, async (req, res) => {
       return res.status(400).json({ message: 'ERROR: SEASONAL UNIT - ACQUISITION VIA EVENT ONLY' });
     }
 
-    const price = item.price || 0; // Legacy price support if needed, otherwise 0 for RPG drops
+    let price = item.price || 0;
+    let finalDeduction = price;
 
-    if (user.reppy_coins < price) {
+    // Bundle Refund Logic
+    if (item.type === 'bundle' && item.bundle_items) {
+      const bundleItemIds = item.bundle_items.split(',').map(id => parseInt(id.trim()));
+      let refundAmount = 0;
+      
+      for (const id of bundleItemIds) {
+        const checkRes = await query('SELECT id FROM user_items WHERE user_id = $1 AND item_id = $2', [userId, id]);
+        if (checkRes.rows.length > 0) {
+          const subItemRes = await query('SELECT price, type FROM items WHERE id = $1', [id]);
+          if (subItemRes.rows.length > 0) {
+            const subItem = subItemRes.rows[0];
+            if (subItem.type !== 'consumable') {
+              refundAmount += (subItem.price || 0);
+            }
+          }
+        }
+      }
+      finalDeduction = Math.max(0, price - refundAmount);
+    }
+
+    if (user.reppy_coins < finalDeduction) {
       return res.status(400).json({ message: 'INSUFFICIENT FUNDS: REPPY COINS REQUIRED' });
     }
 
@@ -91,14 +112,13 @@ router.post('/buy/:id', authenticate, async (req, res) => {
     await query('BEGIN');
     
     if (item.type === 'bundle' && item.bundle_items) {
-      // Handle Bundle Purchase
       const bundleItemIds = item.bundle_items.split(',').map(id => parseInt(id.trim()));
-      
       for (const id of bundleItemIds) {
         await query(`
-          INSERT INTO user_items (user_id, item_id) 
-          VALUES ($1, $2) 
-          ON CONFLICT (user_id, item_id) DO NOTHING
+          INSERT INTO user_items (user_id, item_id, quantity) 
+          VALUES ($1, $2, 1) 
+          ON CONFLICT (user_id, item_id) 
+          DO UPDATE SET quantity = user_items.quantity + 1, is_new = TRUE
         `, [userId, id]);
       }
       
@@ -108,7 +128,6 @@ router.post('/buy/:id', authenticate, async (req, res) => {
         ON CONFLICT (user_id, item_id) DO NOTHING
       `, [userId, itemId]);
     } else {
-      // Regular Item Purchase OR Consumable
       if (item.type === 'consumable' && inventoryRes.rows.length > 0) {
         await query('UPDATE user_items SET quantity = quantity + 1, is_new = TRUE WHERE user_id = $1 AND item_id = $2', [userId, itemId]);
       } else {
@@ -121,14 +140,18 @@ router.post('/buy/:id', authenticate, async (req, res) => {
       }
     }
 
-    await query('UPDATE users SET reppy_coins = reppy_coins - $1 WHERE id = $2', [price, userId]);
+    await query('UPDATE users SET reppy_coins = reppy_coins - $1 WHERE id = $2', [finalDeduction, userId]);
     
     await query('COMMIT');
 
-    // Recalculate stats to reflect potential item bonuses immediately
+    // Recalculate stats
     await recalculateUserStats(userId);
 
-    res.json({ message: 'Purchase successful', remaining_coins: user.reppy_coins - price });
+    res.json({ 
+      message: 'Purchase successful', 
+      remaining_coins: user.reppy_coins - finalDeduction,
+      refunded: price - finalDeduction
+    });
   } catch (error) {
     await query('ROLLBACK');
     console.error('Error purchasing item:', error);
