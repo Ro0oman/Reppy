@@ -100,7 +100,7 @@ const updateAvatar = async (req, res) => {
   const { avatar_url } = req.body;
   
   // Only allow valid avatar paths
-  const validAvatars = Array.from({ length: 30 }, (_, i) => `/img/avatars/avatar_${i + 1}.webp`);
+  const validAvatars = Array.from({ length: 40 }, (_, i) => `/img/avatars/avatar_${i + 1}.webp`);
   
   if (!validAvatars.includes(avatar_url)) {
     return res.status(400).json({ message: 'Invalid avatar selection' });
