@@ -14,7 +14,7 @@ router.get('/me', authenticate, async (req, res) => {
     await autoGrantPendingChests(req.user.id);
 
     const result = await query(
-      `SELECT u.id, u.name, u.email, u.avatar_url, u.total_reps, u.is_private, u.has_seen_easter_modal, u.has_seen_damage_overhaul, u.daily_goal, u.body_weight, u.reppy_coins, u.boss_chests, u.level_chests, u.str_xp, u.dex_xp, u.end_xp, u.vig_xp, u.int_xp, u.fth_xp, u.cha_xp, u.total_xp, u.current_level, u.equipped_title_id, u.equipped_border_id, u.equipped_avatar_id, u.equipped_background_id, u.equipped_post_background_id, u.is_admin, u.theme,
+      `SELECT u.id, u.name, u.email, u.avatar_url, u.total_reps, u.is_private, u.has_seen_easter_modal, u.has_seen_damage_overhaul, u.has_seen_avatar_overhaul, u.daily_goal, u.body_weight, u.reppy_coins, u.boss_chests, u.level_chests, u.str_xp, u.dex_xp, u.end_xp, u.vig_xp, u.int_xp, u.fth_xp, u.cha_xp, u.total_xp, u.current_level, u.equipped_title_id, u.equipped_border_id, u.equipped_avatar_id, u.equipped_background_id, u.equipped_post_background_id, u.is_admin, u.theme,
               t.name as title_name, t.css_value as title_css,
               b.css_value as border_css,
               a.css_value as avatar_css,
@@ -159,6 +159,20 @@ router.patch('/seen-damage-modal', authenticate, async (req, res) => {
       [req.user.id]
     );
     res.json({ message: 'Damage modal marked as seen' });
+  } catch (error) {
+    console.error('Error updating modal state:', error);
+    res.status(500).json({ message: 'Error updating modal state' });
+  }
+});
+
+// Mark avatar overhaul modal as seen
+router.patch('/seen-avatar-modal', authenticate, async (req, res) => {
+  try {
+    await query(
+      'UPDATE users SET has_seen_avatar_overhaul = true WHERE id = $1',
+      [req.user.id]
+    );
+    res.json({ message: 'Avatar modal marked as seen' });
   } catch (error) {
     console.error('Error updating modal state:', error);
     res.status(500).json({ message: 'Error updating modal state' });

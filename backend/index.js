@@ -249,6 +249,7 @@ apiRouter.get('/db/init', async (req, res) => {
       `UPDATE cosmetics SET rarity = 'epic' WHERE price < 1200 AND price >= 600`,
       `UPDATE cosmetics SET rarity = 'rare' WHERE price < 600 AND price >= 200`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_spin_at TIMESTAMP WITH TIME ZONE`,
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_avatar_overhaul BOOLEAN DEFAULT FALSE`,
       // Mark old bosses as inactive to avoid overlapping
       `UPDATE boss_fights SET status = 'defeated' WHERE order_index = 0 AND status = 'active'`,
       

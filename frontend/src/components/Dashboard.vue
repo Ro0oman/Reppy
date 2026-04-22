@@ -173,6 +173,12 @@
       :show="showDamageModal" 
       @close="handleCloseDamageModal" 
     />
+
+    <!-- Avatar Overhaul Welcome Modal -->
+    <AvatarOverhaulModal 
+      :show="showAvatarModal" 
+      @close="handleCloseAvatarModal" 
+    />
   </div>
 </template>
 
@@ -192,6 +198,7 @@ import ExerciseSelector from './ExerciseSelector.vue';
 import BossHealth from './BossHealth.vue';
 import RadialProgress from './RadialProgress.vue';
 import DamageOverhaulModal from './DamageOverhaulModal.vue';
+import AvatarOverhaulModal from './AvatarOverhaulModal.vue';
 import { getLocalDateString } from '../utils/dateUtils.js';
 
 const emit = defineEmits(['viewProfile', 'start']);
@@ -209,11 +216,12 @@ const bossHealthRef = ref(null);
 const isLoading = ref(false);
 const activeYear = ref(2026);
 const showDamageModal = ref(false);
+const showAvatarModal = ref(false);
 const activeTab = ref('heatmap');
 
 // Scroll lock when damage modal is active
-watch(showDamageModal, (val) => {
-  if (val) {
+watch([showDamageModal, showAvatarModal], ([dModal, aModal]) => {
+  if (dModal || aModal) {
     document.body.style.overflow = 'hidden';
   } else {
     document.body.style.overflow = '';
@@ -269,6 +277,9 @@ const fetchData = async () => {
     // Check for damage overhaul modal
     if (authStore.user && !authStore.user.has_seen_damage_overhaul) {
       showDamageModal.value = true;
+    } else if (authStore.user && !authStore.user.has_seen_avatar_overhaul) {
+      // Only show avatar modal if damage modal is not showing
+      showAvatarModal.value = true;
     }
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -328,6 +339,17 @@ const handleCloseDamageModal = () => {
   showDamageModal.value = false;
   if (authStore.user) {
     authStore.user.has_seen_damage_overhaul = true;
+    // Chain to avatar modal if eligible
+    if (!authStore.user.has_seen_avatar_overhaul) {
+      showAvatarModal.value = true;
+    }
+  }
+};
+
+const handleCloseAvatarModal = () => {
+  showAvatarModal.value = false;
+  if (authStore.user) {
+    authStore.user.has_seen_avatar_overhaul = true;
   }
 };
 
