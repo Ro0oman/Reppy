@@ -16,15 +16,24 @@ router.get('/:id', async (req, res) => {
                u.current_level, u.level_chests_claimed, u.level_chests,
                u.damage_multiplier, u.damage_multiplier_expiry,
                u.equipped_title_id, u.equipped_border_id, u.equipped_background_id, u.equipped_post_background_id,
+               u.equipped_head_id, u.equipped_weapon_id, u.equipped_armor_id, u.equipped_boots_id,
                cTitle.name as title_name, cTitle.css_value as title_css,
                cBorder.name as border_name, cBorder.css_value as border_css,
                cAvatar.css_value as avatar_css,
-               cBackground.css_value as background_css
+               cBackground.css_value as background_css,
+               iHead.name as head_name, iHead.rarity as head_rarity, iHead.stats as head_stats,
+               iWeapon.name as weapon_name, iWeapon.rarity as weapon_rarity, iWeapon.stats as weapon_stats,
+               iArmor.name as armor_name, iArmor.rarity as armor_rarity, iArmor.stats as armor_stats,
+               iBoots.name as boots_name, iBoots.rarity as boots_rarity, iBoots.stats as boots_stats
         FROM users u
-        LEFT JOIN cosmetics cTitle ON u.equipped_title_id = cTitle.id AND cTitle.type = 'title'
-        LEFT JOIN cosmetics cBorder ON u.equipped_border_id = cBorder.id AND cBorder.type = 'border'
-        LEFT JOIN cosmetics cAvatar ON u.equipped_avatar_id = cAvatar.id AND cAvatar.type = 'avatar'
-        LEFT JOIN cosmetics cBackground ON u.equipped_background_id = cBackground.id AND cBackground.type = 'background'
+        LEFT JOIN items cTitle ON u.equipped_title_id = cTitle.id AND cTitle.type = 'title'
+        LEFT JOIN items cBorder ON u.equipped_border_id = cBorder.id AND cBorder.type = 'border'
+        LEFT JOIN items cAvatar ON u.equipped_avatar_id = cAvatar.id AND cAvatar.type = 'avatar'
+        LEFT JOIN items cBackground ON u.equipped_background_id = cBackground.id AND cBackground.type = 'background'
+        LEFT JOIN items iHead ON u.equipped_head_id = iHead.id
+        LEFT JOIN items iWeapon ON u.equipped_weapon_id = iWeapon.id
+        LEFT JOIN items iArmor ON u.equipped_armor_id = iArmor.id
+        LEFT JOIN items iBoots ON u.equipped_boots_id = iBoots.id
         WHERE u.id = $1
       `, [userId]);
 
@@ -67,7 +76,7 @@ router.get('/:id', async (req, res) => {
 
     // Check for new inventory items
     const hasNewInventoryRes = await query(
-      'SELECT EXISTS(SELECT 1 FROM user_inventory WHERE user_id = $1 AND is_new = TRUE)',
+      'SELECT EXISTS(SELECT 1 FROM user_items WHERE user_id = $1 AND is_new = TRUE)',
       [userId]
     );
     const hasNewInventory = hasNewInventoryRes.rows[0].exists;

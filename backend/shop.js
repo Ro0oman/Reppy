@@ -4,24 +4,25 @@ import { authenticate } from './middleware.js';
 
 
 const router = express.Router();
-// Get available cosmetics
+// Get available items
 router.get('/cosmetics', authenticate, async (req, res) => {
   try {
     // Show all items (seasonal included)
-    const cosmeticsRes = await query(`
-      SELECT c.* 
-      FROM cosmetics c
-      LEFT JOIN user_inventory ui ON c.id = ui.cosmetic_id AND ui.user_id = $1
-      ORDER BY c.price ASC, c.id ASC
+    const itemsRes = await query(`
+      SELECT i.* 
+      FROM items i
+      LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = $1
+      WHERE i.type NOT IN ('title', 'border', 'avatar', 'background', 'post_background', 'bundle')
+      ORDER BY i.type ASC, i.id ASC
     `, [req.user.id]);
-    const inventoryRes = await query('SELECT cosmetic_id, is_new, quantity FROM user_inventory WHERE user_id = $1', [req.user.id]);
+    const inventoryRes = await query('SELECT item_id, is_new, quantity FROM user_items WHERE user_id = $1', [req.user.id]);
     
     const inventoryMap = {};
     inventoryRes.rows.forEach(row => {
-      inventoryMap[row.cosmetic_id] = { owned: true, is_new: row.is_new, quantity: row.quantity || 1 };
+      inventoryMap[row.item_id] = { owned: true, is_new: row.is_new, quantity: row.quantity || 1 };
     });
     
-    const shopItems = cosmeticsRes.rows.map((item, index) => {
+    const shopItems = itemsRes.rows.map((item, index) => {
       const invData = inventoryMap[item.id] || { owned: false, is_new: false, quantity: 0 };
       return {
         ...item,
@@ -37,17 +38,17 @@ router.get('/cosmetics', authenticate, async (req, res) => {
     
     res.json(shopItems);
   } catch (error) {
-    console.error('Error fetching cosmetics:', error);
-    res.status(500).json({ message: 'Error fetching cosmetics' });
+    console.error('Error fetching items:', error);
+    res.status(500).json({ message: 'Error fetching items' });
   }
 });
 
-// Mark cosmetic as seen
+// Mark item as seen
 router.post('/mark-seen/:id', authenticate, async (req, res) => {
-  const cosmeticId = parseInt(req.params.id);
+  const itemId = parseInt(req.params.id);
   const userId = req.user.id;
   try {
-    await query('UPDATE user_inventory SET is_new = FALSE WHERE user_id = $1 AND cosmetic_id = $2', [userId, cosmeticId]);
+    await query('UPDATE user_items SET is_new = FALSE WHERE user_id = $1 AND item_id = $2', [userId, itemId]);
     res.json({ message: 'Marked as seen' });
   } catch (error) {
     console.error('Error marking as seen:', error);
@@ -55,22 +56,22 @@ router.post('/mark-seen/:id', authenticate, async (req, res) => {
   }
 });
 
-// Buy cosmetic
+// Buy item
 router.post('/buy/:id', authenticate, async (req, res) => {
-  const cosmeticId = parseInt(req.params.id);
+  const itemId = parseInt(req.params.id);
   const userId = req.user.id;
 
   try {
     // Determine cost and users coins
-    const cosmeticRes = await query('SELECT * FROM cosmetics WHERE id = $1', [cosmeticId]);
-    if (cosmeticRes.rows.length === 0) return res.status(404).json({ message: 'Cosmetic not found' });
-    const item = cosmeticRes.rows[0];
+    const itemRes = await query('SELECT * FROM items WHERE id = $1', [itemId]);
+    if (itemRes.rows.length === 0) return res.status(404).json({ message: 'Item not found' });
+    const item = itemRes.rows[0];
 
     const userRes = await query('SELECT reppy_coins FROM users WHERE id = $1', [userId]);
     const user = userRes.rows[0];
 
     // Check inventory
-    const inventoryRes = await query('SELECT * FROM user_inventory WHERE user_id = $1 AND cosmetic_id = $2', [userId, cosmeticId]);
+    const inventoryRes = await query('SELECT * FROM user_items WHERE user_id = $1 AND item_id = $2', [userId, itemId]);
     if (inventoryRes.rows.length > 0 && item.type !== 'consumable') {
       return res.status(400).json({ message: 'UNIT DETECTED: PROTOCOL ALREADY ACQUIRED' });
     }
@@ -79,7 +80,9 @@ router.post('/buy/:id', authenticate, async (req, res) => {
       return res.status(400).json({ message: 'ERROR: SEASONAL UNIT - ACQUISITION VIA EVENT ONLY' });
     }
 
-    if (user.reppy_coins < item.price) {
+    const price = item.price || 0; // Legacy price support if needed, otherwise 0 for RPG drops
+
+    if (user.reppy_coins < price) {
       return res.status(400).json({ message: 'INSUFFICIENT FUNDS: REPPY COINS REQUIRED' });
     }
 
@@ -88,97 +91,102 @@ router.post('/buy/:id', authenticate, async (req, res) => {
     
     if (item.type === 'bundle' && item.bundle_items) {
       // Handle Bundle Purchase
-      const itemIds = item.bundle_items.split(',').map(id => parseInt(id.trim()));
+      const bundleItemIds = item.bundle_items.split(',').map(id => parseInt(id.trim()));
       
-      // Add all items in bundle to inventory
-      for (const id of itemIds) {
-        // Check if user already has it (skip if so, but bundle allows buying even if partial items owned)
-        const checkInv = await query('SELECT * FROM user_inventory WHERE user_id = $1 AND cosmetic_id = $2', [userId, id]);
+      for (const id of bundleItemIds) {
+        const checkInv = await query('SELECT * FROM user_items WHERE user_id = $1 AND item_id = $2', [userId, id]);
         if (checkInv.rows.length === 0) {
-          await query('INSERT INTO user_inventory (user_id, cosmetic_id) VALUES ($1, $2)', [userId, id]);
+          await query('INSERT INTO user_items (user_id, item_id) VALUES ($1, $2)', [userId, id]);
         }
       }
       
-      // Also add the bundle itself to inventory so we know they bought it
-      await query('INSERT INTO user_inventory (user_id, cosmetic_id) VALUES ($1, $2)', [userId, cosmeticId]);
+      await query('INSERT INTO user_items (user_id, item_id) VALUES ($1, $2)', [userId, itemId]);
     } else {
       // Regular Item Purchase OR Consumable
       if (item.type === 'consumable' && inventoryRes.rows.length > 0) {
-        await query('UPDATE user_inventory SET quantity = quantity + 1, is_new = TRUE WHERE user_id = $1 AND cosmetic_id = $2', [userId, cosmeticId]);
+        await query('UPDATE user_items SET quantity = quantity + 1, is_new = TRUE WHERE user_id = $1 AND item_id = $2', [userId, itemId]);
       } else {
-        await query('INSERT INTO user_inventory (user_id, cosmetic_id, quantity) VALUES ($1, $2, 1)', [userId, cosmeticId]);
+        await query('INSERT INTO user_items (user_id, item_id, quantity) VALUES ($1, $2, 1)', [userId, itemId]);
       }
     }
 
-    await query('UPDATE users SET reppy_coins = reppy_coins - $1 WHERE id = $2', [item.price, userId]);
-    
+    await query('UPDATE users SET reppy_coins = reppy_coins - $1 WHERE id = $2', [price, userId]);
     
     await query('COMMIT');
 
-    res.json({ message: 'Purchase successful', remaining_coins: user.reppy_coins - item.price });
+    res.json({ message: 'Purchase successful', remaining_coins: user.reppy_coins - price });
   } catch (error) {
     await query('ROLLBACK');
-    console.error('Error purchasing cosmetic:', error);
+    console.error('Error purchasing item:', error);
     res.status(500).json({ message: 'Error processing purchase' });
   }
 });
 
-// Equip cosmetic
+// Equip item
 router.post('/equip/:id', authenticate, async (req, res) => {
-  const cosmeticId = parseInt(req.params.id);
+  const itemId = parseInt(req.params.id);
   const typeParam = req.query.type;
   const userId = req.user.id;
 
   try {
-    if (cosmeticId === 0) {
-      if (typeParam === 'title') {
-        await query('UPDATE users SET equipped_title_id = NULL WHERE id = $1', [userId]);
-      } else if (typeParam === 'border') {
-        await query('UPDATE users SET equipped_border_id = NULL WHERE id = $1', [userId]);
-      } else if (typeParam === 'avatar') {
-        await query('UPDATE users SET equipped_avatar_id = NULL WHERE id = $1', [userId]);
-      } else if (typeParam === 'background') {
-        await query('UPDATE users SET equipped_background_id = NULL WHERE id = $1', [userId]);
-      } else if (typeParam === 'post_background') {
-        await query('UPDATE users SET equipped_post_background_id = NULL WHERE id = $1', [userId]);
+    if (itemId === 0) {
+      const slotMap = {
+        head: 'equipped_head_id',
+        weapon: 'equipped_weapon_id',
+        armor: 'equipped_armor_id',
+        boots: 'equipped_boots_id',
+        title: 'equipped_title_id',
+        border: 'equipped_border_id',
+        avatar: 'equipped_avatar_id',
+        background: 'equipped_background_id',
+        post_background: 'equipped_post_background_id'
+      };
+      const column = slotMap[typeParam];
+      if (column) {
+        await query(`UPDATE users SET ${column} = NULL WHERE id = $1`, [userId]);
       }
       return res.json({ message: 'Un-equipped successfully' });
     }
 
     // Check ownership
-    const inventoryRes = await query('SELECT * FROM user_inventory WHERE user_id = $1 AND cosmetic_id = $2', [userId, cosmeticId]);
+    const inventoryRes = await query('SELECT * FROM user_items WHERE user_id = $1 AND item_id = $2', [userId, itemId]);
     if (inventoryRes.rows.length === 0) return res.status(403).json({ message: 'You do not own this item' });
     
-    const cosmeticRes = await query('SELECT type FROM cosmetics WHERE id = $1', [cosmeticId]);
-    const type = cosmeticRes.rows[0].type;
+    const itemRes = await query('SELECT type FROM items WHERE id = $1', [itemId]);
+    const type = itemRes.rows[0].type;
     
-    if (type === 'title') {
-      await query('UPDATE users SET equipped_title_id = $1 WHERE id = $2', [cosmeticId, userId]);
-    } else if (type === 'border') {
-      await query('UPDATE users SET equipped_border_id = $1 WHERE id = $2', [cosmeticId, userId]);
-    } else if (type === 'avatar') {
-      await query('UPDATE users SET equipped_avatar_id = $1 WHERE id = $2', [cosmeticId, userId]);
-    } else if (type === 'background') {
-      await query('UPDATE users SET equipped_background_id = $1 WHERE id = $2', [cosmeticId, userId]);
-    } else if (type === 'post_background') {
-      await query('UPDATE users SET equipped_post_background_id = $1 WHERE id = $2', [cosmeticId, userId]);
+    const slotMap = {
+      head: 'equipped_head_id',
+      weapon: 'equipped_weapon_id',
+      armor: 'equipped_armor_id',
+      boots: 'equipped_boots_id',
+      title: 'equipped_title_id',
+      border: 'equipped_border_id',
+      avatar: 'equipped_avatar_id',
+      background: 'equipped_background_id',
+      post_background: 'equipped_post_background_id'
+    };
+
+    const column = slotMap[type];
+    if (column) {
+      await query(`UPDATE users SET ${column} = $1 WHERE id = $2`, [itemId, userId]);
     }
 
     res.json({ message: 'Equipped successfully' });
   } catch (error) {
-    console.error('Error equipping cosmetic:', error);
-    res.status(500).json({ message: 'Error equipping cosmetic' });
+    console.error('Error equipping item:', error);
+    res.status(500).json({ message: 'Error equipping item' });
   }
 });
 
 
 // Activate consumable
 router.post('/activate/:id', authenticate, async (req, res) => {
-  const cosmeticId = parseInt(req.params.id);
+  const itemId = parseInt(req.params.id);
   const userId = req.user.id;
 
   try {
-    const itemRes = await query('SELECT * FROM cosmetics WHERE id = $1', [cosmeticId]);
+    const itemRes = await query('SELECT * FROM items WHERE id = $1', [itemId]);
     if (itemRes.rows.length === 0) return res.status(404).json({ message: 'Item no encontrado' });
     const item = itemRes.rows[0];
 
@@ -187,7 +195,7 @@ router.post('/activate/:id', authenticate, async (req, res) => {
     }
 
     // Check ownership and quantity
-    const invRes = await query('SELECT * FROM user_inventory WHERE user_id = $1 AND cosmetic_id = $2', [userId, cosmeticId]);
+    const invRes = await query('SELECT * FROM user_items WHERE user_id = $1 AND item_id = $2', [userId, itemId]);
     if (invRes.rows.length === 0 || invRes.rows[0].quantity <= 0) {
       return res.status(403).json({ message: 'No tienes este objeto en tu inventario' });
     }
@@ -206,12 +214,12 @@ router.post('/activate/:id', authenticate, async (req, res) => {
 
     // 2. Consume item
     if (invRes.rows[0].quantity > 1) {
-      await query('UPDATE user_inventory SET quantity = quantity - 1 WHERE user_id = $1 AND cosmetic_id = $2', [userId, cosmeticId]);
+      await query('UPDATE user_items SET quantity = quantity - 1 WHERE user_id = $1 AND item_id = $2', [userId, itemId]);
     } else {
-      await query('DELETE FROM user_inventory WHERE user_id = $1 AND cosmetic_id = $2', [userId, cosmeticId]);
+      await query('DELETE FROM user_items WHERE user_id = $1 AND item_id = $2', [userId, itemId]);
     }
 
-    // 3. Post to social feed (Optional: simplified as description update or standalone)
+    // 3. Post to social feed
     try {
       const today = new Date().toISOString().split('T')[0];
       const summaryRes = await query('SELECT id FROM daily_summaries WHERE user_id = $1 AND date = $2', [userId, today]);

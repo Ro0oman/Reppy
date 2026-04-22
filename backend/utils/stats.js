@@ -87,7 +87,11 @@ export const augmentUserWithLevels = (user) => {
 export const recalculateUserStats = async (userId) => {
   try {
     // 1. Get user data for level tracking
-    const userRes = await query('SELECT body_weight, current_level, level_chests_claimed, level_chests, cha_xp, last_streak_reward_date FROM users WHERE id = $1', [userId]);
+    const userRes = await query(`
+      SELECT body_weight, current_level, level_chests_claimed, level_chests, cha_xp, last_streak_reward_date,
+             equipped_head_id, equipped_weapon_id, equipped_armor_id, equipped_boots_id
+      FROM users WHERE id = $1
+    `, [userId]);
     if (userRes.rows.length === 0) return;
     const user = userRes.rows[0];
     const bodyWeight = parseFloat(user.body_weight) || 75.0;
@@ -148,21 +152,37 @@ export const recalculateUserStats = async (userId) => {
     // VIG: Resilience (mapped from streak and consistency)
     const baseVigXP = Math.floor((streak * 100) + (varietyCount * 50));
 
+    // 4. Item Bonuses
+    const equipmentRes = await query(`
+      SELECT stats FROM items 
+      WHERE id IN ($1, $2, $3, $4)
+    `, [user.equipped_head_id, user.equipped_weapon_id, user.equipped_armor_id, user.equipped_boots_id]);
+    
+    const itemBonuses = { str: 0, dex: 0, end: 0, vig: 0, int: 0, fth: 0, cha: 0 };
+    equipmentRes.rows.forEach(item => {
+      const stats = item.stats || {};
+      Object.keys(stats).forEach(key => {
+        if (itemBonuses[key] !== undefined) {
+          itemBonuses[key] += (stats[key] || 0);
+        }
+      });
+    });
+
     // Core Stats (STR, END)
     const baseStrXP = Math.floor(totalVolume * 0.05);
     const baseEndXP = Math.floor(totalReps * 5);
 
     // INT BONUS: Knowledge makes training more efficient
-    const intLvl = getStatLevel(intXP);
+    const intLvl = getStatLevel(intXP + itemBonuses.int);
     const intBonus = 1 + ((intLvl - 1) * 0.05); // +5% XP gain per level above 1
 
-    const strXP = Math.round(baseStrXP * intBonus);
-    const dexXP = Math.round(pwrXP * intBonus);
-    const endXP = Math.round(baseEndXP * intBonus);
-    const vigXP = Math.round(baseVigXP * intBonus);
+    const strXP = Math.round((baseStrXP + itemBonuses.str * 10) * intBonus);
+    const dexXP = Math.round((pwrXP + itemBonuses.dex * 10) * intBonus);
+    const endXP = Math.round((baseEndXP + itemBonuses.end * 10) * intBonus);
+    const vigXP = Math.round((baseVigXP + itemBonuses.vig * 10) * intBonus);
 
     // Total XP for Character Level
-    const chaXP = user.cha_xp || 0;
+    const chaXP = (user.cha_xp || 0) + (itemBonuses.cha * 10);
     const totalXP = strXP + dexXP + endXP + vigXP + intXP + fthXP + chaXP;
 
     // 4. Character Level Calculation (Dynamic Quadratic: base 1000)
