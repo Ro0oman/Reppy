@@ -279,16 +279,16 @@
                 </button>
              </div>
 
-             <div class="grid grid-cols-5 gap-4">
-                <div v-for="i in 10" :key="i" 
-                     @click="selectAvatar(`/img/avatars/avatar_${i}.webp`)"
-                     class="group relative cursor-pointer aspect-square rounded-2xl overflow-hidden border-2 transition-all hover:scale-105 active:scale-95"
-                     :class="user.avatar_url === `/img/avatars/avatar_${i}.webp` ? 'border-primary-500 shadow-[0_0_15px_rgba(255,69,0,0.3)]' : 'border-white/5 hover:border-white/20'">
-                  <img :src="`/img/avatars/avatar_${i}.webp`" class="w-full h-full object-cover" />
+             <div class="grid grid-cols-3 md:grid-cols-6 gap-3">
+                <div v-for="i in 30" :key="i" 
+                     @click="selectAvatar(`/img/avatars/avatar_${i}.png`)"
+                     class="group relative cursor-pointer aspect-square rounded-2xl overflow-hidden border-2 transition-all hover:scale-110 active:scale-95"
+                     :class="user.avatar_url === `/img/avatars/avatar_${i}.png` ? 'border-primary-500 shadow-[0_0_15px_rgba(255,69,0,0.3)]' : 'border-white/5 hover:border-white/20'">
+                  <img :src="`/img/avatars/avatar_${i}.png`" class="w-full h-full object-cover" />
                   <div class="absolute inset-0 bg-primary-500/0 group-hover:bg-primary-500/10 transition-colors"></div>
-                  <!-- Label for Class Type (Visual only for now) -->
+                  <!-- Label for Class Type -->
                   <div class="absolute bottom-0 inset-x-0 bg-black/60 backdrop-blur-sm py-1">
-                     <p class="text-[7px] font-black text-white text-center uppercase tracking-tighter">{{ getClassLabel(i) }}</p>
+                     <p class="text-[6px] font-black text-white text-center uppercase tracking-tighter">{{ getClassLabel(i) }}</p>
                   </div>
                 </div>
              </div>
@@ -385,7 +385,11 @@ const selectAvatar = async (url) => {
 };
 
 const getClassLabel = (i) => {
-  const classes = ['Warrior', 'Mage', 'Rogue', 'Paladin', 'Ranger', 'Necro', 'Barbarian', 'Monk', 'Druid', 'Valkyrie'];
+  const classes = [
+    'Artorias', 'Solaire', 'Scorpion', 'Subzero', 'Steve', 'Creeper', 'Kratos', 'Atreus', 'Melina', 'Malenia', 
+    'Hunter', 'Link', 'Zelda', 'Geralt', 'Ciri', 'Chief', 'Doom', 'Ryu', 'ChunLi', 'Kazuya', 
+    'Cloud', 'Sephiroth', 'Leon', 'Snake', 'Aloy', 'Drake', 'Arthur', 'Ellie', 'Mario', 'Pikachu'
+  ];
   return classes[i-1] || 'Recruit';
 };
 
