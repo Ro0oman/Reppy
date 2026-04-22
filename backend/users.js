@@ -14,16 +14,24 @@ router.get('/me', authenticate, async (req, res) => {
     await autoGrantPendingChests(req.user.id);
 
     const result = await query(
-      `SELECT u.id, u.name, u.email, u.avatar_url, u.total_reps, u.is_private, u.has_seen_easter_modal, u.has_seen_damage_overhaul, u.has_seen_avatar_overhaul, u.daily_goal, u.body_weight, u.reppy_coins, u.boss_chests, u.level_chests, u.str_xp, u.dex_xp, u.end_xp, u.vig_xp, u.int_xp, u.fth_xp, u.cha_xp, u.total_xp, u.current_level, u.equipped_title_id, u.equipped_border_id, u.equipped_avatar_id, u.equipped_background_id, u.equipped_post_background_id, u.is_admin, u.theme,
+      `SELECT u.*,
               t.name as title_name, t.css_value as title_css,
               b.css_value as border_css,
               a.css_value as avatar_css,
-              bg.css_value as background_css
+              bg.css_value as background_css,
+              iHead.stats as head_stats,
+              iWeapon.stats as weapon_stats,
+              iArmor.stats as armor_stats,
+              iBoots.stats as boots_stats
        FROM users u
        LEFT JOIN cosmetics t ON u.equipped_title_id = t.id
        LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
        LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
        LEFT JOIN cosmetics bg ON u.equipped_background_id = bg.id
+       LEFT JOIN items iHead ON u.equipped_head_id = iHead.id
+       LEFT JOIN items iWeapon ON u.equipped_weapon_id = iWeapon.id
+       LEFT JOIN items iArmor ON u.equipped_armor_id = iArmor.id
+       LEFT JOIN items iBoots ON u.equipped_boots_id = iBoots.id
        WHERE u.id = $1`,
       [req.user.id]
     );

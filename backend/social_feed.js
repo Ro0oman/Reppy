@@ -106,6 +106,9 @@ router.get('/feed', authenticate, async (req, res) => {
                 'exercise_type', r.exercise_type,
                 'count', r.count,
                 'boss_damage', r.boss_damage_dealt,
+                'base_damage', r.base_damage,
+                'gear_bonus', r.gear_bonus,
+                'buff_bonus', r.buff_bonus,
                 'active_multiplier', r.active_multiplier,
                 'historical_total', (SELECT SUM(count) FROM reps WHERE user_id = r.user_id AND exercise_type = r.exercise_type AND date <= r.date),
                 'is_pr', NOT EXISTS (
@@ -116,6 +119,13 @@ router.get('/feed', authenticate, async (req, res) => {
                     AND r_old.count >= r.count
                 )
             )) as exercises,
+            -- Equipped items info
+            JSON_BUILD_OBJECT(
+                'head', JSON_BUILD_OBJECT('name', iHead.name, 'rarity', iHead.rarity),
+                'weapon', JSON_BUILD_OBJECT('name', iWeapon.name, 'rarity', iWeapon.rarity),
+                'armor', JSON_BUILD_OBJECT('name', iArmor.name, 'rarity', iArmor.rarity),
+                'boots', JSON_BUILD_OBJECT('name', iBoots.name, 'rarity', iBoots.rarity)
+            ) as equipment,
             (SELECT COUNT(*) FROM summary_interactions WHERE summary_id = ds.id AND type = 'LIKE') as like_count,
             (SELECT COUNT(*) FROM summary_interactions WHERE summary_id = ds.id AND type = 'COMMENT') as comment_count,
             EXISTS(SELECT 1 FROM summary_interactions WHERE summary_id = ds.id AND user_id = $1 AND type = 'LIKE') as user_has_liked,
@@ -126,11 +136,16 @@ router.get('/feed', authenticate, async (req, res) => {
         LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
         LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
         LEFT JOIN cosmetics pb ON u.equipped_post_background_id = pb.id
+        LEFT JOIN items iHead ON u.equipped_head_id = iHead.id
+        LEFT JOIN items iWeapon ON u.equipped_weapon_id = iWeapon.id
+        LEFT JOIN items iArmor ON u.equipped_armor_id = iArmor.id
+        LEFT JOIN items iBoots ON u.equipped_boots_id = iBoots.id
         ${whereClause}
         GROUP BY 
           u.id, r.date, ds.id, ds.title, ds.description,
           b.css_value, a.css_value, pb.css_value, 
-          u.name, u.avatar_url, u.current_level, u.total_reps, u.cha_xp
+          u.name, u.avatar_url, u.current_level, u.total_reps, u.cha_xp,
+          iHead.name, iHead.rarity, iWeapon.name, iWeapon.rarity, iArmor.name, iArmor.rarity, iBoots.name, iBoots.rarity
       )
       SELECT 
         f.*,
@@ -138,6 +153,10 @@ router.get('/feed', authenticate, async (req, res) => {
         (SELECT SUM(count) FROM reps WHERE user_id = f.user_id AND date = f.date::date) as total_reps_today,
         -- Total Damage Today
         (SELECT SUM(boss_damage_dealt) FROM reps WHERE user_id = f.user_id AND date = f.date::date) as total_damage_today,
+        -- Damage Breakdown Today
+        (SELECT SUM(base_damage) FROM reps WHERE user_id = f.user_id AND date = f.date::date) as total_base_damage_today,
+        (SELECT SUM(gear_bonus) FROM reps WHERE user_id = f.user_id AND date = f.date::date) as total_gear_bonus_today,
+        (SELECT SUM(buff_bonus) FROM reps WHERE user_id = f.user_id AND date = f.date::date) as total_buff_bonus_today,
         -- Global Rank (Position 1, 2, 3...) based on total_reps (ALL exercises, lifetime)
         (SELECT COUNT(*) FROM users u2 
          WHERE u2.total_reps > f.total_reps AND u2.is_private = false

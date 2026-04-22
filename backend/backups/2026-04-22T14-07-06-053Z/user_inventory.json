@@ -1,0 +1,594 @@
+[
+  {
+    "id": 56,
+    "user_id": "104874471911797443021",
+    "cosmetic_id": 134,
+    "acquired_at": "2026-04-09T15:34:16.546Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 60,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 6,
+    "acquired_at": "2026-04-11T13:38:34.277Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 47,
+    "user_id": "101063640127017375063",
+    "cosmetic_id": 23,
+    "acquired_at": "2026-04-08T21:38:39.984Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 1,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 1,
+    "acquired_at": "2026-04-03T14:01:56.113Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 7,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 16,
+    "acquired_at": "2026-04-03T17:26:52.863Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 21,
+    "user_id": "user_15b566c0-0895-4802-971c-bf2b98e56c7c",
+    "cosmetic_id": 9,
+    "acquired_at": "2026-04-04T09:36:32.610Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 22,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 118,
+    "acquired_at": "2026-04-05T10:56:42.208Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 23,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 123,
+    "acquired_at": "2026-04-05T10:56:54.251Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 27,
+    "user_id": "104874471911797443021",
+    "cosmetic_id": 133,
+    "acquired_at": "2026-04-05T11:50:14.570Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 26,
+    "user_id": "104874471911797443021",
+    "cosmetic_id": 131,
+    "acquired_at": "2026-04-05T11:50:03.410Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 28,
+    "user_id": "104874471911797443021",
+    "cosmetic_id": 2,
+    "acquired_at": "2026-04-05T11:50:59.858Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 25,
+    "user_id": "user_15b566c0-0895-4802-971c-bf2b98e56c7c",
+    "cosmetic_id": 122,
+    "acquired_at": "2026-04-05T11:46:16.164Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 24,
+    "user_id": "user_15b566c0-0895-4802-971c-bf2b98e56c7c",
+    "cosmetic_id": 132,
+    "acquired_at": "2026-04-05T11:45:38.345Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 30,
+    "user_id": "108603121271969361100",
+    "cosmetic_id": 130,
+    "acquired_at": "2026-04-06T13:21:51.947Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 32,
+    "user_id": "101063640127017375063",
+    "cosmetic_id": 124,
+    "acquired_at": "2026-04-06T18:52:32.845Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 31,
+    "user_id": "101063640127017375063",
+    "cosmetic_id": 120,
+    "acquired_at": "2026-04-06T18:52:23.365Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 34,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 2,
+    "acquired_at": "2026-04-07T17:21:32.948Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 35,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 12,
+    "acquired_at": "2026-04-07T17:21:42.907Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 36,
+    "user_id": "108132319736874480979",
+    "cosmetic_id": 129,
+    "acquired_at": "2026-04-08T08:49:17.905Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 37,
+    "user_id": "104874471911797443021",
+    "cosmetic_id": 1,
+    "acquired_at": "2026-04-08T17:16:50.373Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 41,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 23,
+    "acquired_at": "2026-04-08T21:16:31.283Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 43,
+    "user_id": "101666965639540422191",
+    "cosmetic_id": 23,
+    "acquired_at": "2026-04-08T21:38:39.984Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 44,
+    "user_id": "100645346924921098425",
+    "cosmetic_id": 23,
+    "acquired_at": "2026-04-08T21:38:39.984Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 45,
+    "user_id": "111141881147725956417",
+    "cosmetic_id": 23,
+    "acquired_at": "2026-04-08T21:38:39.984Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 48,
+    "user_id": "user_ffc1eaad-430a-4b22-9294-e60c41c38979",
+    "cosmetic_id": 23,
+    "acquired_at": "2026-04-08T21:38:39.984Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 49,
+    "user_id": "103047301777123103926",
+    "cosmetic_id": 23,
+    "acquired_at": "2026-04-08T21:38:39.984Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 50,
+    "user_id": "105993497299107583479",
+    "cosmetic_id": 23,
+    "acquired_at": "2026-04-08T21:38:39.984Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 52,
+    "user_id": "108132319736874480979",
+    "cosmetic_id": 23,
+    "acquired_at": "2026-04-08T21:38:39.984Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 53,
+    "user_id": "user_15b566c0-0895-4802-971c-bf2b98e56c7c",
+    "cosmetic_id": 23,
+    "acquired_at": "2026-04-08T21:38:39.984Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 54,
+    "user_id": "108603121271969361100",
+    "cosmetic_id": 23,
+    "acquired_at": "2026-04-08T21:38:39.984Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 38,
+    "user_id": "104874471911797443021",
+    "cosmetic_id": 15,
+    "acquired_at": "2026-04-08T17:17:05.061Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 39,
+    "user_id": "104874471911797443021",
+    "cosmetic_id": 21,
+    "acquired_at": "2026-04-08T17:17:16.781Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 40,
+    "user_id": "104874471911797443021",
+    "cosmetic_id": 11,
+    "acquired_at": "2026-04-08T17:17:26.976Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 42,
+    "user_id": "104874471911797443021",
+    "cosmetic_id": 23,
+    "acquired_at": "2026-04-08T21:38:39.984Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 55,
+    "user_id": "104874471911797443021",
+    "cosmetic_id": 6,
+    "acquired_at": "2026-04-09T15:15:36.327Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 57,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 76,
+    "acquired_at": "2026-04-09T16:37:11.474Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 59,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 146,
+    "acquired_at": "2026-04-09T17:14:42.818Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 63,
+    "user_id": "101063640127017375063",
+    "cosmetic_id": 116,
+    "acquired_at": "2026-04-12T10:46:41.118Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 62,
+    "user_id": "101063640127017375063",
+    "cosmetic_id": 118,
+    "acquired_at": "2026-04-12T10:45:23.615Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 61,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 95,
+    "acquired_at": "2026-04-11T13:39:14.260Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 65,
+    "user_id": "101063640127017375063",
+    "cosmetic_id": 133,
+    "acquired_at": "2026-04-13T20:07:39.217Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 64,
+    "user_id": "101063640127017375063",
+    "cosmetic_id": 136,
+    "acquired_at": "2026-04-13T20:07:28.282Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 67,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 127,
+    "acquired_at": "2026-04-14T06:12:13.550Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 66,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 129,
+    "acquired_at": "2026-04-14T06:12:03.723Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 68,
+    "user_id": "104874471911797443021",
+    "cosmetic_id": 119,
+    "acquired_at": "2026-04-16T10:27:29.401Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 70,
+    "user_id": "104874471911797443021",
+    "cosmetic_id": 116,
+    "acquired_at": "2026-04-16T11:32:06.659Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 69,
+    "user_id": "104874471911797443021",
+    "cosmetic_id": 7,
+    "acquired_at": "2026-04-16T11:31:57.646Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 71,
+    "user_id": "104874471911797443021",
+    "cosmetic_id": 117,
+    "acquired_at": "2026-04-17T10:13:42.987Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 72,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 124,
+    "acquired_at": "2026-04-17T12:31:18.341Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 74,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 142,
+    "acquired_at": "2026-04-17T15:51:36.295Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 73,
+    "user_id": "118413847408343069597",
+    "cosmetic_id": 117,
+    "acquired_at": "2026-04-17T14:47:33.800Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 95,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 128,
+    "acquired_at": "2026-04-19T07:51:12.085Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 51,
+    "user_id": "user_eed346b0-2e60-4d34-a228-59aba0c4552e",
+    "cosmetic_id": 23,
+    "acquired_at": "2026-04-08T21:38:39.984Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 76,
+    "user_id": "104874471911797443021",
+    "cosmetic_id": 115,
+    "acquired_at": "2026-04-18T11:19:31.048Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 77,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 137,
+    "acquired_at": "2026-04-18T16:50:56.956Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 78,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 5,
+    "acquired_at": "2026-04-18T16:51:07.764Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 94,
+    "user_id": "101063640127017375063",
+    "cosmetic_id": 157,
+    "acquired_at": "2026-04-19T07:41:37.223Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 81,
+    "user_id": "104874471911797443021",
+    "cosmetic_id": 157,
+    "acquired_at": "2026-04-19T07:41:36.677Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 82,
+    "user_id": "112044860553934841829",
+    "cosmetic_id": 157,
+    "acquired_at": "2026-04-19T07:41:36.718Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 83,
+    "user_id": "101666965639540422191",
+    "cosmetic_id": 157,
+    "acquired_at": "2026-04-19T07:41:36.760Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 84,
+    "user_id": "100645346924921098425",
+    "cosmetic_id": 157,
+    "acquired_at": "2026-04-19T07:41:36.802Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 85,
+    "user_id": "111141881147725956417",
+    "cosmetic_id": 157,
+    "acquired_at": "2026-04-19T07:41:36.844Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 87,
+    "user_id": "user_ffc1eaad-430a-4b22-9294-e60c41c38979",
+    "cosmetic_id": 157,
+    "acquired_at": "2026-04-19T07:41:36.929Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 88,
+    "user_id": "103047301777123103926",
+    "cosmetic_id": 157,
+    "acquired_at": "2026-04-19T07:41:36.971Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 89,
+    "user_id": "105993497299107583479",
+    "cosmetic_id": 157,
+    "acquired_at": "2026-04-19T07:41:37.013Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 91,
+    "user_id": "user_15b566c0-0895-4802-971c-bf2b98e56c7c",
+    "cosmetic_id": 157,
+    "acquired_at": "2026-04-19T07:41:37.097Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 92,
+    "user_id": "108603121271969361100",
+    "cosmetic_id": 157,
+    "acquired_at": "2026-04-19T07:41:37.139Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 93,
+    "user_id": "108132319736874480979",
+    "cosmetic_id": 157,
+    "acquired_at": "2026-04-19T07:41:37.181Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 96,
+    "user_id": "101063640127017375063",
+    "cosmetic_id": 122,
+    "acquired_at": "2026-04-19T09:11:14.078Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 97,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 120,
+    "acquired_at": "2026-04-19T13:19:19.171Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 90,
+    "user_id": "user_eed346b0-2e60-4d34-a228-59aba0c4552e",
+    "cosmetic_id": 157,
+    "acquired_at": "2026-04-19T07:41:37.054Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 99,
+    "user_id": "104874471911797443021",
+    "cosmetic_id": 123,
+    "acquired_at": "2026-04-20T10:57:03.441Z",
+    "is_new": true,
+    "quantity": 1
+  },
+  {
+    "id": 98,
+    "user_id": "118413847408343069597",
+    "cosmetic_id": 130,
+    "acquired_at": "2026-04-19T18:31:07.430Z",
+    "is_new": false,
+    "quantity": 1
+  },
+  {
+    "id": 100,
+    "user_id": "113903862264612270084",
+    "cosmetic_id": 132,
+    "acquired_at": "2026-04-22T12:08:08.689Z",
+    "is_new": true,
+    "quantity": 1
+  }
+]

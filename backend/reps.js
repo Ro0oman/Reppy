@@ -2,11 +2,12 @@ import express from 'express';
 import { query } from './db.js';
 import { authenticate } from './middleware.js';
 import { getExerciseRewards, getBossDamageMultiplier } from './utils/rewards.js';
-import { recalculateUserStats, augmentUserWithLevels } from './utils/stats.js';
+import { recalculateUserStats } from './utils/stats.js';
 
 import { syncBossHealth } from './utils/boss.js';
 import { getLocalDateString } from './utils/date.js';
 import { calculateDamage } from './utils/damage.js';
+import { getUserWithGear } from './utils/user.js';
 
 
 const router = express.Router();
@@ -84,9 +85,7 @@ router.post('/', authenticate, async (req, res) => {
     let actualDamageDealt = 0;
 
     // Get user with full stats for damage calculation
-    const userFullRes = await query('SELECT * FROM users WHERE id = $1', [userId]);
-    const userRaw = userFullRes.rows[0];
-    const user = augmentUserWithLevels(userRaw);
+    const user = await getUserWithGear(userId);
     const dmgResult = calculateDamage(user, count, exercise_type);
 
     if (bossRes.rows.length > 0) {
@@ -126,23 +125,27 @@ router.post('/', authenticate, async (req, res) => {
       }
     }
 
-    // 4. Update the actual record with boss_damage_dealt and metadata
+    // Update the actual record with boss_damage_dealt and metadata
     await query(
       `UPDATE reps 
-       SET boss_damage_dealt = COALESCE(boss_damage_dealt, 0) + $1,
-           active_multiplier = $2
-       WHERE id = $3`, 
-      [actualDamageDealt, dmgResult.activeMultiplier, result.rows[0].id]
+       SET boss_damage_dealt = $1,
+           active_multiplier = $2,
+           base_damage = $3,
+           gear_bonus = $4,
+           buff_bonus = $5
+       WHERE id = $6`, 
+      [actualDamageDealt, dmgResult.activeMultiplier, dmgResult.baseDamage, dmgResult.gearBonus, dmgResult.buffBonus, result.rows[0].id]
     );
-
-    const dmgInfo = calculateDamage(await query('SELECT * FROM users WHERE id = $1', [userId]).then(r => r.rows[0]), count, exercise_type);
 
     res.json({ 
       ...result.rows[0], 
       earnedCoins, 
       boss_damage_dealt: actualDamageDealt,
-      is_crit: dmgInfo.isCrit,
-      magic_bonus: dmgInfo.magicBonus
+      is_crit: dmgResult.isCrit,
+      base_damage: dmgResult.baseDamage,
+      gear_bonus: dmgResult.gearBonus,
+      buff_bonus: dmgResult.buffBonus,
+      active_multiplier: dmgResult.activeMultiplier
     });
   } catch (error) {
     console.error('Error adding reps:', error);
@@ -258,6 +261,10 @@ router.get('/stats', authenticate, async (req, res) => {
     const volumeRes = await query(volumeQuery, volumeParams);
     const totalVolume = parseFloat(volumeRes.rows[0]?.volume) || 0;
 
+    // 6. Combat Power (Damage per Rep)
+    const user = await getUserWithGear(userId);
+    const dmgPerRep = calculateDamage(user, 1, isGlobal ? 'pullups' : type);
+
     res.json({
       totalReps,
       streak,
@@ -265,7 +272,14 @@ router.get('/stats', authenticate, async (req, res) => {
       topMonthCount,
       dailyGoal: daily_goal,
       bodyWeight: body_weight,
-      totalVolume
+      totalVolume,
+      combatPower: {
+        total: dmgPerRep.totalDamage,
+        base: dmgPerRep.baseDamage,
+        gear: dmgPerRep.gearBonus,
+        buff: dmgPerRep.buffBonus,
+        multiplier: dmgPerRep.activeMultiplier
+      }
     });
   } catch (error) {
     console.error('Error fetching stats:', error);
@@ -312,9 +326,7 @@ router.put('/:id', authenticate, async (req, res) => {
     );
 
     // Get user with full stats for damage calculation
-    const userFullRes = await query('SELECT * FROM users WHERE id = $1', [userId]);
-    const userRaw = userFullRes.rows[0];
-    const user = augmentUserWithLevels(userRaw);
+    const user = await getUserWithGear(userId);
     const dmgResult = calculateDamage(user, count, oldRep.exercise_type);
 
     if (bossRes.rows.length > 0) {
@@ -344,8 +356,11 @@ router.put('/:id', authenticate, async (req, res) => {
 
     // 3. Update reps table
     const updateResult = await query(
-      'UPDATE reps SET count = $1, boss_damage_dealt = $2, active_multiplier = $3 WHERE id = $4 RETURNING *',
-      [count, newBossDamageDealt, dmgResult.activeMultiplier, id]
+      `UPDATE reps 
+       SET count = $1, boss_damage_dealt = $2, active_multiplier = $3,
+           base_damage = $4, gear_bonus = $5, buff_bonus = $6
+       WHERE id = $7 RETURNING *`,
+      [count, newBossDamageDealt, dmgResult.activeMultiplier, dmgResult.baseDamage, dmgResult.gearBonus, dmgResult.buffBonus, id]
     );
 
     // 4. Update user stats

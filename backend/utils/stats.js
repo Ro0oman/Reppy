@@ -59,23 +59,46 @@ export const augmentUserWithLevels = (user) => {
     xp_for_next_level: xpNextLevelStart - xpCurrentLevelStart
   };
 
+  // Calculate Item Bonuses from fields like head_stats, weapon_stats, etc.
+  const itemBonuses = { str: 0, dex: 0, end: 0, vig: 0, int: 0, fth: 0, cha: 0 };
+  ['head', 'weapon', 'armor', 'boots'].forEach(slot => {
+    const stats = user[`${slot}_stats`] || {};
+    Object.keys(stats).forEach(key => {
+      const k = key.toLowerCase();
+      if (itemBonuses[k] !== undefined) {
+        itemBonuses[k] += (stats[key] || 0);
+      }
+    });
+  });
+
   stats.forEach(stat => {
     const xp = user[`${stat}_xp`] || 0;
-    const lvl = getStatLevel(xp);
-    const lvlStart = getXPForLevel(lvl, 100);
-    const lvlNext = getXPForLevel(lvl + 1, 100);
+    const baseLvl = getStatLevel(xp);
+    const itemBonus = itemBonuses[stat] || 0;
+    const totalLvl = baseLvl + itemBonus;
     
-    augmented[`${stat}_lvl`] = lvl;
+    const lvlStart = getXPForLevel(baseLvl, 100);
+    const lvlNext = getXPForLevel(baseLvl + 1, 100);
+    
+    augmented[`base_${stat}_lvl`] = baseLvl;
+    augmented[`${stat}_lvl`] = totalLvl;
+    augmented[`${stat}_bonus_lvl`] = itemBonus;
     augmented[`${stat}_xp_into_level`] = xp - lvlStart;
     augmented[`${stat}_xp_for_next_level`] = lvlNext - lvlStart;
   });
 
   // Include charisma
   const chaXp = user.cha_xp || 0;
-  const chaLvl = getStatLevel(chaXp);
-  const chaStart = getXPForLevel(chaLvl, 100);
-  const chaNext = getXPForLevel(chaLvl + 1, 100);
-  augmented.cha_lvl = chaLvl;
+  const baseChaLvl = getStatLevel(chaXp);
+  const itemChaBonus = itemBonuses.cha || 0;
+  const totalChaLvl = baseChaLvl + itemChaBonus;
+  
+  const chaStart = getXPForLevel(baseChaLvl, 100);
+  const chaNext = getXPForLevel(baseChaLvl + 1, 100);
+  
+  augmented.base_cha_lvl = baseChaLvl;
+  augmented.cha_lvl = totalChaLvl;
+  augmented.cha_bonus_lvl = itemChaBonus;
   augmented.cha_xp_into_level = chaXp - chaStart;
   augmented.cha_xp_for_next_level = chaNext - chaStart;
 
@@ -173,17 +196,16 @@ export const recalculateUserStats = async (userId) => {
     const baseEndXP = Math.floor(totalReps * 5);
 
     // INT BONUS: Knowledge makes training more efficient
-    const intLvl = getStatLevel(intXP + itemBonuses.int);
+    const intLvl = getStatLevel(intXP); // Base INT level
     const intBonus = 1 + ((intLvl - 1) * 0.05); // +5% XP gain per level above 1
 
-    const strXP = Math.round((baseStrXP + itemBonuses.str * 10) * intBonus);
-    const dexXP = Math.round((pwrXP + itemBonuses.dex * 10) * intBonus);
-    const endXP = Math.round((baseEndXP + itemBonuses.end * 10) * intBonus);
-    const vigXP = Math.round((baseVigXP + itemBonuses.vig * 10) * intBonus);
+    const strXP = Math.round(baseStrXP * intBonus);
+    const dexXP = Math.round(pwrXP * intBonus);
+    const endXP = Math.round(baseEndXP * intBonus);
+    const vigXP = Math.round(baseVigXP * intBonus);
 
     // Total XP for Character Level
-    const chaXP = (user.cha_xp || 0) + (itemBonuses.cha * 10);
-    const totalXP = strXP + dexXP + endXP + vigXP + intXP + fthXP + chaXP;
+    const totalXP = strXP + dexXP + endXP + vigXP + intXP + fthXP + (user.cha_xp || 0);
 
     // 4. Character Level Calculation (Dynamic Quadratic: base 1000)
     // L = (1 + sqrt(1 + 8 * totalXP / 1000)) / 2

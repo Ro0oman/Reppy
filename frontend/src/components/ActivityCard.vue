@@ -62,6 +62,24 @@
 
     </div>
 
+    <!-- Equipment Loadout (Impact Visibility) -->
+    <div v-if="activity.equipment" class="px-4 py-2 border-y border-white/5 bg-white/[0.02] flex items-center gap-4 overflow-x-auto no-scrollbar relative z-10">
+      <div v-for="(item, slot) in activity.equipment" :key="slot" 
+           class="flex items-center gap-1.5 opacity-80 hover:opacity-100 transition-opacity whitespace-nowrap shrink-0"
+           v-if="item && item.name">
+        <div class="p-1.5 rounded-lg border flex items-center justify-center transition-all"
+             :class="getRarityClass(item.rarity, 'bg')">
+          <component :is="getSlotIcon(slot)" 
+                     class="w-3 h-3" 
+                     :class="getRarityClass(item.rarity)" />
+        </div>
+        <span class="text-[9px] font-bold uppercase tracking-tight"
+              :class="getRarityClass(item.rarity)">
+          {{ item.name }}
+        </span>
+      </div>
+    </div>
+
     <!-- Main Content Area -->
     <div class="px-4 pb-4 space-y-3 relative z-10">
       <!-- Title & Text (Truncated) -->
@@ -90,9 +108,23 @@
           <!-- Damage (Dato Rey) -->
           <div class="flex-1 flex flex-col items-center justify-center py-1 bg-primary-500/5 overflow-hidden">
             <p class="text-[10px] font-bold text-primary-500 uppercase tracking-[0.05em] mb-1.5">{{ i18n.t('activity_damage_session') }}</p>
-            <div class="flex items-baseline gap-1">
-              <span class="text-3xl font-bold tabular-nums text-primary-500 tracking-tight drop-shadow-[0_0_12px_rgba(59,130,246,0.4)]">{{ animatedDamage }}</span>
-              <Swords class="w-3.5 h-3.5 text-primary-500 opacity-60" />
+            <div class="flex flex-col items-center">
+              <div class="flex items-baseline gap-1">
+                <span class="text-3xl font-bold tabular-nums text-primary-500 tracking-tight drop-shadow-[0_0_12px_rgba(59,130,246,0.4)]">{{ animatedDamage }}</span>
+                <Swords class="w-3.5 h-3.5 text-primary-500 opacity-60" />
+              </div>
+              <!-- Breakdown -->
+              <div class="flex items-center gap-2 mt-0.5">
+                <span class="text-[8px] font-bold text-muted/40 uppercase tracking-tighter">
+                  {{ activity.total_base_damage_today || 0 }}B
+                </span>
+                <span class="text-[8px] font-bold text-primary-400 uppercase tracking-tighter" v-if="activity.total_gear_bonus_today > 0">
+                  +{{ activity.total_gear_bonus_today }}G
+                </span>
+                <span class="text-[8px] font-bold text-emerald-500 uppercase tracking-tighter" v-if="activity.total_buff_bonus_today > 0">
+                  +{{ activity.total_buff_bonus_today }}B
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -196,7 +228,8 @@ import {
     Heart, MessageSquare, Share2, Edit3, Send, 
     Swords, ChevronRight, Trophy, Zap, 
     Flame, TrendingUp, Loader2, Dumbbell,
-    ArrowBigUp, Crown
+    ArrowBigUp, Crown,
+    Shield, Sword, Footprints, Construction // Construction as placeholder for Armor/Helmet
 } from 'lucide-vue-next';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
@@ -312,6 +345,22 @@ const rankStyles = computed(() => {
       return 'bg-white/5 border-white/10 text-muted/60';
   }
 });
+
+const getSlotIcon = (slot) => {
+  switch (slot) {
+    case 'head': return Construction;
+    case 'weapon': return Sword;
+    case 'armor': return Shield;
+    case 'boots': return Footprints;
+    default: return Sword;
+  }
+};
+
+const getRarityClass = (rarity, prefix = '') => {
+  const r = rarity?.toLowerCase() || 'common';
+  if (prefix === 'bg') return `bg-rarity-${r}`;
+  return `rarity-${r}${r === 'legendary' ? ' glow-legendary' : ''}`;
+};
 
 const animatedDamage = ref(0);
 const animatedReps = ref(0);

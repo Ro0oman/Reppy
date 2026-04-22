@@ -93,7 +93,7 @@
             </div>
 
             <!-- Empty Slot State -->
-            <div v-else class="flex flex-col items-center gap-2 opacity-10 group-hover:opacity-20 transition-opacity">
+            <div v-else class="flex flex-col items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
               <component :is="slot.icon" class="w-8 h-8 text-muted" />
               <span class="text-[8px] font-black text-muted uppercase tracking-[0.2em]">{{ i18n.t('inv_empty_slot') || 'EMPTY_SLOT' }}</span>
             </div>
@@ -138,7 +138,7 @@
             </div>
 
             <!-- Empty Slot State -->
-            <div v-else class="flex flex-col items-center gap-2 opacity-10 group-hover:opacity-20 transition-opacity">
+            <div v-else class="flex flex-col items-center gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
               <component :is="slot.icon" class="w-8 h-8 text-muted" />
               <span class="text-[8px] font-black text-muted uppercase tracking-[0.2em]">OFFLINE</span>
             </div>
@@ -223,7 +223,7 @@
                 @click="toggleEquip(item)"
                 @mouseenter="markSeen(item)"
                 class="nexus-slot group relative" 
-                :class="[isEquipped(item) ? 'equipped' : '', `rarity-${item.rarity || 'common'}`]">
+                :class="[isEquipped(item) ? 'equipped' : '', `rarity-${item.rarity || 'common'}`, item.rarity === 'legendary' ? 'glow-legendary' : '']">
                 
                 <div class="nexus-slot-inner">
                    <!-- New Item Indicator -->
@@ -270,25 +270,32 @@
                       </div>
                    </div>
 
-                   <!-- Info Badge -->
-                   <div class="p-3 bg-surface/60 border-t border-white/5 relative overflow-hidden">
-                      <div v-if="isEquipped(item)" class="absolute inset-0 bg-primary-500/10 flex items-center justify-center backdrop-blur-[1px]">
-                         <div class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary-500 text-[7px] font-black text-white uppercase tracking-widest italic shadow-xl shadow-primary-500/20">
-                           <Check class="w-2.5 h-2.5" /> LINKED
-                         </div>
-                      </div>
-                      
-                      <div v-if="type === 'consumable'" class="space-y-2">
-                         <button @click.stop="handleActivate(item)" 
-                            class="w-full py-2 bg-primary-500 hover:bg-primary-600 text-white text-[7px] font-black uppercase tracking-widest rounded-lg transition-all shadow-lg active:scale-95">
-                            ACTIVATE_MODULE
-                         </button>
-                      </div>
-                      <div v-else class="text-center">
-                        <h4 class="text-[8px] font-black text-foreground truncate uppercase italic tracking-wider leading-none mb-1 group-hover:text-primary-500 transition-colors">{{ item.name }}</h4>
-                        <div class="text-[6px] font-mono text-muted uppercase tracking-[0.2em]">{{ item.rarity || 'common' }}</div>
-                      </div>
-                   </div>
+                    <!-- Info Badge -->
+                    <div class="p-3 bg-surface/60 border-t border-white/5 relative overflow-hidden">
+                       <div v-if="isEquipped(item)" class="absolute inset-0 bg-primary-500/10 flex items-center justify-center backdrop-blur-[1px]">
+                          <div class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary-500 text-[7px] font-black text-white uppercase tracking-widest italic shadow-xl shadow-primary-500/20">
+                            <Check class="w-2.5 h-2.5" /> LINKED
+                          </div>
+                       </div>
+                       
+                       <div v-if="type === 'consumable'" class="space-y-2">
+                          <button @click.stop="handleActivate(item)" 
+                             class="w-full py-2 bg-primary-500 hover:bg-primary-600 text-white text-[7px] font-black uppercase tracking-widest rounded-lg transition-all shadow-lg active:scale-95">
+                             ACTIVATE_MODULE
+                          </button>
+                       </div>
+                       <div v-else-if="['head', 'weapon', 'armor', 'boots'].includes(type) && !isEquipped(item)" class="flex flex-col gap-1.5">
+                          <button @click.stop="startComparison(item)" 
+                             class="w-full py-2 bg-white/10 hover:bg-white/20 text-white text-[7px] font-black uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-2">
+                             <Swords class="w-2.5 h-2.5" /> COMPARE
+                          </button>
+                          <h4 class="text-[8px] font-black text-foreground truncate uppercase italic tracking-wider leading-none group-hover:text-primary-500 transition-colors">{{ item.name }}</h4>
+                       </div>
+                       <div v-else class="text-center">
+                         <h4 class="text-[8px] font-black text-foreground truncate uppercase italic tracking-wider leading-none mb-1 group-hover:text-primary-500 transition-colors">{{ item.name }}</h4>
+                         <div class="text-[6px] font-mono text-muted uppercase tracking-[0.2em]">{{ item.rarity || 'common' }}</div>
+                       </div>
+                    </div>
                 </div>
               </div>
             </div>
@@ -304,6 +311,16 @@
       :reward="chestReward" 
       :reel-items="reelItems" 
       @close="closeChestModal" 
+    />
+
+    <!-- Comparison Modal -->
+    <CompareModal
+      v-if="comparisonState.show"
+      :show="comparisonState.show"
+      :new-item="comparisonState.newItem"
+      :current-item="comparisonState.currentItem"
+      @close="comparisonState.show = false"
+      @equip="handleEquipFromCompare"
     />
     
   </div>
@@ -322,6 +339,7 @@ import { useNotificationStore } from '../stores/notification';
 import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
 import ChestOpening from './ChestOpening.vue';
+import CompareModal from './CompareModal.vue';
 import axios from 'axios';
 import { useAudio } from '../composables/useAudio';
 
@@ -337,6 +355,25 @@ const activeTab = ref('gear'); // Default to gear for the redesign
 const activeStashTab = ref('all');
 const selectedStat = ref(null);
 const openCategories = ref({}); // tracks open/closed state per category type
+
+const comparisonState = ref({
+  show: false,
+  newItem: null,
+  currentItem: null
+});
+
+const startComparison = (item) => {
+  comparisonState.value = {
+    show: true,
+    newItem: item,
+    currentItem: getEquippedItem(item.type)
+  };
+};
+
+const handleEquipFromCompare = async (item) => {
+  comparisonState.value.show = false;
+  await toggleEquip(item);
+};
 
 const toggleCategory = (type) => {
   // default is open (undefined = truthy), so first click closes
@@ -720,10 +757,10 @@ onMounted(async () => {
 }
 
 /* Rarity Effects */
-.rarity-common { --item-glow: rgba(143, 161, 179, 0.3); }
-.rarity-rare { --item-glow: rgba(247, 178, 59, 0.3); }
-.rarity-epic { --item-glow: rgba(163, 77, 244, 0.3); }
-.rarity-legendary { --item-glow: rgba(255, 157, 0, 0.4); }
+.rarity-common { --item-glow: rgba(148, 163, 184, 0.3); }
+.rarity-rare { --item-glow: rgba(96, 165, 250, 0.3); }
+.rarity-epic { --item-glow: rgba(168, 85, 247, 0.3); }
+.rarity-legendary { --item-glow: rgba(245, 158, 11, 0.4); }
 
 .nexus-slot.equipped .nexus-slot-inner {
   border-color: rgba(255, 69, 0, 0.4);
@@ -731,12 +768,12 @@ onMounted(async () => {
 }
 
 /* Rarity-specific styles */
-.rarity-common .nexus-slot-inner { border-color: rgba(143, 161, 179, 0.1); }
-.rarity-rare .nexus-slot-inner { border-color: rgba(59, 130, 246, 0.2); }
-.rarity-epic .nexus-slot-inner { border-color: rgba(163, 77, 244, 0.2); }
+.rarity-common .nexus-slot-inner { border-color: rgba(148, 163, 184, 0.1); }
+.rarity-rare .nexus-slot-inner { border-color: rgba(96, 165, 250, 0.2); }
+.rarity-epic .nexus-slot-inner { border-color: rgba(168, 85, 247, 0.2); }
 .rarity-legendary .nexus-slot-inner { 
-  border-color: rgba(255, 157, 0, 0.4);
-  background: linear-gradient(to bottom, rgba(255, 157, 0, 0.05), rgba(15, 15, 15, 0.6));
+  border-color: rgba(245, 158, 11, 0.4);
+  background: linear-gradient(to bottom, rgba(245, 158, 11, 0.05), rgba(15, 15, 15, 0.6));
 }
 
 .nexus-slot:hover .nexus-slot-inner {

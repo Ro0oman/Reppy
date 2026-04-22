@@ -41,24 +41,41 @@ export const calculateDamage = (user, reps, type, boss = null) => {
   const chaLvl = parseInt(user.cha_lvl) || 1;
 
   // 3. Scaling Formula (Dark Souls Style)
-  const baseDamage = reps * exerciseMult;
+  const baseDamageValue = reps * exerciseMult;
   
   // Level & INT Efficiency
   const levelMult = 1 + (glvl / 2); 
-  const intBonus = 1 + (intLvl / 50); // Knowledge makes you more efficient
-  const chaBonus = 1 + (chaLvl / 100); // Social influence boost
+  const intBonus = 1 + (intLvl / 50); 
+  const chaBonus = 1 + (chaLvl / 100); 
   
   // Physical Scaling (STR & END)
   const strScale = 1 + (strLvl / 25);
   const endScale = 1 + (endLvl / 50);
   
-  // Divine Scaling (FTH) - BUFFED
+  // Divine Scaling (FTH)
   const fthScale = 1 + (fthLvl / 40);
-  const divineBonus = fthLvl * 25; // Base flat bonus
+  const divineBonus = fthLvl * 25; 
 
-  let damageBeforeCrit = (baseDamage * levelMult * intBonus * chaBonus * strScale * endScale * fthScale) + divineBonus;
+  // --- NEW BREAKDOWN LOGIC ---
+  // To get the "Base" part, we calculate what it would be without item levels.
+  // But since strLvl etc already include items if passed that way, we need to be careful.
+  // Let's assume user.base_str_lvl etc exist or we calculate them.
+  
+  const baseStatStr = parseInt(user.base_str_lvl) || strLvl;
+  const baseStatEnd = parseInt(user.base_end_lvl) || endLvl;
+  const baseStatFth = parseInt(user.base_fth_lvl) || fthLvl;
+  
+  const baseScale = (1 + (baseStatStr / 25)) * (1 + (baseStatEnd / 50)) * (1 + (baseStatFth / 40));
+  const baseDivine = baseStatFth * 25;
+  
+  const baseFinalDamage = (baseDamageValue * levelMult * intBonus * chaBonus * baseScale) + baseDivine;
+  
+  // Total before crit and buffs
+  const damageBeforeCrit = (baseDamageValue * levelMult * intBonus * chaBonus * strScale * endScale * fthScale) + divineBonus;
+  
+  const gearBonus = Math.max(0, damageBeforeCrit - baseFinalDamage);
 
-  // 4. Critical Hit Roll (DEX & VIG)
+  // 4. Critical Hit Roll
   const critChance = (dexLvl * 2.5) + (vigLvl * 0.5);
   const isCrit = (Math.random() * 100) < Math.min(80, critChance); 
   
@@ -74,15 +91,10 @@ export const calculateDamage = (user, reps, type, boss = null) => {
   let weaknessBonus = 1.0;
   if (boss && boss.weakness_stat) {
     const w = boss.weakness_stat.toLowerCase();
-    
-    // If user has leveled up the stat the boss is weak to, they deal extra damage
-    // The bonus scales with the level of that stat
     const weaknessLevel = parseInt(user[`${w}_lvl`]) || 1;
     if (weaknessLevel > 1) {
-       // 50% base bonus if weakness matched, plus 2% extra per level in that stat
        weaknessBonus = 1.5 + (weaknessLevel * 0.02);
     }
-    
     finalDamage *= weaknessBonus;
   }
 
@@ -99,8 +111,9 @@ export const calculateDamage = (user, reps, type, boss = null) => {
   return {
     totalDamage: Math.round(finalDamage),
     isCrit,
-    divineBonus: Math.round(divineBonus),
-    baseDamage: Math.round(baseDamage),
+    baseDamage: Math.round(baseFinalDamage * (isCrit ? critMult : 1) * weaknessBonus),
+    gearBonus: Math.round(gearBonus * (isCrit ? critMult : 1) * weaknessBonus),
+    buffBonus: Math.round(finalDamage - (finalDamage / activeMultiplier)),
     critMultiplier: parseFloat(critMult.toFixed(2)),
     weaknessBonus: parseFloat(weaknessBonus.toFixed(2)),
     activeMultiplier: parseFloat(activeMultiplier.toFixed(2))

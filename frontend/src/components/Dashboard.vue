@@ -57,25 +57,48 @@
 
       <!-- Quick Metrics Bento -->
       <div class="grid grid-cols-1 gap-4 h-full">
-         <!-- Streak -->
-         <div class="bg-surface/10 backdrop-blur-xl border border-white/5 rounded-[2rem] p-8 flex flex-col justify-between group">
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] font-black text-muted/40 uppercase tracking-widest">{{ i18n.t('dash_streak') }}</span>
-              <Flame class="w-4 h-4 text-primary-500" />
+         <!-- Combat Power (New Breakdown Card) -->
+         <div class="bg-gradient-to-br from-primary-500/10 to-surface/5 backdrop-blur-xl border border-primary-500/20 rounded-[2rem] p-8 flex flex-col justify-between group relative overflow-hidden">
+            <div class="absolute -right-4 -top-4 opacity-5 group-hover:scale-110 transition-transform duration-700">
+               <Sword class="w-32 h-32 text-primary-500" />
             </div>
-            <div class="mt-4">
-              <span class="text-5xl font-black text-white italic tracking-tighter">{{ stats.streak }}</span>
-              <p class="text-[10px] font-black text-primary-500 uppercase tracking-widest mt-1">{{ i18n.t('stats_days') }}</p>
+            
+            <div class="flex items-center justify-between relative z-10">
+              <span class="text-[10px] font-black text-primary-500 uppercase tracking-widest">COMBAT_POWER</span>
+              <Sword class="w-4 h-4 text-primary-500 animate-pulse" />
+            </div>
+
+            <div class="mt-4 relative z-10">
+              <div class="flex items-baseline gap-2">
+                <span class="text-5xl font-black text-white italic tracking-tighter">{{ stats.combatPower.total }}</span>
+                <span class="text-[10px] font-black text-muted uppercase tracking-widest">DMG / REP</span>
+              </div>
+              
+              <!-- Detailed Breakdown -->
+              <div class="grid grid-cols-1 gap-2 mt-6 pt-6 border-t border-white/5">
+                <div class="flex justify-between items-center">
+                  <span class="text-[9px] font-bold text-muted/60 uppercase">BASE_SKILL</span>
+                  <span class="text-xs font-black text-white italic">{{ stats.combatPower.base }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-[9px] font-bold text-primary-400 uppercase">⚔️ GEAR_BONUS</span>
+                  <span class="text-xs font-black text-primary-400 italic">+{{ stats.combatPower.gear }}</span>
+                </div>
+                <div class="flex justify-between items-center" v-if="stats.combatPower.buff > 0">
+                  <span class="text-[9px] font-bold text-neon-lime uppercase">🧪 ACTIVE_BUFFS</span>
+                  <span class="text-xs font-black text-neon-lime italic">+{{ stats.combatPower.buff }}</span>
+                </div>
+              </div>
             </div>
          </div>
 
          <div class="grid grid-cols-2 gap-4">
-            <!-- Peak -->
+            <!-- Streak -->
             <div class="bg-surface/10 backdrop-blur-xl border border-white/5 rounded-[2rem] p-6 flex flex-col justify-between group">
-              <Activity class="w-3.5 h-3.5 text-accent mb-4" />
+              <Flame class="w-3.5 h-3.5 text-primary-500 mb-4" />
               <div>
-                <span class="text-3xl font-black text-white italic tracking-tighter">{{ stats.topMonthCount }}</span>
-                <p class="text-[9px] font-black text-muted/40 uppercase tracking-widest mt-1">{{ i18n.t('dash_max_month') }}</p>
+                <span class="text-3xl font-black text-white italic tracking-tighter">{{ stats.streak }}</span>
+                <p class="text-[9px] font-black text-muted/40 uppercase tracking-widest mt-1">{{ i18n.t('dash_streak') }}</p>
               </div>
             </div>
             <!-- Tonnage -->
@@ -187,7 +210,7 @@ import { ref, onMounted, onUnmounted, computed, reactive, watch } from 'vue';
 import axios from 'axios';
 import {
   Trophy, Target, Flame, Zap, Activity, History, Inbox,
-  BarChart3, Check, X, Trash2, Globe
+  BarChart3, Check, X, Trash2, Globe, Sword, Swords
 } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
@@ -234,7 +257,8 @@ const stats = reactive({
   topMonthCount: 0,
   dailyGoal: 50,
   totalVolume: 0,
-  bodyWeight: 75
+  bodyWeight: 75,
+  combatPower: { total: 0, base: 0, gear: 0, buff: 0 }
 });
 
 const activeExerciseLabel = computed(() => {
@@ -271,6 +295,7 @@ const fetchData = async () => {
     stats.dailyGoal = statsRes.data.dailyGoal || 50;
     stats.totalVolume = statsRes.data.totalVolume || 0;
     stats.bodyWeight = statsRes.data.bodyWeight || 75;
+    stats.combatPower = statsRes.data.combatPower || { total: 0, base: 0, gear: 0, buff: 0 };
 
     if (bossHealthRef.value) bossHealthRef.value.refresh();
 
