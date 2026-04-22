@@ -27,7 +27,7 @@ async function migrateAvatars() {
     console.log('Assigning random static icons to all users...');
     const updateRes = await client.query(`
       UPDATE users 
-      SET avatar_url = '/img/avatars/avatar_' || floor(random() * 30 + 1)::int || '.png'
+      SET avatar_url = '/img/avatars/avatar_' || floor(random() * 30 + 1)::int || '.webp'
     `);
     console.log(`Successfully updated ${updateRes.rowCount} users.`);
 

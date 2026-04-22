@@ -89,7 +89,7 @@ router.post('/signup', async (req, res) => {
     const passwordHash = await bcrypt.hash(password, 10);
     const result = await query(
       'INSERT INTO users (id, name, email, password_hash, avatar_url, theme) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [id, name, email, passwordHash, '/img/avatars/avatar_1.png', 'light']
+      [id, name, email, passwordHash, '/img/avatars/avatar_1.webp', 'light']
     );
 
     const user = result.rows[0];

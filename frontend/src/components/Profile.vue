@@ -281,10 +281,10 @@
 
              <div class="grid grid-cols-3 md:grid-cols-6 gap-3">
                 <div v-for="i in 30" :key="i" 
-                     @click="selectAvatar(`/img/avatars/avatar_${i}.png`)"
+                     @click="selectAvatar(`/img/avatars/avatar_${i}.webp`)"
                      class="group relative cursor-pointer aspect-square rounded-2xl overflow-hidden border-2 transition-all hover:scale-110 active:scale-95"
-                     :class="user.avatar_url === `/img/avatars/avatar_${i}.png` ? 'border-primary-500 shadow-[0_0_15px_rgba(255,69,0,0.3)]' : 'border-white/5 hover:border-white/20'">
-                  <img :src="`/img/avatars/avatar_${i}.png`" class="w-full h-full object-cover" />
+                     :class="user.avatar_url === `/img/avatars/avatar_${i}.webp` ? 'border-primary-500 shadow-[0_0_15px_rgba(255,69,0,0.3)]' : 'border-white/5 hover:border-white/20'">
+                  <img :src="`/img/avatars/avatar_${i}.webp`" class="w-full h-full object-cover" />
                   <div class="absolute inset-0 bg-primary-500/0 group-hover:bg-primary-500/10 transition-colors"></div>
                   <!-- Label for Class Type -->
                   <div class="absolute bottom-0 inset-x-0 bg-black/60 backdrop-blur-sm py-1">
