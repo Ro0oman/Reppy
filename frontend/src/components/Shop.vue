@@ -33,16 +33,18 @@
     </div>
     
     <div v-else class="space-y-16">
-      <!-- Categories Dropdown (Compact Industrial) -->
-      <div class="flex justify-center relative z-20">
-        <div class="relative w-full max-w-md">
+      <!-- Modern Filters Interface (Grid Layout) -->
+      <div class="flex flex-col lg:flex-row items-center gap-6 bg-surface/20 p-4 rounded-3xl border border-border/50 backdrop-blur-sm">
+        
+        <!-- Categories Dropdown (Left Side) -->
+        <div class="w-full lg:w-72 relative z-20">
           <button 
             @click="showDropdown = !showDropdown"
-            class="flex items-center gap-3 px-6 py-3 bg-surface/40 border border-border rounded-xl text-[10px] font-black uppercase tracking-widest hover:border-primary-500/30 transition-all w-full justify-between"
+            class="flex items-center gap-3 px-6 py-3 bg-surface/60 border border-border rounded-2xl text-[10px] font-black uppercase tracking-widest hover:border-primary-500/30 transition-all w-full justify-between shadow-lg"
           >
             <div class="flex items-center gap-2">
               <component :is="categories.find(c => c.id === selectedCategory).icon" class="w-3.5 h-3.5 text-primary-500" />
-              <span class="text-foreground">{{ i18n.t(categories.find(c => c.id === selectedCategory).label) }}</span>
+              <span class="text-foreground">{{ i18n.t(categories.find(c => c.id === selectedCategory).label) || categories.find(c => c.id === selectedCategory).label }}</span>
             </div>
             <ChevronDown class="w-4 h-4 text-muted transition-transform" :class="{ 'rotate-180': showDropdown }" />
           </button>
@@ -64,10 +66,26 @@
                 :class="selectedCategory === cat.id ? 'bg-primary-500 text-white' : 'text-muted hover:bg-white/5 hover:text-foreground'"
               >
                 <component :is="cat.icon" class="w-3.5 h-3.5" />
-                {{ i18n.t(cat.label) }}
+                {{ i18n.t(cat.label) || cat.label }}
               </button>
             </div>
           </Transition>
+        </div>
+
+        <!-- Divider (Desktop only) -->
+        <div class="hidden lg:block w-px h-10 bg-border/50"></div>
+
+        <!-- Rarity Protocol Selector (Right Side) -->
+        <div class="flex-1 flex flex-wrap items-center justify-start lg:justify-end gap-2">
+          <button 
+            v-for="rarity in rarities" 
+            :key="rarity.id"
+            @click="selectedRarity = rarity.id"
+            class="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all active:scale-95 whitespace-nowrap"
+            :class="selectedRarity === rarity.id ? rarity.activeClass : 'bg-surface/20 border-border text-muted hover:border-foreground/20'"
+          >
+            {{ rarity.label }}
+          </button>
         </div>
       </div>
 
@@ -219,18 +237,18 @@
                   <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">{{ i18n.t('shop_screen_preview') }}</div>
                </div>
                <div v-if="['head', 'weapon', 'armor', 'boots'].includes(item.type)" class="flex flex-col items-center gap-3">
-                  <div class="p-4 rounded-2xl bg-gradient-to-br border shadow-2xl transition-transform duration-500 group-hover/item:scale-110"
-                       :class="[getRarityBadge(item).classes, getRarityBadge(item).classes.includes('primary') ? 'from-primary-500/20 to-primary-500/5' : 'from-foreground/10 to-transparent']">
+                   <div class="p-4 rounded-2xl bg-gradient-to-br border shadow-2xl transition-transform duration-500 group-hover/item:scale-110"
+                        :class="[getRarityBadge(item).classes, getRarityBadge(item).classes.includes('primary') ? 'from-primary-500/20 to-primary-500/5' : 'from-foreground/10 to-transparent']">
                      <component :is="getSlotIcon(item.type)" class="w-12 h-12" :class="getRarityBadge(item).classes.split(' ')[0]" />
-                  </div>
-                  <div class="flex items-center gap-1.5">
-                    <span class="text-[8px] font-black uppercase tracking-widest opacity-40">{{ item.type }}</span>
-                  </div>
-               </div>
-               <div v-if="item.type === 'consumable'" class="flex flex-col items-center gap-2">
-                  <FlaskConical class="w-10 h-10 text-primary-500 animate-pulse" />
-                  <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest">BOOST x{{ item.css_value }}</span>
-               </div>
+                   </div>
+                   <div class="flex items-center gap-1.5">
+                     <span class="text-[8px] font-black uppercase tracking-widest opacity-40">{{ item.type }}</span>
+                   </div>
+                </div>
+                <div v-if="item.type === 'consumable'" class="flex flex-col items-center gap-2">
+                   <FlaskConical class="w-10 h-10 animate-pulse" :class="getRarityBadge(item).classes.split(' ')[0]" />
+                   <span class="text-[8px] font-black uppercase tracking-widest" :class="getRarityBadge(item).classes.split(' ')[0]">BOOST x{{ item.css_value }}</span>
+                </div>
                <div v-if="item.type === 'post_background'" class="w-full h-full relative group/post-bg overflow-hidden flex items-center justify-center">
                   <div class="w-[90%] h-[80%] bg-black border border-border rounded-lg relative overflow-hidden flex flex-col p-2 gap-2 shadow-2xl shop-preview">
                      <div class="w-full h-full absolute inset-0 z-0" :class="item.css_value"></div>
@@ -570,10 +588,23 @@ const categories = [
   { id: 'consumable', label: 'cat_consumable', icon: Flame }
 ];
 
+const selectedRarity = ref('all');
+const rarities = [
+  { id: 'all', label: 'TODOS', activeClass: 'bg-foreground text-background border-foreground' },
+  { id: 'common', label: 'COMÚN', activeClass: 'bg-muted text-white border-muted' },
+  { id: 'rare', label: 'RARO', activeClass: 'bg-blue-500 text-white border-blue-500' },
+  { id: 'especial', label: 'ESPECIAL', activeClass: 'bg-purple-500 text-white border-purple-500' },
+  { id: 'legendary', label: 'LEGENDARIO', activeClass: 'bg-primary-500 text-white border-primary-500' },
+  { id: 'calistenico', label: 'CALISTÉNICO', activeClass: 'bg-[#ccff00] text-black border-[#ccff00]' }
+];
+
 const filteredItems = computed(() => {
   let result = [...items.value];
   if (selectedCategory.value !== 'all') {
     result = result.filter(item => item.type === selectedCategory.value);
+  }
+  if (selectedRarity.value !== 'all') {
+    result = result.filter(item => item.rarity?.toLowerCase() === selectedRarity.value);
   }
   return result.sort((a, b) => a.price - b.price);
 });
@@ -593,7 +624,7 @@ const paginatedItems = computed(() => {
   return regularItems.value.slice(start, start + itemsPerPage.value);
 });
 
-watch(selectedCategory, () => {
+watch([selectedCategory, selectedRarity], () => {
   currentPage.value = 1;
 });
 
