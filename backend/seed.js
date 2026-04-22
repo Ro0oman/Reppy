@@ -34,7 +34,7 @@ async function seed() {
     // 2. Spawn Boss
     const usersRes = await query('SELECT COUNT(*) as count FROM users');
     const totalUsers = Math.max(1, parseInt(usersRes.rows[0].count));
-    const totalHP = totalUsers * 10;
+    const totalHP = Math.max(10000, totalUsers * 10);
     
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - 1); // Started yesterday
