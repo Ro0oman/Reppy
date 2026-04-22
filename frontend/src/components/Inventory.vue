@@ -70,6 +70,32 @@
         </div>
       </div>
 
+      <!-- ACTIVE EFFECTS (Potions/Buffs) -->
+      <div v-if="activePotion" class="space-y-6">
+        <div class="flex items-center gap-4">
+          <div class="h-px flex-1 bg-gradient-to-r from-transparent to-emerald-500/20"></div>
+          <h3 class="text-[10px] font-black text-emerald-500 uppercase tracking-[0.5em] font-mono">ACTIVE_NEURAL_BUFFS</h3>
+          <div class="h-px flex-1 bg-gradient-to-l from-transparent to-emerald-500/20"></div>
+        </div>
+
+        <div class="max-w-md mx-auto p-6 rounded-3xl bg-emerald-500/5 border border-emerald-500/20 flex items-center justify-between group hover:bg-emerald-500/10 transition-all relative overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none"></div>
+          <div class="flex items-center gap-4 relative z-10">
+            <div class="p-3 bg-emerald-500/20 rounded-2xl border border-emerald-500/30 group-hover:scale-110 transition-transform">
+              <FlaskConical class="w-6 h-6 text-emerald-500 animate-pulse" />
+            </div>
+            <div>
+              <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest leading-none mb-1">DAMAGE_MULTIPLIER</p>
+              <h4 class="text-xl font-black text-white italic">x{{ activePotion.multiplier }} Boost Active</h4>
+            </div>
+          </div>
+          <div class="text-right relative z-10">
+            <p class="text-[8px] font-black text-muted uppercase tracking-widest mb-1">TIME_REMAINING</p>
+            <span class="text-lg font-black text-white font-mono tracking-tighter">{{ activePotion.timeLeft }}</span>
+          </div>
+        </div>
+      </div>
+
       <!-- LOADOUT CONSOLE (Active Equipment) -->
       <div class="space-y-8">
         <div class="flex items-center gap-4">
@@ -327,11 +353,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 import { 
   Package, Frame, Type, Check, Sparkles, Archive, Zap, TrendingUp, 
   Dumbbell, Sword, Heart, Brain, Church, Trophy, ExternalLink, Activity, X, 
-  ChevronDown, Flame, BookOpen, Swords, Info, ChevronRight, Users, Shield, Footprints
+  ChevronDown, Flame, BookOpen, Swords, Info, ChevronRight, Users, Shield, Footprints,
+  FlaskConical
 } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
@@ -350,6 +377,28 @@ const emit = defineEmits(['start', 'viewProfile']);
 const notificationStore = useNotificationStore();
 const inventory = ref([]);
 const loading = ref(true);
+const currentTime = ref(new Date());
+let timerInterval = null;
+
+const activePotion = computed(() => {
+  const user = authStore.user;
+  if (!user || !user.damage_multiplier || !user.damage_multiplier_expiry) return null;
+  
+  const expiry = new Date(user.damage_multiplier_expiry);
+  const now = currentTime.value;
+  
+  if (expiry <= now) return null;
+  
+  const diff = expiry - now;
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+  
+  return {
+    multiplier: parseFloat(user.damage_multiplier).toFixed(1),
+    timeLeft: `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+  };
+});
 
 const activeTab = ref('gear'); // Default to gear for the redesign
 const activeStashTab = ref('all');
@@ -708,7 +757,14 @@ const hasNewInventoryOverall = computed(() => {
 onMounted(async () => {
   playZip();
   await Promise.all([fetchInventory(), authStore.fetchProfile()]);
-  // Removed automatic global markSeen timeout
+  
+  timerInterval = setInterval(() => {
+    currentTime.value = new Date();
+  }, 1000);
+});
+
+onUnmounted(() => {
+  if (timerInterval) clearInterval(timerInterval);
 });
 </script>
 

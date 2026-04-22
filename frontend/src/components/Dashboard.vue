@@ -88,6 +88,15 @@
                   <span class="text-[9px] font-bold text-neon-lime uppercase">🧪 ACTIVE_BUFFS</span>
                   <span class="text-xs font-black text-neon-lime italic">+{{ stats.combatPower.buff }}</span>
                 </div>
+                
+                <!-- Active Potion Timer (Real-time) -->
+                <div v-if="activePotion" class="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <FlaskConical class="w-3.5 h-3.5 text-emerald-500 animate-bounce" />
+                    <span class="text-[9px] font-black text-emerald-500 uppercase tracking-widest">DAMAGE_BOOST x{{ activePotion.multiplier }}</span>
+                  </div>
+                  <span class="text-[10px] font-black text-white font-mono">{{ activePotion.timeLeft }}</span>
+                </div>
               </div>
             </div>
          </div>
@@ -210,7 +219,7 @@ import { ref, onMounted, onUnmounted, computed, reactive, watch } from 'vue';
 import axios from 'axios';
 import {
   Trophy, Target, Flame, Zap, Activity, History, Inbox,
-  BarChart3, Check, X, Trash2, Globe, Sword, Swords
+  BarChart3, Check, X, Trash2, Globe, Sword, Swords, FlaskConical
 } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
@@ -270,6 +279,29 @@ const todayProgress = computed(() => {
   return reps.value
     .filter(r => getLocalDateString(r.date) === today)
     .reduce((acc, curr) => acc + Number(curr.count), 0);
+});
+
+const currentTime = ref(new Date());
+let timerInterval = null;
+
+const activePotion = computed(() => {
+  const user = authStore.user;
+  if (!user || !user.damage_multiplier || !user.damage_multiplier_expiry) return null;
+  
+  const expiry = new Date(user.damage_multiplier_expiry);
+  const now = currentTime.value;
+  
+  if (expiry <= now) return null;
+  
+  const diff = expiry - now;
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+  
+  return {
+    multiplier: parseFloat(user.damage_multiplier).toFixed(1),
+    timeLeft: `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+  };
 });
 
 const fetchData = async () => {
@@ -389,10 +421,16 @@ onMounted(() => {
   fetchData();
   // Auto-refresh every 60 seconds to keep boss HP and leaderboard updated
   refreshInterval = setInterval(fetchData, 60000);
+  
+  // Timer for active effects
+  timerInterval = setInterval(() => {
+    currentTime.value = new Date();
+  }, 1000);
 });
 
 onUnmounted(() => {
   if (refreshInterval) clearInterval(refreshInterval);
+  if (timerInterval) clearInterval(timerInterval);
 });
 </script>
 

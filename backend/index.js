@@ -33,7 +33,7 @@ app.use(helmet({
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
       "connect-src": ["'self'", "https://*.google-analytics.com", "https://www.google-analytics.com", "https://accounts.google.com"],
       "script-src": ["'self'", "'unsafe-inline'", "https://www.googletagmanager.com", "https://www.google-analytics.com"],
-      "img-src": ["'self'", "data:", "https://www.google-analytics.com", "https://www.googletagmanager.com", "https://static.wikia.nocookie.net", "*"],
+      "img-src": ["'self'", "data:", "https://www.google-analytics.com", "https://www.googletagmanager.com", "https://static.wikia.nocookie.net", "https://*.wikia.nocookie.net", "https://ssb.wiki.gallery", "https://*.wiki.gallery", "https://ui-avatars.com", "https://images.unsplash.com", "https://fbi.cults3d.com", "https://i.redd.it", "https://www.vhv.rs", "https://lh3.googleusercontent.com", "*"],
       "frame-src": ["'self'", "https://accounts.google.com/"],
       "style-src": ["'self'", "'unsafe-inline'", "https://accounts.google.com/gsi/style"],
       "media-src": ["'self'", "https://www.soundjay.com", "https://assets.mixkit.co"]

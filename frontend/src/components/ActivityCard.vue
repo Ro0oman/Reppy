@@ -62,22 +62,22 @@
 
     </div>
 
-    <!-- Equipment Loadout (Impact Visibility) -->
     <div v-if="activity.equipment" class="px-4 py-2 border-y border-white/5 bg-white/[0.02] flex items-center gap-4 overflow-x-auto no-scrollbar relative z-10">
-      <div v-for="(item, slot) in activity.equipment" :key="slot" 
-           class="flex items-center gap-1.5 opacity-80 hover:opacity-100 transition-opacity whitespace-nowrap shrink-0"
-           v-if="item && item.name">
-        <div class="p-1.5 rounded-lg border flex items-center justify-center transition-all"
-             :class="getRarityClass(item.rarity, 'bg')">
-          <component :is="getSlotIcon(slot)" 
-                     class="w-3 h-3" 
-                     :class="getRarityClass(item.rarity)" />
+      <template v-for="(item, slot) in activity.equipment" :key="slot">
+        <div v-if="item && item.name" 
+             class="flex items-center gap-1.5 opacity-80 hover:opacity-100 transition-opacity whitespace-nowrap shrink-0">
+          <div class="p-1.5 rounded-lg border flex items-center justify-center transition-all"
+               :class="getRarityClass(item.rarity, 'bg')">
+            <component :is="getSlotIcon(slot)" 
+                       class="w-3 h-3" 
+                       :class="getRarityClass(item.rarity)" />
+          </div>
+          <span class="text-[9px] font-bold uppercase tracking-tight"
+                :class="getRarityClass(item.rarity)">
+            {{ item.name }}
+          </span>
         </div>
-        <span class="text-[9px] font-bold uppercase tracking-tight"
-              :class="getRarityClass(item.rarity)">
-          {{ item.name }}
-        </span>
-      </div>
+      </template>
     </div>
 
     <!-- Main Content Area -->
