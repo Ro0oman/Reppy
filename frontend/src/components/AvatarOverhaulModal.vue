@@ -70,8 +70,10 @@
 </template>
 
 <script setup>
+import { onMounted, watch } from 'vue';
 import { UserCircle, ShieldCheck, X } from 'lucide-vue-next';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '../stores/auth';
 import axios from 'axios';
 
 const props = defineProps({
@@ -80,21 +82,41 @@ const props = defineProps({
 
 const emit = defineEmits(['close']);
 const router = useRouter();
+const authStore = useAuthStore();
 
-const close = async () => {
-    try {
-        await axios.patch('/api/users/seen-avatar-modal');
-        emit('close');
-    } catch (err) {
-        console.error("Error updating modal status", err);
-        emit('close');
-    }
+const close = () => {
+    emit('close');
 };
 
 const navigateToProfile = () => {
     close();
-    router.push('/es/profile');
+    router.push({ name: 'profile', params: { userId: authStore.user?.id } });
 };
+
+const dismissModalPermanently = async () => {
+    if (!props.show) return;
+    try {
+        await axios.patch('/api/users/seen-avatar-modal');
+        // Update local state immediately
+        if (authStore.user) {
+            authStore.user.has_seen_avatar_overhaul = true;
+        }
+    } catch (err) {
+        console.error("Error dismissing modal:", err);
+    }
+};
+
+onMounted(() => {
+    if (props.show) {
+        dismissModalPermanently();
+    }
+});
+
+watch(() => props.show, (newVal) => {
+    if (newVal) {
+        dismissModalPermanently();
+    }
+});
 </script>
 
 <style scoped>
