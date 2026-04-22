@@ -64,13 +64,33 @@
         </div>
 
         <!-- Result Terminal View -->
-        <div v-if="finished" class="p-8 md:p-12 text-center animate-in-up flex flex-col items-center pb-32 md:pb-12">
+        <div v-if="finished" class="p-8 md:p-12 text-center animate-in-up flex flex-col items-center pb-32 md:pb-12 overflow-y-auto max-h-[60vh] scrollbar-hide">
           <div class="mb-6 md:mb-8 inline-flex items-center gap-4 px-6 py-2 rounded-xl bg-neon-lime/10 border border-neon-lime/20 shadow-[0_0_30px_rgba(204,255,0,0.05)]">
             <Trophy class="w-4 h-4 md:w-5 md:h-5 text-neon-lime" />
             <span class="text-[9px] md:text-[10px] font-black text-neon-lime uppercase tracking-[0.4em] font-tight">PROTOCOL SUCCESSFUL</span>
           </div>
           
-          <div class="space-y-3 md:space-y-4 mb-8 md:mb-10 max-w-lg">
+          <!-- Multiple Rewards Support -->
+          <div v-if="reward.rewards" class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl mb-10">
+             <div v-for="(r, idx) in reward.rewards" :key="idx" 
+                  class="p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-4 group hover:bg-white/10 transition-all">
+                <div class="w-12 h-12 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center">
+                   <Coins v-if="r.type === 'coins'" class="w-6 h-6 text-primary-500" />
+                   <div v-else class="flex items-center justify-center">
+                      <Sparkles class="w-6 h-6 text-primary-500" />
+                   </div>
+                </div>
+                <div class="text-left">
+                   <p class="text-[11px] font-black text-white uppercase italic leading-none mb-1">
+                      {{ r.type === 'coins' ? '+' + r.amount + ' REPPY COINS' : r.data.name }}
+                   </p>
+                   <p class="text-[8px] font-bold text-zinc-500 uppercase tracking-widest">{{ r.type === 'coins' ? r.message : r.data.rarity }}</p>
+                </div>
+             </div>
+          </div>
+
+          <!-- Single Reward (Legacy/Level Chest) -->
+          <div v-else class="space-y-3 md:space-y-4 mb-8 md:mb-10 max-w-lg">
              <h3 class="text-3xl md:text-5xl font-black text-industrial text-white italic tracking-tighter uppercase leading-none px-4" :class="reward.item?.css_value">
                {{ reward.item ? reward.item.name : '+' + reward.coins + ' REPPY COINS' }}
              </h3>

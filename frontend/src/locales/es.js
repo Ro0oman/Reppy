@@ -830,4 +830,52 @@ export default {
     codex_earn_contribution: 'Esfuerzo Fiel',
     codex_earn_social: 'Interacción Social',
     codex_earn_cheer: 'Ánimo Enviado',
+
+    // Inventory Redesign
+    inv_artifact_detail: 'VISTA_DETALLE_ARTEFACTO',
+    inv_artifact_rarity: 'RAREZA_ARTEFACTO',
+    inv_artifact_description: 'DESCRIPCIÓN',
+    inv_artifact_stats: 'ANÁLISIS_COMBATE',
+    inv_link_artifact: 'ENLAZAR_ARTEFACTO',
+    inv_unlink_artifact: 'DESENLAZAR_ARTEFACTO',
+    inv_activate_module: 'ACTIVAR_MÓDULO',
+    inv_close: 'CERRAR',
+    
+    inv_cat_helmet: 'MÓDULO_CASCO',
+    inv_cat_weapon: 'MÓDULO_ARMAMENTO',
+    inv_cat_armor: 'MÓDULO_ARMADURA',
+    inv_cat_boots: 'MÓDULO_BOTAS',
+    inv_cat_gear: 'EQUIPO_COMBATE',
+    
+    rarity_all: 'PROTOCOLO_TODO',
+    rarity_common: 'COMÚN',
+    rarity_rare: 'RARO',
+    rarity_special: 'ESPECIAL',
+    rarity_legendary: 'LEGENDARIO',
+    rarity_calisthenic: 'CALISTÉNICO',
+    
+    // Combat Dashboard
+    dash_base_dmg: 'DAÑO_BASE_POR_REP',
+    dash_gear_mod: 'MODIFICADOR_EQUIPO',
+    dash_crit_overlay: 'PROBABILIDAD_CRÍTICA',
+    dash_per_rep: 'POR_REPETICIÓN',
+    dash_bonus_str: 'BONUS_FUERZA',
+    dash_success_prob: 'PROBABILIDAD_ÉXITO',
+    
+    dash_stat_str: 'FUERZA_ARMAMENTO',
+    dash_stat_dex: 'DESTREZA_PRECISIÓN',
+    dash_stat_end: 'AGUANTE_ESTRUCTURAL',
+    dash_stat_vig: 'VIGOR_RESILIENCIA',
+    dash_stat_int: 'SINC_NEURONAL',
+    dash_stat_fth: 'AURA_SAGRADA',
+    dash_stat_cha: 'PROTOCOLO_CARISMA',
+    
+    inv_active_buffs: 'BUFFS_NEURONALES_ACTIVOS',
+    inv_dmg_mult: 'MULTIPLICADOR_DAÑO',
+    inv_boost_active: 'Boost Activo',
+    inv_time_left: 'TIEMPO_RESTANTE',
+    inv_sync_stash: 'SINCRONIZANDO_NEXUS_STASH...',
+    inv_offline: 'DESCONECTADO',
+    inv_empty_slot: 'RANURA_VACÍA',
+    inv_aesthetic_title: 'MÓDULOS_ESTÉTICOS'
 };

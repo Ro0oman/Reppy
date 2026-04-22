@@ -101,6 +101,30 @@ router.get('/:id', async (req, res) => {
       [userId]
     );
 
+    // --- BUNDLE AUTO-SYNC PROTOCOL ---
+    // Ensure all items from purchased bundles are assigned to the user's inventory
+    try {
+      const purchasedBundles = await query(`
+        SELECT i.bundle_items FROM user_items ui
+        JOIN items i ON ui.item_id = i.id
+        WHERE ui.user_id = $1 AND i.type = 'bundle' AND i.bundle_items IS NOT NULL
+      `, [userId]);
+
+      for (const bundle of purchasedBundles.rows) {
+        const itemIds = bundle.bundle_items.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+        for (const itemId of itemIds) {
+          await query(`
+            INSERT INTO user_items (user_id, item_id, is_new)
+            VALUES ($1, $2, TRUE)
+            ON CONFLICT (user_id, item_id) DO NOTHING
+          `, [userId, itemId]);
+        }
+      }
+    } catch (syncError) {
+      console.error('[PROFILE_API] Bundle Sync Warning:', syncError.message);
+      // Non-blocking, continue with profile fetch
+    }
+
     // RPG CALCULATIONS - Now handled by shared utility
     const statsResult = await recalculateUserStats(userId);
     

@@ -89,30 +89,31 @@ router.post('/spin', authenticate, async (req, res) => {
     } else if (selectedPrize.type === 'chest') {
       await query('UPDATE users SET level_chests = level_chests + 1 WHERE id = $1', [userId]);
     } else if (selectedPrize.type === 'consumable') {
-      // Find the specific cosmetic ID
-      // The user wants 'Poción de Fuerza (x1.5)' specifically
-      const cosmeticRes = await query(`
-        SELECT id, name FROM cosmetics 
-        WHERE type = 'consumable' AND name = 'Poción de Fuerza (x1.5)'
+      // Find the specific item ID
+      // We look for any consumable with multiplier 1.5 (legacy name support)
+      const itemRes = await query(`
+        SELECT id, name FROM items 
+        WHERE type = 'consumable' AND stats->>'multiplier' = '1.5'
+        LIMIT 1
       `);
       
       let item;
-      if (cosmeticRes.rows.length > 0) {
-        item = cosmeticRes.rows[0];
+      if (itemRes.rows.length > 0) {
+        item = itemRes.rows[0];
       } else {
-        // Fallback to searching by rarity if explicit name fails
-        const fallbackRes = await query("SELECT id, name FROM cosmetics WHERE type = 'consumable' AND rarity = 'common' LIMIT 1");
+        // Fallback to searching by rarity if explicit multiplier fails
+        const fallbackRes = await query("SELECT id, name FROM items WHERE type = 'consumable' AND rarity = 'common' LIMIT 1");
         item = fallbackRes.rows[0];
       }
 
       if (item) {
         // Check if user already has it to update quantity
-        const invRes = await query('SELECT * FROM user_inventory WHERE user_id = $1 AND cosmetic_id = $2', [userId, item.id]);
+        const invRes = await query('SELECT * FROM user_items WHERE user_id = $1 AND item_id = $2', [userId, item.id]);
         
         if (invRes.rows.length > 0) {
-          await query('UPDATE user_inventory SET quantity = quantity + 1, is_new = TRUE WHERE user_id = $1 AND cosmetic_id = $2', [userId, item.id]);
+          await query('UPDATE user_items SET quantity = quantity + 1, is_new = TRUE WHERE user_id = $1 AND item_id = $2', [userId, item.id]);
         } else {
-          await query('INSERT INTO user_inventory (user_id, cosmetic_id, quantity) VALUES ($1, $2, 1)', [userId, item.id]);
+          await query('INSERT INTO user_items (user_id, item_id, quantity) VALUES ($1, $2, 1)', [userId, item.id]);
         }
         
         result.item = item;

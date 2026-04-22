@@ -168,7 +168,7 @@ router.post('/claim-chest/:bossId', authenticate, async (req, res) => {
   }
 });
 
-// Open Chest - CS:GO Style Reward Logic
+// Open Chest - CS:GO Style Reward Logic -> Redesigned for Clash Royale Style (1-3 items)
 router.post('/open-chest', authenticate, async (req, res) => {
   const userId = req.user.id;
 
@@ -180,72 +180,81 @@ router.post('/open-chest', authenticate, async (req, res) => {
 
     await query('BEGIN');
 
-    let rewardItem = null;
-    let rewardCoins = 250; // Base coins if no item
-    let message = '';
+    // 1. Determine number of rewards (1 to 3)
+    const numRewards = Math.floor(Math.random() * 3) + 1;
+    const rewards = [];
+    let totalCoins = 0;
 
-    // 1. Try to find a random unowned Seasonal item
-    const seasonalRes = await query(`
-      SELECT c.* FROM cosmetics c
-      WHERE c.is_seasonal = TRUE
-      AND NOT EXISTS (SELECT 1 FROM user_inventory ui WHERE ui.cosmetic_id = c.id AND ui.user_id = $1)
-      ORDER BY RANDOM() LIMIT 1
-    `, [userId]);
+    for (let i = 0; i < numRewards; i++) {
+        // Random rarity weighted logic
+        const rand = Math.random();
+        let targetRarity = 'common';
+        if (rand < 0.03) targetRarity = 'calistenico';
+        else if (rand < 0.10) targetRarity = 'legendary';
+        else if (rand < 0.25) targetRarity = 'especial';
+        else if (rand < 0.55) targetRarity = 'rare';
 
-    if (seasonalRes.rows.length > 0) {
-      rewardItem = seasonalRes.rows[0];
-      message = `¡Increíble! Has obtenido un objeto de TEMPORADA: ${rewardItem.name}`;
-      rewardCoins = 100; // Bonus coins
-    } else {
-      // 2. Try to find a random unowned Normal item
-      const normalRes = await query(`
-        SELECT c.* FROM cosmetics c
-        WHERE c.is_seasonal = FALSE
-        AND NOT EXISTS (SELECT 1 FROM user_inventory ui WHERE ui.cosmetic_id = c.id AND ui.user_id = $1)
-        ORDER BY RANDOM() LIMIT 1
-      `, [userId]);
+        // Try to find an item of that rarity
+        let itemRes = await query(`
+            SELECT * FROM items 
+            WHERE rarity = $1 
+            AND type != 'bundle'
+            AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $2 AND item_id = items.id)
+            ORDER BY RANDOM() LIMIT 1
+        `, [targetRarity, userId]);
 
-      if (normalRes.rows.length > 0) {
-        rewardItem = normalRes.rows[0];
-        message = `¡Genial! Has obtenido: ${rewardItem.name}`;
-        rewardCoins = 50; // Bonus coins
-      } else {
-        // 3. Give coins only
-        rewardCoins = 1000;
-        message = '¡Ya tienes todos los cosméticos disponibles! Has recibido Reppy Coins adicionales.';
-      }
+        if (itemRes.rows.length === 0) {
+            // User owns all items of this rarity, or rarity not found
+            // Try to find ANY item unowned of any rarity
+            itemRes = await query(`
+                SELECT * FROM items 
+                WHERE type != 'bundle'
+                AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = items.id)
+                ORDER BY RANDOM() LIMIT 1
+            `, [userId]);
+        }
+
+        if (itemRes.rows.length > 0) {
+            const rewardItem = itemRes.rows[0];
+            rewards.push({ type: 'item', data: rewardItem });
+            await query(`
+                INSERT INTO user_items (user_id, item_id, is_new)
+                VALUES ($1, $2, TRUE)
+                ON CONFLICT (user_id, item_id) DO NOTHING
+            `, [userId, rewardItem.id]);
+        } else {
+            // User owns EVERYTHING? Or just give coins compensation
+            const goldAmount = 500; 
+            totalCoins += goldAmount;
+            rewards.push({ type: 'coins', amount: goldAmount, message: 'Protocolo de Compensación: Item Duplicado' });
+        }
     }
 
-    // Process Reward
-    if (rewardItem) {
-      await query(
-        `INSERT INTO user_inventory (user_id, cosmetic_id, is_new) 
-         VALUES ($1, $2, TRUE) 
-         ON CONFLICT (user_id, cosmetic_id) DO NOTHING`, 
-        [userId, rewardItem.id]
-      );
-    }
+    // Add some base coins too
+    const baseCoins = 150 * numRewards;
+    totalCoins += baseCoins;
 
-    await query('UPDATE users SET boss_chests = boss_chests - 1, reppy_coins = reppy_coins + $1 WHERE id = $2', [rewardCoins, userId]);
-    
-    // Log the transaction (DEPRECATED: coin_transactions table removed)
+    await query('UPDATE users SET boss_chests = boss_chests - 1, reppy_coins = reppy_coins + $1 WHERE id = $2', [totalCoins, userId]);
 
-    // Get dummy items for the reel animation
-    const dummiesRes = await query(`
-      SELECT name, type, css_value, is_seasonal FROM cosmetics 
-      ORDER BY RANDOM() LIMIT 40
-    `);
+    // Reel items for animation (legacy support)
+    const dummiesRes = await query(`SELECT name, type, rarity FROM items WHERE type != 'bundle' ORDER BY RANDOM() LIMIT 40`);
 
     await query('COMMIT');
+
+    // For backward compatibility with the frontend animation, we pick the first item as the "main" reward
+    // but the frontend should be updated to show all
+    const mainReward = rewards.find(r => r.type === 'item') || rewards[0];
 
     res.json({ 
       success: true,
       reward: {
-        item: rewardItem,
-        coins: rewardCoins,
-        message
+        item: mainReward.type === 'item' ? mainReward.data : null,
+        coins: totalCoins,
+        message: `Has recuperado ${numRewards} artefactos del boss.`
       },
-      reel_items: dummiesRes.rows // Used for CS:GO animation
+      rewards, // New field for updated UI
+      totalCoins,
+      reel_items: dummiesRes.rows
     });
   } catch (error) {
     await query('ROLLBACK');
@@ -266,46 +275,39 @@ router.post('/open-level-chest', authenticate, async (req, res) => {
 
     await query('BEGIN');
 
+    // Level chest always gives 1 item + coins
     let rewardItem = null;
-    let rewardCoins = 0;
+    let rewardCoins = 200;
     let message = '';
 
-    // 1. Try to find a random unowned Common (non-seasonal) item
-    const commonRes = await query(`
-      SELECT c.* FROM cosmetics c
-      WHERE c.is_seasonal = FALSE
-      AND NOT EXISTS (SELECT 1 FROM user_inventory ui WHERE ui.cosmetic_id = c.id AND ui.user_id = $1)
+    // Try to find a random unowned Common/Rare item
+    const itemRes = await query(`
+      SELECT * FROM items
+      WHERE rarity IN ('common', 'rare')
+      AND type != 'bundle'
+      AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = items.id)
       ORDER BY RANDOM() LIMIT 1
     `, [userId]);
 
-    if (commonRes.rows.length > 0) {
-      rewardItem = commonRes.rows[0];
+    if (itemRes.rows.length > 0) {
+      rewardItem = itemRes.rows[0];
       message = `¡Protocolo de Nivel completado! Has obtenido: ${rewardItem.name}`;
-      rewardCoins = 100; // Bonus coins
-    } else {
-      // 2. Give coins only (higher amount as consolation)
-      rewardCoins = 1000;
-      message = '¡Ya tienes todas las recompensas comunes disponibles! Has recibido Reppy Coins de alto nivel.';
-    }
-
-    // Process Reward
-    if (rewardItem) {
       await query(
-        `INSERT INTO user_inventory (user_id, cosmetic_id, is_new) 
+        `INSERT INTO user_items (user_id, item_id, is_new) 
          VALUES ($1, $2, TRUE) 
-         ON CONFLICT (user_id, cosmetic_id) DO NOTHING`, 
+         ON CONFLICT (user_id, item_id) DO NOTHING`, 
         [userId, rewardItem.id]
       );
+    } else {
+      rewardCoins += 800;
+      message = '¡Ya tienes todas las recompensas de nivel! Has recibido Reppy Coins adicionales.';
     }
 
     await query('UPDATE users SET level_chests = level_chests - 1, reppy_coins = reppy_coins + $1 WHERE id = $2', [rewardCoins, userId]);
     
-    // Log the transaction (DEPRECATED: coin_transactions table removed)
-
-    // Get dummy items for the reel animation (filtered to common items for thematic consistency)
     const dummiesRes = await query(`
-      SELECT name, type, css_value, is_seasonal FROM cosmetics 
-      WHERE is_seasonal = FALSE
+      SELECT name, type, rarity FROM items 
+      WHERE rarity = 'common'
       ORDER BY RANDOM() LIMIT 40
     `);
 

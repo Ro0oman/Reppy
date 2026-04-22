@@ -829,6 +829,10 @@ const getCountdown = (item) => {
 
 const isEquipped = (item) => {
   if (!authStore.user || item.type === 'bundle') return false;
+  if (item.type === 'head') return authStore.user.equipped_head_id === item.id;
+  if (item.type === 'weapon') return authStore.user.equipped_weapon_id === item.id;
+  if (item.type === 'armor') return authStore.user.equipped_armor_id === item.id;
+  if (item.type === 'boots') return authStore.user.equipped_boots_id === item.id;
   if (item.type === 'title') return authStore.user.equipped_title_id === item.id;
   if (item.type === 'border') return authStore.user.equipped_border_id === item.id;
   if (item.type === 'background') return authStore.user.equipped_background_id === item.id;
@@ -908,6 +912,10 @@ const buyItem = async (item) => {
 const equipItem = async (item) => {
   try {
     await axios.post(`/api/shop/equip/${item.id}?type=${item.type}`);
+    if (item.type === 'head') authStore.user.equipped_head_id = item.id;
+    if (item.type === 'weapon') authStore.user.equipped_weapon_id = item.id;
+    if (item.type === 'armor') authStore.user.equipped_armor_id = item.id;
+    if (item.type === 'boots') authStore.user.equipped_boots_id = item.id;
     if (item.type === 'title') { authStore.user.equipped_title_id = item.id; authStore.user.title_css = item.css_value; authStore.user.title_name = item.name; }
     if (item.type === 'border') authStore.user.equipped_border_id = item.id;
     if (item.type === 'avatar') authStore.user.equipped_avatar_id = item.id;

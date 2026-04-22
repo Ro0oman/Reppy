@@ -6,28 +6,13 @@
         <h1 class="text-[120px] font-black tracking-tighter uppercase italic select-none">ARMORY</h1>
       </div>
       <div class="text-center space-y-4 relative z-10">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 mb-4">
-          <span class="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
-          <span class="text-[8px] font-black text-primary-500 tracking-[0.3em] uppercase">{{ i18n.t('inv_title') }}</span>
-        </div>
         <h1 class="text-4xl md:text-6xl font-black text-foreground tracking-tighter uppercase italic leading-none">
-          {{ i18n.t('inv_loadout_title') }}<span class="text-primary-500">_</span>
         </h1>
         <p class="text-[10px] font-bold text-muted uppercase tracking-[0.5em] font-tight max-w-md mx-auto">{{ i18n.t('inv_subtitle') }}</p>
       </div>
     </div>
 
-    <!-- Interface Navigation -->
-    <div class="flex items-center justify-center p-1.5 bg-surface/20 backdrop-blur-2xl border border-white/5 rounded-2xl max-w-sm mx-auto shadow-2xl relative">
-      <div class="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent rounded-2xl pointer-events-none"></div>
-      <div 
-        class="flex-1 py-3 px-6 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 relative z-10 bg-primary-500 text-white shadow-lg shadow-primary-500/20">
-        <Package class="w-3.5 h-3.5" /> 
-        {{ i18n.t('inv_tab_gear') }}
-        <span v-if="hasNewInventoryOverall" 
-              class="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 border-2 border-surface animate-pulse"></span>
-      </div>
-    </div>
+
 
 
     <!-- TAB: TACTICAL GEAR (Armory Grid) -->
@@ -38,10 +23,10 @@
         <div class="p-6 rounded-[2.5rem] bg-surface/10 border border-white/5 relative overflow-hidden group">
           <div class="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent"></div>
           <div class="relative z-10 flex flex-col gap-2">
-            <p class="text-[10px] font-black text-muted uppercase tracking-[0.3em] leading-none">BASE_DAMAGE_PER_REP</p>
+            <p class="text-[10px] font-black text-muted uppercase tracking-[0.3em] leading-none">{{ i18n.t('dash_base_dmg') }}</p>
             <div class="flex items-baseline gap-2">
               <span class="text-4xl font-black text-foreground italic">{{ combatStats.base }}</span>
-              <span class="text-sm font-bold text-primary-500/50 uppercase tracking-tighter">PER_REPUTATION</span>
+              <span class="text-sm font-bold text-primary-500/50 uppercase tracking-tighter">{{ i18n.t('dash_per_rep') }}</span>
             </div>
           </div>
           <Sword class="absolute -bottom-2 -right-2 w-24 h-24 text-white/5 rotate-12 group-hover:scale-110 transition-transform" />
@@ -50,10 +35,10 @@
         <div class="p-6 rounded-[2.5rem] bg-surface/10 border border-white/5 relative overflow-hidden group">
           <div class="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent"></div>
           <div class="relative z-10 flex flex-col gap-2">
-            <p class="text-[10px] font-black text-muted uppercase tracking-[0.3em] leading-none">GEAR_MODIFIER</p>
+            <p class="text-[10px] font-black text-muted uppercase tracking-[0.3em] leading-none">{{ i18n.t('dash_gear_mod') }}</p>
             <div class="flex items-baseline gap-2">
               <span class="text-4xl font-black text-orange-500 italic">+{{ combatStats.gear }}</span>
-              <span class="text-sm font-bold text-orange-500/50 uppercase tracking-tighter">BONUS_STRENGTH</span>
+              <span class="text-sm font-bold text-orange-500/50 uppercase tracking-tighter">{{ i18n.t('dash_bonus_str') }}</span>
             </div>
           </div>
           <Zap class="absolute -bottom-2 -right-2 w-24 h-24 text-white/5 -rotate-12 group-hover:scale-110 transition-transform" />
@@ -62,13 +47,36 @@
         <div class="p-6 rounded-[2.5rem] bg-surface/10 border border-white/5 relative overflow-hidden group">
           <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent"></div>
           <div class="relative z-10 flex flex-col gap-2">
-            <p class="text-[10px] font-black text-muted uppercase tracking-[0.3em] leading-none">CRITICAL_OVERLAY</p>
+            <p class="text-[10px] font-black text-muted uppercase tracking-[0.3em] leading-none">{{ i18n.t('dash_crit_overlay') }}</p>
             <div class="flex items-baseline gap-2">
               <span class="text-4xl font-black text-emerald-400 italic">{{ combatStats.critChance }}%</span>
-              <span class="text-sm font-bold text-emerald-500/50 uppercase tracking-tighter">SUCCESS_PROBABILITY</span>
+              <span class="text-sm font-bold text-emerald-500/50 uppercase tracking-tighter">{{ i18n.t('dash_success_prob') }}</span>
             </div>
           </div>
           <Activity class="absolute -bottom-2 -right-2 w-24 h-24 text-white/5 rotate-0 group-hover:scale-110 transition-transform" />
+        </div>
+      </div>
+
+      <!-- NEW: DETAILED GEAR STATS BREAKDOWN -->
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 max-w-7xl mx-auto">
+        <div v-for="stat in [
+          { key: 'str', label: 'dash_stat_str', icon: Dumbbell, color: 'text-orange-500', bg: 'bg-orange-500/5' },
+          { key: 'dex', label: 'dash_stat_dex', icon: Sword, color: 'text-cyan-400', bg: 'bg-cyan-400/5' },
+          { key: 'end', label: 'dash_stat_end', icon: Activity, color: 'text-green-400', bg: 'bg-green-400/5' },
+          { key: 'vig', label: 'dash_stat_vig', icon: Heart, color: 'text-red-500', bg: 'bg-red-500/5' },
+          { key: 'int', label: 'dash_stat_int', icon: Brain, color: 'text-blue-400', bg: 'bg-blue-400/5' },
+          { key: 'fth', label: 'dash_stat_fth', icon: Church, color: 'text-yellow-400', bg: 'bg-yellow-400/5' },
+          { key: 'cha', label: 'dash_stat_cha', icon: Sparkles, color: 'text-pink-400', bg: 'bg-pink-400/5' }
+        ]" :key="stat.key" class="p-4 rounded-3xl bg-surface/10 border border-white/5 flex flex-col gap-2 group hover:bg-white/5 transition-all">
+          <div class="flex items-center justify-between">
+            <component :is="stat.icon" class="w-4 h-4" :class="stat.color" />
+            <span class="text-[8px] font-black uppercase tracking-widest text-muted">{{ i18n.t(stat.label) }}</span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span class="text-xl font-black italic" :class="equippedStats[stat.key] > 0 ? stat.color : 'text-muted/40'">
+              +{{ equippedStats[stat.key] }}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -114,7 +122,7 @@
       <div v-if="activePotion" class="space-y-6">
         <div class="flex items-center gap-4">
           <div class="h-px flex-1 bg-gradient-to-r from-transparent to-emerald-500/20"></div>
-          <h3 class="text-[10px] font-black text-emerald-500 uppercase tracking-[0.5em] font-mono">ACTIVE_NEURAL_BUFFS</h3>
+          <h3 class="text-[10px] font-black text-emerald-500 uppercase tracking-[0.5em] font-mono">{{ i18n.t('inv_active_buffs') }}</h3>
           <div class="h-px flex-1 bg-gradient-to-l from-transparent to-emerald-500/20"></div>
         </div>
 
@@ -125,12 +133,12 @@
               <FlaskConical class="w-6 h-6 text-emerald-500 animate-pulse" />
             </div>
             <div>
-              <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest leading-none mb-1">DAMAGE_MULTIPLIER</p>
-              <h4 class="text-xl font-black text-white italic">x{{ activePotion.multiplier }} Boost Active</h4>
+              <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest leading-none mb-1">{{ i18n.t('inv_dmg_mult') }}</p>
+              <h4 class="text-xl font-black text-white italic">x{{ activePotion.multiplier }} {{ i18n.t('inv_boost_active') }}</h4>
             </div>
           </div>
           <div class="text-right relative z-10">
-            <p class="text-[8px] font-black text-muted uppercase tracking-widest mb-1">TIME_REMAINING</p>
+            <p class="text-[8px] font-black text-muted uppercase tracking-widest mb-1">{{ i18n.t('inv_time_left') }}</p>
             <span class="text-lg font-black text-white font-mono tracking-tighter">{{ activePotion.timeLeft }}</span>
           </div>
         </div>
@@ -171,7 +179,7 @@
 
         <div class="flex items-center gap-4 pt-8">
           <div class="h-px flex-1 bg-gradient-to-r from-transparent to-white/10"></div>
-          <h3 class="text-[10px] font-black text-muted uppercase tracking-[0.5em] font-mono">{{ i18n.t('inv_aesthetic_title') || 'AESTHETIC_MODULES' }}</h3>
+          <h3 class="text-[10px] font-black text-muted uppercase tracking-[0.5em] font-mono">{{ i18n.t('inv_aesthetic_title') }}</h3>
           <div class="h-px flex-1 bg-gradient-to-l from-transparent to-white/10"></div>
         </div>
 
@@ -207,7 +215,7 @@
             <!-- Empty Slot State -->
             <div v-else class="flex flex-col items-center gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
               <component :is="slot.icon" class="w-8 h-8 text-muted" />
-              <span class="text-[8px] font-black text-muted uppercase tracking-[0.2em]">OFFLINE</span>
+              <span class="text-[8px] font-black text-muted uppercase tracking-[0.2em]">{{ i18n.t('inv_offline') }}</span>
             </div>
 
             <!-- Glow based on rarity -->
@@ -226,7 +234,7 @@
                <span class="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></span>
              </div>
            </div>
-           <p class="text-[10px] font-black text-muted uppercase tracking-[0.6em] font-mono">SYNCHRONIZING_MAIN_STASH...</p>
+           <p class="text-[10px] font-black text-muted uppercase tracking-[0.6em] font-mono">{{ i18n.t('inv_sync_stash') }}</p>
         </div>
 
         <div v-else-if="inventory.length === 0" class="py-32 text-center max-w-xl mx-auto space-y-6">
@@ -241,22 +249,59 @@
 
         <!-- Nexus Item Stash -->
         <div v-else class="space-y-12">
-          <!-- Stash Filter Tabs -->
-          <div class="flex items-center justify-start gap-2 p-1 bg-surface/10 backdrop-blur-xl border border-white/5 rounded-2xl overflow-x-auto scrollbar-hide">
-            <button v-for="tab in [
-              { id: 'all', label: i18n.t('inv_tab_all') || 'ALL_GEAR' },
-              { id: 'gear', label: i18n.t('inv_tab_gear') || 'COMBAT_EQUIP' },
-              { id: 'cores', label: i18n.t('inv_tab_cores') || 'NEURAL_FRAMES' },
-              { id: 'titles', label: i18n.t('inv_tab_titles') || 'COMBAT_TITLES' },
-              { id: 'hud', label: i18n.t('inv_tab_hud') || 'HUD_LAYOUTS' },
-              { id: 'themes', label: i18n.t('inv_tab_themes') || 'FEED_THEMES' },
-              { id: 'consumables', label: i18n.t('inv_tab_consumables') || 'CONSUMABLES' }
-            ]" :key="tab.id"
-              @click="activeStashTab = tab.id"
-              class="px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all whitespace-nowrap"
-              :class="activeStashTab === tab.id ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-muted/60 hover:text-foreground hover:bg-white/5'">
-              {{ tab.label }}
-            </button>
+          <!-- Modern Filters Interface (Replicating Store) -->
+          <div class="flex flex-col lg:flex-row items-center gap-6 bg-surface/20 p-4 rounded-3xl border border-border/50 backdrop-blur-sm relative z-30 mb-8">
+            
+            <!-- Categories Dropdown -->
+            <div class="w-full lg:w-72 relative z-50">
+              <button 
+                @click="showDropdown = !showDropdown"
+                class="flex items-center gap-3 px-6 py-3 bg-surface/60 border border-border rounded-2xl text-[10px] font-black uppercase tracking-widest hover:border-primary-500/30 transition-all w-full justify-between shadow-lg"
+              >
+                <div class="flex items-center gap-2">
+                  <component :is="categories.find(c => c.id === activeStashTab)?.icon || Archive" class="w-3.5 h-3.5 text-primary-500" />
+                  <span class="text-foreground">{{ i18n.t(categories.find(c => c.id === activeStashTab)?.label) || categories.find(c => c.id === activeStashTab)?.label }}</span>
+                </div>
+                <ChevronDown class="w-4 h-4 text-muted transition-transform" :class="{ 'rotate-180': showDropdown }" />
+              </button>
+
+              <Transition
+                enter-active-class="transition duration-200 ease-out"
+                enter-from-class="transform scale-95 opacity-0 -translate-y-2"
+                enter-to-class="transform scale-100 opacity-100 translate-y-0"
+                leave-active-class="transition duration-150 ease-in"
+                leave-from-class="transform scale-100 opacity-100 translate-y-0"
+                leave-to-class="transform scale-95 opacity-0 -translate-y-2"
+              >
+                <div v-if="showDropdown" class="absolute top-full left-0 mt-2 w-full bg-surface/90 backdrop-blur-3xl border border-border rounded-2xl shadow-2xl overflow-hidden py-2 z-[60]">
+                  <button 
+                    v-for="cat in categories" 
+                    :key="cat.id"
+                    @click="activeStashTab = cat.id; showDropdown = false"
+                    class="w-full flex items-center gap-3 px-6 py-3 text-[10px] font-black uppercase tracking-widest transition-all text-left"
+                    :class="activeStashTab === cat.id ? 'bg-primary-500 text-white' : 'text-muted hover:bg-white/5 hover:text-foreground'"
+                  >
+                    <component :is="cat.icon" class="w-3.5 h-3.5" />
+                    {{ i18n.t(cat.label) }}
+                  </button>
+                </div>
+              </Transition>
+            </div>
+
+            <div class="hidden lg:block w-px h-10 bg-border/50"></div>
+
+            <!-- Rarity Selector -->
+            <div class="flex-1 flex flex-wrap items-center justify-start lg:justify-end gap-2">
+              <button 
+                v-for="rarity in rarities" 
+                :key="rarity.id"
+                @click="selectedRarity = rarity.id"
+                class="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all active:scale-95 whitespace-nowrap"
+                :class="selectedRarity === rarity.id ? rarity.activeClass : 'bg-surface/20 border-border text-muted hover:border-foreground/20'"
+              >
+                {{ i18n.t(rarity.label) }}
+              </button>
+            </div>
           </div>
 
           <div v-for="(items, type) in groupedItems" :key="type" class="space-y-6">
@@ -267,16 +312,15 @@
                 <div class="w-2 h-2 rounded-full bg-primary-500"></div>
                 <h2 class="text-xs font-black text-foreground uppercase tracking-[0.4em] font-mono">
                   {{ 
-                    type === 'head' ? 'HELMET_MODULE' :
-                    type === 'weapon' ? 'WEAPON_MODULE' :
-                    type === 'armor' ? 'ARMOR_MODULE' :
-                    type === 'boots' ? 'BOOTS_MODULE' :
+                    type === 'head' ? i18n.t('inv_cat_helmet') :
+                    type === 'weapon' ? i18n.t('inv_cat_weapon') :
+                    type === 'armor' ? i18n.t('inv_cat_armor') :
+                    type === 'boots' ? i18n.t('inv_cat_boots') :
                     type === 'title' ? i18n.t('inv_cat_titles') : 
                     type === 'border' ? i18n.t('inv_cat_borders') : 
                     type === 'background' ? i18n.t('inv_cat_backgrounds') : 
                     type === 'post_background' ? i18n.t('inv_cat_post_backgrounds') : 
                     type === 'avatar' ? i18n.t('inv_cat_avatar_effects') : 
-                    type === 'bundle' ? 'PRÓXIMAS APERTURAS' :
                     i18n.t('inv_cat_consumables') 
                   }}
                 </h2>
@@ -288,7 +332,7 @@
             <!-- Stash Grid -->
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               <div v-for="item in items" :key="item.id" 
-                @click="toggleEquip(item)"
+                @click="openItemDetails(item)"
                 @mouseenter="markSeen(item)"
                 class="nexus-slot group relative" 
                 :class="[isEquipped(item) ? 'equipped' : '', getRarityClass(item.rarity)]">
@@ -350,20 +394,7 @@
                           </div>
                        </div>
                        
-                       <div v-if="type === 'consumable'" class="space-y-2">
-                          <button @click.stop="handleActivate(item)" 
-                             class="w-full py-2 bg-primary-500 hover:bg-primary-600 text-white text-[7px] font-black uppercase tracking-widest rounded-lg transition-all shadow-lg active:scale-95">
-                             ACTIVATE_MODULE
-                          </button>
-                       </div>
-                       <div v-else-if="['head', 'weapon', 'armor', 'boots'].includes(type) && !isEquipped(item)" class="flex flex-col gap-1.5">
-                          <button @click.stop="openItemDetails(item)" 
-                             class="w-full py-2 bg-white/10 hover:bg-white/20 text-white text-[7px] font-black uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-2">
-                             <Info class="w-2.5 h-2.5" /> DETAILS
-                          </button>
-                          <h4 class="text-[8px] font-black text-foreground truncate uppercase italic tracking-wider leading-none group-hover:text-primary-500 transition-colors">{{ item.name }}</h4>
-                       </div>
-                       <div v-else class="text-center">
+                       <div class="text-center">
                          <h4 class="text-[8px] font-black text-foreground truncate uppercase italic tracking-wider leading-none mb-1 group-hover:text-primary-500 transition-colors">{{ item.name }}</h4>
                          <div class="text-[6px] font-mono text-muted uppercase tracking-[0.2em]">{{ item.rarity || 'common' }}</div>
                        </div>
@@ -384,6 +415,96 @@
       :reel-items="reelItems" 
       @close="closeChestModal" 
     />
+
+    <!-- Item Details Modal (Issue #135) -->
+    <Teleport to="body">
+      <div v-if="showItemModal && selectedItem" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-in">
+        <div class="relative w-full max-w-xl bg-surface/40 border border-white/10 rounded-[2.5rem] shadow-[0_0_100px_rgba(255,69,0,0.1)] overflow-hidden">
+          
+          <!-- Modal Header -->
+          <div class="p-8 pb-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-primary-500/10 rounded-lg border border-primary-500/20">
+                <Package class="w-4 h-4 text-primary-500" />
+              </div>
+              <div>
+                <p class="text-[10px] font-black text-primary-500 uppercase tracking-[0.3em] font-mono leading-none mb-1">{{ i18n.t('inv_artifact_detail') }}</p>
+                <h3 class="text-2xl font-black text-white italic uppercase tracking-tighter">{{ selectedItem.name }}</h3>
+              </div>
+            </div>
+            <button @click="showItemModal = false" class="p-2 hover:bg-white/5 rounded-xl transition-all">
+              <X class="w-6 h-6 text-muted" />
+            </button>
+          </div>
+
+          <!-- Modal Body -->
+          <div class="p-8 pt-0 space-y-6">
+            <!-- Visual Preview -->
+            <div class="aspect-video bg-black/40 rounded-3xl border border-white/5 flex items-center justify-center relative overflow-hidden group">
+               <!-- Scan Effect -->
+               <div class="absolute inset-x-0 h-px bg-primary-500/20 top-0 group-hover:top-full transition-all duration-[3s] ease-linear pointer-events-none"></div>
+               
+               <div class="scale-150">
+                  <ItemIcon v-if="['head', 'weapon', 'armor', 'boots'].includes(selectedItem.type)" :name="selectedItem.svg_key" :type="selectedItem.type" class-name="w-24 h-24 text-primary-500" />
+                  <FlaskConical v-else-if="selectedItem.type === 'consumable'" class="w-24 h-24 text-primary-500 animate-pulse" />
+                  <div v-else-if="selectedItem.type === 'title'" class="text-xl font-black uppercase italic" :class="selectedItem.css_value">{{ selectedItem.name }}</div>
+                  <AvatarFrame v-else-if="selectedItem.type === 'border'" :src="authStore.user?.avatar_url" :border-css="selectedItem.css_value" :size="100" />
+                  <div v-else-if="selectedItem.type === 'background'" class="w-32 h-32 rounded-2xl overflow-hidden border border-white/10 relative">
+                     <BackgroundEffect :background-css="selectedItem.css_value" is-preview class="!absolute !inset-0" />
+                  </div>
+                  <div v-else-if="selectedItem.type === 'avatar'" class="w-32 h-32 rounded-2xl overflow-hidden border border-white/10 relative">
+                     <div :class="selectedItem.css_value" class="absolute inset-0"></div>
+                  </div>
+                  <div v-else-if="selectedItem.type === 'post_background'" class="w-32 h-32 rounded-2xl overflow-hidden border border-white/10 relative">
+                     <div :class="selectedItem.css_value" class="absolute inset-0"></div>
+                  </div>
+                  <Package v-else class="w-24 h-24 text-primary-500" />
+               </div>
+            </div>
+
+            <!-- Stats & Description -->
+            <div class="space-y-4">
+              <div v-if="selectedItem.description" class="p-4 bg-white/5 rounded-2xl border border-white/5">
+                <p class="text-[10px] font-black text-muted uppercase tracking-widest mb-1">{{ i18n.t('inv_artifact_description') }}</p>
+                <p class="text-sm font-bold text-zinc-400 leading-relaxed">{{ selectedItem.description }}</p>
+              </div>
+
+              <div v-if="selectedItem.stats" class="grid grid-cols-2 gap-4">
+                <div v-for="(val, key) in selectedItem.stats" :key="key" class="p-4 bg-white/5 rounded-2xl border border-white/5 flex flex-col gap-1">
+                  <p class="text-[8px] font-black text-primary-500/60 uppercase tracking-widest">{{ key.replace('_', ' ') }}</p>
+                  <p class="text-lg font-black text-white italic">
+                    {{ key === 'multiplier' ? 'x' : '+' }}{{ val }}{{ key.includes('percent') || key.includes('chance') ? '%' : '' }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Rarity Badge -->
+              <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+                <p class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18n.t('inv_artifact_rarity') }}</p>
+                <span class="px-3 py-1 rounded-lg border text-[10px] font-black uppercase tracking-widest" :class="getRarityClass(selectedItem.rarity)">
+                  {{ getRarityLabel(selectedItem.rarity) }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-4 pt-4">
+              <button v-if="selectedItem.type === 'consumable'" @click="handleActivate(selectedItem); showItemModal = false"
+                class="flex-1 btn-reppy !py-5 shadow-2xl shadow-primary-500/20">
+                {{ i18n.t('inv_activate_module') }} (x{{ selectedItem.quantity || 1 }})
+              </button>
+              <button v-else-if="selectedItem.type !== 'bundle'" @click="toggleEquip(selectedItem); showItemModal = false"
+                class="flex-1 btn-reppy !py-5 shadow-2xl" :class="isEquipped(selectedItem) ? '!bg-zinc-800 !text-muted' : 'shadow-primary-500/20'">
+                {{ isEquipped(selectedItem) ? i18n.t('inv_unlink_artifact') : i18n.t('inv_link_artifact') }}
+              </button>
+              <button @click="showItemModal = false" class="px-8 bg-white/5 hover:bg-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-zinc-400 transition-all">
+                {{ i18n.t('inv_close') }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
 
     <!-- Comparison Modal -->
     <CompareModal
@@ -449,6 +570,28 @@ const activePotion = computed(() => {
 
 const activeTab = ref('gear'); // Default to gear for the redesign
 const activeStashTab = ref('all');
+const showDropdown = ref(false);
+const selectedRarity = ref('all');
+
+const categories = [
+  { id: 'all', label: 'shop_cat_all', icon: Archive },
+  { id: 'gear', label: 'inv_cat_gear', icon: Swords },
+  { id: 'head', label: 'shop_cat_head', icon: Zap },
+  { id: 'weapon', label: 'shop_cat_weapons', icon: Sword },
+  { id: 'armor', label: 'shop_cat_armor', icon: Shield },
+  { id: 'boots', label: 'shop_cat_boots', icon: Footprints },
+  { id: 'consumable', label: 'shop_cat_consumables', icon: Flame }
+];
+
+const rarities = [
+  { id: 'all', label: 'rarity_all', activeClass: 'bg-primary-500 text-white border-primary-500 shadow-lg shadow-primary-500/20' },
+  { id: 'common', label: 'rarity_common', activeClass: 'bg-zinc-800 text-white border-zinc-700' },
+  { id: 'rare', label: 'rarity_rare', activeClass: 'bg-blue-600 text-white border-blue-500 shadow-lg shadow-blue-500/20' },
+  { id: 'especial', label: 'rarity_special', activeClass: 'bg-purple-600 text-white border-purple-500 shadow-lg shadow-purple-500/20' },
+  { id: 'legendary', label: 'rarity_legendary', activeClass: 'bg-orange-600 text-white border-orange-500 shadow-lg shadow-orange-500/20' },
+  { id: 'calistenico', label: 'rarity_calisthenic', activeClass: 'bg-[#ccff00] text-black border-[#ccff00] shadow-lg shadow-[#ccff00]/20' }
+];
+
 const selectedStat = ref(null);
 const openCategories = ref({}); // tracks open/closed state per category type
 
@@ -516,15 +659,15 @@ const openItemDetails = (item) => {
 };
 
 const getRarityBadge = (item) => {
-  if (!item) return { label: 'COMÚN', classes: 'text-muted bg-foreground/5 border-border' };
+  if (!item) return { label: i18n.t('rarity_common'), classes: 'text-muted bg-foreground/5 border-border' };
   const rarity = item.rarity?.toLowerCase() || 'common';
   switch (rarity) {
-    case 'calistenico': return { label: 'CALISTÉNICO', classes: 'text-[#ccff00] bg-[#ccff00]/10 border-[#ccff00]/30 shadow-[0_0_10px_rgba(204,255,0,0.2)]' };
-    case 'legendary': return { label: 'LEGENDARIO', classes: 'text-primary-500 bg-primary-500/10 border-primary-500/30 shadow-[0_0_10px_rgba(255,69,0,0.2)]' };
+    case 'calistenico': return { label: i18n.t('rarity_calisthenic'), classes: 'text-[#ccff00] bg-[#ccff00]/10 border-[#ccff00]/30 shadow-[0_0_10px_rgba(204,255,0,0.2)]' };
+    case 'legendary': return { label: i18n.t('rarity_legendary'), classes: 'text-primary-500 bg-primary-500/10 border-primary-500/30 shadow-[0_0_10px_rgba(255,69,0,0.2)]' };
     case 'epic':
-    case 'especial': return { label: 'ESPECIAL', classes: 'text-purple-400 bg-purple-500/10 border-purple-500/30' };
-    case 'rare': return { label: 'RARO', classes: 'text-blue-400 bg-blue-500/10 border-blue-500/30' };
-    default: return { label: 'COMÚN', classes: 'text-muted bg-foreground/5 border-border' };
+    case 'especial': return { label: i18n.t('rarity_special'), classes: 'text-purple-400 bg-purple-500/10 border-purple-500/30' };
+    case 'rare': return { label: i18n.t('rarity_rare'), classes: 'text-blue-400 bg-blue-500/10 border-blue-500/30' };
+    default: return { label: i18n.t('rarity_common'), classes: 'text-muted bg-foreground/5 border-border' };
   }
 };
 
@@ -587,6 +730,35 @@ const getEquippedItem = (type) => {
   if (!id) return null;
   return inventory.value.find(item => item.id === id);
 };
+
+const equippedStats = computed(() => {
+  const stats = {
+    str: 0,
+    dex: 0,
+    end: 0,
+    vig: 0,
+    int: 0,
+    fth: 0,
+    cha: 0,
+    multiplier: 0,
+    crit_chance: 0,
+    crit_damage: 0
+  };
+  
+  const slots = ['head', 'weapon', 'armor', 'boots'];
+  slots.forEach(slot => {
+    const item = getEquippedItem(slot);
+    if (item && item.stats) {
+      Object.entries(item.stats).forEach(([stat, val]) => {
+        if (stats[stat] !== undefined) {
+          stats[stat] += val;
+        }
+      });
+    }
+  });
+  
+  return stats;
+});
 
 const rpgStats = computed(() => [
   {
@@ -774,22 +946,38 @@ const fetchInventory = async () => {
 const groupedItems = computed(() => {
   const groups = {};
   
-  // Filtering logic based on activeStashTab
-  let filtered = inventory.value;
+  // Only non-cosmetic items for this inventory view
+  const nonCosmeticTypes = ['head', 'weapon', 'armor', 'boots', 'consumable'];
+  let filtered = inventory.value.filter(i => nonCosmeticTypes.includes(i.type));
+
+  // Category filter
   if (activeStashTab.value !== 'all') {
     if (activeStashTab.value === 'gear') {
-      filtered = inventory.value.filter(i => ['head', 'weapon', 'armor', 'boots'].includes(i.type));
+      filtered = filtered.filter(i => ['head', 'weapon', 'armor', 'boots'].includes(i.type));
     } else if (activeStashTab.value === 'cores') {
-      filtered = inventory.value.filter(i => i.type === 'border');
+      filtered = filtered.filter(i => i.type === 'border');
     } else if (activeStashTab.value === 'titles') {
-      filtered = inventory.value.filter(i => i.type === 'title');
+      filtered = filtered.filter(i => i.type === 'title');
     } else if (activeStashTab.value === 'hud') {
-      filtered = inventory.value.filter(i => i.type === 'avatar');
+      filtered = filtered.filter(i => i.type === 'avatar');
     } else if (activeStashTab.value === 'themes') {
-      filtered = inventory.value.filter(i => i.type === 'background' || i.type === 'post_background');
+      filtered = filtered.filter(i => i.type === 'background' || i.type === 'post_background');
     } else if (activeStashTab.value === 'consumables') {
-      filtered = inventory.value.filter(i => i.type === 'consumable');
+      filtered = filtered.filter(i => i.type === 'consumable');
+    } else {
+      // Direct type match (head, weapon, etc)
+      filtered = filtered.filter(i => i.type === activeStashTab.value);
     }
+  }
+
+  // Rarity filter
+  if (selectedRarity.value !== 'all') {
+    filtered = filtered.filter(i => {
+      const r = i.rarity?.toLowerCase() || 'common';
+      const target = selectedRarity.value;
+      if (target === 'especial') return r === 'especial' || r === 'epic';
+      return r === target;
+    });
   }
 
   filtered.forEach(item => {
@@ -875,13 +1063,13 @@ const getRarityClass = (rarity) => {
 const getRarityLabel = (rarity) => {
   const r = rarity?.toLowerCase() || 'common';
   switch (r) {
-    case 'common': return 'COMÚN';
-    case 'rare': return 'RARO';
+    case 'common': return i18n.t('rarity_common');
+    case 'rare': return i18n.t('rarity_rare');
     case 'epic':
-    case 'especial': return 'ESPECIAL';
-    case 'legendary': return 'LEGENDARIO';
-    case 'calistenico': return 'CALISTÉNICO';
-    default: return 'COMÚN';
+    case 'especial': return i18n.t('rarity_special');
+    case 'legendary': return i18n.t('rarity_legendary');
+    case 'calistenico': return i18n.t('rarity_calisthenic');
+    default: return i18n.t('rarity_common');
   }
 };
 

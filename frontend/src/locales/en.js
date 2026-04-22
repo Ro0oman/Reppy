@@ -806,4 +806,52 @@ export default {
     codex_earn_contribution: 'Faithful Effort',
     codex_earn_social: 'Social Interaction',
     codex_earn_cheer: 'Cheer Given',
+
+    // Inventory Redesign
+    inv_artifact_detail: 'ARTIFACT_DETAIL_VIEW',
+    inv_artifact_rarity: 'ARTIFACT_RARITY',
+    inv_artifact_description: 'DESCRIPTION',
+    inv_artifact_stats: 'COMBAT_ANALYSIS',
+    inv_link_artifact: 'LINK_ARTIFACT',
+    inv_unlink_artifact: 'UNLINK_ARTIFACT',
+    inv_activate_module: 'ACTIVATE_MODULE',
+    inv_close: 'CLOSE',
+    
+    inv_cat_helmet: 'HELMET_MODULE',
+    inv_cat_weapon: 'WEAPON_MODULE',
+    inv_cat_armor: 'ARMOR_MODULE',
+    inv_cat_boots: 'BOOTS_MODULE',
+    inv_cat_gear: 'COMBAT_EQUIP',
+    
+    rarity_all: 'PROTOCOL_ALL',
+    rarity_common: 'COMMON',
+    rarity_rare: 'RARE',
+    rarity_special: 'SPECIAL',
+    rarity_legendary: 'LEGENDARY',
+    rarity_calisthenic: 'CALISTHENIC',
+    
+    // Combat Dashboard
+    dash_base_dmg: 'BASE_DAMAGE_PER_REP',
+    dash_gear_mod: 'GEAR_MODIFIER',
+    dash_crit_overlay: 'CRITICAL_OVERLAY',
+    dash_per_rep: 'PER_REPUTATION',
+    dash_bonus_str: 'BONUS_STRENGTH',
+    dash_success_prob: 'SUCCESS_PROBABILITY',
+    
+    dash_stat_str: 'WEAPON_STRENGTH',
+    dash_stat_dex: 'PRECISION_DEXTERITY',
+    dash_stat_end: 'STRUCTURAL_ENDURANCE',
+    dash_stat_vig: 'RESILIENCE_VIGOR',
+    dash_stat_int: 'NEURAL_SYNC',
+    dash_stat_fth: 'HOLY_AURA',
+    dash_stat_cha: 'CHARISMA_PROTOCOL',
+    
+    inv_active_buffs: 'ACTIVE_NEURAL_BUFFS',
+    inv_dmg_mult: 'DAMAGE_MULTIPLIER',
+    inv_boost_active: 'Boost Active',
+    inv_time_left: 'TIME_REMAINING',
+    inv_sync_stash: 'SYNCHRONIZING_NEXUS_STASH...',
+    inv_offline: 'OFFLINE',
+    inv_empty_slot: 'EMPTY_SLOT',
+    inv_aesthetic_title: 'AESTHETIC_MODULES'
 };
