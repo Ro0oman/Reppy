@@ -206,6 +206,7 @@ export default {
     ex_dips_std: 'Fondos (Estándar)',
     ex_weighted_pullups: 'Dominadas Lastradas',
     ex_muscle_ups: 'Muscle Ups',
+    ex_helmet_std: 'Casco (Estándar)',
 
     // Login
     login_title: 'Iniciar Sesión',
@@ -762,6 +763,15 @@ export default {
     inv_loadout_title: 'CARGA ACTIVA',
     inv_stash_title: 'ALMACÉN NEXUS',
     inv_preview_hint: 'Hover para proyectar, click para enlazar',
+    inv_aesthetic_title: 'MÓDULOS ESTÉTICOS',
+    inv_tab_all: 'TODO EL EQUIPO',
+    inv_tab_gear: 'EQUIPO DE COMBATE',
+    inv_tab_cores: 'NÚCLEOS NEURALES (MARCOS)',
+    inv_tab_titles: 'TÍTULOS DE COMBATE',
+    inv_tab_hud: 'INTERFAZ HUD (AURAS)',
+    inv_tab_themes: 'TEMAS DE FEED (ESCENARIOS)',
+    inv_tab_consumables: 'CONSUMIBLES',
+    inv_slot_helmet: 'CASCO',
 
     // Additional Dashboard
     dash_global_view_active: 'Vista global activa. Selecciona un protocolo para registrar volumen.',

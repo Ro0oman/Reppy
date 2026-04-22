@@ -76,7 +76,10 @@
                   :class="getAttrColor(attr.lvl)">
                 <p class="text-[9px] font-black uppercase tracking-[0.2em] mb-2 font-tight" :class="attr.labelColor">{{ attr.key }}</p>
                 <div class="flex flex-col leading-none">
-                  <span class="text-2xl font-black text-precision text-foreground">LVL {{ attr.lvl }}</span>
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-2xl font-black text-precision text-foreground">LVL {{ attr.lvl }}</span>
+                    <span v-if="attr.bonus > 0" class="text-[10px] font-black text-neon-lime animate-pulse">(+{{ attr.bonus }})</span>
+                  </div>
                   <span class="text-[8px] font-bold text-muted mt-1 tabular-nums">{{ attr.xp }} XP</span>
                 </div>
               </div>
@@ -352,14 +355,29 @@ const getIconForType = (type) => {
   return icons[type] || Dumbbell;
 };
 
+const itemBonuses = computed(() => {
+  const bonuses = { STR: 0, DEX: 0, END: 0, VIG: 0, INT: 0, FTH: 0, CHA: 0 };
+  const slots = ['head', 'weapon', 'armor', 'boots'];
+  slots.forEach(slot => {
+    const stats = user.value[`${slot}_stats`] || {};
+    Object.keys(stats).forEach(key => {
+      const upperKey = key.toUpperCase();
+      if (bonuses[upperKey] !== undefined) {
+        bonuses[upperKey] += stats[key];
+      }
+    });
+  });
+  return bonuses;
+});
+
 const attributes = computed(() => [
-  { key: 'STR', xp: user.value.str_xp || 0, lvl: user.value.str_lvl || 1, labelColor: 'text-orange-500' },
-  { key: 'DEX', xp: user.value.dex_xp || 0, lvl: user.value.dex_lvl || 1, labelColor: 'text-cyan-400' },
-  { key: 'END', xp: user.value.end_xp || 0, lvl: user.value.end_lvl || 1, labelColor: 'text-emerald-500' },
-  { key: 'VIG', xp: user.value.vig_xp || 0, lvl: user.value.vig_lvl || 1, labelColor: 'text-red-500' },
-  { key: 'INT', xp: user.value.int_xp || 0, lvl: user.value.int_lvl || 1, labelColor: 'text-blue-400' },
-  { key: 'FTH', xp: user.value.fth_xp || 0, lvl: user.value.fth_lvl || 1, labelColor: 'text-yellow-400' },
-  { key: 'CHA', xp: user.value.cha_xp || 0, lvl: user.value.cha_lvl || 1, labelColor: 'text-pink-400' },
+  { key: 'STR', xp: user.value.str_xp || 0, lvl: user.value.str_lvl || 1, labelColor: 'text-orange-500', bonus: itemBonuses.value.STR },
+  { key: 'DEX', xp: user.value.dex_xp || 0, lvl: user.value.dex_lvl || 1, labelColor: 'text-cyan-400', bonus: itemBonuses.value.DEX },
+  { key: 'END', xp: user.value.end_xp || 0, lvl: user.value.end_lvl || 1, labelColor: 'text-emerald-500', bonus: itemBonuses.value.END },
+  { key: 'VIG', xp: user.value.vig_xp || 0, lvl: user.value.vig_lvl || 1, labelColor: 'text-red-500', bonus: itemBonuses.value.VIG },
+  { key: 'INT', xp: user.value.int_xp || 0, lvl: user.value.int_lvl || 1, labelColor: 'text-blue-400', bonus: itemBonuses.value.INT },
+  { key: 'FTH', xp: user.value.fth_xp || 0, lvl: user.value.fth_lvl || 1, labelColor: 'text-yellow-400', bonus: itemBonuses.value.FTH },
+  { key: 'CHA', xp: user.value.cha_xp || 0, lvl: user.value.cha_lvl || 1, labelColor: 'text-pink-400', bonus: itemBonuses.value.CHA },
 ]);
 
 const getAttrColor = (lvl) => {

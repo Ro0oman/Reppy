@@ -78,11 +78,37 @@
           <div class="h-px flex-1 bg-gradient-to-l from-transparent to-white/10"></div>
         </div>
 
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 relative">
+          <div v-for="slot in gearSlots" :key="slot.type" 
+               class="relative group rounded-2xl bg-surface/10 border border-white/5 p-4 flex flex-col items-center justify-center gap-3 min-h-[140px] transition-all hover:bg-white/5 overflow-hidden">
+            <div class="absolute inset-x-0 h-px bg-primary-500/20 top-0 group-hover:top-full transition-all duration-[2s] ease-linear pointer-events-none z-10"></div>
+            <div class="absolute top-2 left-2 text-[6px] font-mono text-muted/50 uppercase tracking-widest">{{ slot.label }}</div>
+            
+            <!-- Slot Content -->
+            <div v-if="getEquippedItem(slot.type)" class="flex flex-col items-center gap-2 relative z-20">
+               <div class="w-16 h-16 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <component :is="slot.icon" class="w-8 h-8 text-primary-500" />
+               </div>
+               <span class="text-[8px] font-black text-foreground uppercase truncate w-24 text-center tracking-tighter">{{ getEquippedItem(slot.type).name }}</span>
+            </div>
+
+            <!-- Empty Slot State -->
+            <div v-else class="flex flex-col items-center gap-2 opacity-10 group-hover:opacity-20 transition-opacity">
+              <component :is="slot.icon" class="w-8 h-8 text-muted" />
+              <span class="text-[8px] font-black text-muted uppercase tracking-[0.2em]">{{ i18n.t('inv_empty_slot') || 'EMPTY_SLOT' }}</span>
+            </div>
+            <div v-if="getEquippedItem(slot.type)" 
+                 class="absolute inset-0 rounded-2xl border border-primary-500/20 shadow-[0_0_20px_rgba(255,69,0,0.1)] pointer-events-none group-hover:border-primary-500/40 transition-colors"></div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4 pt-8">
+          <div class="h-px flex-1 bg-gradient-to-r from-transparent to-white/10"></div>
+          <h3 class="text-[10px] font-black text-muted uppercase tracking-[0.5em] font-mono">{{ i18n.t('inv_aesthetic_title') || 'AESTHETIC_MODULES' }}</h3>
+          <div class="h-px flex-1 bg-gradient-to-l from-transparent to-white/10"></div>
+        </div>
+
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4 relative">
-          <!-- Decorative HUD elements -->
-          <div class="absolute -top-10 -right-4 w-32 h-32 border-r border-t border-primary-500/10 rounded-tr-3xl pointer-events-none hidden md:block"></div>
-          <div class="absolute -bottom-10 -left-4 w-32 h-32 border-l border-b border-primary-500/10 rounded-bl-3xl pointer-events-none hidden md:block"></div>
-          
           <div v-for="slot in loadoutSlots" :key="slot.type" 
                class="relative group rounded-2xl bg-surface/10 border border-white/5 p-4 flex flex-col items-center justify-center gap-3 min-h-[140px] transition-all hover:bg-white/5 overflow-hidden">
             
@@ -90,7 +116,6 @@
             <div class="absolute inset-x-0 h-px bg-primary-500/20 top-0 group-hover:top-full transition-all duration-[2s] ease-linear pointer-events-none z-10"></div>
             
             <div class="absolute top-2 left-2 text-[6px] font-mono text-muted/50 uppercase tracking-widest">{{ slot.label }}</div>
-            <div class="absolute bottom-2 right-2 text-[5px] font-mono text-muted/30 uppercase tracking-widest">UNIT_0{{ loadoutSlots.indexOf(slot) + 1 }}</div>
             
             <!-- Slot Content -->
             <div v-if="getEquippedItem(slot.type)" class="flex flex-col items-center gap-2 relative z-20">
@@ -152,12 +177,13 @@
           <!-- Stash Filter Tabs -->
           <div class="flex items-center justify-start gap-2 p-1 bg-surface/10 backdrop-blur-xl border border-white/5 rounded-2xl overflow-x-auto scrollbar-hide">
             <button v-for="tab in [
-              { id: 'all', label: 'ALL_GEAR' },
-              { id: 'cores', label: 'NEURAL_FRAMES' },
-              { id: 'titles', label: 'COMBAT_TITLES' },
-              { id: 'hud', label: 'HUD_LAYOUTS' },
-              { id: 'themes', label: 'FEED_THEMES' },
-              { id: 'consumables', label: 'CONSUMABLES' }
+              { id: 'all', label: i18n.t('inv_tab_all') || 'ALL_GEAR' },
+              { id: 'gear', label: i18n.t('inv_tab_gear') || 'COMBAT_EQUIP' },
+              { id: 'cores', label: i18n.t('inv_tab_cores') || 'NEURAL_FRAMES' },
+              { id: 'titles', label: i18n.t('inv_tab_titles') || 'COMBAT_TITLES' },
+              { id: 'hud', label: i18n.t('inv_tab_hud') || 'HUD_LAYOUTS' },
+              { id: 'themes', label: i18n.t('inv_tab_themes') || 'FEED_THEMES' },
+              { id: 'consumables', label: i18n.t('inv_tab_consumables') || 'CONSUMABLES' }
             ]" :key="tab.id"
               @click="activeStashTab = tab.id"
               class="px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all whitespace-nowrap"
@@ -174,6 +200,10 @@
                 <div class="w-2 h-2 rounded-full bg-primary-500"></div>
                 <h2 class="text-xs font-black text-foreground uppercase tracking-[0.4em] font-mono">
                   {{ 
+                    type === 'head' ? 'HELMET_MODULE' :
+                    type === 'weapon' ? 'WEAPON_MODULE' :
+                    type === 'armor' ? 'ARMOR_MODULE' :
+                    type === 'boots' ? 'BOOTS_MODULE' :
                     type === 'title' ? i18n.t('inv_cat_titles') : 
                     type === 'border' ? i18n.t('inv_cat_borders') : 
                     type === 'background' ? i18n.t('inv_cat_backgrounds') : 
@@ -229,8 +259,13 @@
                          <div class="relative group-hover:scale-110 transition-transform">
                             <Flame class="w-10 h-10 text-primary-500 animate-pulse" />
                             <div class="absolute -top-1 -right-1 bg-foreground text-background text-[9px] font-black px-1.5 py-0.5 rounded border border-surface shadow-xl">
-                               x{{ item.quantity }}
+                                x{{ item.quantity }}
                             </div>
+                         </div>
+                      </div>
+                      <div v-else class="flex flex-col items-center gap-2 group-hover:scale-110 transition-transform">
+                         <div class="p-4 rounded-full bg-primary-500/10 border border-primary-500/20">
+                            <component :is="getSlotIcon(type)" class="w-10 h-10 text-primary-500" />
                          </div>
                       </div>
                    </div>
@@ -279,7 +314,7 @@ import { ref, onMounted, computed, watch } from 'vue';
 import { 
   Package, Frame, Type, Check, Sparkles, Archive, Zap, TrendingUp, 
   Dumbbell, Sword, Heart, Brain, Church, Trophy, ExternalLink, Activity, X, 
-  ChevronDown, Flame, BookOpen, Swords, Info, ChevronRight, Users
+  ChevronDown, Flame, BookOpen, Swords, Info, ChevronRight, Users, Shield, Footprints
 } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
@@ -313,6 +348,13 @@ const toggleCategory = (type) => {
   }
 };
 
+const gearSlots = computed(() => [
+  { type: 'head', label: i18n.t('inv_slot_helmet') || 'HELMET', icon: Zap }, // Using Zap as placeholder for Helmet
+  { type: 'weapon', label: 'WEAPON', icon: Sword },
+  { type: 'armor', label: 'ARMOR', icon: Shield },
+  { type: 'boots', label: 'BOOTS', icon: Footprints } // Need to import these icons
+]);
+
 const loadoutSlots = computed(() => [
   { type: 'title', label: i18n.t('shop_tab_titles'), icon: Type },
   { type: 'border', label: i18n.t('shop_tab_borders'), icon: Frame },
@@ -321,8 +363,17 @@ const loadoutSlots = computed(() => [
   { type: 'background', label: i18n.t('shop_tab_backgrounds'), icon: Sparkles }
 ]);
 
+const getSlotIcon = (type) => {
+  const allSlots = [...gearSlots.value, ...loadoutSlots.value];
+  return allSlots.find(s => s.type === type)?.icon || Package;
+};
+
 const getEquippedItem = (type) => {
   const equippedIdMap = {
+    head: authStore.user?.equipped_head_id,
+    weapon: authStore.user?.equipped_weapon_id,
+    armor: authStore.user?.equipped_armor_id,
+    boots: authStore.user?.equipped_boots_id,
     title: authStore.user?.equipped_title_id,
     border: authStore.user?.equipped_border_id,
     background: authStore.user?.equipped_background_id,
@@ -523,7 +574,9 @@ const groupedItems = computed(() => {
   // Filtering logic based on activeStashTab
   let filtered = inventory.value;
   if (activeStashTab.value !== 'all') {
-    if (activeStashTab.value === 'cores') {
+    if (activeStashTab.value === 'gear') {
+      filtered = inventory.value.filter(i => ['head', 'weapon', 'armor', 'boots'].includes(i.type));
+    } else if (activeStashTab.value === 'cores') {
       filtered = inventory.value.filter(i => i.type === 'border');
     } else if (activeStashTab.value === 'titles') {
       filtered = inventory.value.filter(i => i.type === 'title');
@@ -544,6 +597,10 @@ const groupedItems = computed(() => {
 });
 
 const isEquipped = (item) => {
+  if (item.type === 'head') return authStore.user?.equipped_head_id === item.id;
+  if (item.type === 'weapon') return authStore.user?.equipped_weapon_id === item.id;
+  if (item.type === 'armor') return authStore.user?.equipped_armor_id === item.id;
+  if (item.type === 'boots') return authStore.user?.equipped_boots_id === item.id;
   if (item.type === 'title') return authStore.user?.equipped_title_id === item.id;
   if (item.type === 'border') return authStore.user?.equipped_border_id === item.id;
   if (item.type === 'background') return authStore.user?.equipped_background_id === item.id;
@@ -558,7 +615,11 @@ const toggleEquip = async (item) => {
   playEquipBlip();
   try {
     await axios.post(`/api/shop/equip/${targetId}?type=${item.type}`);
-    if (item.type === 'title') { authStore.user.equipped_title_id = alreadyEquipped ? null : item.id; authStore.user.title_css = alreadyEquipped ? '' : item.css_value; authStore.user.title_name = alreadyEquipped ? '' : item.name; }
+    if (item.type === 'head') authStore.user.equipped_head_id = alreadyEquipped ? null : item.id;
+    else if (item.type === 'weapon') authStore.user.equipped_weapon_id = alreadyEquipped ? null : item.id;
+    else if (item.type === 'armor') authStore.user.equipped_armor_id = alreadyEquipped ? null : item.id;
+    else if (item.type === 'boots') authStore.user.equipped_boots_id = alreadyEquipped ? null : item.id;
+    else if (item.type === 'title') { authStore.user.equipped_title_id = alreadyEquipped ? null : item.id; authStore.user.title_css = alreadyEquipped ? '' : item.css_value; authStore.user.title_name = alreadyEquipped ? '' : item.name; }
     else if (item.type === 'border') { authStore.user.equipped_border_id = alreadyEquipped ? null : item.id; authStore.user.border_css = alreadyEquipped ? '' : item.css_value; }
     else if (item.type === 'background') { authStore.user.equipped_background_id = alreadyEquipped ? null : item.id; authStore.user.background_css = alreadyEquipped ? '' : item.css_value; }
     else if (item.type === 'post_background') { authStore.user.equipped_post_background_id = alreadyEquipped ? null : item.id; authStore.user.post_background_css = alreadyEquipped ? '' : item.css_value; }
