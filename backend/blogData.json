@@ -1,5 +1,27 @@
 [
   {
+    "slug": "overhaul-avatares-rpg-2026",
+    "date": "2026-04-21",
+    "author": "Reppy HQ",
+    "image": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80",
+    "category": "noticias",
+    "isPillar": true,
+    "locales": {
+      "es": {
+        "title": "Avatares RPG v2.0: Identidad y Rendimiento de Nivel Épico",
+        "excerpt": "Hemos expandido nuestra colección a 40 iconos premium y optimizado cada píxel para una carga instantánea. ¡Descubre tu nueva clase!",
+        "keywords": ["avatares rpg", "identidad visual", "noticias reppy", "optimización webp", "personalización gamer"],
+        "content": "# El Gran Renacimiento de la Identidad en Reppy\n\nTu avatar no es solo una imagen de perfil; es tu carta de presentación ante la comunidad, tu armadura visual en el [Leaderboard](/leaderboard) y tu rostro en cada [Boss Fight](/dashboard). Por eso, hoy anunciamos una de las mayores actualizaciones de personalización hasta la fecha: **Avatares RPG v2.0**.\n\n## 🛡️ Más que una Imagen: Una Declaración de Intenciones\nHemos escuchado a la comunidad y hemos expandido nuestra galería hasta los **40 slots**. Pero no es solo cantidad, es calidad. Hemos seleccionado iconos inspirados en las sagas más legendarias: desde guerreros de *Elden Ring* y guerreros espartanos hasta maestros jefes y cazadores de monstruos. Cada clase ha sido elegida para representar los pilares de la calistenia: fuerza, agilidad y disciplina.\n\n## ⚡ Optimización Invisible (Pero Radical)\nDetrás de estos nuevos iconos hay un cambio técnico masivo. Hemos migrado toda la infraestructura de imágenes a **WebP de nueva generación**. \n- **Carga Instantánea**: Los archivos ahora son un 90% más ligeros sin perder un ápice de detalle.\n- **Ahorro de Datos**: Navegar por el feed [/social](/social) ahora consume una fracción de lo que consumía antes.\n- **Calidad HD**: Resoluciones nítidas que lucen increíbles incluso en pantallas de retina.\n\n## 🚀 ¿Cómo elegir tu nueva Identidad?\nEs muy sencillo. Ve a tu [Perfil](/profile) y pulsa sobre tu avatar actual. Se abrirá la nueva galería optimizada donde podrás elegir entre las 40 opciones disponibles. \n\n**🔥 Desafío del Día:** Cambia tu avatar hoy mismo y publica un mensaje en el feed con tu nuevo aspecto. ¡Queremos ver a la legión de Reppy más fuerte que nunca!"
+      },
+      "en": {
+        "title": "RPG Avatars v2.0: Epic Identity and High-Speed Performance",
+        "excerpt": "We've expanded our collection to 40 premium icons and optimized every pixel for instant loading. Discover your new class!",
+        "keywords": ["rpg avatars", "visual identity", "reppy news", "webp optimization", "gamer customization"],
+        "content": "# The Great Identity Rebirth in Reppy\n\nYour avatar is not just a profile picture; it's your business card to the community, your visual armor on the [Leaderboard](/leaderboard), and your face in every [Boss Fight](/dashboard). That's why today we are announcing one of our biggest customization updates to date: **RPG Avatars v2.0**.\n\n## 🛡️ More Than an Image: A Statement of Intent\nWe've listened to the community and expanded our gallery to **40 slots**. But it's not just quantity; it's quality. We've selected icons inspired by the most legendary sagas: from *Elden Ring* warriors and Spartan fighters to master chiefs and monster hunters. Each class has been chosen to represent the pillars of calisthenics: strength, agility, and discipline.\n\n## ⚡ Invisible (But Radical) Optimization\nBehind these new icons is a massive technical shift. We've migrated our entire image infrastructure to **next-generation WebP**. \n- **Instant Loading**: Files are now 90% lighter without losing a bit of detail.\n- **Data Savings**: Browsing the [/social](/social) feed now consumes a fraction of what it did before.\n- **HD Quality**: Sharp resolutions that look incredible even on retina displays.\n\n## 🚀 How to Choose Your New Identity?\nIt's very simple. Go to your [Profile](/profile) and click on your current avatar. The new optimized gallery will open, where you can choose from the 40 available options. \n\n**🔥 Daily Challenge:** Change your avatar today and post a message in the feed with your new look. We want to see the Reppy legion stronger than ever!"
+      }
+    }
+  },
+  {
     "slug": "guia-definitiva-dominadas",
     "date": "2026-04-16",
     "author": "Reppy Editorial",
