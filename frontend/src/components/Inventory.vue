@@ -32,6 +32,46 @@
 
     <!-- TAB: TACTICAL GEAR (Armory Grid) -->
     <div v-if="activeTab === 'gear'" class="space-y-16 animate-in">
+      
+      <!-- NEW: COMBAT PERFORMANCE DASHBOARD -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div class="p-6 rounded-[2.5rem] bg-surface/10 border border-white/5 relative overflow-hidden group">
+          <div class="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent"></div>
+          <div class="relative z-10 flex flex-col gap-2">
+            <p class="text-[10px] font-black text-muted uppercase tracking-[0.3em] leading-none">BASE_DAMAGE_PER_REP</p>
+            <div class="flex items-baseline gap-2">
+              <span class="text-4xl font-black text-foreground italic">{{ combatStats.base }}</span>
+              <span class="text-sm font-bold text-primary-500/50 uppercase tracking-tighter">PER_REPUTATION</span>
+            </div>
+          </div>
+          <Sword class="absolute -bottom-2 -right-2 w-24 h-24 text-white/5 rotate-12 group-hover:scale-110 transition-transform" />
+        </div>
+
+        <div class="p-6 rounded-[2.5rem] bg-surface/10 border border-white/5 relative overflow-hidden group">
+          <div class="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent"></div>
+          <div class="relative z-10 flex flex-col gap-2">
+            <p class="text-[10px] font-black text-muted uppercase tracking-[0.3em] leading-none">GEAR_MODIFIER</p>
+            <div class="flex items-baseline gap-2">
+              <span class="text-4xl font-black text-orange-500 italic">+{{ combatStats.gear }}</span>
+              <span class="text-sm font-bold text-orange-500/50 uppercase tracking-tighter">BONUS_STRENGTH</span>
+            </div>
+          </div>
+          <Zap class="absolute -bottom-2 -right-2 w-24 h-24 text-white/5 -rotate-12 group-hover:scale-110 transition-transform" />
+        </div>
+
+        <div class="p-6 rounded-[2.5rem] bg-surface/10 border border-white/5 relative overflow-hidden group">
+          <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent"></div>
+          <div class="relative z-10 flex flex-col gap-2">
+            <p class="text-[10px] font-black text-muted uppercase tracking-[0.3em] leading-none">CRITICAL_OVERLAY</p>
+            <div class="flex items-baseline gap-2">
+              <span class="text-4xl font-black text-emerald-400 italic">{{ combatStats.critChance }}%</span>
+              <span class="text-sm font-bold text-emerald-500/50 uppercase tracking-tighter">SUCCESS_PROBABILITY</span>
+            </div>
+          </div>
+          <Activity class="absolute -bottom-2 -right-2 w-24 h-24 text-white/5 rotate-0 group-hover:scale-110 transition-transform" />
+        </div>
+      </div>
+
       <!-- Section: Modules (Chests) -->
       <div v-if="authStore.user?.level_chests > 0 || authStore.user?.boss_chests > 0" 
            class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -106,14 +146,15 @@
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 relative">
           <div v-for="slot in gearSlots" :key="slot.type" 
-               class="relative group rounded-2xl bg-surface/10 border border-white/5 p-4 flex flex-col items-center justify-center gap-3 min-h-[140px] transition-all hover:bg-white/5 overflow-hidden">
+               @click="getEquippedItem(slot.type) && openItemDetails(getEquippedItem(slot.type))"
+               class="relative group rounded-2xl bg-surface/10 border border-white/5 p-4 flex flex-col items-center justify-center gap-3 min-h-[140px] transition-all hover:bg-white/5 overflow-hidden cursor-pointer">
             <div class="absolute inset-x-0 h-px bg-primary-500/20 top-0 group-hover:top-full transition-all duration-[2s] ease-linear pointer-events-none z-10"></div>
             <div class="absolute top-2 left-2 text-[6px] font-mono text-muted/50 uppercase tracking-widest">{{ slot.label }}</div>
             
             <!-- Slot Content -->
             <div v-if="getEquippedItem(slot.type)" class="flex flex-col items-center gap-2 relative z-20">
                <div class="w-16 h-16 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <component :is="slot.icon" class="w-8 h-8 text-primary-500" />
+                  <ItemIcon :name="getEquippedItem(slot.type).svg_key" :type="slot.type" class-name="w-8 h-8 text-primary-500" />
                </div>
                <span class="text-[8px] font-black text-foreground uppercase truncate w-24 text-center tracking-tighter">{{ getEquippedItem(slot.type).name }}</span>
             </div>
@@ -235,6 +276,7 @@
                     type === 'background' ? i18n.t('inv_cat_backgrounds') : 
                     type === 'post_background' ? i18n.t('inv_cat_post_backgrounds') : 
                     type === 'avatar' ? i18n.t('inv_cat_avatar_effects') : 
+                    type === 'bundle' ? 'PRÓXIMAS APERTURAS' :
                     i18n.t('inv_cat_consumables') 
                   }}
                 </h2>
@@ -291,7 +333,7 @@
                       </div>
                       <div v-else class="flex flex-col items-center gap-2 group-hover:scale-110 transition-transform">
                          <div class="p-4 rounded-full bg-primary-500/10 border border-primary-500/20">
-                            <component :is="getSlotIcon(type)" class="w-10 h-10 text-primary-500" />
+                            <ItemIcon :name="item.svg_key" :type="type" class-name="w-10 h-10 text-primary-500" />
                          </div>
                       </div>
                    </div>
@@ -315,9 +357,9 @@
                           </button>
                        </div>
                        <div v-else-if="['head', 'weapon', 'armor', 'boots'].includes(type) && !isEquipped(item)" class="flex flex-col gap-1.5">
-                          <button @click.stop="startComparison(item)" 
+                          <button @click.stop="openItemDetails(item)" 
                              class="w-full py-2 bg-white/10 hover:bg-white/20 text-white text-[7px] font-black uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-2">
-                             <Swords class="w-2.5 h-2.5" /> COMPARE
+                             <Info class="w-2.5 h-2.5" /> DETAILS
                           </button>
                           <h4 class="text-[8px] font-black text-foreground truncate uppercase italic tracking-wider leading-none group-hover:text-primary-500 transition-colors">{{ item.name }}</h4>
                        </div>
@@ -373,6 +415,7 @@ import ChestOpening from './ChestOpening.vue';
 import CompareModal from './CompareModal.vue';
 import axios from 'axios';
 import { useAudio } from '../composables/useAudio';
+import ItemIcon from './ItemIcon.vue';
 
 const { playZip, playEquipBlip, playClickBlip } = useAudio();
 const authStore = useAuthStore();
@@ -414,6 +457,76 @@ const comparisonState = ref({
   newItem: null,
   currentItem: null
 });
+
+const showItemModal = ref(false);
+const selectedItem = ref(null);
+
+const combatStats = ref({
+  total: 0,
+  base: 0,
+  gear: 0,
+  buff: 0,
+  multiplier: 1.0,
+  critChance: 0
+});
+
+const fetchStats = async () => {
+  try {
+    const res = await axios.get('/api/reps/stats');
+    if (res.data.combatPower) {
+      combatStats.value = {
+        total: res.data.combatPower.total,
+        base: res.data.combatPower.base,
+        gear: res.data.combatPower.gear,
+        buff: res.data.combatPower.buff,
+        multiplier: res.data.combatPower.multiplier,
+        // Calculate crit chance locally for immediate feedback if possible, or use one from backend if we add it
+        critChance: Math.round((authStore.user?.dex_lvl * 2.5) + (authStore.user?.vig_lvl * 0.5)) || 0
+      };
+    }
+  } catch (e) {
+    console.error('Error fetching combat stats:', e);
+  }
+};
+
+const statLabels = {
+  str: 'Fuerza',
+  dex: 'Destreza',
+  end: 'Resistencia',
+  vig: 'Vigor',
+  int: 'Inteligencia',
+  fth: 'Fe',
+  cha: 'Carisma'
+};
+
+const getStatDiff = (stat, newValue) => {
+  if (!authStore.user || !selectedItem.value) return 0;
+  
+  const equippedItem = getEquippedItem(selectedItem.value.type);
+  if (!equippedItem || !equippedItem.stats) return newValue;
+  
+  const oldVal = equippedItem.stats[stat] || 0;
+  return newValue - oldVal;
+};
+
+const openItemDetails = (item) => {
+  if (!item) return;
+  selectedItem.value = item;
+  showItemModal.value = true;
+};
+
+const getRarityBadge = (item) => {
+  if (!item) return { label: 'COMÚN', classes: 'text-muted bg-foreground/5 border-border' };
+  const rarity = item.rarity?.toLowerCase() || 'common';
+  switch (rarity) {
+    case 'calistenico': return { label: 'CALISTÉNICO', classes: 'text-[#ccff00] bg-[#ccff00]/10 border-[#ccff00]/30 shadow-[0_0_10px_rgba(204,255,0,0.2)]' };
+    case 'legendary': return { label: 'LEGENDARIO', classes: 'text-primary-500 bg-primary-500/10 border-primary-500/30 shadow-[0_0_10px_rgba(255,69,0,0.2)]' };
+    case 'epic':
+    case 'especial': return { label: 'ESPECIAL', classes: 'text-purple-400 bg-purple-500/10 border-purple-500/30' };
+    case 'rare': return { label: 'RARO', classes: 'text-blue-400 bg-blue-500/10 border-blue-500/30' };
+    default: return { label: 'COMÚN', classes: 'text-muted bg-foreground/5 border-border' };
+  }
+};
 
 const startComparison = (item) => {
   comparisonState.value = {
@@ -714,6 +827,11 @@ const toggleEquip = async (item) => {
     else if (item.type === 'background') { authStore.user.equipped_background_id = alreadyEquipped ? null : item.id; authStore.user.background_css = alreadyEquipped ? '' : item.css_value; }
     else if (item.type === 'post_background') { authStore.user.equipped_post_background_id = alreadyEquipped ? null : item.id; authStore.user.post_background_css = alreadyEquipped ? '' : item.css_value; }
     else if (item.type === 'avatar') { authStore.user.equipped_avatar_id = alreadyEquipped ? null : item.id; authStore.user.avatar_css = alreadyEquipped ? '' : item.css_value; }
+    
+    // Refresh stats to show immediate impact in Armory Dashboard
+    await authStore.fetchProfile();
+    await fetchStats();
+    
     notificationStore.notify(alreadyEquipped ? 'Deactivated' : 'Activated', 'success');
   } catch (err) { notificationStore.notify('Activation error', 'error'); }
 };
@@ -784,7 +902,7 @@ const hasNewInventoryOverall = computed(() => {
 
 onMounted(async () => {
   playZip();
-  await Promise.all([fetchInventory(), authStore.fetchProfile()]);
+  await Promise.all([fetchInventory(), authStore.fetchProfile(), fetchStats()]);
   
   timerInterval = setInterval(() => {
     currentTime.value = new Date();

@@ -187,4 +187,18 @@ router.patch('/seen-avatar-modal', authenticate, async (req, res) => {
   }
 });
 
+// Mark armory update modal as seen
+router.patch('/seen-armory-modal', authenticate, async (req, res) => {
+  try {
+    await query(
+      'UPDATE users SET has_seen_armory_update = true WHERE id = $1',
+      [req.user.id]
+    );
+    res.json({ message: 'Armory modal marked as seen' });
+  } catch (error) {
+    console.error('Error updating modal state:', error);
+    res.status(500).json({ message: 'Error updating modal state' });
+  }
+});
+
 export default router;

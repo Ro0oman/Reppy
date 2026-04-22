@@ -1,6 +1,6 @@
 import express from 'express';
 import { query } from './db.js';
-import { recalculateUserStats, getStatLevel, getGlobalLevel, getXPForLevel } from './utils/stats.js';
+import { recalculateUserStats, augmentUserWithLevels, getStatLevel, getGlobalLevel, getXPForLevel } from './utils/stats.js';
 
 const router = express.Router();
 
@@ -103,54 +103,42 @@ router.get('/:id', async (req, res) => {
 
     // RPG CALCULATIONS - Now handled by shared utility
     const statsResult = await recalculateUserStats(userId);
-    const { 
-      strXP, dexXP, endXP, vigXP, intXP, fthXP, chaXP,
-      totalXP, currentLevel, xpIntoLevel, xpForNextLevel, streak, totalVolume 
-    } = statsResult;
-
+    
     // Dynamic Title Selection
+    const totalXPForTitle = statsResult.total_xp || 0;
     let dynamicTitle = 'Novato de Midgard';
-    if (totalXP > 40000) dynamicTitle = 'Espectro de Reppy';
-    else if (totalXP > 15000) dynamicTitle = 'Dios de la Guerra';
-    else if (totalXP > 5000) dynamicTitle = 'Campeón del Olimpo';
-    else if (totalXP > 1500) dynamicTitle = 'Asesino de Dragones';
-    else if (totalXP > 500) dynamicTitle = 'Guerrero Espartano';
+    if (totalXPForTitle > 40000) dynamicTitle = 'Espectro de Reppy';
+    else if (totalXPForTitle > 15000) dynamicTitle = 'Dios de la Guerra';
+    else if (totalXPForTitle > 5000) dynamicTitle = 'Campeón del Olimpo';
+    else if (totalXPForTitle > 1500) dynamicTitle = 'Asesino de Dragones';
+    else if (totalXPForTitle > 500) dynamicTitle = 'Guerrero Espartano';
 
     const finalTitleName = userRaw.title_name ? userRaw.title_name : dynamicTitle;
     const finalTitleCss = userRaw.title_name ? userRaw.title_css : '';
 
-    console.log(`[PROFILE_API] SUCCESS for ${userId} - Title: ${finalTitleName} XP: ${totalXP}`);
+    // Create the augmented user object
+    const finalUser = augmentUserWithLevels({
+      ...userRaw,
+      ...statsResult,
+      read_blogs: readBlogs,
+      has_new_inventory: hasNewInventory,
+      title_name: finalTitleName,
+      title_css: finalTitleCss
+    });
+
+    console.log(`[PROFILE_API] SUCCESS for ${userId} - Title: ${finalTitleName} XP: ${finalUser.total_xp}`);
     
     res.json({
-      user: {
-        ...userRaw,
-        title_name: finalTitleName,
-        title_css: finalTitleCss,
-        read_blogs: readBlogs,
-        str_xp: strXP,
-        dex_xp: dexXP,
-        end_xp: endXP,
-        vig_xp: vigXP,
-        int_xp: intXP,
-        fth_xp: fthXP,
-        cha_xp: chaXP,
-        total_xp: totalXP,
-        str_lvl: getStatLevel(strXP),
-        dex_lvl: getStatLevel(dexXP),
-        end_lvl: getStatLevel(endXP),
-        vig_lvl: getStatLevel(vigXP),
-        int_lvl: getStatLevel(intXP),
-        fth_lvl: getStatLevel(fthXP),
-        cha_lvl: getStatLevel(chaXP),
-        cha_xp_into_level: chaXP - getXPForLevel(getStatLevel(chaXP), 100),
-        cha_xp_for_next_level: getXPForLevel(getStatLevel(chaXP) + 1, 100) - getXPForLevel(getStatLevel(chaXP), 100),
-        current_level: currentLevel,
-        xp_into_level: xpIntoLevel,
-        xp_for_next_level: xpForNextLevel,
-        has_new_inventory: hasNewInventory
-      },
+      user: finalUser,
       heatmap: heatmapResult.rows || [],
-      stats: { totalReps, streak, favExercise, totalXP, totalVolume, breakdown: breakdownRes.rows || [] },
+      stats: { 
+        totalReps: finalUser.total_reps, 
+        streak: finalUser.streak, 
+        favExercise, 
+        totalXP: finalUser.total_xp, 
+        totalVolume: finalUser.total_volume, 
+        breakdown: breakdownRes.rows || [] 
+      },
       recentLogs: recentLogs.rows || []
     });
   } catch (error) {

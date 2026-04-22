@@ -211,6 +211,12 @@
       :show="showAvatarModal" 
       @close="handleCloseAvatarModal" 
     />
+
+    <!-- Armory Update Welcome Modal -->
+    <ArmoryUpdateModal
+      :show="showArmoryModal"
+      @close="handleCloseArmoryModal"
+    />
   </div>
 </template>
 
@@ -231,6 +237,7 @@ import BossHealth from './BossHealth.vue';
 import RadialProgress from './RadialProgress.vue';
 import DamageOverhaulModal from './DamageOverhaulModal.vue';
 import AvatarOverhaulModal from './AvatarOverhaulModal.vue';
+import ArmoryUpdateModal from './ArmoryUpdateModal.vue';
 import { getLocalDateString } from '../utils/dateUtils.js';
 
 const emit = defineEmits(['viewProfile', 'start']);
@@ -249,11 +256,12 @@ const isLoading = ref(false);
 const activeYear = ref(2026);
 const showDamageModal = ref(false);
 const showAvatarModal = ref(false);
+const showArmoryModal = ref(false);
 const activeTab = ref('heatmap');
 
-// Scroll lock when damage modal is active
-watch([showDamageModal, showAvatarModal], ([dModal, aModal]) => {
-  if (dModal || aModal) {
+// Scroll lock when modals are active
+watch([showDamageModal, showAvatarModal, showArmoryModal], ([dModal, aModal, rModal]) => {
+  if (dModal || aModal || rModal) {
     document.body.style.overflow = 'hidden';
   } else {
     document.body.style.overflow = '';
@@ -335,8 +343,9 @@ const fetchData = async () => {
     if (authStore.user && !authStore.user.has_seen_damage_overhaul) {
       showDamageModal.value = true;
     } else if (authStore.user && !authStore.user.has_seen_avatar_overhaul) {
-      // Only show avatar modal if damage modal is not showing
       showAvatarModal.value = true;
+    } else if (authStore.user && !authStore.user.has_seen_armory_update) {
+      showArmoryModal.value = true;
     }
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -407,6 +416,17 @@ const handleCloseAvatarModal = () => {
   showAvatarModal.value = false;
   if (authStore.user) {
     authStore.user.has_seen_avatar_overhaul = true;
+    // Chain to armory modal if eligible
+    if (!authStore.user.has_seen_armory_update) {
+      showArmoryModal.value = true;
+    }
+  }
+};
+
+const handleCloseArmoryModal = () => {
+  showArmoryModal.value = false;
+  if (authStore.user) {
+    authStore.user.has_seen_armory_update = true;
   }
 };
 

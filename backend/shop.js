@@ -1,6 +1,7 @@
 import express from 'express';
 import { query } from './db.js';
 import { authenticate } from './middleware.js';
+import { recalculateUserStats } from './utils/stats.js';
 
 
 const router = express.Router();
@@ -94,25 +95,38 @@ router.post('/buy/:id', authenticate, async (req, res) => {
       const bundleItemIds = item.bundle_items.split(',').map(id => parseInt(id.trim()));
       
       for (const id of bundleItemIds) {
-        const checkInv = await query('SELECT * FROM user_items WHERE user_id = $1 AND item_id = $2', [userId, id]);
-        if (checkInv.rows.length === 0) {
-          await query('INSERT INTO user_items (user_id, item_id) VALUES ($1, $2)', [userId, id]);
-        }
+        await query(`
+          INSERT INTO user_items (user_id, item_id) 
+          VALUES ($1, $2) 
+          ON CONFLICT (user_id, item_id) DO NOTHING
+        `, [userId, id]);
       }
       
-      await query('INSERT INTO user_items (user_id, item_id) VALUES ($1, $2)', [userId, itemId]);
+      await query(`
+        INSERT INTO user_items (user_id, item_id) 
+        VALUES ($1, $2) 
+        ON CONFLICT (user_id, item_id) DO NOTHING
+      `, [userId, itemId]);
     } else {
       // Regular Item Purchase OR Consumable
       if (item.type === 'consumable' && inventoryRes.rows.length > 0) {
         await query('UPDATE user_items SET quantity = quantity + 1, is_new = TRUE WHERE user_id = $1 AND item_id = $2', [userId, itemId]);
       } else {
-        await query('INSERT INTO user_items (user_id, item_id, quantity) VALUES ($1, $2, 1)', [userId, itemId]);
+        await query(`
+          INSERT INTO user_items (user_id, item_id, quantity) 
+          VALUES ($1, $2, 1) 
+          ON CONFLICT (user_id, item_id) 
+          DO UPDATE SET quantity = user_items.quantity + 1, is_new = TRUE
+        `, [userId, itemId]);
       }
     }
 
     await query('UPDATE users SET reppy_coins = reppy_coins - $1 WHERE id = $2', [price, userId]);
     
     await query('COMMIT');
+
+    // Recalculate stats to reflect potential item bonuses immediately
+    await recalculateUserStats(userId);
 
     res.json({ message: 'Purchase successful', remaining_coins: user.reppy_coins - price });
   } catch (error) {

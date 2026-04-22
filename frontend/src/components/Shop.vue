@@ -34,7 +34,7 @@
     
     <div v-else class="space-y-16">
       <!-- Modern Filters Interface (Grid Layout) -->
-      <div class="flex flex-col lg:flex-row items-center gap-6 bg-surface/20 p-4 rounded-3xl border border-border/50 backdrop-blur-sm">
+      <div class="flex flex-col lg:flex-row items-center gap-6 bg-surface/20 p-4 rounded-3xl border border-border/50 backdrop-blur-sm relative z-30">
         
         <!-- Categories Dropdown (Left Side) -->
         <div class="w-full lg:w-72 relative z-20">
@@ -89,14 +89,178 @@
         </div>
       </div>
 
+      <!-- Bundle Details Modal (Enhanced) -->
+  <Transition
+    enter-active-class="transition duration-300 ease-out"
+    enter-from-class="opacity-0 backdrop-blur-0"
+    enter-to-class="opacity-100 backdrop-blur-xl"
+    leave-active-class="transition duration-200 ease-in"
+    leave-from-class="opacity-100 backdrop-blur-xl"
+    leave-to-class="opacity-0 backdrop-blur-0"
+  >
+    <div v-if="showBundleModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl">
+      <div 
+        @click.stop
+        class="bg-surface/90 border border-white/10 w-full max-w-4xl rounded-[3rem] shadow-2xl overflow-hidden relative flex flex-col max-h-[90vh]"
+      >
+        <!-- Close Button -->
+        <button 
+          @click="showBundleModal = false"
+          class="absolute top-8 right-8 p-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all z-50 group"
+        >
+          <X class="w-6 h-6 text-muted group-hover:text-foreground transition-colors" />
+        </button>
+
+        <div class="flex flex-col lg:flex-row h-full">
+          <!-- Left: Bundle Preview -->
+          <div class="lg:w-1/3 p-8 bg-gradient-to-br from-yellow-500/20 to-transparent border-r border-white/5 flex flex-col items-center justify-center gap-6">
+            <div class="p-8 bg-yellow-500/10 rounded-[3rem] border border-yellow-500/20 shadow-2xl">
+              <LayoutGrid class="w-24 h-24 text-yellow-500" />
+            </div>
+            <div class="text-center">
+              <h2 class="text-3xl font-black text-industrial tracking-tighter text-yellow-500">{{ selectedBundle?.name }}</h2>
+              <span class="text-[10px] font-black uppercase tracking-[0.3em] text-yellow-500/60 mt-2 block">{{ i18n.t('shop_elite_pack') }}</span>
+            </div>
+            <div class="flex items-center gap-4 px-6 py-4 bg-yellow-500/5 border border-yellow-500/20 rounded-2xl w-full">
+              <div class="flex flex-col flex-1">
+                <span class="text-[8px] font-black text-yellow-500/50 uppercase tracking-widest">{{ i18n.t('shop_bundle_value') }}</span>
+                <span class="text-2xl font-black text-yellow-500 tabular-nums">{{ selectedBundle?.price }} RC</span>
+              </div>
+              <div class="px-3 py-1.5 bg-yellow-500 text-black text-[9px] font-black rounded-lg">
+                30% OFF
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Bundle Items -->
+          <div class="flex-1 p-8 overflow-y-auto no-scrollbar">
+            <h3 class="text-[10px] font-black text-muted uppercase tracking-[0.4em] mb-8">{{ i18n.t('shop_bundle_contents') }}</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div 
+                v-for="item in selectedBundleItems" 
+                :key="item.id"
+                @click="openItemDetails(item)"
+                class="flex items-center gap-4 p-4 bg-white/5 border border-white/5 rounded-3xl hover:border-white/20 transition-all cursor-pointer group"
+              >
+                <div class="p-3 bg-foreground/5 rounded-2xl group-hover:scale-110 transition-transform" :class="getRarityBadge(item).classes">
+                  <ItemIcon :name="item.svg_key" :type="item.type" class-name="w-6 h-6" />
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-sm font-black text-foreground">{{ item.name }}</span>
+                  <span class="text-[9px] font-black uppercase tracking-widest" :class="getRarityBadge(item).classes.split(' ')[0]">{{ item.type }}</span>
+                </div>
+                <ChevronRight class="w-4 h-4 text-muted ml-auto" />
+              </div>
+            </div>
+
+            <div class="mt-12 flex gap-4">
+              <button 
+                @click="buyItem(selectedBundle); showBundleModal = false"
+                :disabled="!canAfford(selectedBundle) || buying || selectedBundle?.owned"
+                class="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black py-5 rounded-3xl text-sm font-black uppercase tracking-[0.2em] transition-all disabled:opacity-20 shadow-2xl shadow-yellow-500/20 active:scale-95"
+              >
+                {{ selectedBundle?.owned ? i18n.t('btn_acquired') : i18n.t('shop_initiate_acquisition') }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Transition>
+
+  <!-- Item Details Modal (Comparison) -->
+  <Transition
+    enter-active-class="transition duration-300 ease-out"
+    enter-from-class="opacity-0 scale-95"
+    enter-to-class="opacity-100 scale-100"
+    leave-active-class="transition duration-200 ease-in"
+    leave-from-class="opacity-100 scale-100"
+    leave-to-class="opacity-0 scale-95"
+  >
+    <div v-if="showItemModal" class="fixed inset-0 z-[110] flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-2xl">
+      <div 
+        @click.stop
+        class="bg-surface/90 border border-white/10 w-full max-w-2xl rounded-[2rem] sm:rounded-[3rem] shadow-2xl overflow-hidden relative p-6 sm:p-10 max-h-[95vh] overflow-y-auto no-scrollbar"
+      >
+        <button 
+          @click="showItemModal = false"
+          class="absolute top-4 right-4 sm:top-8 sm:right-8 p-2 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-all group z-20"
+        >
+          <X class="w-5 h-5 text-muted group-hover:text-foreground" />
+        </button>
+
+        <div class="flex flex-col gap-6 sm:gap-8">
+          <div class="flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
+            <div class="p-6 sm:p-8 rounded-[2rem] sm:rounded-[2.5rem] bg-gradient-to-br border shadow-2xl flex-shrink-0" :class="getRarityBadge(selectedItem).classes">
+              <ItemIcon :name="selectedItem?.svg_key" :type="selectedItem?.type" class-name="w-16 h-16 sm:w-20 sm:h-20" />
+            </div>
+            <div class="flex-1 text-center sm:text-left">
+              <span class="px-3 py-1 rounded-full text-[8px] sm:text-[9px] font-black uppercase tracking-widest border mb-2 sm:mb-3 inline-block" :class="getRarityBadge(selectedItem).classes">
+                {{ getRarityBadge(selectedItem).label }}
+              </span>
+              <h2 class="text-2xl sm:text-3xl font-black text-industrial tracking-tighter text-foreground">{{ selectedItem?.name }}</h2>
+              <p class="text-[11px] sm:text-sm text-muted mt-2 leading-relaxed">{{ selectedItem?.description }}</p>
+            </div>
+          </div>
+
+          <!-- Stats Comparison -->
+          <div class="grid grid-cols-1 gap-3 sm:gap-4">
+            <h3 class="text-[9px] sm:text-[10px] font-black text-muted uppercase tracking-[0.4em]">{{ i18n.t('shop_combat_analysis') }}</h3>
+            <div class="space-y-2 sm:space-y-3">
+              <div v-for="(val, stat) in selectedItem?.stats" :key="stat" class="flex items-center justify-between p-4 sm:p-5 bg-white/5 border border-white/5 rounded-xl sm:rounded-2xl">
+                <div class="flex items-center gap-3 sm:gap-4">
+                  <div class="w-8 h-8 sm:w-10 sm:h-10 bg-foreground/5 rounded-lg sm:rounded-xl flex items-center justify-center font-black text-[10px] sm:text-xs uppercase">{{ stat }}</div>
+                  <span class="text-[11px] sm:text-sm font-black text-foreground uppercase tracking-widest">{{ statLabels[stat] || stat }}</span>
+                </div>
+                <div class="flex items-center gap-3 sm:gap-4">
+                  <span class="text-lg sm:text-xl font-black text-foreground tabular-nums">+{{ val }}</span>
+                  <!-- Comparison -->
+                  <div v-if="getStatDiff(stat, val) !== 0" class="flex items-center gap-1 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg text-[9px] sm:text-[10px] font-black" :class="getStatDiff(stat, val) > 0 ? 'text-neon-lime bg-neon-lime/10' : 'text-red-500 bg-red-500/10'">
+                    <component :is="getStatDiff(stat, val) > 0 ? ChevronUp : ChevronDown" class="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                    {{ Math.abs(getStatDiff(stat, val)) }}
+                  </div>
+                  <div v-else class="text-[9px] sm:text-[10px] font-black text-muted opacity-30">{{ i18n.t('shop_stat_equal') }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mt-2">
+            <div class="flex flex-col items-center sm:items-start">
+              <span class="text-[8px] sm:text-[10px] font-black text-muted uppercase tracking-widest mb-0.5 sm:mb-1">{{ i18n.t('shop_acquisition_cost') }}</span>
+              <div class="flex items-baseline gap-1.5 sm:gap-2">
+                <span class="text-2xl sm:text-3xl font-black text-foreground tabular-nums">{{ selectedItem?.price }}</span>
+                <span class="text-[8px] sm:text-[10px] font-black text-muted uppercase tracking-widest">RC</span>
+              </div>
+            </div>
+            <button 
+              @click="buyItem(selectedItem); showItemModal = false"
+              :disabled="!canAfford(selectedItem) || buying || selectedItem?.owned"
+              class="w-full sm:flex-1 bg-primary-500 hover:bg-primary-400 text-white py-4 sm:py-5 rounded-2xl sm:rounded-3xl text-xs sm:text-sm font-black uppercase tracking-[0.2em] transition-all disabled:opacity-20 shadow-2xl shadow-primary-500/20 active:scale-95"
+            >
+              {{ selectedItem?.owned ? i18n.t('btn_acquired') : i18n.t('shop_initiate_acquisition') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Transition>
+
       <!-- Elite Bundles Highlight (Industrial Gold) -->
-      <section v-if="bundleItems.length > 0 && selectedCategory === 'all'" class="relative">
-        <div class="flex items-center gap-4 mb-10">
-          <h2 class="text-xl font-black text-industrial text-yellow-500 tracking-tight italic flex items-center gap-2">
-            <LayoutGrid class="w-5 h-5" />
-            {{ i18n.t('shop_bundles_title') }}
-          </h2>
-          <div class="h-px flex-1 bg-gradient-to-r from-yellow-500/40 to-transparent"></div>
+      <section v-if="bundleItems.length > 0 && selectedCategory === 'all' && selectedRarity === 'all'" class="relative z-10">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-10">
+          <div class="flex items-center gap-3">
+             <div class="p-2 bg-yellow-500/10 rounded-xl border border-yellow-500/20">
+               <LayoutGrid class="w-5 h-5 text-yellow-500" />
+             </div>
+             <div>
+               <h2 class="text-2xl font-black text-industrial text-yellow-500 tracking-tighter italic uppercase leading-none">
+                 {{ i18n.t('shop_bundles_title') }}
+               </h2>
+               <p class="text-[9px] font-black text-muted uppercase tracking-[0.3em] mt-1">{{ i18n.t('shop_bundles_subtitle') }}</p>
+             </div>
+          </div>
+          <div class="hidden sm:block h-px flex-1 bg-gradient-to-r from-yellow-500/40 to-transparent"></div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -112,34 +276,32 @@
 
             <!-- Header Info -->
             <div class="p-4 pb-0 flex items-start justify-between z-10">
-              <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-yellow-500/20 text-yellow-500 bg-yellow-500/10">
-                {{ i18n.t('shop_elite_pack') }}
-              </span>
+              <div class="flex items-center gap-2">
+                <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-yellow-500/20 text-yellow-500 bg-yellow-500/10">
+                  {{ i18n.t('shop_elite_pack') }}
+                </span>
+                <span class="px-2 py-1 bg-yellow-500 text-black text-[7px] font-black rounded-md shadow-lg shadow-yellow-500/20">30% OFF</span>
+              </div>
               <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border" :class="getRarityBadge(item).classes">
                 {{ getRarityBadge(item).label }}
               </span>
             </div>
 
             <!-- Preview Area -->
-            <div class="h-40 flex items-center justify-center m-4 mb-2 bg-black/40 rounded-2xl border border-yellow-500/10 relative overflow-hidden group-hover/item:border-yellow-500/30 transition-colors shadow-inner">
+            <div class="h-48 flex items-center justify-center m-6 mb-2 bg-yellow-500/5 rounded-[2rem] border border-yellow-500/10 relative overflow-hidden group-hover/item:border-yellow-500/30 transition-colors shadow-inner">
                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-yellow-500/10 to-transparent relative">
-                  <div class="grid grid-cols-2 gap-2 p-2 scale-90">
-                     <div class="w-12 h-12 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><Type class="w-6 h-6 text-yellow-500/40" /></div>
-                     <div class="w-12 h-12 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><Frame class="w-6 h-6 text-yellow-500/40" /></div>
-                     <div class="w-12 h-12 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><Sparkles class="w-6 h-6 text-yellow-500/40" /></div>
-                     <div class="w-12 h-12 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><LayoutGrid class="w-6 h-6 text-yellow-500/40" /></div>
+                  <div class="grid grid-cols-2 gap-2 p-4 scale-90">
+                     <div class="w-12 h-12 bg-yellow-500/5 rounded-xl border border-yellow-500/10 flex items-center justify-center"><Sword class="w-6 h-6 text-yellow-500/40" /></div>
+                     <div class="w-12 h-12 bg-yellow-500/5 rounded-xl border border-yellow-500/10 flex items-center justify-center"><Shield class="w-6 h-6 text-yellow-500/40" /></div>
+                     <div class="w-12 h-12 bg-yellow-500/5 rounded-xl border border-yellow-500/10 flex items-center justify-center"><Zap class="w-6 h-6 text-yellow-500/40" /></div>
+                     <div class="w-12 h-12 bg-yellow-500/5 rounded-xl border border-yellow-500/10 flex items-center justify-center"><Footprints class="w-6 h-6 text-yellow-500/40" /></div>
                   </div>
                   <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                     <div class="p-4 bg-background/80 backdrop-blur-md rounded-2xl border border-yellow-500/40 shadow-2xl">
-                        <Swords class="w-8 h-8 text-yellow-500 animate-pulse" />
+                     <div class="p-4 bg-surface/90 backdrop-blur-md rounded-2xl border border-yellow-500/30 shadow-2xl">
+                        <LayoutGrid class="w-8 h-8 text-yellow-500 animate-pulse" />
                      </div>
                   </div>
                </div>
-            </div>
-
-            <div class="p-4 pt-2 flex-1">
-              <h3 class="text-base font-black text-industrial text-foreground mb-1">{{ item.name }}</h3>
-              <p class="text-[10px] text-muted font-medium mb-4 leading-relaxed">{{ item.description }}</p>
             </div>
 
             <div class="p-4 pt-0 mt-auto border-t border-yellow-500/10 bg-yellow-500/[0.02]">
@@ -195,7 +357,7 @@
             </div>
 
             <!-- Header Info -->
-            <div class="p-4 pb-0 flex items-start justify-between z-10">
+            <div class="p-4 pb-0 flex items-start justify-between z-10" @click="openItemDetails(item)">
               <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-border text-muted bg-foreground/5">
                 #{{ item.roadmap_position || '??' }}
               </span>
@@ -205,7 +367,7 @@
             </div>
 
             <!-- Preview Area -->
-            <div class="h-32 flex items-center justify-center m-4 mb-2 bg-surface rounded-2xl border border-border relative overflow-hidden group-hover/item:border-primary-500/20 transition-colors shadow-inner">
+            <div class="h-32 flex items-center justify-center m-4 mb-2 bg-surface rounded-2xl border border-border relative overflow-hidden group-hover/item:border-primary-500/20 transition-colors shadow-inner" @click="openItemDetails(item)">
                <div v-if="item.type === 'bundle'" class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-500/10 to-purple-500/10 relative">
                   <div class="grid grid-cols-2 gap-1 p-2 scale-75">
                      <div class="w-10 h-10 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><Type class="w-5 h-5 text-primary-500/40" /></div>
@@ -239,15 +401,15 @@
                <div v-if="['head', 'weapon', 'armor', 'boots'].includes(item.type)" class="flex flex-col items-center gap-3">
                    <div class="p-4 rounded-2xl bg-gradient-to-br border shadow-2xl transition-transform duration-500 group-hover/item:scale-110"
                         :class="[getRarityBadge(item).classes, getRarityBadge(item).classes.includes('primary') ? 'from-primary-500/20 to-primary-500/5' : 'from-foreground/10 to-transparent']">
-                     <component :is="getSlotIcon(item.type)" class="w-12 h-12" :class="getRarityBadge(item).classes.split(' ')[0]" />
+                     <ItemIcon :name="item.svg_key" :type="item.type" class-name="w-12 h-12" :class="getRarityBadge(item).classes?.split(' ')[0]" />
                    </div>
                    <div class="flex items-center gap-1.5">
                      <span class="text-[8px] font-black uppercase tracking-widest opacity-40">{{ item.type }}</span>
                    </div>
                 </div>
                 <div v-if="item.type === 'consumable'" class="flex flex-col items-center gap-2">
-                   <FlaskConical class="w-10 h-10 animate-pulse" :class="getRarityBadge(item).classes.split(' ')[0]" />
-                   <span class="text-[8px] font-black uppercase tracking-widest" :class="getRarityBadge(item).classes.split(' ')[0]">BOOST x{{ item.css_value }}</span>
+                   <FlaskConical class="w-10 h-10 animate-pulse" :class="getRarityBadge(item).classes?.split(' ')[0]" />
+                   <span class="text-[8px] font-black uppercase tracking-widest" :class="getRarityBadge(item).classes?.split(' ')[0]">BOOST x{{ item.css_value }}</span>
                 </div>
                <div v-if="item.type === 'post_background'" class="w-full h-full relative group/post-bg overflow-hidden flex items-center justify-center">
                   <div class="w-[90%] h-[80%] bg-black border border-border rounded-lg relative overflow-hidden flex flex-col p-2 gap-2 shadow-2xl shop-preview">
@@ -274,7 +436,7 @@
             </div>
 
             <!-- Content -->
-            <div class="p-4 pt-2 flex-1">
+            <div class="p-4 pt-2 flex-1" @click="openItemDetails(item)">
               <h3 class="text-sm font-black text-industrial text-foreground mb-1">{{ item.name }}</h3>
               <p class="text-[10px] text-muted font-medium line-clamp-2 mb-4 leading-relaxed">{{ item.description }}</p>
               
@@ -553,9 +715,10 @@ import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
-import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Check, Swords, X, Flame, Package, Sword, Shield, Footprints, Construction, FlaskConical, Zap } from 'lucide-vue-next';
+import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Check, Swords, X, Flame, Package, Sword, Shield, Footprints, Construction, FlaskConical, Zap, Info, ChevronUp, ChevronDown as ChevronDownIcon } from 'lucide-vue-next';
 import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
+import ItemIcon from './ItemIcon.vue';
 
 const emit = defineEmits(['start', 'viewProfile']);
 const authStore = useAuthStore();
@@ -569,9 +732,21 @@ const nowMs = ref(Date.now());
 const showSeasonal = ref(false);
 const showDropdown = ref(false);
 const showBundleModal = ref(false);
+const showItemModal = ref(false);
 const selectedBundle = ref(null);
+const selectedItem = ref(null);
 const selectedBundleItems = ref([]);
 let countdownTimer = null;
+
+const statLabels = {
+  str: 'Fuerza',
+  pwr: 'Potencia',
+  end: 'Resistencia',
+  agi: 'Agilidad',
+  vig: 'Vigor',
+  dex: 'Destreza',
+  cha: 'Carisma'
+};
 
 const selectedCategory = ref('all');
 const seasonalItems = computed(() => filteredItems.value.filter(item => item.is_seasonal));
@@ -663,6 +838,7 @@ const isEquipped = (item) => {
 };
 
 const getRarityBadge = (item) => {
+  if (!item) return { label: 'COMÚN', classes: 'text-muted bg-foreground/5 border-border' };
   const rarity = item.rarity?.toLowerCase() || 'common';
   switch (rarity) {
     case 'calistenico': return { label: 'CALISTÉNICO', classes: 'text-[#ccff00] bg-[#ccff00]/10 border-[#ccff00]/30 shadow-[0_0_10px_rgba(204,255,0,0.2)]' };
@@ -676,22 +852,43 @@ const getRarityBadge = (item) => {
 
 const getCardClass = (item) => {
   const r = item.rarity?.toLowerCase();
-  if (isEquipped(item)) return '!border-neon-lime/40 shadow-[0_0_30px_rgba(204,255,0,0.05)]';
-  if (item.owned) return 'border-border';
+  if (isEquipped(item)) return '!border-neon-lime/40 shadow-[0_0_30px_rgba(204,255,0,0.05)] cursor-pointer';
+  if (item.owned) return 'border-border cursor-pointer';
   if (!item.is_unlocked) return 'opacity-60 grayscale';
-  if (r === 'legendary') return 'border-primary-500/30 hover:border-primary-500/60 shadow-[0_0_20px_rgba(255,69,0,0.05)]';
-  if (r === 'calistenico') return 'border-[#ccff00]/30 hover:border-[#ccff00]/60 shadow-[0_0_25px_rgba(204,255,0,0.1)]';
-  return 'border-border hover:border-foreground/20';
+  if (r === 'legendary') return 'border-primary-500/30 hover:border-primary-500/60 shadow-[0_0_20px_rgba(255,69,0,0.05)] cursor-pointer';
+  if (r === 'calistenico') return 'border-[#ccff00]/30 hover:border-[#ccff00]/60 shadow-[0_0_25px_rgba(204,255,0,0.1)] cursor-pointer';
+  return 'border-border hover:border-foreground/20 cursor-pointer';
 };
 
 const getSlotIcon = (slot) => {
   switch (slot) {
-    case 'head': return Construction;
+    case 'head': return Zap;
     case 'weapon': return Sword;
     case 'armor': return Shield;
     case 'boots': return Footprints;
     default: return Sword;
   }
+};
+
+const getStatDiff = (stat, newValue) => {
+  if (!authStore.user || !selectedItem.value) return 0;
+  
+  // Find equipped item in the same slot
+  const slotMap = {
+    head: authStore.user.equipped_head_id,
+    weapon: authStore.user.equipped_weapon_id,
+    armor: authStore.user.equipped_armor_id,
+    boots: authStore.user.equipped_boots_id
+  };
+  
+  const equippedId = slotMap[selectedItem.value.type];
+  if (!equippedId) return newValue; // No item equipped, full gain
+  
+  const equippedItem = items.value.find(i => i.id === equippedId);
+  if (!equippedItem || !equippedItem.stats) return newValue;
+  
+  const oldVal = equippedItem.stats[stat] || 0;
+  return newValue - oldVal;
 };
 
 const buyItem = async (item) => {
@@ -737,9 +934,18 @@ const activateConsumable = async (item) => {
 
 const openBundleModal = (bundle) => {
   selectedBundle.value = bundle;
-  const ids = bundle.bundle_items.split(',').map(id => parseInt(id.trim()));
+  const ids = bundle.bundle_items?.split(',').map(id => parseInt(id.trim())) || [];
   selectedBundleItems.value = items.value.filter(i => ids.includes(i.id));
   showBundleModal.value = true;
+};
+
+const openItemDetails = (item) => {
+  if (item.type === 'bundle') {
+    openBundleModal(item);
+    return;
+  }
+  selectedItem.value = item;
+  showItemModal.value = true;
 };
 
 onMounted(() => {

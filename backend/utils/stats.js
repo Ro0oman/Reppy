@@ -204,8 +204,11 @@ export const recalculateUserStats = async (userId) => {
     const endXP = Math.round(baseEndXP * intBonus);
     const vigXP = Math.round(baseVigXP * intBonus);
 
+    // Include charisma
+    const chaXP = user.cha_xp || 0;
+
     // Total XP for Character Level
-    const totalXP = strXP + dexXP + endXP + vigXP + intXP + fthXP + (user.cha_xp || 0);
+    const totalXP = strXP + dexXP + endXP + vigXP + intXP + fthXP + chaXP;
 
     // 4. Character Level Calculation (Dynamic Quadratic: base 1000)
     // L = (1 + sqrt(1 + 8 * totalXP / 1000)) / 2
@@ -296,20 +299,20 @@ export const recalculateUserStats = async (userId) => {
     ]);
 
     return {
-      totalReps,
-      strXP,
-      dexXP,
-      endXP,
-      vigXP,
-      intXP,
-      fthXP,
-      chaXP,
-      totalXP,
-      currentLevel: newLevel,
-      xpIntoLevel,
-      xpForNextLevel,
+      total_reps: totalReps,
+      str_xp: strXP,
+      dex_xp: dexXP,
+      end_xp: endXP,
+      vig_xp: vigXP,
+      int_xp: intXP,
+      fth_xp: fthXP,
+      cha_xp: chaXP,
+      total_xp: totalXP,
+      current_level: newLevel,
+      xp_into_level: xpIntoLevel,
+      xp_for_next_level: xpForNextLevel,
       streak,
-      totalVolume
+      total_volume: totalVolume
     };
 
   } catch (err) {
