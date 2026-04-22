@@ -170,6 +170,7 @@ apiRouter.get('/db/init', async (req, res) => {
           is_private BOOLEAN DEFAULT FALSE,
           daily_goal INTEGER DEFAULT 50,
           body_weight DECIMAL DEFAULT 75.0,
+          last_streak_reward_date DATE,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       )`,
       `CREATE TABLE IF NOT EXISTS reps (
@@ -250,6 +251,7 @@ apiRouter.get('/db/init', async (req, res) => {
       `UPDATE cosmetics SET rarity = 'rare' WHERE price < 600 AND price >= 200`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_spin_at TIMESTAMP WITH TIME ZONE`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_avatar_overhaul BOOLEAN DEFAULT FALSE`,
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_streak_reward_date DATE`,
       // Mark old bosses as inactive to avoid overlapping
       `UPDATE boss_fights SET status = 'defeated' WHERE order_index = 0 AND status = 'active'`,
       

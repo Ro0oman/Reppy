@@ -87,7 +87,7 @@ export const augmentUserWithLevels = (user) => {
 export const recalculateUserStats = async (userId) => {
   try {
     // 1. Get user data for level tracking
-    const userRes = await query('SELECT body_weight, current_level, level_chests_claimed, level_chests, cha_xp FROM users WHERE id = $1', [userId]);
+    const userRes = await query('SELECT body_weight, current_level, level_chests_claimed, level_chests, cha_xp, last_streak_reward_date FROM users WHERE id = $1', [userId]);
     if (userRes.rows.length === 0) return;
     const user = userRes.rows[0];
     const bodyWeight = parseFloat(user.body_weight) || 75.0;
@@ -200,6 +200,28 @@ export const recalculateUserStats = async (userId) => {
         'LEVEL_CHEST'
       );
     }
+    
+    // --- STREAK REWARDS ---
+    const todayStr = getLocalDateString();
+    let additionalCoins = 0;
+    let newLastStreakRewardDate = user.last_streak_reward_date;
+
+    // We reward if the streak is active (>0) AND it's a new day since the last reward
+    // Note: streak is already calculated in step 2.
+    const lastRewardDate = user.last_streak_reward_date ? getLocalDateString(user.last_streak_reward_date) : null;
+    
+    if (streak > 0 && lastRewardDate !== todayStr) {
+      additionalCoins = streak * 50;
+      newLastStreakRewardDate = todayStr;
+
+      await createNotification(
+        userId,
+        'STREAK_REWARD',
+        null,
+        `¡Racha de ${streak} días! Has ganado ${additionalCoins} Reppy Coins`,
+        streak.toString()
+      );
+    }
 
     // 6. Final Sync to Users Table
     await query(`
@@ -215,7 +237,9 @@ export const recalculateUserStats = async (userId) => {
         total_xp = $9,
         current_level = $10,
         level_chests = COALESCE(level_chests, 0) + $11,
-        level_chests_claimed = $12
+        level_chests_claimed = $12,
+        reppy_coins = reppy_coins + $13,
+        last_streak_reward_date = $14
       WHERE id = $1
     `, [
       userId, 
@@ -224,7 +248,9 @@ export const recalculateUserStats = async (userId) => {
       totalXP, 
       newLevel, 
       additionalChests, 
-      newLevelChestsClaimed
+      newLevelChestsClaimed,
+      additionalCoins,
+      newLastStreakRewardDate
     ]);
 
     return {
