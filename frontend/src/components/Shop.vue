@@ -353,9 +353,21 @@
 
       <!-- Main Collection -->
       <section>
-        <div class="flex items-center gap-4 mb-10">
+        <div class="flex items-center gap-4 mb-6">
           <h2 class="text-xl font-black text-industrial text-foreground tracking-tight italic">{{ i18n.t('shop_permanent_protocol') }}</h2>
           <div class="h-px flex-1 bg-gradient-to-r from-muted/20 to-transparent"></div>
+        </div>
+
+        <!-- Global Context (Tu Build Actual) -->
+        <div v-if="activeTab === 'combat' && authStore.user" class="mb-8 p-4 bg-surface/40 rounded-xl border border-border flex flex-wrap items-center gap-6 text-xs font-mono">
+          <span class="text-muted font-bold tracking-widest uppercase">TU BUILD ACTUAL:</span>
+          <div class="flex flex-wrap gap-4">
+            <span v-for="(val, stat) in currentBuildStats" :key="stat" v-show="val > 0" class="text-foreground">
+              <span class="text-muted mr-1">{{ stat.toUpperCase() }}</span>
+              <span class="font-black">{{ val }}</span>
+            </span>
+            <span v-if="!Object.values(currentBuildStats).some(v => v > 0)" class="text-muted/50 italic">Sin estadísticas base</span>
+          </div>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
@@ -374,12 +386,23 @@
 
             <!-- Header Info -->
             <div class="p-4 pb-0 flex items-start justify-between z-10" @click="openItemDetails(item)">
-              <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-border text-muted bg-foreground/5">
-                #{{ item.roadmap_position || '??' }}
-              </span>
-              <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border" :class="getRarityBadge(item).classes">
-                {{ getRarityBadge(item).label }}
-              </span>
+              <div class="flex flex-col gap-1">
+                <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-border text-muted bg-foreground/5 w-fit">
+                  #{{ item.roadmap_position || '??' }}
+                </span>
+                <span v-if="isUpgrade(item) && item.price > 0" class="text-[10px] font-black text-neon-lime mt-1 tracking-widest">
+                  ↑ UPGRADE
+                </span>
+              </div>
+              
+              <div class="flex flex-col items-end gap-2">
+                <span v-if="isEquipped(item)" class="text-[10px] font-black uppercase tracking-widest px-2 py-1 bg-blue-500 text-white rounded shadow-[0_0_10px_rgba(59,130,246,0.5)]">
+                  EQUIPADO
+                </span>
+                <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border" :class="getRarityBadge(item).classes">
+                  {{ getRarityBadge(item).label }}
+                </span>
+              </div>
             </div>
 
             <!-- Preview Area -->
@@ -456,7 +479,23 @@
             <!-- Content -->
             <div class="p-4 pt-2 flex-1" @click="openItemDetails(item)">
               <h3 class="text-sm font-black text-industrial text-foreground mb-1">{{ item.name }}</h3>
-              <p class="text-[10px] text-muted font-medium line-clamp-2 mb-4 leading-relaxed">{{ item.description }}</p>
+              
+              <!-- Inline Stats Diff -->
+              <div v-if="['head', 'weapon', 'armor', 'boots'].includes(item.type) && item.stats" class="mt-2 flex flex-col gap-1 mb-3">
+                <span
+                  v-for="(value, stat) in item.stats"
+                  :key="stat"
+                  v-show="stat !== 'duration' && stat !== 'multiplier' && value !== 0"
+                  class="text-[11px] font-black tracking-widest uppercase flex items-center"
+                  :class="getStatDifference(item, stat) > 0 ? 'text-neon-lime' : (getStatDifference(item, stat) < 0 ? 'text-red-500' : 'text-foreground/80')"
+                >
+                  {{ value > 0 ? '+' : '' }}{{ value }} {{ stat.substring(0, 3) }}
+                  <span v-if="getStatDifference(item, stat) !== 0" class="text-muted ml-2 font-bold opacity-60">
+                    ( {{ getStatDifference(item, stat) > 0 ? '+' : '' }}{{ getStatDifference(item, stat) }} )
+                  </span>
+                </span>
+              </div>
+              <p v-else class="text-[10px] text-muted font-medium line-clamp-2 mb-4 leading-relaxed">{{ item.description }}</p>
               
               <div v-if="!item.is_unlocked" class="px-2 py-1.5 bg-red-500/5 border border-red-500/10 rounded-lg">
                 <p class="text-[7px] font-black uppercase tracking-widest text-red-500/70">{{ i18n.t('shop_decrypt_at') }}: {{ getCountdown(item) }}</p>
@@ -604,8 +643,23 @@
                  <div class="w-12 h-12 bg-surface/60 rounded-full flex items-center justify-center border border-border"><span class="text-xl">🔒</span></div>
               </div>
               <div class="p-4 pb-0 flex items-start justify-between z-10">
-                <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-primary-500/20 text-primary-500 bg-primary-500/5">{{ i18n.t('shop_seasonal_badge') }}</span>
-                <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border" :class="getRarityBadge(item).classes">{{ getRarityBadge(item).label }}</span>
+                <div class="flex flex-col gap-1">
+                  <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-primary-500/20 text-primary-500 bg-primary-500/5 w-fit">
+                    {{ i18n.t('shop_seasonal_badge') }}
+                  </span>
+                  <span v-if="isUpgrade(item)" class="text-[10px] font-black text-neon-lime mt-1 tracking-widest">
+                    ↑ UPGRADE
+                  </span>
+                </div>
+                
+                <div class="flex flex-col items-end gap-2">
+                  <span v-if="isEquipped(item)" class="text-[10px] font-black uppercase tracking-widest px-2 py-1 bg-blue-500 text-white rounded shadow-[0_0_10px_rgba(59,130,246,0.5)]">
+                    EQUIPADO
+                  </span>
+                  <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border" :class="getRarityBadge(item).classes">
+                    {{ getRarityBadge(item).label }}
+                  </span>
+                </div>
               </div>
               <div class="h-32 flex items-center justify-center m-4 mb-2 bg-surface rounded-2xl border border-border relative overflow-hidden group-hover/item:border-primary-500/20 transition-colors shadow-inner">
                  <div v-if="item.type === 'title'" class="text-lg text-center px-4 leading-tight font-black" :class="item.css_value">{{ item.name }}</div>
@@ -643,9 +697,25 @@
                     <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">{{ i18n.t('shop_post_preview') }}</div>
                  </div>
               </div>
-              <div class="p-4 pt-2 flex-1">
+              <div class="p-4 pt-2 flex-1" @click="openItemDetails(item)">
                 <h3 class="text-sm font-black text-industrial text-foreground mb-1">{{ item.name }}</h3>
-                <p class="text-[10px] text-muted font-medium line-clamp-2 mb-4 leading-relaxed">{{ item.description }}</p>
+                
+                <!-- Inline Stats Diff -->
+                <div v-if="['head', 'weapon', 'armor', 'boots'].includes(item.type) && item.stats" class="mt-2 flex flex-col gap-1 mb-3">
+                  <span
+                    v-for="(value, stat) in item.stats"
+                    :key="stat"
+                    v-show="stat !== 'duration' && stat !== 'multiplier' && value !== 0"
+                    class="text-[11px] font-black tracking-widest uppercase flex items-center"
+                    :class="getStatDifference(item, stat) > 0 ? 'text-neon-lime' : (getStatDifference(item, stat) < 0 ? 'text-red-500' : 'text-foreground/80')"
+                  >
+                    {{ value > 0 ? '+' : '' }}{{ value }} {{ stat.substring(0, 3) }}
+                    <span v-if="getStatDifference(item, stat) !== 0" class="text-muted ml-2 font-bold opacity-60">
+                      ( {{ getStatDifference(item, stat) > 0 ? '+' : '' }}{{ getStatDifference(item, stat) }} )
+                    </span>
+                  </span>
+                </div>
+                <p v-else class="text-[10px] text-muted font-medium line-clamp-2 mb-4 leading-relaxed">{{ item.description }}</p>
               </div>
               <div class="p-4 pt-0 mt-auto border-t border-border bg-foreground/[0.01]">
                 <div class="flex items-center justify-between mt-4">
@@ -906,12 +976,15 @@ const getRarityBadge = (item) => {
 
 const getCardClass = (item) => {
   const r = item.rarity?.toLowerCase();
-  if (isEquipped(item)) return '!border-neon-lime/40 shadow-[0_0_30px_rgba(204,255,0,0.05)] cursor-pointer';
-  if (item.owned) return 'border-border cursor-pointer';
+  if (isEquipped(item)) return 'ring-2 ring-blue-500 border-transparent bg-blue-500/5 cursor-pointer';
   if (!item.is_unlocked) return 'opacity-60 grayscale';
-  if (r === 'legendary') return 'border-primary-500/30 hover:border-primary-500/60 shadow-[0_0_20px_rgba(255,69,0,0.05)] cursor-pointer';
-  if (r === 'calistenico') return 'border-[#ccff00]/30 hover:border-[#ccff00]/60 shadow-[0_0_25px_rgba(204,255,0,0.1)] cursor-pointer';
-  return 'border-border hover:border-foreground/20 cursor-pointer';
+  if (item.owned) return 'border-border opacity-80 cursor-pointer';
+
+  if (r === 'legendary') return 'border-yellow-400 bg-yellow-400/5 cursor-pointer';
+  if (r === 'epic' || r === 'especial') return 'border-purple-500/50 bg-purple-500/5 cursor-pointer';
+  if (r === 'rare') return 'border-blue-500/50 bg-blue-500/5 cursor-pointer';
+  if (r === 'calistenico') return 'border-[#ccff00]/50 bg-[#ccff00]/5 cursor-pointer';
+  return 'border-gray-700 opacity-80 bg-background/20 cursor-pointer';
 };
 
 const getSlotIcon = (slot) => {
@@ -924,10 +997,60 @@ const getSlotIcon = (slot) => {
   }
 };
 
+const getStatDifference = (item, stat) => {
+  if (!authStore.user || !item.stats || item.type === 'consumable') return item.stats[stat] || 0;
+  
+  const slotMap = {
+    head: authStore.user.equipped_head_id,
+    weapon: authStore.user.equipped_weapon_id,
+    armor: authStore.user.equipped_armor_id,
+    boots: authStore.user.equipped_boots_id
+  };
+  
+  const equippedId = slotMap[item.type];
+  if (!equippedId) return item.stats[stat] || 0;
+  
+  const equippedItem = items.value.find(i => i.id === equippedId);
+  if (!equippedItem || !equippedItem.stats) return item.stats[stat] || 0;
+  
+  return (item.stats[stat] || 0) - (equippedItem.stats[stat] || 0);
+};
+
+const equippedItems = computed(() => {
+  if (!authStore.user) return [];
+  const ids = [
+    authStore.user.equipped_head_id,
+    authStore.user.equipped_weapon_id,
+    authStore.user.equipped_armor_id,
+    authStore.user.equipped_boots_id
+  ].filter(Boolean);
+  return items.value.filter(i => ids.includes(i.id));
+});
+
+const currentBuildStats = computed(() => {
+  const stats = { str: 0, pwr: 0, end: 0, agi: 0, vig: 0, dex: 0, cha: 0 };
+  equippedItems.value.forEach(item => {
+    if (item.stats) {
+      for (const key in item.stats) {
+        if (stats[key] !== undefined) stats[key] += item.stats[key];
+      }
+    }
+  });
+  return stats;
+});
+
+const isUpgrade = (item) => {
+  if (!['head', 'weapon', 'armor', 'boots'].includes(item.type) || !item.stats || item.owned) return false;
+  for (const stat in item.stats) {
+    if (stat === 'duration' || stat === 'multiplier') continue;
+    if (getStatDifference(item, stat) > 0) return true;
+  }
+  return false;
+};
+
 const getStatDiff = (stat, newValue) => {
   if (!authStore.user || !selectedItem.value) return 0;
   
-  // Find equipped item in the same slot
   const slotMap = {
     head: authStore.user.equipped_head_id,
     weapon: authStore.user.equipped_weapon_id,
@@ -936,7 +1059,7 @@ const getStatDiff = (stat, newValue) => {
   };
   
   const equippedId = slotMap[selectedItem.value.type];
-  if (!equippedId) return newValue; // No item equipped, full gain
+  if (!equippedId) return newValue;
   
   const equippedItem = items.value.find(i => i.id === equippedId);
   if (!equippedItem || !equippedItem.stats) return newValue;
