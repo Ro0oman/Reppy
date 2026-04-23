@@ -105,8 +105,8 @@
              </div>
            </div>
            
-           <!-- Armor (Center) -->
-           <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 transition-all duration-300" :class="{ 'animate-pulse-fast scale-110': equippingSlot === 'armor' }">
+           <!-- Armor (Right) -->
+           <div class="absolute top-1/2 right-0 -translate-y-1/2 -mr-4 transition-all duration-300" :class="{ 'animate-pulse-fast scale-110': equippingSlot === 'armor' }">
              <div @click="getEquippedItem('armor') && openItemDetails(getEquippedItem('armor'))"
                   class="w-24 h-24 relative group rounded-2xl bg-surface border border-white/10 p-2 flex flex-col items-center justify-center gap-2 transition-all hover:bg-white/10 overflow-hidden cursor-pointer shadow-2xl backdrop-blur-md">
                <div class="absolute inset-x-0 h-px bg-primary-500/20 top-0 group-hover:top-full transition-all duration-[1s] ease-linear pointer-events-none z-10"></div>
