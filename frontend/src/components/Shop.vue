@@ -719,7 +719,7 @@ import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
-import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Check, Swords, X, Flame, Package, Sword, Shield, Footprints, Construction, FlaskConical, Zap, Info, ChevronUp, ChevronDown as ChevronDownIcon } from 'lucide-vue-next';
+import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Check, Swords, X, Flame, Package, Sword, Shield, Footprints, Construction, FlaskConical, Zap, Info, ChevronUp, ChevronDown as ChevronDownIcon, Users, Activity } from 'lucide-vue-next';
 import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
 import ItemIcon from './ItemIcon.vue';
@@ -775,7 +775,12 @@ const categories = [
   { id: 'head', label: 'HELMET', icon: Zap },
   { id: 'armor', label: 'ARMOR', icon: Shield },
   { id: 'boots', label: 'BOOTS', icon: Footprints },
-  { id: 'consumable', label: 'cat_consumable', icon: Flame }
+  { id: 'consumable', label: 'cat_consumable', icon: Flame },
+  { id: 'title', label: 'shop_tab_titles', icon: Type },
+  { id: 'border', label: 'shop_tab_borders', icon: Frame },
+  { id: 'avatar', label: 'shop_tab_avatars', icon: Users },
+  { id: 'background', label: 'shop_tab_backgrounds', icon: Sparkles },
+  { id: 'post_background', label: 'shop_tab_post_backgrounds', icon: Activity }
 ];
 
 const selectedRarity = ref('all');
