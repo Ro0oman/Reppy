@@ -33,6 +33,20 @@
     </div>
     
     <div v-else class="space-y-16">
+      <!-- Tabs Navigation (Separation Filter) -->
+      <div class="flex items-center justify-center gap-4 mb-8">
+        <button @click="activeTab = 'combat'; selectedCategory = 'all'" 
+                class="px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all border"
+                :class="activeTab === 'combat' ? 'bg-primary-500 text-white border-primary-400 shadow-lg shadow-primary-500/20' : 'bg-surface/20 text-muted border-white/5 hover:border-white/10'">
+          {{ i18n.t('inv_tab_combat') || 'COMBAT_PROTOCOL' }}
+        </button>
+        <button @click="activeTab = 'customization'; selectedCategory = 'all'" 
+                class="px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all border"
+                :class="activeTab === 'customization' ? 'bg-purple-600 text-white border-purple-500 shadow-lg shadow-purple-500/20' : 'bg-surface/20 text-muted border-white/5 hover:border-white/10'">
+          {{ i18n.t('inv_tab_customization') || 'IDENTITY_STASH' }}
+        </button>
+      </div>
+
       <!-- Modern Filters Interface (Grid Layout) -->
       <div class="flex flex-col lg:flex-row items-center gap-6 bg-surface/20 p-4 rounded-3xl  border-border/50 backdrop-blur-sm relative z-30">
         
@@ -764,24 +778,33 @@ const formatDuration = (seconds) => {
 };
 
 const selectedCategory = ref('all');
+const activeTab = ref('combat');
 const seasonalItems = computed(() => filteredItems.value.filter(item => item.is_seasonal));
 const currentPage = ref(1);
 const itemsPerPage = ref(15);
 
-const categories = [
-  { id: 'all', label: 'cat_all', icon: Swords },
-  { id: 'bundle', label: 'cat_bundle', icon: LayoutGrid },
-  { id: 'weapon', label: 'WEAPON', icon: Sword },
-  { id: 'head', label: 'HELMET', icon: Zap },
-  { id: 'armor', label: 'ARMOR', icon: Shield },
-  { id: 'boots', label: 'BOOTS', icon: Footprints },
-  { id: 'consumable', label: 'cat_consumable', icon: Flame },
-  { id: 'title', label: 'shop_tab_titles', icon: Type },
-  { id: 'border', label: 'shop_tab_borders', icon: Frame },
-  { id: 'avatar', label: 'shop_tab_avatars', icon: Users },
-  { id: 'background', label: 'shop_tab_backgrounds', icon: Sparkles },
-  { id: 'post_background', label: 'shop_tab_post_backgrounds', icon: Activity }
-];
+const categories = computed(() => {
+  if (activeTab.value === 'combat') {
+    return [
+      { id: 'all', label: 'cat_all', icon: Swords },
+      { id: 'bundle', label: 'cat_bundle', icon: LayoutGrid },
+      { id: 'weapon', label: 'WEAPON', icon: Sword },
+      { id: 'head', label: 'HELMET', icon: Zap },
+      { id: 'armor', label: 'ARMOR', icon: Shield },
+      { id: 'boots', label: 'BOOTS', icon: Footprints },
+      { id: 'consumable', label: 'cat_consumable', icon: Flame }
+    ];
+  } else {
+    return [
+      { id: 'all', label: 'cat_all', icon: Swords },
+      { id: 'title', label: 'shop_tab_titles', icon: Type },
+      { id: 'border', label: 'shop_tab_borders', icon: Frame },
+      { id: 'avatar', label: 'shop_tab_avatars', icon: Users },
+      { id: 'background', label: 'shop_tab_backgrounds', icon: Sparkles },
+      { id: 'post_background', label: 'shop_tab_post_backgrounds', icon: Activity }
+    ];
+  }
+});
 
 const selectedRarity = ref('all');
 const rarities = [
@@ -795,6 +818,13 @@ const rarities = [
 
 const filteredItems = computed(() => {
   let result = [...items.value];
+  
+  if (activeTab.value === 'combat') {
+    result = result.filter(item => ['head', 'weapon', 'armor', 'boots', 'consumable', 'bundle'].includes(item.type));
+  } else {
+    result = result.filter(item => ['title', 'border', 'avatar', 'background', 'post_background'].includes(item.type));
+  }
+
   if (selectedCategory.value !== 'all') {
     result = result.filter(item => item.type === selectedCategory.value);
   }
@@ -804,7 +834,7 @@ const filteredItems = computed(() => {
   return result.sort((a, b) => a.price - b.price);
 });
 
-const bundleItems = computed(() => items.value.filter(item => item.type === 'bundle'));
+const bundleItems = computed(() => filteredItems.value.filter(item => item.type === 'bundle'));
 const regularItems = computed(() => {
   if (selectedCategory.value === 'all') {
     return filteredItems.value.filter(item => !item.is_seasonal && item.type !== 'bundle');
@@ -819,7 +849,7 @@ const paginatedItems = computed(() => {
   return regularItems.value.slice(start, start + itemsPerPage.value);
 });
 
-watch([selectedCategory, selectedRarity], () => {
+watch([selectedCategory, selectedRarity, activeTab], () => {
   currentPage.value = 1;
 });
 
