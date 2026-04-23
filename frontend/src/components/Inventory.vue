@@ -27,43 +27,151 @@
 
     <!-- COMBAT VIEW -->
     <div v-if="activeTab === 'combat'" class="space-y-12 animate-in">
-      <!-- Combat Performance Dashboard remains at top -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-        <div class="p-6 rounded-[2.5rem] bg-surface/10 border border-white/5 relative overflow-hidden group">
-          <div class="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent"></div>
-          <div class="relative z-10 flex flex-col gap-2">
-            <p class="text-[10px] font-black text-primary-500 uppercase tracking-[0.3em] leading-none">{{ i18n.t('inv_total_power') || 'TOTAL_POWER' }}</p>
-            <div class="flex items-baseline gap-2">
-              <span class="text-3xl font-black text-foreground italic">{{ combatStats.minDamage }} - {{ combatStats.maxDamage }}</span>
-              <span class="text-sm font-bold text-primary-500/50 uppercase tracking-tighter">{{ i18n.t('dash_per_rep') }}</span>
+      <!-- UNIFIED RPG LOADOUT & STATS VISUALIZER -->
+      <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 py-4 mb-8">
+        
+        <!-- Left Stats (Offensive) -->
+        <div class="flex-1 w-full max-w-sm space-y-4">
+          <div class="p-6 rounded-[2rem] bg-surface/10 border border-white/5 relative overflow-hidden group hover:border-primary-500/30 transition-colors">
+            <div class="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent"></div>
+            <div class="relative z-10">
+              <p class="text-[10px] font-black text-primary-500 uppercase tracking-[0.3em] leading-none mb-2">{{ i18n.t('inv_total_power') || 'POWER_OUTPUT' }}</p>
+              <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-black text-foreground italic inline-block transition-transform duration-300" :class="{ 'animate-bump': recentlyEquipped }">{{ combatStats.minDamage }} - {{ combatStats.maxDamage }}</span>
+              </div>
+              <p class="text-[8px] font-black text-muted uppercase tracking-widest mt-1 opacity-60">Avg: {{ combatStats.total }}</p>
             </div>
-            <p class="text-[8px] font-black text-muted uppercase tracking-widest mt-1 opacity-60">Avg: {{ combatStats.total }}</p>
+            <Sword class="absolute -bottom-2 -right-2 w-20 h-20 text-white/5 rotate-12 group-hover:scale-110 transition-transform" />
           </div>
-          <Sword class="absolute -bottom-2 -right-2 w-24 h-24 text-white/5 rotate-12 group-hover:scale-110 transition-transform" />
+
+          <div class="p-6 rounded-[2rem] bg-surface/10 border border-white/5 relative overflow-hidden group hover:border-orange-500/30 transition-colors">
+            <div class="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent"></div>
+            <div class="relative z-10">
+              <p class="text-[10px] font-black text-muted uppercase tracking-[0.3em] leading-none mb-2">{{ i18n.t('dash_gear_mod') || 'GEAR_MODIFIER' }}</p>
+              <div class="flex items-baseline gap-2">
+                <span class="text-2xl font-black text-orange-500 italic inline-block transition-transform duration-300" :class="{ 'animate-bump': recentlyEquipped }">+{{ combatStats.gear }}</span>
+                <span class="text-xs font-bold text-orange-500/50 uppercase">STR</span>
+              </div>
+            </div>
+            <Zap class="absolute -bottom-2 -right-2 w-20 h-20 text-white/5 -rotate-12 group-hover:scale-110 transition-transform" />
+          </div>
         </div>
 
-        <div class="p-6 rounded-[2.5rem] bg-surface/10 border border-white/5 relative overflow-hidden group">
-          <div class="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent"></div>
-          <div class="relative z-10 flex flex-col gap-2">
-            <p class="text-[10px] font-black text-muted uppercase tracking-[0.3em] leading-none">{{ i18n.t('dash_gear_mod') }}</p>
-            <div class="flex items-baseline gap-2">
-              <span class="text-4xl font-black text-orange-500 italic">+{{ combatStats.gear }}</span>
-              <span class="text-sm font-bold text-orange-500/50 uppercase tracking-tighter">{{ i18n.t('dash_bonus_str') }}</span>
-            </div>
-          </div>
-          <Zap class="absolute -bottom-2 -right-2 w-24 h-24 text-white/5 -rotate-12 group-hover:scale-110 transition-transform" />
+        <!-- Center Character Diagram -->
+        <div class="relative w-[300px] h-[360px] flex-shrink-0 flex items-center justify-center">
+           <!-- Hexagon / Circle background -->
+           <div class="absolute inset-8 rounded-[3rem] border border-white/5 bg-surface/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] transform rotate-45 group-hover:rotate-0 transition-transform duration-1000"></div>
+           <div class="absolute inset-12 rounded-[2rem] border border-white/5 bg-surface/20 flex items-center justify-center transform -rotate-45">
+             <Users class="w-24 h-24 text-white/10" />
+           </div>
+
+           <!-- Helmet (Top) -->
+           <div class="absolute top-0 left-1/2 -translate-x-1/2 transition-all duration-300" :class="{ 'animate-pulse-fast scale-110': equippingSlot === 'head' }">
+             <div @click="getEquippedItem('head') && openItemDetails(getEquippedItem('head'))"
+                  class="w-24 h-24 relative group rounded-2xl bg-surface border border-white/10 p-2 flex flex-col items-center justify-center gap-2 transition-all hover:bg-white/10 overflow-hidden cursor-pointer shadow-2xl backdrop-blur-md">
+               <div class="absolute inset-x-0 h-px bg-primary-500/20 top-0 group-hover:top-full transition-all duration-[1s] ease-linear pointer-events-none z-10"></div>
+               <div class="absolute top-1 left-1 text-[5px] font-mono text-muted/50 uppercase tracking-widest z-10">{{ i18n.t('inv_slot_helmet') || 'HELMET' }}</div>
+               <div v-if="getEquippedItem('head')" class="flex flex-col items-center gap-1 relative z-20">
+                  <div class="w-12 h-12 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                     <ItemIcon :name="getEquippedItem('head').svg_key" type="head" class-name="w-6 h-6 text-primary-500" />
+                  </div>
+                  <span class="text-[6px] font-black text-foreground uppercase truncate w-20 text-center tracking-tighter">{{ getEquippedItem('head').name }}</span>
+               </div>
+               <div v-else class="flex flex-col items-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
+                 <Zap class="w-6 h-6 text-muted" />
+                 <span class="text-[6px] font-black text-muted uppercase tracking-[0.2em]">EMPTY</span>
+               </div>
+               <div v-if="getEquippedItem('head')" class="absolute inset-0 rounded-2xl border border-primary-500/30 shadow-[0_0_15px_rgba(255,69,0,0.1)] pointer-events-none group-hover:border-primary-500/50"></div>
+             </div>
+           </div>
+           
+           <!-- Weapon (Left) -->
+           <div class="absolute top-1/2 left-0 -translate-y-1/2 -ml-4 transition-all duration-300" :class="{ 'animate-pulse-fast scale-110': equippingSlot === 'weapon' }">
+             <div @click="getEquippedItem('weapon') && openItemDetails(getEquippedItem('weapon'))"
+                  class="w-24 h-24 relative group rounded-2xl bg-surface border border-white/10 p-2 flex flex-col items-center justify-center gap-2 transition-all hover:bg-white/10 overflow-hidden cursor-pointer shadow-2xl backdrop-blur-md">
+               <div class="absolute inset-x-0 h-px bg-primary-500/20 top-0 group-hover:top-full transition-all duration-[1s] ease-linear pointer-events-none z-10"></div>
+               <div class="absolute top-1 left-1 text-[5px] font-mono text-muted/50 uppercase tracking-widest z-10">WEAPON</div>
+               <div v-if="getEquippedItem('weapon')" class="flex flex-col items-center gap-1 relative z-20">
+                  <div class="w-12 h-12 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                     <ItemIcon :name="getEquippedItem('weapon').svg_key" type="weapon" class-name="w-6 h-6 text-primary-500" />
+                  </div>
+                  <span class="text-[6px] font-black text-foreground uppercase truncate w-20 text-center tracking-tighter">{{ getEquippedItem('weapon').name }}</span>
+               </div>
+               <div v-else class="flex flex-col items-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
+                 <Sword class="w-6 h-6 text-muted" />
+                 <span class="text-[6px] font-black text-muted uppercase tracking-[0.2em]">EMPTY</span>
+               </div>
+               <div v-if="getEquippedItem('weapon')" class="absolute inset-0 rounded-2xl border border-primary-500/30 shadow-[0_0_15px_rgba(255,69,0,0.1)] pointer-events-none group-hover:border-primary-500/50"></div>
+             </div>
+           </div>
+           
+           <!-- Armor (Center) -->
+           <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 transition-all duration-300" :class="{ 'animate-pulse-fast scale-110': equippingSlot === 'armor' }">
+             <div @click="getEquippedItem('armor') && openItemDetails(getEquippedItem('armor'))"
+                  class="w-24 h-24 relative group rounded-2xl bg-surface border border-white/10 p-2 flex flex-col items-center justify-center gap-2 transition-all hover:bg-white/10 overflow-hidden cursor-pointer shadow-2xl backdrop-blur-md">
+               <div class="absolute inset-x-0 h-px bg-primary-500/20 top-0 group-hover:top-full transition-all duration-[1s] ease-linear pointer-events-none z-10"></div>
+               <div class="absolute top-1 left-1 text-[5px] font-mono text-muted/50 uppercase tracking-widest z-10">ARMOR</div>
+               <div v-if="getEquippedItem('armor')" class="flex flex-col items-center gap-1 relative z-20">
+                  <div class="w-12 h-12 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                     <ItemIcon :name="getEquippedItem('armor').svg_key" type="armor" class-name="w-6 h-6 text-primary-500" />
+                  </div>
+                  <span class="text-[6px] font-black text-foreground uppercase truncate w-20 text-center tracking-tighter">{{ getEquippedItem('armor').name }}</span>
+               </div>
+               <div v-else class="flex flex-col items-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
+                 <Shield class="w-6 h-6 text-muted" />
+                 <span class="text-[6px] font-black text-muted uppercase tracking-[0.2em]">EMPTY</span>
+               </div>
+               <div v-if="getEquippedItem('armor')" class="absolute inset-0 rounded-2xl border border-primary-500/30 shadow-[0_0_15px_rgba(255,69,0,0.1)] pointer-events-none group-hover:border-primary-500/50"></div>
+             </div>
+           </div>
+
+           <!-- Boots (Bottom) -->
+           <div class="absolute bottom-0 left-1/2 -translate-x-1/2 transition-all duration-300" :class="{ 'animate-pulse-fast scale-110': equippingSlot === 'boots' }">
+             <div @click="getEquippedItem('boots') && openItemDetails(getEquippedItem('boots'))"
+                  class="w-24 h-24 relative group rounded-2xl bg-surface border border-white/10 p-2 flex flex-col items-center justify-center gap-2 transition-all hover:bg-white/10 overflow-hidden cursor-pointer shadow-2xl backdrop-blur-md">
+               <div class="absolute inset-x-0 h-px bg-primary-500/20 top-0 group-hover:top-full transition-all duration-[1s] ease-linear pointer-events-none z-10"></div>
+               <div class="absolute top-1 left-1 text-[5px] font-mono text-muted/50 uppercase tracking-widest z-10">BOOTS</div>
+               <div v-if="getEquippedItem('boots')" class="flex flex-col items-center gap-1 relative z-20">
+                  <div class="w-12 h-12 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                     <ItemIcon :name="getEquippedItem('boots').svg_key" type="boots" class-name="w-6 h-6 text-primary-500" />
+                  </div>
+                  <span class="text-[6px] font-black text-foreground uppercase truncate w-20 text-center tracking-tighter">{{ getEquippedItem('boots').name }}</span>
+               </div>
+               <div v-else class="flex flex-col items-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
+                 <Footprints class="w-6 h-6 text-muted" />
+                 <span class="text-[6px] font-black text-muted uppercase tracking-[0.2em]">EMPTY</span>
+               </div>
+               <div v-if="getEquippedItem('boots')" class="absolute inset-0 rounded-2xl border border-primary-500/30 shadow-[0_0_15px_rgba(255,69,0,0.1)] pointer-events-none group-hover:border-primary-500/50"></div>
+             </div>
+           </div>
         </div>
 
-        <div class="p-6 rounded-[2.5rem] bg-surface/10 border border-white/5 relative overflow-hidden group">
-          <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent"></div>
-          <div class="relative z-10 flex flex-col gap-2">
-            <p class="text-[10px] font-black text-muted uppercase tracking-[0.3em] leading-none">{{ i18n.t('dash_crit_overlay') }}</p>
-            <div class="flex items-baseline gap-2">
-              <span class="text-4xl font-black text-emerald-400 italic">{{ combatStats.critChance }}%</span>
-              <span class="text-sm font-bold text-emerald-500/50 uppercase tracking-tighter">{{ i18n.t('dash_success_prob') }}</span>
+        <!-- Right Stats (Defensive/Utility) -->
+        <div class="flex-1 w-full max-w-sm space-y-4">
+          <div class="p-6 rounded-[2rem] bg-surface/10 border border-white/5 relative overflow-hidden group hover:border-emerald-500/30 transition-colors">
+            <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent"></div>
+            <div class="relative z-10">
+              <p class="text-[10px] font-black text-muted uppercase tracking-[0.3em] leading-none mb-2">{{ i18n.t('dash_crit_overlay') || 'CRITICAL_CHANCE' }}</p>
+              <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-black text-emerald-400 italic inline-block transition-transform duration-300" :class="{ 'animate-bump': recentlyEquipped }">{{ combatStats.critChance }}%</span>
+              </div>
             </div>
+            <Activity class="absolute -bottom-2 -right-2 w-20 h-20 text-white/5 rotate-0 group-hover:scale-110 transition-transform" />
           </div>
-          <Activity class="absolute -bottom-2 -right-2 w-24 h-24 text-white/5 rotate-0 group-hover:scale-110 transition-transform" />
+
+          <!-- Base Stats Grid -->
+          <div class="p-5 rounded-[2rem] bg-surface/10 border border-white/5 relative overflow-hidden">
+             <p class="text-[9px] font-black text-muted uppercase tracking-[0.3em] mb-4">BASE_ATTRIBUTES</p>
+             <div class="grid grid-cols-2 gap-3">
+               <div v-for="(val, stat) in equippedStats" :key="stat" v-show="val > 0 && stat !== 'multiplier' && stat !== 'crit_chance' && stat !== 'crit_damage'" class="flex items-center justify-between">
+                 <span class="text-[8px] font-black text-muted uppercase">{{ stat }}</span>
+                 <span class="text-xs font-black text-primary-500 inline-block transition-transform duration-300" :class="{ 'animate-bump': recentlyEquipped }">+{{ val }}</span>
+               </div>
+             </div>
+             <div v-if="!Object.values(equippedStats).some(v => v > 0)" class="text-[10px] text-muted/40 italic text-center py-2">
+               No active attributes
+             </div>
+          </div>
         </div>
       </div>
 
@@ -150,36 +258,7 @@
         </div>
       </div>
 
-      <!-- LOADOUT CONSOLE (Combat Gear Only) -->
-      <div class="space-y-8 max-w-6xl mx-auto">
-        <div class="flex items-center gap-4">
-          <div class="h-px flex-1 bg-gradient-to-r from-transparent to-primary-500/20"></div>
-          <h3 class="text-[10px] font-black text-primary-500 uppercase tracking-[0.5em] font-mono">{{ i18n.t('inv_loadout_combat') || 'TU PERSONAJE' }}</h3>
-          <div class="h-px flex-1 bg-gradient-to-l from-transparent to-primary-500/20"></div>
-        </div>
-
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 relative">
-          <!-- Combat Gear Slots -->
-          <div v-for="slot in gearSlots" :key="slot.type" 
-               @click="getEquippedItem(slot.type) && openItemDetails(getEquippedItem(slot.type))"
-               class="relative group rounded-2xl bg-surface/10 border border-white/5 p-4 flex flex-col items-center justify-center gap-3 min-h-[140px] transition-all hover:bg-white/5 overflow-hidden cursor-pointer">
-            <div class="absolute inset-x-0 h-px bg-primary-500/20 top-0 group-hover:top-full transition-all duration-[2s] ease-linear pointer-events-none z-10"></div>
-            <div class="absolute top-2 left-2 text-[6px] font-mono text-muted/50 uppercase tracking-widest">{{ slot.label }}</div>
-            
-            <div v-if="getEquippedItem(slot.type)" class="flex flex-col items-center gap-2 relative z-20">
-               <div class="w-16 h-16 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <ItemIcon :name="getEquippedItem(slot.type).svg_key" :type="slot.type" class-name="w-8 h-8 text-primary-500" />
-               </div>
-               <span class="text-[8px] font-black text-foreground uppercase truncate w-24 text-center tracking-tighter">{{ getEquippedItem(slot.type).name }}</span>
-            </div>
-            <div v-else class="flex flex-col items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
-              <component :is="slot.icon" class="w-8 h-8 text-muted" />
-              <span class="text-[8px] font-black text-muted uppercase tracking-[0.2em]">{{ i18n.t('inv_empty_slot') || 'EMPTY' }}</span>
-            </div>
-            <div v-if="getEquippedItem(slot.type)" class="absolute inset-0 rounded-2xl border border-primary-500/20 shadow-[0_0_20px_rgba(255,69,0,0.1)] pointer-events-none group-hover:border-primary-500/40"></div>
-          </div>
-        </div>
-      </div>
+      <!-- (Combat Gear slots have been moved to the UNIFIED RPG VISUALIZER) -->
     </div>
 
     <!-- CUSTOMIZATION VIEW -->
@@ -569,6 +648,8 @@ const notificationStore = useNotificationStore();
 const inventory = ref([]);
 const loading = ref(true);
 const currentTime = ref(new Date());
+const equippingSlot = ref(null);
+const recentlyEquipped = ref(false);
 let timerInterval = null;
 
 const formatTimeLeft = (diff) => {
@@ -1110,6 +1191,14 @@ const toggleEquip = async (item) => {
     else if (item.type === 'post_background') { authStore.user.equipped_post_background_id = alreadyEquipped ? null : item.id; authStore.user.post_background_css = alreadyEquipped ? '' : item.css_value; }
     else if (item.type === 'avatar') { authStore.user.equipped_avatar_id = alreadyEquipped ? null : item.id; authStore.user.avatar_css = alreadyEquipped ? '' : item.css_value; }
     
+    // TACTILE FEEDBACK LOGIC
+    equippingSlot.value = item.type;
+    recentlyEquipped.value = true;
+    setTimeout(() => {
+      equippingSlot.value = null;
+      recentlyEquipped.value = false;
+    }, 400);
+
     // Refresh stats to show immediate impact in Armory Dashboard
     await authStore.fetchProfile();
     await fetchStats();
@@ -1256,6 +1345,23 @@ onUnmounted(() => {
 .rarity-calistenico { --item-glow: rgba(204, 255, 0, 0.5); }
 
 /* Animations */
+@keyframes bump {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4) translateY(-2px); color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.8); }
+  100% { transform: scale(1); }
+}
+.animate-bump {
+  animation: bump 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes pulse-fast {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 transparent; }
+  50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(255,69,0,0.8); }
+}
+.animate-pulse-fast {
+  animation: pulse-fast 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
 @keyframes scan {
   from { top: -10%; }
   to { top: 110%; }
