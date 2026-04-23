@@ -23,10 +23,23 @@
         <div class="p-6 rounded-[2.5rem] bg-surface/10 border border-white/5 relative overflow-hidden group">
           <div class="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent"></div>
           <div class="relative z-10 flex flex-col gap-2">
-            <p class="text-[10px] font-black text-muted uppercase tracking-[0.3em] leading-none">{{ i18n.t('dash_base_dmg') }}</p>
+            <p class="text-[10px] font-black text-primary-500 uppercase tracking-[0.3em] leading-none">{{ i18n.t('inv_total_power') || 'TOTAL_POWER' }}</p>
             <div class="flex items-baseline gap-2">
-              <span class="text-4xl font-black text-foreground italic">{{ combatStats.base }}</span>
+              <span class="text-3xl font-black text-foreground italic">{{ combatStats.minDamage }} - {{ combatStats.maxDamage }}</span>
               <span class="text-sm font-bold text-primary-500/50 uppercase tracking-tighter">{{ i18n.t('dash_per_rep') }}</span>
+            </div>
+            <p class="text-[8px] font-black text-muted uppercase tracking-widest mt-1 opacity-60">Avg: {{ combatStats.total }}</p>
+            
+            <!-- Potion Contribution Indicator -->
+            <div class="mt-4 space-y-1.5" v-if="combatStats.buff > 0">
+              <div class="flex justify-between items-center text-[8px] font-black">
+                <span class="text-emerald-500 uppercase tracking-widest">POTION_CONTRIBUTION</span>
+                <span class="text-emerald-400">+{{ Math.round((combatStats.buff / (combatStats.total - combatStats.buff)) * 100) }}%</span>
+              </div>
+              <div class="h-1 bg-white/5 rounded-full overflow-hidden">
+                <div class="h-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)] transition-all duration-1000" 
+                     :style="{ width: Math.min(100, (combatStats.buff / combatStats.total) * 100) + '%' }"></div>
+              </div>
             </div>
           </div>
           <Sword class="absolute -bottom-2 -right-2 w-24 h-24 text-white/5 rotate-12 group-hover:scale-110 transition-transform" />
@@ -57,28 +70,7 @@
         </div>
       </div>
 
-      <!-- NEW: DETAILED GEAR STATS BREAKDOWN -->
-      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 max-w-7xl mx-auto">
-        <div v-for="stat in [
-          { key: 'str', label: 'dash_stat_str', icon: Dumbbell, color: 'text-orange-500', bg: 'bg-orange-500/5' },
-          { key: 'dex', label: 'dash_stat_dex', icon: Sword, color: 'text-cyan-400', bg: 'bg-cyan-400/5' },
-          { key: 'end', label: 'dash_stat_end', icon: Activity, color: 'text-green-400', bg: 'bg-green-400/5' },
-          { key: 'vig', label: 'dash_stat_vig', icon: Heart, color: 'text-red-500', bg: 'bg-red-500/5' },
-          { key: 'int', label: 'dash_stat_int', icon: Brain, color: 'text-blue-400', bg: 'bg-blue-400/5' },
-          { key: 'fth', label: 'dash_stat_fth', icon: Church, color: 'text-yellow-400', bg: 'bg-yellow-400/5' },
-          { key: 'cha', label: 'dash_stat_cha', icon: Sparkles, color: 'text-pink-400', bg: 'bg-pink-400/5' }
-        ]" :key="stat.key" class="p-4 rounded-3xl bg-surface/10 border border-white/5 flex flex-col gap-2 group hover:bg-white/5 transition-all">
-          <div class="flex items-center justify-between">
-            <component :is="stat.icon" class="w-4 h-4" :class="stat.color" />
-            <span class="text-[8px] font-black uppercase tracking-widest text-muted">{{ i18n.t(stat.label) }}</span>
-          </div>
-          <div class="flex items-baseline gap-1">
-            <span class="text-xl font-black italic" :class="equippedStats[stat.key] > 0 ? stat.color : 'text-muted/40'">
-              +{{ equippedStats[stat.key] }}
-            </span>
-          </div>
-        </div>
-      </div>
+      <!-- Detailed stats removed per user request, now handled in Codex -->
 
       <!-- Section: Modules (Chests) -->
       <div v-if="authStore.user?.level_chests > 0 || authStore.user?.boss_chests > 0" 
@@ -119,27 +111,31 @@
       </div>
 
       <!-- ACTIVE EFFECTS (Potions/Buffs) -->
-      <div v-if="activePotion" class="space-y-6">
+      <div v-if="activePotions.length > 0" class="space-y-6">
         <div class="flex items-center gap-4">
           <div class="h-px flex-1 bg-gradient-to-r from-transparent to-emerald-500/20"></div>
           <h3 class="text-[10px] font-black text-emerald-500 uppercase tracking-[0.5em] font-mono">{{ i18n.t('inv_active_buffs') }}</h3>
           <div class="h-px flex-1 bg-gradient-to-l from-transparent to-emerald-500/20"></div>
         </div>
 
-        <div class="max-w-md mx-auto p-6 rounded-3xl bg-emerald-500/5 border border-emerald-500/20 flex items-center justify-between group hover:bg-emerald-500/10 transition-all relative overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none"></div>
-          <div class="flex items-center gap-4 relative z-10">
-            <div class="p-3 bg-emerald-500/20 rounded-2xl border border-emerald-500/30 group-hover:scale-110 transition-transform">
-              <FlaskConical class="w-6 h-6 text-emerald-500 animate-pulse" />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div v-for="potion in activePotions" :key="potion.type" 
+               class="p-6 rounded-3xl bg-emerald-500/5 border border-emerald-500/20 flex items-center justify-between group hover:bg-emerald-500/10 transition-all relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none"></div>
+            <div class="flex items-center gap-4 relative z-10">
+              <div class="p-3 bg-emerald-500/20 rounded-2xl border border-emerald-500/30 group-hover:scale-110 transition-transform">
+                <FlaskConical class="w-6 h-6 text-emerald-500 animate-pulse" />
+              </div>
+              <div>
+                <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest leading-none mb-1">{{ i18n.t(potion.label) }}</p>
+                <h4 class="text-xl font-black text-white italic leading-tight">{{ potion.value }} {{ i18n.t('inv_boost_active') }}</h4>
+                <p class="text-[9px] font-bold text-emerald-500/60 uppercase tracking-wider mt-1">{{ potion.description }}</p>
+              </div>
             </div>
-            <div>
-              <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest leading-none mb-1">{{ i18n.t('inv_dmg_mult') }}</p>
-              <h4 class="text-xl font-black text-white italic">x{{ activePotion.multiplier }} {{ i18n.t('inv_boost_active') }}</h4>
+            <div class="text-right relative z-10">
+              <p class="text-[8px] font-black text-muted uppercase tracking-widest mb-1">{{ i18n.t('inv_time_left') }}</p>
+              <span class="text-lg font-black text-white font-mono tracking-tighter">{{ potion.timeLeft }}</span>
             </div>
-          </div>
-          <div class="text-right relative z-10">
-            <p class="text-[8px] font-black text-muted uppercase tracking-widest mb-1">{{ i18n.t('inv_time_left') }}</p>
-            <span class="text-lg font-black text-white font-mono tracking-tighter">{{ activePotion.timeLeft }}</span>
           </div>
         </div>
       </div>
@@ -489,9 +485,11 @@
 
             <!-- Action Buttons -->
             <div class="flex gap-4 pt-4">
-              <button v-if="selectedItem.type === 'consumable'" @click="handleActivate(selectedItem); showItemModal = false"
-                class="flex-1 btn-reppy !py-5 shadow-2xl shadow-primary-500/20">
-                {{ i18n.t('inv_activate_module') }} (x{{ selectedItem.quantity || 1 }})
+              <button v-if="selectedItem.type === 'consumable'" 
+                @click="handleActivate(selectedItem); showItemModal = false"
+                :disabled="isPotionTypeActive(selectedItem)"
+                class="flex-1 btn-reppy !py-5 shadow-2xl shadow-primary-500/20 disabled:opacity-40 disabled:grayscale disabled:cursor-not-allowed">
+                {{ isPotionTypeActive(selectedItem) ? i18n.t('inv_already_active') || 'ALREADY_ACTIVE' : i18n.t('inv_activate_module') }} (x{{ selectedItem.quantity || 1 }})
               </button>
               <button v-else-if="selectedItem.type !== 'bundle'" @click="toggleEquip(selectedItem); showItemModal = false"
                 class="flex-1 btn-reppy !py-5 shadow-2xl" :class="isEquipped(selectedItem) ? '!bg-zinc-800 !text-muted' : 'shadow-primary-500/20'">
@@ -548,25 +546,105 @@ const loading = ref(true);
 const currentTime = ref(new Date());
 let timerInterval = null;
 
-const activePotion = computed(() => {
-  const user = authStore.user;
-  if (!user || !user.damage_multiplier || !user.damage_multiplier_expiry) return null;
-  
-  const expiry = new Date(user.damage_multiplier_expiry);
-  const now = currentTime.value;
-  
-  if (expiry <= now) return null;
-  
-  const diff = expiry - now;
+const formatTimeLeft = (diff) => {
   const hours = Math.floor(diff / (1000 * 60 * 60));
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+};
+
+const activePotions = computed(() => {
+  const user = authStore.user;
+  if (!user) return [];
   
-  return {
-    multiplier: parseFloat(user.damage_multiplier).toFixed(1),
-    timeLeft: `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-  };
+  const now = currentTime.value;
+  const boosts = [];
+
+  // Check Damage Multiplier
+  if (user.damage_multiplier_expiry && new Date(user.damage_multiplier_expiry) > now) {
+    const expiry = new Date(user.damage_multiplier_expiry);
+    const diff = expiry - now;
+    const mult = parseFloat(user.damage_multiplier);
+    const percent = Math.round((mult - 1) * 100);
+    boosts.push({
+      type: 'multiplier',
+      label: 'inv_dmg_mult',
+      value: `x${mult.toFixed(1)}`,
+      description: i18n.t('inv_dmg_mult_desc', { percent }),
+      timeLeft: formatTimeLeft(diff)
+    });
+  }
+
+  // Check DEX Bonus
+  if (user.dex_bonus_expiry && new Date(user.dex_bonus_expiry) > now) {
+    const expiry = new Date(user.dex_bonus_expiry);
+    const diff = expiry - now;
+    boosts.push({
+      type: 'dex',
+      label: 'inv_dex_boost',
+      value: `+${user.dex_bonus}`,
+      description: i18n.t('inv_dex_boost_desc'),
+      timeLeft: formatTimeLeft(diff)
+    });
+  }
+
+  return boosts;
 });
+
+const combatStats = ref({
+  total: 0,
+  base: 0,
+  gear: 0,
+  buff: 0,
+  multiplier: 1.0,
+  critChance: 0,
+  minDamage: 0,
+  maxDamage: 0
+});
+
+const fetchStats = async () => {
+  try {
+    const res = await axios.get('/api/reps/stats');
+    if (res.data.combatPower) {
+      combatStats.value = {
+        total: res.data.combatPower.total,
+        base: res.data.combatPower.base,
+        gear: res.data.combatPower.gear,
+        buff: res.data.combatPower.buff,
+        multiplier: res.data.combatPower.multiplier,
+        critChance: res.data.combatPower.critChance,
+        minDamage: res.data.combatPower.minDamage,
+        maxDamage: res.data.combatPower.maxDamage
+      };
+    }
+  } catch (e) {
+    console.error('Error fetching combat stats:', e);
+  }
+};
+
+// Watch for potion expiry to refresh combat stats in Armory
+watch(() => activePotions.value.length, (newLen, oldLen) => {
+  if (newLen < oldLen) {
+    fetchStats();
+    authStore.fetchProfile();
+  }
+});
+
+const isPotionTypeActive = (item) => {
+  if (!item || !item.stats) return false;
+  const user = authStore.user;
+  if (!user) return false;
+  const now = currentTime.value;
+  
+  if (item.stats.multiplier) {
+    return user.damage_multiplier_expiry && new Date(user.damage_multiplier_expiry) > now;
+  }
+  if (item.stats.dex_bonus) {
+    return user.dex_bonus_expiry && new Date(user.dex_bonus_expiry) > now;
+  }
+  return false;
+};
+
 
 const activeTab = ref('gear'); // Default to gear for the redesign
 const activeStashTab = ref('all');
@@ -603,34 +681,6 @@ const comparisonState = ref({
 
 const showItemModal = ref(false);
 const selectedItem = ref(null);
-
-const combatStats = ref({
-  total: 0,
-  base: 0,
-  gear: 0,
-  buff: 0,
-  multiplier: 1.0,
-  critChance: 0
-});
-
-const fetchStats = async () => {
-  try {
-    const res = await axios.get('/api/reps/stats');
-    if (res.data.combatPower) {
-      combatStats.value = {
-        total: res.data.combatPower.total,
-        base: res.data.combatPower.base,
-        gear: res.data.combatPower.gear,
-        buff: res.data.combatPower.buff,
-        multiplier: res.data.combatPower.multiplier,
-        // Calculate crit chance locally for immediate feedback if possible, or use one from backend if we add it
-        critChance: Math.round((authStore.user?.dex_lvl * 2.5) + (authStore.user?.vig_lvl * 0.5)) || 0
-      };
-    }
-  } catch (e) {
-    console.error('Error fetching combat stats:', e);
-  }
-};
 
 const statLabels = {
   str: 'Fuerza',
@@ -1030,6 +1080,7 @@ const handleActivate = async (item) => {
     notificationStore.notify(res.data.message, 'success');
     await fetchInventory();
     await authStore.fetchProfile();
+    await fetchStats(); // Refresh combat stats for immediate feedback
   } catch (err) {
     notificationStore.notify(err.response?.data?.message || 'Error al activar', 'error');
   }

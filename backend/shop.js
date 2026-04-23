@@ -237,17 +237,39 @@ router.post('/activate/:id', authenticate, async (req, res) => {
       return res.status(403).json({ message: 'No tienes este objeto en tu inventario' });
     }
 
-    const multiplier = parseFloat(item.css_value) || 1.5;
-
     await query('BEGIN');
 
-    // 1. Update user bonus (Resetting the 24h timer)
-    await query(`
-      UPDATE users 
-      SET damage_multiplier = $1, 
-          damage_multiplier_expiry = CURRENT_TIMESTAMP + INTERVAL '24 hours' 
-      WHERE id = $2
-    `, [multiplier, userId]);
+        // 2. Activate specific stat boost or generic multiplier
+        let updateQuery = '';
+        let updateParams = [];
+        let bonusDesc = '';
+        let bonusValue = '';
+        const durationSeconds = item.stats.duration || 3600;
+
+        if (item.stats.dex_bonus) {
+            bonusDesc = 'DEX +' + item.stats.dex_bonus;
+            bonusValue = '+' + item.stats.dex_bonus;
+            updateQuery = `
+                UPDATE users 
+                SET dex_bonus = $2, 
+                    dex_bonus_expiry = NOW() + INTERVAL '1 second' * $3 
+                WHERE id = $1
+            `;
+            updateParams = [userId, item.stats.dex_bonus, durationSeconds];
+        } else {
+            const multiplier = item.stats.multiplier || 1.5;
+            bonusDesc = 'Daño x' + multiplier;
+            bonusValue = 'x' + multiplier;
+            updateQuery = `
+                UPDATE users 
+                SET damage_multiplier = $2, 
+                    damage_multiplier_expiry = NOW() + INTERVAL '1 second' * $3 
+                WHERE id = $1
+            `;
+            updateParams = [userId, multiplier, durationSeconds];
+        }
+
+        await query(updateQuery, updateParams);
 
     // 2. Consume item
     if (invRes.rows[0].quantity > 1) {
@@ -259,18 +281,27 @@ router.post('/activate/:id', authenticate, async (req, res) => {
     // 3. Post to social feed
     try {
       const today = new Date().toISOString().split('T')[0];
-      const summaryRes = await query('SELECT id FROM daily_summaries WHERE user_id = $1 AND date = $2', [userId, today]);
+      const durationDesc = durationSeconds >= 3600 ? `${Math.floor(durationSeconds/3600)}h` : `${Math.floor(durationSeconds/60)}m`;
+      const summaryRes = await query('SELECT id, description FROM daily_summaries WHERE user_id = $1 AND date = $2', [userId, today]);
       if (summaryRes.rows.length > 0) {
+        let newDesc = summaryRes.rows[0].description || '';
+        // If it already has buffs, just add a comma or newline without repeating the prefix too much
+        if (newDesc.includes('🚀 [BUFFS]:')) {
+          newDesc = newDesc.replace('🚀 [BUFFS]:', `🚀 [BUFFS]: ${item.name} (${bonusDesc}), `);
+        } else {
+          newDesc += `\n\n🚀 [BUFFS]: ${item.name} (${bonusDesc})`;
+        }
+        
         await query(`
           UPDATE daily_summaries 
-          SET description = COALESCE(description, '') || '\n\n🚀 [POTENCIADOR ACTIVADO]: ' || $1 || ' (Bonus x' || $2 || ' durante 24h)'
-          WHERE id = $3
-        `, [item.name, multiplier, summaryRes.rows[0].id]);
+          SET description = $1
+          WHERE id = $2
+        `, [newDesc, summaryRes.rows[0].id]);
       } else {
         await query(`
           INSERT INTO daily_summaries (user_id, date, title, description)
-          VALUES ($1, $2, 'Preparación para el Combate', '¡He activado un ' || $3 || '! Daño x' || $4 || ' durante las próximas 24 horas.')
-        `, [userId, today, item.name, multiplier]);
+          VALUES ($1, $2, 'Preparación para el Combate', '¡He activado un ' || $3 || '! (' || $4 || ' durante ' || $5 || ')')
+        `, [userId, today, item.name, bonusDesc, durationDesc]);
       }
     } catch (socialErr) {
       console.error('Error updating social feed for consumable:', socialErr);
@@ -280,8 +311,8 @@ router.post('/activate/:id', authenticate, async (req, res) => {
 
     res.json({ 
       message: `${item.name} activado con éxito`, 
-      multiplier,
-      expiry: new Date(Date.now() + 24 * 60 * 60 * 1000)
+      bonus: bonusValue,
+      expiry: new Date(Date.now() + durationSeconds * 1000)
     });
 
   } catch (error) {

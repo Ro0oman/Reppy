@@ -74,7 +74,15 @@ export const augmentUserWithLevels = (user) => {
   stats.forEach(stat => {
     const xp = user[`${stat}_xp`] || 0;
     const baseLvl = getStatLevel(xp);
-    const itemBonus = itemBonuses[stat] || 0;
+    let itemBonus = itemBonuses[stat] || 0;
+    
+    // Check for temporary stat bonuses (e.g., DEX potion)
+    if (stat === 'dex' && user.dex_bonus && user.dex_bonus_expiry) {
+      if (new Date(user.dex_bonus_expiry) > new Date()) {
+        itemBonus += user.dex_bonus;
+      }
+    }
+
     const totalLvl = baseLvl + itemBonus;
     
     const lvlStart = getXPForLevel(baseLvl, 100);

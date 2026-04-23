@@ -90,10 +90,11 @@ router.post('/spin', authenticate, async (req, res) => {
       await query('UPDATE users SET level_chests = level_chests + 1 WHERE id = $1', [userId]);
     } else if (selectedPrize.type === 'consumable') {
       // Find the specific item ID
-      // We look for any consumable with multiplier 1.5 (legacy name support)
+      // Find a common consumable as a prize
       const itemRes = await query(`
         SELECT id, name FROM items 
-        WHERE type = 'consumable' AND stats->>'multiplier' = '1.5'
+        WHERE type = 'consumable' AND rarity = 'common'
+        ORDER BY RANDOM()
         LIMIT 1
       `);
       

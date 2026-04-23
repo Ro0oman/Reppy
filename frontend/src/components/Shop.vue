@@ -210,16 +210,18 @@
               <div v-for="(val, stat) in selectedItem?.stats" :key="stat" class="flex items-center justify-between p-4 sm:p-5 bg-white/5 border border-white/5 rounded-xl sm:rounded-2xl">
                 <div class="flex items-center gap-3 sm:gap-4">
                   <div class="w-8 h-8 sm:w-10 sm:h-10 bg-foreground/5 rounded-lg sm:rounded-xl flex items-center justify-center font-black text-[10px] sm:text-xs uppercase">{{ stat }}</div>
-                  <span class="text-[11px] sm:text-sm font-black text-foreground uppercase tracking-widest">{{ statLabels[stat] || stat }}</span>
+                  <span class="text-[11px] sm:text-sm font-black text-foreground uppercase tracking-widest">{{ i18n.t('stat_' + stat) }}</span>
                 </div>
                 <div class="flex items-center gap-3 sm:gap-4">
-                  <span class="text-lg sm:text-xl font-black text-foreground tabular-nums">+{{ val }}</span>
+                  <span class="text-lg sm:text-xl font-black text-foreground tabular-nums">
+                    {{ stat === 'duration' ? formatDuration(val) : (stat === 'multiplier' ? 'x' + val : (stat.includes('bonus') ? '+' + val : '+' + val)) }}
+                  </span>
                   <!-- Comparison -->
-                  <div v-if="getStatDiff(stat, val) !== 0" class="flex items-center gap-1 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg text-[9px] sm:text-[10px] font-black" :class="getStatDiff(stat, val) > 0 ? 'text-neon-lime bg-neon-lime/10' : 'text-red-500 bg-red-500/10'">
+                  <div v-if="stat !== 'duration' && stat !== 'multiplier' && getStatDiff(stat, val) !== 0" class="flex items-center gap-1 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg text-[9px] sm:text-[10px] font-black" :class="getStatDiff(stat, val) > 0 ? 'text-neon-lime bg-neon-lime/10' : 'text-red-500 bg-red-500/10'">
                     <component :is="getStatDiff(stat, val) > 0 ? ChevronUp : ChevronDown" class="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                     {{ Math.abs(getStatDiff(stat, val)) }}
                   </div>
-                  <div v-else class="text-[9px] sm:text-[10px] font-black text-muted opacity-30">{{ i18n.t('shop_stat_equal') }}</div>
+                  <div v-else-if="stat !== 'duration' && stat !== 'multiplier'" class="text-[9px] sm:text-[10px] font-black text-muted opacity-30">{{ i18n.t('shop_stat_equal') }}</div>
                 </div>
               </div>
             </div>
@@ -409,7 +411,9 @@
                 </div>
                 <div v-if="item.type === 'consumable'" class="flex flex-col items-center gap-2">
                    <FlaskConical class="w-10 h-10 animate-pulse" :class="getRarityBadge(item).classes?.split(' ')[0]" />
-                   <span class="text-[8px] font-black uppercase tracking-widest" :class="getRarityBadge(item).classes?.split(' ')[0]">BOOST x{{ item.css_value }}</span>
+                   <span v-if="item.stats?.multiplier" class="text-[8px] font-black uppercase tracking-widest" :class="getRarityBadge(item).classes?.split(' ')[0]">BOOST x{{ item.stats.multiplier }}</span>
+                   <span v-else-if="item.stats?.dex_bonus" class="text-[8px] font-black uppercase tracking-widest" :class="getRarityBadge(item).classes?.split(' ')[0]">DEX +{{ item.stats.dex_bonus }}</span>
+                   <span class="text-[7px] font-black text-muted uppercase opacity-60">{{ formatDuration(item.stats?.duration) }}</span>
                 </div>
                <div v-if="item.type === 'post_background'" class="w-full h-full relative group/post-bg overflow-hidden flex items-center justify-center">
                   <div class="w-[90%] h-[80%] bg-black border border-border rounded-lg relative overflow-hidden flex flex-col p-2 gap-2 shadow-2xl shop-preview">
@@ -745,7 +749,18 @@ const statLabels = {
   agi: 'Agilidad',
   vig: 'Vigor',
   dex: 'Destreza',
-  cha: 'Carisma'
+  cha: 'Carisma',
+  duration: 'Duración',
+  multiplier: 'Multiplicador'
+};
+
+const formatDuration = (seconds) => {
+  if (!seconds) return '0m';
+  if (seconds < 3600) {
+    return `${Math.floor(seconds / 60)} ${i18n.t('tf_minutes') || 'Minutos'}`;
+  }
+  const hours = Math.floor(seconds / 3600);
+  return `${hours} ${hours === 1 ? (i18n.t('tf_hour') || 'Hora') : (i18n.t('tf_hours') || 'Horas')}`;
 };
 
 const selectedCategory = ref('all');

@@ -263,7 +263,7 @@ router.get('/stats', authenticate, async (req, res) => {
 
     // 6. Combat Power (Damage per Rep)
     const user = await getUserWithGear(userId);
-    const dmgPerRep = calculateDamage(user, 1, isGlobal ? 'pullups' : type);
+    const dmgPerRep = calculateDamage(user, 1, isGlobal ? 'pullups' : type, null, false, true);
 
     res.json({
       totalReps,
@@ -278,7 +278,11 @@ router.get('/stats', authenticate, async (req, res) => {
         base: dmgPerRep.baseDamage,
         gear: dmgPerRep.gearBonus,
         buff: dmgPerRep.buffBonus,
-        multiplier: dmgPerRep.activeMultiplier
+        multiplier: dmgPerRep.activeMultiplier,
+        critChance: dmgPerRep.critChance,
+        critMultiplier: dmgPerRep.critMultiplier,
+        minDamage: dmgPerRep.minDamage,
+        maxDamage: dmgPerRep.maxDamage
       }
     });
   } catch (error) {

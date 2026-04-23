@@ -150,6 +150,9 @@ export default {
     tf_month: 'Mes',
     tf_year: 'Año',
     tf_all: 'Total',
+    tf_minutes: 'Minutos',
+    tf_hour: 'Hora',
+    tf_hours: 'Horas',
 
     // Sección de Estadísticas
     stats_effort: 'Esfuerzo Total',
@@ -626,6 +629,14 @@ export default {
     shop_initiate_acquisition: 'INICIAR ADQUISICIÓN',
     shop_bundle_contents: 'CONTENIDO DEL LOTE',
     shop_bundle_value: 'VALOR DEL LOTE',
+    shop_combat_analysis: 'ANÁLISIS DE COMBATE',
+    shop_acquisition_cost: 'COSTE DE ADQUISICIÓN',
+    shop_stat_equal: 'IGUAL',
+    stat_duration: 'Duración',
+    stat_multiplier: 'Multiplicador',
+    stat_crit_dmg: 'Daño Crítico',
+    stat_crit_chance: 'Prob. Crítica',
+    stat_dex_bonus: 'Bono de Destreza',
 
     // Roulette
     roulette_exe_available: 'ROULETTE.EXE DISPONIBLE',
@@ -839,6 +850,7 @@ export default {
     inv_link_artifact: 'ENLAZAR_ARTEFACTO',
     inv_unlink_artifact: 'DESENLAZAR_ARTEFACTO',
     inv_activate_module: 'ACTIVAR_MÓDULO',
+    inv_already_active: 'YA_ESTÁ_ACTIVO',
     inv_close: 'CERRAR',
     
     inv_cat_helmet: 'MÓDULO_CASCO',
@@ -854,8 +866,13 @@ export default {
     rarity_legendary: 'LEGENDARIO',
     rarity_calisthenic: 'CALISTÉNICO',
     
-    // Combat Dashboard
+    inv_total_power: 'DAÑO_TOTAL_POTENCIAL',
     dash_base_dmg: 'DAÑO_BASE_POR_REP',
+    dash_base_skill: 'HABILIDAD_BASE',
+    dash_gear_bonus: 'BONUS_EQUIPO',
+    dash_active_buffs: 'BUFFS_ACTIVOS',
+    dash_potion_impact: 'IMPACTO_POCIÓN',
+    dash_of_total: 'DEL TOTAL',
     dash_gear_mod: 'MODIFICADOR_EQUIPO',
     dash_crit_overlay: 'PROBABILIDAD_CRÍTICA',
     dash_per_rep: 'POR_REPETICIÓN',
@@ -872,10 +889,14 @@ export default {
     
     inv_active_buffs: 'BUFFS_NEURONALES_ACTIVOS',
     inv_dmg_mult: 'MULTIPLICADOR_DAÑO',
+    inv_dmg_mult_desc: '+{percent}% de daño global',
+    inv_dex_boost: 'AUMENTO_DESTREZA',
+    inv_dex_boost_desc: 'Aumenta críticos y precisión',
     inv_boost_active: 'Boost Activo',
     inv_time_left: 'TIEMPO_RESTANTE',
     inv_sync_stash: 'SINCRONIZANDO_NEXUS_STASH...',
     inv_offline: 'DESCONECTADO',
     inv_empty_slot: 'RANURA_VACÍA',
+    inv_loadout_title: 'CARGA ACTIVA',
     inv_aesthetic_title: 'MÓDULOS_ESTÉTICOS'
 };

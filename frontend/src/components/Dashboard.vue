@@ -70,32 +70,61 @@
 
             <div class="mt-4 relative z-10">
               <div class="flex items-baseline gap-2">
-                <span class="text-5xl font-black text-white italic tracking-tighter">{{ stats.combatPower.total }}</span>
-                <span class="text-[10px] font-black text-muted uppercase tracking-widest">DMG / REP</span>
+                <span class="text-4xl font-black text-white italic tracking-tighter">
+                  {{ stats.combatPower.minDamage }} - {{ stats.combatPower.maxDamage }}
+                </span>
+                <span class="text-[10px] font-black text-muted uppercase tracking-widest">DMG RANGE / REP</span>
+              </div>
+              <div class="text-[9px] font-bold text-primary-500/60 uppercase tracking-[0.2em] mt-1 italic">
+                 ESTIMATED_AVG: {{ stats.combatPower.total }}
               </div>
               
               <!-- Detailed Breakdown -->
               <div class="grid grid-cols-1 gap-2 mt-6 pt-6 border-t border-white/5">
                 <div class="flex justify-between items-center">
-                  <span class="text-[9px] font-bold text-muted/60 uppercase">BASE_SKILL</span>
+                  <span class="text-[9px] font-bold text-muted/60 uppercase">{{ i18n.t('dash_base_skill') }}</span>
                   <span class="text-xs font-black text-white italic">{{ stats.combatPower.base }}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                  <span class="text-[9px] font-bold text-primary-400 uppercase">⚔️ GEAR_BONUS</span>
+                  <span class="text-[9px] font-bold text-primary-400 uppercase">⚔️ {{ i18n.t('dash_gear_bonus') }}</span>
                   <span class="text-xs font-black text-primary-400 italic">+{{ stats.combatPower.gear }}</span>
                 </div>
                 <div class="flex justify-between items-center" v-if="stats.combatPower.buff > 0">
-                  <span class="text-[9px] font-bold text-neon-lime uppercase">🧪 ACTIVE_BUFFS</span>
+                  <span class="text-[9px] font-bold text-neon-lime uppercase">🧪 {{ i18n.t('dash_active_buffs') }}</span>
                   <span class="text-xs font-black text-neon-lime italic">+{{ stats.combatPower.buff }}</span>
+                </div>
+
+                <!-- Crit Stats -->
+                <div class="flex justify-between items-center mt-2 pt-2 border-t border-white/5 opacity-60">
+                   <div class="flex items-center gap-1.5">
+                      <Zap class="w-2.5 h-2.5 text-amber-400" />
+                      <span class="text-[8px] font-bold text-white uppercase">{{ stats.combatPower.critChance }}% CRIT</span>
+                   </div>
+                   <div class="flex items-center gap-1.5">
+                      <Target class="w-2.5 h-2.5 text-amber-400" />
+                      <span class="text-[8px] font-bold text-white uppercase">x{{ stats.combatPower.critMultiplier }} MULT</span>
+                   </div>
+                </div>
+
+                <!-- Contribution Bar -->
+                <div class="mt-4 space-y-1.5" v-if="stats.combatPower.buff > 0">
+                  <div class="h-1 bg-white/5 rounded-full overflow-hidden">
+                    <div class="h-full bg-neon-lime shadow-[0_0_10px_rgba(183,255,0,0.4)] transition-all duration-1000" 
+                         :style="{ width: Math.min(100, (stats.combatPower.buff / stats.combatPower.total) * 100) + '%' }"></div>
+                  </div>
+                  <div class="flex justify-between text-[7px] font-black uppercase tracking-widest text-muted/40">
+                    <span>{{ i18n.t('dash_potion_impact') }}</span>
+                    <span class="text-neon-lime">{{ Math.round((stats.combatPower.buff / stats.combatPower.total) * 100) }}% {{ i18n.t('dash_of_total') }}</span>
+                  </div>
                 </div>
                 
                 <!-- Active Potion Timer (Real-time) -->
-                <div v-if="activePotion" class="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-between">
+                <div v-for="boost in activePotions" :key="boost.type" class="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-between">
                   <div class="flex items-center gap-2">
                     <FlaskConical class="w-3.5 h-3.5 text-emerald-500 animate-bounce" />
-                    <span class="text-[9px] font-black text-emerald-500 uppercase tracking-widest">DAMAGE_BOOST x{{ activePotion.multiplier }}</span>
+                    <span class="text-[9px] font-black text-emerald-500 uppercase tracking-widest">{{ boost.label }} {{ boost.value }}</span>
                   </div>
-                  <span class="text-[10px] font-black text-white font-mono">{{ activePotion.timeLeft }}</span>
+                  <span class="text-[10px] font-black text-white font-mono">{{ boost.timeLeft }}</span>
                 </div>
               </div>
             </div>
@@ -275,7 +304,7 @@ const stats = reactive({
   dailyGoal: 50,
   totalVolume: 0,
   bodyWeight: 75,
-  combatPower: { total: 0, base: 0, gear: 0, buff: 0 }
+  combatPower: { total: 0, base: 0, gear: 0, buff: 0, critChance: 0, critMultiplier: 1, minDamage: 0, maxDamage: 0 }
 });
 
 const activeExerciseLabel = computed(() => {
@@ -292,24 +321,52 @@ const todayProgress = computed(() => {
 const currentTime = ref(new Date());
 let timerInterval = null;
 
-const activePotion = computed(() => {
-  const user = authStore.user;
-  if (!user || !user.damage_multiplier || !user.damage_multiplier_expiry) return null;
-  
-  const expiry = new Date(user.damage_multiplier_expiry);
-  const now = currentTime.value;
-  
-  if (expiry <= now) return null;
-  
-  const diff = expiry - now;
+const formatTimeLeft = (diff) => {
   const hours = Math.floor(diff / (1000 * 60 * 60));
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+};
+
+const activePotions = computed(() => {
+  const user = authStore.user;
+  if (!user) return [];
   
-  return {
-    multiplier: parseFloat(user.damage_multiplier).toFixed(1),
-    timeLeft: `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-  };
+  const now = currentTime.value;
+  const boosts = [];
+
+  // Check Damage Multiplier
+  if (user.damage_multiplier_expiry && new Date(user.damage_multiplier_expiry) > now) {
+    const expiry = new Date(user.damage_multiplier_expiry);
+    const diff = expiry - now;
+    boosts.push({
+      type: 'multiplier',
+      label: i18n.t('inv_dmg_mult'),
+      value: `x${parseFloat(user.damage_multiplier).toFixed(1)}`,
+      timeLeft: formatTimeLeft(diff)
+    });
+  }
+
+  // Check DEX Bonus
+  if (user.dex_bonus_expiry && new Date(user.dex_bonus_expiry) > now) {
+    const expiry = new Date(user.dex_bonus_expiry);
+    const diff = expiry - now;
+    boosts.push({
+      type: 'dex',
+      label: i18n.t('inv_dex_boost'),
+      value: `+${user.dex_bonus}`,
+      timeLeft: formatTimeLeft(diff)
+    });
+  }
+
+  return boosts;
+});
+
+// Watch for potion expiry to refresh combat stats
+watch(() => activePotions.value.length, (newLen, oldLen) => {
+  if (newLen < oldLen) {
+    fetchData();
+  }
 });
 
 const fetchData = async () => {
