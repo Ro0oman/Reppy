@@ -34,7 +34,7 @@
     
     <div v-else class="space-y-16">
       <!-- Modern Filters Interface (Grid Layout) -->
-      <div class="flex flex-col lg:flex-row items-center gap-6 bg-surface/20 p-4 rounded-3xl border border-border/50 backdrop-blur-sm relative z-30">
+      <div class="flex flex-col lg:flex-row items-center gap-6 bg-surface/20 p-4 rounded-3xl  border-border/50 backdrop-blur-sm relative z-30">
         
         <!-- Categories Dropdown (Left Side) -->
         <div class="w-full lg:w-72 relative z-20">
