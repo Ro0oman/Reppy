@@ -376,10 +376,11 @@ const fetchData = async () => {
       type: activeExercise.value,
       year: activeYear.value 
     };
+    const t = Date.now();
     const [repsRes, heatmapRes, statsRes] = await Promise.all([
-      axios.get('/api/reps', { params }),
-      axios.get('/api/reps/heatmap', { params }),
-      axios.get('/api/reps/stats', { params }),
+      axios.get('/api/reps', { params: { ...params, t } }),
+      axios.get('/api/reps/heatmap', { params: { ...params, t } }),
+      axios.get('/api/reps/stats', { params: { ...params, t } }),
       authStore.fetchProfile()
     ]);
 

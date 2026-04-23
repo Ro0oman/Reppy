@@ -11,9 +11,20 @@
         <p class="text-[10px] font-bold text-muted uppercase tracking-[0.5em] font-tight max-w-md mx-auto">{{ i18n.t('inv_subtitle') }}</p>
       </div>
     </div>
-
-
-
+    
+    <!-- Tabs Navigation -->
+    <div class="flex items-center justify-center gap-4 mb-8">
+      <button @click="activeTab = 'gear'; activeStashTab = 'all'; playZip()" 
+              class="px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all border"
+              :class="activeTab === 'gear' ? 'bg-primary-500 text-white border-primary-400 shadow-lg shadow-primary-500/20' : 'bg-surface/20 text-muted border-white/5 hover:border-white/10'">
+        {{ i18n.t('inv_tab_gear') || 'COMBAT_GEAR' }}
+      </button>
+      <button @click="activeTab = 'cosmetics'; activeStashTab = 'all'; playZip()" 
+              class="px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all border"
+              :class="activeTab === 'cosmetics' ? 'bg-purple-600 text-white border-purple-500 shadow-lg shadow-purple-500/20' : 'bg-surface/20 text-muted border-white/5 hover:border-white/10'">
+        {{ i18n.t('inv_tab_cosmetics') || 'AESTHETICS' }}
+      </button>
+    </div>
 
     <!-- TAB: TACTICAL GEAR (Armory Grid) -->
     <div v-if="activeTab === 'gear'" class="space-y-16 animate-in">
@@ -73,8 +84,25 @@
       <!-- Detailed stats removed per user request, now handled in Codex -->
 
       <!-- Section: Modules (Chests) -->
-      <div v-if="authStore.user?.level_chests > 0 || authStore.user?.boss_chests > 0" 
-           class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+      <div v-if="authStore.user?.level_chests > 0 || authStore.user?.boss_chests > 0 || authStore.user?.legendary_chests > 0" 
+           class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto justify-center">
+        <div v-if="authStore.user?.legendary_chests > 0" @click="handleOpenLegendaryChest" :disabled="openingChest"
+          class="tactical-chest-button p-1 rounded-3xl bg-amber-500/10 border border-amber-500/20 group cursor-pointer hover:bg-amber-500/20 transition-all overflow-hidden relative shadow-[0_0_40px_rgba(245,158,11,0.1)]">
+          <div class="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent pointer-events-none"></div>
+          <div class="flex items-center justify-between p-6 relative z-10">
+            <div class="flex items-center gap-6">
+              <div class="p-4 bg-amber-500/20 rounded-2xl border border-amber-500/30 group-hover:scale-110 transition-transform">
+                <Trophy class="w-8 h-8 text-amber-500" />
+              </div>
+              <div class="text-left">
+                <p class="text-[10px] font-black text-amber-400 uppercase tracking-[0.3em] font-mono leading-none mb-1">LEGENDARY_VAULT</p>
+                <h4 class="text-2xl font-black text-foreground italic">{{ authStore.user.legendary_chests }} Ready</h4>
+              </div>
+            </div>
+            <Sparkles class="w-6 h-6 text-amber-500 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </div>
+
         <div v-if="authStore.user?.level_chests > 0" @click="handleOpenLevelChest" :disabled="openingChest"
           class="tactical-chest-button p-1 rounded-3xl bg-cyan-500/10 border border-cyan-500/20 group cursor-pointer hover:bg-cyan-500/20 transition-all overflow-hidden relative">
           <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent pointer-events-none"></div>
@@ -172,19 +200,26 @@
                  class="absolute inset-0 rounded-2xl border border-primary-500/20 shadow-[0_0_20px_rgba(255,69,0,0.1)] pointer-events-none group-hover:border-primary-500/40 transition-colors"></div>
           </div>
         </div>
+      </div>
+    </div>
 
-        <div class="flex items-center gap-4 pt-8">
-          <div class="h-px flex-1 bg-gradient-to-r from-transparent to-white/10"></div>
-          <h3 class="text-[10px] font-black text-muted uppercase tracking-[0.5em] font-mono">{{ i18n.t('inv_aesthetic_title') }}</h3>
-          <div class="h-px flex-1 bg-gradient-to-l from-transparent to-white/10"></div>
+    <!-- TAB: AESTHETICS (Cosmetics Grid) -->
+    <div v-if="activeTab === 'cosmetics'" class="space-y-16 animate-in">
+      <!-- LOADOUT CONSOLE (Active Aesthetics) -->
+      <div class="space-y-8">
+        <div class="flex items-center gap-4">
+          <div class="h-px flex-1 bg-gradient-to-r from-transparent to-purple-500/20"></div>
+          <h3 class="text-[10px] font-black text-purple-400 uppercase tracking-[0.5em] font-mono">{{ i18n.t('inv_identity_title') || 'IDENTITY_LOADOUT' }}</h3>
+          <div class="h-px flex-1 bg-gradient-to-l from-transparent to-purple-500/20"></div>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4 relative">
           <div v-for="slot in loadoutSlots" :key="slot.type" 
-               class="relative group rounded-2xl bg-surface/10 border border-white/5 p-4 flex flex-col items-center justify-center gap-3 min-h-[140px] transition-all hover:bg-white/5 overflow-hidden">
+               @click="getEquippedItem(slot.type) && openItemDetails(getEquippedItem(slot.type))"
+               class="relative group rounded-2xl bg-surface/10 border border-white/5 p-4 flex flex-col items-center justify-center gap-3 min-h-[140px] transition-all hover:bg-white/5 overflow-hidden cursor-pointer">
             
             <!-- Scanning Line -->
-            <div class="absolute inset-x-0 h-px bg-primary-500/20 top-0 group-hover:top-full transition-all duration-[2s] ease-linear pointer-events-none z-10"></div>
+            <div class="absolute inset-x-0 h-px bg-purple-500/20 top-0 group-hover:top-full transition-all duration-[2s] ease-linear pointer-events-none z-10"></div>
             
             <div class="absolute top-2 left-2 text-[6px] font-mono text-muted/50 uppercase tracking-widest">{{ slot.label }}</div>
             
@@ -216,13 +251,14 @@
 
             <!-- Glow based on rarity -->
             <div v-if="getEquippedItem(slot.type)" 
-                 class="absolute inset-0 rounded-2xl border border-primary-500/20 shadow-[0_0_20px_rgba(255,69,0,0.1)] pointer-events-none group-hover:border-primary-500/40 transition-colors"></div>
+                 class="absolute inset-0 rounded-2xl border border-purple-500/20 shadow-[0_0_20px_rgba(168,85,247,0.1)] pointer-events-none group-hover:border-purple-500/40 transition-colors"></div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Main Stash Layout -->
-      <div class="space-y-12">
+    <!-- Main Stash Layout (Shared between tabs but filtered) -->
+    <div class="space-y-12">
         <div v-if="loading" class="py-32 flex flex-col items-center justify-center gap-6">
            <div class="relative">
              <div class="w-16 h-16 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin"></div>
@@ -401,7 +437,6 @@
           </div>
         </div>
       </div>
-    </div>
 
     <!-- Chest Opening Modal Overlay -->
     <ChestOpening 
@@ -651,15 +686,27 @@ const activeStashTab = ref('all');
 const showDropdown = ref(false);
 const selectedRarity = ref('all');
 
-const categories = [
-  { id: 'all', label: 'shop_cat_all', icon: Archive },
-  { id: 'gear', label: 'inv_cat_gear', icon: Swords },
-  { id: 'head', label: 'shop_cat_head', icon: Zap },
-  { id: 'weapon', label: 'shop_cat_weapons', icon: Sword },
-  { id: 'armor', label: 'shop_cat_armor', icon: Shield },
-  { id: 'boots', label: 'shop_cat_boots', icon: Footprints },
-  { id: 'consumable', label: 'shop_cat_consumables', icon: Flame }
-];
+const categories = computed(() => {
+  if (activeTab.value === 'gear') {
+    return [
+      { id: 'all', label: 'shop_cat_all', icon: Archive },
+      { id: 'head', label: 'shop_cat_head', icon: Zap },
+      { id: 'weapon', label: 'shop_cat_weapons', icon: Sword },
+      { id: 'armor', label: 'shop_cat_armor', icon: Shield },
+      { id: 'boots', label: 'shop_cat_boots', icon: Footprints },
+      { id: 'consumable', label: 'shop_cat_consumables', icon: Flame }
+    ];
+  } else {
+    return [
+      { id: 'all', label: 'shop_cat_all', icon: Archive },
+      { id: 'title', label: 'shop_tab_titles', icon: Type },
+      { id: 'border', label: 'shop_tab_borders', icon: Frame },
+      { id: 'avatar', label: 'shop_tab_avatars', icon: Users },
+      { id: 'post_background', label: 'shop_tab_post_backgrounds', icon: Activity },
+      { id: 'background', label: 'shop_tab_backgrounds', icon: Sparkles }
+    ];
+  }
+});
 
 const rarities = [
   { id: 'all', label: 'rarity_all', activeClass: 'bg-primary-500 text-white border-primary-500 shadow-lg shadow-primary-500/20' },
@@ -954,16 +1001,33 @@ watch([selectedStat, showChestModal], ([newStat, newChest]) => {
 });
 
 const handleOpenChest = async () => {
-  if (openingChest.value) return;
+  if (openingChest.value || authStore.user.boss_chests <= 0) return;
   openingChest.value = true;
   try {
     const res = await axios.post('/api/boss/open-chest');
-    chestReward.value = res.data.reward;
+    chestReward.value = res.data;
     reelItems.value = res.data.reel_items;
     showChestModal.value = true;
-    if (authStore.user) authStore.user.boss_chests--;
-  } catch (err) { notificationStore.notify('Chest decryption failed', 'error'); }
-  finally { openingChest.value = false; }
+  } catch (error) {
+    notificationStore.notify(error.response?.data?.message || 'Error al abrir cofre', 'error');
+  } finally {
+    openingChest.value = false;
+  }
+};
+
+const handleOpenLegendaryChest = async () => {
+  if (openingChest.value || authStore.user.legendary_chests <= 0) return;
+  openingChest.value = true;
+  try {
+    const res = await axios.post('/api/boss/open-legendary-chest');
+    chestReward.value = res.data;
+    reelItems.value = res.data.reel_items;
+    showChestModal.value = true;
+  } catch (error) {
+    notificationStore.notify(error.response?.data?.message || 'Error al abrir cofre legendario', 'error');
+  } finally {
+    openingChest.value = false;
+  }
 };
 
 const handleOpenLevelChest = async () => {
@@ -997,27 +1061,21 @@ const groupedItems = computed(() => {
   const groups = {};
   
   // Only non-cosmetic items for this inventory view
-  const nonCosmeticTypes = ['head', 'weapon', 'armor', 'boots', 'consumable'];
-  let filtered = inventory.value.filter(i => nonCosmeticTypes.includes(i.type));
+  const gearTypes = ['head', 'weapon', 'armor', 'boots', 'consumable'];
+  const aestheticTypes = ['title', 'border', 'background', 'post_background', 'avatar'];
+  
+  let filtered = inventory.value;
+  
+  if (activeTab.value === 'gear') {
+    filtered = filtered.filter(i => gearTypes.includes(i.type));
+  } else {
+    filtered = filtered.filter(i => aestheticTypes.includes(i.type));
+  }
 
   // Category filter
   if (activeStashTab.value !== 'all') {
-    if (activeStashTab.value === 'gear') {
-      filtered = filtered.filter(i => ['head', 'weapon', 'armor', 'boots'].includes(i.type));
-    } else if (activeStashTab.value === 'cores') {
-      filtered = filtered.filter(i => i.type === 'border');
-    } else if (activeStashTab.value === 'titles') {
-      filtered = filtered.filter(i => i.type === 'title');
-    } else if (activeStashTab.value === 'hud') {
-      filtered = filtered.filter(i => i.type === 'avatar');
-    } else if (activeStashTab.value === 'themes') {
-      filtered = filtered.filter(i => i.type === 'background' || i.type === 'post_background');
-    } else if (activeStashTab.value === 'consumables') {
-      filtered = filtered.filter(i => i.type === 'consumable');
-    } else {
-      // Direct type match (head, weapon, etc)
-      filtered = filtered.filter(i => i.type === activeStashTab.value);
-    }
+    // Direct type match (head, weapon, etc)
+    filtered = filtered.filter(i => i.type === activeStashTab.value);
   }
 
   // Rarity filter
@@ -1136,11 +1194,10 @@ const markSeen = async (item) => {
 };
 
 const hasNewInventoryOverall = computed(() => {
-  return (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory);
+  return (authStore.user?.boss_chests > 0 || authStore.user?.legendary_chests > 0 || authStore.user?.has_new_inventory);
 });
 
 onMounted(async () => {
-  playZip();
   await Promise.all([fetchInventory(), authStore.fetchProfile(), fetchStats()]);
   
   timerInterval = setInterval(() => {

@@ -132,9 +132,10 @@ router.post('/', authenticate, async (req, res) => {
            active_multiplier = $2,
            base_damage = $3,
            gear_bonus = $4,
-           buff_bonus = $5
-       WHERE id = $6`, 
-      [actualDamageDealt, dmgResult.activeMultiplier, dmgResult.baseDamage, dmgResult.gearBonus, dmgResult.buffBonus, result.rows[0].id]
+           buff_bonus = $5,
+           boss_fight_id = $6
+       WHERE id = $7`, 
+      [actualDamageDealt, dmgResult.activeMultiplier, dmgResult.baseDamage, dmgResult.gearBonus, dmgResult.buffBonus, bossRes.rows[0]?.id || null, result.rows[0].id]
     );
 
     res.json({ 
@@ -300,7 +301,7 @@ router.put('/:id', authenticate, async (req, res) => {
   try {
     // 1. Get old values
     const oldRes = await query(
-      'SELECT count, exercise_type, boss_damage_dealt, date FROM reps WHERE id = $1 AND user_id = $2',
+      'SELECT count, exercise_type, boss_damage_dealt, date, boss_fight_id FROM reps WHERE id = $1 AND user_id = $2',
       [id, userId]
     );
 
@@ -322,11 +323,12 @@ router.put('/:id', authenticate, async (req, res) => {
     let newBossDamageDealt = 0;
     const isToday = getLocalDateString(oldRep.date) === getLocalDateString();
 
-    // Find active boss
+    // Find active boss or the one originally damaged
     const bossRes = await query(
-      `SELECT id, current_hp, total_hp, weakness_stat FROM boss_fights 
-       WHERE status != 'defeated' 
-       ORDER BY order_index ASC LIMIT 1`
+      `SELECT id, current_hp, total_hp, weakness_stat, status FROM boss_fights 
+       WHERE id = $1 OR (status != 'defeated' AND $1 IS NULL)
+       ORDER BY CASE WHEN id = $1 THEN 0 ELSE 1 END, order_index ASC LIMIT 1`,
+      [oldRep.boss_fight_id]
     );
 
     // Get user with full stats for damage calculation
@@ -341,7 +343,7 @@ router.put('/:id', authenticate, async (req, res) => {
       const bossHpChange = newBossDamageDealt - oldRep.boss_damage_dealt;
       const newBossHp = Math.min(boss.total_hp, Math.max(0, boss.current_hp - bossHpChange));
 
-      await query(`UPDATE boss_fights SET current_hp = $1 WHERE id = $2`, [newBossHp, boss.id]);
+      await query(`UPDATE boss_fights SET current_hp = $1, status = CASE WHEN $1 > 0 AND status = 'defeated' THEN 'active' ELSE status END WHERE id = $2`, [newBossHp, boss.id]);
 
       // Update historic damage in event_participants
       await query(
@@ -413,7 +415,7 @@ router.delete('/:id', authenticate, async (req, res) => {
   try {
     // 1. Get old values for deduction
     const oldRes = await query(
-      'SELECT count, exercise_type, boss_damage_dealt, date FROM reps WHERE id = $1 AND user_id = $2',
+      'SELECT count, exercise_type, boss_damage_dealt, date, boss_fight_id FROM reps WHERE id = $1 AND user_id = $2',
       [id, userId]
     );
 
@@ -427,15 +429,16 @@ router.delete('/:id', authenticate, async (req, res) => {
     // 2. Restore Boss HP and adjust daily cap
     if (oldRep.boss_damage_dealt > 0) {
       const bossRes = await query(
-        `SELECT id, current_hp, total_hp FROM boss_fights 
-         WHERE status != 'defeated' 
-         ORDER BY order_index ASC LIMIT 1`
+        `SELECT id, current_hp, total_hp, status FROM boss_fights 
+         WHERE id = $1 OR (status != 'defeated' AND $1 IS NULL)
+         ORDER BY CASE WHEN id = $1 THEN 0 ELSE 1 END, order_index ASC LIMIT 1`,
+        [oldRep.boss_fight_id]
       );
 
       if (bossRes.rows.length > 0) {
         const boss = bossRes.rows[0];
         const restoredHp = Math.min(boss.total_hp, boss.current_hp + oldRep.boss_damage_dealt);
-        await query(`UPDATE boss_fights SET current_hp = $1 WHERE id = $2`, [restoredHp, boss.id]);
+        await query(`UPDATE boss_fights SET current_hp = $1, status = CASE WHEN $1 > 0 AND status = 'defeated' THEN 'active' ELSE status END WHERE id = $2`, [restoredHp, boss.id]);
 
         // Adjust participant historic damage too? (Optional, but more consistent)
         await query(

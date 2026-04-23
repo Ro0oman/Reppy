@@ -4,11 +4,17 @@
     
     <!-- Active Boss Card (Codex Style) -->
     <div @click="authStore.isAuthenticated && (showHistory = true)" 
-         class="w-full bg-surface/5 backdrop-blur-2xl border border-white/5 rounded-[3rem] shadow-[0_0_80px_rgba(236,72,153,0.05)] relative overflow-hidden group transition-all duration-700 cursor-pointer"
-         :class="authStore.isAuthenticated ? 'hover:border-primary-500/20 hover:shadow-[0_0_100px_rgba(236,72,153,0.1)]' : 'cursor-default'">
+         class="w-full bg-surface/5 backdrop-blur-2xl border rounded-[3rem] relative overflow-hidden group transition-all duration-700 cursor-pointer"
+         :class="[
+           authStore.isAuthenticated ? 'hover:border-primary-500/20' : 'cursor-default',
+           boss.is_legendary 
+             ? 'border-amber-500/30 shadow-[0_0_80px_rgba(245,158,11,0.1)] hover:shadow-[0_0_100px_rgba(245,158,11,0.2)]' 
+             : 'border-white/5 shadow-[0_0_80px_rgba(236,72,153,0.05)] hover:shadow-[0_0_100px_rgba(236,72,153,0.1)]'
+         ]">
       
       <!-- Ambient Background Glow -->
-      <div class="absolute inset-0 pointer-events-none opacity-20 bg-gradient-to-br from-primary-500/20 via-transparent to-transparent group-hover:opacity-40 transition-opacity duration-700"></div>
+      <div class="absolute inset-0 pointer-events-none opacity-20 bg-gradient-to-br via-transparent to-transparent group-hover:opacity-40 transition-opacity duration-700"
+           :class="boss.is_legendary ? 'from-amber-500/20' : 'from-primary-500/20'"></div>
       
       <!-- History Icon Hint (Authenticated only) -->
       <div v-if="authStore.isAuthenticated" class="absolute top-6 right-6 text-white/20 group-hover:text-primary-500 transition-colors z-20" :title="i18nStore.t('battle_history')">
@@ -19,9 +25,10 @@
 
         <!-- Top Status & Actions -->
         <div class="flex flex-wrap items-center gap-2 mb-5">
-           <span class="px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-500 text-[8px] md:text-[9px] font-black tracking-[0.3em] uppercase backdrop-blur-sm">
-              {{ i18nStore.t('boss_class_active') }}
-           </span>
+            <span class="px-3 py-1 rounded-full text-[8px] md:text-[9px] font-black tracking-[0.3em] uppercase backdrop-blur-sm border"
+                  :class="boss.is_legendary ? 'bg-amber-500/20 border-amber-500/30 text-amber-400' : 'bg-primary-500/10 border-primary-500/20 text-primary-500'">
+              {{ boss.is_legendary ? 'PROTOCOLO LEGENDARIO' : i18nStore.t('boss_class_active') }}
+            </span>
            <button @click.stop="showCodex = true" class="px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 text-[8px] md:text-[9px] font-black tracking-[0.3em] uppercase hover:bg-orange-500/20 hover:border-orange-500/40 transition-all backdrop-blur-sm flex items-center gap-1.5">
               <span>📖</span> {{ i18nStore.t('boss_how_damage') }}
            </button>
@@ -38,8 +45,9 @@
         <!-- Boss Info & Avatar -->
         <div class="flex flex-col md:flex-row gap-5 md:gap-6 items-center md:items-start mb-6">
            <!-- Portrait -->
-           <div class="relative shrink-0 group/img">
-              <div class="absolute inset-0 bg-primary-500/30 blur-[40px] rounded-full opacity-60 group-hover/img:opacity-100 transition-opacity duration-700"></div>
+            <div class="relative shrink-0 group/img">
+              <div class="absolute inset-0 blur-[40px] rounded-full opacity-60 group-hover/img:opacity-100 transition-opacity duration-700"
+                   :class="boss.is_legendary ? 'bg-amber-500/30' : 'bg-primary-500/30'"></div>
               <div class="w-24 h-24 md:w-32 md:h-32 rounded-[2rem] border border-white/10 bg-black/40 shadow-2xl overflow-hidden relative z-10">
                  <img v-if="boss.image_url" :src="boss.image_url" :alt="boss.name" class="w-full h-full object-cover transition-all duration-700" :class="isDefeated ? 'grayscale opacity-30 mix-blend-luminosity' : 'group-hover/img:scale-105 saturate-150'" />
                  <span v-else class="text-6xl font-black italic text-white/20 absolute inset-0 flex items-center justify-center">?</span>
@@ -51,7 +59,8 @@
               <h3 class="text-3xl md:text-4xl lg:text-5xl font-black italic tracking-tighter text-white uppercase leading-none drop-shadow-2xl">
                  {{ boss.name }}
               </h3>
-              <p v-if="boss.active_phrase && !isDefeated" class="text-primary-500 font-medium italic text-xs md:text-sm pl-3 border-l-2 border-primary-500">
+              <p v-if="boss.active_phrase && !isDefeated" class="font-medium italic text-xs md:text-sm pl-3 border-l-2"
+                 :class="boss.is_legendary ? 'text-amber-500 border-amber-500' : 'text-primary-500 border-primary-500'">
                 "{{ boss.active_phrase }}"
               </p>
               <div v-if="isDefeated" class="inline-block mt-4">
@@ -67,19 +76,25 @@
            <div class="flex justify-between items-end mb-2">
               <span class="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-white/50">{{ i18nStore.t('boss_target_integrity') }}</span>
               <div class="text-right">
-                 <span class="text-2xl md:text-3xl font-black text-white leading-none tracking-tighter shadow-black drop-shadow-md">{{ formatNumber(boss.current_hp) }}</span>
-                 <span class="text-[10px] md:text-xs font-black text-primary-500/70 ml-2 tracking-widest">/ {{ formatNumber(boss.total_hp) }} HP</span>
+                  <span class="text-2xl md:text-3xl font-black text-white leading-none tracking-tighter shadow-black drop-shadow-md">{{ formatNumber(boss.current_hp) }}</span>
+                  <span class="text-[10px] md:text-xs font-black ml-2 tracking-widest"
+                        :class="boss.is_legendary ? 'text-amber-500/70' : 'text-primary-500/70'">/ {{ formatNumber(boss.total_hp) }} HP</span>
               </div>
            </div>
            
-           <div class="h-6 md:h-8 rounded-[1rem] bg-black/60 border border-white/10 p-1 md:p-1.5 relative overflow-hidden shadow-inner">
+            <div class="h-6 md:h-8 rounded-[1rem] bg-black/60 border border-white/10 p-1 md:p-1.5 relative overflow-hidden shadow-inner">
               <!-- Glow -->
-              <div class="absolute inset-0 bg-primary-500/30 blur-[20px] transition-all duration-1000" :style="{ width: `${hpPercentage}%` }"></div>
+              <div class="absolute inset-0 blur-[20px] transition-all duration-1000" 
+                   :style="{ width: `${hpPercentage}%` }"
+                   :class="boss.is_legendary ? 'bg-amber-500/30' : 'bg-primary-500/30'"></div>
               
               <!-- Actual Bar -->
-              <div class="h-full rounded-full bg-gradient-to-r from-primary-600 via-primary-500 to-amber-400 relative overflow-hidden transition-all duration-1000 ease-out" 
+              <div class="h-full rounded-full relative overflow-hidden transition-all duration-1000 ease-out" 
                    :style="{ width: `${hpPercentage}%` }"
-                   :class="hpPercentage === 0 ? 'opacity-0' : 'opacity-100'">
+                   :class="[
+                     hpPercentage === 0 ? 'opacity-0' : 'opacity-100',
+                     boss.is_legendary ? 'bg-gradient-to-r from-amber-600 via-amber-400 to-yellow-200' : 'bg-gradient-to-r from-primary-600 via-primary-500 to-amber-400'
+                   ]">
                  <!-- Shimmer Effect -->
                  <div class="absolute inset-0 w-[200%] animate-shimmer bg-[linear-gradient(90deg,transparent_25%,rgba(255,255,255,0.4)_50%,transparent_75%)]"></div>
               </div>
@@ -139,8 +154,11 @@
           <div v-if="isDefeated && authStore.isAuthenticated" class="w-full flex items-center justify-center md:justify-end gap-4">
             <template v-if="chestsClaimed < 1">
                <button @click.stop="claim" :disabled="claiming" 
-                class="w-full md:w-auto px-10 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-[0.2em] rounded-2xl transition-all shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_40px_rgba(16,185,129,0.5)] flex items-center justify-center gap-3 text-sm md:text-base">
-                 <span class="text-xl">🎁</span> {{ i18nStore.t('boss_claim_loot') }}
+                class="w-full md:w-auto px-10 py-4 font-black uppercase tracking-[0.2em] rounded-2xl transition-all flex items-center justify-center gap-3 text-sm md:text-base border shadow-lg"
+                :class="boss.is_legendary 
+                  ? 'bg-amber-500 hover:bg-amber-400 text-black border-amber-400 shadow-amber-500/30' 
+                  : 'bg-emerald-500 hover:bg-emerald-400 text-black border-emerald-400 shadow-emerald-500/30'">
+                 <span class="text-xl">🎁</span> {{ boss.is_legendary ? 'RECLAMAR BOTÍN LEGENDARIO' : i18nStore.t('boss_claim_loot') }}
                </button>
             </template>
             <div v-else class="w-full md:w-auto flex items-center justify-center gap-3 text-white/30 font-black uppercase text-[10px] tracking-[0.2em] px-8 py-4 bg-black/40 rounded-2xl border border-white/5">
@@ -324,7 +342,7 @@ onMounted(() => {
   fetchBoss();
 });
 
-defineExpose({ refresh: fetchBoss });
+defineExpose({ refresh: () => fetchBoss(true) });
 </script>
 
 <style scoped>
