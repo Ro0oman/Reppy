@@ -440,6 +440,13 @@ export default {
     blog_read_congrats: 'Protocolo completado: Intelecto aumentado.',
 
     // Shop Categories
+    shop_cat_all: 'TODO EL PROTOCOLO',
+    shop_cat_head: 'CASCOS',
+    shop_cat_weapons: 'ARMAMENTO',
+    shop_cat_armor: 'ARMADURAS',
+    shop_cat_boots: 'BOTAS',
+    shop_cat_consumables: 'CONSUMIBLES',
+    shop_cat_bundles: 'PACKS ÉLITE',
     shop_tab_titles: 'TÍTULOS',
     shop_tab_borders: 'MARCOS',
     shop_tab_avatars: 'AVATARES',

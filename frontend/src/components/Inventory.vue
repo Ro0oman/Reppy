@@ -11,25 +11,23 @@
         <p class="text-[10px] font-bold text-muted uppercase tracking-[0.5em] font-tight max-w-md mx-auto">{{ i18n.t('inv_subtitle') }}</p>
       </div>
     </div>
-    
-    <!-- Tabs Navigation -->
+    <!-- Tabs Navigation (Redesigned for separation) -->
     <div class="flex items-center justify-center gap-4 mb-8">
-      <button @click="activeTab = 'gear'; activeStashTab = 'all'; playZip()" 
+      <button @click="activeTab = 'combat'; activeStashTab = 'all'; playZip()" 
               class="px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all border"
-              :class="activeTab === 'gear' ? 'bg-primary-500 text-white border-primary-400 shadow-lg shadow-primary-500/20' : 'bg-surface/20 text-muted border-white/5 hover:border-white/10'">
-        {{ i18n.t('inv_tab_gear') || 'COMBAT_GEAR' }}
+              :class="activeTab === 'combat' ? 'bg-primary-500 text-white border-primary-400 shadow-lg shadow-primary-500/20' : 'bg-surface/20 text-muted border-white/5 hover:border-white/10'">
+        {{ i18n.t('inv_tab_combat') || 'COMBAT_PROTOCOL' }}
       </button>
-      <button @click="activeTab = 'cosmetics'; activeStashTab = 'all'; playZip()" 
+      <button @click="activeTab = 'customization'; activeStashTab = 'all'; playZip()" 
               class="px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all border"
-              :class="activeTab === 'cosmetics' ? 'bg-purple-600 text-white border-purple-500 shadow-lg shadow-purple-500/20' : 'bg-surface/20 text-muted border-white/5 hover:border-white/10'">
-        {{ i18n.t('inv_tab_cosmetics') || 'AESTHETICS' }}
+              :class="activeTab === 'customization' ? 'bg-purple-600 text-white border-purple-500 shadow-lg shadow-purple-500/20' : 'bg-surface/20 text-muted border-white/5 hover:border-white/10'">
+        {{ i18n.t('inv_tab_customization') || 'IDENTITY_STASH' }}
       </button>
     </div>
 
-    <!-- TAB: TACTICAL GEAR (Armory Grid) -->
-    <div v-if="activeTab === 'gear'" class="space-y-16 animate-in">
-      
-      <!-- NEW: COMBAT PERFORMANCE DASHBOARD -->
+    <!-- COMBAT VIEW -->
+    <div v-if="activeTab === 'combat'" class="space-y-12 animate-in">
+      <!-- Combat Performance Dashboard remains at top -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
         <div class="p-6 rounded-[2.5rem] bg-surface/10 border border-white/5 relative overflow-hidden group">
           <div class="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent"></div>
@@ -40,18 +38,6 @@
               <span class="text-sm font-bold text-primary-500/50 uppercase tracking-tighter">{{ i18n.t('dash_per_rep') }}</span>
             </div>
             <p class="text-[8px] font-black text-muted uppercase tracking-widest mt-1 opacity-60">Avg: {{ combatStats.total }}</p>
-            
-            <!-- Potion Contribution Indicator -->
-            <div class="mt-4 space-y-1.5" v-if="combatStats.buff > 0">
-              <div class="flex justify-between items-center text-[8px] font-black">
-                <span class="text-emerald-500 uppercase tracking-widest">POTION_CONTRIBUTION</span>
-                <span class="text-emerald-400">+{{ Math.round((combatStats.buff / (combatStats.total - combatStats.buff)) * 100) }}%</span>
-              </div>
-              <div class="h-1 bg-white/5 rounded-full overflow-hidden">
-                <div class="h-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)] transition-all duration-1000" 
-                     :style="{ width: Math.min(100, (combatStats.buff / combatStats.total) * 100) + '%' }"></div>
-              </div>
-            </div>
           </div>
           <Sword class="absolute -bottom-2 -right-2 w-24 h-24 text-white/5 rotate-12 group-hover:scale-110 transition-transform" />
         </div>
@@ -80,8 +66,6 @@
           <Activity class="absolute -bottom-2 -right-2 w-24 h-24 text-white/5 rotate-0 group-hover:scale-110 transition-transform" />
         </div>
       </div>
-
-      <!-- Detailed stats removed per user request, now handled in Codex -->
 
       <!-- Section: Modules (Chests) -->
       <div v-if="authStore.user?.level_chests > 0 || authStore.user?.boss_chests > 0 || authStore.user?.legendary_chests > 0" 
@@ -136,8 +120,6 @@
             <Sparkles class="w-6 h-6 text-primary-500 group-hover:translate-x-1 transition-transform" />
           </div>
         </div>
-      </div>
-
       <!-- ACTIVE EFFECTS (Potions/Buffs) -->
       <div v-if="activePotions.length > 0" class="space-y-6">
         <div class="flex items-center gap-4">
@@ -168,62 +150,55 @@
         </div>
       </div>
 
-      <!-- LOADOUT CONSOLE (Active Equipment) -->
-      <div class="space-y-8">
+      <!-- LOADOUT CONSOLE (Combat Gear Only) -->
+      <div class="space-y-8 max-w-6xl mx-auto">
         <div class="flex items-center gap-4">
-          <div class="h-px flex-1 bg-gradient-to-r from-transparent to-white/10"></div>
-          <h3 class="text-[10px] font-black text-muted uppercase tracking-[0.5em] font-mono">{{ i18n.t('inv_loadout_title') }}</h3>
-          <div class="h-px flex-1 bg-gradient-to-l from-transparent to-white/10"></div>
+          <div class="h-px flex-1 bg-gradient-to-r from-transparent to-primary-500/20"></div>
+          <h3 class="text-[10px] font-black text-primary-500 uppercase tracking-[0.5em] font-mono">{{ i18n.t('inv_loadout_combat') || 'TACTICAL_LOADOUT' }}</h3>
+          <div class="h-px flex-1 bg-gradient-to-l from-transparent to-primary-500/20"></div>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 relative">
+          <!-- Combat Gear Slots -->
           <div v-for="slot in gearSlots" :key="slot.type" 
                @click="getEquippedItem(slot.type) && openItemDetails(getEquippedItem(slot.type))"
                class="relative group rounded-2xl bg-surface/10 border border-white/5 p-4 flex flex-col items-center justify-center gap-3 min-h-[140px] transition-all hover:bg-white/5 overflow-hidden cursor-pointer">
             <div class="absolute inset-x-0 h-px bg-primary-500/20 top-0 group-hover:top-full transition-all duration-[2s] ease-linear pointer-events-none z-10"></div>
             <div class="absolute top-2 left-2 text-[6px] font-mono text-muted/50 uppercase tracking-widest">{{ slot.label }}</div>
             
-            <!-- Slot Content -->
             <div v-if="getEquippedItem(slot.type)" class="flex flex-col items-center gap-2 relative z-20">
                <div class="w-16 h-16 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <ItemIcon :name="getEquippedItem(slot.type).svg_key" :type="slot.type" class-name="w-8 h-8 text-primary-500" />
                </div>
                <span class="text-[8px] font-black text-foreground uppercase truncate w-24 text-center tracking-tighter">{{ getEquippedItem(slot.type).name }}</span>
             </div>
-
-            <!-- Empty Slot State -->
             <div v-else class="flex flex-col items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
               <component :is="slot.icon" class="w-8 h-8 text-muted" />
-              <span class="text-[8px] font-black text-muted uppercase tracking-[0.2em]">{{ i18n.t('inv_empty_slot') || 'EMPTY_SLOT' }}</span>
+              <span class="text-[8px] font-black text-muted uppercase tracking-[0.2em]">{{ i18n.t('inv_empty_slot') || 'EMPTY' }}</span>
             </div>
-            <div v-if="getEquippedItem(slot.type)" 
-                 class="absolute inset-0 rounded-2xl border border-primary-500/20 shadow-[0_0_20px_rgba(255,69,0,0.1)] pointer-events-none group-hover:border-primary-500/40 transition-colors"></div>
+            <div v-if="getEquippedItem(slot.type)" class="absolute inset-0 rounded-2xl border border-primary-500/20 shadow-[0_0_20px_rgba(255,69,0,0.1)] pointer-events-none group-hover:border-primary-500/40"></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- TAB: AESTHETICS (Cosmetics Grid) -->
-    <div v-if="activeTab === 'cosmetics'" class="space-y-16 animate-in">
-      <!-- LOADOUT CONSOLE (Active Aesthetics) -->
-      <div class="space-y-8">
+    <!-- CUSTOMIZATION VIEW -->
+    <div v-if="activeTab === 'customization'" class="space-y-12 animate-in">
+      <div class="space-y-8 max-w-6xl mx-auto">
         <div class="flex items-center gap-4">
           <div class="h-px flex-1 bg-gradient-to-r from-transparent to-purple-500/20"></div>
-          <h3 class="text-[10px] font-black text-purple-400 uppercase tracking-[0.5em] font-mono">{{ i18n.t('inv_identity_title') || 'IDENTITY_LOADOUT' }}</h3>
+          <h3 class="text-[10px] font-black text-purple-400 uppercase tracking-[0.5em] font-mono">{{ i18n.t('inv_loadout_identity') || 'IDENTITY_LOADOUT' }}</h3>
           <div class="h-px flex-1 bg-gradient-to-l from-transparent to-purple-500/20"></div>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4 relative">
+          <!-- Aesthetic Slots -->
           <div v-for="slot in loadoutSlots" :key="slot.type" 
                @click="getEquippedItem(slot.type) && openItemDetails(getEquippedItem(slot.type))"
                class="relative group rounded-2xl bg-surface/10 border border-white/5 p-4 flex flex-col items-center justify-center gap-3 min-h-[140px] transition-all hover:bg-white/5 overflow-hidden cursor-pointer">
-            
-            <!-- Scanning Line -->
             <div class="absolute inset-x-0 h-px bg-purple-500/20 top-0 group-hover:top-full transition-all duration-[2s] ease-linear pointer-events-none z-10"></div>
-            
             <div class="absolute top-2 left-2 text-[6px] font-mono text-muted/50 uppercase tracking-widest">{{ slot.label }}</div>
             
-            <!-- Slot Content -->
             <div v-if="getEquippedItem(slot.type)" class="flex flex-col items-center gap-2 relative z-20">
               <div class="scale-90 origin-center transition-transform group-hover:scale-105 duration-500">
                 <AvatarFrame v-if="slot.type === 'border'" :src="authStore.user?.avatar_url" :border-css="getEquippedItem(slot.type).css_value" :size="55" />
@@ -242,26 +217,22 @@
               </div>
               <span class="text-[8px] font-black text-foreground uppercase truncate w-24 text-center tracking-tighter">{{ getEquippedItem(slot.type).name }}</span>
             </div>
-
-            <!-- Empty Slot State -->
-            <div v-else class="flex flex-col items-center gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
+            <div v-else class="flex flex-col items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
               <component :is="slot.icon" class="w-8 h-8 text-muted" />
-              <span class="text-[8px] font-black text-muted uppercase tracking-[0.2em]">{{ i18n.t('inv_offline') }}</span>
+              <span class="text-[8px] font-black text-muted uppercase tracking-[0.2em]">{{ i18n.t('inv_offline') || 'OFFLINE' }}</span>
             </div>
-
-            <!-- Glow based on rarity -->
-            <div v-if="getEquippedItem(slot.type)" 
-                 class="absolute inset-0 rounded-2xl border border-purple-500/20 shadow-[0_0_20px_rgba(168,85,247,0.1)] pointer-events-none group-hover:border-purple-500/40 transition-colors"></div>
+            <div v-if="getEquippedItem(slot.type)" class="absolute inset-0 rounded-2xl border border-purple-500/20 shadow-[0_0_20px_rgba(168,85,247,0.1)] pointer-events-none group-hover:border-purple-500/40"></div>
           </div>
         </div>
       </div>
+    </div>
     </div>
 
     <!-- Main Stash Layout (Shared between tabs but filtered) -->
     <div class="space-y-12">
         <div v-if="loading" class="py-32 flex flex-col items-center justify-center gap-6">
            <div class="relative">
-             <div class="w-16 h-16 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin"></div>
+             <div class="w-16 h-16 border-primary-500/20 border-t-primary-500 rounded-full animate-spin"></div>
              <div class="absolute inset-0 flex items-center justify-center">
                <span class="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></span>
              </div>
@@ -353,6 +324,7 @@
                     type === 'background' ? i18n.t('inv_cat_backgrounds') : 
                     type === 'post_background' ? i18n.t('inv_cat_post_backgrounds') : 
                     type === 'avatar' ? i18n.t('inv_cat_avatar_effects') : 
+                    type === 'bundle' ? i18n.t('shop_cat_bundles') || 'BUNDLES' :
                     i18n.t('inv_cat_consumables') 
                   }}
                 </h2>
@@ -681,20 +653,21 @@ const isPotionTypeActive = (item) => {
 };
 
 
-const activeTab = ref('gear'); // Default to gear for the redesign
+const activeTab = ref('combat'); 
 const activeStashTab = ref('all');
 const showDropdown = ref(false);
 const selectedRarity = ref('all');
 
 const categories = computed(() => {
-  if (activeTab.value === 'gear') {
+  if (activeTab.value === 'combat') {
     return [
       { id: 'all', label: 'shop_cat_all', icon: Archive },
       { id: 'head', label: 'shop_cat_head', icon: Zap },
       { id: 'weapon', label: 'shop_cat_weapons', icon: Sword },
       { id: 'armor', label: 'shop_cat_armor', icon: Shield },
       { id: 'boots', label: 'shop_cat_boots', icon: Footprints },
-      { id: 'consumable', label: 'shop_cat_consumables', icon: Flame }
+      { id: 'consumable', label: 'shop_cat_consumables', icon: Flame },
+      { id: 'bundle', label: 'shop_cat_bundles', icon: Package }
     ];
   } else {
     return [
@@ -1059,17 +1032,12 @@ const fetchInventory = async () => {
 
 const groupedItems = computed(() => {
   const groups = {};
-  
-  // Only non-cosmetic items for this inventory view
-  const gearTypes = ['head', 'weapon', 'armor', 'boots', 'consumable'];
-  const aestheticTypes = ['title', 'border', 'background', 'post_background', 'avatar'];
-  
   let filtered = inventory.value;
   
-  if (activeTab.value === 'gear') {
-    filtered = filtered.filter(i => gearTypes.includes(i.type));
+  if (activeTab.value === 'combat') {
+    filtered = filtered.filter(i => !i.is_customizable);
   } else {
-    filtered = filtered.filter(i => aestheticTypes.includes(i.type));
+    filtered = filtered.filter(i => i.is_customizable);
   }
 
   // Category filter
