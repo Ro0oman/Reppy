@@ -1,6 +1,12 @@
 <template>
   <div class="max-w-5xl mx-auto w-full px-4 pt-6 pb-32 space-y-8 relative">
-    <div class="space-y-4">
+    <!-- Animated Environment Blobs -->
+    <div class="bg-glow">
+      <div class="blob" style="top: 10%; left: -5%;"></div>
+      <div class="blob" style="bottom: 20%; right: -5%; animation-delay: -10s; background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, transparent 70%);"></div>
+    </div>
+    
+    <div class="space-y-4 relative z-10">
       <!-- Community Hub simplified title -->
       <div class="flex flex-col gap-1 pt-2 relative">
           <h1 class="text-xl font-black text-foreground uppercase italic tracking-tighter">{{ i18n.t('community') }}.HUB</h1>

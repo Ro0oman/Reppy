@@ -1,5 +1,7 @@
 <template>
-  <div class="space-y-12">
+  <div class="space-y-8">
+    <!-- Activity Spotlight (Heatmap Header) -->
+    <MiniActivityHeatmap class="mb-8" />
 
     <!-- Feed Content -->
     <div class="space-y-8 min-h-[600px] relative">
@@ -89,6 +91,7 @@ import axios from 'axios';
 import ActivityCard from './ActivityCard.vue';
 import ActivitySkeleton from './ActivitySkeleton.vue';
 import UserCompareModal from './UserCompareModal.vue';
+import MiniActivityHeatmap from './MiniActivityHeatmap.vue';
 import { ZapOff, X } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
