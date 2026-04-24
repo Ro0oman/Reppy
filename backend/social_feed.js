@@ -98,6 +98,9 @@ router.get('/feed', authenticate, async (req, res) => {
             ds.title,
             ds.description,
             u.cha_xp,
+            t.name as title_name,
+            (SELECT name FROM boss_fights bf WHERE bf.id = MAX(r.boss_fight_id)) as boss_name,
+            (SELECT image_url FROM boss_fights bf WHERE bf.id = MAX(r.boss_fight_id)) as boss_image,
             (SELECT COUNT(*) 
              FROM reps r2 
              WHERE r2.user_id = u.id AND r2.date > r.date - INTERVAL '7 days' AND r2.date < r.date
@@ -105,6 +108,7 @@ router.get('/feed', authenticate, async (req, res) => {
             JSON_AGG(JSON_BUILD_OBJECT(
                 'exercise_type', r.exercise_type,
                 'count', r.count,
+                'is_crit', COALESCE(r.is_crit, false),
                 'boss_damage', r.boss_damage_dealt,
                 'base_damage', r.base_damage,
                 'gear_bonus', r.gear_bonus,
@@ -137,6 +141,7 @@ router.get('/feed', authenticate, async (req, res) => {
         LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
         LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
         LEFT JOIN cosmetics pb ON u.equipped_post_background_id = pb.id
+        LEFT JOIN cosmetics t ON u.equipped_title_id = t.id
         LEFT JOIN items iHead ON u.equipped_head_id = iHead.id
         LEFT JOIN items iWeapon ON u.equipped_weapon_id = iWeapon.id
         LEFT JOIN items iArmor ON u.equipped_armor_id = iArmor.id
@@ -144,12 +149,14 @@ router.get('/feed', authenticate, async (req, res) => {
         ${whereClause}
         GROUP BY 
           u.id, r.date, ds.id, ds.title, ds.description,
-          b.css_value, a.css_value, pb.css_value, 
+          b.css_value, a.css_value, pb.css_value, t.name,
           u.name, u.avatar_url, u.current_level, u.total_reps, u.cha_xp,
           iHead.name, iHead.rarity, iWeapon.name, iWeapon.rarity, iArmor.name, iArmor.rarity, iBoots.name, iBoots.rarity
       )
       SELECT 
         f.*,
+        -- Has Critical Hit today?
+        EXISTS (SELECT 1 FROM reps rc WHERE rc.user_id = f.user_id AND rc.date = f.date::date AND rc.is_crit = true) as has_crit,
         -- Total Reps Today
         (SELECT SUM(count) FROM reps WHERE user_id = f.user_id AND date = f.date::date) as total_reps_today,
         -- Total Damage Today
@@ -282,11 +289,16 @@ router.post('/like', authenticate, async (req, res) => {
             [myUserId, summaryId, 'LIKE']
           );
           
-          // Reward Charisma XP
+          // Reward Charisma XP to Liker
           await client.query('UPDATE users SET cha_xp = cha_xp + 5 WHERE id = $1', [myUserId]);
+          
+          // Reward Reppy Coins to Author (Buff for interaction)
+          await client.query('UPDATE users SET reppy_coins = reppy_coins + 5 WHERE id = $1', [TargetUserId]);
+
           // Note: we'll recalculate after commit
           await client.query('COMMIT');
           await recalculateUserStats(myUserId);
+          await recalculateUserStats(TargetUserId);
           
           const cleanDate = typeof date === 'string' ? date.substring(0, 10) : date;
           await createNotification(TargetUserId, 'LIKE', myUserId, 'le ha dado like a tu entrenamiento', cleanDate, TargetUserId);

@@ -43,13 +43,14 @@ router.post('/', authenticate, async (req, res) => {
   try {
     // 1. Insert or update reps for the specific date and exercise type
     const result = await query(
-      `INSERT INTO reps (user_id, count, date, exercise_type, added_weight) 
-       VALUES ($1, $2, $3, $4, $5) 
+      `INSERT INTO reps (user_id, count, date, exercise_type, added_weight, is_crit) 
+       VALUES ($1, $2, $3, $4, $5, $6) 
        ON CONFLICT (user_id, date, exercise_type) 
        DO UPDATE SET count = reps.count + EXCLUDED.count,
-                     added_weight = EXCLUDED.added_weight 
+                     added_weight = EXCLUDED.added_weight,
+                     is_crit = EXCLUDED.is_crit
        RETURNING *`,
-      [userId, count, date || getLocalDateString(), exercise_type, parseFloat(added_weight) || 0]
+      [userId, count, date || getLocalDateString(), exercise_type, parseFloat(added_weight) || 0, dmgResult.isCrit]
     );
 
     // 2. Calcular Reppy Coins y XP ganada
@@ -370,9 +371,9 @@ router.put('/:id', authenticate, async (req, res) => {
     const updateResult = await query(
       `UPDATE reps 
        SET count = $1, boss_damage_dealt = $2, active_multiplier = $3,
-           base_damage = $4, gear_bonus = $5, buff_bonus = $6
-       WHERE id = $7 RETURNING *`,
-      [count, newBossDamageDealt, dmgResult.activeMultiplier, dmgResult.baseDamage, dmgResult.gearBonus, dmgResult.buffBonus, id]
+           base_damage = $4, gear_bonus = $5, buff_bonus = $6, is_crit = $7
+       WHERE id = $8 RETURNING *`,
+      [count, newBossDamageDealt, dmgResult.activeMultiplier, dmgResult.baseDamage, dmgResult.gearBonus, dmgResult.buffBonus, dmgResult.isCrit, id]
     );
 
     // 4. Update user stats

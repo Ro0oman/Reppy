@@ -12,6 +12,7 @@
           @toggleLike="handleLike(activity)"
           @viewProfile="$emit('viewProfile', $event)"
           @edit="openEditModal(activity)"
+          @compare="openCompareModal(activity)"
         />
       </TransitionGroup>
 
@@ -69,6 +70,16 @@
         </div>
       </div>
     </Teleport>
+
+    <!-- Comparison Modal (Teleported) -->
+    <Teleport to="body">
+       <UserCompareModal 
+         :show="!!comparingUser" 
+         :me="authStore.user" 
+         :target="comparingUser" 
+         @close="comparingUser = null" 
+       />
+    </Teleport>
   </div>
 </template>
 
@@ -77,6 +88,7 @@ import { ref, onMounted, onUnmounted, reactive, watch } from 'vue';
 import axios from 'axios';
 import ActivityCard from './ActivityCard.vue';
 import ActivitySkeleton from './ActivitySkeleton.vue';
+import UserCompareModal from './UserCompareModal.vue';
 import { ZapOff, X } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
@@ -107,6 +119,8 @@ const editForm = reactive({
     title: '',
     description: ''
 });
+
+const comparingUser = ref(null);
 
 const fetchFeed = async () => {
     if (loading.value || finished.value) return;
@@ -182,6 +196,12 @@ const saveEdit = async () => {
         console.error('Error saving edit:', e);
         notificationStore.notify('Failed to update protocol', 'error');
     }
+};
+
+const openCompareModal = async (activity) => {
+    // If we only have basic info from the card, we might want to fetch full stats
+    // But ActivityCard already has most stats from the query update in social_feed.js
+    comparingUser.value = activity;
 };
 
 const normalizeDate = (d) => {
