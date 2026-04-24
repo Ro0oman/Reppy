@@ -129,7 +129,8 @@ router.get('/feed', authenticate, async (req, res) => {
             (SELECT COUNT(*) FROM summary_interactions WHERE summary_id = ds.id AND type = 'LIKE') as like_count,
             (SELECT COUNT(*) FROM summary_interactions WHERE summary_id = ds.id AND type = 'COMMENT') as comment_count,
             EXISTS(SELECT 1 FROM summary_interactions WHERE summary_id = ds.id AND user_id = $1 AND type = 'LIKE') as user_has_liked,
-            (SELECT name FROM boss_fights WHERE status = 'active' ORDER BY order_index ASC LIMIT 1) as active_boss_name
+            (SELECT name FROM boss_fights WHERE status = 'active' ORDER BY order_index ASC LIMIT 1) as active_boss_name,
+            MAX(r.created_at) as created_at
         FROM reps r
         JOIN users u ON r.user_id = u.id
         LEFT JOIN daily_summaries ds ON ds.user_id = r.user_id AND ds.date::date = r.date::date
