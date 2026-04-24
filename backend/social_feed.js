@@ -168,16 +168,16 @@ router.get('/feed', authenticate, async (req, res) => {
         -- Calculate XP gains for visual aura
         (SELECT 
             CASE 
-                WHEN MAX(GREATEST(
+                WHEN GREATEST(
                     SUM(count) * 5, -- END
                     SUM(count * (COALESCE(added_weight, 0) + 75.0)) * 0.05, -- STR
                     SUM(CASE WHEN exercise_type IN ('muscleups', 'weighted_pullups') THEN (count * (10 + COALESCE(added_weight, 0))) ELSE 0 END) -- DEX
-                )) = SUM(count) * 5 THEN 'end'
-                WHEN MAX(GREATEST(
+                ) = SUM(count) * 5 THEN 'end'
+                WHEN GREATEST(
                     SUM(count) * 5, 
                     SUM(count * (COALESCE(added_weight, 0) + 75.0)) * 0.05, 
                     SUM(CASE WHEN exercise_type IN ('muscleups', 'weighted_pullups') THEN (count * (10 + COALESCE(added_weight, 0))) ELSE 0 END)
-                )) = SUM(count * (COALESCE(added_weight, 0) + 75.0)) * 0.05 THEN 'str'
+                ) = SUM(count * (COALESCE(added_weight, 0) + 75.0)) * 0.05 THEN 'str'
                 ELSE 'dex'
             END
          FROM reps WHERE user_id = f.user_id AND date = f.date::date
