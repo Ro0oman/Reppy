@@ -45,19 +45,28 @@
         </div>
       </div>
 
-      <!-- Rank Badge (Pill Style) -->
-      <div v-if="activity.global_rank" 
-     class="px-2.5 py-1 rounded-full flex items-center gap-1.5 shrink-0 border transition-all duration-300"
-     :class="rankStyles">
-  
-  <Crown v-if="activity.global_rank === 1" class="w-3 h-3 drop-shadow-[0_0_3px_rgba(245,158,11,0.8)]" />
-  <Trophy v-else-if="activity.global_rank <= 3" class="w-3 h-3" />
-  <TrendingUp v-else class="w-3 h-3 opacity-40" />
-  
-  <span class="text-[10px] font-black uppercase tracking-widest italic">
-    RANKING #{{ activity.global_rank }}
-  </span>
-</div>
+      <div class="flex items-center gap-2">
+        <!-- Edit Button (Only for owner) -->
+        <button v-if="isOwn" 
+                @click="$emit('edit', activity)"
+                class="p-2 hover:bg-white/10 rounded-lg transition-colors cursor-pointer text-muted/40 hover:text-primary-500 shrink-0">
+          <Edit3 class="w-4 h-4" />
+        </button>
+
+        <!-- Rank Badge (Pill Style) -->
+        <div v-if="activity.global_rank" 
+       class="px-2.5 py-1 rounded-full flex items-center gap-1.5 shrink-0 border transition-all duration-300"
+       :class="rankStyles">
+    
+    <Crown v-if="activity.global_rank === 1" class="w-3 h-3 drop-shadow-[0_0_3px_rgba(245,158,11,0.8)]" />
+    <Trophy v-else-if="activity.global_rank <= 3" class="w-3 h-3" />
+    <TrendingUp v-else class="w-3 h-3 opacity-40" />
+    
+    <span class="text-[10px] font-black uppercase tracking-widest italic">
+      RANKING #{{ activity.global_rank }}
+    </span>
+  </div>
+      </div>
 
 
     </div>
@@ -303,8 +312,8 @@ const activeMultiplierDisplay = computed(() => {
 });
 
 const timeAgo = computed(() => {
-  // Append a time to avoid timezone shift issues with date-only strings
-  const date = new Date(props.activity.date + 'T12:00:00'); 
+  if (!props.activity.date) return '';
+  const date = props.activity.created_at ? new Date(props.activity.created_at) : new Date(props.activity.date + 'T12:00:00');
   return formatDistanceToNow(date, { 
     addSuffix: true, 
     locale: i18n.locale === 'es' ? es : enUS 
