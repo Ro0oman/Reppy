@@ -128,25 +128,31 @@ router.post('/', authenticate, async (req, res) => {
     // Update the actual record with boss_damage_dealt and metadata
     await query(
       `UPDATE reps 
-       SET boss_damage_dealt = $1,
+       SET boss_damage_dealt = COALESCE(boss_damage_dealt, 0) + $1,
            active_multiplier = $2,
-           base_damage = $3,
-           gear_bonus = $4,
-           buff_bonus = $5,
+           base_damage = COALESCE(base_damage, 0) + $3,
+           gear_bonus = COALESCE(gear_bonus, 0) + $4,
+           buff_bonus = COALESCE(buff_bonus, 0) + $5,
            boss_fight_id = $6
        WHERE id = $7`, 
       [actualDamageDealt, dmgResult.activeMultiplier, dmgResult.baseDamage, dmgResult.gearBonus, dmgResult.buffBonus, bossRes.rows[0]?.id || null, result.rows[0].id]
     );
 
+    // 4. Fetch the final updated record to return cumulative totals to the frontend
+    const finalRecord = await query(
+      'SELECT boss_damage_dealt, base_damage, gear_bonus, buff_bonus, active_multiplier FROM reps WHERE id = $1',
+      [result.rows[0].id]
+    );
+
     res.json({ 
       ...result.rows[0], 
       earnedCoins, 
-      boss_damage_dealt: actualDamageDealt,
+      boss_damage_dealt: finalRecord.rows[0].boss_damage_dealt,
       is_crit: dmgResult.isCrit,
-      base_damage: dmgResult.baseDamage,
-      gear_bonus: dmgResult.gearBonus,
-      buff_bonus: dmgResult.buffBonus,
-      active_multiplier: dmgResult.activeMultiplier
+      base_damage: finalRecord.rows[0].base_damage,
+      gear_bonus: finalRecord.rows[0].gear_bonus,
+      buff_bonus: finalRecord.rows[0].buff_bonus,
+      active_multiplier: finalRecord.rows[0].active_multiplier
     });
   } catch (error) {
     console.error('Error adding reps:', error);
