@@ -68,7 +68,7 @@
   left: 0;
   width: 100%;
   height: 2px;
-  background: linear-gradient(to right, transparent, var(--primary-500), transparent);
+  background: linear-gradient(to right, transparent, hsl(var(--primary)), transparent);
   animation: carbon-scan 4s linear infinite;
   opacity: 0.3;
 }
@@ -79,7 +79,7 @@
 
 /* 2. Neon Pulse */
 .post-bg-neon {
-  background: rgba(var(--primary-500-rgb), 0.05);
+  background: hsla(var(--primary) / 0.05);
   position: absolute;
   inset: 0;
 }
@@ -87,14 +87,15 @@
 /* Using [data-cosmetic-container] to target the parent from the child effect class if needed, 
    or we just apply the animation to the container if this class is present. */
 .card-stats:has(.post-bg-neon),
+.rpg-card:has(.post-bg-neon),
 .shop-preview:has(.post-bg-neon) {
   animation: neon-border-pulse 4s ease-in-out infinite !important;
   border-width: 1.5px !important;
 }
 
 @keyframes neon-border-pulse {
-  0%, 100% { border-color: rgba(var(--primary-500-rgb), 0.1) !important; box-shadow: 0 0 10px rgba(var(--primary-500-rgb), 0) !important; }
-  50% { border-color: rgba(var(--primary-500-rgb), 0.6) !important; box-shadow: 0 0 25px rgba(var(--primary-500-rgb), 0.15) !important; }
+  0%, 100% { border-color: hsla(var(--primary) / 0.1) !important; box-shadow: 0 0 10px hsla(var(--primary) / 0) !important; }
+  50% { border-color: hsla(var(--primary) / 0.6) !important; box-shadow: 0 0 25px hsla(var(--primary) / 0.15) !important; }
 }
 
 /* 3. Matrix Rain */
@@ -191,6 +192,7 @@
 }
 
 .card-stats:has(.post-bg-void),
+.rpg-card:has(.post-bg-void),
 .shop-preview:has(.post-bg-void) {
   animation: void-gravity-glitch 5s step-end infinite !important;
 }
