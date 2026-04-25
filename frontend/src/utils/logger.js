@@ -1,4 +1,4 @@
-const MAX_LOGS = 50;
+const MAX_LOGS = 200; // Aumentado para capturar sesiones largas
 let logs = [];
 let notificationStore = null;
 
@@ -15,13 +15,20 @@ export const initLogger = (store) => {
     
     isLogging = true;
     try {
-      const message = args.map(arg => 
-        typeof arg === 'object' ? (arg instanceof Error ? arg.stack : JSON.stringify(arg, null, 2)) : String(arg)
-      ).join(' ');
+      const message = args.map(arg => {
+        if (arg instanceof Error) return arg.stack;
+        if (typeof arg === 'object') {
+          try {
+            return JSON.stringify(arg, null, 2);
+          } catch (e) {
+            return '[Object non-serializable]';
+          }
+        }
+        return String(arg);
+      }).join(' ');
       
       addLog('ERROR', message);
       
-      // Auto-notify on error if store is available
       if (notificationStore) {
         notificationStore.notify('Error detected. Click to copy logs for support.', 'error', 8000, true);
       }
@@ -32,19 +39,28 @@ export const initLogger = (store) => {
     }
   };
 
-  // Optional: capture warnings too but don't trigger toast
   console.warn = (...args) => {
-    const message = args.map(arg => 
-      typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
-    ).join(' ');
-    addLog('WARN', message);
     originalWarn.apply(console, args);
+    if (isLogging) return;
+    isLogging = true;
+    try {
+      const message = args.map(arg => 
+        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+      ).join(' ');
+      addLog('WARN', message);
+    } catch (e) {
+      // Ignore
+    } finally {
+      isLogging = false;
+    }
   };
 };
 
 const addLog = (level, message) => {
   const timestamp = new Date().toISOString();
-  logs.push(`[${timestamp}] [${level}] ${message}`);
+  // Si el mensaje es absurdamente largo, lo truncamos para no colapsar la memoria
+  const sanitizedMessage = message.length > 10000 ? message.substring(0, 10000) + '... [TRUNCATED]' : message;
+  logs.push(`[${timestamp}] [${level}] ${sanitizedMessage}`);
   if (logs.length > MAX_LOGS) {
     logs.shift();
   }
@@ -61,6 +77,7 @@ export const clearLogs = () => {
 export const copyLogsToClipboard = async () => {
   const text = getLogs();
   try {
+    // El portapapeles aguanta megabytes sin problema
     await navigator.clipboard.writeText(text);
     return true;
   } catch (err) {
@@ -72,10 +89,19 @@ export const copyLogsToClipboard = async () => {
 export const sendLogsViaEmail = () => {
   const email = 'romainot99@gmail.com';
   const subject = encodeURIComponent('Reppy Debug Logs - ' + new Date().toLocaleString());
+  
+  let fullLogs = getLogs();
+  
+  // Límite de seguridad para URLs mailto (algunos navegadores/clientes fallan > 2000-8000 chars)
+  // Si es muy largo, avisamos al usuario que use el botón de copiar
+  if (fullLogs.length > 4000) {
+    fullLogs = fullLogs.substring(fullLogs.length - 4000) + '\n\n[... Logs truncated for email size limits. Please use COPY LOGS for full report ...]';
+  }
+
   const body = encodeURIComponent(
     'Please describe what you were doing when the error occurred:\n\n' +
     '----------------------------------\n' +
-    getLogs() +
+    fullLogs +
     '\n----------------------------------'
   );
   
