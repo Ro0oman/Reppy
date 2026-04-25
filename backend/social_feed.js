@@ -74,7 +74,6 @@ router.get('/feed', authenticate, async (req, res) => {
 
     const feedRes = await query(`
       WITH daily_stats AS (
-        -- Calculate total reps and damage for every user/date combination
         SELECT 
           user_id, 
           date, 
@@ -90,6 +89,7 @@ router.get('/feed', authenticate, async (req, res) => {
             u.avatar_url,
             u.current_level,
             u.total_reps,
+            u.str_xp, u.end_xp, u.agi_xp, u.dex_xp, u.vig_xp, u.int_xp, u.fth_xp,
             b.css_value as border_css,
             a.css_value as avatar_css,
             pb.css_value as post_background_css,
@@ -101,10 +101,6 @@ router.get('/feed', authenticate, async (req, res) => {
             t.name as title_name,
             (SELECT name FROM boss_fights bf WHERE bf.id = MAX(r.boss_fight_id)) as boss_name,
             (SELECT image_url FROM boss_fights bf WHERE bf.id = MAX(r.boss_fight_id)) as boss_image,
-            (SELECT COUNT(*) 
-             FROM reps r2 
-             WHERE r2.user_id = u.id AND r2.date > r.date - INTERVAL '7 days' AND r2.date < r.date
-            ) as activity_7d,
             JSON_AGG(JSON_BUILD_OBJECT(
                 'exercise_type', r.exercise_type,
                 'count', r.count,
@@ -114,7 +110,6 @@ router.get('/feed', authenticate, async (req, res) => {
                 'gear_bonus', r.gear_bonus,
                 'buff_bonus', r.buff_bonus,
                 'active_multiplier', r.active_multiplier,
-                'historical_total', (SELECT SUM(count) FROM reps WHERE user_id = r.user_id AND exercise_type = r.exercise_type AND date <= r.date),
                 'is_pr', NOT EXISTS (
                     SELECT 1 FROM reps r_old 
                     WHERE r_old.user_id = u.id 
@@ -123,7 +118,6 @@ router.get('/feed', authenticate, async (req, res) => {
                     AND r_old.count >= r.count
                 )
             )) as exercises,
-            -- Equipped items info
             JSON_BUILD_OBJECT(
                 'head', JSON_BUILD_OBJECT('name', iHead.name, 'rarity', iHead.rarity),
                 'weapon', JSON_BUILD_OBJECT('name', iWeapon.name, 'rarity', iWeapon.rarity),
@@ -133,7 +127,6 @@ router.get('/feed', authenticate, async (req, res) => {
             (SELECT COUNT(*) FROM summary_interactions WHERE summary_id = ds.id AND type = 'LIKE') as like_count,
             (SELECT COUNT(*) FROM summary_interactions WHERE summary_id = ds.id AND type = 'COMMENT') as comment_count,
             EXISTS(SELECT 1 FROM summary_interactions WHERE summary_id = ds.id AND user_id = $1 AND type = 'LIKE') as user_has_liked,
-            (SELECT name FROM boss_fights WHERE status = 'active' ORDER BY order_index ASC LIMIT 1) as active_boss_name,
             MAX(r.created_at) as created_at
         FROM reps r
         JOIN users u ON r.user_id = u.id
@@ -155,66 +148,29 @@ router.get('/feed', authenticate, async (req, res) => {
       )
       SELECT 
         f.*,
-        -- Has Critical Hit today?
         EXISTS (SELECT 1 FROM reps rc WHERE rc.user_id = f.user_id AND rc.date = f.date::date AND rc.is_crit = true) as has_crit,
-        -- Total Reps Today
         (SELECT SUM(count) FROM reps WHERE user_id = f.user_id AND date = f.date::date) as total_reps_today,
-        -- Total Damage Today
         (SELECT SUM(boss_damage_dealt) FROM reps WHERE user_id = f.user_id AND date = f.date::date) as total_damage_today,
-        -- Damage Breakdown Today
-        (SELECT SUM(base_damage) FROM reps WHERE user_id = f.user_id AND date = f.date::date) as total_base_damage_today,
-        (SELECT SUM(gear_bonus) FROM reps WHERE user_id = f.user_id AND date = f.date::date) as total_gear_bonus_today,
-        (SELECT SUM(buff_bonus) FROM reps WHERE user_id = f.user_id AND date = f.date::date) as total_buff_bonus_today,
-        -- Calculate XP gains for visual aura
+        -- Dominant stat calculation
         (SELECT 
             CASE 
-                WHEN GREATEST(
-                    SUM(count) * 5, -- END
-                    SUM(count * (COALESCE(added_weight, 0) + 75.0)) * 0.05, -- STR
-                    SUM(CASE WHEN exercise_type IN ('muscleups', 'weighted_pullups') THEN (count * (10 + COALESCE(added_weight, 0))) ELSE 0 END) -- DEX
-                ) = SUM(count) * 5 THEN 'end'
-                WHEN GREATEST(
-                    SUM(count) * 5, 
-                    SUM(count * (COALESCE(added_weight, 0) + 75.0)) * 0.05, 
-                    SUM(CASE WHEN exercise_type IN ('muscleups', 'weighted_pullups') THEN (count * (10 + COALESCE(added_weight, 0))) ELSE 0 END)
-                ) = SUM(count * (COALESCE(added_weight, 0) + 75.0)) * 0.05 THEN 'str'
-                ELSE 'dex'
+                WHEN GREATEST(str_xp, end_xp, agi_xp) = str_xp THEN 'str'
+                WHEN GREATEST(str_xp, end_xp, agi_xp) = end_xp THEN 'end'
+                ELSE 'agi'
             END
-         FROM reps WHERE user_id = f.user_id AND date = f.date::date
+         FROM users WHERE id = f.user_id
         ) as dominant_stat,
-        -- Global Rank (Position 1, 2, 3...) based on total_reps (ALL exercises, lifetime)
-        (SELECT COUNT(*) FROM users u2 
-         WHERE u2.total_reps > f.total_reps AND u2.is_private = false
-        ) + 1 as global_rank,
-        -- Percentile Ranking (Global)
-        COALESCE(
-          ROUND(100.0 * (
-            SELECT COUNT(*) FROM users u3 
-            WHERE u3.total_reps < f.total_reps AND u3.is_private = false
-          ) / NULLIF((SELECT COUNT(*) FROM users u4 WHERE u4.is_private = false), 0)),
-          10
-        ) as global_rank_percentile,
-        -- Positions Climbed (Rank before this session vs Rank after)
-        GREATEST(0, (
-            (SELECT COUNT(*) FROM users u_climb 
-             WHERE u_climb.total_reps > (f.total_reps - (SELECT COALESCE(SUM(count), 0) FROM reps WHERE user_id = f.user_id AND date = f.date::date))
-             AND u_climb.is_private = false
-            ) + 1
-        ) - (
-            (SELECT COUNT(*) FROM users u_climb2 
-             WHERE u_climb2.total_reps > f.total_reps
-             AND u_climb2.is_private = false
-            ) + 1
-        )) as rank_climb,
-        -- Personal Best (PB) check: Are today's reps higher than any previous day?
+        (SELECT COUNT(*) FROM users u2 WHERE u2.total_reps > f.total_reps AND u2.is_private = false) + 1 as global_rank,
+        -- Rivalry: Find user just above in rank
+        (SELECT JSON_BUILD_OBJECT('name', u_rival.name, 'reps_diff', u_rival.total_reps - f.total_reps)
+         FROM users u_rival 
+         WHERE u_rival.total_reps > f.total_reps AND u_rival.is_private = false
+         ORDER BY u_rival.total_reps ASC LIMIT 1
+        ) as next_rank_rival,
         EXISTS (
-          SELECT 1 
-          FROM daily_stats ds_pb 
-          WHERE ds_pb.user_id = f.user_id 
-          AND ds_pb.date < f.date::date
+          SELECT 1 FROM daily_stats ds_pb WHERE ds_pb.user_id = f.user_id AND ds_pb.date < f.date::date
           HAVING (SELECT SUM(count) FROM reps WHERE user_id = f.user_id AND date = f.date::date) > COALESCE(MAX(ds_pb.day_reps), 0)
         ) as is_personal_best,
-        -- Current Streak Calculation (Real consecutive days until this post)
         (
           WITH RECURSIVE streak_calc AS (
             SELECT f.date::date as streak_date
