@@ -119,15 +119,15 @@
            <div class="grid grid-cols-1 gap-2">
               <div v-for="ex in activity.exercises" :key="ex.exercise_type" 
                    class="flex items-center justify-between p-3 rounded-xl border transition-all"
-                   :class="ex.is_record ? 'bg-amber-500/10 border-amber-500/20 shadow-[inset_0_0_10px_rgba(245,158,11,0.05)]' : 'bg-foreground/5 border-border/5'">
+                   :class="ex.is_pr ? 'bg-amber-500/10 border-amber-500/20 shadow-[inset_0_0_10px_rgba(245,158,11,0.05)]' : 'bg-foreground/5 border-border/5'">
                  <div class="flex items-center gap-3">
                     <div class="p-2 rounded-lg bg-background/40 shadow-sm">
-                       <component :is="getExerciseIcon(ex.exercise_type)" class="w-4 h-4" :class="ex.is_record ? 'text-amber-500' : dominantStatColor(getAttributeName(ex.exercise_type).toLowerCase())" />
+                       <component :is="getExerciseIcon(ex.exercise_type)" class="w-4 h-4" :class="ex.is_pr ? 'text-amber-500' : dominantStatColor(getAttributeName(ex.exercise_type).toLowerCase())" />
                     </div>
                     <div class="flex flex-col">
                        <div class="flex items-center gap-2">
-                          <span class="text-[11px] font-black uppercase tracking-tight" :class="ex.is_record ? 'text-amber-600 dark:text-amber-400' : 'text-foreground'">{{ i18n.t(`exercise_${ex.exercise_type}`) }}</span>
-                          <Crown v-if="ex.is_record" class="w-3 h-3 text-amber-500 fill-amber-500/20" />
+                          <span class="text-[11px] font-black uppercase tracking-tight" :class="ex.is_pr ? 'text-amber-600 dark:text-amber-400' : 'text-foreground'">{{ i18n.t(`exercise_${ex.exercise_type}`) }}</span>
+                          <Crown v-if="ex.is_pr" class="w-3 h-3 text-amber-500 fill-amber-500/20" />
                        </div>
                        <span class="text-[8px] text-muted font-bold uppercase tracking-widest">+{{ Math.ceil(ex.count / 5) }} {{ getAttributeName(ex.exercise_type) }} XP</span>
                     </div>
@@ -137,7 +137,7 @@
                        x{{ ex.active_multiplier }}
                     </div>
                     <div class="flex flex-col items-end min-w-[50px]">
-                       <span class="text-sm font-black italic" :class="ex.is_record ? 'text-amber-600 dark:text-amber-400' : 'text-foreground'">{{ ex.count }}</span>
+                       <span class="text-sm font-black italic" :class="ex.is_pr ? 'text-amber-600 dark:text-amber-400' : 'text-foreground'">{{ ex.count }}</span>
                        <span class="text-[7px] font-black text-primary-500 uppercase tracking-widest">{{ ex.boss_damage }} DMG</span>
                     </div>
                  </div>
