@@ -163,12 +163,6 @@
     <LuckyWheel :show="showRoulette" @close="showRoulette = false" @spun="onSpun" />
     <DamageNumbers />
 
-    <!-- Test Buttons (Temporary) -->
-    <div class="fixed bottom-32 left-4 z-[200] flex flex-col gap-2 opacity-40 hover:opacity-100 transition-opacity">
-      <button @click="console.error('Manual Test Error', { time: new Date(), component: 'App.vue' })" class="px-4 py-2 bg-red-600/90 text-white text-[11px] font-black uppercase tracking-widest rounded-xl shadow-2xl backdrop-blur-md border border-white/20 active:scale-95 transition-all">Test Error</button>
-      <button @click="console.warn('Manual Test Warning')" class="px-4 py-2 bg-yellow-600/90 text-white text-[11px] font-black uppercase tracking-widest rounded-xl shadow-2xl backdrop-blur-md border border-white/20 active:scale-95 transition-all">Test Warning</button>
-    </div>
-
     <Teleport to="body">
       <div v-if="showCoinsInfo" 
            class="fixed inset-0 z-[100] flex justify-center items-start overflow-y-auto p-4 md:p-8 bg-background/90 backdrop-blur-md"
