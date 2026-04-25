@@ -55,10 +55,7 @@
              </div>
 
              <div class="space-y-6">
-                <div class="space-y-3">
-                    <label class="text-[10px] font-black text-primary-500 uppercase tracking-widest pl-1">Mission Title</label>
-                    <input v-model="editForm.title" placeholder="E.g. Morning Grind, Road to 1000..." class="w-full bg-foreground/[0.04] border border-border rounded-2xl px-6 py-4 text-sm font-bold focus:outline-none focus:border-primary-500/50 transition-all font-industrial" />
-                </div>
+                
                 <div class="space-y-3">
                     <label class="text-[10px] font-black text-primary-500 uppercase tracking-widest pl-1">Protocol Briefing</label>
                     <textarea v-model="editForm.description" rows="4" placeholder="How was the workout today?" class="w-full bg-foreground/[0.04] border border-border rounded-3xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary-500/50 transition-all resize-none"></textarea>
