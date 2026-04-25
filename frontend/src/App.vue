@@ -246,7 +246,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
 import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Bell, User, Dices, Volume2, VolumeX, Book, ShoppingBag } from 'lucide-vue-next';
