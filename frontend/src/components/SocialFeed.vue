@@ -4,7 +4,7 @@
     <MiniActivityHeatmap class="mb-8" />
 
     <!-- Feed Content -->
-    <div class="space-y-8 min-h-[600px] relative">
+    <div class="space-y-12 min-h-[600px] relative">
       <TransitionGroup name="stagger">
         <ActivityCard 
           v-for="activity in activities" 
@@ -30,10 +30,10 @@
       </div>
 
       <!-- Empty State -->
-      <div v-if="!loading && activities.length === 0" class="py-32 text-center card-stats border-dashed bg-transparent">
-          <ZapOff class="w-12 h-12 text-muted/20 mx-auto mb-6" />
-          <h3 class="text-xl font-black text-foreground uppercase italic tracking-tighter mb-2">Registry Silent</h3>
-          <p class="text-sm text-muted/60 max-w-xs mx-auto">No activity detected in this sector. Follow more athletes to populate your inner circle.</p>
+      <div v-if="!loading && activities.length === 0" class="py-32 text-center bg-surface/5 rounded-[3rem] border-2 border-dashed border-border/20">
+          <ZapOff class="w-16 h-16 text-muted/20 mx-auto mb-6" />
+          <h3 class="text-2xl font-black text-foreground uppercase tracking-tight mb-2">Registry Silent</h3>
+          <p class="text-sm text-muted max-w-xs mx-auto font-medium opacity-60">No activity detected in this sector. Follow more athletes to populate your inner circle.</p>
       </div>
 
       <!-- Sentinel for Infinite Scroll -->
