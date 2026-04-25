@@ -104,13 +104,43 @@
            <span>Superando a <span class="text-foreground">{{ activity.next_rank_rival.name }}</span> en {{ activity.next_rank_rival.reps_diff }} reps</span>
         </div>
 
-        <!-- Mini Exercises -->
-        <div class="grid grid-cols-2 gap-2">
-           <div v-for="ex in activity.exercises" :key="ex.exercise_type" class="flex items-center gap-2 p-2 bg-foreground/5 rounded-lg border border-border/5">
-              <component :is="getExerciseIcon(ex.exercise_type)" class="w-3.5 h-3.5" :class="dominantStatColor(getAttributeName(ex.exercise_type).toLowerCase())" />
-              <div class="flex flex-col min-w-0">
-                 <span class="text-[9px] font-black text-foreground uppercase truncate">{{ i18n.t(`exercise_${ex.exercise_type}`) }}</span>
-                 <span class="text-[8px] text-muted font-bold">{{ ex.count }} reps • {{ ex.boss_damage }} dmg</span>
+        <!-- Detailed Exercises Breakdown -->
+        <div class="space-y-3">
+           <div class="flex items-center justify-between">
+              <p class="text-[8px] font-black text-muted/40 uppercase tracking-[0.3em]">Operaciones detalladas</p>
+              <div class="flex gap-3">
+                 <div v-for="xp in xpGains" :key="xp.stat" class="flex items-center gap-1 text-[8px] font-black" :class="dominantStatColor(xp.stat.toLowerCase())">
+                   <div class="w-1 h-1 rounded-full bg-current"></div>
+                   +{{ xp.amount }} {{ xp.stat }}
+                 </div>
+              </div>
+           </div>
+
+           <div class="grid grid-cols-1 gap-2">
+              <div v-for="ex in activity.exercises" :key="ex.exercise_type" 
+                   class="flex items-center justify-between p-3 rounded-xl border transition-all"
+                   :class="ex.is_record ? 'bg-amber-500/10 border-amber-500/20 shadow-[inset_0_0_10px_rgba(245,158,11,0.05)]' : 'bg-foreground/5 border-border/5'">
+                 <div class="flex items-center gap-3">
+                    <div class="p-2 rounded-lg bg-background/40 shadow-sm">
+                       <component :is="getExerciseIcon(ex.exercise_type)" class="w-4 h-4" :class="ex.is_record ? 'text-amber-500' : dominantStatColor(getAttributeName(ex.exercise_type).toLowerCase())" />
+                    </div>
+                    <div class="flex flex-col">
+                       <div class="flex items-center gap-2">
+                          <span class="text-[11px] font-black uppercase tracking-tight" :class="ex.is_record ? 'text-amber-600 dark:text-amber-400' : 'text-foreground'">{{ i18n.t(`exercise_${ex.exercise_type}`) }}</span>
+                          <Crown v-if="ex.is_record" class="w-3 h-3 text-amber-500 fill-amber-500/20" />
+                       </div>
+                       <span class="text-[8px] text-muted font-bold uppercase tracking-widest">+{{ Math.ceil(ex.count / 5) }} {{ getAttributeName(ex.exercise_type) }} XP</span>
+                    </div>
+                 </div>
+                 <div class="flex items-center gap-4">
+                    <div v-if="ex.active_multiplier > 1" class="text-[9px] font-black text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                       x{{ ex.active_multiplier }}
+                    </div>
+                    <div class="flex flex-col items-end min-w-[50px]">
+                       <span class="text-sm font-black italic" :class="ex.is_record ? 'text-amber-600 dark:text-amber-400' : 'text-foreground'">{{ ex.count }}</span>
+                       <span class="text-[7px] font-black text-primary-500 uppercase tracking-widest">{{ ex.boss_damage }} DMG</span>
+                    </div>
+                 </div>
               </div>
            </div>
         </div>
