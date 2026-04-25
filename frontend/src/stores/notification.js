@@ -6,6 +6,7 @@ export const useNotificationStore = defineStore('notification', {
     type: 'error', // 'error', 'success', 'info'
     visible: false,
     timeout: null,
+    showCopyLogs: false,
     
     // Confirm Dialog State
     confirmVisible: false,
@@ -15,19 +16,23 @@ export const useNotificationStore = defineStore('notification', {
     onCancel: null
   }),
   actions: {
-    notify(message, type = 'error', duration = 5000) {
+    notify(message, type = 'error', duration = 5000, showCopyLogs = false) {
       if (this.timeout) clearTimeout(this.timeout);
       
       this.message = message;
       this.type = type;
       this.visible = true;
+      this.showCopyLogs = showCopyLogs;
       
-      this.timeout = setTimeout(() => {
-        this.visible = false;
-      }, duration);
+      if (duration !== Infinity) {
+        this.timeout = setTimeout(() => {
+          this.visible = false;
+        }, duration);
+      }
     },
     hide() {
       this.visible = false;
+      this.showCopyLogs = false;
       if (this.timeout) clearTimeout(this.timeout);
     },
     

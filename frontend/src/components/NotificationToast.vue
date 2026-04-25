@@ -30,6 +30,26 @@
             <p class="text-[13px] font-black text-foreground leading-tight">
               {{ store.message }}
             </p>
+            <div class="mt-2 flex flex-wrap gap-2">
+              <button 
+                v-if="store.showCopyLogs" 
+                @click="handleCopyLogs"
+                class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-[11px] font-bold transition-all border border-white/10 active:scale-95"
+              >
+                <Copy v-if="!copied" class="w-3 h-3" />
+                <Check v-else class="w-3 h-3 text-green-400" />
+                {{ copied ? 'Copied!' : 'Copy Logs' }}
+              </button>
+
+              <button 
+                v-if="store.showCopyLogs" 
+                @click="sendLogsViaEmail"
+                class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-[11px] font-bold transition-all border border-white/10 active:scale-95 text-blue-200"
+              >
+                <Mail class="w-3 h-3" />
+                Email Developer
+              </button>
+            </div>
           </div>
           
           <button @click="store.hide" 
@@ -47,12 +67,25 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
-import { AlertCircle, CheckCircle, Info, X } from 'lucide-vue-next';
+import { AlertCircle, CheckCircle, Info, X, Copy, Check, Mail } from 'lucide-vue-next';
+import { copyLogsToClipboard, sendLogsViaEmail } from '../utils/logger';
 
 const store = useNotificationStore();
 const i18n = useI18nStore();
+const copied = ref(false);
+
+const handleCopyLogs = async () => {
+  const success = await copyLogsToClipboard();
+  if (success) {
+    copied.value = true;
+    setTimeout(() => {
+      copied.value = false;
+    }, 2000);
+  }
+};
 </script>
 
 <style scoped>
