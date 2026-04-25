@@ -180,7 +180,20 @@ router.get('/feed', authenticate, async (req, res) => {
             JOIN daily_stats ds ON ds.user_id = f.user_id AND ds.date = (sc.streak_date - INTERVAL '1 day')::date
           )
           SELECT COUNT(*) FROM streak_calc
-        ) as real_streak
+        ) as real_streak,
+        (
+          SELECT JSON_AGG(r_stats) FROM (
+            SELECT exercise_type, rank
+            FROM (
+              SELECT exercise_type, user_id, 
+                     RANK() OVER(PARTITION BY exercise_type ORDER BY SUM(count) DESC) as rank
+              FROM reps
+              GROUP BY exercise_type, user_id
+            ) all_ranks
+            WHERE user_id = f.user_id AND rank <= 10
+            LIMIT 3
+          ) r_stats
+        ) as exercise_ranks
       FROM feed_base f
       ORDER BY f.date DESC, f.summary_id DESC
       LIMIT ${limit} OFFSET $2

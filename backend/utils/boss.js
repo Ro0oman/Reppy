@@ -16,9 +16,9 @@ export async function syncBossHealth() {
     `);
     
     const activeUsers = parseInt(activeUsersRes.rows[0]?.count) || 0;
-    const newTotalHp = Math.max(350, activeUsers * 350);
+    const newTotalHp = 50000;
     
-    console.log(`[BOSS_SYNC] Active users (7d): ${activeUsers}. New scale: ${newTotalHp} HP.`);
+    console.log(`[BOSS_SYNC] Manual override: ${newTotalHp} HP.`);
 
     // 2. Update ALL bosses total_hp
     // We also update current_hp if the boss is currently at full health (meaning it hasn't been attacked yet)

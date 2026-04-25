@@ -48,18 +48,22 @@
             </div>
             <div class="flex items-center gap-1 text-[9px] font-medium text-muted/60 uppercase tracking-widest">
               {{ timeAgo }}
-              <template v-if="activity.dominant_stat">
-                <span class="opacity-30 mx-1">•</span>
-                <span :class="dominantStatColor(activity.dominant_stat)">{{ activity.dominant_stat.toUpperCase() }} {{ calculateStatLevel(activity[`${activity.dominant_stat}_xp`]) }}</span>
-              </template>
+
             </div>
           </div>
         </div>
         
-        <button @click="showDetails = !showDetails" class="text-[9px] font-black uppercase tracking-widest text-muted/40 hover:text-primary-500 transition-colors flex items-center gap-1">
-          {{ showDetails ? 'Ocultar build' : 'Ver build' }}
-          <ChevronRight class="w-3 h-3 transition-transform" :class="showDetails ? 'rotate-90' : ''" />
-        </button>
+        <div class="flex items-center gap-2">
+          <button v-if="activity.user_id === authStore.user?.id" 
+                  @click="$emit('edit', activity)"
+                  class="text-[9px] font-black uppercase tracking-widest text-muted/40 hover:text-primary-500 transition-colors flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-foreground/5">
+            <Pencil class="w-3 h-3" />
+          </button>
+          <button @click="showDetails = !showDetails" class="text-[9px] font-black uppercase tracking-widest text-muted/40 hover:text-primary-500 transition-colors flex items-center gap-1">
+            {{ showDetails ? 'Ocultar build' : 'Ver build' }}
+            <ChevronRight class="w-3 h-3 transition-transform" :class="showDetails ? 'rotate-90' : ''" />
+          </button>
+        </div>
       </div>
 
       <!-- HIGHLIGHT ROW: Reps & DMG -->
@@ -82,8 +86,17 @@
         <div v-if="activity.real_streak > 1" class="flex items-center gap-1 px-2 py-0.5 bg-emerald-500/10 text-emerald-500 rounded border border-emerald-500/20 text-[8px] font-black uppercase tracking-widest">
           <Flame class="w-2.5 h-2.5" /> {{ activity.real_streak }}D STREAK
         </div>
+        
+        <!-- RANKING BADGES -->
+        <div v-for="badge in rankingBadges" :key="badge.text" 
+             class="flex items-center gap-1 px-2 py-0.5 rounded border text-[8px] font-black uppercase tracking-widest transition-all hover:scale-105"
+             :class="badge.class">
+          <component :is="badge.icon" class="w-2.5 h-2.5" />
+          {{ badge.text }}
+        </div>
         <!-- XP GAINS -->
-        <div v-for="xp in xpGains" :key="xp.stat" class="text-[8px] font-black text-primary-500/60 uppercase tracking-widest">
+        <div v-for="xp in xpGains" :key="xp.stat" 
+             class="flex items-center gap-1 px-2 py-0.5 bg-primary-500/5 text-primary-500/80 rounded border border-primary-500/10 text-[8px] font-black uppercase tracking-widest">
           +{{ xp.amount }} XP {{ xp.stat }}
         </div>
       </div>
@@ -101,46 +114,31 @@
         <!-- Rivalry context -->
         <div v-if="activity.next_rank_rival" class="flex items-center gap-2 text-[10px] text-muted font-bold italic">
            <Swords class="w-3 h-3 text-amber-500" />
-           <span>Superando a <span class="text-foreground">{{ activity.next_rank_rival.name }}</span> en {{ activity.next_rank_rival.reps_diff }} reps</span>
+           <span>Objetivo: Superar a <span class="text-foreground">{{ activity.next_rank_rival.name }}</span> ({{ activity.next_rank_rival.reps_diff }} reps restantes)</span>
         </div>
 
         <!-- Detailed Exercises Breakdown -->
-        <div class="space-y-3">
+        <div class="space-y-4">
            <div class="flex items-center justify-between">
               <p class="text-[8px] font-black text-muted/40 uppercase tracking-[0.3em]">Operaciones detalladas</p>
-              <div class="flex gap-3">
-                 <div v-for="xp in xpGains" :key="xp.stat" class="flex items-center gap-1 text-[8px] font-black" :class="dominantStatColor(xp.stat.toLowerCase())">
-                   <div class="w-1 h-1 rounded-full bg-current"></div>
-                   +{{ xp.amount }} {{ xp.stat }}
-                 </div>
-              </div>
            </div>
 
-           <div class="grid grid-cols-1 gap-2">
+           <div class="space-y-4">
               <div v-for="ex in activity.exercises" :key="ex.exercise_type" 
-                   class="flex items-center justify-between p-3 rounded-xl border transition-all"
-                   :class="ex.is_pr ? 'bg-amber-500/10 border-amber-500/20 shadow-[inset_0_0_10px_rgba(245,158,11,0.05)]' : 'bg-foreground/5 border-border/5'">
-                 <div class="flex items-center gap-3">
-                    <div class="p-2 rounded-lg bg-background/40 shadow-sm">
-                       <component :is="getExerciseIcon(ex.exercise_type)" class="w-4 h-4" :class="ex.is_pr ? 'text-amber-500' : dominantStatColor(getAttributeName(ex.exercise_type).toLowerCase())" />
-                    </div>
-                    <div class="flex flex-col">
-                       <div class="flex items-center gap-2">
-                          <span class="text-[11px] font-black uppercase tracking-tight" :class="ex.is_pr ? 'text-amber-600 dark:text-amber-400' : 'text-foreground'">{{ i18n.t(`exercise_${ex.exercise_type}`) }}</span>
-                          <Crown v-if="ex.is_pr" class="w-3 h-3 text-amber-500 fill-amber-500/20" />
-                       </div>
-                       <span class="text-[8px] text-muted font-bold uppercase tracking-widest">+{{ Math.ceil(ex.count / 5) }} {{ getAttributeName(ex.exercise_type) }} XP</span>
-                    </div>
-                 </div>
-                 <div class="flex items-center gap-4">
-                    <div v-if="ex.active_multiplier > 1" class="text-[9px] font-black text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-                       x{{ ex.active_multiplier }}
-                    </div>
-                    <div class="flex flex-col items-end min-w-[50px]">
-                       <span class="text-sm font-black italic" :class="ex.is_pr ? 'text-amber-600 dark:text-amber-400' : 'text-foreground'">{{ ex.count }}</span>
-                       <span class="text-[7px] font-black text-primary-500 uppercase tracking-widest">{{ ex.boss_damage }} DMG</span>
-                    </div>
-                 </div>
+                   class="grid grid-cols-2 gap-4 py-2 border-b border-border/5 last:border-0">
+                  <div class="flex flex-col gap-1">
+                     <span class="text-[10px] font-black uppercase tracking-wider text-foreground">{{ i18n.t(ex.exercise_type) }}</span>
+                     <span class="text-[9px] font-bold" :class="dominantStatColor(getAttributeName(ex.exercise_type).toLowerCase())">
+                        +{{ Math.ceil(ex.count / 5) }} {{ getAttributeName(ex.exercise_type) }} XP
+                     </span>
+                     <div v-if="ex.active_multiplier > 1" class="text-[8px] font-black text-amber-500 flex items-center gap-1">
+                        <Zap class="w-2.5 h-2.5" /> Multiplicador x{{ ex.active_multiplier }}
+                     </div>
+                  </div>
+                  <div class="flex flex-col items-end justify-center">
+                     <span class="text-xl font-black italic text-foreground tracking-tighter">{{ ex.count }} <span class="text-[8px] text-muted not-italic uppercase tracking-widest ml-1">REPS</span></span>
+                     <span class="text-[10px] font-black text-primary-500 tracking-tight">{{ ex.boss_damage }} DMG</span>
+                  </div>
               </div>
            </div>
         </div>
@@ -231,7 +229,8 @@ import {
     Flame, TrendingUp, Dumbbell, 
     ArrowBigUp, Crown, Scan, 
     Shield, Sword, Footprints,
-    CircleDot, Ghost, Gem, Hammer
+    CircleDot, Ghost, Gem, Hammer,
+    Medal, Award, Pencil
 } from 'lucide-vue-next';
 import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
@@ -243,7 +242,7 @@ const props = defineProps({
     highlighted: { type: Boolean, default: false }
 });
 
-const emit = defineEmits(['toggleLike', 'viewProfile', 'commentAdded', 'compare']);
+const emit = defineEmits(['toggleLike', 'viewProfile', 'commentAdded', 'compare', 'edit']);
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();
@@ -283,6 +282,29 @@ const xpGains = computed(() => {
         if (amount > 0) gains.push({ stat: stat.toUpperCase(), amount });
     });
     return gains;
+});
+
+const rankingBadges = computed(() => {
+    const badges = [];
+    if (props.activity.global_rank) {
+        badges.push({
+            icon: Trophy,
+            text: `Rank #${props.activity.global_rank} Global`,
+            class: 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+        });
+    }
+    if (props.activity.exercise_ranks) {
+        props.activity.exercise_ranks.forEach(r => {
+            if (badges.length < 3) {
+                badges.push({
+                    icon: Medal,
+                    text: `Rank #${r.rank} en ${i18n.t(r.exercise_type)}`,
+                    class: 'bg-primary-500/10 text-primary-500 border-primary-500/20'
+                });
+            }
+        });
+    }
+    return badges.slice(0, 3);
 });
 
 const latestComment = computed(() => {

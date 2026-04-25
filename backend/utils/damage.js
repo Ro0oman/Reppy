@@ -141,7 +141,5 @@ export const getCommunityScaleFactor = (avgXP) => {
 };
 
 export const getBaseBossHP = (orderIndex) => {
-    // Base HP per order index (increasing)
-    const baseHPs = [1000, 2500, 5000, 7500, 10000, 15000, 25000, 50000, 75000, 150000];
-    return baseHPs[orderIndex % 10] || 10000;
+    return 50000;
 };
