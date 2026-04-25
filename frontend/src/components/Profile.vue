@@ -89,7 +89,7 @@
                    :title="i18nStore.t('profile_guide_title')"
                    class="flex items-center gap-3 bg-surface/5 px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[9px] font-black tracking-widest h-fit">
               <HelpCircle class="w-4 h-4" />
-              CODEX INFO
+              {{ i18nStore.t('ui_codex_info') || 'CODEX INFO' }}
             </button>
             <router-link v-if="isOwnProfile" to="/inventory"
                    class="flex items-center gap-3 bg-primary-500/10 px-6 py-4 rounded-xl border border-primary-500/30 hover:border-primary-500/60 transition-all text-primary-500 hover:text-primary-400 uppercase text-[9px] font-black tracking-widest h-fit">
@@ -182,7 +182,7 @@
                          <p class="text-[9px] font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t(item.type) }}</p>
                          <div class="flex items-baseline gap-2">
                            <span class="text-xs font-black text-foreground tabular-nums">{{ item.count }}</span>
-                           <span class="text-[7px] font-bold text-zinc-600 uppercase">REPS</span>
+                           <span class="text-[7px] font-bold text-zinc-600 uppercase">{{ i18nStore.t('ui_reps') }}</span>
                          </div>
                        </div>
                      </div>
@@ -224,7 +224,7 @@
                     <p class="text-[9px] font-black text-muted uppercase tracking-[0.3em] font-tight">{{ i18nStore.t('profile_rc_history') }}</p>
                   </div>
                 </div>
-                <span class="text-[10px] font-black bg-white/5 border border-white/5 px-3 py-1 rounded-full text-zinc-500 tracking-tighter uppercase font-precision opacity-40">CADENA_ENCRIPTADA</span>
+                <span class="text-[10px] font-black bg-white/5 border border-white/5 px-3 py-1 rounded-full text-zinc-500 tracking-tighter uppercase font-precision opacity-40">{{ i18nStore.t('ui_enc_chain') }}</span>
               </div>
 
               <div v-if="transactions?.length > 0" class="space-y-3 font-precision">
@@ -274,8 +274,8 @@
         <div class="card-stats max-w-2xl w-full p-6 md:p-12 border-border space-y-8 md:space-y-10 relative overflow-visible my-auto animate-in">
              <div class="flex items-center justify-between">
                 <div class="space-y-1">
-                    <h2 class="text-2xl font-black text-industrial text-foreground uppercase italic tracking-tighter">SELECT<span class="text-primary-500">.</span>CLASS</h2>
-                    <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em]">Choose your visual protocol identifier</p>
+                    <h2 class="text-2xl font-black text-industrial text-foreground uppercase italic tracking-tighter">{{ i18nStore.t('ui_select_class') }}<span class="text-primary-500">.</span></h2>
+                    <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em]">{{ i18nStore.t('ui_choose_protocol') }}</p>
                 </div>
                 <button @click="showAvatarSelector = false" class="p-2 bg-surface/10 rounded-xl hover:bg-surface/20 transition-all">
                     <XIcon class="w-5 h-5 text-foreground" />
@@ -296,7 +296,7 @@
                 </div>
              </div>
 
-             <p class="text-[9px] font-bold text-muted text-center uppercase tracking-widest opacity-40">RPG CLASSES LOCK UPON SELECTION</p>
+             <p class="text-[9px] font-bold text-muted text-center uppercase tracking-widest opacity-40">{{ i18nStore.t('ui_lock_selection') }}</p>
         </div>
       </div>
     </Teleport>

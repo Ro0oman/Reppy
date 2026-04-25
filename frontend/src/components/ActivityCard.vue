@@ -60,7 +60,7 @@
             <Pencil class="w-3 h-3" />
           </button>
           <button @click="showDetails = !showDetails" class="text-[9px] font-black uppercase tracking-widest text-muted/40 hover:text-primary-500 transition-colors flex items-center gap-1">
-            {{ showDetails ? 'Ocultar build' : 'Ver build' }}
+            {{ showDetails ? i18n.t('ui_hide_build') || 'Ocultar build' : i18n.t('ui_show_build') || 'Ver build' }}
             <ChevronRight class="w-3 h-3 transition-transform" :class="showDetails ? 'rotate-90' : ''" />
           </button>
         </div>
@@ -70,21 +70,21 @@
       <div class="flex items-baseline gap-4 py-1">
         <div class="flex items-baseline gap-1.5">
           <span class="text-3xl font-black text-foreground italic tracking-tighter">🔥 {{ activity.total_reps_today }}</span>
-          <span class="text-[9px] font-black text-muted/40 uppercase tracking-widest">REPS</span>
+          <span class="text-[9px] font-black text-muted/40 uppercase tracking-widest">{{ i18n.t('ui_reps') }}</span>
         </div>
         <div v-if="activity.total_damage_today" class="flex items-baseline gap-1">
           <span class="text-xl font-black text-primary-500 italic tracking-tighter">⚡ {{ animatedDamage }}</span>
-          <span class="text-[8px] font-black text-primary-500/40 uppercase tracking-widest">DMG</span>
+          <span class="text-[8px] font-black text-primary-500/40 uppercase tracking-widest">{{ i18n.t('ui_dmg') }}</span>
         </div>
       </div>
 
       <!-- BADGES & PROGRESS -->
       <div class="flex flex-wrap items-center gap-2">
         <div v-if="activity.is_personal_best" class="flex items-center gap-1 px-2 py-0.5 bg-amber-500/10 text-amber-500 rounded border border-amber-500/20 text-[8px] font-black uppercase tracking-widest">
-          <Trophy class="w-2.5 h-2.5" /> PB
+          <Trophy class="w-2.5 h-2.5" /> {{ i18n.t('ui_pb') }}
         </div>
         <div v-if="activity.real_streak > 1" class="flex items-center gap-1 px-2 py-0.5 bg-emerald-500/10 text-emerald-500 rounded border border-emerald-500/20 text-[8px] font-black uppercase tracking-widest">
-          <Flame class="w-2.5 h-2.5" /> {{ activity.real_streak }}D STREAK
+          <Flame class="w-2.5 h-2.5" /> {{ activity.real_streak }}{{ i18n.t('ui_streak_days') ? ' ' + i18n.t('ui_streak_days') : 'D STREAK' }}
         </div>
         
         <!-- RANKING BADGES -->
@@ -97,7 +97,7 @@
         <!-- XP GAINS -->
         <div v-for="xp in xpGains" :key="xp.stat" 
              class="flex items-center gap-1 px-2 py-0.5 bg-primary-500/5 text-primary-500/80 rounded border border-primary-500/10 text-[8px] font-black uppercase tracking-widest">
-          +{{ xp.amount }} XP {{ xp.stat }}
+          +{{ xp.amount }} {{ i18n.t('ui_xp') || 'XP' }} {{ xp.stat }}
         </div>
       </div>
 
@@ -114,13 +114,13 @@
         <!-- Rivalry context -->
         <div v-if="activity.next_rank_rival" class="flex items-center gap-2 text-[10px] text-muted font-bold italic">
            <Swords class="w-3 h-3 text-amber-500" />
-           <span>Objetivo: Superar a <span class="text-foreground">{{ activity.next_rank_rival.name }}</span> ({{ activity.next_rank_rival.reps_diff }} reps restantes)</span>
+           <span>{{ i18n.t('ui_objective') }}: {{ i18n.t('ui_surpass') || 'Superar a' }} <span class="text-foreground">{{ activity.next_rank_rival.name }}</span> ({{ activity.next_rank_rival.reps_diff }} {{ i18n.t('ui_reps_remaining') || 'reps restantes' }})</span>
         </div>
 
         <!-- Detailed Exercises Breakdown -->
         <div class="space-y-4">
            <div class="flex items-center justify-between">
-              <p class="text-[8px] font-black text-muted/40 uppercase tracking-[0.3em]">Operaciones detalladas</p>
+              <p class="text-[8px] font-black text-muted/40 uppercase tracking-[0.3em]">{{ i18n.t('ui_detailed_ops') || 'Operaciones detalladas' }}</p>
            </div>
 
            <div class="space-y-4">
@@ -129,15 +129,15 @@
                   <div class="flex flex-col gap-1">
                      <span class="text-[10px] font-black uppercase tracking-wider text-foreground">{{ i18n.t(ex.exercise_type) }}</span>
                      <span class="text-[9px] font-bold" :class="dominantStatColor(getAttributeName(ex.exercise_type).toLowerCase())">
-                        +{{ Math.ceil(ex.count / 5) }} {{ getAttributeName(ex.exercise_type) }} XP
+                        +{{ Math.ceil(ex.count / 5) }} {{ getAttributeName(ex.exercise_type) }} {{ i18n.t('ui_xp') || 'XP' }}
                      </span>
                      <div v-if="ex.active_multiplier > 1" class="text-[8px] font-black text-amber-500 flex items-center gap-1">
-                        <Zap class="w-2.5 h-2.5" /> Multiplicador x{{ ex.active_multiplier }}
+                        <Zap class="w-2.5 h-2.5" /> {{ i18n.t('ui_mult') || 'Multiplicador' }} x{{ ex.active_multiplier }}
                      </div>
                   </div>
                   <div class="flex flex-col items-end justify-center">
-                     <span class="text-xl font-black italic text-foreground tracking-tighter">{{ ex.count }} <span class="text-[8px] text-muted not-italic uppercase tracking-widest ml-1">REPS</span></span>
-                     <span class="text-[10px] font-black text-primary-500 tracking-tight">{{ ex.boss_damage }} DMG</span>
+                     <span class="text-xl font-black italic text-foreground tracking-tighter">{{ ex.count }} <span class="text-[8px] text-muted not-italic uppercase tracking-widest ml-1">{{ i18n.t('ui_reps') }}</span></span>
+                     <span class="text-[10px] font-black text-primary-500 tracking-tight">{{ ex.boss_damage }} {{ i18n.t('ui_dmg') }}</span>
                   </div>
               </div>
            </div>
@@ -145,7 +145,7 @@
 
         <!-- LOADOUT: Real icons -->
         <div class="space-y-2">
-           <p class="text-[8px] font-black text-muted/40 uppercase tracking-[0.3em]">Loadout Activo</p>
+           <p class="text-[8px] font-black text-muted/40 uppercase tracking-[0.3em]">{{ i18n.t('ui_loadout_active') }}</p>
            <div class="flex gap-2">
               <div v-for="(item, slot) in activity.equipment" :key="slot" 
                    class="w-10 h-10 flex items-center justify-center rounded-lg bg-black/40 border-2 relative group/item"

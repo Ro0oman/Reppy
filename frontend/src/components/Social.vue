@@ -9,7 +9,7 @@
     <div class="space-y-4 relative z-10">
       <!-- Community Hub simplified title -->
       <div class="flex flex-col gap-1 pt-2 relative">
-          <h1 class="text-xl font-black text-foreground uppercase italic tracking-tighter">{{ i18n.t('community') }}.HUB</h1>
+          <h1 class="text-xl font-black text-foreground uppercase italic tracking-tighter">{{ i18n.t('community') }}</h1>
           <p class="text-[10px] text-muted uppercase tracking-widest opacity-60">{{ i18n.t('community_subtitle') }}</p>
       </div>
 
@@ -100,7 +100,7 @@
                     <div class="flex items-center gap-2">
                       <p class="font-black text-foreground uppercase tracking-tight group-hover:text-primary-500 transition-colors text-sm">{{ user.name }}</p>
                       <div class="flex items-center gap-1 bg-foreground/5 px-1.5 py-0.5 rounded border border-border/30">
-                        <span class="text-[6px] font-black text-primary-500/80 tracking-widest uppercase">LVL</span>
+                        <span class="text-[6px] font-black text-primary-500/80 tracking-widest uppercase">{{ i18n.t('ui_lvl') }}</span>
                         <span class="text-[8px] font-black text-foreground italic">{{ user.current_level }}</span>
                       </div>
                     </div>
@@ -134,7 +134,7 @@
             <TransitionGroup name="list">
               <div v-for="friend in friends" :key="friend.id"
                 @click="$emit('viewProfile', friend.id)"
-                :title="i18n.locale === 'es' ? `Ver perfil de ${friend.name}` : `View ${friend.name}'s profile`"
+                :title="i18n.t('ui_view_profile', { name: friend.name })"
                 class="w-full text-left bg-foreground/[0.02] border border-border hover:border-primary-500/30 group p-6 rounded-[2rem] flex items-center justify-between transition-all cursor-pointer active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-primary-500/50 outline-none">
                 <div class="flex items-center gap-5">
                   <div class="relative">
@@ -148,7 +148,7 @@
                     <div class="flex items-center gap-2 min-w-0 flex-1">
                       <p class="text-lg sm:text-xl font-black text-foreground tracking-tight group-hover:text-primary-500 transition-colors uppercase italic font-industrial truncate">{{ friend.name }}</p>
                       <div class="flex items-center gap-1.5 bg-primary-500/10 px-2 py-0.5 rounded-lg border border-primary-500/30 shrink-0">
-                        <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest">LVL</span>
+                        <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('ui_lvl') }}</span>
                         <span class="text-[10px] font-black text-foreground italic">{{ friend.current_level }}</span>
                       </div>
                     </div>

@@ -15,17 +15,17 @@
                 <span class="text-xl font-black tracking-tighter text-white italic leading-none">
                   {{ Math.round((todayProgress / stats.dailyGoal) * 100) }}%
                 </span>
-                <span class="text-[7px] font-black text-primary-500 uppercase tracking-widest mt-0.5">OBJETIVO</span>
+                <span class="text-[7px] font-black text-primary-500 uppercase tracking-widest mt-0.5">{{ i18n.t('ui_objective') }}</span>
               </div>
             </RadialProgress>
           </div>
 
           <div>
-            <h2 class="text-4xl font-black tracking-tighter text-foreground italic uppercase leading-none">Command Hub</h2>
+            <h2 class="text-4xl font-black tracking-tighter text-foreground italic uppercase leading-none">{{ i18n.t('dashboard_title') }}</h2>
             <div class="flex items-center gap-2 mt-2">
               <div class="flex items-center gap-1.5 bg-primary-500/10 px-2 py-0.5 rounded-full border border-primary-500/20">
                 <Target class="w-3 h-3 text-primary-500" />
-                <span class="text-[9px] font-black text-primary-500 uppercase tracking-widest">{{ todayProgress }} / {{ stats.dailyGoal }} REPS</span>
+                <span class="text-[9px] font-black text-primary-500 uppercase tracking-widest">{{ todayProgress }} / {{ stats.dailyGoal }} {{ i18n.t('ui_reps') }}</span>
               </div>
             </div>
           </div>
@@ -64,7 +64,7 @@
             </div>
             
             <div class="flex items-center justify-between relative z-10">
-              <span class="text-[10px] font-black text-primary-500 uppercase tracking-widest">COMBAT_POWER</span>
+              <span class="text-[10px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('ui_combat_power') }}</span>
               <Sword class="w-4 h-4 text-primary-500 animate-pulse" />
             </div>
 
@@ -73,10 +73,10 @@
                 <span class="text-4xl font-black text-white italic tracking-tighter">
                   {{ stats.combatPower.minDamage }} - {{ stats.combatPower.maxDamage }}
                 </span>
-                <span class="text-[10px] font-black text-muted uppercase tracking-widest">DMG RANGE / REP</span>
+                <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18n.t('ui_dmg_range') }}</span>
               </div>
               <div class="text-[9px] font-bold text-primary-500/60 uppercase tracking-[0.2em] mt-1 italic">
-                 ESTIMATED_AVG: {{ stats.combatPower.total }}
+                 {{ i18n.t('ui_avg_estimated') }}: {{ stats.combatPower.total }}
               </div>
               
               <!-- Detailed Breakdown -->
@@ -98,11 +98,11 @@
                 <div class="flex justify-between items-center mt-2 pt-2 border-t border-white/5 opacity-60">
                    <div class="flex items-center gap-1.5">
                       <Zap class="w-2.5 h-2.5 text-amber-400" />
-                      <span class="text-[8px] font-bold text-white uppercase">{{ stats.combatPower.critChance }}% CRIT</span>
+                      <span class="text-[8px] font-bold text-white uppercase">{{ stats.combatPower.critChance }}% {{ i18n.t('ui_crit') }}</span>
                    </div>
                    <div class="flex items-center gap-1.5">
                       <Target class="w-2.5 h-2.5 text-amber-400" />
-                      <span class="text-[8px] font-bold text-white uppercase">x{{ stats.combatPower.critMultiplier }} MULT</span>
+                      <span class="text-[8px] font-bold text-white uppercase">x{{ stats.combatPower.critMultiplier }} {{ i18n.t('ui_mult') }}</span>
                    </div>
                 </div>
 
