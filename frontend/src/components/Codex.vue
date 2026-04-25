@@ -55,10 +55,10 @@
           <div class="hidden sm:flex pt-4 items-center justify-between border-t border-white/5">
             <div class="flex items-center gap-2">
               <div class="w-1.5 h-1.5 rounded-full animate-pulse" :style="{ backgroundColor: stat.color }"></div>
-              <span class="text-[8px] font-black text-muted uppercase tracking-widest">Protocol Active</span>
+              <span class="text-[8px] font-black text-muted uppercase tracking-widest">{{ i18n.t('ui_protocol_active') }}</span>
             </div>
             <div class="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-              <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest">More Details</span>
+              <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('ui_more_details') }}</span>
               <ChevronRight class="w-2.5 h-2.5 text-primary-500" />
             </div>
           </div>
@@ -72,18 +72,18 @@
         <div class="space-y-2">
           <div class="flex items-center gap-3">
             <div class="p-2 bg-primary-500/10 rounded-lg"><Book class="w-4 h-4 text-primary-500" /></div>
-            <h2 class="text-3xl font-black tracking-tighter text-foreground italic uppercase leading-none">THE KNOWLEDGE VAULT</h2>
+            <h2 class="text-3xl font-black tracking-tighter text-foreground italic uppercase leading-none">{{ i18n.t('ui_knowledge_vault') }}</h2>
           </div>
           <p class="text-muted/60 text-sm max-w-sm">{{ i18n.t('codex_int_vault_desc') || 'Unlock Intelligence XP by studying calisthenics protocols. Knowledge is the ultimate force multiplier.' }}</p>
         </div>
         
         <div class="bg-surface/10 border border-white/5 px-6 py-4 rounded-2xl flex items-center gap-6">
            <div class="text-center border-r border-border pr-6">
-             <span class="text-[9px] font-black text-muted uppercase tracking-widest block mb-1">PROTOCOLS</span>
+             <span class="text-[9px] font-black text-muted uppercase tracking-widest block mb-1">{{ i18n.t('ui_protocols') || 'Protocolos' }}</span>
              <span class="text-xl font-black text-foreground">{{ blogPosts.length }}</span>
            </div>
            <div class="text-center">
-             <span class="text-[9px] font-black text-muted uppercase tracking-widest block mb-1">UNLOCKED</span>
+             <span class="text-[9px] font-black text-muted uppercase tracking-widest block mb-1">{{ i18n.t('ui_unlocked') || 'Desbloqueados' }}</span>
              <span class="text-xl font-black text-neon-lime">{{ readPostsCount}}</span>
            </div>
         </div>
@@ -107,11 +107,11 @@
             
             <div v-if="isRead(post.slug)" class="absolute top-4 right-4 bg-neon-lime/20 backdrop-blur-md border border-neon-lime/40 px-3 py-1 rounded-full flex items-center gap-1.5">
                <CheckCircle2 class="w-3.5 h-3.5 text-neon-lime" />
-               <span class="text-[8px] font-black text-neon-lime uppercase tracking-widest italic">ACQUIRED</span>
+               <span class="text-[8px] font-black text-neon-lime uppercase tracking-widest italic">{{ i18n.t('ui_acquired') || 'ACQUIRED' }}</span>
             </div>
             <div v-else class="absolute top-4 right-4 bg-primary-500/20 backdrop-blur-md border border-primary-500/40 px-3 py-1 rounded-full flex items-center gap-1.5">
                <ShieldAlert class="w-3.5 h-3.5 text-primary-500" />
-               <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest italic">LOCKED</span>
+               <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest italic">{{ i18n.t('ui_locked') || 'LOCKED' }}</span>
             </div>
           </div>
 
@@ -131,7 +131,7 @@
       <div v-if="upcomingPosts.length > 0" class="pt-20 space-y-8">
         <div class="flex items-center gap-3">
           <div class="p-2 bg-muted/10 rounded-lg"><Timer class="w-4 h-4 text-muted" /></div>
-          <h2 class="text-xl font-black tracking-tighter text-muted italic uppercase leading-none">{{ i18n.locale === 'es' ? 'CRÓNICAS EN CAMINO' : 'UPCOMING CHRONICLES' }}</h2>
+          <h2 class="text-xl font-black tracking-tighter text-muted italic uppercase leading-none">{{ i18n.t('ui_upcoming_chronicles') || 'Próximas Crónicas' }}</h2>
         </div>
 
         <div class="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">

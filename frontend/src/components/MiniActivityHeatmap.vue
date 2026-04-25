@@ -9,10 +9,10 @@
           <Flame class="w-5 h-5 text-emerald-500" />
         </div>
         <div>
-          <h4 class="text-[10px] font-black text-muted uppercase tracking-[0.3em] font-industrial">Operational_Consistency</h4>
-          <div class="flex items-baseline gap-2">
-            <p class="text-xs font-black text-foreground uppercase tracking-widest italic">AGI Efficiency Protocol</p>
-            <span class="text-[8px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded uppercase">Verified</span>
+          <h4 class="text-[10px] font-black text-muted uppercase tracking-[0.3em] font-industrial">{{ i18n.t('ui_op_consistency') }}</h4>
+          <div class="flex items-center gap-2">
+            <p class="text-xs font-black text-foreground uppercase tracking-widest italic">{{ i18n.t('ui_eff_protocol') }}</p>
+            <span class="text-[8px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded uppercase">{{ i18n.t('ui_verified') }}</span>
           </div>
         </div>
       </div>
@@ -27,7 +27,7 @@
         
         <div class="ml-4 flex flex-col items-end">
            <span class="text-xl font-black text-foreground italic tabular-nums leading-none">{{ currentStreak }}</span>
-           <span class="text-[7px] font-bold text-muted uppercase tracking-tighter">Current_Streak</span>
+           <span class="text-[7px] font-bold text-muted uppercase tracking-tighter">{{ i18n.t('stats_streak') }}</span>
         </div>
       </div>
     </div>
@@ -39,6 +39,9 @@ import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { Flame } from 'lucide-vue-next';
 import { getLocalDateString } from '../utils/dateUtils.js';
+import { useI18nStore } from '../stores/i18n';
+
+const i18n = useI18nStore();
 
 const heatmapData = ref([]);
 const loading = ref(true);

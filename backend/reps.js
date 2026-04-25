@@ -1,8 +1,8 @@
 import express from 'express';
-import { query } from './db.js';
+import pool, { query } from './db.js';
 import { authenticate } from './middleware.js';
 import { getExerciseRewards, getBossDamageMultiplier } from './utils/rewards.js';
-import { recalculateUserStats } from './utils/stats.js';
+import { recalculateUserStats, augmentUserWithLevels } from './utils/stats.js';
 
 import { syncBossHealth } from './utils/boss.js';
 import { getLocalDateString } from './utils/date.js';

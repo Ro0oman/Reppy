@@ -88,7 +88,8 @@
    or we just apply the animation to the container if this class is present. */
 .card-stats:has(.post-bg-neon),
 .rpg-card:has(.post-bg-neon),
-.shop-preview:has(.post-bg-neon) {
+.shop-preview:has(.post-bg-neon),
+.social-card:has(.post-bg-neon) {
   animation: neon-border-pulse 4s ease-in-out infinite !important;
   border-width: 1.5px !important;
 }
@@ -193,7 +194,8 @@
 
 .card-stats:has(.post-bg-void),
 .rpg-card:has(.post-bg-void),
-.shop-preview:has(.post-bg-void) {
+.shop-preview:has(.post-bg-void),
+.social-card:has(.post-bg-void) {
   animation: void-gravity-glitch 5s step-end infinite !important;
 }
 

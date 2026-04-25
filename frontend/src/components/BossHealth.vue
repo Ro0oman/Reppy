@@ -27,7 +27,7 @@
         <div class="flex flex-wrap items-center gap-2 mb-5">
             <span class="px-3 py-1 rounded-full text-[8px] md:text-[9px] font-black tracking-[0.3em] uppercase backdrop-blur-sm border"
                   :class="boss.is_legendary ? 'bg-amber-500/20 border-amber-500/30 text-amber-400' : 'bg-primary-500/10 border-primary-500/20 text-primary-500'">
-              {{ boss.is_legendary ? 'PROTOCOLO LEGENDARIO' : i18nStore.t('boss_class_active') }}
+              {{ boss.is_legendary ? i18nStore.t('ui_protocol_legendary') : i18nStore.t('boss_class_active') }}
             </span>
            <button @click.stop="showCodex = true" class="px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 text-[8px] md:text-[9px] font-black tracking-[0.3em] uppercase hover:bg-orange-500/20 hover:border-orange-500/40 transition-all backdrop-blur-sm flex items-center gap-1.5">
               <span>📖</span> {{ i18nStore.t('boss_how_damage') }}
@@ -106,6 +106,38 @@
            </div>
         </div>
 
+        <!-- Legendary Rewards Preview -->
+        <div v-if="boss.is_legendary && !isDefeated" class="mb-6 animate-in slide-in-from-top-4 duration-1000">
+          <div class="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10 flex flex-col md:flex-row gap-4 items-center">
+            <div class="shrink-0 relative group">
+              <div class="absolute inset-0 bg-amber-500/20 blur-xl rounded-full animate-pulse"></div>
+              <span class="text-4xl md:text-5xl relative z-10 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]">🎁</span>
+            </div>
+            <div class="flex-1 text-center md:text-left">
+              <h4 class="text-[10px] font-black text-amber-500 uppercase tracking-[0.2em] mb-1">{{ i18nStore.t('ui_legendary_rewards') }}</h4>
+              <p class="text-sm font-bold text-white tracking-tight uppercase italic leading-tight">{{ i18nStore.t('ui_super_chest') }}: {{ i18nStore.t('ui_guaranteed') }} (x1 {{ i18nStore.t('ui_legendary') }})</p>
+            </div>
+            <div class="flex gap-2 flex-wrap justify-center">
+              <div class="px-2 py-1 rounded-lg bg-black/40 border border-white/5 flex flex-col items-center min-w-[50px]">
+                <span class="text-[7px] font-black text-white/40 uppercase tracking-tighter">{{ i18nStore.t('ui_calisthenic') }}</span>
+                <span class="text-[10px] font-black text-amber-400 italic">10%</span>
+              </div>
+              <div class="px-2 py-1 rounded-lg bg-black/40 border border-white/5 flex flex-col items-center min-w-[50px]">
+                <span class="text-[7px] font-black text-white/40 uppercase tracking-tighter">{{ i18nStore.t('ui_legendary') }}</span>
+                <span class="text-[10px] font-black text-amber-400 italic">15%</span>
+              </div>
+              <div class="px-2 py-1 rounded-lg bg-black/40 border border-white/5 flex flex-col items-center min-w-[50px]">
+                <span class="text-[7px] font-black text-white/40 uppercase tracking-tighter">{{ i18nStore.t('ui_epic') }}</span>
+                <span class="text-[10px] font-black text-amber-400 italic">25%</span>
+              </div>
+              <div class="px-2 py-1 rounded-lg bg-black/40 border border-white/5 flex flex-col items-center min-w-[50px]">
+                <span class="text-[7px] font-black text-white/40 uppercase tracking-tighter">{{ i18nStore.t('ui_rare') }}</span>
+                <span class="text-[10px] font-black text-amber-400 italic">25%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
          <div class="grid grid-cols-1 md:grid-cols-3 gap-3" v-if="authStore.isAuthenticated">
            
            <!-- Tu Daño Total -->
@@ -158,7 +190,7 @@
                 :class="boss.is_legendary 
                   ? 'bg-amber-500 hover:bg-amber-400 text-black border-amber-400 shadow-amber-500/30' 
                   : 'bg-emerald-500 hover:bg-emerald-400 text-black border-emerald-400 shadow-emerald-500/30'">
-                 <span class="text-xl">🎁</span> {{ boss.is_legendary ? 'RECLAMAR BOTÍN LEGENDARIO' : i18nStore.t('boss_claim_loot') }}
+                 <span class="text-xl">🎁</span> {{ boss.is_legendary ? i18nStore.t('ui_claim_legendary') : i18nStore.t('boss_claim_loot') }}
                </button>
             </template>
             <div v-else class="w-full md:w-auto flex items-center justify-center gap-3 text-white/30 font-black uppercase text-[10px] tracking-[0.2em] px-8 py-4 bg-black/40 rounded-2xl border border-white/5">

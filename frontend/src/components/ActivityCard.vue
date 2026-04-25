@@ -8,9 +8,27 @@
       activity.has_crit ? 'is-critical' : ''
     ]"
   >
-    <!-- Background Enhancement (Subtle) -->
+    <!-- Background Enhancement (Premium Effects) -->
     <div v-if="activity.post_background_css" class="absolute inset-0 pointer-events-none overflow-hidden rounded-[1.5rem] z-0">
-      <div class="absolute inset-0 opacity-10" :class="activity.post_background_css"></div>
+      <div class="absolute inset-0 opacity-20" :class="activity.post_background_css">
+        <!-- Matrix Rain Effect -->
+        <template v-if="activity.post_background_css === 'post-bg-matrix'">
+          <div v-for="i in 10" :key="i" class="matrix-column" :style="{ 
+            left: (i * 10) + '%', 
+            animationDelay: (i * 0.5) + 's',
+            animationDuration: (1 + Math.random() * 2) + 's'
+          }"></div>
+        </template>
+        
+        <!-- Inferno Core Effect -->
+        <template v-if="activity.post_background_css === 'post-bg-inferno'">
+          <div v-for="i in 12" :key="i" class="ember" :style="{ 
+            left: (Math.random() * 100) + '%', 
+            animationDelay: (Math.random() * 4) + 's',
+            animationDuration: (2 + Math.random() * 3) + 's'
+          }"></div>
+        </template>
+      </div>
     </div>
 
     <!-- Feedback Popups -->
@@ -37,7 +55,7 @@
               :size="40" 
               class="ring-1 ring-border/20 shadow-sm"
             />
-            <div class="absolute -bottom-1 -right-1 bg-background text-[8px] font-bold text-foreground px-1 py-0.5 rounded border border-border/50 shadow-sm">
+            <div class="absolute -bottom-2 -right-2 bg-primary-500 text-[11px] font-black text-white px-2 py-0.5 rounded-lg border-2 border-background shadow-xl z-20 flex items-center justify-center min-w-[24px]">
               {{ activity.current_level }}
             </div>
           </div>
@@ -56,8 +74,9 @@
         <div class="flex items-center gap-2">
           <button v-if="activity.user_id === authStore.user?.id" 
                   @click="$emit('edit', activity)"
-                  class="text-[9px] font-black uppercase tracking-widest text-muted/40 hover:text-primary-500 transition-colors flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-foreground/5">
-            <Pencil class="w-3 h-3" />
+                  class="text-[10px] font-black uppercase tracking-widest text-primary-500 bg-primary-500/10 hover:bg-primary-500/20 transition-all flex items-center gap-2 px-3 py-1.5 rounded-xl border border-primary-500/20 shadow-sm">
+            <Pencil class="w-3.5 h-3.5" />
+            <span>{{ i18n.t('ui_edit') || 'EDITAR' }}</span>
           </button>
           <button @click="showDetails = !showDetails" class="text-[9px] font-black uppercase tracking-widest text-muted/40 hover:text-primary-500 transition-colors flex items-center gap-1">
             {{ showDetails ? i18n.t('ui_hide_build') || 'Ocultar build' : i18n.t('ui_show_build') || 'Ver build' }}
@@ -100,6 +119,12 @@
           +{{ xp.amount }} {{ i18n.t('ui_xp') || 'XP' }} {{ xp.stat }}
         </div>
       </div>
+      
+      <!-- Rivalry context -->
+      <div v-if="activity.next_rank_rival" class="mt-3 flex items-center gap-2 text-[10px] text-muted font-bold italic">
+         <Swords class="w-3 h-3 text-amber-500" />
+         <span>{{ i18n.t('ui_objective') }}: {{ i18n.t('ui_surpassing_rival', { name: activity.next_rank_rival.name, reps: activity.next_rank_rival.reps_diff }) }}</span>
+      </div>
 
       <!-- CAPTION -->
       <div v-if="activity.description" class="mt-1">
@@ -111,17 +136,26 @@
       <!-- EXPANDED SECTION -->
       <div v-if="showDetails" class="mt-3 pt-3 border-t border-border/10 space-y-5 animate-in slide-in-from-top-2 duration-300">
         
-        <!-- Rivalry context -->
-        <div v-if="activity.next_rank_rival" class="flex items-center gap-2 text-[10px] text-muted font-bold italic">
-           <Swords class="w-3 h-3 text-amber-500" />
-           <span>{{ i18n.t('ui_objective') }}: {{ i18n.t('ui_surpass') || 'Superar a' }} <span class="text-foreground">{{ activity.next_rank_rival.name }}</span> ({{ activity.next_rank_rival.reps_diff }} {{ i18n.t('ui_reps_remaining') || 'reps restantes' }})</span>
-        </div>
+
 
         <!-- Detailed Exercises Breakdown -->
         <div class="space-y-4">
            <div class="flex items-center justify-between">
-              <p class="text-[8px] font-black text-muted/40 uppercase tracking-[0.3em]">{{ i18n.t('ui_detailed_ops') || 'Operaciones detalladas' }}</p>
+              <h4 class="text-[10px] font-black text-primary-500 uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
+                {{ i18n.t('ui_detailed_ops') }}
+              </h4>
            </div>
+
+           <div v-if="activity.surpassing_rival_name" class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-between group-hover:bg-amber-500/20 transition-all duration-500">
+            <div class="flex items-center gap-3">
+              <Trophy class="w-5 h-5" />
+              <p class="text-xs font-black uppercase tracking-widest italic">
+                {{ i18n.t('ui_surpassing_rival', { name: props.activity.surpassing_rival_name, reps: props.activity.surpassing_rival_reps }) }}
+              </p>
+            </div>
+            <div class="text-[9px] font-black tracking-[0.2em] uppercase opacity-50">{{ i18n.t('ui_objective') }}</div>
+          </div>
 
            <div class="space-y-4">
               <div v-for="ex in activity.exercises" :key="ex.exercise_type" 
@@ -174,7 +208,7 @@
             </button>
             <button @click="$emit('compare', activity)" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all hover:bg-foreground/5 text-muted/60 hover:text-amber-500">
               <Swords class="w-4 h-4" />
-              <span class="text-[10px] font-black uppercase tracking-tighter">Retar</span>
+              <span class="text-[10px] font-black uppercase tracking-tighter">{{ i18n.t('ui_challenge') || 'Retar' }}</span>
             </button>
           </div>
 
@@ -197,11 +231,11 @@
       <div v-if="showComments" class="mt-1 space-y-4 animate-in slide-in-from-top-2">
         <div class="flex gap-2">
           <input 
-            v-model="commentText" @keyup.enter="submitComment" placeholder="Comentar..." 
+            v-model="commentText" @keyup.enter="submitComment" :placeholder="i18n.t('ui_comment_placeholder') || 'Comentar...'" 
             class="flex-1 bg-foreground/5 border-none rounded-xl px-3 py-2 text-xs outline-none focus:ring-1 ring-primary-500/20"
           />
           <button @click="submitComment" class="text-[10px] font-black uppercase text-primary-500 disabled:opacity-30" :disabled="!commentText.trim()">
-            Ok
+            {{ i18n.t('ui_submit') || 'Ok' }}
           </button>
         </div>
         <div class="space-y-3 max-h-40 overflow-y-auto custom-scrollbar">
@@ -289,7 +323,7 @@ const rankingBadges = computed(() => {
     if (props.activity.global_rank) {
         badges.push({
             icon: Trophy,
-            text: `Rank #${props.activity.global_rank} Global`,
+            text: i18n.t('ui_rank_global', { rank: props.activity.global_rank }),
             class: 'bg-amber-500/10 text-amber-500 border-amber-500/20'
         });
     }
@@ -298,7 +332,7 @@ const rankingBadges = computed(() => {
             if (badges.length < 3) {
                 badges.push({
                     icon: Medal,
-                    text: `Rank #${r.rank} en ${i18n.t(r.exercise_type)}`,
+                    text: i18n.t('ui_rank_exercise', { rank: r.rank, exercise: i18n.t(r.exercise_type) }),
                     class: 'bg-primary-500/10 text-primary-500 border-primary-500/20'
                 });
             }

@@ -188,8 +188,8 @@
             <table class="w-full text-left">
               <thead>
                 <tr class="text-muted/40 text-[9px] uppercase font-black tracking-[0.3em] border-b border-white/5">
-                  <th class="px-10 py-6">Timestamp</th>
-                  <th class="px-10 py-6 text-right">Magnitude</th>
+                  <th class="px-10 py-6">{{ i18n.t('ui_timestamp') }}</th>
+                  <th class="px-10 py-6 text-right">{{ i18n.t('ui_magnitude') }}</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-white/[0.02]">
