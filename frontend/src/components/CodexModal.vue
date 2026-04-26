@@ -5,7 +5,7 @@
          @click.self="emit('close')">
       
       <!-- Main Container -->
-      <div class="w-full max-w-5xl bg-surface/30 border border-white/10 sm:rounded-[2.5rem] shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-row h-full sm:h-[650px] animate-in zoom-in-95 duration-500 select-none">
+      <div class="w-full max-w-5xl bg-surface/30 border border-white/10 sm:rounded-[2.5rem] shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col md:flex-row h-full md:h-[650px] animate-in zoom-in-95 duration-500 select-none">
         
         <!-- Ambient Background Glow -->
         <div class="absolute inset-0 pointer-events-none transition-colors duration-1000 opacity-20" :class="activeDesc.bgAccent"></div>
@@ -17,16 +17,16 @@
         </button>
 
         <!-- Sidebar: Stat Selection -->
-        <div class="w-20 md:w-72 border-r border-white/5 bg-black/40 flex flex-col z-10 shrink-0">
-          <div class="p-4 md:p-8 flex items-center justify-center md:justify-start">
-            <h3 class="text-[8px] md:text-2xl font-black text-foreground uppercase italic leading-none tracking-tighter truncate">CODEX<span class="text-primary-500 hidden md:inline">_</span>V2</h3>
+        <div class="w-full md:w-72 border-b md:border-b-0 md:border-r border-white/5 bg-black/40 flex flex-col z-10 shrink-0">
+          <div class="p-4 md:p-8 flex items-center justify-between md:justify-start">
+            <h3 class="text-lg md:text-2xl font-black text-foreground uppercase italic leading-none tracking-tighter truncate">CODEX<span class="text-primary-500 hidden md:inline">_</span>V2</h3>
           </div>
 
-          <!-- Scrollable Tab Sidebar -->
-          <div class="flex-1 overflow-y-auto px-2 md:px-6 py-2 md:py-0 custom-scrollbar flex flex-col gap-2 md:pb-8 overflow-x-hidden">
+          <!-- Scrollable Tab Sidebar (Horizontal on mobile, Vertical on desktop) -->
+          <div class="flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto px-4 md:px-6 py-2 md:py-0 custom-scrollbar gap-2 md:pb-8 no-scrollbar">
             <button v-for="desc in attributeDescriptions" :key="desc.key" 
                     @click="activeTab = desc.key"
-                    class="relative w-full p-2.5 sm:p-4 rounded-2xl flex items-center justify-center md:justify-start gap-4 transition-all duration-300 group shrink-0"
+                    class="relative p-2.5 sm:p-4 rounded-2xl flex items-center justify-center md:justify-start gap-4 transition-all duration-300 group shrink-0 min-w-[60px] md:min-w-0"
                     :class="activeTab === desc.key ? desc.bgActive + ' border ' + desc.borderActive : 'bg-white/5 border border-transparent hover:bg-white/10'">
               
               <div class="p-2 sm:p-2.5 rounded-xl transition-all duration-300 bg-black/50" :class="activeTab === desc.key ? desc.buttonIconBg : 'grayscale opacity-50'">
@@ -50,12 +50,12 @@
         </div>
 
         <!-- Main Content Area -->
-        <div class="flex-1 relative flex flex-col p-6 pt-16 sm:p-10 md:p-16 overflow-y-auto custom-scrollbar z-20">
+        <div class="flex-1 relative flex flex-col p-6 sm:p-10 md:p-16 overflow-y-auto custom-scrollbar z-20">
           
           <Transition name="slide-up" mode="out-in">
-            <div :key="activeTab" class="relative z-10 w-full space-y-8">
+            <div :key="activeTab" class="relative z-10 w-full space-y-6 md:space-y-8">
               <!-- Header & Stat Summary -->
-              <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+              <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 md:gap-6">
                 <div class="space-y-1">
                   <span class="text-[8px] font-black text-muted uppercase tracking-[0.4em]">{{ i18nStore.t('lb_level') }} {{ getStatLevel(activeTab) }}</span>
                   <h4 class="text-3xl sm:text-7xl font-black uppercase tracking-tighter italic leading-none" :class="activeDesc.iconColor">
@@ -79,10 +79,10 @@
               </div>
 
               <!-- Content Grid -->
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                 <div class="space-y-4">
-                  <p class="hidden sm:block text-[11px] font-black text-primary-500 uppercase tracking-widest italic">{{ i18nStore.t(`codex_${activeDesc.key.toLowerCase()}_quote`) }}</p>
-                  <p class="text-xs sm:text-base text-muted/80 leading-relaxed line-clamp-4 sm:line-clamp-none">{{ i18nStore.t(`codex_${activeDesc.key.toLowerCase()}_desc`) }}</p>
+                  <p class="text-[11px] font-black text-primary-500 uppercase tracking-widest italic">{{ i18nStore.t(`codex_${activeDesc.key.toLowerCase()}_quote`) }}</p>
+                  <p class="text-xs sm:text-base text-muted/80 leading-relaxed">{{ i18nStore.t(`codex_${activeDesc.key.toLowerCase()}_desc`) }}</p>
                 </div>
                 
                 <!-- Earnings Protocol -->
@@ -98,21 +98,21 @@
               </div>
 
               <!-- Action Module -->
-              <div class="p-8 sm:p-10 rounded-[3rem] bg-black/40 border shadow-2xl relative overflow-hidden group" :class="activeDesc.borderActive">
+              <div class="p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] bg-black/40 border shadow-2xl relative overflow-hidden group" :class="activeDesc.borderActive">
                 <div class="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-10 transition-opacity duration-700" :class="activeDesc.gradient"></div>
                 
-                <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+                <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-8">
                   <div class="space-y-4 w-full">
                     <div class="flex items-center gap-2">
                       <div class="w-2.5 h-2.5 rounded-full animate-pulse shadow-[0_0_10px_currentColor]" :class="activeDesc.iconColor.replace('text-', 'bg-')"></div>
                       <span class="text-[10px] font-black uppercase tracking-[0.4em]" :class="activeDesc.iconColor">{{ i18nStore.t('codex_lv_up') }}</span>
                     </div>
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-8">
-                      <p class="text-2xl sm:text-3xl font-black text-white uppercase tracking-tighter leading-tight max-w-sm italic">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 md:gap-8">
+                      <p class="text-xl md:text-3xl font-black text-white uppercase tracking-tighter leading-tight max-w-sm italic">
                         {{ i18nStore.t('codex_' + activeDesc.key.toLowerCase() + '_action') }}
                       </p>
                       <button @click="handleAction(activeDesc.key)" 
-                              class="px-6 sm:px-10 py-4 rounded-2xl font-black text-[10px] sm:text-[11px] uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_rgba(0,0,0,0.4)] whitespace-normal text-center leading-tight min-w-[160px]"
+                              class="w-full sm:w-auto px-6 sm:px-10 py-4 rounded-2xl font-black text-[10px] sm:text-[11px] uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_rgba(0,0,0,0.4)] whitespace-normal text-center leading-tight min-w-[160px]"
                               :class="['bg-gradient-to-r ' + activeDesc.gradient, 'text-white']">
                         {{ i18nStore.t('codex_action_target') }}
                       </button>
@@ -126,7 +126,7 @@
           <!-- Decorative Large Icon -->
           <component 
             :is="activeDesc.icon" 
-            class="absolute -right-32 -bottom-32 w-[500px] h-[500px] opacity-[0.03] blur-sm pointer-events-none -z-10" 
+            class="absolute -right-32 -bottom-32 w-[300px] md:w-[500px] h-[300px] md:h-[500px] opacity-[0.03] blur-sm pointer-events-none -z-10" 
             :class="activeDesc.iconColor" 
           />
         </div>

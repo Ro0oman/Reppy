@@ -12,9 +12,9 @@
       </div>
     </div>
     <!-- Tabs Navigation (Redesigned for separation) -->
-    <div class="flex items-center justify-center gap-4 mb-8">
+    <div class="flex flex-wrap items-center justify-center gap-2 md:gap-4 mb-8">
       <button @click="activeTab = 'combat'; activeStashTab = 'all'; playZip()" 
-              class="px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all border outline-none"
+              class="flex-1 sm:flex-none px-4 md:px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all border outline-none whitespace-nowrap"
               :class="activeTab === 'combat' ? 'bg-primary-500 text-white border-primary-400 shadow-lg shadow-primary-500/20' : 'bg-surface/10 text-muted/60 border-white/5 hover:border-white/10 hover:text-foreground'">
         {{ i18n.t('inv_tab_combat') }}
       </button>
@@ -535,11 +535,11 @@
 
     <!-- Item Details Modal (Issue #135) -->
     <Teleport to="body">
-      <div v-if="showItemModal && selectedItem" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-in">
-        <div class="relative w-full max-w-xl bg-surface/40 border border-white/10 rounded-[2.5rem] shadow-[0_0_100px_rgba(255,69,0,0.1)] overflow-hidden">
+      <div v-if="showItemModal && selectedItem" class="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-xl animate-in">
+        <div class="relative w-full max-w-xl bg-surface/40 border border-white/10 rounded-[2.5rem] shadow-[0_0_100px_rgba(255,69,0,0.1)] overflow-hidden flex flex-col max-h-[90vh]">
           
           <!-- Modal Header -->
-          <div class="p-8 pb-4 flex items-center justify-between">
+          <div class="p-6 md:p-8 pb-4 flex items-center justify-between shrink-0">
             <div class="flex items-center gap-3">
               <div class="p-2 bg-primary-500/10 rounded-lg border border-primary-500/20">
                 <Package class="w-4 h-4 text-primary-500" />
@@ -555,7 +555,7 @@
           </div>
 
           <!-- Modal Body -->
-          <div class="p-8 pt-0 space-y-6">
+          <div class="p-6 md:p-8 pt-0 space-y-6 overflow-y-auto no-scrollbar">
             <!-- Visual Preview -->
             <div class="aspect-video bg-black/40 rounded-3xl border border-white/5 flex items-center justify-center relative overflow-hidden group">
                <!-- Scan Effect -->
@@ -605,7 +605,7 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex gap-4 pt-4">
+            <div class="flex flex-col sm:flex-row gap-4 pt-4 shrink-0 p-6 md:p-8 pt-0">
               <button v-if="selectedItem.type === 'consumable'" 
                 @click="handleActivate(selectedItem); showItemModal = false"
                 :disabled="isPotionTypeActive(selectedItem)"

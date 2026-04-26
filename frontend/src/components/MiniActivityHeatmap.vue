@@ -18,14 +18,14 @@
       </div>
 
       <!-- Heatmap Cells Row -->
-      <div class="flex items-center gap-1.5">
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar max-w-full py-2 px-1">
         <div v-for="day in last30Days" :key="day.date" 
-             class="w-3 h-3 rounded-sm transition-all duration-500 hover:scale-125 cursor-help"
+             class="w-3 h-3 rounded-sm transition-all duration-500 hover:scale-125 cursor-help shrink-0"
              :class="getDayClass(day.count)"
              :title="`${day.date}: ${day.count} reps`"
         ></div>
         
-        <div class="ml-4 flex flex-col items-end">
+        <div class="ml-4 flex flex-col items-end shrink-0">
            <span class="text-xl font-black text-foreground italic tabular-nums leading-none">{{ currentStreak }}</span>
            <span class="text-[7px] font-bold text-muted uppercase tracking-tighter">{{ i18n.t('stats_streak') }}</span>
         </div>

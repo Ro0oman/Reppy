@@ -150,7 +150,7 @@
                  class="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full border border-surface shadow-[0_0_10px_rgba(59,130,246,0.5)] animate-pulse"></div>
           </div>
 
-          <span class="text-[7.5px] xs:text-[9.5px] font-black uppercase tracking-tighter sm:tracking-widest mt-1 opacity-60 group-hover:opacity-100 transition-opacity text-center px-1" :class="$route.name === nav.id ? 'opacity-100 text-primary-500' : ''">
+          <span class="hidden xs:block text-[7.5px] xs:text-[9.5px] font-black uppercase tracking-tighter sm:tracking-widest mt-1 opacity-60 group-hover:opacity-100 transition-opacity text-center px-1" :class="$route.name === nav.id ? 'opacity-100 text-primary-500' : ''">
             {{ nav.short || i18n.t(nav.label) }}
           </span>
         </router-link>

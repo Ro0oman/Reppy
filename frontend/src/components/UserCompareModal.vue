@@ -4,7 +4,7 @@
     <div class="absolute inset-0 bg-black/90 backdrop-blur-md" @click="$emit('close')"></div>
     
     <!-- Modal Content -->
-    <div class="bg-surface/40 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col relative z-10 shadow-[0_0_100px_rgba(0,0,0,0.8)] animate-in zoom-in-95 duration-300">
+    <div class="bg-surface/40 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] w-full max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col relative z-10 shadow-[0_0_100px_rgba(0,0,0,0.8)] animate-in zoom-in-95 duration-300">
       
       <!-- High-Tech Header -->
       <div class="px-8 py-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
@@ -92,7 +92,7 @@
       </div>
 
       <!-- Summary Analysis Footer -->
-      <div class="px-8 py-6 bg-black/40 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="px-6 md:px-8 py-4 md:py-6 bg-black/40 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 shrink-0">
         <div class="flex items-center gap-6">
            <div class="flex flex-col">
               <span class="text-[8px] font-black text-muted uppercase tracking-widest mb-1">TOTAL_REPS</span>
