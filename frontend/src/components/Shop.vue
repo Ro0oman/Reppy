@@ -48,60 +48,7 @@
       </div>
 
       <!-- Modern Filters Interface (Grid Layout) -->
-      <div class="flex flex-col lg:flex-row items-center gap-6 bg-surface/20 p-4 rounded-3xl  border-border/50 backdrop-blur-sm relative z-30">
-        
-        <!-- Categories Dropdown (Left Side) -->
-        <div class="w-full lg:w-72 relative z-20">
-          <button 
-            @click="showDropdown = !showDropdown"
-            class="flex items-center gap-3 px-6 py-3 bg-surface/60 border border-border rounded-2xl text-[10px] font-black uppercase tracking-widest hover:border-primary-500/30 transition-all w-full justify-between shadow-lg"
-          >
-            <div class="flex items-center gap-2">
-              <component :is="categories.find(c => c.id === selectedCategory).icon" class="w-3.5 h-3.5 text-primary-500" />
-              <span class="text-foreground">{{ i18n.t(categories.find(c => c.id === selectedCategory).label) || categories.find(c => c.id === selectedCategory).label }}</span>
-            </div>
-            <ChevronDown class="w-4 h-4 text-muted transition-transform" :class="{ 'rotate-180': showDropdown }" />
-          </button>
-
-          <Transition
-            enter-active-class="transition duration-200 ease-out"
-            enter-from-class="transform scale-95 opacity-0 -translate-y-2"
-            enter-to-class="transform scale-100 opacity-100 translate-y-0"
-            leave-active-class="transition duration-150 ease-in"
-            leave-from-class="transform scale-100 opacity-100 translate-y-0"
-            leave-to-class="transform scale-95 opacity-0 -translate-y-2"
-          >
-            <div v-if="showDropdown" class="absolute top-full left-0 mt-2 w-full bg-surface/90 backdrop-blur-3xl border border-border rounded-2xl shadow-2xl overflow-hidden py-2 z-50">
-              <button 
-                v-for="cat in categories" 
-                :key="cat.id"
-                @click="selectedCategory = cat.id; showDropdown = false"
-                class="w-full flex items-center gap-3 px-6 py-3 text-[10px] font-black uppercase tracking-widest transition-all text-left"
-                :class="selectedCategory === cat.id ? 'bg-primary-500 text-white' : 'text-muted hover:bg-white/5 hover:text-foreground'"
-              >
-                <component :is="cat.icon" class="w-3.5 h-3.5" />
-                {{ i18n.t(cat.label) || cat.label }}
-              </button>
-            </div>
-          </Transition>
-        </div>
-
-        <!-- Divider (Desktop only) -->
-        <div class="hidden lg:block w-px h-10 bg-border/50"></div>
-
-        <!-- Rarity Protocol Selector (Right Side) -->
-        <div class="flex-1 flex flex-wrap items-center justify-start lg:justify-end gap-2">
-          <button 
-            v-for="rarity in rarities" 
-            :key="rarity.id"
-            @click="selectedRarity = rarity.id"
-            class="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all active:scale-95 whitespace-nowrap"
-            :class="selectedRarity === rarity.id ? rarity.activeClass : 'bg-surface/20 border-border text-muted hover:border-foreground/20'"
-          >
-            {{ rarity.label }}
-          </button>
-        </div>
-      </div>
+      
 
       <!-- Bundle Details Modal (Enhanced) -->
   <Transition
@@ -133,7 +80,7 @@
             </div>
             <div class="text-center">
               <h2 class="text-3xl font-black text-industrial tracking-tighter" :class="getBundleTextClass(selectedBundle?.rarity)">{{ selectedBundle?.name }}</h2>
-              <span class="text-[10px] font-black uppercase tracking-[0.3em] mt-2 block" :class="getBundleTextClass(selectedBundle?.rarity, 0.6)">{{ i18n.t('shop_elite_pack') }}</span>
+              <span class="text-[10px] font-black uppercase tracking-[0.3em] mt-2 block" :class="getBundleTextClass(selectedBundle?.rarity, 0.6)">PACK {{ getRarityBadge(selectedBundle).label }}</span>
             </div>
             <div class="flex items-center gap-4 px-6 py-4 border rounded-2xl w-full" :class="[getBundleBorderClass(selectedBundle?.rarity), getBundleBgClass(selectedBundle?.rarity)]">
               <div class="flex flex-col flex-1">
@@ -262,21 +209,22 @@
     </div>
   </Transition>
 
-      <!-- Elite Bundles Highlight (Industrial Gold) -->
+      <!-- Elite Bundles Highlight (Premium Tactical Look) -->
       <section v-if="bundleItems.length > 0 && selectedCategory === 'all' && selectedRarity === 'all'" class="relative z-10">
         <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-10">
           <div class="flex items-center gap-3">
-             <div class="p-2 bg-yellow-500/10 rounded-xl border border-yellow-500/20">
+             <div class="p-2 bg-yellow-500/10 rounded-xl border border-yellow-500/20 shadow-[0_0_15px_rgba(234,179,8,0.1)]">
                <LayoutGrid class="w-5 h-5 text-yellow-500" />
              </div>
              <div>
-               <h2 class="text-2xl font-black text-industrial text-yellow-500 tracking-tighter italic uppercase leading-none">
+               <h2 class="text-3xl font-black text-industrial text-foreground tracking-tighter italic uppercase leading-none flex items-center gap-2">
                  {{ i18n.t('shop_bundles_title') }}
+                 <span class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
                </h2>
-               <p class="text-[9px] font-black text-muted uppercase tracking-[0.3em] mt-1">{{ i18n.t('shop_bundles_subtitle') }}</p>
+               <p class="text-[9px] font-black text-muted uppercase tracking-[0.4em] mt-1.5 opacity-60">{{ i18n.t('shop_bundles_subtitle') }}</p>
              </div>
           </div>
-          <div class="hidden sm:block h-px flex-1 bg-gradient-to-r from-yellow-500/40 to-transparent"></div>
+          <div class="hidden sm:block h-px flex-1 bg-gradient-to-r from-yellow-500/30 via-yellow-500/10 to-transparent"></div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -284,56 +232,128 @@
             v-for="item in bundleItems" 
             :key="item.id"
             @click="openBundleModal(item)"
-            class="card-stats p-0 flex flex-col group/item bg-yellow-500/5 border-yellow-500/20 hover:border-yellow-500/50 shadow-[0_0_50px_rgba(234,179,8,0.05)] overflow-hidden relative cursor-pointer"
-            :class="getCardClass(item)"
+            class="group/bundle relative flex flex-col bg-surface/30 backdrop-blur-md border border-white/5 rounded-[2.5rem] overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)] cursor-pointer"
+            :class="[
+              item.rarity?.toLowerCase() === 'legendary' ? 'hover:border-yellow-500/30' : 
+              item.rarity?.toLowerCase() === 'especial' || item.rarity?.toLowerCase() === 'epic' ? 'hover:border-purple-500/30' : 
+              'hover:border-white/20'
+            ]"
           >
-            <!-- Gold Glow Detail -->
-            <div class="absolute -top-24 -right-24 w-48 h-48 bg-yellow-500/10 blur-[60px] rounded-full pointer-events-none transition-opacity group-hover/item:opacity-100 opacity-50"></div>
+            <!-- Background Rarity Glow -->
+            <div class="absolute -top-24 -right-24 w-64 h-64 blur-[80px] rounded-full pointer-events-none transition-opacity duration-700 opacity-20 group-hover/bundle:opacity-40"
+                 :class="[
+                   item.rarity?.toLowerCase() === 'legendary' ? 'bg-yellow-500' : 
+                   item.rarity?.toLowerCase() === 'especial' || item.rarity?.toLowerCase() === 'epic' ? 'bg-purple-500' : 
+                   'bg-slate-400'
+                 ]"></div>
 
-            <!-- Header Info -->
-            <div class="p-4 pb-0 flex items-start justify-between z-10">
+            <!-- Header Info (Rarity & Discount) -->
+            <div class="p-6 pb-0 flex items-start justify-between z-10">
               <div class="flex items-center gap-2">
-                <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-yellow-500/20 text-yellow-500 bg-yellow-500/10">
-                  {{ i18n.t('shop_elite_pack') }}
-                </span>
-                <span class="px-2 py-1 bg-yellow-500 text-black text-[7px] font-black rounded-md shadow-lg shadow-yellow-500/20">30% OFF</span>
+                <div class="px-3 py-1 bg-surface/60 backdrop-blur-md border border-white/10 rounded-xl">
+                  <span class="text-[8px] font-black uppercase tracking-[0.2em] text-foreground/80">
+                    PACK {{ getRarityBadge(item).label }}
+                  </span>
+                </div>
+                <div v-if="!item.owned" class="px-2 py-1 bg-yellow-500 text-black text-[8px] font-black rounded-lg shadow-lg shadow-yellow-500/20">
+                  30% OFF
+                </div>
               </div>
-              <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border" :class="getRarityBadge(item).classes">
+              
+              <div class="px-3 py-1 rounded-xl border font-black text-[8px] tracking-[0.2em] uppercase backdrop-blur-md"
+                   :class="getRarityBadge(item).classes">
                 {{ getRarityBadge(item).label }}
-              </span>
+              </div>
             </div>
 
-            <!-- Preview Area -->
-            <div class="h-48 flex items-center justify-center m-6 mb-2 bg-yellow-500/5 rounded-[2rem] border border-yellow-500/10 relative overflow-hidden group-hover/item:border-yellow-500/30 transition-colors shadow-inner">
-               <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-yellow-500/10 to-transparent relative">
-                  <div class="grid grid-cols-2 gap-2 p-4 scale-90">
-                     <div class="w-12 h-12 bg-yellow-500/5 rounded-xl border border-yellow-500/10 flex items-center justify-center"><Sword class="w-6 h-6 text-yellow-500/40" /></div>
-                     <div class="w-12 h-12 bg-yellow-500/5 rounded-xl border border-yellow-500/10 flex items-center justify-center"><Shield class="w-6 h-6 text-yellow-500/40" /></div>
-                     <div class="w-12 h-12 bg-yellow-500/5 rounded-xl border border-yellow-500/10 flex items-center justify-center"><Construction class="w-6 h-6 text-yellow-500/40" /></div>
-                     <div class="w-12 h-12 bg-yellow-500/5 rounded-xl border border-yellow-500/10 flex items-center justify-center"><Footprints class="w-6 h-6 text-yellow-500/40" /></div>
-                  </div>
-                  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                     <div class="p-4 bg-surface/90 backdrop-blur-md rounded-2xl border border-yellow-500/30 shadow-2xl">
-                        <LayoutGrid class="w-8 h-8 text-yellow-500 animate-pulse" />
-                     </div>
+            <!-- Preview Area (Tactical Display) -->
+            <div class="h-56 m-4 mt-2 mb-0 rounded-[2rem] relative overflow-hidden bg-black/40 border border-white/5 group-hover/bundle:border-white/10 transition-colors shadow-inner">
+               <!-- Tactical Grid Background -->
+               <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(white 1px, transparent 0); background-size: 20px 20px;"></div>
+               
+               <!-- Rarity Aura -->
+               <div class="absolute inset-0 opacity-10"
+                    :class="[
+                      item.rarity?.toLowerCase() === 'legendary' ? 'bg-gradient-to-b from-yellow-500/20 to-transparent' : 
+                      item.rarity?.toLowerCase() === 'especial' || item.rarity?.toLowerCase() === 'epic' ? 'bg-gradient-to-b from-purple-500/20 to-transparent' : 
+                      'bg-gradient-to-b from-slate-400/20 to-transparent'
+                    ]"></div>
+
+               <!-- Center Hologram -->
+               <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="relative">
+                    <!-- Rotating Rings -->
+                    <div class="absolute inset-0 border-2 border-white/5 rounded-full scale-[1.8] border-dashed animate-[spin_10s_linear_infinite]"></div>
+                    <div class="absolute inset-0 border border-white/10 rounded-full scale-[2.2] animate-[spin_15s_linear_infinite_reverse]"></div>
+                    
+                    <!-- Core Icon -->
+                    <div class="relative z-10 p-6 rounded-3xl bg-surface/40 backdrop-blur-xl border border-white/10 shadow-2xl transform group-hover/bundle:scale-110 transition-transform duration-700">
+                       <LayoutGrid class="w-10 h-10 transition-colors" 
+                                   :class="[
+                                     item.rarity?.toLowerCase() === 'legendary' ? 'text-yellow-500' : 
+                                     item.rarity?.toLowerCase() === 'especial' || item.rarity?.toLowerCase() === 'epic' ? 'text-purple-400' : 
+                                     'text-slate-400'
+                                   ]" />
+                       
+                       <!-- Scanning Line -->
+                       <div class="absolute inset-0 bg-gradient-to-b from-transparent via-white/20 to-transparent h-1/2 w-full animate-[scan_2s_ease-in-out_infinite] pointer-events-none"></div>
+                    </div>
                   </div>
                </div>
+
+               <!-- Corner Slots Preview (Actual Items) -->
+               <div class="absolute inset-0 p-6 flex flex-col justify-between pointer-events-none">
+                  <div class="flex justify-between">
+                    <div v-for="cItem in getBundlePreviewItems(item).slice(0, 2)" :key="cItem.id"
+                         class="w-11 h-11 rounded-xl bg-surface/60 backdrop-blur-md border border-white/10 flex items-center justify-center opacity-40 group-hover/bundle:opacity-100 transition-all hover:scale-110 shadow-lg">
+                      <ItemIcon :name="cItem.svg_key" :type="cItem.type" class-name="w-6 h-6" />
+                    </div>
+                    <!-- Fillers if bundle has < 2 items in top row -->
+                    <div v-if="getBundlePreviewItems(item).length < 1" class="w-11 h-11 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center opacity-10"><Sword class="w-5 h-5" /></div>
+                    <div v-if="getBundlePreviewItems(item).length < 2" class="w-11 h-11 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center opacity-10"><Shield class="w-5 h-5" /></div>
+                  </div>
+                  <div class="flex justify-between">
+                    <div v-for="cItem in getBundlePreviewItems(item).slice(2, 4)" :key="cItem.id"
+                         class="w-11 h-11 rounded-xl bg-surface/60 backdrop-blur-md border border-white/10 flex items-center justify-center opacity-40 group-hover/bundle:opacity-100 transition-all hover:scale-110 shadow-lg">
+                      <ItemIcon :name="cItem.svg_key" :type="cItem.type" class-name="w-6 h-6" />
+                    </div>
+                    <!-- Fillers if bundle has < 4 items -->
+                    <div v-if="getBundlePreviewItems(item).length < 3" class="w-11 h-11 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center opacity-10"><Construction class="w-5 h-5" /></div>
+                    <div v-if="getBundlePreviewItems(item).length < 4" class="w-11 h-11 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center opacity-10"><Footprints class="w-5 h-5" /></div>
+                  </div>
+               </div>
+
             </div>
 
-            <div class="p-4 pt-0 mt-auto border-t border-yellow-500/10 bg-yellow-500/[0.02]">
-              <div class="flex items-center justify-between mt-4">
-                <div v-if="item.owned" class="flex items-center gap-1.5 text-neon-lime">
-                  <Check class="w-3.5 h-3.5" />
-                  <span class="text-[8px] font-black uppercase tracking-widest leading-none">{{ i18n.t('btn_acquired') }}</span>
-                </div>
-                <div v-else class="flex flex-col">
-                  <div v-if="item.original_price" class="flex items-center gap-2 mb-0.5">
-                    <span class="text-[10px] font-black text-muted line-through tracking-tighter">{{ item.original_price }}</span>
-                    <span class="text-[8px] font-black bg-yellow-500/20 text-yellow-500 px-1.5 rounded uppercase">{{ i18n.t('shop_special_deal') }}</span>
+            <!-- Content Area -->
+            <div class="p-6 flex-1 flex flex-col">
+              <h3 class="text-xl font-black text-foreground tracking-tight group-hover/bundle:text-primary-500 transition-colors duration-300">
+                {{ item.name }}
+              </h3>
+              <p class="text-[10px] text-muted font-medium mt-1 line-clamp-1 opacity-60">{{ item.description }}</p>
+              
+              <!-- Footer / Action -->
+              <div class="mt-6 pt-6 border-t border-white/5 flex items-center justify-between">
+                <div v-if="item.owned" class="flex items-center gap-2 text-neon-lime">
+                  <div class="w-5 h-5 rounded-full bg-neon-lime/10 flex items-center justify-center border border-neon-lime/20">
+                    <Check class="w-3 h-3" />
                   </div>
-                  <div class="flex items-baseline gap-1">
-                    <span class="text-xl font-black text-precision text-yellow-500">{{ item.price }}</span>
-                    <span class="text-[8px] font-black text-muted uppercase tracking-widest">{{ i18n.t('stats_reps') }}</span>
+                  <span class="text-[9px] font-black uppercase tracking-[0.2em]">{{ i18n.t('btn_acquired') }}</span>
+                </div>
+                
+                <div v-else class="flex flex-col">
+                  <div v-if="item.original_price" class="flex items-center gap-2 mb-0.5 opacity-40">
+                    <span class="text-[10px] font-bold text-muted line-through tracking-tighter">{{ item.original_price }}</span>
+                    <span class="text-[7px] font-black bg-white/10 px-1 rounded uppercase">VALOR REAL</span>
+                  </div>
+                  <div class="flex items-baseline gap-1.5">
+                    <span class="text-2xl font-black text-precision transition-colors"
+                          :class="[
+                            item.rarity?.toLowerCase() === 'legendary' ? 'text-yellow-500' : 
+                            item.rarity?.toLowerCase() === 'especial' || item.rarity?.toLowerCase() === 'epic' ? 'text-purple-400' : 
+                            'text-foreground'
+                          ]">{{ item.price }}</span>
+                    <span class="text-[9px] font-black text-muted uppercase tracking-widest opacity-60">{{ i18n.t('stats_reps') }}</span>
                   </div>
                 </div>
 
@@ -341,33 +361,80 @@
                   v-if="!item.owned"
                   @click.stop="buyItem(item)"
                   :disabled="!canAfford(item) || buying"
-                  class="bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-20 shadow-lg shadow-yellow-500/20 active:scale-95"
+                  class="relative overflow-hidden group/btn px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 disabled:opacity-30"
+                  :class="[
+                    item.rarity?.toLowerCase() === 'legendary' ? 'bg-yellow-500 text-black hover:bg-yellow-400 shadow-lg shadow-yellow-500/20' : 
+                    item.rarity?.toLowerCase() === 'especial' || item.rarity?.toLowerCase() === 'epic' ? 'bg-purple-600 text-white hover:bg-purple-500 shadow-lg shadow-purple-500/20' : 
+                    'bg-white text-black hover:bg-gray-200 shadow-lg shadow-white/10'
+                  ]"
                 >
-                  {{ i18n.t('btn_acquire') }}
+                  <span class="relative z-10">{{ i18n.t('btn_acquire') }}</span>
+                  <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:animate-shimmer pointer-events-none"></div>
                 </button>
               </div>
             </div>
           </div>
         </div>
       </section>
+<div class="flex flex-col lg:flex-row items-center gap-6 bg-surface/20 p-4 rounded-3xl  border-border/50 backdrop-blur-sm relative z-30">
+        
+        <!-- Categories Dropdown (Left Side) -->
+        <div class="w-full lg:w-72 relative z-20">
+          <button 
+            @click="showDropdown = !showDropdown"
+            class="flex items-center gap-3 px-6 py-3 bg-surface/60 border border-border rounded-2xl text-[10px] font-black uppercase tracking-widest hover:border-primary-500/30 transition-all w-full justify-between shadow-lg"
+          >
+            <div class="flex items-center gap-2">
+              <component :is="categories.find(c => c.id === selectedCategory).icon" class="w-3.5 h-3.5 text-primary-500" />
+              <span class="text-foreground">{{ i18n.t(categories.find(c => c.id === selectedCategory).label) || categories.find(c => c.id === selectedCategory).label }}</span>
+            </div>
+            <ChevronDown class="w-4 h-4 text-muted transition-transform" :class="{ 'rotate-180': showDropdown }" />
+          </button>
 
+          <Transition
+            enter-active-class="transition duration-200 ease-out"
+            enter-from-class="transform scale-95 opacity-0 -translate-y-2"
+            enter-to-class="transform scale-100 opacity-100 translate-y-0"
+            leave-active-class="transition duration-150 ease-in"
+            leave-from-class="transform scale-100 opacity-100 translate-y-0"
+            leave-to-class="transform scale-95 opacity-0 -translate-y-2"
+          >
+            <div v-if="showDropdown" class="absolute top-full left-0 mt-2 w-full bg-surface/90 backdrop-blur-3xl border border-border rounded-2xl shadow-2xl overflow-hidden py-2 z-50">
+              <button 
+                v-for="cat in categories" 
+                :key="cat.id"
+                @click="selectedCategory = cat.id; showDropdown = false"
+                class="w-full flex items-center gap-3 px-6 py-3 text-[10px] font-black uppercase tracking-widest transition-all text-left"
+                :class="selectedCategory === cat.id ? 'bg-primary-500 text-white' : 'text-muted hover:bg-white/5 hover:text-foreground'"
+              >
+                <component :is="cat.icon" class="w-3.5 h-3.5" />
+                {{ i18n.t(cat.label) || cat.label }}
+              </button>
+            </div>
+          </Transition>
+        </div>
+
+        <!-- Divider (Desktop only) -->
+        <div class="hidden lg:block w-px h-10 bg-border/50"></div>
+
+        <!-- Rarity Protocol Selector (Right Side) -->
+        <div class="flex-1 flex flex-wrap items-center justify-start lg:justify-end gap-2">
+          <button 
+            v-for="rarity in rarities" 
+            :key="rarity.id"
+            @click="selectedRarity = rarity.id"
+            class="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all active:scale-95 whitespace-nowrap"
+            :class="selectedRarity === rarity.id ? rarity.activeClass : 'bg-surface/20 border-border text-muted hover:border-foreground/20'"
+          >
+            {{ rarity.label }}
+          </button>
+        </div>
+      </div>
       <!-- Main Collection -->
       <section>
         <div class="flex items-center gap-4 mb-6">
           <h2 class="text-xl font-black text-industrial text-foreground tracking-tight italic">{{ i18n.t('shop_permanent_protocol') }}</h2>
           <div class="h-px flex-1 bg-gradient-to-r from-muted/20 to-transparent"></div>
-        </div>
-
-        <!-- Global Context (Tu Build Actual) -->
-        <div v-if="activeTab === 'combat' && authStore.user" class="mb-8 p-4 bg-surface/40 rounded-xl border border-border flex flex-wrap items-center gap-6 text-xs font-mono">
-          <span class="text-muted font-bold tracking-widest uppercase">TU BUILD ACTUAL:</span>
-          <div class="flex flex-wrap gap-4">
-            <span v-for="(val, stat) in currentBuildStats" :key="stat" v-show="val > 0" class="text-foreground">
-              <span class="text-muted mr-1">{{ (statLabels[stat] || stat).toUpperCase() }}</span>
-              <span class="font-black">{{ val }}</span>
-            </span>
-            <span v-if="!Object.values(currentBuildStats).some(v => v > 0)" class="text-muted/50 italic">Sin estadísticas base</span>
-          </div>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
@@ -909,6 +976,12 @@ const filteredItems = computed(() => {
 });
 
 const bundleItems = computed(() => filteredItems.value.filter(item => item.type === 'bundle'));
+const getBundlePreviewItems = (bundle) => {
+  if (!bundle.bundle_items) return [];
+  const ids = bundle.bundle_items.split(',').map(id => parseInt(id.trim()));
+  return items.value.filter(i => ids.includes(i.id)).slice(0, 4);
+};
+
 const regularItems = computed(() => {
   if (selectedCategory.value === 'all') {
     return filteredItems.value.filter(item => !item.is_seasonal && item.type !== 'bundle');
@@ -1198,4 +1271,14 @@ onBeforeUnmount(() => { if (countdownTimer) clearInterval(countdownTimer); });
 .animate-skeleton {
   animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
 </style>
+
