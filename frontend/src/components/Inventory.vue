@@ -56,7 +56,7 @@
                 <span class="px-2 py-0.5 bg-orange-500/10 border border-orange-500/20 rounded text-[9px] font-black text-orange-500 uppercase tracking-widest">Fuerza</span>
               </div>
             </div>
-            <Zap class="absolute -bottom-4 -right-4 w-24 h-24 text-white/5 -rotate-12 group-hover:scale-110 group-hover:rotate-0 transition-all duration-700" />
+            <Construction class="absolute -bottom-4 -right-4 w-24 h-24 text-white/5 -rotate-12 group-hover:scale-110 group-hover:rotate-0 transition-all duration-700" />
           </div>
         </div>
 
@@ -84,7 +84,7 @@
                    <span class="text-[7px] font-black text-foreground uppercase truncate w-20 text-center tracking-tighter">{{ getEquippedItem('head').name }}</span>
                 </div>
                 <div v-else class="flex flex-col items-center gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
-                  <Zap class="w-6 h-6 text-muted" />
+                  <Construction class="w-6 h-6 text-muted" />
                   <span class="text-[6px] font-black text-muted uppercase tracking-[0.2em]">{{ i18n.t('ui_empty') }}</span>
                 </div>
                 <div v-if="getEquippedItem('head')" class="absolute inset-0 rounded-2xl border border-primary-500/40 shadow-[0_0_20px_rgba(255,69,0,0.1)] pointer-events-none group-hover:border-primary-500/60"></div>
@@ -484,7 +484,7 @@
                    <div class="p-3 bg-surface/60 border-t border-white/5 flex-1 flex flex-col justify-between relative overflow-hidden rounded-b-2xl">
                       <div>
                         <div class="flex items-center justify-between mb-2">
-                           <span class="text-[8px] font-black uppercase tracking-widest opacity-40">{{ type }}</span>
+                           <span class="text-[8px] font-black uppercase tracking-widest opacity-40">{{ i18n.t('ui_' + type) || type }}</span>
                            <span class="text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded border" :class="getRarityClass(item.rarity)">{{ getRarityLabel(item.rarity) }}</span>
                         </div>
                         <h4 class="text-[11px] font-black text-foreground truncate uppercase italic tracking-wider leading-none mb-2" :class="item.css_value && type === 'title' ? item.css_value : ''">{{ item.name }}</h4>
@@ -641,10 +641,10 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 import { 
-  Package, Frame, Type, Check, Sparkles, Archive, Zap, TrendingUp, 
+  Package, Frame, Type, Check, Sparkles, Archive, TrendingUp, 
   Dumbbell, Sword, Heart, Brain, Church, Trophy, ExternalLink, Activity, X, 
   ChevronDown, Flame, BookOpen, Swords, Info, ChevronRight, Users, Shield, Footprints,
-  FlaskConical, Timer
+  FlaskConical, Timer, Construction
 } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
@@ -778,7 +778,7 @@ const categories = computed(() => {
   if (activeTab.value === 'combat') {
     return [
       { id: 'all', label: 'shop_cat_all', icon: Archive },
-      { id: 'head', label: 'shop_cat_head', icon: Zap },
+      { id: 'head', label: 'shop_cat_head', icon: Construction },
       { id: 'weapon', label: 'shop_cat_weapons', icon: Sword },
       { id: 'armor', label: 'shop_cat_armor', icon: Shield },
       { id: 'boots', label: 'shop_cat_boots', icon: Footprints },
@@ -887,7 +887,7 @@ const toggleCategory = (type) => {
 };
 
 const gearSlots = computed(() => [
-  { type: 'head', label: i18n.t('inv_slot_helmet') || 'HELMET', icon: Zap }, // Using Zap as placeholder for Helmet
+  { type: 'head', label: i18n.t('inv_slot_helmet') || 'HELMET', icon: Construction }, // Using Construction for Helmet
   { type: 'weapon', label: 'WEAPON', icon: Sword },
   { type: 'armor', label: 'ARMOR', icon: Shield },
   { type: 'boots', label: 'BOOTS', icon: Footprints } // Need to import these icons
@@ -969,7 +969,7 @@ const rpgStats = computed(() => [
     bgLight: 'bg-orange-500/10',
     gradient: 'from-orange-500 to-red-600',
     effectLabel: i18n.t('battle_overhaul_str_desc'),
-    links: [{ label: i18n.locale === 'es' ? 'ENTRENAR FUERZA' : 'TRAIN STRENGTH', to: '/?exercise=weighted_pullups', icon: Zap }]
+    links: [{ label: i18n.locale === 'es' ? 'ENTRENAR FUERZA' : 'TRAIN STRENGTH', to: '/?exercise=weighted_pullups', icon: Construction }]
   },
   {
     key: 'dex',

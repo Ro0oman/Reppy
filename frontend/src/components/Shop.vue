@@ -309,7 +309,7 @@
                   <div class="grid grid-cols-2 gap-2 p-4 scale-90">
                      <div class="w-12 h-12 bg-yellow-500/5 rounded-xl border border-yellow-500/10 flex items-center justify-center"><Sword class="w-6 h-6 text-yellow-500/40" /></div>
                      <div class="w-12 h-12 bg-yellow-500/5 rounded-xl border border-yellow-500/10 flex items-center justify-center"><Shield class="w-6 h-6 text-yellow-500/40" /></div>
-                     <div class="w-12 h-12 bg-yellow-500/5 rounded-xl border border-yellow-500/10 flex items-center justify-center"><Zap class="w-6 h-6 text-yellow-500/40" /></div>
+                     <div class="w-12 h-12 bg-yellow-500/5 rounded-xl border border-yellow-500/10 flex items-center justify-center"><Construction class="w-6 h-6 text-yellow-500/40" /></div>
                      <div class="w-12 h-12 bg-yellow-500/5 rounded-xl border border-yellow-500/10 flex items-center justify-center"><Footprints class="w-6 h-6 text-yellow-500/40" /></div>
                   </div>
                   <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -391,7 +391,7 @@
                   #{{ item.roadmap_position || '??' }}
                 </span>
                 <span v-if="isUpgrade(item) && item.price > 0" class="text-[10px] font-black text-neon-lime mt-1 tracking-widest">
-                  ↑ UPGRADE
+                  ↑ MEJORA
                 </span>
               </div>
               
@@ -443,7 +443,7 @@
                      <ItemIcon :name="item.svg_key" :type="item.type" class-name="w-12 h-12" :class="getRarityBadge(item).classes?.split(' ')[0]" />
                    </div>
                    <div class="flex items-center gap-1.5">
-                     <span class="text-[8px] font-black uppercase tracking-widest opacity-40">{{ item.type }}</span>
+                     <span class="text-[8px] font-black uppercase tracking-widest opacity-40">{{ i18n.t('ui_' + item.type) || item.type }}</span>
                    </div>
                 </div>
                 <div v-if="item.type === 'consumable'" class="flex flex-col items-center gap-2">
@@ -648,7 +648,7 @@
                     {{ i18n.t('shop_seasonal_badge') }}
                   </span>
                   <span v-if="isUpgrade(item)" class="text-[10px] font-black text-neon-lime mt-1 tracking-widest">
-                    ↑ UPGRADE
+                    ↑ MEJORA
                   </span>
                 </div>
                 
@@ -863,7 +863,7 @@ const categories = computed(() => {
       { id: 'all', label: 'cat_all', icon: Swords },
       { id: 'bundle', label: 'cat_bundle', icon: LayoutGrid },
       { id: 'weapon', label: 'WEAPON', icon: Sword },
-      { id: 'head', label: 'HELMET', icon: Zap },
+      { id: 'head', label: 'HELMET', icon: Construction },
       { id: 'armor', label: 'ARMOR', icon: Shield },
       { id: 'boots', label: 'BOOTS', icon: Footprints },
       { id: 'consumable', label: 'cat_consumable', icon: Flame }
@@ -993,7 +993,7 @@ const getCardClass = (item) => {
 
 const getSlotIcon = (slot) => {
   switch (slot) {
-    case 'head': return Zap;
+    case 'head': return Construction;
     case 'weapon': return Sword;
     case 'armor': return Shield;
     case 'boots': return Footprints;

@@ -111,7 +111,7 @@
 
 <script setup>
 import { computed } from 'vue';
-import { Swords, X, Sword, Shield, Zap, Footprints, Package } from 'lucide-vue-next';
+import { Swords, X, Sword, Shield, Construction, Footprints, Package } from 'lucide-vue-next';
 
 const props = defineProps({
   show: Boolean,
@@ -123,7 +123,7 @@ const emit = defineEmits(['close', 'equip']);
 
 const getSlotIcon = (type) => {
   switch (type) {
-    case 'head': return Zap;
+    case 'head': return Construction;
     case 'weapon': return Sword;
     case 'armor': return Shield;
     case 'boots': return Footprints;

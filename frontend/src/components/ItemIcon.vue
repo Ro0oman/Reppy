@@ -6,8 +6,8 @@
       <path d="M13 19L15 21L18 18L16 16" />
     </svg>
     <svg v-else-if="name === 'ds_helmet'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-full h-full">
-      <path d="M12 2C7 2 4 5 4 10V15C4 18 7 21 12 21C17 21 20 18 20 15V10C20 5 17 2 12 2Z" />
-      <path d="M8 10H16M10 14H14M12 2V6" />
+      <path d="M12 1L4.5 5v5.5C4.5 16.5 7.5 21 12 23c4.5-2 7.5-6.5 7.5-12.5V5L12 1zm0 2.1l6 3.6v4.8c0 4.8-2.3 8.3-6 10-3.7-1.7-6-5.2-6-10V6.7l6-3.6z" />
+      <path d="M9 10h6v1H9zM10 13h4v1h-4zM12 2v2" />
     </svg>
 
     <!-- MINECRAFT THEME -->
@@ -34,13 +34,25 @@
     </svg>
 
     <!-- FALLBACKS BY TYPE -->
+    <svg v-if="type === 'head'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-full h-full">
+      <path d="M12 1L4.5 5v5.5C4.5 16.5 7.5 21 12 23c4.5-2 7.5-6.5 7.5-12.5V5L12 1zm0 2.1l6 3.6v4.8c0 4.8-2.3 8.3-6 10-3.7-1.7-6-5.2-6-10V6.7l6-3.6z" />
+      <path d="M9 10h6v1H9zM10 13h4v1h-4zM12 2v2" />
+    </svg>
+    <svg v-else-if="type === 'armor'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-full h-full">
+      <path d="M20 10C20 10 19 3 12 3C5 3 4 10 4 10C4 10 3 18 5 21H19C21 18 20 10 20 10Z" />
+      <path d="M12 3v18M4 10h16M8 3v3M16 3v3M8 21v-3h8v3" />
+    </svg>
+    <svg v-else-if="type === 'boots'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-full h-full">
+      <path d="M4 16L6 10L10 3h4l4 7l2 6l-2 5H6l-2-5z" />
+      <path d="M6 10h12M10 3v7M14 3v7M4 16h16M7 21l-2 2h14l-2-2" />
+    </svg>
     <component v-else :is="fallbackComponent" class="w-full h-full" />
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue';
-import { Sword, Shield, Zap, Footprints, LayoutGrid, Sparkles, FlaskConical } from 'lucide-vue-next';
+import { Sword, Shield, Construction, Footprints, LayoutGrid, Sparkles, FlaskConical } from 'lucide-vue-next';
 
 const props = defineProps({
   name: { type: String, default: '' },
@@ -50,7 +62,7 @@ const props = defineProps({
 
 const fallbackComponent = computed(() => {
   switch (props.type) {
-    case 'head': return Zap;
+    case 'head': return Construction;
     case 'weapon': return Sword;
     case 'armor': return Shield;
     case 'boots': return Footprints;
