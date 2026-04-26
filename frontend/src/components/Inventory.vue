@@ -9,7 +9,6 @@
         <h1 class="text-4xl md:text-6xl font-black text-foreground tracking-tighter uppercase italic leading-none">
           {{ i18n.t('inv_title') }}
         </h1>
-        <p class="text-[10px] font-bold text-muted uppercase tracking-[0.5em] font-tight max-w-md mx-auto">{{ i18n.t('inv_subtitle') }}</p>
       </div>
     </div>
     <!-- Tabs Navigation (Redesigned for separation) -->
@@ -54,7 +53,7 @@
               <p class="text-[11px] font-black text-muted uppercase tracking-[0.4em] leading-none mb-3">{{ i18n.t('inv_gear_mod') }}</p>
               <div class="flex items-baseline gap-3">
                 <span class="text-3xl font-black text-orange-500 italic tracking-tighter inline-block transition-transform duration-300" :class="{ 'animate-bump': recentlyEquipped }">+{{ combatStats.gear }}</span>
-                <span class="px-2 py-0.5 bg-orange-500/10 border border-orange-500/20 rounded text-[9px] font-black text-orange-500 uppercase tracking-widest">STR</span>
+                <span class="px-2 py-0.5 bg-orange-500/10 border border-orange-500/20 rounded text-[9px] font-black text-orange-500 uppercase tracking-widest">Fuerza</span>
               </div>
             </div>
             <Zap class="absolute -bottom-4 -right-4 w-24 h-24 text-white/5 -rotate-12 group-hover:scale-110 group-hover:rotate-0 transition-all duration-700" />
@@ -174,7 +173,7 @@
              </p>
              <div class="grid grid-cols-1 gap-4">
                <div v-for="(val, stat) in equippedStats" :key="stat" v-show="val > 0 && stat !== 'multiplier' && stat !== 'crit_chance' && stat !== 'crit_damage'" class="flex items-center justify-between p-3 bg-white/[0.02] rounded-xl border border-white/5">
-                 <span class="text-[10px] font-black text-muted/60 uppercase tracking-widest">{{ stat }}</span>
+                 <span class="text-[10px] font-black text-muted/60 uppercase tracking-widest">{{ statLabels[stat] || stat }}</span>
                  <span class="text-sm font-black text-primary-500 tabular-nums inline-block transition-transform duration-300" :class="{ 'animate-bump': recentlyEquipped }">+{{ val }}</span>
                </div>
              </div>
@@ -350,7 +349,7 @@
         <!-- Nexus Item Stash -->
         <div v-else class="space-y-12">
           <!-- Modern Filters Interface (Replicating Store) -->
-          <div class="flex flex-col lg:flex-row items-center gap-6 bg-surface/20 p-4 rounded-3xl border border-border/50 backdrop-blur-sm relative z-30 mb-8">
+          <div class="flex flex-col lg:flex-row items-center gap-6 bg-surface/20 p-4 rounded-3xl border-green-500  border backdrop-blur-sm relative z-30 mb-8">
             
             <!-- Categories Dropdown -->
             <div class="w-full lg:w-72 relative z-50">
@@ -493,7 +492,7 @@
                         <!-- Simple Stats -->
                         <div v-if="['head', 'weapon', 'armor', 'boots'].includes(item.type) && item.stats" class="flex flex-wrap gap-1 mb-2">
                            <span v-for="(val, stat) in item.stats" :key="stat" v-show="val > 0 && stat !== 'duration' && stat !== 'multiplier'" class="text-[8px] font-black text-primary-500 uppercase">
-                              +{{ val }} {{ stat.substring(0,3) }}
+                              +{{ val }} {{ statLabels[stat] || stat }}
                            </span>
                         </div>
                       </div>
@@ -589,7 +588,7 @@
 
               <div v-if="selectedItem.stats" class="grid grid-cols-2 gap-4">
                 <div v-for="(val, key) in selectedItem.stats" :key="key" class="p-4 bg-white/5 rounded-2xl border border-white/5 flex flex-col gap-1">
-                  <p class="text-[8px] font-black text-primary-500/60 uppercase tracking-widest">{{ key.replace('_', ' ') }}</p>
+                  <p class="text-[8px] font-black text-primary-500/60 uppercase tracking-widest">{{ statLabels[key] || key.replace('_', ' ') }}</p>
                   <p class="text-lg font-black text-white italic">
                     {{ key === 'multiplier' ? 'x' : '+' }}{{ val }}{{ key.includes('percent') || key.includes('chance') ? '%' : '' }}
                   </p>
@@ -645,7 +644,7 @@ import {
   Package, Frame, Type, Check, Sparkles, Archive, Zap, TrendingUp, 
   Dumbbell, Sword, Heart, Brain, Church, Trophy, ExternalLink, Activity, X, 
   ChevronDown, Flame, BookOpen, Swords, Info, ChevronRight, Users, Shield, Footprints,
-  FlaskConical
+  FlaskConical, Timer
 } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
@@ -821,12 +820,18 @@ const selectedItem = ref(null);
 
 const statLabels = {
   str: 'Fuerza',
-  dex: 'Destreza',
+  pwr: 'Potencia',
   end: 'Resistencia',
+  agi: 'Agilidad',
   vig: 'Vigor',
+  dex: 'Destreza',
   int: 'Inteligencia',
   fth: 'Fe',
-  cha: 'Carisma'
+  cha: 'Carisma',
+  multiplier: 'Multiplicador',
+  crit_chance: 'Prob. Crítica',
+  crit_damage: 'Daño Crítico',
+  duration: 'Duración'
 };
 
 const getStatDiff = (stat, newValue) => {

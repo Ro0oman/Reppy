@@ -223,8 +223,8 @@
             <div class="space-y-2 sm:space-y-3">
               <div v-for="(val, stat) in selectedItem?.stats" :key="stat" class="flex items-center justify-between p-4 sm:p-5 bg-white/5 border border-white/5 rounded-xl sm:rounded-2xl">
                 <div class="flex items-center gap-3 sm:gap-4">
-                  <div class="w-8 h-8 sm:w-10 sm:h-10 bg-foreground/5 rounded-lg sm:rounded-xl flex items-center justify-center font-black text-[10px] sm:text-xs uppercase">{{ stat }}</div>
-                  <span class="text-[11px] sm:text-sm font-black text-foreground uppercase tracking-widest">{{ i18n.t('stat_' + stat) }}</span>
+                  <div class="w-8 h-8 sm:w-10 sm:h-10 bg-foreground/5 rounded-lg sm:rounded-xl flex items-center justify-center font-black text-[10px] sm:text-xs uppercase">{{ statLabels[stat] || stat }}</div>
+                  <span class="text-[11px] sm:text-sm font-black text-foreground uppercase tracking-widest">{{ statLabels[stat] || stat }}</span>
                 </div>
                 <div class="flex items-center gap-3 sm:gap-4">
                   <span class="text-lg sm:text-xl font-black text-foreground tabular-nums">
@@ -363,7 +363,7 @@
           <span class="text-muted font-bold tracking-widest uppercase">TU BUILD ACTUAL:</span>
           <div class="flex flex-wrap gap-4">
             <span v-for="(val, stat) in currentBuildStats" :key="stat" v-show="val > 0" class="text-foreground">
-              <span class="text-muted mr-1">{{ stat.toUpperCase() }}</span>
+              <span class="text-muted mr-1">{{ (statLabels[stat] || stat).toUpperCase() }}</span>
               <span class="font-black">{{ val }}</span>
             </span>
             <span v-if="!Object.values(currentBuildStats).some(v => v > 0)" class="text-muted/50 italic">Sin estadísticas base</span>
@@ -489,7 +489,7 @@
                   class="text-[11px] font-black tracking-widest uppercase flex items-center"
                   :class="getStatDifference(item, stat) > 0 ? 'text-neon-lime' : (getStatDifference(item, stat) < 0 ? 'text-red-500' : 'text-foreground/80')"
                 >
-                  {{ value > 0 ? '+' : '' }}{{ value }} {{ stat.substring(0, 3) }}
+                  {{ value > 0 ? '+' : '' }}{{ value }} {{ statLabels[stat] || stat }}
                   <span v-if="getStatDifference(item, stat) !== 0" class="text-muted ml-2 font-bold opacity-60">
                     ( {{ getStatDifference(item, stat) > 0 ? '+' : '' }}{{ getStatDifference(item, stat) }} )
                   </span>
@@ -709,7 +709,7 @@
                     class="text-[11px] font-black tracking-widest uppercase flex items-center"
                     :class="getStatDifference(item, stat) > 0 ? 'text-neon-lime' : (getStatDifference(item, stat) < 0 ? 'text-red-500' : 'text-foreground/80')"
                   >
-                    {{ value > 0 ? '+' : '' }}{{ value }} {{ stat.substring(0, 3) }}
+                    {{ value > 0 ? '+' : '' }}{{ value }} {{ statLabels[stat] || stat }}
                     <span v-if="getStatDifference(item, stat) !== 0" class="text-muted ml-2 font-bold opacity-60">
                       ( {{ getStatDifference(item, stat) > 0 ? '+' : '' }}{{ getStatDifference(item, stat) }} )
                     </span>
@@ -833,9 +833,13 @@ const statLabels = {
   agi: 'Agilidad',
   vig: 'Vigor',
   dex: 'Destreza',
+  int: 'Inteligencia',
+  fth: 'Fe',
   cha: 'Carisma',
   duration: 'Duración',
-  multiplier: 'Multiplicador'
+  multiplier: 'Multiplicador',
+  crit_chance: 'Prob. Crítica',
+  crit_damage: 'Daño Crítico'
 };
 
 const formatDuration = (seconds) => {

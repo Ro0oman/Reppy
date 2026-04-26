@@ -133,13 +133,13 @@ const getSlotIcon = (type) => {
 
 const comparedStats = computed(() => {
   const stats = [
-    { key: 'str', label: 'STRENGTH' },
-    { key: 'end', label: 'ENDURANCE' },
-    { key: 'vig', label: 'VIGOR' },
-    { key: 'dex', label: 'DEXTERITY' },
-    { key: 'int', label: 'INTELLIGENCE' },
-    { key: 'fth', label: 'FAITH' },
-    { key: 'cha', label: 'CHARISMA' }
+    { key: 'str', label: 'Fuerza' },
+    { key: 'end', label: 'Resistencia' },
+    { key: 'vig', label: 'Vigor' },
+    { key: 'dex', label: 'Destreza' },
+    { key: 'int', label: 'Inteligencia' },
+    { key: 'fth', label: 'Fe' },
+    { key: 'cha', label: 'Carisma' }
   ];
 
   return stats.map(s => {
