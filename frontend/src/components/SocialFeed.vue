@@ -43,7 +43,7 @@
     <!-- Edit Modal (Teleported) -->
     <Teleport to="body">
       <div v-if="editingActivity" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/90 backdrop-blur-md" @click.self="editingActivity = null">
-        <div class="card-stats max-w-xl w-full p-8 md:p-12 border-border space-y-10 relative overflow-hidden">
+        <div class="card-stats max-w-xl w-full p-6 md:p-12 border-border space-y-8 relative overflow-y-auto max-h-[90vh]">
              <div class="flex items-center justify-between">
                 <div class="space-y-1">
                     <h2 class="text-2xl font-black text-industrial text-foreground uppercase italic tracking-tighter">DATA<span class="text-primary-500">.</span>OVERRIDE</h2>
@@ -55,10 +55,14 @@
              </div>
 
              <div class="space-y-6">
-                
                 <div class="space-y-3">
-                    <label class="text-[10px] font-black text-primary-500 uppercase tracking-widest pl-1">Protocol Briefing</label>
-                    <textarea v-model="editForm.description" rows="4" placeholder="How was the workout today?" class="w-full bg-foreground/[0.04] border border-border rounded-3xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary-500/50 transition-all resize-none"></textarea>
+                    <label class="text-[10px] font-black text-primary-500 uppercase tracking-widest pl-1">TITULO DEL POST</label>
+                    <input v-model="editForm.title" type="text" placeholder="Ponle un título a tu entrenamiento..." class="w-full bg-foreground/[0.04] border border-border rounded-2xl px-6 py-4 text-sm font-black uppercase italic focus:outline-none focus:border-primary-500/50 transition-all" />
+                </div>
+
+                <div class="space-y-3">
+                    <label class="text-[10px] font-black text-primary-500 uppercase tracking-widest pl-1">RESUMEN DEL PROTOCOLO</label>
+                    <textarea v-model="editForm.description" rows="4" placeholder="¿Cómo fue el entrenamiento de hoy?" class="w-full bg-foreground/[0.04] border border-border rounded-3xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary-500/50 transition-all resize-none"></textarea>
                 </div>
              </div>
 

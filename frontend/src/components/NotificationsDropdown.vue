@@ -67,7 +67,7 @@
 </template>
 
 <script setup>
-import { Bell, Heart, MessageSquare, Trophy, Package, Swords, PartyPopper } from 'lucide-vue-next';
+import { Bell, BicepsFlexed, MessageSquare, Trophy, Package, Swords, PartyPopper } from 'lucide-vue-next';
 import { useNotificationsStore } from '../stores/notifications';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
@@ -85,7 +85,7 @@ const emit = defineEmits(['close']);
 
 const getIcon = (type) => {
   switch (type) {
-    case 'LIKE': return Heart;
+    case 'LIKE': return BicepsFlexed;
     case 'COMMENT': return MessageSquare;
     case 'LEVEL_UP': return Trophy;
     case 'NEW_CHEST': return Package;
@@ -96,7 +96,7 @@ const getIcon = (type) => {
 
 const getIconColor = (type) => {
   switch (type) {
-    case 'LIKE': return 'text-red-500';
+    case 'LIKE': return 'text-amber-500';
     case 'COMMENT': return 'text-blue-500';
     case 'LEVEL_UP': return 'text-yellow-500';
     case 'NEW_CHEST': return 'text-primary-500';

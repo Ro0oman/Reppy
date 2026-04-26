@@ -85,8 +85,17 @@
         </div>
       </div>
 
+      <div v-if="activity.title || activity.description" class="mt-1 space-y-1">
+        <h3 v-if="activity.title" class="text-base md:text-xl font-black text-foreground uppercase italic tracking-tight leading-tight break-words">
+          {{ activity.title }}
+        </h3>
+        <p v-if="activity.description" class="text-xs text-foreground/80 leading-relaxed font-medium">
+          {{ activity.description }}
+        </p>
+      </div>
+
       <!-- HIGHLIGHT ROW: Reps & DMG -->
-      <div class="flex items-baseline gap-4 py-1">
+      <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1 py-1">
         <div class="flex items-baseline gap-1.5">
           <span class="text-3xl font-black text-foreground italic tracking-tighter">🔥 {{ activity.total_reps_today }}</span>
           <span class="text-[9px] font-black text-muted/40 uppercase tracking-widest">{{ i18n.t('ui_reps') }}</span>
@@ -121,16 +130,9 @@
       </div>
       
       <!-- Rivalry context -->
-      <div v-if="activity.next_rank_rival" class="mt-3 flex items-center gap-2 text-[10px] text-muted font-bold italic">
+      <div v-if="activity.next_rank_rival" class="mt-1 flex items-center gap-2 text-[10px] text-muted font-bold italic">
          <Swords class="w-3 h-3 text-amber-500" />
          <span>{{ i18n.t('ui_objective') }}: {{ i18n.t('ui_surpassing_rival', { name: activity.next_rank_rival.name, reps: activity.next_rank_rival.reps_diff }) }}</span>
-      </div>
-
-      <!-- CAPTION -->
-      <div v-if="activity.description" class="mt-1">
-        <p class="text-xs text-foreground/70 leading-relaxed font-medium line-clamp-2" :class="{ 'line-clamp-none': showDetails }">
-          {{ activity.description }}
-        </p>
       </div>
 
       <!-- EXPANDED SECTION -->
@@ -193,26 +195,26 @@
 
       <!-- ACTION BAR & COMMENTS PREVIEW -->
       <div class="mt-2 pt-3 border-t border-border/10 flex flex-col gap-3">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-1.5">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar">
             <button @click="toggleLike" 
-                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all hover:bg-foreground/5"
-                    :class="activity.user_has_liked ? 'text-primary-500' : 'text-muted/60'">
-              <Heart class="w-4 h-4" :class="{ 'fill-current': activity.user_has_liked }" />
+                    class="flex-shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl transition-all hover:bg-foreground/5"
+                    :class="activity.user_has_liked ? 'text-amber-500' : 'text-muted/60'">
+              <BicepsFlexed class="w-4 h-4" :class="{ 'fill-current': activity.user_has_liked }" />
               <span class="text-[10px] font-black tabular-nums">{{ activity.like_count }}</span>
             </button>
             <button @click="showComments = !showComments" 
-                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all hover:bg-foreground/5 text-muted/60">
+                    class="flex-shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl transition-all hover:bg-foreground/5 text-muted/60">
               <MessageSquare class="w-4 h-4" />
               <span class="text-[10px] font-black tabular-nums">{{ activity.comment_count }}</span>
             </button>
-            <button @click="$emit('compare', activity)" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all hover:bg-foreground/5 text-muted/60 hover:text-amber-500">
+            <button @click="$emit('compare', activity)" class="flex-shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl transition-all hover:bg-foreground/5 text-muted/60 hover:text-amber-500">
               <Swords class="w-4 h-4" />
               <span class="text-[10px] font-black uppercase tracking-tighter">{{ i18n.t('ui_challenge') || 'Retar' }}</span>
             </button>
           </div>
 
-          <button @click="$emit('viewProfile', activity.user_id)" class="p-2 text-muted/30 hover:text-foreground transition-colors">
+          <button @click="$emit('viewProfile', activity.user_id)" class="shrink-0 p-2 text-muted/30 hover:text-foreground transition-colors">
             <Scan class="w-4 h-4" />
           </button>
         </div>
@@ -258,7 +260,7 @@ import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
 import AvatarFrame from './AvatarFrame.vue';
 import { 
-    Heart, MessageSquare, Share2, 
+    BicepsFlexed, MessageSquare, Share2, 
     Swords, ChevronRight, Trophy, Zap, 
     Flame, TrendingUp, Dumbbell, 
     ArrowBigUp, Crown, Scan, 
@@ -498,5 +500,20 @@ onMounted(() => {
 
 .has-custom-bg {
   background: rgba(0, 0, 0, 0.9) !important;
+  color: white !important;
+}
+
+.has-custom-bg .text-foreground,
+.has-custom-bg [class*="text-foreground/"] {
+  color: white !important;
+}
+
+.has-custom-bg .text-muted,
+.has-custom-bg [class*="text-muted/"] {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.has-custom-bg .text-primary-500 {
+  color: hsl(var(--primary)) !important;
 }
 </style>

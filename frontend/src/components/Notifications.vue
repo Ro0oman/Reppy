@@ -67,7 +67,7 @@
 <script setup>
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { Bell, Heart, MessageSquare, Trophy, Package, Swords, PartyPopper, ChevronRight } from 'lucide-vue-next';
+import { Bell, BicepsFlexed, MessageSquare, Trophy, Package, Swords, PartyPopper, ChevronRight } from 'lucide-vue-next';
 import { useNotificationsStore } from '../stores/notifications';
 import { useI18nStore } from '../stores/i18n';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
@@ -81,7 +81,7 @@ const emit = defineEmits(['start', 'viewProfile']);
 
 const getIcon = (type) => {
   switch (type) {
-    case 'LIKE': return Heart;
+    case 'LIKE': return BicepsFlexed;
     case 'COMMENT': return MessageSquare;
     case 'LEVEL_UP': return Trophy;
     case 'NEW_CHEST': return Package;
@@ -92,7 +92,7 @@ const getIcon = (type) => {
 
 const getIconColor = (type) => {
   switch (type) {
-    case 'LIKE': return 'text-red-500';
+    case 'LIKE': return 'text-amber-500';
     case 'COMMENT': return 'text-primary-500';
     case 'LEVEL_UP': return 'text-yellow-500';
     case 'NEW_CHEST': return 'text-green-500';
