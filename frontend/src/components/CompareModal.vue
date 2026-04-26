@@ -11,6 +11,7 @@
         <div class="flex items-center gap-4">
           <div class="p-3 bg-primary-500/10 rounded-2xl border border-primary-500/20">
             <Swords class="w-6 h-6 text-primary-500" />
+            
           </div>
           <div>
             <h2 class="text-2xl font-black text-white italic uppercase tracking-tighter">Combat Comparison</h2>

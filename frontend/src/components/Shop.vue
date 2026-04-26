@@ -127,20 +127,20 @@
 
         <div class="flex flex-col lg:flex-row h-full">
           <!-- Left: Bundle Preview -->
-          <div class="lg:w-1/3 p-8 bg-gradient-to-br from-yellow-500/20 to-transparent border-r border-white/5 flex flex-col items-center justify-center gap-6">
-            <div class="p-8 bg-yellow-500/10 rounded-[3rem] border border-yellow-500/20 shadow-2xl">
-              <LayoutGrid class="w-24 h-24 text-yellow-500" />
+          <div class="lg:w-1/3 p-8 bg-gradient-to-br border-r border-white/5 flex flex-col items-center justify-center gap-6" :class="getBundleBgClass(selectedBundle?.rarity)">
+            <div class="p-8 rounded-[3rem] border shadow-2xl" :class="[getBundleBorderClass(selectedBundle?.rarity), getBundleBgClass(selectedBundle?.rarity)]">
+              <LayoutGrid class="w-24 h-24" :class="getBundleTextClass(selectedBundle?.rarity)" />
             </div>
             <div class="text-center">
-              <h2 class="text-3xl font-black text-industrial tracking-tighter text-yellow-500">{{ selectedBundle?.name }}</h2>
-              <span class="text-[10px] font-black uppercase tracking-[0.3em] text-yellow-500/60 mt-2 block">{{ i18n.t('shop_elite_pack') }}</span>
+              <h2 class="text-3xl font-black text-industrial tracking-tighter" :class="getBundleTextClass(selectedBundle?.rarity)">{{ selectedBundle?.name }}</h2>
+              <span class="text-[10px] font-black uppercase tracking-[0.3em] mt-2 block" :class="getBundleTextClass(selectedBundle?.rarity, 0.6)">{{ i18n.t('shop_elite_pack') }}</span>
             </div>
-            <div class="flex items-center gap-4 px-6 py-4 bg-yellow-500/5 border border-yellow-500/20 rounded-2xl w-full">
+            <div class="flex items-center gap-4 px-6 py-4 border rounded-2xl w-full" :class="[getBundleBorderClass(selectedBundle?.rarity), getBundleBgClass(selectedBundle?.rarity)]">
               <div class="flex flex-col flex-1">
-                <span class="text-[8px] font-black text-yellow-500/50 uppercase tracking-widest">{{ i18n.t('shop_bundle_value') }}</span>
-                <span class="text-2xl font-black text-yellow-500 tabular-nums">{{ selectedBundle?.price }} RC</span>
+                <span class="text-[8px] font-black uppercase tracking-widest" :class="getBundleTextClass(selectedBundle?.rarity, 0.5)">{{ i18n.t('shop_bundle_value') }}</span>
+                <span class="text-2xl font-black tabular-nums" :class="getBundleTextClass(selectedBundle?.rarity)">{{ selectedBundle?.price }} RC</span>
               </div>
-              <div class="px-3 py-1.5 bg-yellow-500 text-black text-[9px] font-black rounded-lg">
+              <div class="px-3 py-1.5 text-black text-[9px] font-black rounded-lg" :class="getBundleBgClass(selectedBundle?.rarity).split(' ')[1].replace('/10', '')">
                 30% OFF
               </div>
             </div>
@@ -407,16 +407,16 @@
 
             <!-- Preview Area -->
             <div class="h-32 flex items-center justify-center m-4 mb-2 bg-surface rounded-2xl border border-border relative overflow-hidden group-hover/item:border-primary-500/20 transition-colors shadow-inner" @click="openItemDetails(item)">
-               <div v-if="item.type === 'bundle'" class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-500/10 to-purple-500/10 relative">
+               <div v-if="item.type === 'bundle'" class="w-full h-full flex items-center justify-center bg-gradient-to-br relative" :class="getBundleBgClass(item.rarity)">
                   <div class="grid grid-cols-2 gap-1 p-2 scale-75">
-                     <div class="w-10 h-10 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><Type class="w-5 h-5 text-primary-500/40" /></div>
-                     <div class="w-10 h-10 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><Frame class="w-5 h-5 text-purple-400/40" /></div>
-                     <div class="w-10 h-10 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><Sparkles class="w-5 h-5 text-blue-400/40" /></div>
-                     <div class="w-10 h-10 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><LayoutGrid class="w-5 h-5 text-neon-lime/40" /></div>
+                     <div class="w-10 h-10 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><Type class="w-5 h-5" :class="getBundleTextClass(item.rarity, 0.4)" /></div>
+                     <div class="w-10 h-10 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><Frame class="w-5 h-5" :class="getBundleTextClass(item.rarity, 0.4)" /></div>
+                     <div class="w-10 h-10 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><Sparkles class="w-5 h-5" :class="getBundleTextClass(item.rarity, 0.4)" /></div>
+                     <div class="w-10 h-10 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><LayoutGrid class="w-5 h-5" :class="getBundleTextClass(item.rarity, 0.4)" /></div>
                   </div>
                   <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                     <div class="p-3 bg-surface/80 backdrop-blur-md rounded-2xl border border-primary-500/30 shadow-2xl">
-                        <Swords class="w-6 h-6 text-primary-500 animate-pulse" />
+                     <div class="p-3 bg-surface/80 backdrop-blur-md rounded-2xl border shadow-2xl" :class="getBundleBorderClass(item.rarity)">
+                        <Swords class="w-6 h-6 animate-pulse" :class="getBundleTextClass(item.rarity)" />
                      </div>
                   </div>
                </div>
@@ -984,11 +984,51 @@ const getCardClass = (item) => {
   if (!item.is_unlocked) return 'opacity-60 grayscale';
   if (item.owned) return 'border-border opacity-80 cursor-pointer';
 
-  if (r === 'legendary') return 'border-yellow-400 bg-yellow-400/5 cursor-pointer';
-  if (r === 'epic' || r === 'especial') return 'border-purple-500/50 bg-purple-500/5 cursor-pointer';
-  if (r === 'rare') return 'border-blue-500/50 bg-blue-500/5 cursor-pointer';
-  if (r === 'calistenico') return 'border-[#ccff00]/50 bg-[#ccff00]/5 cursor-pointer';
-  return 'border-gray-700 opacity-80 bg-background/20 cursor-pointer';
+  if (r === 'calistenico') return 'border-[#ccff00]/50 bg-[#ccff00]/5 cursor-pointer hover:shadow-[0_0_30px_rgba(204,255,0,0.15)] hover:border-[#ccff00]';
+  if (r === 'legendary') return 'border-primary-500/50 bg-primary-500/5 cursor-pointer hover:shadow-[0_0_30px_rgba(255,69,0,0.15)] hover:border-primary-500';
+  if (r === 'epic' || r === 'especial') return 'border-purple-500/50 bg-purple-500/5 cursor-pointer hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] hover:border-purple-500';
+  if (r === 'rare') return 'border-blue-500/50 bg-blue-500/5 cursor-pointer hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] hover:border-blue-500';
+  return 'border-gray-700 opacity-80 bg-background/20 cursor-pointer hover:border-foreground/30';
+};
+
+const getBundleBgClass = (rarity) => {
+  const r = rarity?.toLowerCase() || 'common';
+  switch (r) {
+    case 'calistenico': return 'from-[#ccff00]/10 to-[#ccff00]/5';
+    case 'legendary': return 'from-primary-500/10 to-primary-500/5';
+    case 'epic':
+    case 'especial': return 'from-purple-500/10 to-purple-500/5';
+    case 'rare': return 'from-blue-500/10 to-blue-500/5';
+    default: return 'from-foreground/10 to-foreground/5';
+  }
+};
+
+const getBundleBorderClass = (rarity) => {
+  const r = rarity?.toLowerCase() || 'common';
+  switch (r) {
+    case 'calistenico': return 'border-[#ccff00]/30';
+    case 'legendary': return 'border-primary-500/30';
+    case 'epic':
+    case 'especial': return 'border-purple-500/30';
+    case 'rare': return 'border-blue-500/30';
+    default: return 'border-foreground/30';
+  }
+};
+
+const getBundleTextClass = (rarity, opacity = 1) => {
+  const r = rarity?.toLowerCase() || 'common';
+  let base = 'text-foreground';
+  switch (r) {
+    case 'calistenico': base = 'text-[#ccff00]'; break;
+    case 'legendary': base = 'text-primary-500'; break;
+    case 'epic':
+    case 'especial': base = 'text-purple-400'; break;
+    case 'rare': base = 'text-blue-400'; break;
+  }
+  if (opacity < 1) {
+    return opacity === 0.4 ? `${base}/40` : (opacity === 0.5 ? `${base}/50` : `${base}/60`);
+  }
+  return base;
 };
 
 const getSlotIcon = (slot) => {

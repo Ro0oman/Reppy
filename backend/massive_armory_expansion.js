@@ -111,11 +111,29 @@ const themes = {
     }
 };
 
-const rarities = ['common', 'rare', 'especial', 'legendary', 'calistenico'];
-const categories = ['head', 'weapon', 'armor', 'boots', 'consumable'];
+import fs from 'fs';
+import path from 'path';
+
+const iconMapPath = path.resolve('data/game-icons.json');
+const iconData = JSON.parse(fs.readFileSync(iconMapPath, 'utf8'));
+
+const icons = {
+    head: iconData.head.map(i => `gi:${i.slug}`),
+    weapon: iconData.weapon.map(i => `gi:${i.slug}`),
+    armor: iconData.armor.map(i => `gi:${i.slug}`),
+    boots: iconData.boots.map(i => `gi:${i.slug}`),
+    consumable: iconData.consumable.map(i => `gi:${i.slug}`)
+};
+
+// Fallback if some categories are too small (not the case here but good practice)
+Object.keys(icons).forEach(cat => {
+    if (icons[cat].length === 0) {
+        icons[cat] = iconData.other.map(i => `gi:${i.slug}`);
+    }
+});
 
 async function expand() {
-    console.log('🚀 Iniciando expansión definitiva de la Armería con Lore Dinámico...');
+    console.log('🚀 Iniciando expansión definitiva de la Armería con Lore Dinámico e Iconos Diversos (Library Mode)...');
 
     try {
         console.log('🧹 Limpiando equipo antiguo...');
@@ -125,6 +143,7 @@ async function expand() {
         const usedNames = new Set();
 
         for (const cat of categories) {
+            const catIcons = icons[cat];
             for (const rarity of rarities) {
                 for (let i = 0; i < 5; i++) {
                     const themeKeys = Object.keys(themes);
@@ -176,17 +195,18 @@ async function expand() {
 
                     const desc = loreText;
                     const price = powerScale * 150;
+                    const svg_key = catIcons[Math.floor(Math.random() * catIcons.length)];
 
-                    allItems.push({ name, desc, type: cat, rarity, stats, price });
+                    allItems.push({ name, desc, type: cat, rarity, stats, price, svg_key });
                 }
             }
         }
 
-        console.log(`📦 Insertando ${allItems.length} items con lore escalado...`);
+        console.log(`📦 Insertando ${allItems.length} items con lore e iconos...`);
         for (const item of allItems) {
             await query(
-                'INSERT INTO items (name, description, type, rarity, stats, price) VALUES ($1, $2, $3, $4, $5, $6)',
-                [item.name, item.desc, item.type, item.rarity, item.stats, item.price]
+                'INSERT INTO items (name, description, type, rarity, stats, price, svg_key) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+                [item.name, item.desc, item.type, item.rarity, item.stats, item.price, item.svg_key]
             );
         }
 

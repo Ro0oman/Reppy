@@ -128,14 +128,14 @@ export const useAuthStore = defineStore('auth', {
       // 1. Check for stale session (> 48h) to avoid cached component errors
       const lastVisit = localStorage.getItem('reppy_last_visit');
       const now = Date.now();
-      const FORTY_EIGHT_HOURS = 48 * 60 * 60 * 1000;
+      const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
 
       if (lastVisit && this.token) {
         const diff = now - parseInt(lastVisit);
-        if (diff > FORTY_EIGHT_HOURS) {
-          console.warn('[AUTH_STORE] Stale session detected (>48h). Forcing logout and refresh...');
+        if (diff > THIRTY_DAYS) {
+          console.warn('[AUTH_STORE] Stale session detected (>30d). Forcing logout and refresh...');
           this.logout();
-          window.location.reload(); // Hard reload to clear component cache
+          window.location.reload(); 
           return;
         }
       }
@@ -148,9 +148,10 @@ export const useAuthStore = defineStore('auth', {
         axios.interceptors.response.use(
           (response) => response,
           (error) => {
-            if (error.response?.status === 401) {
-              console.warn('Session expired or unauthorized. Logging out...');
+            if (error.response?.status === 401 || error.response?.status === 404) {
+              console.warn('Session expired or user not found. Logging out...');
               this.logout();
+              if (!import.meta.env.SSR) window.location.reload();
             }
             return Promise.reject(error);
           }

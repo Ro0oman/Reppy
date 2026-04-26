@@ -9,7 +9,7 @@ const router = express.Router();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const generateToken = (userId, isAdmin) => {
-  return jwt.sign({ id: userId, is_admin: isAdmin }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  return jwt.sign({ id: userId, is_admin: isAdmin }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
 // Google Login
