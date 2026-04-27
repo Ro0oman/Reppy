@@ -266,10 +266,10 @@ const getStatXPMax = (statId) => {
 
 const localizedPosts = computed(() => {
   const now = new Date();
-  now.setHours(0, 0, 0, 0); // Normalize today to midnight for comparison
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   
   return blogPosts
-    .filter(post => new Date(post.date) <= now)
+    .filter(post => post.date <= todayStr)
     .map(post => ({
       ...post,
       title: post.locales[i18n.locale]?.title || post.locales.en.title
@@ -285,10 +285,10 @@ const localizedPosts = computed(() => {
 
 const upcomingPosts = computed(() => {
   const now = new Date();
-  now.setHours(0, 0, 0, 0);
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   
   const upcoming = blogPosts
-    .filter(post => new Date(post.date) > now)
+    .filter(post => post.date > todayStr)
     .sort((a, b) => new Date(a.date) - new Date(b.date))
     .slice(0, 3);
     
