@@ -31,14 +31,35 @@
              <button 
                v-for="bg in battlefields" 
                :key="bg"
-               @click="form.battlefield = bg"
+               @click="form.battlefield = bg; form.customBattlefield = ''"
                class="p-4 rounded-2xl border transition-all text-center group relative overflow-hidden"
-               :class="form.battlefield === bg ? 'bg-primary-500 border-primary-500 shadow-lg shadow-primary-500/20' : 'bg-white/5 border-white/5 hover:border-white/20'"
+               :class="form.battlefield === bg && !form.customBattlefield ? 'bg-primary-500 border-primary-500 shadow-lg shadow-primary-500/20' : 'bg-white/5 border-white/5 hover:border-white/20'"
              >
-               <span class="text-[10px] font-black uppercase italic relative z-10" :class="form.battlefield === bg ? 'text-white' : 'text-muted group-hover:text-white'">{{ bg }}</span>
-               <div v-if="form.battlefield === bg" class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent"></div>
+               <span class="text-[10px] font-black uppercase italic relative z-10" :class="form.battlefield === bg && !form.customBattlefield ? 'text-white' : 'text-muted group-hover:text-white'">{{ bg }}</span>
+               <div v-if="form.battlefield === bg && !form.customBattlefield" class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent"></div>
+             </button>
+             <!-- Custom Battlefield -->
+             <button 
+               @click="form.customBattlefield = form.customBattlefield || 'https://'; form.battlefield = ''"
+               class="p-4 rounded-2xl border transition-all text-center group relative overflow-hidden"
+               :class="form.customBattlefield ? 'bg-primary-500 border-primary-500 shadow-lg shadow-primary-500/20' : 'bg-white/5 border-white/5 hover:border-white/20'"
+             >
+               <span class="text-[10px] font-black uppercase italic relative z-10" :class="form.customBattlefield ? 'text-white' : 'text-muted group-hover:text-white'">{{ i18n.t('pvp_custom_bg') }}</span>
              </button>
           </div>
+          
+          <!-- Custom BG Input -->
+          <Transition name="slide-down">
+            <div v-if="form.customBattlefield !== undefined && (form.customBattlefield || form.battlefield === '')" class="mt-4 animate-in slide-in-from-top-2 duration-300">
+               <input 
+                 v-model="form.customBattlefield" 
+                 type="text" 
+                 placeholder="https://example.com/image.jpg"
+                 class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[10px] text-white font-mono outline-none focus:border-primary-500/50 transition-all"
+               />
+               <p class="text-[9px] text-muted mt-2 uppercase tracking-widest">{{ i18n.t('pvp_custom_bg_desc') }}</p>
+            </div>
+          </Transition>
         </div>
 
         <!-- Combat Stats -->
@@ -57,12 +78,31 @@
            <!-- Time -->
            <div class="space-y-4">
               <label class="text-[10px] font-black text-primary-500 uppercase tracking-[0.3em]">{{ i18n.t('pvp_time_limit') }}</label>
-              <div class="flex gap-2">
-                 <button v-for="t in [30, 60, 90]" :key="t" @click="form.timeLimit = t"
-                         class="flex-1 py-3 rounded-xl border text-[10px] font-black transition-all"
-                         :class="form.timeLimit === t ? 'bg-white text-black border-white' : 'bg-white/5 text-muted border-white/5 hover:border-white/20'">
-                    {{ t }}s
+              <div class="grid grid-cols-3 gap-2">
+                 <button v-for="t in durations" :key="t.val" @click="form.timeLimit = t.val; form.isCustomTime = false"
+                         class="py-3 rounded-xl border text-[10px] font-black transition-all"
+                         :class="form.timeLimit === t.val && !form.isCustomTime ? 'bg-white text-black border-white' : 'bg-white/5 text-muted border-white/5 hover:border-white/20'">
+                    {{ t.label }}
                  </button>
+                 <button @click="form.isCustomTime = true"
+                         class="py-3 rounded-xl border text-[10px] font-black transition-all"
+                         :class="form.isCustomTime ? 'bg-white text-black border-white' : 'bg-white/5 text-muted border-white/5 hover:border-white/20'">
+                    {{ i18n.t('pvp_custom_time') }}
+                 </button>
+              </div>
+
+              <!-- Custom Time Input -->
+              <div v-if="form.isCustomTime" class="mt-4 animate-in slide-in-from-top-2 duration-200">
+                <div class="flex items-center gap-4 bg-black/40 border border-white/10 rounded-xl px-4 py-2">
+                  <input 
+                    v-model="form.customTimeMinutes" 
+                    type="range" 
+                    min="1" 
+                    max="30" 
+                    class="flex-1 accent-primary-500"
+                  />
+                  <span class="text-xs font-black text-white w-12 text-center">{{ form.customTimeMinutes }}m</span>
+                </div>
               </div>
            </div>
         </div>
@@ -123,7 +163,7 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
+import { reactive, ref, computed } from 'vue';
 import { X, Swords, ShieldCheck, Loader2, ArrowBigUp, Shield, Footprints } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import axios from 'axios';
@@ -142,11 +182,20 @@ const notificationStore = useNotificationStore();
 
 const loading = ref(false);
 const battlefields = ['Default Reppy', 'Dark Arena', 'Neon Gym', 'Forest Temple', 'Steel Dungeon'];
+const durations = [
+  { val: 60, label: '1 min' },
+  { val: 300, label: '5 min' },
+  { val: 600, label: '10 min' },
+  { val: 1800, label: '30 min' },
+];
 
 const form = reactive({
   maxHp: 5000,
   timeLimit: 60,
+  customTimeMinutes: 1,
+  isCustomTime: false,
   battlefield: 'Default Reppy',
+  customBattlefield: '',
   allowedExercises: ['pullups', 'pushups'],
   anticheatEnabled: true
 });
@@ -167,9 +216,14 @@ const getExIcon = (ex) => {
 const initChallenge = async () => {
   loading.value = true;
   try {
+    const finalTimeLimit = form.isCustomTime ? form.customTimeMinutes * 60 : form.timeLimit;
+    const finalBattlefield = form.customBattlefield || form.battlefield;
+
     const res = await axios.post('/api/pvp/challenge', {
       challengedId: props.target.user_id || props.target.id,
-      ...form
+      ...form,
+      timeLimit: finalTimeLimit,
+      battlefield: finalBattlefield
     });
     notificationStore.notify(i18n.t('pvp_challenge_sent'), 'success');
     emit('close');

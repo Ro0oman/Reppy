@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS users (
     damage_multiplier_expiry TIMESTAMP WITH TIME ZONE,
     cha_xp INTEGER DEFAULT 0,
     last_streak_reward_date DATE,
+    reppy_gems INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -115,6 +116,17 @@ CREATE TABLE IF NOT EXISTS user_read_blogs (
     read_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(user_id, post_slug)
 );
+
+CREATE TABLE IF NOT EXISTS gem_transactions (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    amount INTEGER NOT NULL,
+    source VARCHAR(50) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_gem_trans_user ON gem_transactions(user_id);
 
 -- Index for better performance
 CREATE INDEX IF NOT EXISTS idx_reps_user_date ON reps(user_id, date);

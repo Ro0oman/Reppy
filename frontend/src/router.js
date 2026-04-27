@@ -16,6 +16,7 @@ const Notifications = () => import('./components/Notifications.vue')
 const BlogList = () => import('./components/BlogList.vue')
 const Codex = () => import('./components/Codex.vue')
 const PvpBattleView = () => import('./components/PvpBattleView.vue')
+const Missions = () => import('./components/Missions.vue')
 const NotFound = () => import('./components/NotFound.vue')
 
 export const routes = [
@@ -99,6 +100,12 @@ export const routes = [
         component: PvpBattleView, 
         name: 'pvp',
         meta: { requiresAuth: true, title: 'PvP Battle | Reppy' }
+      },
+      { 
+        path: 'missions', 
+        component: Missions, 
+        name: 'missions',
+        meta: { requiresAuth: true, titleKey: 'nav_missions' }
       },
       // SEO Routes
       { 

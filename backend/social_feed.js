@@ -188,7 +188,8 @@ router.get('/feed', authenticate, async (req, res) => {
                 'hp2', f.hp2,
                 'max_hp', f.max_hp,
                 'started_at', f.started_at,
-                'time_limit', f.time_limit
+                'time_limit', f.time_limit,
+                'battlefield', f.battlefield
             ) as pvp_data
         FROM pvp_fights f
         JOIN users u1 ON f.challenger_id = u1.id

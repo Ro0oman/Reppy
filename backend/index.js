@@ -24,6 +24,7 @@ import adminRoutes from './admin.js';
 import blogRoutes from './blog.js';
 import pvpRoutes from './pvp.js';
 import testRoutes from './test.js';
+import missionsRoutes from './missions.js';
 
 
 const app = express();
@@ -65,6 +66,7 @@ apiRouter.use('/admin', adminRoutes);
 apiRouter.use('/blog-tracking', blogRoutes);
 apiRouter.use('/pvp', pvpRoutes);
 apiRouter.use('/test', testRoutes);
+apiRouter.use('/missions', missionsRoutes);
 
 
 // Health check (within router)

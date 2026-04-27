@@ -178,6 +178,9 @@ export default {
     pvp_anticheat: 'Reppy AntiCheat™',
     pvp_anticheat_desc: 'Evita series imposibles y spam',
     pvp_init_battle: 'INICIALIZAR COMANDO DE BATALLA ⚔',
+    pvp_custom_bg: 'FONDO PERSONALIZADO',
+    pvp_custom_bg_desc: 'Introduce la URL de una imagen para el campo de batalla',
+    pvp_custom_time: 'PERSONALIZADO',
 
     // Leaderboard
     lb_friends: 'Amigos',
@@ -248,6 +251,18 @@ export default {
     economy_history_title: 'Historial de Monedas',
     economy_my_profile: 'Mi Perfil',
     economy_reppy_core: 'Reppy Core © 2026',
+    economy_gems: 'REPPY GEMS',
+    economy_gems_desc: 'Moneda premium para objetos míticos.',
+    nav_missions: 'Misiones',
+    missions_title: 'CENTRO DE MISIONES',
+    missions_subtitle: 'OBJETIVOS OPERATIVOS DIARIOS',
+    missions_available: 'LISTO',
+    mission_daily_reps_title: 'Entrenamiento de Campo',
+    mission_daily_reps_desc: 'Realiza 50 repeticiones totales hoy.',
+    mission_daily_streak_title: 'Disciplina de Hierro',
+    mission_daily_streak_desc: 'Mantén tu racha de entrenamiento activa.',
+    mission_boss_damage_title: 'Cazador de Gigantes',
+    mission_boss_damage_desc: 'Inflige 10000 de daño a cualquier boss.',
 
     // Exercise Names
     ex_pullups_std: 'Dominadas (Estándar)',

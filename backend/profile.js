@@ -11,7 +11,7 @@ router.get('/:id', async (req, res) => {
 
   try {
     const userResult = await query(`
-        SELECT u.id, u.name, u.email, u.avatar_url, u.reppy_coins, u.daily_goal,
+        SELECT u.id, u.name, u.email, u.avatar_url, u.reppy_coins, u.reppy_gems, u.daily_goal,
                u.str_xp, u.dex_xp, u.end_xp, u.vig_xp, u.int_xp, u.fth_xp, u.total_xp, u.body_weight, u.is_private,
                u.current_level, u.level_chests_claimed, u.level_chests,
                u.damage_multiplier, u.damage_multiplier_expiry,

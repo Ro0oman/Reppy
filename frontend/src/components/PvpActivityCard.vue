@@ -6,7 +6,22 @@
       activity.pvp_data?.status === 'active' ? 'border-primary-500/50 shadow-[0_0_40px_rgba(59,130,246,0.1)]' : 'border-white/5 opacity-90'
     ]"
   >
-    <!-- Background Glow -->
+    <!-- Battlefield Background -->
+    <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-30">
+        <!-- Preset Background Images -->
+        <div v-if="activity.pvp_data?.battlefield && presetImages[activity.pvp_data.battlefield]" class="absolute inset-0">
+           <img :src="presetImages[activity.pvp_data.battlefield]" class="w-full h-full object-cover" />
+           <div class="absolute inset-0 bg-background/40 backdrop-blur-[1px]"></div>
+        </div>
+        
+        <!-- Custom Background Image (URLs) -->
+        <div v-else-if="activity.pvp_data?.battlefield && activity.pvp_data.battlefield.startsWith('http')" class="absolute inset-0">
+           <img :src="activity.pvp_data.battlefield" class="w-full h-full object-cover mix-blend-overlay" />
+           <div class="absolute inset-0 bg-background/40 backdrop-blur-[2px]"></div>
+        </div>
+    </div>
+
+    <!-- Background Glow (Legacy fallback) -->
     <div v-if="activity.pvp_data?.status === 'active'" class="absolute -top-24 -right-24 w-48 h-48 bg-primary-500/10 blur-[100px] pointer-events-none"></div>
 
     <!-- Header: Battle Status -->
@@ -36,14 +51,21 @@
     <!-- VS Display -->
     <div class="flex items-center justify-center gap-6 md:gap-12 py-4">
        <!-- P1 -->
-       <div class="flex flex-col items-center gap-3 text-center">
+       <div class="flex flex-col items-center gap-3 text-center transition-all duration-500" 
+            :class="{ 'scale-110 z-10': isWinner(activity.pvp_data?.challenger_id), 'opacity-40 grayscale': activity.pvp_data?.winner_id && !isWinner(activity.pvp_data?.challenger_id) }">
           <div class="relative">
-             <img :src="activity.avatar_url" class="w-16 h-16 rounded-full border-2 border-white/10 p-0.5" />
-             <div v-if="isWinner(activity.pvp_data?.challenger_id)" class="absolute -top-2 -right-2 p-1 bg-amber-500 rounded-full border-2 border-surface">
-                <Trophy class="w-3 h-3 text-black" />
+             <div v-if="isWinner(activity.pvp_data?.challenger_id)" class="absolute -inset-4 bg-amber-500/20 blur-xl rounded-full animate-pulse"></div>
+             <img :src="activity.avatar_url" 
+                  class="w-16 h-16 md:w-20 md:h-20 rounded-full border-2 p-0.5 relative z-10 transition-all" 
+                  :class="isWinner(activity.pvp_data?.challenger_id) ? 'border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.4)]' : 'border-white/10'" />
+             <div v-if="isWinner(activity.pvp_data?.challenger_id)" class="absolute -top-2 -right-2 p-1.5 bg-amber-500 rounded-full border-2 border-surface z-20 shadow-lg">
+                <Trophy class="w-4 h-4 text-black" />
+             </div>
+             <div v-if="isWinner(activity.pvp_data?.challenger_id)" class="absolute -bottom-2 inset-x-0 flex justify-center z-20">
+                <span class="px-2 py-0.5 bg-amber-500 text-[7px] font-black text-black uppercase rounded-full shadow-lg">WINNER</span>
              </div>
           </div>
-          <span class="text-[10px] font-black text-white uppercase italic truncate max-w-[80px]">{{ activity.pvp_data?.challenger_name }}</span>
+          <span class="text-[10px] font-black text-white uppercase italic truncate max-w-[80px] mt-2">{{ activity.pvp_data?.challenger_name }}</span>
        </div>
 
        <div class="flex flex-col items-center gap-1">
@@ -51,16 +73,22 @@
        </div>
 
        <!-- P2 -->
-       <div class="flex flex-col items-center gap-3 text-center">
+       <div class="flex flex-col items-center gap-3 text-center transition-all duration-500"
+            :class="{ 'scale-110 z-10': isWinner(activity.pvp_data?.challenged_id), 'opacity-40 grayscale': activity.pvp_data?.winner_id && !isWinner(activity.pvp_data?.challenged_id) }">
           <div class="relative">
-             <div class="w-16 h-16 rounded-full border-2 border-white/10 p-0.5 bg-surface/80 flex items-center justify-center">
+             <div v-if="isWinner(activity.pvp_data?.challenged_id)" class="absolute -inset-4 bg-amber-500/20 blur-xl rounded-full animate-pulse"></div>
+             <div class="w-16 h-16 md:w-20 md:h-20 rounded-full border-2 p-0.5 bg-surface/80 flex items-center justify-center relative z-10 transition-all"
+                  :class="isWinner(activity.pvp_data?.challenged_id) ? 'border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.4)]' : 'border-white/10'">
                 <User class="w-8 h-8 text-muted/30" />
              </div>
-             <div v-if="isWinner(activity.pvp_data?.challenged_id)" class="absolute -top-2 -right-2 p-1 bg-amber-500 rounded-full border-2 border-surface">
-                <Trophy class="w-3 h-3 text-black" />
+             <div v-if="isWinner(activity.pvp_data?.challenged_id)" class="absolute -top-2 -right-2 p-1.5 bg-amber-500 rounded-full border-2 border-surface z-20 shadow-lg">
+                <Trophy class="w-4 h-4 text-black" />
+             </div>
+             <div v-if="isWinner(activity.pvp_data?.challenged_id)" class="absolute -bottom-2 inset-x-0 flex justify-center z-20">
+                <span class="px-2 py-0.5 bg-amber-500 text-[7px] font-black text-black uppercase rounded-full shadow-lg">WINNER</span>
              </div>
           </div>
-          <span class="text-[10px] font-black text-white uppercase italic truncate max-w-[80px]">{{ activity.pvp_data?.challenged_name }}</span>
+          <span class="text-[10px] font-black text-white uppercase italic truncate max-w-[80px] mt-2">{{ activity.pvp_data?.challenged_name }}</span>
        </div>
     </div>
 
@@ -122,6 +150,14 @@ import { Swords, User, Trophy, Zap } from 'lucide-vue-next';
 const props = defineProps({
   activity: Object
 });
+
+const presetImages = {
+  'Default Reppy': '/images/pvp/default.gif',
+  'Dark Arena': '/images/pvp/dark_arena.gif',
+  'Neon Gym': '/images/pvp/neon_gym.gif',
+  'Forest Temple': '/images/pvp/forest_temple.gif',
+  'Steel Dungeon': '/images/pvp/steel_dungeon.gif'
+};
 
 const timeLeft = ref(0);
 let timer = null;

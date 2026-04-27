@@ -8,6 +8,7 @@ import { syncBossHealth } from './utils/boss.js';
 import { getLocalDateString } from './utils/date.js';
 import { calculateDamage } from './utils/damage.js';
 import { getUserWithGear } from './utils/user.js';
+import { updateMissionProgress } from './utils/missions.js';
 
 
 const router = express.Router();
@@ -142,6 +143,12 @@ router.post('/', authenticate, async (req, res) => {
        WHERE id = $7`, 
       [actualDamageDealt, dmgResult.activeMultiplier, dmgResult.baseDamage, dmgResult.gearBonus, dmgResult.buffBonus, bossId, repResult.rows[0].id]
     );
+
+    // 4. Update Missions
+    await updateMissionProgress(userId, 'reps', count);
+    if (actualDamageDealt > 0) {
+      await updateMissionProgress(userId, 'damage', actualDamageDealt);
+    }
 
     await client.query('COMMIT');
     

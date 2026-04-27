@@ -177,6 +177,9 @@ export default {
     pvp_anticheat: 'Reppy AntiCheat™',
     pvp_anticheat_desc: 'Prevents impossible sets and spam',
     pvp_init_battle: 'INITIALIZE BATTLE COMMAND ⚔',
+    pvp_custom_bg: 'CUSTOM BACKGROUND',
+    pvp_custom_bg_desc: 'Enter an image URL for the battlefield',
+    pvp_custom_time: 'CUSTOM',
 
     // Leaderboard
     lb_friends: 'Friends',
@@ -244,6 +247,18 @@ export default {
     economy_history_title: 'Coin Transaction History',
     economy_my_profile: 'My Profile',
     economy_reppy_core: 'Reppy Core © 2026',
+    economy_gems: 'REPPY GEMS',
+    economy_gems_desc: 'Premium currency for mythical items.',
+    nav_missions: 'Missions',
+    missions_title: 'MISSION CENTER',
+    missions_subtitle: 'DAILY OPERATIONAL OBJECTIVES',
+    missions_available: 'READY',
+    mission_daily_reps_title: 'Field Training',
+    mission_daily_reps_desc: 'Perform 50 total reps today.',
+    mission_daily_streak_title: 'Iron Discipline',
+    mission_daily_streak_desc: 'Keep your training streak active.',
+    mission_boss_damage_title: 'Giant Hunter',
+    mission_boss_damage_desc: 'Inflict 10000 damage on any boss.',
 
     // Exercise Names
     ex_pullups_std: 'Pullups (Standard)',

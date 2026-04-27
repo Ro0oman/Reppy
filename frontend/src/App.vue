@@ -6,7 +6,7 @@
     <BackgroundEffect v-if="authStore.isAuthenticated" :background-css="authStore.user?.background_css" />
 
     <!-- Industrial Navigation Bar -->
-    <nav v-if="authStore.isAuthenticated"
+    <nav v-if="authStore.isAuthenticated && $route.name !== 'pvp'"
       class="border-b border-border bg-surface/40 backdrop-blur-3xl sticky top-0 z-50 transition-all">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
         <!-- Logo Core -->
@@ -40,13 +40,22 @@
           <!-- Desktop GitHub Module -->
 
           <div class="flex items-center gap-2 sm:gap-4">
-            <!-- Currency Module -->
-             <button @click="showCoinsInfo = true" 
-                  :title="i18n.t('economy_history_title')"
-                  class="flex items-center gap-2 bg-surface/5 px-2.5 sm:px-4 py-2 rounded-xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-primary-500/50">
-               <Coins class="w-3.5 h-3.5 text-primary-500 transition-transform group-hover:scale-110" />
-               <span class="text-[12px] sm:text-sm font-black text-precision text-foreground">{{ authStore.user?.reppy_coins || 0 }}</span>
-            </button>
+             <!-- Currency Module -->
+              <div class="flex items-center gap-2">
+                <button @click="showCoinsInfo = true" 
+                    :title="i18n.t('economy_history_title')"
+                    class="flex items-center gap-2 bg-surface/5 px-2.5 sm:px-4 py-2 rounded-xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-primary-500/50">
+                  <Coins class="w-3.5 h-3.5 text-primary-500 transition-transform group-hover:scale-110" />
+                  <span class="text-[12px] sm:text-sm font-black text-precision text-foreground">{{ authStore.user?.reppy_coins || 0 }}</span>
+                </button>
+
+                <button 
+                    :title="i18n.t('economy_gems')"
+                    class="flex items-center gap-2 bg-indigo-500/5 px-2.5 sm:px-4 py-2 rounded-xl border border-indigo-500/20 hover:border-indigo-500/40 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
+                  <Gem class="w-3.5 h-3.5 text-indigo-500 transition-transform group-hover:scale-110" />
+                  <span class="text-[12px] sm:text-sm font-black text-precision text-foreground">{{ authStore.user?.reppy_gems || 0 }}</span>
+                </button>
+              </div>
 
             <!-- Notification Bell -->
             <div class="relative">
@@ -100,7 +109,7 @@
     </nav>
 
     <!-- Main Operational View -->
-    <main class="pt-4 pb-20">
+    <main :class="['flex-1 flex flex-col', $route.name === 'pvp' ? 'p-0' : 'pt-4 pb-20']">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" @start="onStartAction" @viewProfile="openProfile" />
@@ -129,7 +138,7 @@
     </footer>
 
     <!-- Mobile Bottom Operational Dock -->
-    <nav v-if="authStore.isAuthenticated" 
+    <nav v-if="authStore.isAuthenticated && $route.name !== 'pvp'" 
       class="lg:hidden fixed bottom-6 left-4 right-4 z-[60] bg-surface/60 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-1.5 transition-all duration-500">
       <div class="flex items-center justify-around h-14">
         <router-link v-for="nav in mobileNavLinks" :key="nav.id"
@@ -249,7 +258,7 @@
 import { ref, onMounted, watch, computed } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
-import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Bell, User, Dices, Volume2, VolumeX, Book, ShoppingBag } from 'lucide-vue-next';
+import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Gem, Bell, User, Dices, Volume2, VolumeX, Book, ShoppingBag, Target } from 'lucide-vue-next';
 import { useAuthStore } from './stores/auth';
 import { useI18nStore } from './stores/i18n';
 import { useNotificationsStore } from './stores/notifications';

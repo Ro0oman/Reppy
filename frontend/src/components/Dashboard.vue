@@ -148,6 +148,23 @@
               </div>
             </div>
          </div>
+
+         <!-- Missions Entry Point -->
+         <div 
+          @click="router.push({ name: 'missions', params: { lang: i18n.locale } })"
+          class="bg-indigo-500/10 hover:bg-indigo-500/20 backdrop-blur-xl border border-indigo-500/20 rounded-[2rem] p-6 flex flex-col justify-between group cursor-pointer transition-all hover:scale-[1.02] active:scale-95"
+         >
+            <div class="flex items-center justify-between">
+              <Target class="w-4 h-4 text-indigo-400" />
+              <div v-if="unclaimedMissions > 0" class="flex items-center gap-1.5 px-2 py-0.5 bg-indigo-500 text-[8px] font-black text-white uppercase rounded-full animate-pulse">
+                {{ unclaimedMissions }} {{ i18n.t('missions_available') || 'READY' }}
+              </div>
+            </div>
+            <div class="mt-4">
+              <span class="text-xl font-black text-white italic tracking-tighter uppercase">{{ i18n.t('nav_missions') }}</span>
+              <p class="text-[9px] font-black text-indigo-400/60 uppercase tracking-widest mt-1">{{ i18n.t('missions_subtitle') }}</p>
+            </div>
+         </div>
       </div>
     </section>
 
@@ -251,6 +268,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed, reactive, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 import {
   Trophy, Target, Flame, Zap, Activity, History, Inbox,
@@ -273,6 +291,7 @@ const emit = defineEmits(['viewProfile', 'start']);
 const authStore = useAuthStore();
 const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
+const router = useRouter();
 
 const reps = ref([]);
 const heatmapData = ref([]);
@@ -287,6 +306,7 @@ const showDamageModal = ref(false);
 const showAvatarModal = ref(false);
 const showArmoryModal = ref(false);
 const activeTab = ref('heatmap');
+const unclaimedMissions = ref(0);
 
 // Scroll lock when modals are active
 watch([showDamageModal, showAvatarModal, showArmoryModal], ([dModal, aModal, rModal]) => {
@@ -377,16 +397,18 @@ const fetchData = async () => {
       year: activeYear.value 
     };
     const t = Date.now();
-    const [repsRes, heatmapRes, statsRes] = await Promise.all([
+    const [repsRes, heatmapRes, statsRes, missionsRes] = await Promise.all([
       axios.get('/api/reps', { params: { ...params, t } }),
       axios.get('/api/reps/heatmap', { params: { ...params, t } }),
       axios.get('/api/reps/stats', { params: { ...params, t } }),
+      axios.get('/api/missions', { params: { t } }),
       authStore.fetchProfile()
     ]);
 
     reps.value = repsRes.data;
     heatmapData.value = heatmapRes.data;
     totalReps.value = statsRes.data.totalReps;
+    unclaimedMissions.value = missionsRes.data.filter(m => m.is_completed && !m.is_claimed).length;
     stats.streak = statsRes.data.streak;
     stats.topMonth = statsRes.data.topMonth;
     stats.topMonthCount = statsRes.data.topMonthCount;

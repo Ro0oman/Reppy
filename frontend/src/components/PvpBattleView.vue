@@ -1,11 +1,22 @@
 <template>
-  <div class="min-h-screen bg-background p-4 md:p-8 flex flex-col gap-6 overflow-hidden relative">
+  <div class="min-h-screen bg-background p-3 md:p-8 flex flex-col gap-4 md:gap-6 overflow-y-auto relative custom-scrollbar">
     <!-- Battlefield Background Effects -->
     <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-       <div v-if="fight?.battlefield === 'Neon Gym'" class="absolute inset-0 opacity-20 bg-gradient-to-tr from-pink-500/20 via-purple-500/20 to-cyan-500/20 animate-pulse"></div>
-       <div v-if="fight?.battlefield === 'Dark Arena'" class="absolute inset-0 opacity-40 bg-black shadow-[inset_0_0_200px_rgba(255,0,0,0.2)]"></div>
-       <div v-if="fight?.battlefield === 'Forest Temple'" class="absolute inset-0 opacity-20 bg-emerald-900/30"></div>
-       <div v-if="fight?.battlefield === 'Steel Dungeon'" class="absolute inset-0 opacity-20 bg-slate-900 shadow-[inset_0_0_100px_rgba(255,255,255,0.1)]"></div>
+        <!-- Preset Background Images -->
+        <div v-if="fight?.battlefield && presetImages[fight.battlefield]" class="absolute inset-0">
+           <img :src="presetImages[fight.battlefield]" class="w-full h-full object-cover opacity-30" />
+           <div class="absolute inset-0 bg-background/60 backdrop-blur-[1px]"></div>
+           
+           <!-- Overlay effects for specific presets -->
+           <div v-if="fight.battlefield === 'Neon Gym'" class="absolute inset-0 opacity-20 bg-gradient-to-tr from-pink-500/20 via-purple-500/20 to-cyan-500/20 animate-pulse"></div>
+           <div v-if="fight.battlefield === 'Dark Arena'" class="absolute inset-0 opacity-40 shadow-[inset_0_0_200px_rgba(255,0,0,0.2)]"></div>
+        </div>
+        
+        <!-- Custom Background Image (URLs) -->
+        <div v-if="fight?.battlefield && fight.battlefield.startsWith('http')" class="absolute inset-0">
+           <img :src="fight.battlefield" class="w-full h-full object-cover opacity-30 mix-blend-overlay" />
+           <div class="absolute inset-0 bg-background/60 backdrop-blur-[2px]"></div>
+        </div>
     </div>
 
     <!-- Header: Health Bars & Timer -->
@@ -52,11 +63,10 @@
     </div>
 
     <!-- Main Arena -->
-    <div v-if="fight" class="relative z-10 flex-1 w-full max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-center gap-8 md:gap-24 py-12">
-      <!-- Challenger Avatar Area -->
+    <div v-if="fight" class="relative z-10 flex-1 w-full max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-center gap-6 md:gap-24 py-6 md:py-12">
       <div class="relative group" :class="{ 'opacity-50 grayscale scale-95': fight.hp1 <= 0 }">
         <div class="absolute -inset-4 bg-primary-500/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        <div class="relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center">
+        <div class="relative w-32 h-32 xs:w-40 h-40 md:w-64 md:h-64 flex items-center justify-center">
             <img :src="fight.challenger_avatar" class="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(59,130,246,0.5)] animate-float" />
         </div>
         <div class="absolute -bottom-6 inset-x-0 text-center">
@@ -67,8 +77,8 @@
       </div>
 
       <!-- VS Emblem -->
-      <div class="shrink-0 flex flex-col items-center gap-4">
-        <div class="w-20 h-20 rounded-full bg-surface border-4 border-border flex items-center justify-center shadow-2xl relative overflow-hidden">
+      <div class="shrink-0 flex flex-col items-center gap-2 md:gap-4">
+        <div class="w-14 h-14 md:w-20 md:h-20 rounded-full bg-surface border-2 md:border-4 border-border flex items-center justify-center shadow-2xl relative overflow-hidden">
            <div class="absolute inset-0 bg-gradient-to-tr from-primary-500/20 to-transparent"></div>
            <span class="text-3xl font-black italic text-primary-500 z-10">VS</span>
         </div>
@@ -85,7 +95,7 @@
       <!-- Challenged Avatar Area -->
       <div class="relative group" :class="{ 'opacity-50 grayscale scale-95': fight.hp2 <= 0 }">
         <div class="absolute -inset-4 bg-primary-500/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        <div class="relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center">
+        <div class="relative w-32 h-32 xs:w-40 h-40 md:w-64 md:h-64 flex items-center justify-center">
             <img :src="fight.challenged_avatar" class="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(59,130,246,0.5)] animate-float" style="animation-delay: -2s" />
         </div>
         <div class="absolute -bottom-6 inset-x-0 text-center">
@@ -150,10 +160,13 @@
           </button>
        </div>
 
-       <div v-else-if="fight.status === 'pending' && isChallenger" class="bg-foreground/[0.03] border border-border rounded-[2rem] p-8 text-center space-y-4">
-          <Loader2 class="w-10 h-10 text-primary-500 animate-spin mx-auto" />
-          <h2 class="text-xl font-black text-foreground italic uppercase tracking-tighter">{{ i18n.t('pvp_waiting') }}</h2>
-          <p class="text-[10px] text-muted font-bold uppercase">{{ i18n.t('pvp_waiting_desc') }}</p>
+       <div v-else-if="fight.status === 'pending' && isChallenger" class="bg-foreground/[0.03] border border-border rounded-[2rem] p-6 md:p-8 text-center space-y-4">
+          <Loader2 class="w-8 h-8 md:w-10 md:h-10 text-primary-500 animate-spin mx-auto" />
+          <h2 class="text-lg md:text-xl font-black text-foreground italic uppercase tracking-tighter">{{ i18n.t('pvp_waiting') }}</h2>
+          <p class="text-[9px] md:text-[10px] text-muted font-bold uppercase">{{ i18n.t('pvp_waiting_desc') }}</p>
+          <button @click="router.push('/social')" class="mt-4 px-6 py-2 bg-foreground/[0.05] hover:bg-foreground/[0.1] text-muted rounded-xl text-[9px] font-black uppercase tracking-widest transition-all">
+             SALIR DEL COMBATE
+          </button>
        </div>
     </div>
 
@@ -212,6 +225,14 @@ const damageStore = useDamageStore();
 const fightId = route.params.id;
 const fight = ref(null);
 const timeLeft = ref(0);
+
+const presetImages = {
+  'Default Reppy': '/images/pvp/default.gif',
+  'Dark Arena': '/images/pvp/dark_arena.gif',
+  'Neon Gym': '/images/pvp/neon_gym.gif',
+  'Forest Temple': '/images/pvp/forest_temple.gif',
+  'Steel Dungeon': '/images/pvp/steel_dungeon.gif'
+};
 const logging = ref(false);
 const manualEx = ref('pullups');
 const manualReps = ref(null);
