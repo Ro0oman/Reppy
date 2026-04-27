@@ -96,6 +96,20 @@
               <Zap class="w-4 h-4" />
               VER ATRIBUTOS
             </router-link>
+            
+            <!-- Other User Actions -->
+            <template v-else>
+              <button @click="challengingUser = user"
+                      class="flex items-center gap-3 bg-primary-500 hover:bg-primary-600 text-white px-6 py-4 rounded-xl border border-primary-500/30 transition-all uppercase text-[9px] font-black tracking-widest h-fit shadow-lg shadow-primary-500/20 active:scale-95">
+                <Swords class="w-4 h-4" />
+                {{ i18nStore.t('pvp_challenge_btn') || 'RETAR A DUELO' }}
+              </button>
+              <button @click="comparingUser = user"
+                      class="flex items-center gap-3 bg-surface/5 px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[9px] font-black tracking-widest h-fit active:scale-95">
+                <BarChart3 class="w-4 h-4" />
+                {{ i18nStore.t('ui_compare') || 'COMPARAR' }}
+              </button>
+            </template>
           </div>
           </div>
         </div>
@@ -268,6 +282,21 @@
     <!-- Issue 88: Settings Modal -->
     <SettingsModal :show="showSettingsModal" :initial-data="settingsForm" @close="showSettingsModal = false" @updated="onProfileUpdated" />
 
+    <!-- PvP and Comparison Modals -->
+    <Teleport to="body">
+       <PvpConfigModal 
+         :show="!!challengingUser" 
+         :target="challengingUser" 
+         @close="challengingUser = null" 
+       />
+       <UserCompareModal 
+         :show="!!comparingUser" 
+         :me="authStore.user" 
+         :target="comparingUser" 
+         @close="comparingUser = null" 
+       />
+    </Teleport>
+
     <!-- NEW: Avatar Selector Modal -->
     <Teleport to="body">
       <div v-if="showAvatarSelector" class="fixed inset-0 z-[1001] flex justify-center items-start overflow-y-auto p-4 md:p-8 bg-background/90 backdrop-blur-md" @click.self="showAvatarSelector = false">
@@ -305,7 +334,7 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
-import { Camera, Settings, LogOut, Activity, Flame, Trophy, HelpCircle, X as XIcon, Sword, Zap, Heart, Shield, Coins, Dumbbell, Target, Globe, User as UserIcon } from 'lucide-vue-next';
+import { Camera, Settings, LogOut, Activity, Flame, Trophy, HelpCircle, X as XIcon, Swords, Zap, Heart, Shield, Coins, Dumbbell, Target, Globe, User as UserIcon, BarChart3 } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
@@ -315,6 +344,8 @@ import AvatarFrame from './AvatarFrame.vue';
 import ExerciseSelector from './ExerciseSelector.vue';
 import CodexModal from './CodexModal.vue';
 import SettingsModal from './SettingsModal.vue';
+import PvpConfigModal from './PvpConfigModal.vue';
+import UserCompareModal from './UserCompareModal.vue';
 import axios from 'axios';
 import { Moon, Sun, Monitor } from 'lucide-vue-next';
 
@@ -337,6 +368,8 @@ const activeExercise = ref('all');
 const showInfoModal = ref(false);
 const showSettingsModal = ref(false);
 const showAvatarSelector = ref(false);
+const challengingUser = ref(null);
+const comparingUser = ref(null);
 
 // Pagination State
 const transactionsPage = ref(1);

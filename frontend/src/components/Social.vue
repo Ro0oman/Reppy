@@ -41,11 +41,28 @@
           <!-- Tactical Highlight Bar (Neon Precision) -->
           <div v-if="activeTab === 'rankings'" class="absolute bottom-0 inset-x-4 h-[2px] bg-primary-500 tab-indicator-neon transition-all duration-300"></div>
         </button>
+
+        <div class="h-4 w-px bg-white/10 hidden sm:block"></div>
+
+        <button 
+          @click="activeTab = 'battles'"
+          class="flex-1 sm:flex-none px-6 py-3 rounded-xl text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2.5 relative group overflow-hidden"
+          :class="activeTab === 'battles' ? 'text-primary-400' : 'text-muted/50 hover:text-foreground hover:bg-white/5'"
+        >
+          <Swords class="w-3.5 h-3.5" :class="activeTab === 'battles' ? 'animate-pulse' : ''" />
+          <span class="truncate">{{ i18n.t('pvp_tab') }}</span>
+          
+          <!-- Tactical Highlight Bar (Neon Precision) -->
+          <div v-if="activeTab === 'battles'" class="absolute bottom-0 inset-x-4 h-[2px] bg-primary-500 tab-indicator-neon transition-all duration-300"></div>
+        </button>
       </div>
     </div>
 
     <!-- Feed Tab -->
     <SocialFeed v-if="activeTab === 'feed'" @viewProfile="$emit('viewProfile', $event)" />
+
+    <!-- Battles Tab -->
+    <PvpBattlesTab v-else-if="activeTab === 'battles'" />
 
     <!-- Rankings Tab (Combined Search + Leaderboard) -->
     <div v-else class="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -185,12 +202,14 @@ import {
   Users, Search, SearchX, UserPlus, Heart, Check,
   Trophy, ChevronRight, Users2, BarChart3, Activity
 } from 'lucide-vue-next';
+import { Swords } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useNotificationStore } from '../stores/notification';
 import AvatarFrame from './AvatarFrame.vue';
 import Leaderboard from './Leaderboard.vue';
 import ExerciseSelector from './ExerciseSelector.vue';
 import SocialFeed from './SocialFeed.vue';
+import PvpBattlesTab from './PvpBattlesTab.vue';
 import { computed } from 'vue';
 
 const emit = defineEmits(['viewProfile', 'start']);

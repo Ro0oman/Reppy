@@ -6,16 +6,23 @@
     <!-- Feed Content -->
     <div class="space-y-12 min-h-[600px] relative">
       <TransitionGroup name="stagger">
-        <ActivityCard 
-          v-for="activity in activities" 
-          :key="activity.user_id + activity.date"
-          :activity="activity"
-          :highlighted="isHighlighted(activity)"
-          @toggleLike="handleLike(activity)"
-          @viewProfile="$emit('viewProfile', $event)"
-          @edit="openEditModal(activity)"
-          @compare="openCompareModal(activity)"
-        />
+        <template v-for="activity in activities" :key="activity.post_type === 'pvp' ? 'pvp-' + activity.pvp_data.id : (activity.summary_id || 'reps-' + activity.user_id + '-' + activity.date)">
+          <ActivityCard 
+            v-if="activity.post_type !== 'pvp'"
+            :activity="activity" 
+            :highlighted="isHighlighted(activity)"
+            @toggleLike="handleLike(activity)"
+            @commentAdded="handleComment"
+            @viewProfile="$emit('viewProfile', $event)"
+            @edit="openEditModal(activity)"
+            @compare="openCompareModal(activity)"
+            @challenge="openChallengeModal(activity)"
+          />
+          <PvpActivityCard
+            v-else
+            :activity="activity"
+          />
+        </template>
       </TransitionGroup>
 
       <!-- Loading State -->
@@ -83,6 +90,15 @@
          @close="comparingUser = null" 
        />
     </Teleport>
+
+    <!-- PvP Config Modal (Teleported) -->
+    <Teleport to="body">
+       <PvpConfigModal 
+         :show="!!challengingUser" 
+         :target="challengingUser" 
+         @close="challengingUser = null" 
+       />
+    </Teleport>
   </div>
 </template>
 
@@ -92,11 +108,16 @@ import axios from 'axios';
 import ActivityCard from './ActivityCard.vue';
 import ActivitySkeleton from './ActivitySkeleton.vue';
 import UserCompareModal from './UserCompareModal.vue';
+import PvpActivityCard from './PvpActivityCard.vue';
+import PvpConfigModal from './PvpConfigModal.vue';
 import MiniActivityHeatmap from './MiniActivityHeatmap.vue';
 import { ZapOff, X } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
+import { useI18nStore } from '../stores/i18n';
 import { useRoute } from 'vue-router';
+
+const i18n = useI18nStore();
 
 const props = defineProps({
     initialFilter: { type: String, default: 'global' }
@@ -125,6 +146,7 @@ const editForm = reactive({
 });
 
 const comparingUser = ref(null);
+const challengingUser = ref(null);
 
 const fetchFeed = async () => {
     if (loading.value || finished.value) return;
@@ -176,6 +198,11 @@ const handleLike = async (activity) => {
     }
 };
 
+const handleComment = (activity) => {
+    notificationStore.notify('💬 COMENTARIO REGISTRADO', 'success');
+    authStore.fetchProfile(); // Charisma XP update
+};
+
 const openEditModal = (activity) => {
     editingActivity.value = activity;
     editForm.title = activity.title || '';
@@ -206,6 +233,10 @@ const openCompareModal = async (activity) => {
     // If we only have basic info from the card, we might want to fetch full stats
     // But ActivityCard already has most stats from the query update in social_feed.js
     comparingUser.value = activity;
+};
+
+const openChallengeModal = (activity) => {
+    challengingUser.value = activity;
 };
 
 const normalizeDate = (d) => {

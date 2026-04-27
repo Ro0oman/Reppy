@@ -208,7 +208,7 @@
               <MessageSquare class="w-4 h-4" />
               <span class="text-[10px] font-black tabular-nums">{{ activity.comment_count }}</span>
             </button>
-            <button @click="$emit('compare', activity)" class="flex-shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl transition-all hover:bg-foreground/5 text-muted/60 hover:text-amber-500">
+            <button @click="$emit('challenge', activity)" class="flex-shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl transition-all hover:bg-foreground/5 text-muted/60 hover:text-amber-500">
               <Swords class="w-4 h-4" />
               <span class="text-[10px] font-black uppercase tracking-tighter">{{ i18n.t('ui_challenge') || 'Retar' }}</span>
             </button>
@@ -278,7 +278,7 @@ const props = defineProps({
     highlighted: { type: Boolean, default: false }
 });
 
-const emit = defineEmits(['toggleLike', 'viewProfile', 'commentAdded', 'compare', 'edit']);
+const emit = defineEmits(['toggleLike', 'viewProfile', 'commentAdded', 'compare', 'challenge', 'edit']);
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();

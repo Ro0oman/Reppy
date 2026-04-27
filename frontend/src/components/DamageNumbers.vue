@@ -15,7 +15,7 @@
           <span class="damage-number font-black italic tracking-tighter">
             -{{ dmg.amount }}
           </span>
-          <span v-if="dmg.amount > 20" class="critical-hit text-[10px] uppercase font-black tracking-widest absolute -top-4 left-1/2 -translate-x-1/2">
+          <span v-if="dmg.isCrit" class="critical-hit text-[10px] uppercase font-black tracking-widest absolute -top-4 left-1/2 -translate-x-1/2">
             CRITICAL!
           </span>
         </div>

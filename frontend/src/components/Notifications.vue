@@ -66,7 +66,7 @@
 
 <script setup>
 import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { Bell, BicepsFlexed, MessageSquare, Trophy, Package, Swords, PartyPopper, ChevronRight } from 'lucide-vue-next';
 import { useNotificationsStore } from '../stores/notifications';
 import { useI18nStore } from '../stores/i18n';
@@ -77,6 +77,7 @@ import AvatarFrame from './AvatarFrame.vue';
 const store = useNotificationsStore();
 const i18n = useI18nStore();
 const router = useRouter();
+const route = useRoute();
 const emit = defineEmits(['start', 'viewProfile']);
 
 const getIcon = (type) => {
@@ -86,6 +87,7 @@ const getIcon = (type) => {
     case 'LEVEL_UP': return Trophy;
     case 'NEW_CHEST': return Package;
     case 'BOSS_DEFEATED': return Swords;
+    case 'PVP_CHALLENGE': return Swords;
     default: return Bell;
   }
 };
@@ -96,6 +98,7 @@ const getIconColor = (type) => {
     case 'COMMENT': return 'text-primary-500';
     case 'LEVEL_UP': return 'text-yellow-500';
     case 'NEW_CHEST': return 'text-green-500';
+    case 'PVP_CHALLENGE': return 'text-primary-500';
     default: return 'text-muted';
   }
 };
@@ -124,6 +127,9 @@ const handleNotifClick = (notif) => {
     router.push('/profile');
   } else if (notif.type === 'BOSS_DEFEATED') {
     router.push('/dashboard');
+  } else if (notif.type === 'PVP_CHALLENGE') {
+    const lang = route.params.lang || i18n.locale || 'es';
+    router.push(`/${lang}/pvp/${notif.target_id}`);
   }
 };
 

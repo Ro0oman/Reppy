@@ -15,6 +15,7 @@ const ExerciseLanding = () => import('./components/ExerciseLanding.vue')
 const Notifications = () => import('./components/Notifications.vue')
 const BlogList = () => import('./components/BlogList.vue')
 const Codex = () => import('./components/Codex.vue')
+const PvpBattleView = () => import('./components/PvpBattleView.vue')
 const NotFound = () => import('./components/NotFound.vue')
 
 export const routes = [
@@ -92,6 +93,12 @@ export const routes = [
         component: Notifications, 
         name: 'notifications',
         meta: { requiresAuth: true, title: 'Notificaciones | Reppy' }
+      },
+      { 
+        path: 'pvp/:id', 
+        component: PvpBattleView, 
+        name: 'pvp',
+        meta: { requiresAuth: true, title: 'PvP Battle | Reppy' }
       },
       // SEO Routes
       { 

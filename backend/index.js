@@ -22,6 +22,7 @@ import { query } from './db.js';
 import { blogData } from './blogData.js';
 import adminRoutes from './admin.js';
 import blogRoutes from './blog.js';
+import pvpRoutes from './pvp.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -60,6 +61,7 @@ apiRouter.use('/profile', profileRoutes);
 apiRouter.use('/roulette', rouletteRoutes);
 apiRouter.use('/admin', adminRoutes);
 apiRouter.use('/blog-tracking', blogRoutes);
+apiRouter.use('/pvp', pvpRoutes);
 
 // Health check (within router)
 apiRouter.get('/health', (req, res) => {
