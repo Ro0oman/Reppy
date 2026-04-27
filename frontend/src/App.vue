@@ -150,7 +150,7 @@
                  class="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full border border-surface shadow-[0_0_10px_rgba(59,130,246,0.5)] animate-pulse"></div>
           </div>
 
-          <span class="hidden xs:block text-[7.5px] xs:text-[9.5px] font-black uppercase tracking-tighter sm:tracking-widest mt-1 opacity-60 group-hover:opacity-100 transition-opacity text-center px-1" :class="$route.name === nav.id ? 'opacity-100 text-primary-500' : ''">
+          <span class="text-[7px] xs:text-[8px] font-black uppercase tracking-tighter mt-1 opacity-60 group-hover:opacity-100 transition-opacity text-center px-0.5 line-clamp-1" :class="$route.name === nav.id ? 'opacity-100 text-primary-500' : ''">
             {{ nav.short || i18n.t(nav.label) }}
           </span>
         </router-link>
@@ -309,12 +309,12 @@ const navLinks = computed(() => [
 ]);
 
 const mobileNavLinks = computed(() => [
-  { id: 'dashboard', icon: LayoutDashboard, label: 'nav_dashboard', short: i18n.t('nav_dashboard').toUpperCase() },
-  { id: 'social', icon: Users, label: 'nav_social', short: i18n.t('nav_social').toUpperCase() },
-  { id: 'codex', icon: Book, label: 'nav_codex', short: i18n.t('nav_codex').toUpperCase() },
-  { id: 'inventory', icon: Package, label: 'nav_inventory', short: i18n.t('nav_inventory').toUpperCase() },
-  { id: 'shop', icon: ShoppingBag, label: 'nav_shop', short: i18n.t('nav_shop').toUpperCase() },
-  { id: 'profile', icon: User, label: 'nav_profile', short: i18n.t('nav_profile').toUpperCase() },
+  { id: 'dashboard', icon: LayoutDashboard, label: 'nav_dashboard', short: (i18n.t('nav_dashboard') || 'Panel').substring(0, 5).toUpperCase() },
+  { id: 'social', icon: Users, label: 'nav_social', short: (i18n.t('nav_social') || 'Social').substring(0, 6).toUpperCase() },
+  { id: 'codex', icon: Book, label: 'nav_codex', short: 'STATS' },
+  { id: 'inventory', icon: Package, label: 'nav_inventory', short: (i18n.t('nav_inventory') || 'Equipo').substring(0, 6).toUpperCase() },
+  { id: 'shop', icon: ShoppingBag, label: 'nav_shop', short: (i18n.t('nav_shop') || 'Tienda').substring(0, 6).toUpperCase() },
+  { id: 'profile', icon: User, label: 'nav_profile', short: (i18n.t('nav_profile') || 'Perfil').substring(0, 6).toUpperCase() },
 ]);
 
 const earnings = [
