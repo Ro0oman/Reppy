@@ -44,7 +44,7 @@ async function cleanup() {
   const client = await pool.connect();
   try {
     // 1. Find all test users
-    const usersRes = await client.query("SELECT id, name FROM users WHERE name LIKE 'TEST_USER_%'");
+    const usersRes = await client.query("SELECT id, name FROM users WHERE name LIKE 'REFUND_TEST_%' OR name LIKE 'COMBAT_TEST_%' OR name LIKE 'REWARD_TEST_%'");
     const testUsers = usersRes.rows;
 
     if (testUsers.length === 0) {
