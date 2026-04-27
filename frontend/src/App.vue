@@ -231,7 +231,7 @@
     </Teleport>
     
      <!-- Floating Roulette Module (Issue 86) -->
-     <div v-if="canSpinToday" 
+     <div v-if="rouletteStore.canSpin" 
           class="fixed bottom-32 right-8 md:bottom-12 md:right-12 z-[70] flex flex-col items-end gap-5 group">
        <!-- Logic Tooltip -->
        <div class="bg-primary-500 text-white text-[9px] font-black uppercase tracking-[0.3em] px-5 py-2.5 rounded-full shadow-2xl opacity-0 group-hover:opacity-100 transition-all border border-white/20 whitespace-nowrap">
@@ -264,8 +264,10 @@ import { useI18nStore } from './stores/i18n';
 import { useNotificationsStore } from './stores/notifications';
 import { useAudio } from './composables/useAudio';
 import { useSocketStore } from './stores/socket';
+import { useRouletteStore } from './stores/roulette';
 
 const socketStore = useSocketStore();
+const rouletteStore = useRouletteStore();
 import AvatarFrame from './components/AvatarFrame.vue'
 import BackgroundEffect from './components/BackgroundEffect.vue'
 import LuckyWheel from './components/LuckyWheel.vue'
@@ -284,7 +286,6 @@ const router = useRouter();
 const route = useRoute();
 
 const showRoulette = ref(false);
-const canSpinToday = ref(false);
 const showCoinsInfo = ref(false);
 const showNotifications = ref(false);
 
@@ -336,16 +337,10 @@ const earnings = [
 ];
 
 const checkRoulette = async () => {
-  if (!authStore.isAuthenticated || !authStore.token) return;
-  try {
-    const res = await axios.get('/api/roulette/status');
-    canSpinToday.value = res.data.canSpin;
-  } catch (e) {
-    console.warn('[ROULETTE_SYNC_ERROR]', e.message);
-  }
+  await rouletteStore.checkStatus();
 };
 
-const onSpun = () => { canSpinToday.value = false; showRoulette.value = false; };
+const onSpun = () => { rouletteStore.setSpun(); showRoulette.value = false; };
 
 const openProfile = (id) => { 
   router.push({ name: 'profile', params: { userId: id } });
@@ -359,29 +354,26 @@ const onStartAction = () => {
   }
 };
 
+const initializeApp = async () => {
+  if (!authStore.isAuthenticated || import.meta.env.SSR) return;
+  
+  // These are throttled at the store level, but calling them here ensures initial load
+  authStore.fetchProfile();
+  rouletteStore.checkStatus();
+  notifStore.fetchNotifications();
+  socketStore.init();
+};
+
 watch(() => authStore.isAuthenticated, (val) => {
-  if (val && !import.meta.env.SSR) {
-    authStore.fetchProfile();
-    checkRoulette();
-    notifStore.fetchNotifications();
-    socketStore.init();
-    if (authStore.user && !authStore.user.has_seen_easter_modal) {
-      // Logic removed
-    }
-  } else if (!val) {
+  if (val) {
+    initializeApp();
+  } else {
     socketStore.disconnect();
   }
 }, { immediate: true });
 
 onMounted(async () => {
-  if (authStore.isAuthenticated && !import.meta.env.SSR) {
-    socketStore.init();
-    checkRoulette();
-    notifStore.fetchNotifications();
-    if (authStore.user && !authStore.user.has_seen_easter_modal) {
-      // Logic removed
-    }
-  }
+  // Initialization is handled by the immediate watch on isAuthenticated
 });
 </script>
 

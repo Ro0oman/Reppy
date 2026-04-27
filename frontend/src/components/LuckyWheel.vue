@@ -53,7 +53,7 @@
           <!-- Center Button -->
           <button 
             @click="spinWheel"
-            :disabled="spinning || !canSpin"
+            :disabled="spinning || !rouletteStore.canSpin"
             class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white dark:bg-zinc-800 shadow-2xl border-4 border-primary-500 flex items-center justify-center z-30 transition-all disabled:opacity-50 disabled:grayscale"
           >
             <span class="text-[10px] font-black text-primary-600 uppercase tracking-tighter">{{ spinning ? i18n.t('wheel_btn_spinning') : i18n.t('wheel_btn_spin') }}</span>
@@ -70,7 +70,7 @@
                </span>
             </div>
           </div>
-          <div v-else-if="!canSpin && !spinning" class="text-center">
+          <div v-else-if="!rouletteStore.canSpin && !spinning" class="text-center">
             <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1 italic">{{ i18n.t('wheel_return_tomorrow') }}</p>
             <div class="bg-zinc-100 dark:bg-white/5 px-6 py-2 rounded-xl border border-zinc-200 dark:border-white/10">
                <span class="text-sm font-bold text-zinc-400">{{ i18n.t('wheel_already_spun') }}</span>
@@ -142,6 +142,7 @@ import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
+import { useRouletteStore } from '../stores/roulette';
 import confetti from 'canvas-confetti';
 
 const props = defineProps({
@@ -153,9 +154,9 @@ const emit = defineEmits(['close', 'spun']);
 const authStore = useAuthStore();
 const notificationStore = useNotificationStore();
 const i18n = useI18nStore();
+const rouletteStore = useRouletteStore();
 
 const spinning = ref(false);
-const canSpin = ref(true);
 const rotation = ref(0);
 const prizeResult = ref(null);
 const showResultModal = ref(false);
@@ -213,7 +214,7 @@ const getPrizeText = (prize) => {
 };
 
 const spinWheel = async () => {
-  if (spinning.value || !canSpin.value) return;
+  if (spinning.value || !rouletteStore.canSpin) return;
 
   try {
     const res = await axios.post('/api/roulette/spin');
@@ -241,7 +242,7 @@ const spinWheel = async () => {
     setTimeout(() => {
       spinning.value = false;
       prizeResult.value = { ...data.prize, msg: data.message };
-      canSpin.value = false;
+      rouletteStore.setSpun();
       showResultModal.value = true;
       
       // Update balances
@@ -269,12 +270,7 @@ const spinWheel = async () => {
 };
 
 onMounted(async () => {
-  try {
-    const res = await axios.get('/api/roulette/status');
-    canSpin.value = res.data.canSpin;
-  } catch (e) {
-    canSpin.value = false;
-  }
+  rouletteStore.checkStatus();
 });
 </script>
 

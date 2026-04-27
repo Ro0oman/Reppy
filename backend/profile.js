@@ -110,15 +110,17 @@ router.get('/:id', async (req, res) => {
         WHERE ui.user_id = $1 AND i.type = 'bundle' AND i.bundle_items IS NOT NULL
       `, [userId]);
 
-      for (const bundle of purchasedBundles.rows) {
-        const itemIds = bundle.bundle_items.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
-        for (const itemId of itemIds) {
-          await query(`
-            INSERT INTO user_items (user_id, item_id, is_new)
-            VALUES ($1, $2, TRUE)
-            ON CONFLICT (user_id, item_id) DO NOTHING
-          `, [userId, itemId]);
-        }
+      const allItemIds = purchasedBundles.rows
+        .flatMap(bundle => bundle.bundle_items.split(','))
+        .map(id => parseInt(id.trim()))
+        .filter(id => !isNaN(id));
+
+      if (allItemIds.length > 0) {
+        await query(`
+          INSERT INTO user_items (user_id, item_id, is_new)
+          SELECT $1, unnest($2::int[]), TRUE
+          ON CONFLICT (user_id, item_id) DO NOTHING
+        `, [userId, allItemIds]);
       }
     } catch (syncError) {
       console.error('[PROFILE_API] Bundle Sync Warning:', syncError.message);

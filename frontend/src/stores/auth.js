@@ -6,6 +6,8 @@ export const useAuthStore = defineStore('auth', {
     user: (!import.meta.env.SSR && JSON.parse(localStorage.getItem('user'))) || null,
     token: (!import.meta.env.SSR && localStorage.getItem('token')) || null,
     interceptorRegistered: false,
+    lastFetch: 0,
+    fetchPromise: null,
   }),
   getters: {
     isAuthenticated: (state) => !!state.token,
@@ -63,24 +65,39 @@ export const useAuthStore = defineStore('auth', {
         throw error;
       }
     },
-    async fetchProfile() {
-      try {
-        const response = await axios.get('/api/users/me');
-        const oldLevel = this.user?.current_level;
-        this.user = response.data;
-        localStorage.setItem('user', JSON.stringify(this.user));
-        
-        // Detect Level Up
-        if (oldLevel && this.user.current_level > oldLevel) {
-          const { useAudioStore } = await import('./audio');
-          const audioStore = useAudioStore();
-          audioStore.play('level_up');
-        }
-        
+    async fetchProfile(force = false) {
+      // 1. If already fetching, return the existing promise
+      if (this.fetchPromise) return this.fetchPromise;
+
+      const now = Date.now();
+      if (!force && this.lastFetch && now - this.lastFetch < 10000) {
         return this.user;
-      } catch (error) {
-        console.error('Fetch profile failed:', error);
       }
+
+      this.fetchPromise = (async () => {
+        try {
+          const response = await axios.get('/api/users/me');
+          this.lastFetch = Date.now();
+          const oldLevel = this.user?.current_level;
+          this.user = response.data;
+          localStorage.setItem('user', JSON.stringify(this.user));
+          
+          if (oldLevel && this.user.current_level > oldLevel) {
+            const { useAudioStore } = await import('./audio');
+            const audioStore = useAudioStore();
+            audioStore.play('level_up');
+          }
+          
+          return this.user;
+        } catch (error) {
+          console.error('Fetch profile failed:', error);
+          throw error;
+        } finally {
+          this.fetchPromise = null;
+        }
+      })();
+
+      return this.fetchPromise;
     },
     async updateProfile(data) {
       try {

@@ -152,11 +152,11 @@ const props = defineProps({
 });
 
 const presetImages = {
-  'Default Reppy': '/images/pvp/default.gif',
-  'Dark Arena': '/images/pvp/dark_arena.gif',
-  'Neon Gym': '/images/pvp/neon_gym.gif',
-  'Forest Temple': '/images/pvp/forest_temple.gif',
-  'Steel Dungeon': '/images/pvp/steel_dungeon.gif'
+  'Default Reppy': '/images/pvp/default.webp',
+  'Dark Arena': '/images/pvp/dark_arena.webp',
+  'Neon Gym': '/images/pvp/neon_gym.webp',
+  'Forest Temple': '/images/pvp/forest_temple.webp',
+  'Steel Dungeon': '/images/pvp/steel_dungeon.webp'
 };
 
 const timeLeft = ref(0);

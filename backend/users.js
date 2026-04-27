@@ -2,6 +2,7 @@ import express from 'express';
 import { query } from './db.js';
 import { authenticate } from './middleware.js';
 import { autoGrantPendingChests } from './utils/bossRewards.js';
+import sharp from 'sharp';
 
 import { recalculateUserStats, getXPForLevel, augmentUserWithLevels } from './utils/stats.js';
 
@@ -105,16 +106,30 @@ router.patch('/profile', authenticate, async (req, res) => {
 
 // Update avatar (specifically) - Supporting both PATCH and POST
 const updateAvatar = async (req, res) => {
-  const { avatar_url, is_custom } = req.body;
+  let { avatar_url, is_custom } = req.body;
   
   if (is_custom) {
     // Basic safety check for base64 images
     if (!avatar_url.startsWith('data:image/')) {
       return res.status(400).json({ message: 'Invalid custom avatar format' });
     }
-    // Limit size of base64 string to ~100KB (just in case)
-    if (avatar_url.length > 150000) { 
-      return res.status(400).json({ message: 'Avatar too large even after compression' });
+
+    try {
+      // Server-side compression/optimization to guarantee small size
+      const base64Data = avatar_url.split(';base64,').pop();
+      const buffer = Buffer.from(base64Data, 'base64');
+      
+      const optimizedBuffer = await sharp(buffer)
+        .resize(128, 128, { fit: 'cover' })
+        .webp({ quality: 70 })
+        .toBuffer();
+      
+      avatar_url = `data:image/webp;base64,${optimizedBuffer.toString('base64')}`;
+      
+      console.log(`[AVATAR] Optimized custom avatar. New size: ${Math.round(avatar_url.length / 1024)}KB`);
+    } catch (sharpError) {
+      console.error('Sharp optimization failed:', sharpError);
+      return res.status(400).json({ message: 'Failed to process image' });
     }
   } else {
     // Only allow valid avatar paths
