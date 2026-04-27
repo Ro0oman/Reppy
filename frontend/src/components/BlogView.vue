@@ -117,13 +117,42 @@
         </div>
       </article>
 
-      <!-- Dynamic CTA Section -->
-      <div v-if="ctaTarget" class="p-12 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-[3rem] border border-primary/20 text-center space-y-8 animate-in ring-1 ring-primary/10">
-        <div class="space-y-4">
-          <h3 class="text-3xl font-black text-foreground tracking-tight">{{ ctaHeader }}</h3>
-          <p class="text-muted text-lg max-w-md mx-auto">{{ ctaSub }}</p>
+      <!-- Dynamic CTA Section (Conversion Engine) -->
+      <div v-if="ctaTarget" class="relative group p-8 md:p-16 rounded-[3rem] overflow-hidden border border-white/10 animate-in">
+        <!-- Background accents -->
+        <div class="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/5 to-transparent opacity-50"></div>
+        <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/20 blur-[80px] rounded-full"></div>
+        
+        <div class="relative z-10 text-center space-y-8">
+          <div class="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full text-[10px] font-black text-primary uppercase tracking-widest">
+            <Sparkles class="w-3 h-3" />
+            {{ i18n.locale === 'es' ? 'MEJORA MÁS RÁPIDO' : 'LEVEL UP FASTER' }}
+          </div>
+          
+          <div class="space-y-4">
+            <h3 class="text-3xl md:text-5xl font-black text-foreground tracking-tighter uppercase italic leading-none">
+              {{ ctaHeader }}
+            </h3>
+            <p class="text-muted text-lg max-w-md mx-auto font-medium leading-relaxed">
+              {{ ctaSub }}
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center gap-6">
+            <button @click="router.push(ctaTarget)" class="btn-reppy !px-16 !py-5 !text-lg shadow-[0_20px_50px_rgba(255,69,0,0.3)] hover:shadow-primary/50 transition-all transform hover:scale-105 active:scale-95">
+              {{ ctaLabel }}
+            </button>
+            
+            <div class="flex items-center gap-3 opacity-60">
+              <div class="flex -space-x-2">
+                <img v-for="i in 3" :key="i" :src="`https://i.pravatar.cc/100?img=${i+10}`" class="w-6 h-6 rounded-full border-2 border-background" />
+              </div>
+              <span class="text-[10px] font-bold text-muted uppercase tracking-wider">
+                {{ i18n.locale === 'es' ? '+5,420 atletas ya compiten hoy' : '+5,420 athletes competing today' }}
+              </span>
+            </div>
+          </div>
         </div>
-        <button @click="router.push(ctaTarget)" class="btn-reppy !px-16 !py-4 !text-base shadow-[0_0_40px_rgba(var(--primary-500-rgb),0.2)] hover:shadow-primary/40">{{ ctaLabel }}</button>
       </div>
 
       <!-- Related Pillar (Master Guide) -->
@@ -157,6 +186,14 @@
 
     <!-- JSON-LD Injection (Hidden) -->
     <div v-html="jsonLdScript" v-if="jsonLdScript"></div>
+
+    <!-- Sticky Bottom CTA (Mobile Only for Guests) -->
+    <div v-if="!authStore.isAuthenticated" 
+         class="md:hidden fixed bottom-6 left-4 right-4 z-[100] animate-in slide-in-from-bottom-20 duration-1000 delay-1000">
+       <button @click="router.push('/login')" class="w-full btn-reppy !py-5 shadow-[0_20px_50px_rgba(255,69,0,0.4)]">
+         🚀 {{ i18n.locale === 'es' ? 'REGÍSTRATE Y GANA XP' : 'SIGN UP & EARN XP' }}
+       </button>
+    </div>
   </div>
 </template>
 
@@ -166,7 +203,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { 
   User, Clock, ChevronRight, ArrowRight,
   Share2, Twitter, MessageCircle,
-  Loader2, BookOpenCheck
+  Loader2, BookOpenCheck, Sparkles
 } from 'lucide-vue-next';
 import { marked } from 'marked';
 import { blogPosts } from '../blogPosts';
