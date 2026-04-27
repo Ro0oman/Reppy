@@ -376,299 +376,287 @@
           </div>
         </div>
       </section>
-<div class="flex flex-col lg:flex-row items-center gap-6 bg-surface/20 p-4 rounded-3xl  border-border/50 backdrop-blur-sm relative z-30">
-        
-  
-        <!-- Categories Dropdown (Left Side) -->
-        <div class="w-full lg:w-72 relative z-20">
-          <button 
-            @click="showDropdown = !showDropdown"
-            class="flex items-center gap-3 px-6 py-3 bg-surface/60 border border-border rounded-2xl text-[10px] font-black uppercase tracking-widest hover:border-primary-500/30 transition-all w-full justify-between shadow-lg"
-          >
-            <div class="flex items-center gap-2">
-              <component :is="categories.find(c => c.id === selectedCategory).icon" class="w-3.5 h-3.5 text-primary-500" />
-              <span class="text-foreground">{{ i18n.t(categories.find(c => c.id === selectedCategory).label) || categories.find(c => c.id === selectedCategory).label }}</span>
-            </div>
-            <ChevronDown class="w-4 h-4 text-muted transition-transform" :class="{ 'rotate-180': showDropdown }" />
-          </button>
 
-          <Transition
-            enter-active-class="transition duration-200 ease-out"
-            enter-from-class="transform scale-95 opacity-0 -translate-y-2"
-            enter-to-class="transform scale-100 opacity-100 translate-y-0"
-            leave-active-class="transition duration-150 ease-in"
-            leave-from-class="transform scale-100 opacity-100 translate-y-0"
-            leave-to-class="transform scale-95 opacity-0 -translate-y-2"
-          >
-            <div v-if="showDropdown" class="absolute top-full left-0 mt-2 w-full bg-surface/90 backdrop-blur-3xl border border-border rounded-2xl shadow-2xl overflow-hidden py-2 z-50">
+      <!-- Modern Filters & Layout Interface -->
+      <div class="flex flex-col lg:flex-row gap-8 items-start relative z-30">
+        
+        <!-- Sidebar Filters (Desktop) / Top Bar (Mobile) -->
+        <aside class="w-full lg:w-64 flex-shrink-0 space-y-8 sticky top-24">
+          <!-- Category Selector -->
+          <div class="space-y-4">
+            <h3 class="text-[10px] font-black text-muted uppercase tracking-[0.4em] px-2">{{ i18n.t('shop_filter_categories') || 'CATEGORÍAS' }}</h3>
+            <div class="flex flex-col gap-1">
               <button 
                 v-for="cat in categories" 
                 :key="cat.id"
-                @click="selectedCategory = cat.id; showDropdown = false"
-                class="w-full flex items-center gap-3 px-6 py-3 text-[10px] font-black uppercase tracking-widest transition-all text-left"
-                :class="selectedCategory === cat.id ? 'bg-primary-500 text-white' : 'text-muted hover:bg-white/5 hover:text-foreground'"
+                @click="selectedCategory = cat.id; currentPage = 1"
+                class="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all group"
+                :class="selectedCategory === cat.id ? 'bg-primary-500 text-white shadow-xl shadow-primary-500/20 border border-primary-400' : 'text-muted hover:bg-white/5 hover:text-foreground border border-transparent'"
               >
-                <component :is="cat.icon" class="w-3.5 h-3.5" />
-                {{ i18n.t(cat.label) || cat.label }}
+                <component :is="cat.icon" class="w-4 h-4 transition-transform group-hover:scale-110" />
+                <span>{{ i18n.t(cat.label) || cat.label }}</span>
               </button>
             </div>
-          </Transition>
-        </div>
+          </div>
 
-        <!-- Divider (Desktop only) -->
-        <div class="hidden lg:block w-px h-10 bg-border/50"></div>
-
-        <!-- Rarity Protocol Selector (Right Side) -->
-        <div class="flex-1 flex flex-wrap items-center justify-start lg:justify-end gap-2">
-          <button 
-            v-for="rarity in rarities" 
-            :key="rarity.id"
-            @click="selectedRarity = rarity.id"
-            class="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all active:scale-95 whitespace-nowrap"
-            :class="selectedRarity === rarity.id ? rarity.activeClass : 'bg-surface/20 border-border text-muted hover:border-foreground/20'"
-          >
-            {{ rarity.label }}
-          </button>
-        </div>
-      </div>
-      <!-- Main Collection -->
-      <section>
-        <div class="flex items-center gap-4 mb-6">
-          <h2 class="text-xl font-black text-industrial text-foreground tracking-tight italic">{{ i18n.t('shop_permanent_protocol') }}</h2>
-          <div class="h-px flex-1 bg-gradient-to-r from-muted/20 to-transparent"></div>
-        </div>
-
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          <div 
-            v-for="item in paginatedItems" 
-            :key="item.id"
-            class="card-stats p-0 flex flex-col group/item border-white/10"
-            :class="getCardClass(item)"
-          >
-            <!-- Lock Overlay -->
-            <div v-if="!item.is_unlocked" class="absolute inset-0 bg-background/40 backdrop-blur-[2px] z-[5] pointer-events-none flex items-center justify-center">
-               <div class="w-12 h-12 bg-surface/60 rounded-full flex items-center justify-center border border-border">
-                  <span class="text-xl">🔒</span>
-               </div>
+          <!-- Rarity Selector -->
+          <div class="space-y-4">
+            <h3 class="text-[10px] font-black text-muted uppercase tracking-[0.4em] px-2">{{ i18n.t('shop_filter_rarity') || 'PROTOCOLOS DE RAREZA' }}</h3>
+            <div class="flex flex-wrap gap-2 px-1">
+              <button 
+                v-for="rarity in rarities" 
+                :key="rarity.id"
+                @click="selectedRarity = rarity.id; currentPage = 1"
+                class="px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all active:scale-95"
+                :class="selectedRarity === rarity.id ? rarity.activeClass : 'bg-surface/20 border-border text-muted hover:border-foreground/20'"
+              >
+                {{ rarity.label }}
+              </button>
             </div>
+          </div>
 
-            <!-- Header Info -->
-            <div class="p-4 pb-0 flex items-start justify-between z-10" @click="openItemDetails(item)">
-              <div class="flex flex-col gap-1">
-                <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-border text-muted bg-foreground/5 w-fit">
-                  #{{ item.roadmap_position || '??' }}
-                </span>
-                <span v-if="isUpgrade(item) && item.price > 0" class="text-[10px] font-black text-neon-lime mt-1 tracking-widest">
-                  ↑ MEJORA
-                </span>
+          <!-- Summary / Quick Stats -->
+          <div class="p-6 bg-surface/30 rounded-[2rem] border border-white/5 backdrop-blur-md hidden lg:block">
+            <div class="flex items-center gap-3 mb-4">
+               <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+               <span class="text-[9px] font-black text-foreground uppercase tracking-widest">{{ i18n.t('shop_status_online') || 'ARMERÍA_EN_LINEA' }}</span>
+            </div>
+            <p class="text-[10px] text-muted font-bold leading-relaxed uppercase tracking-tight opacity-60">
+              {{ filteredItems.length }} {{ i18n.t('shop_artifacts_available') || 'ARTEFACTOS DISPONIBLES EN TU SECTOR' }}
+            </p>
+          </div>
+        </aside>
+
+        <!-- Main Collection Grid (Bento Style) -->
+        <main class="flex-1 w-full">
+          <div class="flex items-center gap-4 mb-8">
+            <h2 class="text-xl font-black text-industrial text-foreground tracking-tight italic uppercase">{{ i18n.t('shop_permanent_protocol') }}</h2>
+            <div class="h-px flex-1 bg-gradient-to-r from-muted/20 to-transparent"></div>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 grid-auto-flow-dense">
+            <div 
+              v-for="item in paginatedItems" 
+              :key="item.id"
+              class="card-stats p-0 flex flex-col group/item border-white/10 relative transition-all duration-500"
+              :class="[
+                getCardClass(item),
+                item.rarity?.toLowerCase() === 'legendary' ? 'md:col-span-2 md:row-span-2' : 
+                (item.rarity?.toLowerCase() === 'especial' || item.rarity?.toLowerCase() === 'epic' ? 'md:col-span-2' : '')
+              ]"
+            >
+              <!-- Lock Overlay -->
+              <div v-if="!item.is_unlocked" class="absolute inset-0 bg-background/60 backdrop-blur-[4px] z-[5] pointer-events-none flex items-center justify-center rounded-[2.5rem]">
+                 <div class="flex flex-col items-center gap-3 bg-surface/80 p-6 rounded-[2rem] border border-white/10 shadow-2xl">
+                    <Lock class="w-8 h-8 text-muted/60" />
+                    <span class="text-[9px] font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('shop_locked') || 'BLOQUEADO' }}</span>
+                 </div>
               </div>
-              
-              <div class="flex flex-col items-end gap-2">
-                <span v-if="isEquipped(item)" class="text-[10px] font-black uppercase tracking-widest px-2 py-1 bg-blue-500 text-white rounded shadow-[0_0_10px_rgba(59,130,246,0.5)]">
-                  EQUIPADO
-                </span>
-                <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border" :class="getRarityBadge(item).classes">
-                  {{ getRarityBadge(item).label }}
-                </span>
-              </div>
-            </div>
 
-            <!-- Preview Area -->
-            <div class="h-32 flex items-center justify-center m-4 mb-2 bg-surface rounded-2xl border border-border relative overflow-hidden group-hover/item:border-primary-500/20 transition-colors shadow-inner" @click="openItemDetails(item)">
-               <div v-if="item.type === 'bundle'" class="w-full h-full flex items-center justify-center bg-gradient-to-br relative" :class="getBundleBgClass(item.rarity)">
-                  <div class="grid grid-cols-2 gap-1 p-2 scale-75">
-                     <div class="w-10 h-10 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><Type class="w-5 h-5" :class="getBundleTextClass(item.rarity, 0.4)" /></div>
-                     <div class="w-10 h-10 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><Frame class="w-5 h-5" :class="getBundleTextClass(item.rarity, 0.4)" /></div>
-                     <div class="w-10 h-10 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><Sparkles class="w-5 h-5" :class="getBundleTextClass(item.rarity, 0.4)" /></div>
-                     <div class="w-10 h-10 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center"><LayoutGrid class="w-5 h-5" :class="getBundleTextClass(item.rarity, 0.4)" /></div>
-                  </div>
-                  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                     <div class="p-3 bg-surface/80 backdrop-blur-md rounded-2xl border shadow-2xl" :class="getBundleBorderClass(item.rarity)">
-                        <Swords class="w-6 h-6 animate-pulse" :class="getBundleTextClass(item.rarity)" />
-                     </div>
-                  </div>
-               </div>
-
-               <div v-if="item.type === 'title'" class="text-lg text-center px-4 leading-tight font-black" :class="item.css_value">
-                 {{ item.name }}
-               </div>
-               <div v-if="item.type === 'border'">
-                 <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :border-css="item.css_value" :size="64" />
-               </div>
-               <div v-if="item.type === 'avatar'">
-                 <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :avatar-css="item.css_value" :size="64" />
-               </div>
-               <div v-if="item.type === 'background'" class="w-full h-full relative group/bg overflow-hidden">
-                  <BackgroundEffect :background-css="item.css_value" is-preview class="!absolute !inset-0 !w-full !h-full transition-transform duration-700 group-hover/item:scale-110" />
-                  <!-- Screen Overlay Effect -->
-                  <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none"></div>
-                  <div class="absolute inset-0 opacity-20 pointer-events-none h-[200%] animate-scanline" style="background: linear-gradient(to bottom, transparent 50%, rgba(34, 211, 238, 0.5) 50.5%, transparent 51%); background-size: 100% 4px;"></div>
-                  <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">{{ i18n.t('shop_screen_preview') }}</div>
-               </div>
-               <div v-if="['head', 'weapon', 'armor', 'boots'].includes(item.type)" class="flex flex-col items-center gap-3">
-                   <div class="p-4 rounded-2xl bg-gradient-to-br border shadow-2xl transition-transform duration-500 group-hover/item:scale-110"
-                        :class="[getRarityBadge(item).classes, getRarityBadge(item).classes.includes('primary') ? 'from-primary-500/20 to-primary-500/5' : 'from-foreground/10 to-transparent']">
-                     <ItemIcon :name="item.svg_key" :type="item.type" class-name="w-12 h-12" :class="getRarityBadge(item).classes?.split(' ')[0]" />
-                   </div>
-                   <div class="flex items-center gap-1.5">
-                     <span class="text-[8px] font-black uppercase tracking-widest opacity-40">{{ i18n.t('ui_' + item.type) || item.type }}</span>
-                   </div>
-                </div>
-                <div v-if="item.type === 'consumable'" class="flex flex-col items-center gap-2">
-                   <FlaskConical class="w-10 h-10 animate-pulse" :class="getRarityBadge(item).classes?.split(' ')[0]" />
-                   <span v-if="item.stats?.multiplier" class="text-[8px] font-black uppercase tracking-widest" :class="getRarityBadge(item).classes?.split(' ')[0]">BOOST x{{ item.stats.multiplier }}</span>
-                   <span v-else-if="item.stats?.dex_bonus" class="text-[8px] font-black uppercase tracking-widest" :class="getRarityBadge(item).classes?.split(' ')[0]">DEX +{{ item.stats.dex_bonus }}</span>
-                   <span class="text-[7px] font-black text-muted uppercase opacity-60">{{ formatDuration(item.stats?.duration) }}</span>
-                </div>
-               <div v-if="item.type === 'post_background'" class="w-full h-full relative group/post-bg overflow-hidden flex items-center justify-center">
-                  <div class="w-[90%] h-[80%] bg-black border border-border rounded-lg relative overflow-hidden flex flex-col p-2 gap-2 shadow-2xl shop-preview">
-                     <div class="w-full h-full absolute inset-0 z-0" :class="item.css_value"></div>
-                     
-                     <!-- Particle Injector for Previews -->
-                     <div v-if="item.css_value === 'post-bg-matrix'" class="absolute inset-0 pointer-events-none z-0 opacity-60">
-                       <div v-for="i in 8" :key="i" class="matrix-column" :style="{ left: (i-1)*12 + '%', animationDelay: (i*0.2) + 's' }"></div>
-                     </div>
-                     <div v-if="item.css_value === 'post-bg-inferno'" class="absolute inset-0 pointer-events-none z-0">
-                       <div v-for="i in 12" :key="i" class="ember" :style="{ left: Math.random()*100 + '%', animationDelay: Math.random()*5 + 's' }"></div>
-                     </div>
-                     <div class="flex items-center gap-2">
-                       <div class="w-4 h-4 rounded-full bg-primary-500/20"></div>
-                       <div class="w-12 h-1 bg-muted/20 rounded"></div>
-                     </div>
-                     <div class="flex-1 space-y-1">
-                       <div class="w-full h-2 bg-foreground/5 rounded"></div>
-                       <div class="w-2/3 h-2 bg-foreground/5 rounded"></div>
-                     </div>
-                  </div>
-                  <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/40 rounded border border-white/10 text-[6px] font-black text-muted uppercase tracking-widest z-10">{{ i18n.t('shop_post_preview') }}</div>
-               </div>
-            </div>
-
-            <!-- Content -->
-            <div class="p-4 pt-2 flex-1" @click="openItemDetails(item)">
-              <h3 class="text-sm font-black text-industrial text-foreground mb-1">{{ item.name }}</h3>
-              
-              <!-- Inline Stats Diff -->
-              <div v-if="['head', 'weapon', 'armor', 'boots'].includes(item.type) && item.stats" class="mt-2 flex flex-col gap-1 mb-3">
-                <span
-                  v-for="(value, stat) in item.stats"
-                  :key="stat"
-                  v-show="stat !== 'duration' && stat !== 'multiplier' && value !== 0"
-                  class="text-[11px] font-black tracking-widest uppercase flex items-center"
-                  :class="getStatDifference(item, stat) > 0 ? 'text-neon-lime' : (getStatDifference(item, stat) < 0 ? 'text-red-500' : 'text-foreground/80')"
-                >
-                  {{ value > 0 ? '+' : '' }}{{ value }} {{ statLabels[stat] || stat }}
-                  <span v-if="getStatDifference(item, stat) !== 0" class="text-muted ml-2 font-bold opacity-60">
-                    ( {{ getStatDifference(item, stat) > 0 ? '+' : '' }}{{ getStatDifference(item, stat) }} )
+              <!-- Header Info -->
+              <div class="p-6 pb-0 flex items-start justify-between z-10 gap-2" @click="openItemDetails(item)">
+                <div class="flex flex-col gap-1.5 min-w-0">
+                  <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-border text-muted bg-foreground/5 w-fit">
+                    #{{ item.roadmap_position || '??' }}
                   </span>
-                </span>
+                  <div v-if="isUpgrade(item) && item.price > 0" class="flex items-center gap-1.5">
+                    <div class="w-1 h-1 rounded-full bg-neon-lime animate-ping"></div>
+                    <span class="text-[8px] font-black text-neon-lime tracking-widest uppercase">↑ MEJORA</span>
+                  </div>
+                </div>
+                
+                <div class="flex flex-col items-end gap-1.5 shrink-0">
+                  <div v-if="isEquipped(item)" class="flex items-center gap-1.5 px-2 py-1 bg-blue-500/20 border border-blue-500/30 rounded-lg">
+                    <div class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></div>
+                    <span class="text-[8px] font-black uppercase tracking-widest text-blue-400">ACTIVE</span>
+                  </div>
+                  <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border backdrop-blur-md whitespace-nowrap" :class="getRarityBadge(item).classes">
+                    {{ getRarityBadge(item).label }}
+                  </span>
+                </div>
               </div>
-              <p v-else class="text-[10px] text-muted font-medium line-clamp-2 mb-4 leading-relaxed">{{ item.description }}</p>
-              
-              <div v-if="!item.is_unlocked" class="px-2 py-1.5 bg-red-500/5 border border-red-500/10 rounded-lg">
-                <p class="text-[7px] font-black uppercase tracking-widest text-red-500/70">{{ i18n.t('shop_decrypt_at') }}: {{ getCountdown(item) }}</p>
-              </div>
-            </div>
 
-            <!-- Action Footer -->
-            <div class="p-4 pt-0 mt-auto border-t border-border bg-foreground/[0.01]">
-              <div class="flex items-center justify-between mt-4">
-                <div v-if="item.owned && item.type !== 'consumable'" class="flex items-center gap-1.5 text-neon-lime">
-                  <Check class="w-3.5 h-3.5" />
-                  <span class="text-[8px] font-black uppercase tracking-widest leading-none">{{ i18n.t('btn_acquired') }}</span>
+              <!-- Preview Area (Dynamic Height for Bento) -->
+              <div 
+                class="flex items-center justify-center m-6 mb-2 bg-surface/50 rounded-[2rem] border border-white/5 relative overflow-hidden group-hover/item:border-primary-500/30 transition-all duration-700 shadow-inner"
+                :class="item.rarity?.toLowerCase() === 'legendary' ? 'h-72' : 'h-40'"
+                @click="openItemDetails(item)"
+              >
+                 <!-- Background Rarity Glow -->
+                 <div class="absolute inset-0 opacity-10 blur-3xl pointer-events-none"
+                      :class="[
+                        item.rarity?.toLowerCase() === 'legendary' ? 'bg-yellow-500' : 
+                        item.rarity?.toLowerCase() === 'especial' || item.rarity?.toLowerCase() === 'epic' ? 'bg-purple-500' : 
+                        'bg-foreground'
+                      ]"></div>
+
+                 <div v-if="item.type === 'bundle'" class="w-full h-full flex items-center justify-center bg-gradient-to-br relative" :class="getBundleBgClass(item.rarity)">
+                    <div class="grid grid-cols-2 gap-2 p-4" :class="item.rarity?.toLowerCase() === 'legendary' ? 'scale-110' : 'scale-90'">
+                       <div class="w-12 h-12 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center"><Type class="w-6 h-6" :class="getBundleTextClass(item.rarity, 0.4)" /></div>
+                       <div class="w-12 h-12 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center"><Frame class="w-6 h-6" :class="getBundleTextClass(item.rarity, 0.4)" /></div>
+                       <div class="w-12 h-12 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center"><Sparkles class="w-6 h-6" :class="getBundleTextClass(item.rarity, 0.4)" /></div>
+                       <div class="w-12 h-12 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center"><LayoutGrid class="w-6 h-6" :class="getBundleTextClass(item.rarity, 0.4)" /></div>
+                    </div>
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                       <div class="p-4 bg-surface/80 backdrop-blur-md rounded-[2rem] border shadow-2xl" :class="getBundleBorderClass(item.rarity)">
+                          <Swords class="w-8 h-8 animate-pulse" :class="getBundleTextClass(item.rarity)" />
+                       </div>
+                    </div>
+                 </div>
+
+                 <div v-if="item.type === 'title'" class="text-xl text-center px-6 leading-tight font-black transition-transform group-hover/item:scale-110 duration-700" :class="item.css_value">
+                   {{ item.name }}
+                 </div>
+                 <div v-if="item.type === 'border'" class="transition-transform group-hover/item:scale-110 duration-700">
+                   <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :border-css="item.css_value" :size="item.rarity?.toLowerCase() === 'legendary' ? 120 : 80" />
+                 </div>
+                 <div v-if="item.type === 'avatar'" class="transition-transform group-hover/item:scale-110 duration-700">
+                   <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :avatar-css="item.css_value" :size="item.rarity?.toLowerCase() === 'legendary' ? 120 : 80" />
+                 </div>
+                 <div v-if="item.type === 'background'" class="w-full h-full relative group/bg overflow-hidden">
+                    <BackgroundEffect :background-css="item.css_value" is-preview class="!absolute !inset-0 !w-full !h-full transition-transform duration-1000 group-hover/item:scale-125" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none"></div>
+                    <div class="absolute inset-0 opacity-10 pointer-events-none h-[200%] animate-scanline" style="background: linear-gradient(to bottom, transparent 50%, rgba(34, 211, 238, 0.5) 50.5%, transparent 51%); background-size: 100% 4px;"></div>
+                 </div>
+                 <div v-if="['head', 'weapon', 'armor', 'boots'].includes(item.type)" class="flex flex-col items-center gap-4">
+                     <div class="p-6 rounded-[2rem] bg-gradient-to-br border shadow-2xl transition-all duration-700 group-hover/item:scale-110 group-hover/item:rotate-3"
+                          :class="[getRarityBadge(item).classes, getRarityBadge(item).classes.includes('primary') ? 'from-primary-500/20 to-primary-500/5' : 'from-foreground/10 to-transparent']">
+                       <ItemIcon :name="item.svg_key" :type="item.type" :class-name="item.rarity?.toLowerCase() === 'legendary' ? 'w-20 h-20' : 'w-12 h-12'" :class="getRarityBadge(item).classes?.split(' ')[0]" />
+                     </div>
+                  </div>
+                  <div v-if="item.type === 'consumable'" class="flex flex-col items-center gap-3">
+                     <FlaskConical class="w-16 h-16 animate-pulse transition-transform group-hover/item:scale-110 duration-700" :class="getRarityBadge(item).classes?.split(' ')[0]" />
+                     <div v-if="item.stats?.multiplier" class="px-3 py-1 bg-foreground/10 rounded-lg">
+                        <span class="text-[10px] font-black uppercase tracking-widest" :class="getRarityBadge(item).classes?.split(' ')[0]">BOOST x{{ item.stats.multiplier }}</span>
+                     </div>
+                  </div>
+                 <div v-if="item.type === 'post_background'" class="w-full h-full relative group/post-bg overflow-hidden flex items-center justify-center p-6">
+                    <div class="w-full h-full bg-black border border-white/10 rounded-2xl relative overflow-hidden flex flex-col p-4 gap-3 shadow-2xl shop-preview group-hover/item:scale-105 transition-transform duration-700">
+                       <div class="w-full h-full absolute inset-0 z-0" :class="item.css_value"></div>
+                       <div class="flex items-center gap-3 relative z-10">
+                         <div class="w-6 h-6 rounded-full bg-primary-500/30"></div>
+                         <div class="w-20 h-2 bg-muted/20 rounded"></div>
+                       </div>
+                       <div class="flex-1 space-y-2 relative z-10">
+                         <div class="w-full h-3 bg-foreground/10 rounded-lg"></div>
+                         <div class="w-2/3 h-3 bg-foreground/10 rounded-lg"></div>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+
+              <!-- Content Area -->
+              <div class="p-6 pt-4 flex-1" @click="openItemDetails(item)">
+                <h3 class="font-black text-industrial text-foreground mb-2 tracking-tight group-hover/item:text-primary-500 transition-colors"
+                    :class="item.rarity?.toLowerCase() === 'legendary' ? 'text-2xl' : 'text-base'">
+                  {{ item.name }}
+                </h3>
+                
+                <!-- Expanded Stats for Bento -->
+                <div v-if="['head', 'weapon', 'armor', 'boots'].includes(item.type) && item.stats" class="mt-3 flex flex-wrap gap-2 mb-4">
+                  <div
+                    v-for="(value, stat) in item.stats"
+                    :key="stat"
+                    v-show="stat !== 'duration' && stat !== 'multiplier' && value !== 0"
+                    class="px-3 py-1.5 bg-white/5 border border-white/5 rounded-xl flex items-center gap-2"
+                  >
+                    <span class="text-[10px] font-black uppercase tracking-widest text-muted">{{ statLabels[stat] || stat }}</span>
+                    <span class="text-xs font-black tabular-nums" :class="getStatDifference(item, stat) >= 0 ? 'text-neon-lime' : 'text-red-500'">
+                      {{ value > 0 ? '+' : '' }}{{ value }}
+                    </span>
+                  </div>
                 </div>
-                <div v-else-if="item.owned && item.type === 'consumable'" class="flex items-center gap-1.5 text-primary-500">
+                <p v-else class="text-[11px] text-muted font-bold line-clamp-2 mb-4 leading-relaxed opacity-60">{{ item.description }}</p>
+                
+                <div v-if="!item.is_unlocked" class="px-3 py-2 bg-red-500/5 border border-red-500/10 rounded-xl">
+                  <p class="text-[8px] font-black uppercase tracking-widest text-red-500/70 flex items-center gap-2">
+                    <Clock class="w-3 h-3" />
+                    {{ i18n.t('shop_decrypt_at') }}: {{ getCountdown(item) }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Action Footer -->
+              <div class="p-4 mt-auto border-t border-white/5 bg-foreground/[0.02] flex items-center justify-between gap-2">
+                <div v-if="item.owned && item.type !== 'consumable'" class="flex items-center gap-1.5 text-neon-lime shrink-0">
+                  <CheckCircle2 class="w-3.5 h-3.5" />
+                  <span class="text-[9px] font-black uppercase tracking-widest">{{ i18n.t('btn_acquired') }}</span>
+                </div>
+                <div v-else-if="item.owned && item.type === 'consumable'" class="flex items-center gap-1.5 text-primary-500 shrink-0">
                   <Package class="w-3.5 h-3.5" />
-                  <span class="text-[8px] font-black uppercase tracking-widest leading-none">{{ i18n.t('shop_stock') }}: {{ item.quantity }}</span>
+                  <span class="text-[10px] font-black uppercase tracking-widest">{{ i18n.t('shop_stock') }}: {{ item.quantity }}</span>
                 </div>
-                <div v-else-if="item.price > 0" class="flex flex-col">
-                  <div v-if="item.original_price" class="flex items-center gap-2 mb-0.5">
-                    <span class="text-[9px] font-black text-muted line-through tracking-tighter">{{ item.original_price }}</span>
-                    <span class="text-[7px] font-black bg-primary-500/20 text-primary-500 px-1 rounded">{{ i18n.t('shop_special_deal') }}</span>
+                <div v-else-if="item.price > 0" class="flex flex-col justify-center shrink-0">
+                  <div v-if="item.original_price" class="flex items-center gap-1 mb-0.5 opacity-40">
+                    <span class="text-[8px] font-bold text-muted line-through">{{ item.original_price }}</span>
                   </div>
                   <div class="flex items-baseline gap-1">
-                    <span class="text-base font-black text-precision" :class="canAfford(item) ? 'text-primary-500' : 'text-muted'">{{ item.price }}</span>
-                    <span class="text-[7px] font-black text-muted uppercase tracking-widest">{{ i18n.t('shop_reppy_coins') }}</span>
+                    <span class="text-lg font-black tabular-nums transition-colors" :class="canAfford(item) ? 'text-primary-500' : 'text-muted'">{{ item.price }}</span>
+                    <span class="text-[7px] font-black text-muted uppercase tracking-widest opacity-40">RC</span>
                   </div>
                 </div>
-                <div v-else class="text-[8px] font-black uppercase tracking-widest text-primary-500/60 leading-none">{{ i18n.t('shop_event_badge') }}</div>
 
-                <!-- Action Button -->
-                <button 
-                  v-if="(!item.owned || item.type === 'consumable') && item.price > 0"
-                  @click="buyItem(item)"
-                  :disabled="!canAfford(item) || buying || !item.is_unlocked"
-                  class="btn-reppy !px-4 !py-2 !text-[8px] disabled:opacity-20 disabled:grayscale disabled:scale-100"
-                >
-                  {{ item.is_unlocked ? i18n.t('btn_get') : i18n.t('btn_lock') }}
-                </button>
-                
-                <button 
-                  v-if="item.owned && item.type !== 'bundle'"
-                  @click="item.type === 'consumable' ? activateConsumable(item) : equipItem(item)"
-                  :disabled="item.type !== 'consumable' && isEquipped(item)"
-                  class="px-4 py-2 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all"
-                  :class="item.type === 'consumable' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : (isEquipped(item) ? 'bg-foreground/5 text-muted border border-border' : 'bg-neon-lime text-black shadow-lg shadow-neon-lime/20')"
-                >
-                  {{ item.type === 'consumable' ? i18n.t('btn_activate') : (isEquipped(item) ? i18n.t('btn_on') : i18n.t('btn_equip')) }}
-                </button>
+                <div class="flex items-center ml-auto">
+                  <button 
+                    v-if="(!item.owned || item.type === 'consumable') && item.price > 0"
+                    @click="buyItem(item)"
+                    :disabled="!canAfford(item) || buying || !item.is_unlocked"
+                    class="px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap min-w-[80px]"
+                    :class="!canAfford(item) || buying || !item.is_unlocked 
+                      ? 'bg-foreground/5 text-muted/40 border border-border/50 cursor-not-allowed' 
+                      : 'bg-primary-500 hover:bg-primary-400 text-white shadow-lg shadow-primary-500/20 active:scale-95'"
+                  >
+                    {{ item.is_unlocked ? i18n.t('btn_get') : i18n.t('btn_lock') }}
+                  </button>
+                  
+                  <button 
+                    v-if="item.owned && item.type !== 'bundle'"
+                    @click="item.type === 'consumable' ? activateConsumable(item) : equipItem(item)"
+                    :disabled="item.type !== 'consumable' && isEquipped(item)"
+                    class="px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 whitespace-nowrap"
+                    :class="item.type === 'consumable' ? 'bg-emerald-500 text-black hover:bg-emerald-400 shadow-lg shadow-emerald-500/20' : (isEquipped(item) ? 'bg-white/5 text-muted border border-white/10 cursor-default' : 'bg-blue-500 text-white hover:bg-blue-400 shadow-lg shadow-blue-500/20')"
+                  >
+                    {{ item.type === 'consumable' ? i18n.t('btn_activate') : (isEquipped(item) ? i18n.t('btn_on') : i18n.t('btn_equip')) }}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        
-        <!-- Pagination Metadata & Controls -->
-        <div v-if="totalPages > 1" class="flex flex-col items-center gap-6 mt-16 p-10 bg-surface/20 rounded-[2.5rem] border border-white/5 relative overflow-hidden group/pagination">
-          <!-- Background Detail -->
-          <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-primary-500/5 blur-[100px] rounded-full pointer-events-none group-hover/pagination:bg-primary-500/10 transition-colors duration-1000"></div>
-
-          <div class="flex items-center gap-4 relative z-10">
-            <button 
-              @click="currentPage > 1 && (currentPage--)"
-              :disabled="currentPage === 1"
-              :title="i18n.t('shop_prev')"
-              :aria-label="i18n.t('shop_prev')"
-              class="p-5 bg-surface/60 border border-border rounded-2xl hover:border-primary-500/30 disabled:opacity-20 transition-all group/prev shadow-xl active:scale-95"
-            >
-              <ChevronLeft class="w-5 h-5 group-hover/prev:-translate-x-1 transition-transform" />
-            </button>
-            
-            <div class="flex items-center gap-2.5">
+          
+          <!-- Pagination -->
+          <div v-if="totalPages > 1" class="flex flex-col items-center gap-8 mt-16 p-12 bg-surface/20 rounded-[3rem] border border-white/5 relative overflow-hidden group/pagination">
+            <div class="flex items-center gap-6 relative z-10">
               <button 
-                v-for="p in totalPages" 
-                :key="p"
-                @click="currentPage = p"
-                :title="`${i18n.t('shop_go_to')} ${p}`"
-                class="w-12 h-12 flex items-center justify-center rounded-2xl text-[11px] font-black tracking-widest transition-all border-2"
-                :class="currentPage === p ? 'bg-primary-500 text-white border-primary-500 shadow-[0_0_25px_rgba(255,69,0,0.3)]' : 'bg-surface/40 text-muted border-border hover:border-primary-500/40 hover:text-foreground active:scale-90'"
+                @click="currentPage > 1 && (currentPage--)"
+                :disabled="currentPage === 1"
+                class="p-5 bg-surface/60 border border-border rounded-2xl hover:border-primary-500/30 disabled:opacity-20 transition-all group/prev shadow-xl active:scale-95"
               >
-                {{ String(p).padStart(2, '0') }}
+                <ChevronLeft class="w-6 h-6 group-hover/prev:-translate-x-1 transition-transform" />
+              </button>
+              
+              <div class="flex items-center gap-3">
+                <button 
+                  v-for="p in totalPages" 
+                  :key="p"
+                  @click="currentPage = p"
+                  class="w-14 h-14 flex items-center justify-center rounded-2xl text-sm font-black tracking-widest transition-all border-2"
+                  :class="currentPage === p ? 'bg-primary-500 text-white border-primary-500 shadow-2xl shadow-primary-500/40' : 'bg-surface/40 text-muted border-border hover:border-primary-500/40 hover:text-foreground'"
+                >
+                  {{ p }}
+                </button>
+              </div>
+
+              <button 
+                @click="currentPage < totalPages && (currentPage++)"
+                :disabled="currentPage === totalPages"
+                class="p-5 bg-surface/60 border border-border rounded-2xl hover:border-primary-500/30 disabled:opacity-20 transition-all group/next shadow-xl active:scale-95"
+              >
+                <ChevronRight class="w-6 h-6 group-hover/next:translate-x-1 transition-transform" />
               </button>
             </div>
-
-            <button 
-              @click="currentPage < totalPages && (currentPage++)"
-              :disabled="currentPage === totalPages"
-              :title="i18n.t('shop_next')"
-              :aria-label="i18n.t('shop_next')"
-              class="p-5 bg-surface/60 border border-border rounded-2xl hover:border-primary-500/30 disabled:opacity-20 transition-all group/next shadow-xl active:scale-95"
-            >
-              <ChevronRight class="w-5 h-5 group-hover/next:translate-x-1 transition-transform" />
-            </button>
           </div>
-          
-          <div class="flex flex-col items-center gap-2 relative z-10">
-            <p class="text-[10px] font-black text-industrial text-foreground/40 uppercase tracking-[0.5em] italic">
-              {{ i18n.t('shop_unit_page') }} <span class="text-primary-500">{{ currentPage }}</span> // {{ i18n.t('shop_total_chunks') }}: {{ totalPages }}
-            </p>
-            <div class="flex gap-1">
-              <div v-for="d in totalPages" :key="d" 
-                   class="h-1 rounded-full transition-all duration-500"
-                   :class="currentPage === d ? 'w-8 bg-primary-500' : 'w-2 bg-border'"></div>
-            </div>
-          </div>
-        </div>
-      </section>
+        </main>
+      </div>
 
       <!-- Seasonal Section (Collapsed) -->
       <section v-if="seasonalItems.length > 0" class="pt-8 border-t border-border">
@@ -871,7 +859,7 @@ import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
-import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Check, Swords, X, Flame, Package, Sword, Shield, Footprints, Construction, FlaskConical, Zap, Info, ChevronUp, ChevronDown as ChevronDownIcon, Users, Activity } from 'lucide-vue-next';
+import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Check, Swords, X, Flame, Package, Sword, Shield, Footprints, Construction, FlaskConical, Zap, Info, ChevronUp, ChevronDown as ChevronDownIcon, Users, Activity, Lock, CheckCircle2, Clock } from 'lucide-vue-next';
 import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
 import ItemIcon from './ItemIcon.vue';
@@ -930,10 +918,10 @@ const categories = computed(() => {
     return [
       { id: 'all', label: 'cat_all', icon: Swords },
       { id: 'bundle', label: 'cat_bundle', icon: LayoutGrid },
-      { id: 'weapon', label: 'WEAPON', icon: Sword },
-      { id: 'head', label: 'HELMET', icon: Construction },
-      { id: 'armor', label: 'ARMOR', icon: Shield },
-      { id: 'boots', label: 'BOOTS', icon: Footprints },
+      { id: 'weapon', label: 'cat_weapon', icon: Sword },
+      { id: 'head', label: 'cat_head', icon: Construction },
+      { id: 'armor', label: 'cat_armor', icon: Shield },
+      { id: 'boots', label: 'cat_boots', icon: Footprints },
       { id: 'consumable', label: 'cat_consumable', icon: Flame }
     ];
   } else {

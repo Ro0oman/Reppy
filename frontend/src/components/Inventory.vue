@@ -25,361 +25,193 @@
       </button>
     </div>
 
-    <!-- COMBAT VIEW -->
-    <div v-if="activeTab === 'combat'" class="space-y-12 animate-in">
-      <!-- UNIFIED RPG LOADOUT & STATS VISUALIZER -->
-      <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 py-4 mb-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+      <!-- LEFT PANEL: Character & Stats (lg:col-span-5) -->
+      <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
         
-        <!-- Left Stats (Offensive) -->
-        <div class="flex-1 w-full max-w-sm space-y-4">
-          <div class="p-8 rounded-[2.5rem] bg-surface/20 border border-white/5 relative overflow-hidden group hover:border-primary-500/40 transition-all duration-500 backdrop-blur-xl shadow-2xl">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-transparent"></div>
-            <div class="relative z-10">
-              <p class="text-[11px] font-black text-primary-500 uppercase tracking-[0.4em] leading-none mb-3">{{ i18n.t('inv_total_power') }}</p>
-              <div class="flex items-baseline gap-2">
-                <span class="text-4xl font-black text-foreground italic tracking-tighter inline-block transition-transform duration-300" :class="{ 'animate-bump': recentlyEquipped }">{{ combatStats.minDamage }} - {{ combatStats.maxDamage }}</span>
+        <!-- COMBAT SIDEBAR -->
+        <div v-if="activeTab === 'combat'" class="space-y-6">
+          <!-- Compact Stats Dashboard -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="p-6 rounded-[2rem] bg-surface/20 border border-white/5 relative overflow-hidden group hover:border-primary-500/40 transition-all duration-500 backdrop-blur-xl shadow-2xl">
+              <div class="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-transparent"></div>
+              <p class="text-[9px] font-black text-primary-500 uppercase tracking-[0.3em] leading-none mb-2">{{ i18n.t('inv_total_power') }}</p>
+              <div class="flex items-baseline gap-1">
+                <span class="text-2xl font-black text-foreground italic tracking-tighter" :class="{ 'animate-bump': recentlyEquipped }">{{ combatStats.minDamage }}-{{ combatStats.maxDamage }}</span>
               </div>
-              <div class="flex items-center gap-2 mt-2">
-                <div class="h-px w-8 bg-muted/20"></div>
-                <p class="text-[9px] font-black text-muted uppercase tracking-[0.2em] opacity-40 italic">{{ i18n.t('ui_avg') }}: {{ combatStats.total }}</p>
-              </div>
+              <Sword class="absolute -bottom-2 -right-2 w-12 h-12 text-white/5 rotate-12 group-hover:scale-110 transition-transform" />
             </div>
-            <Sword class="absolute -bottom-4 -right-4 w-24 h-24 text-white/5 rotate-12 group-hover:scale-110 group-hover:rotate-0 transition-all duration-700" />
+
+            <div class="p-6 rounded-[2rem] bg-surface/20 border border-white/5 relative overflow-hidden group hover:border-emerald-500/40 transition-all duration-500 backdrop-blur-xl shadow-2xl">
+              <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent"></div>
+              <p class="text-[9px] font-black text-emerald-500 uppercase tracking-[0.3em] leading-none mb-2">{{ i18n.t('inv_crit_prob') }}</p>
+              <span class="text-2xl font-black text-emerald-400 italic tracking-tighter" :class="{ 'animate-bump': recentlyEquipped }">{{ combatStats.critChance }}%</span>
+              <Activity class="absolute -bottom-2 -right-2 w-12 h-12 text-white/5 group-hover:scale-110 transition-transform" />
+            </div>
           </div>
 
-          <div class="p-8 rounded-[2.5rem] bg-surface/20 border border-white/5 relative overflow-hidden group hover:border-orange-500/40 transition-all duration-500 backdrop-blur-xl shadow-2xl">
-            <div class="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent"></div>
-            <div class="relative z-10">
-              <p class="text-[11px] font-black text-muted uppercase tracking-[0.4em] leading-none mb-3">{{ i18n.t('inv_gear_mod') }}</p>
-              <div class="flex items-baseline gap-3">
-                <span class="text-3xl font-black text-orange-500 italic tracking-tighter inline-block transition-transform duration-300" :class="{ 'animate-bump': recentlyEquipped }">+{{ combatStats.gear }}</span>
-                <span class="px-2 py-0.5 bg-orange-500/10 border border-orange-500/20 rounded text-[9px] font-black text-orange-500 uppercase tracking-widest">Fuerza</span>
-              </div>
-            </div>
-            <Construction class="absolute -bottom-4 -right-4 w-24 h-24 text-white/5 -rotate-12 group-hover:scale-110 group-hover:rotate-0 transition-all duration-700" />
-          </div>
-        </div>
-
-        <!-- Center Character Diagram -->
-        <div class="relative w-[300px] h-[360px] flex-shrink-0 flex items-center justify-center">
-           <!-- Hexagon / Circle background -->
-           <div class="absolute inset-4 rounded-[4rem] border border-white/5 bg-surface/5 backdrop-blur-3xl shadow-[0_0_100px_rgba(0,0,0,0.5)] transition-all duration-1000"></div>
-           <div class="absolute inset-12 rounded-[3rem] border border-white/10 bg-surface/10 flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-700">
-             <div class="relative">
-               <Users class="w-24 h-24 text-white/5" />
-               <div class="absolute inset-0 bg-primary-500/5 blur-2xl rounded-full animate-pulse"></div>
+          <!-- Character Diagram (Sidebar Compact) -->
+          <div class="relative w-full aspect-[4/5] max-w-[320px] mx-auto flex items-center justify-center bg-surface/5 rounded-[3rem] border border-white/5 backdrop-blur-3xl overflow-hidden">
+             <!-- Background FX -->
+             <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,69,0,0.05)_0%,transparent_70%)] animate-pulse"></div>
+             
+             <!-- Center Silhouette -->
+             <div class="relative z-10 opacity-20 transform scale-125">
+               <Users class="w-32 h-32 text-white" />
              </div>
-           </div>
 
-           <!-- Helmet (Top) -->
-           <div class="absolute top-0 left-1/2 -translate-x-1/2 transition-all duration-300" :class="{ 'animate-pulse-fast scale-110': equippingSlot === 'head' }">
-              <div @click="getEquippedItem('head') && openItemDetails(getEquippedItem('head'))"
-                   class="w-24 h-24 relative group rounded-2xl bg-surface/40 border border-white/10 p-2 flex flex-col items-center justify-center gap-2 transition-all hover:bg-white/10 overflow-hidden cursor-pointer shadow-2xl backdrop-blur-xl">
-                <div class="absolute inset-x-0 h-px bg-primary-500/30 top-0 group-hover:top-full transition-all duration-[1.5s] ease-linear pointer-events-none z-10"></div>
-                <div class="absolute top-1.5 left-2 text-[6px] font-black text-muted/40 uppercase tracking-[0.2em] z-10">{{ i18n.t('inv_slot_helmet') }}</div>
-                <div v-if="getEquippedItem('head')" class="flex flex-col items-center gap-1 relative z-20">
-                   <div class="w-10 h-10 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <ItemIcon :name="getEquippedItem('head').svg_key" type="head" class-name="w-6 h-6 text-primary-500" />
-                   </div>
-                   <span class="text-[7px] font-black text-foreground uppercase truncate w-20 text-center tracking-tighter">{{ getEquippedItem('head').name }}</span>
+             <!-- Helmet (Top) -->
+             <div class="absolute top-8 left-1/2 -translate-x-1/2" :class="{ 'animate-pulse-fast scale-110': equippingSlot === 'head' }">
+                <div @click="getEquippedItem('head') && openItemDetails(getEquippedItem('head'))"
+                     class="w-20 h-20 relative group rounded-2xl bg-surface/40 border border-white/10 p-2 flex flex-col items-center justify-center gap-1 transition-all hover:bg-white/10 overflow-hidden cursor-pointer shadow-2xl backdrop-blur-xl">
+                  <div class="absolute top-1 left-1.5 text-[5px] font-black text-muted/40 uppercase tracking-widest z-10">{{ i18n.t('inv_slot_helmet') }}</div>
+                  <div v-if="getEquippedItem('head')" class="flex flex-col items-center gap-1 relative z-20">
+                     <ItemIcon :name="getEquippedItem('head').svg_key" type="head" class-name="w-8 h-8 text-primary-500 group-hover:scale-110 transition-transform" />
+                     <span class="text-[6px] font-black text-foreground uppercase truncate w-16 text-center">{{ getEquippedItem('head').name }}</span>
+                  </div>
+                  <Construction v-else class="w-6 h-6 text-muted opacity-20" />
+                  <div v-if="getEquippedItem('head')" class="absolute inset-0 rounded-2xl border border-primary-500/40 pointer-events-none"></div>
                 </div>
-                <div v-else class="flex flex-col items-center gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
-                  <Construction class="w-6 h-6 text-muted" />
-                  <span class="text-[6px] font-black text-muted uppercase tracking-[0.2em]">{{ i18n.t('ui_empty') }}</span>
-                </div>
-                <div v-if="getEquippedItem('head')" class="absolute inset-0 rounded-2xl border border-primary-500/40 shadow-[0_0_20px_rgba(255,69,0,0.1)] pointer-events-none group-hover:border-primary-500/60"></div>
-              </div>
-           </div>
-           
-           <!-- Weapon (Left) -->
-           <div class="absolute top-1/2 left-0 -translate-y-1/2 -ml-4 transition-all duration-300" :class="{ 'animate-pulse-fast scale-110': equippingSlot === 'weapon' }">
-             <div @click="getEquippedItem('weapon') && openItemDetails(getEquippedItem('weapon'))"
-                  class="w-24 h-24 relative group rounded-2xl bg-surface/40 border border-white/10 p-2 flex flex-col items-center justify-center gap-2 transition-all hover:bg-white/10 overflow-hidden cursor-pointer shadow-2xl backdrop-blur-xl">
-               <div class="absolute inset-x-0 h-px bg-primary-500/30 top-0 group-hover:top-full transition-all duration-[1.5s] ease-linear pointer-events-none z-10"></div>
-               <div class="absolute top-1.5 left-2 text-[6px] font-black text-muted/40 uppercase tracking-[0.2em] z-10">{{ i18n.t('inv_slot_weapon') }}</div>
-               <div v-if="getEquippedItem('weapon')" class="flex flex-col items-center gap-1 relative z-20">
-                  <div class="w-10 h-10 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                     <ItemIcon :name="getEquippedItem('weapon').svg_key" type="weapon" class-name="w-6 h-6 text-primary-500" />
-                  </div>
-                  <span class="text-[7px] font-black text-foreground uppercase truncate w-20 text-center tracking-tighter">{{ getEquippedItem('weapon').name }}</span>
-               </div>
-               <div v-else class="flex flex-col items-center gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
-                 <Sword class="w-6 h-6 text-muted" />
-                 <span class="text-[6px] font-black text-muted uppercase tracking-[0.2em]">{{ i18n.t('ui_empty') }}</span>
-               </div>
-               <div v-if="getEquippedItem('weapon')" class="absolute inset-0 rounded-2xl border border-primary-500/40 shadow-[0_0_20px_rgba(255,69,0,0.1)] pointer-events-none group-hover:border-primary-500/60"></div>
              </div>
-           </div>
-           
-           <!-- Armor (Right) -->
-           <div class="absolute top-1/2 right-0 translate-y-1/2 translate-x-4 transition-all duration-300" :class="{ 'animate-pulse-fast scale-110': equippingSlot === 'armor' }">
-             <div @click="getEquippedItem('armor') && openItemDetails(getEquippedItem('armor'))"
-                  class="w-24 h-24 relative group rounded-2xl bg-surface/40 border border-white/10 p-2 flex flex-col items-center justify-center gap-2 transition-all hover:bg-white/10 overflow-hidden cursor-pointer shadow-2xl backdrop-blur-xl">
-               <div class="absolute inset-x-0 h-px bg-primary-500/30 top-0 group-hover:top-full transition-all duration-[1.5s] ease-linear pointer-events-none z-10"></div>
-               <div class="absolute top-1.5 left-2 text-[6px] font-black text-muted/40 uppercase tracking-[0.2em] z-10">{{ i18n.t('inv_slot_armor') }}</div>
-               <div v-if="getEquippedItem('armor')" class="flex flex-col items-center gap-1 relative z-20">
-                  <div class="w-10 h-10 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                     <ItemIcon :name="getEquippedItem('armor').svg_key" type="armor" class-name="w-6 h-6 text-primary-500" />
-                  </div>
-                  <span class="text-[7px] font-black text-foreground uppercase truncate w-20 text-center tracking-tighter">{{ getEquippedItem('armor').name }}</span>
+             
+             <!-- Weapon (Left) -->
+             <div class="absolute top-1/2 left-4 -translate-y-1/2" :class="{ 'animate-pulse-fast scale-110': equippingSlot === 'weapon' }">
+               <div @click="getEquippedItem('weapon') && openItemDetails(getEquippedItem('weapon'))"
+                    class="w-20 h-20 relative group rounded-2xl bg-surface/40 border border-white/10 p-2 flex flex-col items-center justify-center gap-1 transition-all hover:bg-white/10 overflow-hidden cursor-pointer shadow-2xl backdrop-blur-xl">
+                 <div class="absolute top-1 left-1.5 text-[5px] font-black text-muted/40 uppercase tracking-widest z-10">{{ i18n.t('inv_slot_weapon') }}</div>
+                 <div v-if="getEquippedItem('weapon')" class="flex flex-col items-center gap-1 relative z-20">
+                    <ItemIcon :name="getEquippedItem('weapon').svg_key" type="weapon" class-name="w-8 h-8 text-primary-500 group-hover:scale-110 transition-transform" />
+                    <span class="text-[6px] font-black text-foreground uppercase truncate w-16 text-center">{{ getEquippedItem('weapon').name }}</span>
+                 </div>
+                 <Sword v-else class="w-6 h-6 text-muted opacity-20" />
+                 <div v-if="getEquippedItem('weapon')" class="absolute inset-0 rounded-2xl border border-primary-500/40 pointer-events-none"></div>
                </div>
-               <div v-else class="flex flex-col items-center gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
-                 <Shield class="w-6 h-6 text-muted" />
-                 <span class="text-[6px] font-black text-muted uppercase tracking-[0.2em]">{{ i18n.t('ui_empty') }}</span>
-               </div>
-               <div v-if="getEquippedItem('armor')" class="absolute inset-0 rounded-2xl border border-primary-500/40 shadow-[0_0_20px_rgba(255,69,0,0.1)] pointer-events-none group-hover:border-primary-500/60"></div>
              </div>
-           </div>
+             
+             <!-- Armor (Right) -->
+             <div class="absolute top-1/2 right-4 -translate-y-1/2" :class="{ 'animate-pulse-fast scale-110': equippingSlot === 'armor' }">
+               <div @click="getEquippedItem('armor') && openItemDetails(getEquippedItem('armor'))"
+                    class="w-20 h-20 relative group rounded-2xl bg-surface/40 border border-white/10 p-2 flex flex-col items-center justify-center gap-1 transition-all hover:bg-white/10 overflow-hidden cursor-pointer shadow-2xl backdrop-blur-xl">
+                 <div class="absolute top-1 left-1.5 text-[5px] font-black text-muted/40 uppercase tracking-widest z-10">{{ i18n.t('inv_slot_armor') }}</div>
+                 <div v-if="getEquippedItem('armor')" class="flex flex-col items-center gap-1 relative z-20">
+                    <ItemIcon :name="getEquippedItem('armor').svg_key" type="armor" class-name="w-8 h-8 text-primary-500 group-hover:scale-110 transition-transform" />
+                    <span class="text-[6px] font-black text-foreground uppercase truncate w-16 text-center">{{ getEquippedItem('armor').name }}</span>
+                 </div>
+                 <Shield v-else class="w-6 h-6 text-muted opacity-20" />
+                 <div v-if="getEquippedItem('armor')" class="absolute inset-0 rounded-2xl border border-primary-500/40 pointer-events-none"></div>
+               </div>
+             </div>
 
-           <!-- Boots (Bottom) -->
-           <div class="absolute bottom-0 left-1/2 -translate-x-1/2 transition-all duration-300" :class="{ 'animate-pulse-fast scale-110': equippingSlot === 'boots' }">
-             <div @click="getEquippedItem('boots') && openItemDetails(getEquippedItem('boots'))"
-                  class="w-24 h-24 relative group rounded-2xl bg-surface/40 border border-white/10 p-2 flex flex-col items-center justify-center gap-2 transition-all hover:bg-white/10 overflow-hidden cursor-pointer shadow-2xl backdrop-blur-xl">
-               <div class="absolute inset-x-0 h-px bg-primary-500/30 top-0 group-hover:top-full transition-all duration-[1.5s] ease-linear pointer-events-none z-10"></div>
-               <div class="absolute top-1.5 left-2 text-[6px] font-black text-muted/40 uppercase tracking-[0.2em] z-10">{{ i18n.t('inv_slot_boots') }}</div>
-               <div v-if="getEquippedItem('boots')" class="flex flex-col items-center gap-1 relative z-20">
-                  <div class="w-10 h-10 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                     <ItemIcon :name="getEquippedItem('boots').svg_key" type="boots" class-name="w-6 h-6 text-primary-500" />
-                  </div>
-                  <span class="text-[7px] font-black text-foreground uppercase truncate w-20 text-center tracking-tighter">{{ getEquippedItem('boots').name }}</span>
+             <!-- Boots (Bottom) -->
+             <div class="absolute bottom-8 left-1/2 -translate-x-1/2" :class="{ 'animate-pulse-fast scale-110': equippingSlot === 'boots' }">
+               <div @click="getEquippedItem('boots') && openItemDetails(getEquippedItem('boots'))"
+                    class="w-20 h-20 relative group rounded-2xl bg-surface/40 border border-white/10 p-2 flex flex-col items-center justify-center gap-1 transition-all hover:bg-white/10 overflow-hidden cursor-pointer shadow-2xl backdrop-blur-xl">
+                 <div class="absolute top-1 left-1.5 text-[5px] font-black text-muted/40 uppercase tracking-widest z-10">{{ i18n.t('inv_slot_boots') }}</div>
+                 <div v-if="getEquippedItem('boots')" class="flex flex-col items-center gap-1 relative z-20">
+                    <ItemIcon :name="getEquippedItem('boots').svg_key" type="boots" class-name="w-8 h-8 text-primary-500 group-hover:scale-110 transition-transform" />
+                    <span class="text-[6px] font-black text-foreground uppercase truncate w-16 text-center">{{ getEquippedItem('boots').name }}</span>
+                 </div>
+                 <Footprints v-else class="w-6 h-6 text-muted opacity-20" />
+                 <div v-if="getEquippedItem('boots')" class="absolute inset-0 rounded-2xl border border-primary-500/40 pointer-events-none"></div>
                </div>
-               <div v-else class="flex flex-col items-center gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
-                 <Footprints class="w-6 h-6 text-muted" />
-                 <span class="text-[6px] font-black text-muted uppercase tracking-[0.2em]">{{ i18n.t('ui_empty') }}</span>
-               </div>
-               <div v-if="getEquippedItem('boots')" class="absolute inset-0 rounded-2xl border border-primary-500/40 shadow-[0_0_20px_rgba(255,69,0,0.1)] pointer-events-none group-hover:border-primary-500/60"></div>
              </div>
-           </div>
-        </div>
-
-        <!-- Right Stats (Defensive/Utility) -->
-        <div class="flex-1 w-full max-w-sm space-y-4">
-          <div class="p-8 rounded-[2.5rem] bg-surface/20 border border-white/5 relative overflow-hidden group hover:border-emerald-500/40 transition-all duration-500 backdrop-blur-xl shadow-2xl">
-            <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent"></div>
-            <div class="relative z-10">
-              <p class="text-[11px] font-black text-muted uppercase tracking-[0.4em] leading-none mb-3">{{ i18n.t('inv_crit_prob') }}</p>
-              <div class="flex items-baseline gap-2">
-                <span class="text-4xl font-black text-emerald-400 italic tracking-tighter inline-block transition-transform duration-300" :class="{ 'animate-bump': recentlyEquipped }">{{ combatStats.critChance }}%</span>
-              </div>
-            </div>
-            <Activity class="absolute -bottom-4 -right-4 w-24 h-24 text-white/5 group-hover:scale-110 transition-all duration-700" />
           </div>
 
-          <!-- Base Stats Grid -->
-          <div class="p-8 rounded-[2.5rem] bg-surface/20 border border-white/5 relative overflow-hidden backdrop-blur-xl shadow-2xl">
-             <p class="text-[11px] font-black text-muted uppercase tracking-[0.4em] mb-6 flex items-center gap-2">
-               <span class="w-2 h-2 rounded-full bg-primary-500"></span>
+          <!-- Base Stats Grid (Sidebar) -->
+          <div class="p-6 rounded-[2rem] bg-surface/10 border border-white/5 backdrop-blur-xl">
+             <p class="text-[9px] font-black text-muted uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
+               <span class="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
                {{ i18n.t('ui_base_attrs') }}
              </p>
-             <div class="grid grid-cols-1 gap-4">
-               <div v-for="(val, stat) in equippedStats" :key="stat" v-show="val > 0 && stat !== 'multiplier' && stat !== 'crit_chance' && stat !== 'crit_damage'" class="flex items-center justify-between p-3 bg-white/[0.02] rounded-xl border border-white/5">
-                 <span class="text-[10px] font-black text-muted/60 uppercase tracking-widest">{{ statLabels[stat] || stat }}</span>
-                 <span class="text-sm font-black text-primary-500 tabular-nums inline-block transition-transform duration-300" :class="{ 'animate-bump': recentlyEquipped }">+{{ val }}</span>
+             <div class="grid grid-cols-2 gap-2">
+               <div v-for="(val, stat) in equippedStats" :key="stat" v-show="val > 0 && stat !== 'multiplier' && stat !== 'crit_chance' && stat !== 'crit_damage'" 
+                    class="flex items-center justify-between p-2.5 bg-white/[0.02] rounded-xl border border-white/5 transition-all hover:bg-white/[0.05]">
+                 <span class="text-[8px] font-black text-muted/60 uppercase tracking-widest">{{ statLabels[stat] || stat }}</span>
+                 <span class="text-xs font-black text-primary-500 tabular-nums" :class="{ 'animate-bump': recentlyEquipped }">+{{ val }}</span>
                </div>
              </div>
-             <div v-if="!Object.values(equippedStats).some(v => v > 0)" class="text-[10px] text-muted/30 italic text-center py-4 uppercase tracking-[0.2em]">
-               No Active Augments
-             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Section: Modules (Chests) -->
-      <div v-if="authStore.user?.level_chests > 0 || authStore.user?.boss_chests > 0 || authStore.user?.legendary_chests > 0" 
-           class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto justify-center">
-        <div v-if="authStore.user?.legendary_chests > 0" @click="handleOpenLegendaryChest" :disabled="openingChest"
-          class="tactical-chest-button p-1 rounded-[2.5rem] bg-amber-500/10 border border-amber-500/20 group cursor-pointer hover:bg-amber-500/20 transition-all overflow-hidden relative shadow-[0_0_40px_rgba(245,158,11,0.1)]">
-          <div class="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent pointer-events-none"></div>
-          <div class="flex items-center justify-between p-8 relative z-10">
-            <div class="flex items-center gap-6">
-              <div class="p-5 bg-amber-500/20 rounded-2xl border border-amber-500/30 group-hover:scale-110 transition-transform shadow-xl">
-                <Trophy class="w-8 h-8 text-amber-500" />
+          <!-- Modules (Compact Chests) -->
+          <div v-if="authStore.user?.level_chests > 0 || authStore.user?.boss_chests > 0 || authStore.user?.legendary_chests > 0" class="space-y-2">
+            <div v-if="authStore.user?.legendary_chests > 0" @click="handleOpenLegendaryChest"
+                 class="flex items-center justify-between p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 group cursor-pointer hover:bg-amber-500/20 transition-all">
+              <div class="flex items-center gap-3">
+                <Trophy class="w-5 h-5 text-amber-500" />
+                <span class="text-[10px] font-black text-amber-400 uppercase tracking-widest">{{ authStore.user.legendary_chests }} {{ i18n.t('inv_vault_legendary') }}</span>
               </div>
-              <div class="text-left">
-                <p class="text-[11px] font-black text-amber-400 uppercase tracking-[0.4em] font-mono leading-none mb-1">{{ i18n.t('inv_vault_legendary') }}</p>
-                <h4 class="text-2xl font-black text-foreground italic">{{ authStore.user.legendary_chests }} {{ i18n.t('inv_vault_ready') }}</h4>
-              </div>
+              <Sparkles class="w-4 h-4 text-amber-500 animate-pulse" />
             </div>
-            <Sparkles class="w-6 h-6 text-amber-500 group-hover:translate-x-1 transition-transform" />
-          </div>
-        </div>
-
-        <div v-if="authStore.user?.level_chests > 0" @click="handleOpenLevelChest" :disabled="openingChest"
-          class="tactical-chest-button p-1 rounded-[2.5rem] bg-cyan-500/10 border border-cyan-500/20 group cursor-pointer hover:bg-cyan-500/20 transition-all overflow-hidden relative">
-          <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent pointer-events-none"></div>
-          <div class="flex items-center justify-between p-8 relative z-10">
-            <div class="flex items-center gap-6">
-              <div class="p-5 bg-cyan-500/20 rounded-2xl border border-cyan-500/30 group-hover:scale-110 transition-transform shadow-xl">
-                <TrendingUp class="w-8 h-8 text-cyan-500" />
+            <div v-if="authStore.user?.level_chests > 0" @click="handleOpenLevelChest"
+                 class="flex items-center justify-between p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 group cursor-pointer hover:bg-cyan-500/20 transition-all">
+              <div class="flex items-center gap-3">
+                <TrendingUp class="w-5 h-5 text-cyan-500" />
+                <span class="text-[10px] font-black text-cyan-400 uppercase tracking-widest">{{ authStore.user.level_chests }} {{ i18n.t('inv_vault_evolution') }}</span>
               </div>
-              <div class="text-left">
-                <p class="text-[11px] font-black text-cyan-400 uppercase tracking-[0.4em] font-mono leading-none mb-1">{{ i18n.t('inv_vault_evolution') }}</p>
-                <h4 class="text-2xl font-black text-foreground italic">{{ authStore.user.level_chests }} {{ i18n.t('inv_vault_ready') }}</h4>
-              </div>
+              <ChevronRight class="w-4 h-4 text-cyan-500" />
             </div>
-            <ChevronRight class="w-6 h-6 text-cyan-500 group-hover:translate-x-1 transition-transform" />
-          </div>
-        </div>
-
-        <div v-if="authStore.user?.boss_chests > 0" @click="handleOpenChest" :disabled="openingChest"
-          class="tactical-chest-button p-1 rounded-[2.5rem] bg-primary-500/10 border border-primary-500/20 group cursor-pointer hover:bg-primary-500/20 transition-all overflow-hidden relative">
-          <div class="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-transparent pointer-events-none"></div>
-          <div class="flex items-center justify-between p-8 relative z-10">
-            <div class="flex items-center gap-6">
-              <div class="p-5 bg-primary-500/20 rounded-2xl border border-primary-500/30 group-hover:scale-110 transition-transform shadow-xl">
-                <Archive class="w-8 h-8 text-primary-500" />
+            <div v-if="authStore.user?.boss_chests > 0" @click="handleOpenChest"
+                 class="flex items-center justify-between p-4 rounded-2xl bg-primary-500/10 border border-primary-500/20 group cursor-pointer hover:bg-primary-500/20 transition-all">
+              <div class="flex items-center gap-3">
+                <Archive class="w-5 h-5 text-primary-500" />
+                <span class="text-[10px] font-black text-primary-400 uppercase tracking-widest">{{ authStore.user.boss_chests }} {{ i18n.t('inv_vault_decrypted') }}</span>
               </div>
-              <div class="text-left">
-                <p class="text-[11px] font-black text-primary-400 uppercase tracking-[0.4em] font-mono leading-none mb-1">{{ i18n.t('inv_vault_decrypted') }}</p>
-                <h4 class="text-2xl font-black text-foreground italic">{{ authStore.user.boss_chests }} {{ i18n.t('inv_vault_ready') }}</h4>
-              </div>
-            </div>
-            <Sparkles class="w-6 h-6 text-primary-500 group-hover:translate-x-1 transition-transform" />
-          </div>
-        </div>
-      </div>
-
-      <!-- ACTIVE EFFECTS (Potions/Buffs) -->
-      <div v-if="activePotions.length > 0" class="space-y-6">
-        <div class="flex items-center gap-4">
-          <div class="h-px flex-1 bg-gradient-to-r from-transparent to-emerald-500/20"></div>
-          <h3 class="text-[10px] font-black text-emerald-500 uppercase tracking-[0.5em] font-mono">{{ i18n.t('inv_active_buffs') }}</h3>
-          <div class="h-px flex-1 bg-gradient-to-l from-transparent to-emerald-500/20"></div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          <div v-for="potion in activePotions" :key="potion.type" 
-               class="p-6 rounded-[2.5rem] bg-emerald-500/15 border border-emerald-500/30 flex flex-col group hover:bg-emerald-500/20 transition-all duration-500 relative overflow-hidden backdrop-blur-2xl">
-            <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/20 via-transparent to-transparent pointer-events-none"></div>
-            
-            <!-- Time Left (Top Right Corner) -->
-            <div class="absolute top-6 right-8 text-right z-20">
-              <p class="text-[8px] font-black text-emerald-400/60 uppercase tracking-widest mb-1">{{ i18n.t('inv_time_left') }}</p>
-              <div class="flex items-center gap-1.5 justify-end">
-                <Timer class="w-3 h-3 text-emerald-400/80" />
-                <span class="text-sm font-black text-white font-mono tracking-tighter">{{ potion.timeLeft }}</span>
-              </div>
-            </div>
-
-            <div class="flex items-start gap-5 relative z-10">
-              <div class="p-4 bg-emerald-500/20 rounded-2xl border border-emerald-500/30 group-hover:scale-110 transition-transform shadow-2xl flex-shrink-0">
-                <FlaskConical class="w-7 h-7 text-emerald-400 animate-pulse" />
-              </div>
-              <div class="space-y-1 pr-12">
-                <p class="text-[10px] font-black text-emerald-300 uppercase tracking-wider leading-tight">{{ i18n.t(potion.label) }}</p>
-                <div class="flex items-baseline gap-2">
-                  <h4 class="text-4xl font-black text-white italic tracking-tighter leading-none">{{ potion.value }}</h4>
-                  <span class="text-[9px] text-emerald-400/80 not-italic uppercase tracking-widest font-black">{{ i18n.t('inv_boost_active') }}</span>
-                </div>
-                <p class="text-[11px] font-bold text-white/70 uppercase tracking-wide pt-1 leading-snug">{{ potion.description }}</p>
-              </div>
+              <Sparkles class="w-4 h-4 text-primary-500 animate-pulse" />
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- CUSTOMIZATION VIEW -->
-    <div v-if="activeTab === 'customization'" class="space-y-12 animate-in">
-      <div class="space-y-8 max-w-6xl mx-auto">
-        <div class="flex items-center gap-4">
-          <div class="h-px flex-1 bg-gradient-to-r from-transparent to-purple-500/20"></div>
-          <h3 class="text-[10px] font-black text-purple-400 uppercase tracking-[0.5em] font-mono">{{ i18n.t('inv_loadout_identity') || 'IDENTITY_LOADOUT' }}</h3>
-          <div class="h-px flex-1 bg-gradient-to-l from-transparent to-purple-500/20"></div>
-        </div>
-
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 relative">
-          <!-- Aesthetic Slots -->
-          <div v-for="slot in loadoutSlots" :key="slot.type" 
-               @click="getEquippedItem(slot.type) && openItemDetails(getEquippedItem(slot.type))"
-               class="relative group rounded-2xl bg-surface/10 border border-white/5 p-4 flex flex-col items-center justify-center gap-3 min-h-[140px] transition-all hover:bg-white/5 overflow-hidden cursor-pointer">
-            <div class="absolute inset-x-0 h-px bg-purple-500/20 top-0 group-hover:top-full transition-all duration-[2s] ease-linear pointer-events-none z-10"></div>
-            <div class="absolute top-2 left-2 text-[6px] font-mono text-muted/50 uppercase tracking-widest">{{ slot.label }}</div>
-            
-            <div v-if="getEquippedItem(slot.type)" class="flex flex-col items-center gap-2 relative z-20">
-              <div class="scale-90 origin-center transition-transform group-hover:scale-105 duration-500">
-                <AvatarFrame v-if="slot.type === 'border'" :src="authStore.user?.avatar_url" :border-css="getEquippedItem(slot.type).css_value" :size="55" />
-                <div v-else-if="slot.type === 'title'" class="text-center px-1">
-                  <h4 class="text-[11px] font-black uppercase italic leading-tight" :class="getEquippedItem(slot.type).css_value">{{ getEquippedItem(slot.type).name }}</h4>
-                </div>
-                <div v-else-if="slot.type === 'background'" class="w-14 h-14 rounded-xl overflow-hidden border border-white/10 relative shadow-2xl">
-                   <BackgroundEffect :background-css="getEquippedItem(slot.type).css_value" is-preview class="!absolute !inset-0" />
-                </div>
-                <div v-else-if="slot.type === 'post_background'" class="w-14 h-14 rounded-xl overflow-hidden border border-white/10 relative shadow-2xl">
-                   <div :class="getEquippedItem(slot.type).css_value" class="absolute inset-0"></div>
-                </div>
-                <div v-else-if="slot.type === 'avatar'" class="w-14 h-14 rounded-xl overflow-hidden border border-white/10 relative shadow-2xl">
-                   <div :class="getEquippedItem(slot.type).css_value" class="absolute inset-0 shadow-inner"></div>
+        <!-- CUSTOMIZATION SIDEBAR -->
+        <div v-if="activeTab === 'customization'" class="space-y-6">
+           <div class="p-8 rounded-[3rem] bg-surface/10 border border-white/5 backdrop-blur-xl text-center space-y-6">
+              <div class="relative inline-block">
+                <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :size="120" />
+                <div class="absolute -bottom-2 inset-x-0">
+                  <span v-if="authStore.user?.title_name" class="px-4 py-1.5 rounded-full bg-surface/90 border border-white/10 text-[10px] font-black uppercase italic tracking-tighter" :class="authStore.user?.title_css">
+                    {{ authStore.user?.title_name }}
+                  </span>
                 </div>
               </div>
-              <span class="text-[8px] font-black text-foreground uppercase truncate w-24 text-center tracking-tighter">{{ getEquippedItem(slot.type).name }}</span>
-            </div>
-            <div v-else class="flex flex-col items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
-              <component :is="slot.icon" class="w-8 h-8 text-muted" />
-              <span class="text-[8px] font-black text-muted uppercase tracking-[0.2em]">{{ i18n.t('ui_offline') }}</span>
-            </div>
-            <div v-if="getEquippedItem(slot.type)" class="absolute inset-0 rounded-2xl border border-purple-500/20 shadow-[0_0_20px_rgba(168,85,247,0.1)] pointer-events-none group-hover:border-purple-500/40"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+              <div class="space-y-1">
+                <h3 class="text-2xl font-black text-white italic tracking-tighter uppercase">{{ authStore.user?.username }}</h3>
+                <p class="text-[9px] font-black text-muted uppercase tracking-[0.4em]">{{ i18n.t('inv_loadout_identity') }}</p>
+              </div>
+           </div>
 
-    <!-- Main Stash Layout (Shared between tabs but filtered) -->
-    <div class="space-y-12">
-        <div v-if="loading" class="py-32 flex flex-col items-center justify-center gap-6">
-           <div class="relative">
-             <div class="w-16 h-16 border-primary-500/20 border-t-primary-500 rounded-full animate-spin"></div>
-             <div class="absolute inset-0 flex items-center justify-center">
-               <span class="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></span>
+           <div class="grid grid-cols-2 gap-3">
+             <div v-for="slot in loadoutSlots" :key="slot.type" 
+                  @click="getEquippedItem(slot.type) && openItemDetails(getEquippedItem(slot.type))"
+                  class="p-4 rounded-2xl bg-surface/10 border border-white/5 flex flex-col items-center justify-center gap-2 group cursor-pointer hover:bg-white/5 transition-all">
+                <component :is="slot.icon" class="w-5 h-5 text-muted/40 group-hover:text-purple-400 transition-colors" />
+                <span class="text-[7px] font-black text-muted uppercase tracking-widest">{{ slot.label }}</span>
+                <div v-if="getEquippedItem(slot.type)" class="w-full h-1 bg-purple-500/40 rounded-full mt-1"></div>
              </div>
            </div>
-           <p class="text-[10px] font-black text-muted uppercase tracking-[0.6em] font-mono">{{ i18n.t('inv_sync_stash') }}</p>
         </div>
+      </div>
 
-        <div v-else-if="inventory.length === 0" class="py-32 text-center max-w-xl mx-auto space-y-6">
-          <div class="p-8 bg-surface/20 border-2 border-dashed border-white/5 rounded-[3rem] inline-block mb-4">
-             <Package class="w-20 h-20 mx-auto text-muted/30" />
-          </div>
-          <div class="space-y-2">
-            <h3 class="text-3xl font-black uppercase italic tracking-tighter">{{ i18n.t('inv_empty_title') }}</h3>
-            <p class="text-[10px] font-bold text-muted uppercase tracking-[0.4em]">{{ i18n.t('inv_empty_desc') }}</p>
-          </div>
-        </div>
-
-        <!-- Nexus Item Stash -->
-        <div v-else class="space-y-12">
-          <!-- Modern Filters Interface (Replicating Store) -->
-          <div class="flex flex-col lg:flex-row items-center gap-6 bg-surface/20 p-4 rounded-3xl border-green-500  border backdrop-blur-sm relative z-30 mb-8">
-            
+      <!-- RIGHT PANEL: Item Stash (lg:col-span-7) -->
+      <div class="lg:col-span-7 space-y-8">
+        
+        <!-- Nexus Item Stash Header & Filters -->
+        <div class="bg-surface/10 rounded-[2.5rem] border border-white/5 backdrop-blur-xl p-6 md:p-8">
+          <div class="flex flex-col md:flex-row items-center gap-6 mb-8">
             <!-- Categories Dropdown -->
-            <div class="w-full lg:w-72 relative z-50">
-              <button 
-                @click="showDropdown = !showDropdown"
-                class="flex items-center gap-3 px-6 py-3 bg-surface/60 border border-border rounded-2xl text-[10px] font-black uppercase tracking-widest hover:border-primary-500/30 transition-all w-full justify-between shadow-lg"
-              >
+            <div class="w-full md:w-64 relative z-50">
+              <button @click="showDropdown = !showDropdown"
+                      class="flex items-center gap-3 px-6 py-4 bg-surface/40 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:border-primary-500/30 transition-all w-full justify-between shadow-lg">
                 <div class="flex items-center gap-2">
-                  <component :is="categories.find(c => c.id === activeStashTab)?.icon || Archive" class="w-3.5 h-3.5 text-primary-500" />
+                  <component :is="categories.find(c => c.id === activeStashTab)?.icon || Archive" class="w-4 h-4 text-primary-500" />
                   <span class="text-foreground">{{ i18n.t(categories.find(c => c.id === activeStashTab)?.label) || categories.find(c => c.id === activeStashTab)?.label }}</span>
                 </div>
                 <ChevronDown class="w-4 h-4 text-muted transition-transform" :class="{ 'rotate-180': showDropdown }" />
               </button>
 
-              <Transition
-                enter-active-class="transition duration-200 ease-out"
-                enter-from-class="transform scale-95 opacity-0 -translate-y-2"
-                enter-to-class="transform scale-100 opacity-100 translate-y-0"
-                leave-active-class="transition duration-150 ease-in"
-                leave-from-class="transform scale-100 opacity-100 translate-y-0"
-                leave-to-class="transform scale-95 opacity-0 -translate-y-2"
-              >
-                <div v-if="showDropdown" class="absolute top-full left-0 mt-2 w-full bg-surface/90 backdrop-blur-3xl border border-border rounded-2xl shadow-2xl overflow-hidden py-2 z-[60]">
-                  <button 
-                    v-for="cat in categories" 
-                    :key="cat.id"
-                    @click="activeStashTab = cat.id; showDropdown = false"
-                    class="w-full flex items-center gap-3 px-6 py-3 text-[10px] font-black uppercase tracking-widest transition-all text-left"
-                    :class="activeStashTab === cat.id ? 'bg-primary-500 text-white' : 'text-muted hover:bg-white/5 hover:text-foreground'"
-                  >
+              <Transition enter-active-class="transition duration-200 ease-out" enter-from-class="transform scale-95 opacity-0 -translate-y-2" enter-to-class="transform scale-100 opacity-100 translate-y-0" leave-active-class="transition duration-150 ease-in" leave-from-class="transform scale-100 opacity-100 translate-y-0" leave-to-class="transform scale-95 opacity-0 -translate-y-2">
+                <div v-if="showDropdown" class="absolute top-full left-0 mt-2 w-full bg-surface/90 backdrop-blur-3xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden py-2 z-[60]">
+                  <button v-for="cat in categories" :key="cat.id" @click="activeStashTab = cat.id; showDropdown = false"
+                          class="w-full flex items-center gap-3 px-6 py-3 text-[10px] font-black uppercase tracking-widest transition-all text-left"
+                          :class="activeStashTab === cat.id ? 'bg-primary-500 text-white' : 'text-muted hover:bg-white/5 hover:text-foreground'">
                     <component :is="cat.icon" class="w-3.5 h-3.5" />
                     {{ i18n.t(cat.label) }}
                   </button>
@@ -387,142 +219,86 @@
               </Transition>
             </div>
 
-            <div class="hidden lg:block w-px h-10 bg-border/50"></div>
-
             <!-- Rarity Selector -->
-            <div class="flex-1 flex flex-wrap items-center justify-start lg:justify-end gap-2">
-              <button 
-                v-for="rarity in rarities" 
-                :key="rarity.id"
-                @click="selectedRarity = rarity.id"
-                class="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all active:scale-95 whitespace-nowrap"
-                :class="selectedRarity === rarity.id ? rarity.activeClass : 'bg-surface/20 border-border text-muted hover:border-foreground/20'"
-              >
+            <div class="flex-1 flex flex-wrap items-center justify-center md:justify-end gap-2">
+              <button v-for="rarity in rarities" :key="rarity.id" @click="selectedRarity = rarity.id"
+                      class="px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all active:scale-95"
+                      :class="selectedRarity === rarity.id ? rarity.activeClass : 'bg-surface/20 border-white/5 text-muted hover:border-white/20'">
                 {{ i18n.t(rarity.label) }}
               </button>
             </div>
           </div>
 
-          <div v-for="(items, type) in groupedItems" :key="type" class="space-y-6">
-            <!-- Category Header -->
-            <div class="flex items-center gap-6 px-4">
-              <div class="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-              <div class="flex items-center gap-3">
-                <div class="w-2 h-2 rounded-full bg-primary-500"></div>
-                <h2 class="text-xs font-black text-foreground uppercase tracking-[0.4em] font-mono">
-                  {{ 
-                    type === 'head' ? i18n.t('inv_cat_helmet') :
-                    type === 'weapon' ? i18n.t('inv_cat_weapon') :
-                    type === 'armor' ? i18n.t('inv_cat_armor') :
-                    type === 'boots' ? i18n.t('inv_cat_boots') :
-                    type === 'title' ? i18n.t('inv_cat_titles') : 
-                    type === 'border' ? i18n.t('inv_cat_borders') : 
-                    type === 'background' ? i18n.t('inv_cat_backgrounds') : 
-                    type === 'post_background' ? i18n.t('inv_cat_post_backgrounds') : 
-                    type === 'avatar' ? i18n.t('inv_cat_avatar_effects') : 
-                    type === 'bundle' ? i18n.t('shop_cat_bundles') || 'BUNDLES' :
-                    i18n.t('inv_cat_consumables') 
-                  }}
-                </h2>
-                <span class="px-2 py-0.5 rounded-md bg-white/5 text-[9px] font-mono text-muted tabular-nums">{{ items.length }}</span>
+          <!-- Stash Inventory Grid -->
+          <div v-if="loading" class="py-24 flex flex-col items-center justify-center gap-4">
+             <div class="w-12 h-12 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin"></div>
+             <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em] animate-pulse">{{ i18n.t('inv_sync_stash') }}</p>
+          </div>
+
+          <div v-else-if="inventory.length === 0" class="py-24 text-center space-y-6">
+            <Package class="w-16 h-16 mx-auto text-muted/20" />
+            <h3 class="text-xl font-black uppercase italic text-muted/40 tracking-tighter">{{ i18n.t('inv_empty_title') }}</h3>
+          </div>
+
+          <div v-else class="space-y-12">
+            <div v-for="(items, type) in groupedItems" :key="type" class="space-y-6">
+              <!-- Category Separator -->
+              <div class="flex items-center gap-4">
+                <span class="text-[10px] font-black text-primary-500 uppercase tracking-[0.4em] whitespace-nowrap">{{ i18n.t('ui_' + type) || type }}</span>
+                <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
               </div>
-              <div class="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-            </div>
 
-            <!-- Stash Grid -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              <div v-for="item in items" :key="item.id" 
-                @mouseenter="markSeen(item)"
-                class="nexus-slot group relative flex flex-col h-full rounded-2xl border transition-all overflow-hidden" 
-                :class="getCardClass(item)">
-                   
-                   <!-- New Item Indicator -->
-                   <div v-if="item.is_new" class="absolute top-2 right-2 z-20 px-2 py-0.5 rounded-full bg-primary-500 text-[6px] font-black text-white uppercase tracking-widest animate-pulse border border-white/20">{{ i18n.t('ui_new_entry') }}</div>
-                   
-                   <!-- Slot Asset Display (Clickable for details) -->
-                   <div class="h-28 flex flex-shrink-0 items-center justify-center p-4 relative overflow-hidden bg-black/40 rounded-t-2xl cursor-pointer" @click="openItemDetails(item)">
-                      <!-- Active Scan Effect -->
-                      <div class="absolute inset-x-0 h-px bg-primary-500/20 top-0 group-hover:top-full transition-all duration-[1.5s] ease-linear pointer-events-none z-10"></div>
-                      
-                      <div v-if="type === 'border'" class="scale-90 group-hover:scale-100 transition-transform duration-500">
-                        <AvatarFrame :src="authStore.user?.avatar_url" :border-css="item.css_value" :size="60" />
-                      </div>
-                      <div v-else-if="type === 'title'" class="text-center group-hover:scale-110 transition-transform px-2">
-                        <h4 class="text-[10px] font-black uppercase italic leading-tight" :class="item.css_value">{{ item.name }}</h4>
-                      </div>
-                      <div v-else-if="type === 'background'" class="w-full h-full scale-110">
-                         <BackgroundEffect :background-css="item.css_value" is-preview class="!absolute !inset-0" />
-                      </div>
-                      <div v-else-if="type === 'post_background'" class="w-full h-full relative p-2 group-hover:scale-110 transition-transform duration-500">
-                         <div :class="item.css_value" class="absolute inset-0"></div>
-                         <div class="absolute inset-0 flex items-center justify-center opacity-40">
-                            <div class="w-4/5 h-2/3 bg-surface/40 backdrop-blur-sm rounded-lg border border-white/10 shadow-lg"></div>
-                         </div>
-                      </div>
-                      <div v-else-if="type === 'avatar'" class="relative group-hover:scale-110 transition-transform duration-500">
-                         <div class="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white/5 relative">
-                            <img :src="authStore.user?.avatar_url" class="w-full h-full object-cover blur-[2px] opacity-40" />
-                            <div :class="item.css_value" class="absolute inset-0"></div>
-                         </div>
-                      </div>
-                      <div v-else-if="type === 'consumable'" class="flex flex-col items-center gap-2">
-                         <div class="relative group-hover:scale-110 transition-transform">
-                            <Flame class="w-10 h-10 text-primary-500 animate-pulse" />
-                            <div class="absolute -top-1 -right-1 bg-foreground text-background text-[9px] font-black px-1.5 py-0.5 rounded border border-surface shadow-xl">
-                                x{{ item.quantity }}
-                            </div>
-                         </div>
-                      </div>
-                      <div v-else class="flex flex-col items-center gap-2 group-hover:scale-110 transition-transform">
-                         <div class="p-4 rounded-full bg-primary-500/10 border border-primary-500/20">
-                            <ItemIcon :name="item.svg_key" :type="type" class-name="w-10 h-10 text-primary-500" />
-                         </div>
-                      </div>
-                   </div>
-
-                   <!-- Info & Actions -->
-                   <div class="p-3 bg-surface/60 border-t border-white/5 flex-1 flex flex-col justify-between relative overflow-hidden rounded-b-2xl">
-                      <div>
-                        <div class="flex items-center justify-between mb-2">
-                           <span class="text-[8px] font-black uppercase tracking-widest opacity-40">{{ i18n.t('ui_' + type) || type }}</span>
-                           <span class="text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded border" :class="getRarityClass(item.rarity)">{{ getRarityLabel(item.rarity) }}</span>
-                        </div>
-                        <h4 class="text-[11px] font-black text-foreground truncate uppercase italic tracking-wider leading-none mb-2" :class="item.css_value && type === 'title' ? item.css_value : ''">{{ item.name }}</h4>
+              <!-- Compact Item Grid -->
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
+                <div v-for="item in items" :key="item.id" 
+                  @mouseenter="markSeen(item)"
+                  class="nexus-slot group relative flex flex-col h-full rounded-2xl border transition-all overflow-hidden" 
+                  :class="[
+                    getCardClass(item),
+                    item.rarity?.toLowerCase() === 'legendary' ? 'md:col-span-2' : ''
+                  ]">
+                     <!-- Item Preview -->
+                     <div class="relative h-28 flex items-center justify-center p-4 bg-black/40 rounded-t-2xl cursor-pointer overflow-hidden" @click="openItemDetails(item)">
+                        <div class="absolute inset-x-0 h-px bg-primary-500/20 top-0 group-hover:top-full transition-all duration-[1.5s] ease-linear pointer-events-none z-10"></div>
                         
-                        <!-- Simple Stats -->
-                        <div v-if="['head', 'weapon', 'armor', 'boots'].includes(item.type) && item.stats" class="flex flex-wrap gap-1 mb-2">
-                           <span v-for="(val, stat) in item.stats" :key="stat" v-show="val > 0 && stat !== 'duration' && stat !== 'multiplier'" class="text-[8px] font-black text-primary-500 uppercase">
-                              +{{ val }} {{ statLabels[stat] || stat }}
-                           </span>
+                        <div class="transform group-hover:scale-110 transition-transform duration-500">
+                          <ItemIcon v-if="['head', 'weapon', 'armor', 'boots', 'consumable'].includes(item.type)" :name="item.svg_key" :type="item.type" class-name="w-12 h-12 text-primary-500" />
+                          <div v-else-if="item.type === 'title'" class="text-[10px] font-black italic uppercase" :class="item.css_value">{{ item.name }}</div>
+                          <AvatarFrame v-else-if="item.type === 'border'" :src="authStore.user?.avatar_url" :border-css="item.css_value" :size="50" />
+                          <div v-else-if="item.type === 'background'" class="w-full h-full absolute inset-0"><BackgroundEffect :background-css="item.css_value" is-preview class="!absolute !inset-0" /></div>
+                          <Package v-else class="w-10 h-10 text-muted/40" />
                         </div>
-                      </div>
 
-                      <!-- Action Button -->
-                      <div class="mt-2 pt-2 border-t border-white/5 relative z-20">
-                        <button 
-                          v-if="type === 'consumable'"
-                          @click.stop="handleActivate(item)"
-                          :disabled="isPotionTypeActive(item)"
-                          class="w-full py-2.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all bg-emerald-500 text-black hover:bg-emerald-400 disabled:opacity-50 disabled:grayscale active:scale-95"
-                        >
-                           {{ isPotionTypeActive(item) ? i18n.t('inv_already_active') : i18n.t('btn_activate') || 'ACTIVATE' }}
+                        <div v-if="item.is_new" class="absolute top-2 right-2 px-1.5 py-0.5 rounded-full bg-primary-500 text-[6px] font-black text-white uppercase tracking-widest animate-pulse border border-white/20">NEW</div>
+                     </div>
+
+                     <!-- Item Details -->
+                     <div class="p-3 bg-surface/60 border-t border-white/5 flex-1 flex flex-col justify-between">
+                        <div>
+                          <div class="flex items-center justify-between mb-1.5">
+                             <span class="text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border" :class="getRarityClass(item.rarity)">{{ getRarityLabel(item.rarity) }}</span>
+                             <Check v-if="isEquipped(item)" class="w-3 h-3 text-blue-500" />
+                          </div>
+                          <h4 class="text-[10px] font-black text-foreground truncate uppercase tracking-wide mb-1">{{ item.name }}</h4>
+                          <div v-if="item.stats" class="flex flex-wrap gap-1">
+                             <span v-for="(val, stat) in item.stats" :key="stat" v-show="val > 0 && stat !== 'duration' && stat !== 'multiplier'" class="text-[7px] font-black text-primary-500/80 uppercase">+{{ val }} {{ statLabels[stat] || stat }}</span>
+                          </div>
+                        </div>
+
+                        <button @click.stop="toggleEquip(item)"
+                                class="mt-3 w-full py-2 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all active:scale-95"
+                                :class="isEquipped(item) ? 'bg-blue-500 text-white' : 'bg-white/5 text-muted hover:bg-white/10 hover:text-primary-500 border border-white/10'">
+                           {{ isEquipped(item) ? i18n.t('btn_on') : i18n.t('btn_equip') }}
                         </button>
-                        <button 
-                          v-else-if="type !== 'bundle'"
-                          @click.stop="toggleEquip(item)"
-                          class="w-full py-2.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-1.5"
-                          :class="isEquipped(item) ? 'bg-blue-500 text-white shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'bg-surface text-foreground hover:bg-white/10 hover:text-primary-500 border border-white/10'"
-                        >
-                           <Check v-if="isEquipped(item)" class="w-3 h-3" />
-                           {{ isEquipped(item) ? i18n.t('btn_on') || 'EQUIPADO' : i18n.t('btn_equip') || 'EQUIPAR' }}
-                        </button>
-                      </div>
-                   </div>
+                     </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
+
 
     <!-- Chest Opening Modal Overlay -->
     <ChestOpening 
