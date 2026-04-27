@@ -1,5 +1,14 @@
 import fs from 'fs';
-const blogPosts = JSON.parse(fs.readFileSync('./frontend/src/blogPosts.json', 'utf8'));
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const blogPostsPath = path.resolve(__dirname, '../src/blogPosts.json');
+const sitemapOutputPath = path.resolve(__dirname, '../public/sitemap.xml');
+
+const blogPosts = JSON.parse(fs.readFileSync(blogPostsPath, 'utf8'));
 
 const BASE_URL = 'https://reppy-weld.vercel.app';
 const lastmod = new Date().toISOString();
@@ -52,7 +61,7 @@ const generateSitemap = () => {
   xml += `</urlset>`;
 
   try {
-    fs.writeFileSync('./frontend/public/sitemap.xml', xml);
+    fs.writeFileSync(sitemapOutputPath, xml);
     console.log('🚀 [SEO] Sitemap generated successfully with i18n support in public/sitemap.xml');
   } catch (err) {
     console.error('❌ [SEO] Failed to generate sitemap:', err.message);
