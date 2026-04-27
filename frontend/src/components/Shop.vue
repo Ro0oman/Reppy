@@ -16,7 +16,7 @@
           <Coins class="w-5 h-5 text-primary-500" />
         </div>
         <div class="flex flex-col">
-          <span class="text-3xl font-black text-precision text-foreground tracking-tighter leading-none">{{ authStore.user?.reppy_coins || 0 }}</span>
+          <span data-testid="reppy-coins" class="text-3xl font-black text-precision text-foreground tracking-tighter leading-none">{{ authStore.user?.reppy_coins || 0 }}</span>
           <span class="text-[8px] uppercase tracking-[0.3em] text-primary-500/70 font-black mt-1">{{ i18n.t('shop_reppy_coins') }}</span>
         </div>
       </div>

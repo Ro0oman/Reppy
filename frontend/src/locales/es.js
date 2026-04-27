@@ -1098,4 +1098,13 @@ export default {
     ui_acquired: 'Adquirido',
     ui_locked: 'Bloqueado',
     ui_upcoming_chronicles: 'Crónicas en Camino',
+    inv_vault_legendary: 'Bóveda Legendaria',
+    inv_vault_evolution: 'Módulo de Evolución',
+    inv_vault_decrypted: 'Cofre Desencriptado',
+    shop_armory_title: 'Armería Goggins',
+    shop_armory_subtitle: 'Equipamiento táctico y de alto rendimiento',
+    shop_reppy_coins: 'Reppy Coins',
+    shop_bundles_title: 'Packs Tácticos',
+    shop_bundles_subtitle: 'Módulos de rendimiento consolidados',
+    shop_permanent_protocol: 'Protocolos Permanentes',
 };

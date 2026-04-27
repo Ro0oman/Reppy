@@ -1059,4 +1059,10 @@ export default {
     rarity_special: 'Special',
     rarity_legendary: 'Legendary',
     rarity_calisthenic: 'Calisthenic',
+    shop_armory_title: 'Goggins Armory',
+    shop_armory_subtitle: 'Elite performance and tactical equipment',
+    shop_reppy_coins: 'Reppy Coins',
+    shop_bundles_title: 'Tactical Bundles',
+    shop_bundles_subtitle: 'Consolidated performance modules',
+    shop_permanent_protocol: 'Permanent Protocols',
 };

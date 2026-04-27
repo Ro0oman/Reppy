@@ -81,4 +81,18 @@ router.post('/set-stats', authenticate, async (req, res) => {
   }
 });
 
+// Give chests to a user
+router.post('/add-chests', authenticate, async (req, res) => {
+  const { boss = 0, level = 0 } = req.body;
+  try {
+    await query(
+      'UPDATE users SET boss_chests = boss_chests + $1, level_chests = level_chests + $2 WHERE id = $3',
+      [boss, level, req.user.id]
+    );
+    res.json({ message: `Added ${boss} boss chests and ${level} level chests` });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;

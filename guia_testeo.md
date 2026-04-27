@@ -1,6 +1,6 @@
 # Guía de Testeo - Reppy
 
-Esta guía te explica cómo ejecutar los tests automatizados que hemos configurado y cómo realizar pruebas manuales seguras.
+Esta guía te explica cómo ejecutar los tests automatizados que hemos configurado y cómo realizar pruebas manuales seguras. Para una lista detallada de qué probar antes de un despliegue, consulta la [Checklist de Major Deployment](MAJOR_DEPLOYMENT_CHECKLIST.md).
 
 ## 1. Tests Automatizados (Playwright)
 
@@ -63,6 +63,15 @@ fetch('/api/test/add-item', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
   body: JSON.stringify({ itemName: 'Espada de Dragón' })
+});
+```
+
+### Darte Cofres:
+```javascript
+fetch('/api/test/add-chests', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+  body: JSON.stringify({ boss: 1, level: 1 })
 });
 ```
 
