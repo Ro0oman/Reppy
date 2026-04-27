@@ -105,13 +105,24 @@ router.patch('/profile', authenticate, async (req, res) => {
 
 // Update avatar (specifically) - Supporting both PATCH and POST
 const updateAvatar = async (req, res) => {
-  const { avatar_url } = req.body;
+  const { avatar_url, is_custom } = req.body;
   
-  // Only allow valid avatar paths
-  const validAvatars = [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 14, 16, 17, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40].map(i => `/img/avatars/avatar_${i}.webp`);
-  
-  if (!validAvatars.includes(avatar_url)) {
-    return res.status(400).json({ message: 'Invalid avatar selection' });
+  if (is_custom) {
+    // Basic safety check for base64 images
+    if (!avatar_url.startsWith('data:image/')) {
+      return res.status(400).json({ message: 'Invalid custom avatar format' });
+    }
+    // Limit size of base64 string to ~100KB (just in case)
+    if (avatar_url.length > 150000) { 
+      return res.status(400).json({ message: 'Avatar too large even after compression' });
+    }
+  } else {
+    // Only allow valid avatar paths
+    const validAvatars = [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 14, 16, 17, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40].map(i => `/img/avatars/avatar_${i}.webp`);
+    
+    if (!validAvatars.includes(avatar_url)) {
+      return res.status(400).json({ message: 'Invalid avatar selection' });
+    }
   }
 
   try {

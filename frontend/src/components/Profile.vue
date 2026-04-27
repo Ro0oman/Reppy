@@ -310,6 +310,17 @@
                 </button>
              </div>
 
+             <div class="flex flex-col items-center gap-6 p-8 border-2 border-dashed border-white/10 rounded-[2.5rem] bg-surface/5 hover:bg-surface/10 hover:border-primary-500/30 transition-all cursor-pointer group/upload" @click="$refs.fileInput.click()">
+                <div class="w-16 h-16 bg-primary-500/20 rounded-2xl flex items-center justify-center group-hover/upload:scale-110 transition-transform">
+                   <Camera class="w-8 h-8 text-primary-500" />
+                </div>
+                <div class="text-center">
+                   <p class="text-xs font-black text-foreground uppercase tracking-widest">{{ i18nStore.t('ui_upload_custom') || 'SUBIR AVATAR PERSONALIZADO' }}</p>
+                   <p class="text-[9px] font-bold text-muted uppercase tracking-widest mt-1 opacity-60">{{ i18nStore.t('ui_compressed_info') || 'Se comprimirá automáticamente para optimizar carga' }}</p>
+                </div>
+                <input type="file" ref="fileInput" hidden accept="image/*" @change="handleCustomAvatar" />
+             </div>
+
              <div class="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
                 <div v-for="i in [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 14, 16, 17, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]" :key="i" 
                      @click="selectAvatar(`/img/avatars/avatar_${i}.webp`)"
@@ -369,6 +380,58 @@ const showSettingsModal = ref(false);
 const showAvatarSelector = ref(false);
 const challengingUser = ref(null);
 const comparingUser = ref(null);
+const fileInput = ref(null);
+
+const handleCustomAvatar = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const img = new Image();
+    img.onload = async () => {
+      const canvas = document.createElement('canvas');
+      const MAX_SIZE = 256;
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > MAX_SIZE) {
+          height *= MAX_SIZE / width;
+          width = MAX_SIZE;
+        }
+      } else {
+        if (height > MAX_SIZE) {
+          width *= MAX_SIZE / height;
+          height = MAX_SIZE;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const compressedBase64 = canvas.toDataURL('image/webp', 0.8);
+
+      try {
+        const res = await axios.post('/api/users/avatar', { 
+          avatar_url: compressedBase64,
+          is_custom: true 
+        });
+        const finalUrl = res.data.avatar_url;
+        user.value.avatar_url = finalUrl;
+        authStore.user.avatar_url = finalUrl;
+        notificationStore.notify(i18nStore.t('profile_updated'), 'success');
+        showAvatarSelector.value = false;
+      } catch (err) {
+        notificationStore.notify('Error uploading avatar', 'error');
+      }
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+};
 
 // Pagination State
 const transactionsPage = ref(1);
