@@ -9,12 +9,14 @@
            authStore.isAuthenticated ? 'hover:border-primary-500/20' : 'cursor-default',
            boss.is_legendary 
              ? 'border-amber-500/30 shadow-[0_0_80px_rgba(245,158,11,0.1)] hover:shadow-[0_0_100px_rgba(245,158,11,0.2)]' 
-             : 'border-white/5 shadow-[0_0_80px_rgba(236,72,153,0.05)] hover:shadow-[0_0_100px_rgba(236,72,153,0.1)]'
+             : (boss.is_epic 
+               ? 'border-purple-500/30 shadow-[0_0_80px_rgba(168,85,247,0.1)] hover:shadow-[0_0_100px_rgba(168,85,247,0.2)]'
+               : 'border-white/5 shadow-[0_0_80px_rgba(236,72,153,0.05)] hover:shadow-[0_0_100px_rgba(236,72,153,0.1)]')
          ]">
       
       <!-- Ambient Background Glow -->
       <div class="absolute inset-0 pointer-events-none opacity-20 bg-gradient-to-br via-transparent to-transparent group-hover:opacity-40 transition-opacity duration-700"
-           :class="boss.is_legendary ? 'from-amber-500/20' : 'from-primary-500/20'"></div>
+           :class="boss.is_legendary ? 'from-amber-500/20' : (boss.is_epic ? 'from-purple-500/20' : 'from-primary-500/20')"></div>
       
       <!-- History Icon Hint (Authenticated only) -->
       <div v-if="authStore.isAuthenticated" class="absolute top-6 right-6 text-white/20 group-hover:text-primary-500 transition-colors z-20" :title="i18nStore.t('battle_history')">
@@ -26,8 +28,8 @@
         <!-- Top Status & Actions -->
         <div class="flex flex-wrap items-center gap-2 mb-5">
             <span class="px-3 py-1 rounded-full text-[8px] md:text-[9px] font-black tracking-[0.3em] uppercase backdrop-blur-sm border"
-                  :class="boss.is_legendary ? 'bg-amber-500/20 border-amber-500/30 text-amber-400' : 'bg-primary-500/10 border-primary-500/20 text-primary-500'">
-              {{ boss.is_legendary ? i18nStore.t('ui_protocol_legendary') : i18nStore.t('boss_class_active') }}
+                  :class="boss.is_legendary ? 'bg-amber-500/20 border-amber-500/30 text-amber-400' : (boss.is_epic ? 'bg-purple-500/20 border-purple-500/30 text-purple-400' : 'bg-primary-500/10 border-primary-500/20 text-primary-500')">
+              {{ boss.is_legendary ? i18nStore.t('ui_protocol_legendary') : (boss.is_epic ? i18nStore.t('ui_protocol_epic') : i18nStore.t('boss_class_active')) }}
             </span>
            <button @click.stop="showCodex = true" class="px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 text-[8px] md:text-[9px] font-black tracking-[0.3em] uppercase hover:bg-orange-500/20 hover:border-orange-500/40 transition-all backdrop-blur-sm flex items-center gap-1.5">
               <span>📖</span> {{ i18nStore.t('boss_how_damage') }}
@@ -47,7 +49,7 @@
            <!-- Portrait -->
             <div class="relative shrink-0 group/img">
               <div class="absolute inset-0 blur-[40px] rounded-full opacity-60 group-hover/img:opacity-100 transition-opacity duration-700"
-                   :class="boss.is_legendary ? 'bg-amber-500/30' : 'bg-primary-500/30'"></div>
+                   :class="boss.is_legendary ? 'bg-amber-500/30' : (boss.is_epic ? 'bg-purple-500/30' : 'bg-primary-500/30')"></div>
               <div class="w-24 h-24 md:w-32 md:h-32 rounded-[2rem] border border-white/10 bg-black/40 shadow-2xl overflow-hidden relative z-10">
                  <img v-if="boss.image_url" :src="boss.image_url" :alt="boss.name" class="w-full h-full object-cover transition-all duration-700" :class="isDefeated ? 'grayscale opacity-30 mix-blend-luminosity' : 'group-hover/img:scale-105 saturate-150'" />
                  <span v-else class="text-6xl font-black italic text-white/20 absolute inset-0 flex items-center justify-center">?</span>
@@ -60,7 +62,7 @@
                  {{ boss.name }}
               </h3>
               <p v-if="boss.active_phrase && !isDefeated" class="font-medium italic text-xs md:text-sm pl-3 border-l-2"
-                 :class="boss.is_legendary ? 'text-amber-500 border-amber-500' : 'text-primary-500 border-primary-500'">
+                 :class="boss.is_legendary ? 'text-amber-500 border-amber-500' : (boss.is_epic ? 'text-purple-500 border-purple-500' : 'text-primary-500 border-primary-500')">
                 "{{ boss.active_phrase }}"
               </p>
               <div v-if="isDefeated" class="inline-block mt-4">
@@ -78,7 +80,7 @@
               <div class="text-right">
                   <span class="text-2xl md:text-3xl font-black text-white leading-none tracking-tighter shadow-black drop-shadow-md">{{ formatNumber(boss.current_hp) }}</span>
                   <span class="text-[10px] md:text-xs font-black ml-2 tracking-widest"
-                        :class="boss.is_legendary ? 'text-amber-500/70' : 'text-primary-500/70'">/ {{ formatNumber(boss.total_hp) }} HP</span>
+                        :class="boss.is_legendary ? 'text-amber-500/70' : (boss.is_epic ? 'text-purple-500/70' : 'text-primary-500/70')">/ {{ formatNumber(boss.total_hp) }} HP</span>
               </div>
            </div>
            
@@ -86,24 +88,54 @@
               <!-- Glow -->
               <div class="absolute inset-0 blur-[20px] transition-all duration-1000" 
                    :style="{ width: `${hpPercentage}%` }"
-                   :class="boss.is_legendary ? 'bg-amber-500/30' : 'bg-primary-500/30'"></div>
+                   :class="boss.is_legendary ? 'bg-amber-500/30' : (boss.is_epic ? 'bg-purple-500/30' : 'bg-primary-500/30')"></div>
               
               <!-- Actual Bar -->
               <div class="h-full rounded-full relative overflow-hidden transition-all duration-1000 ease-out" 
                    :style="{ width: `${hpPercentage}%` }"
                    :class="[
                      hpPercentage === 0 ? 'opacity-0' : 'opacity-100',
-                     boss.is_legendary ? 'bg-gradient-to-r from-amber-600 via-amber-400 to-yellow-200' : 'bg-gradient-to-r from-primary-600 via-primary-500 to-amber-400'
+                     boss.is_legendary ? 'bg-gradient-to-r from-amber-600 via-amber-400 to-yellow-200' : 
+                     (boss.is_epic ? 'bg-gradient-to-r from-purple-600 via-purple-500 to-pink-400' : 'bg-gradient-to-r from-primary-600 via-primary-500 to-amber-400')
                    ]">
                  <!-- Shimmer Effect -->
                  <div class="absolute inset-0 w-[200%] animate-shimmer bg-[linear-gradient(90deg,transparent_25%,rgba(255,255,255,0.4)_50%,transparent_75%)]"></div>
               </div>
               
               <!-- Placeholder if empty -->
+              <!-- Placeholder if empty -->
               <div v-if="hpPercentage === 0" class="absolute inset-0 flex items-center justify-center pointer-events-none">
                  <span class="text-[8px] md:text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">{{ i18nStore.t('boss_neutralized') }}</span>
               </div>
            </div>
+        </div>
+
+        <!-- Epic Rewards Preview -->
+        <div v-if="boss.is_epic && !isDefeated" class="mb-6 animate-in slide-in-from-top-4 duration-1000">
+          <div class="p-4 rounded-2xl bg-purple-500/5 border border-purple-500/10 flex flex-col md:flex-row gap-4 items-center">
+            <div class="shrink-0 relative group">
+              <div class="absolute inset-0 bg-purple-500/20 blur-xl rounded-full animate-pulse"></div>
+              <span class="text-4xl md:text-5xl relative z-10 drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]">🎁</span>
+            </div>
+            <div class="flex-1 text-center md:text-left">
+              <h4 class="text-[10px] font-black text-purple-500 uppercase tracking-[0.2em] mb-1">{{ i18nStore.t('ui_epic_rewards') }}</h4>
+              <p class="text-sm font-bold text-white tracking-tight uppercase italic leading-tight">{{ i18nStore.t('ui_super_chest') }}: {{ i18nStore.t('ui_guaranteed') }} (x1 {{ i18nStore.t('rarity_special') }})</p>
+            </div>
+            <div class="flex gap-2 flex-wrap justify-center">
+              <div class="px-2 py-1 rounded-lg bg-black/40 border border-white/5 flex flex-col items-center min-w-[50px]">
+                <span class="text-[7px] font-black text-white/40 uppercase tracking-tighter">{{ i18nStore.t('ui_legendary') }}</span>
+                <span class="text-[10px] font-black text-purple-400 italic">5%</span>
+              </div>
+              <div class="px-2 py-1 rounded-lg bg-black/40 border border-white/5 flex flex-col items-center min-w-[50px]">
+                <span class="text-[7px] font-black text-white/40 uppercase tracking-tighter">{{ i18nStore.t('ui_epic') }}</span>
+                <span class="text-[10px] font-black text-purple-400 italic">25%</span>
+              </div>
+              <div class="px-2 py-1 rounded-lg bg-black/40 border border-white/5 flex flex-col items-center min-w-[50px]">
+                <span class="text-[7px] font-black text-white/40 uppercase tracking-tighter">{{ i18nStore.t('ui_rare') }}</span>
+                <span class="text-[10px] font-black text-purple-400 italic">35%</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Legendary Rewards Preview -->
@@ -187,10 +219,8 @@
             <template v-if="chestsClaimed < 1">
                <button @click.stop="claim" :disabled="claiming" 
                 class="w-full md:w-auto px-10 py-4 font-black uppercase tracking-[0.2em] rounded-2xl transition-all flex items-center justify-center gap-3 text-sm md:text-base border shadow-lg"
-                :class="boss.is_legendary 
-                  ? 'bg-amber-500 hover:bg-amber-400 text-black border-amber-400 shadow-amber-500/30' 
-                  : 'bg-emerald-500 hover:bg-emerald-400 text-black border-emerald-400 shadow-emerald-500/30'">
-                 <span class="text-xl">🎁</span> {{ boss.is_legendary ? i18nStore.t('ui_claim_legendary') : i18nStore.t('boss_claim_loot') }}
+                :class="boss.is_legendary ? 'bg-amber-500 hover:bg-amber-400 text-black border-amber-400 shadow-amber-500/30' : (boss.is_epic ? 'bg-purple-500 hover:bg-purple-400 text-black border-purple-400 shadow-purple-500/30' : 'bg-emerald-500 hover:bg-emerald-400 text-black border-emerald-400 shadow-emerald-500/30')">
+                 <span class="text-xl">🎁</span> {{ boss.is_legendary ? i18nStore.t('ui_claim_legendary') : (boss.is_epic ? i18nStore.t('ui_claim_epic') : i18nStore.t('boss_claim_loot')) }}
                </button>
             </template>
             <div v-else class="w-full md:w-auto flex items-center justify-center gap-3 text-white/30 font-black uppercase text-[10px] tracking-[0.2em] px-8 py-4 bg-black/40 rounded-2xl border border-white/5">

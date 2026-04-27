@@ -142,6 +142,14 @@
               </div>
               <Sparkles class="w-4 h-4 text-amber-500 animate-pulse" />
             </div>
+            <div v-if="authStore.user?.epic_chests > 0" @click="handleOpenEpicChest"
+                 class="flex items-center justify-between p-4 rounded-2xl bg-purple-500/10 border border-purple-500/20 group cursor-pointer hover:bg-purple-500/20 transition-all">
+              <div class="flex items-center gap-3">
+                <Archive class="w-5 h-5 text-purple-500" />
+                <span class="text-[10px] font-black text-purple-400 uppercase tracking-widest">{{ authStore.user.epic_chests }} {{ i18n.t('inv_vault_epic') }}</span>
+              </div>
+              <Sparkles class="w-4 h-4 text-purple-500 animate-pulse" />
+            </div>
             <div v-if="authStore.user?.level_chests > 0" @click="handleOpenLevelChest"
                  class="flex items-center justify-between p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 group cursor-pointer hover:bg-cyan-500/20 transition-all">
               <div class="flex items-center gap-3">
@@ -895,6 +903,21 @@ const handleOpenLegendaryChest = async () => {
     showChestModal.value = true;
   } catch (error) {
     notificationStore.notify(error.response?.data?.message || 'Error al abrir cofre legendario', 'error');
+  } finally {
+    openingChest.value = false;
+  }
+};
+
+const handleOpenEpicChest = async () => {
+  if (openingChest.value || authStore.user.epic_chests <= 0) return;
+  openingChest.value = true;
+  try {
+    const res = await axios.post('/api/boss/open-epic-chest');
+    chestReward.value = res.data;
+    reelItems.value = res.data.reel_items;
+    showChestModal.value = true;
+  } catch (error) {
+    notificationStore.notify(error.response?.data?.message || 'Error al abrir cofre épico', 'error');
   } finally {
     openingChest.value = false;
   }

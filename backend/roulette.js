@@ -50,16 +50,17 @@ router.post('/spin', authenticate, async (req, res) => {
     }
 
     // 2. Define Prizes with Weights
-    // Total weights = 100
     const prizes = [
       { id: 0, value: 200, weight: 25, type: 'coins' },
-      { id: 1, value: 500, weight: 18, type: 'coins' },
-      { id: 2, value: 800, weight: 15, type: 'coins' },
-      { id: 3, value: 1000, weight: 12, type: 'coins' },
-      { id: 4, value: 1500, weight: 10, type: 'coins' },
-      { id: 5, value: 2500, weight: 5, type: 'coins' },
-      { id: 6, rarity: 'common', weight: 10, type: 'consumable', label: 'Poción de Fuerza (x1.5)' },
-      { id: 7, type: 'chest', weight: 5, label: 'Cofre de Nivel' }
+      { id: 1, value: 400, weight: 18, type: 'coins' },
+      { id: 2, value: 600, weight: 15, type: 'coins' },
+      { id: 3, value: 800, weight: 12, type: 'coins' },
+      { id: 4, value: 1000, weight: 10, type: 'coins' },
+      { id: 5, value: 2000, weight: 5, type: 'coins' },
+      { id: 6, rarity: 'common', weight: 8, type: 'consumable', label: 'Poción de Fuerza (x1.5)' },
+      { id: 7, type: 'chest', rarity: 'level', weight: 4, label: 'Cofre de Nivel' },
+      { id: 8, type: 'chest', rarity: 'boss', weight: 2, label: 'Cofre de Boss' },
+      { id: 9, type: 'chest', rarity: 'epic', weight: 1, label: 'Cofre Épico' }
     ];
 
     // Pick a prize
@@ -87,7 +88,13 @@ router.post('/spin', authenticate, async (req, res) => {
       await query('UPDATE users SET reppy_coins = reppy_coins + $1 WHERE id = $2', [selectedPrize.value, userId]);
 
     } else if (selectedPrize.type === 'chest') {
-      await query('UPDATE users SET level_chests = level_chests + 1 WHERE id = $1', [userId]);
+      if (selectedPrize.rarity === 'level') {
+        await query('UPDATE users SET level_chests = level_chests + 1 WHERE id = $1', [userId]);
+      } else if (selectedPrize.rarity === 'boss') {
+        await query('UPDATE users SET boss_chests = boss_chests + 1 WHERE id = $1', [userId]);
+      } else if (selectedPrize.rarity === 'epic') {
+        await query('UPDATE users SET epic_chests = epic_chests + 1 WHERE id = $1', [userId]);
+      }
     } else if (selectedPrize.type === 'consumable') {
       // Find the specific item ID
       // Find a common consumable as a prize

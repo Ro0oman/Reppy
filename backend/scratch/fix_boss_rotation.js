@@ -9,10 +9,13 @@ async function run() {
     console.log(`Found ${bosses.length} bosses.`);
     
     for (let i = 0; i < bosses.length; i++) {
-      // 1 in every 3 (3rd, 6th, 9th...)
-      const isLegendary = (i + 1) % 3 === 0;
-      await query('UPDATE boss_fights SET is_legendary = $1 WHERE id = $2', [isLegendary, bosses[i].id]);
-      console.log(`Boss ${bosses[i].name} (ID: ${bosses[i].id}) set to is_legendary: ${isLegendary}`);
+      const position = (i % 3) + 1;
+      const isLegendary = position === 3;
+      const isEpic = position === 2;
+      
+      await query('UPDATE boss_fights SET is_legendary = $1, is_epic = $2 WHERE id = $3', 
+        [isLegendary, isEpic, bosses[i].id]);
+      console.log(`Boss ${bosses[i].name} set to: ${isLegendary ? 'LEGENDARY' : (isEpic ? 'EPIC' : 'NORMAL')}`);
     }
     
     console.log('Update complete.');

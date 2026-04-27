@@ -8,14 +8,17 @@ async function run() {
     console.log('Result:', result);
     
     // Optional: If you want to force proportionality for the active boss
-    // because syncBossHealth only updates templates or unattacked bosses.
-    const activeBossRes = await query("SELECT id, current_hp, total_hp FROM boss_fights WHERE status = 'active' LIMIT 1");
+    const activeBossRes = await query("SELECT id, current_hp, total_hp, is_legendary, is_epic FROM boss_fights WHERE status = 'active' LIMIT 1");
     if (activeBossRes.rows.length > 0) {
       const boss = activeBossRes.rows[0];
       console.log(`Current active boss: ${boss.total_hp} HP total, ${boss.current_hp} HP current.`);
       
-      console.log(`Resetting active boss to ${result.newTotalHp} HP (Full Health)...`);
-      await query("UPDATE boss_fights SET total_hp = $1, current_hp = $1 WHERE id = $2", [result.newTotalHp, boss.id]);
+      let scaledHp = result.newTotalHp;
+      if (boss.is_legendary) scaledHp *= 8;
+      else if (boss.is_epic) scaledHp *= 3;
+
+      console.log(`Resetting active boss to ${scaledHp} HP (Full Health)...`);
+      await query("UPDATE boss_fights SET total_hp = $1, current_hp = $1 WHERE id = $2", [scaledHp, boss.id]);
       console.log('Active boss reset to full health with new scale.');
     }
     

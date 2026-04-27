@@ -5,17 +5,32 @@
       <div v-if="clashMode" class="relative w-full max-w-4xl flex flex-col items-center justify-center min-h-[100dvh]">
         
         <!-- 1. Closed Chest View -->
-        <div v-if="currentRevealIndex === -1" class="flex flex-col items-center gap-8 animate-bounce-slow cursor-pointer group">
+        <div v-if="currentRevealIndex === -1" class="flex flex-col items-center gap-8 animate-bounce-slow cursor-pointer group"
+             :class="isShaking ? 'animate-shake-gentle' : ''">
             <div class="relative">
+               <!-- Basic Ambient Glow -->
                <div class="absolute -inset-20 blur-[100px] rounded-full animate-pulse group-hover:bg-opacity-40 transition-all"
-                    :class="isLegendaryChest ? 'bg-amber-500/20' : 'bg-primary-500/20'"></div>
-               <Archive class="w-40 h-40 md:w-64 md:h-64 relative z-10" 
-                        :class="isLegendaryChest ? 'text-amber-500 drop-shadow-[0_0_50px_rgba(245,158,11,0.4)]' : 'text-primary-500 drop-shadow-[0_0_50px_rgba(255,69,0,0.4)]'" />
+                    :class="isLegendaryChest ? 'bg-amber-500/20' : (isEpicChest ? 'bg-purple-500/20' : 'bg-primary-500/20')"></div>
+               
+               <!-- EXTRA LEGENDARY GLOW LAYERS -->
+               <template v-if="isLegendaryChest">
+                  <div class="absolute -inset-40 blur-[150px] rounded-full animate-legendary-pulse bg-amber-400/10 pointer-events-none"></div>
+                  <div class="absolute -inset-10 blur-[50px] rounded-full animate-pulse bg-white/5 pointer-events-none"></div>
+               </template>
+
+               <Archive class="w-40 h-40 md:w-64 md:h-64 relative z-10 transition-all" 
+                        :class="[
+                          isLegendaryChest ? 'text-amber-500 drop-shadow-[0_0_80px_rgba(245,158,11,0.6)]' : 
+                          (isEpicChest ? 'text-purple-500 drop-shadow-[0_0_50px_rgba(168,85,247,0.4)]' : 
+                          'text-primary-500 drop-shadow-[0_0_50px_rgba(255,69,0,0.4)]'),
+                          clickedFlash ? 'scale-110' : ''
+                        ]" />
                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-white/5 blur-3xl rounded-full scale-150 -z-10"></div>
             </div>
             <div class="text-center z-10">
-               <h3 class="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter italic mb-4">
-                 {{ isLegendaryChest ? 'VAULT LEGENDARIO' : 'COFRE DEL BOSS' }}
+               <h3 class="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter italic mb-4"
+                   :class="isLegendaryChest ? 'text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-amber-500 to-amber-700 drop-shadow-[0_0_20px_rgba(245,158,11,0.3)]' : ''">
+                 {{ isLegendaryChest ? 'VAULT LEGENDARIO' : (isEpicChest ? 'BÓVEDA ÉPICA' : 'COFRE DEL BOSS') }}
                </h3>
               <div class="inline-flex items-center gap-3 px-6 py-2 bg-white/5 border border-white/10 rounded-full backdrop-blur-md">
                  <Zap class="w-4 h-4 text-primary-500 animate-pulse" />
@@ -25,8 +40,21 @@
         </div>
 
         <!-- 2. Reward Reveal Sequence -->
-        <div v-else-if="currentRevealIndex < reward.rewards.length" class="flex flex-col items-center gap-12 w-full px-8 animate-reveal cursor-pointer" :key="currentRevealIndex">
-           <div class="relative p-8 md:p-16 rounded-[3rem] bg-white/[0.02] border border-white/10 shadow-2xl flex flex-col items-center w-full max-w-lg backdrop-blur-2xl">
+        <div v-else-if="currentRevealIndex < reward.rewards.length" 
+             class="flex flex-col items-center gap-12 w-full px-8 cursor-pointer" 
+             :class="isLegendaryReward ? 'animate-legendary-reveal' : 'animate-reveal'"
+             :key="currentRevealIndex">
+           <div class="relative p-8 md:p-16 rounded-[3rem] bg-white/[0.02] border border-white/10 shadow-2xl flex flex-col items-center w-full max-w-lg backdrop-blur-2xl"
+                :class="isLegendaryReward ? 'border-amber-500/30 shadow-[0_0_100px_rgba(245,158,11,0.1)]' : ''">
+              
+              <!-- Legendary Special Effect Background -->
+              <template v-if="isLegendaryReward">
+                 <div class="absolute inset-0 overflow-hidden rounded-[3rem] pointer-events-none">
+                    <div class="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-amber-500/5"></div>
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-40 bg-amber-400/5 blur-[80px] -rotate-45 animate-pulse"></div>
+                 </div>
+              </template>
+
               <!-- Rarity Glow Background -->
               <div class="absolute inset-0 blur-[120px] opacity-20 rounded-full" :class="getRarityGlow(activeReward)"></div>
 
@@ -39,14 +67,15 @@
 
               <!-- Reward Icon -->
               <div class="relative z-10 mb-12 transform scale-150 hover:scale-[1.6] transition-transform duration-500">
+                 <div v-if="isLegendaryReward" class="absolute inset-0 bg-amber-400 blur-[60px] rounded-full legendary-flare opacity-50"></div>
                  <div v-if="activeReward.type === 'coins'" class="p-6 bg-yellow-500/10 rounded-3xl border border-yellow-500/20 shadow-[0_0_40px_rgba(234,179,8,0.2)]">
                     <Coins class="w-20 h-20 text-yellow-400" />
                  </div>
                  <div v-else class="relative w-32 h-32 flex items-center justify-center">
-                    <BackgroundEffect v-if="activeReward.data.type === 'background' || activeReward.data.type === 'post_background'" 
+                    <BackgroundEffect v-if="activeReward.data.type === 'background' || activeReward.data.type === 'post_background' || activeReward.data.type === 'avatar'" 
                                      :background-css="activeReward.data.css_value" is-preview class="rounded-2xl shadow-2xl" />
                     <div v-else class="w-full h-full flex items-center justify-center bg-primary-500/10 border border-primary-500/20 rounded-3xl">
-                       <Sparkles class="w-16 h-16 text-primary-500" />
+                       <ItemIcon :name="activeReward.data.svg_key" :type="activeReward.data.type" className="w-16 h-16 text-primary-500" />
                     </div>
                  </div>
               </div>
@@ -84,7 +113,7 @@
                    class="p-6 rounded-3xl bg-white/[0.03] border border-white/10 flex items-center gap-6 group hover:bg-white/10 transition-all hover:-translate-y-1">
                  <div class="w-16 h-16 rounded-2xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center">
                     <Coins v-if="r.type === 'coins'" class="w-8 h-8 text-yellow-400" />
-                    <Sparkles v-else class="w-8 h-8 text-primary-500" />
+                    <ItemIcon v-else :name="r.data.svg_key" :type="r.data.type" className="w-8 h-8 text-primary-500" />
                  </div>
                  <div class="text-left">
                     <p class="text-sm font-black text-white uppercase italic leading-none mb-2">
@@ -140,10 +169,12 @@
               <div class="w-16 h-16 md:w-24 md:h-24 mb-3 md:mb-4 relative flex items-center justify-center overflow-hidden rounded-2xl">
                  <div v-if="item.type === 'title'" class="text-xl md:text-3xl font-black text-white/10 italic font-industrial select-none">CODE</div>
                  <div v-else-if="item.type === 'border'" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-[4px] md:border-[6px] border-white/10"></div>
-                 <BackgroundEffect v-else-if="item.type === 'background'" :background-css="item.css_value" is-preview class="scale-50 rounded-xl" />
+                 <BackgroundEffect v-else-if="item.type === 'background' || item.type === 'post_background' || item.type === 'avatar'" 
+                                  :background-css="item.css_value" is-preview class="scale-50 rounded-xl" />
                  <div v-else-if="item.type === 'coins'" class="p-3 md:p-4 bg-primary-500/10 rounded-2xl">
                     <Coins class="w-8 h-8 md:w-10 md:h-10 text-primary-500" />
                  </div>
+                 <ItemIcon v-else :name="item.svg_key" :type="item.type" className="w-12 h-12 md:w-16 md:h-16 text-white" />
                  <div v-if="item.is_seasonal" class="absolute inset-0 bg-primary-500/5 animate-pulse"></div>
               </div>
               <span class="text-[8px] md:text-[10px] font-black text-center text-white/50 truncate w-full px-2 uppercase tracking-widest font-tight">{{ item.name }}</span>
@@ -179,6 +210,7 @@
 import { ref, onMounted, nextTick, computed } from 'vue';
 import { X, Trophy, Sparkles, Zap, Coins, Archive } from 'lucide-vue-next';
 import BackgroundEffect from './BackgroundEffect.vue';
+import ItemIcon from './ItemIcon.vue';
 import confetti from 'canvas-confetti';
 import { useAudio } from '../composables/useAudio';
 
@@ -200,6 +232,19 @@ const isLegendaryChest = computed(() => {
   // If the rewards contain a guaranteed legendary at the start or are from the legendary endpoint
   return props.reward.rewards.some(r => r.message === 'LEGENDARIO GARANTIZADO' || r.message === 'Oro Legendario');
 });
+const isEpicChest = computed(() => {
+  if (!clashMode.value) return false;
+  return props.reward.rewards.some(r => r.message === 'EPICO GARANTIZADO' || r.message === 'Oro Épico');
+});
+
+const isLegendaryReward = computed(() => {
+  if (currentRevealIndex.value < 0 || currentRevealIndex.value >= props.reward.rewards.length) return false;
+  const r = props.reward.rewards[currentRevealIndex.value];
+  return r.type === 'item' && r.data.rarity?.toLowerCase() === 'legendary';
+});
+
+const clickedFlash = ref(false);
+const isShaking = ref(false);
 
 // Legacy Reel State
 const reelRef = ref(null);
@@ -229,6 +274,16 @@ const handleGlobalClick = () => {
 
 const revealNext = () => {
   if (currentRevealIndex.value < props.reward.rewards.length) {
+    // If we are at the chest view, add a flash effect
+    if (currentRevealIndex.value === -1) {
+      clickedFlash.value = true;
+      if (isLegendaryChest.value) isShaking.value = true;
+      setTimeout(() => {
+        clickedFlash.value = false;
+        isShaking.value = false;
+      }, 400);
+    }
+
     currentRevealIndex.value++;
     playClickBlip();
     
@@ -242,10 +297,10 @@ const revealNext = () => {
       if (['legendary', 'calistenico'].includes(r)) {
         playLevelUp();
         confetti({
-          particleCount: 150,
-          spread: 70,
+          particleCount: r === 'legendary' ? 250 : 150,
+          spread: r === 'legendary' ? 90 : 70,
           origin: { y: 0.6 },
-          colors: r === 'calistenico' ? ['#CCFF00', '#ffffff'] : ['#FF4500', '#ffffff']
+          colors: r === 'calistenico' ? ['#CCFF00', '#ffffff'] : ['#FF4500', '#FFA500', '#ffffff']
         });
       }
     }
@@ -364,6 +419,33 @@ const close = () => { emit('close'); };
   50% { transform: translateY(-30px); }
 }
 .animate-bounce-slow { animation: bounce-slow 3s ease-in-out infinite; }
+
+@keyframes legendary-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.5); opacity: 0.6; filter: blur(40px); }
+}
+.animate-legendary-pulse { animation: legendary-pulse 4s ease-in-out infinite; }
+
+@keyframes legendary-reveal {
+  0% { transform: scale(0.3) rotate(-20deg); opacity: 0; filter: brightness(5) blur(20px); }
+  60% { transform: scale(1.2) rotate(5deg); filter: brightness(1) blur(0px); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.animate-legendary-reveal { animation: legendary-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+@keyframes flare {
+  0% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(2); }
+  100% { opacity: 0; transform: scale(3); }
+}
+.legendary-flare { animation: flare 1s ease-out infinite; }
+
+@keyframes shake-gentle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(1deg); }
+  75% { transform: rotate(-1deg); }
+}
+.animate-shake-gentle { animation: shake-gentle 0.1s linear infinite; }
 
 .reward-card {
   box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.7);

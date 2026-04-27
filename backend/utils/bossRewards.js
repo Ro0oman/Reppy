@@ -21,20 +21,22 @@ export async function autoGrantPendingChests(userId) {
     if (pendingChestsRes.rows.length > 0) {
       const pendingBossIds = pendingChestsRes.rows.map(b => b.id);
       
-      // Separate normal and legendary chests
+      // Separate normal, epic and legendary chests
       const typesRes = await query(
-        `SELECT is_legendary, COUNT(*) as count 
+        `SELECT is_legendary, is_epic, COUNT(*) as count 
          FROM boss_fights 
          WHERE id = ANY($1) 
-         GROUP BY is_legendary`,
+         GROUP BY is_legendary, is_epic`,
         [pendingBossIds]
       );
       
       let normalCount = 0;
+      let epicCount = 0;
       let legendaryCount = 0;
       
       typesRes.rows.forEach(row => {
         if (row.is_legendary) legendaryCount = parseInt(row.count);
+        else if (row.is_epic) epicCount = parseInt(row.count);
         else normalCount = parseInt(row.count);
       });
 
@@ -43,6 +45,9 @@ export async function autoGrantPendingChests(userId) {
         // Increase user's chest count correctly
         if (normalCount > 0) {
           await query('UPDATE users SET boss_chests = boss_chests + $1 WHERE id = $2', [normalCount, userId]);
+        }
+        if (epicCount > 0) {
+          await query('UPDATE users SET epic_chests = epic_chests + $1 WHERE id = $2', [epicCount, userId]);
         }
         if (legendaryCount > 0) {
           await query('UPDATE users SET legendary_chests = legendary_chests + $1 WHERE id = $2', [legendaryCount, userId]);
@@ -57,7 +62,7 @@ export async function autoGrantPendingChests(userId) {
         
         await query('COMMIT');
 
-        const pendingCount = normalCount + legendaryCount;
+        const pendingCount = normalCount + epicCount + legendaryCount;
 
         // Trigger Notification
         await createNotification(

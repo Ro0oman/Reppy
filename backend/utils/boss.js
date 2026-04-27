@@ -20,15 +20,26 @@ export async function syncBossHealth() {
     
     console.log(`[BOSS_SYNC] Manual override: ${newTotalHp} HP.`);
 
-    // 2. Update ALL bosses total_hp
-    // We also update current_hp if the boss is currently at full health (meaning it hasn't been attacked yet)
+    // 2. Update bosses total_hp and current_hp with rarity-based scaling
+    // We apply scaling if the boss hasn't been defeated yet
     await query(`
       UPDATE boss_fights 
-      SET total_hp = $1,
+      SET total_hp = CASE 
+            WHEN is_legendary THEN $1 * 8 
+            WHEN is_epic THEN $1 * 3
+            ELSE $1 
+          END,
           current_hp = CASE 
-            WHEN current_hp >= total_hp THEN $1 
+            WHEN current_hp >= total_hp THEN (
+              CASE 
+                WHEN is_legendary THEN $1 * 8 
+                WHEN is_epic THEN $1 * 3
+                ELSE $1 
+              END
+            )
             ELSE current_hp 
           END
+      WHERE status != 'defeated'
     `, [newTotalHp]);
 
     console.log('[BOSS_SYNC] Successfully updated boss health templates.');
