@@ -95,4 +95,19 @@ router.post('/add-chests', authenticate, async (req, res) => {
   }
 });
 
+// Force complete active missions
+router.post('/complete-missions', authenticate, async (req, res) => {
+  try {
+    await query(`
+      UPDATE user_missions um
+      SET current_value = m.goal_value, is_completed = true
+      FROM missions m
+      WHERE um.mission_id = m.id AND um.user_id = $1 AND um.is_active = true
+    `, [req.user.id]);
+    res.json({ message: 'Active missions marked as completed' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;

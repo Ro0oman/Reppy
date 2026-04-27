@@ -21,7 +21,7 @@
         <div 
           v-for="mission in missions" 
           :key="mission.id"
-          class="group relative overflow-hidden bg-surface/40 border border-border rounded-[2rem] p-6 transition-all hover:border-primary-500/30 hover:bg-surface/60"
+          class="mission-card group relative overflow-hidden bg-surface/40 border border-border rounded-[2rem] p-6 transition-all hover:border-primary-500/30 hover:bg-surface/60"
           :class="{ 'opacity-60': mission.is_claimed }"
         >
           <!-- Background Glow -->
@@ -92,14 +92,14 @@
               >
                 <span v-if="claimingId === mission.id" class="flex items-center gap-2">
                   <Loader2 class="w-3 h-3 animate-spin" />
-                  CLAIMING...
+                  {{ i18n.t('missions_claiming') }}
                 </span>
-                <span v-else>{{ mission.is_completed ? 'CLAIM_REWARD' : 'IN_PROGRESS' }}</span>
+                <span v-else>{{ mission.is_completed ? i18n.t('missions_claim_btn') : i18n.t('missions_in_progress') }}</span>
               </button>
               
               <div v-else class="flex items-center gap-2 px-6 py-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
                 <CheckCircle2 class="w-4 h-4 text-emerald-500" />
-                <span class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">CLAIMED</span>
+                <span class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{{ i18n.t('missions_claimed') }}</span>
               </div>
             </div>
           </div>
@@ -132,7 +132,7 @@ const fetchMissions = async () => {
   } catch (err) {
     console.error('Error fetching missions:', err);
   } finally {
-    loading.ref = false;
+    loading.value = false;
   }
 };
 
@@ -167,11 +167,9 @@ const claimReward = async (mission) => {
   }
 };
 
-onMounted(() => {
-  fetchMissions();
-  // Fixing loading ref access
+onMounted(async () => {
   loading.value = true;
-  setTimeout(() => { loading.value = false; }, 800); // Visual flair
+  await fetchMissions();
 });
 </script>
 
