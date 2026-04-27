@@ -267,7 +267,7 @@
             </div>
 
             <!-- Preview Area (Tactical Display) -->
-            <div class="h-56 m-4 mt-2 mb-0 rounded-[2rem] relative overflow-hidden bg-black/40 border border-white/5 group-hover/bundle:border-white/10 transition-colors shadow-inner">
+            <div class="h-40 sm:h-56 m-3 sm:m-4 mt-2 mb-0 rounded-[1.5rem] sm:rounded-[2rem] relative overflow-hidden bg-black/40 border border-white/5 group-hover/bundle:border-white/10 transition-colors shadow-inner">
                <!-- Tactical Grid Background -->
                <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(white 1px, transparent 0); background-size: 20px 20px;"></div>
                
@@ -326,7 +326,7 @@
             </div>
 
             <!-- Content Area -->
-            <div class="p-6 flex-1 flex flex-col">
+            <div class="p-4 sm:p-6 flex-1 flex flex-col">
               <h3 class="text-xl font-black text-foreground tracking-tight group-hover/bundle:text-primary-500 transition-colors duration-300">
                 {{ item.name }}
               </h3>
@@ -450,7 +450,7 @@
               </div>
 
               <!-- Header Info -->
-              <div class="p-6 pb-0 flex items-start justify-between z-10 gap-2" @click="openItemDetails(item)">
+              <div class="p-4 sm:p-6 pb-0 flex items-start justify-between z-10 gap-2" @click="openItemDetails(item)">
                 <div class="flex flex-col gap-1.5 min-w-0">
                   <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-border text-muted bg-foreground/5 w-fit">
                     #{{ item.roadmap_position || '??' }}
@@ -474,7 +474,7 @@
 
               <!-- Preview Area (Dynamic Height for Bento) -->
               <div 
-                class="flex items-center justify-center m-6 mb-2 bg-surface/50 rounded-[2rem] border border-white/5 relative overflow-hidden group-hover/item:border-primary-500/30 transition-all duration-700 shadow-inner h-48"
+                class="flex items-center justify-center m-3 sm:m-6 mb-1 sm:mb-2 bg-surface/50 rounded-[1.5rem] sm:rounded-[2rem] border border-white/5 relative overflow-hidden group-hover/item:border-primary-500/30 transition-all duration-700 shadow-inner h-32 sm:h-48"
                 @click="openItemDetails(item)"
               >
                  <!-- Background Rarity Glow -->
@@ -499,14 +499,16 @@
                     </div>
                  </div>
 
-                 <div v-if="item.type === 'title'" class="text-xl text-center px-6 leading-tight font-black transition-transform group-hover/item:scale-110 duration-700" :class="item.css_value">
+                 <div v-if="item.type === 'title'" class="text-sm sm:text-xl text-center px-4 sm:px-6 leading-tight font-black transition-transform group-hover/item:scale-110 duration-700" :class="item.css_value">
                    {{ item.name }}
                  </div>
                  <div v-if="item.type === 'border'" class="transition-transform group-hover/item:scale-110 duration-700">
-                   <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :border-css="item.css_value" :size="96" />
+                   <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :border-css="item.css_value" :size="64" class="sm:hidden" />
+                   <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :border-css="item.css_value" :size="96" class="hidden sm:block" />
                  </div>
                  <div v-if="item.type === 'avatar'" class="transition-transform group-hover/item:scale-110 duration-700">
-                   <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :avatar-css="item.css_value" :size="96" />
+                   <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :avatar-css="item.css_value" :size="64" class="sm:hidden" />
+                   <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :avatar-css="item.css_value" :size="96" class="hidden sm:block" />
                  </div>
                  <div v-if="item.type === 'background'" class="w-full h-full relative group/bg overflow-hidden">
                     <BackgroundEffect :background-css="item.css_value" is-preview class="!absolute !inset-0 !w-full !h-full transition-transform duration-1000 group-hover/item:scale-125" />
@@ -514,9 +516,9 @@
                     <div class="absolute inset-0 opacity-10 pointer-events-none h-[200%] animate-scanline" style="background: linear-gradient(to bottom, transparent 50%, rgba(34, 211, 238, 0.5) 50.5%, transparent 51%); background-size: 100% 4px;"></div>
                  </div>
                  <div v-if="['head', 'weapon', 'armor', 'boots'].includes(item.type)" class="flex flex-col items-center gap-4">
-                     <div class="p-6 rounded-[2rem] bg-gradient-to-br border shadow-2xl transition-all duration-700 group-hover/item:scale-110 group-hover/item:rotate-3"
+                     <div class="p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] bg-gradient-to-br border shadow-2xl transition-all duration-700 group-hover/item:scale-110 group-hover/item:rotate-3"
                           :class="[getRarityBadge(item).classes, getRarityBadge(item).classes.includes('primary') ? 'from-primary-500/20 to-primary-500/5' : 'from-foreground/10 to-transparent']">
-                       <ItemIcon :name="item.svg_key" :type="item.type" class-name="w-14 h-14" :class="getRarityBadge(item).classes?.split(' ')[0]" />
+                       <ItemIcon :name="item.svg_key" :type="item.type" class-name="w-10 h-10 sm:w-14 h-14" :class="getRarityBadge(item).classes?.split(' ')[0]" />
                      </div>
                   </div>
                   <div v-if="item.type === 'consumable'" class="flex flex-col items-center gap-3">
@@ -541,9 +543,8 @@
               </div>
 
               <!-- Content Area -->
-              <div class="p-6 pt-4 flex-1" @click="openItemDetails(item)">
-                <h3 class="font-black text-industrial text-foreground mb-2 tracking-tight group-hover/item:text-primary-500 transition-colors"
-                    :class="item.rarity?.toLowerCase() === 'legendary' ? 'text-2xl' : 'text-base'">
+              <div class="p-3 sm:p-6 pt-2 sm:pt-4 flex-1" @click="openItemDetails(item)">
+                <h3 class="font-black text-industrial text-foreground mb-1 sm:mb-2 tracking-tight group-hover/item:text-primary-500 transition-colors text-xs sm:text-base">
                   {{ item.name }}
                 </h3>
                 
@@ -563,16 +564,16 @@
                 </div>
                 <p v-else class="text-[11px] text-muted font-bold line-clamp-2 mb-4 leading-relaxed opacity-60">{{ item.description }}</p>
                 
-                <div v-if="!item.is_unlocked" class="px-3 py-2 bg-red-500/5 border border-red-500/10 rounded-xl">
-                  <p class="text-[8px] font-black uppercase tracking-widest text-red-500/70 flex items-center gap-2">
-                    <Clock class="w-3 h-3" />
+                <div v-if="!item.is_unlocked" class="px-2 sm:px-3 py-1 sm:py-2 bg-red-500/5 border border-red-500/10 rounded-lg sm:rounded-xl">
+                  <p class="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-red-500/70 flex items-center gap-1 sm:gap-2">
+                    <Clock class="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                     {{ i18n.t('shop_decrypt_at') }}: {{ getCountdown(item) }}
                   </p>
                 </div>
               </div>
 
               <!-- Action Footer -->
-              <div class="p-4 mt-auto border-t border-white/5 bg-foreground/[0.02] flex items-center justify-between gap-2">
+              <div class="p-3 sm:p-4 mt-auto border-t border-white/5 bg-foreground/[0.02] flex items-center justify-between gap-2">
                 <div v-if="item.owned && item.type !== 'consumable'" class="flex items-center gap-1.5 text-neon-lime shrink-0">
                   <CheckCircle2 class="w-3.5 h-3.5" />
                   <span class="text-[9px] font-black uppercase tracking-widest">{{ i18n.t('btn_acquired') }}</span>
@@ -596,7 +597,7 @@
                     v-if="(!item.owned || item.type === 'consumable') && item.price > 0"
                     @click="buyItem(item)"
                     :disabled="!canAfford(item) || buying || !item.is_unlocked"
-                    class="px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap min-w-[80px]"
+                    class="px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap min-w-[80px]"
                     :class="!canAfford(item) || buying || !item.is_unlocked 
                       ? 'bg-foreground/5 text-muted/40 border border-border/50 cursor-not-allowed' 
                       : 'bg-primary-500 hover:bg-primary-400 text-white shadow-lg shadow-primary-500/20 active:scale-95'"
@@ -608,7 +609,7 @@
                     v-if="item.owned && item.type !== 'bundle'"
                     @click="item.type === 'consumable' ? activateConsumable(item) : equipItem(item)"
                     :disabled="item.type !== 'consumable' && isEquipped(item)"
-                    class="px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 whitespace-nowrap"
+                    class="px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 whitespace-nowrap"
                     :class="item.type === 'consumable' ? 'bg-emerald-500 text-black hover:bg-emerald-400 shadow-lg shadow-emerald-500/20' : (isEquipped(item) ? 'bg-white/5 text-muted border border-white/10 cursor-default' : 'bg-blue-500 text-white hover:bg-blue-400 shadow-lg shadow-blue-500/20')"
                   >
                     {{ item.type === 'consumable' ? i18n.t('btn_activate') : (isEquipped(item) ? i18n.t('btn_on') : i18n.t('btn_equip')) }}
