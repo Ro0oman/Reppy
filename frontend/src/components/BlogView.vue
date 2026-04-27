@@ -145,7 +145,7 @@
             
             <div class="flex items-center gap-3 opacity-60">
               <div class="flex -space-x-2">
-                <img v-for="i in 3" :key="i" :src="`https://i.pravatar.cc/100?img=${i+10}`" class="w-6 h-6 rounded-full border-2 border-background" />
+                <img v-for="i in 3" :key="i" :src="`https://ui-avatars.com/api/?name=User+${i}&background=random&color=fff`" class="w-6 h-6 rounded-full border-2 border-background" />
               </div>
               <span class="text-[10px] font-bold text-muted uppercase tracking-wider">
                 {{ i18n.locale === 'es' ? '+5,420 atletas ya compiten hoy' : '+5,420 athletes competing today' }}
@@ -191,7 +191,7 @@
     <div v-if="!authStore.isAuthenticated" 
          class="md:hidden fixed bottom-6 left-4 right-4 z-[100] animate-in slide-in-from-bottom-20 duration-1000 delay-1000">
        <button @click="router.push('/login')" class="w-full btn-reppy !py-5 shadow-[0_20px_50px_rgba(255,69,0,0.4)]">
-         🚀 {{ i18n.locale === 'es' ? 'REGÍSTRATE Y GANA XP' : 'SIGN UP & EARN XP' }}
+         🚀 {{ i18n.locale === 'es' ? 'JUGAR Y GANAR XP' : 'PLAY & EARN XP' }}
        </button>
     </div>
   </div>

@@ -5,7 +5,7 @@
     "author": "Reppy HQ",
     "image": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80",
     "category": "noticias",
-    "isPillar": false,
+    "isPillar": true,
     "locales": {
       "es": {
         "title": "Avatares RPG v2.0: Identidad y Rendimiento de Nivel Épico",
@@ -17,75 +17,7 @@
         "title": "RPG Avatars v2.0: Epic Identity and High-Speed Performance",
         "excerpt": "We've expanded our collection to 40 premium icons and optimized every pixel for instant loading. Discover your new class!",
         "keywords": ["rpg avatars", "visual identity", "reppy news", "webp optimization", "gamer customization"],
-        "content": "# The Great Identity Rebirth in Reppy\n\nYour avatar is not just a profile picture; it's your business card to the community, your visual armor on the [Leaderboard](/leaderboard) and your face in every [Boss Fight](/dashboard). That's why today we are announcing one of our biggest customization updates to date: **RPG Avatars v2.0**.\n\n## 🛡️ More Than an Image: A Statement of Intent\nWe've listened to the community and expanded our gallery to **40 slots**. But it's not just quantity; it's quality. We've selected icons inspired by the most legendary sagas: from *Elden Ring* warriors and Spartan fighters to master chiefs and monster hunters. Each class has been chosen to represent the pillars of calisthenics: strength, agility and discipline.\n\n## ⚡ Invisible (But Radical) Optimization\nBehind these new icons is a massive technical shift. We've migrated our entire image infrastructure to **next-generation WebP**. \n- **Instant Loading**: Files are now 90% lighter without losing a bit of detail.\n- **Data Savings**: Browsing the [/social](/social) feed now consumes a fraction of what it did before.\n- **HD Quality**: Sharp resolutions that look incredible even on retina displays.\n\n## 🚀 How to Choose Your New Identity?\nIt's very simple. Go to your [Profile](/profile) and click on your current avatar. The new optimized gallery will open, where you can choose from the 40 available options. \n\n**🔥 Daily Challenge:** Change your avatar today and post a message in the feed with your new look. We want to see the Reppy legion stronger than ever!"
-      }
-    }
-  },
-  {
-    "slug": "rpg-mechanics-reppy-evolution",
-    "date": "2026-04-20",
-    "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80",
-    "category": "rpg",
-    "isPillar": true,
-    "locales": {
-      "es": {
-        "title": "RPG Mechanics: La Evolución del Ecosistema Reppy",
-        "excerpt": "Descubre las novedades que transformarán tu entrenamiento: Tienda Diaria, Sistema de Botín y la integración real de tus estadísticas en el combate contra los Bosses.",
-        "keywords": [
-          "rpg mechanics",
-          "reppy shop",
-          "loot system",
-          "fitness gamified",
-          "combat stats"
-        ],
-        "content": "# RPG Mechanics: La Evolución de tu Entrenamiento\n\nEl camino del guerrero en Reppy está a punto de volverse mucho más profundo. Durante las próximas semanas, implementaremos una serie de cambios estructurales que transformarán la forma en que interactúas con la plataforma. Ya no se trata solo de registrar repeticiones; se trata de construir un héroe.\n\n## 🛒 Tienda Diaria y Rotación de Ítems\nLa nueva [/shop](/shop) no será solo un catálogo estático. Introduciremos una **Tienda Diaria Rotativa** donde aparecerán ítems raros y ediciones limitadas que solo estarán disponibles por 24 horas. ¿Buscas ese marco legendario o una poción de XP? Tendrás que estar atento cada día.\n\n## 📦 Sistema de Cofres y Loot\nAl derrotar Bosses comunitarios o alcanzar hitos personales, desbloquearás **Cofres de Suministros**. Estos cofres contienen desde 'Reppy Coins' hasta consumibles raros. La emoción de abrir un cofre y descubrir qué botín has ganado añadirá una nueva capa de recompensa a cada gota de sudor.\n\n## ⚔️ Integración de Stats en Combate\nTus atributos de **Fuerza (STR)**, **Poder (PWR)** y **Agilidad (AGI)** finalmente tendrán un impacto directo en las Boss Fights. Próximamente, tener un nivel alto de STR aumentará tu daño base, mientras que la AGI podría permitirte realizar 'Critical Hits' que dupliquen el daño de tus repeticiones.\n\n**🔥 Prepárate:** Mantén tu racha alta y acumula todas las monedas que puedas. ¡La era de los RPG Mechanics en Reppy acaba de empezar!"
-      },
-      "en": {
-        "title": "RPG Mechanics: The Evolution of the Reppy Ecosystem",
-        "excerpt": "Discover the new features transforming your training: Daily Shop, Loot System, and the real integration of your stats in Boss combat.",
-        "keywords": [
-          "rpg mechanics",
-          "reppy shop",
-          "loot system",
-          "fitness gamified",
-          "combat stats"
-        ],
-        "content": "# RPG Mechanics: The Evolution of Your Training\n\nThe warrior's path in Reppy is about to get much deeper. Over the coming weeks, we will be implementing a series of structural changes that will transform how you interact with the platform. It's no longer just about logging reps; it's about building a hero.\n\n## 🛒 Daily Shop and Item Rotation\nThe new [/shop](/shop) won't be just a static catalog. We are introducing a **Daily Rotating Shop** where rare items and limited editions will appear for only 24 hours. Looking for 그 legendary frame or an XP potion? You'll have to keep an eye out every day.\n\n## 📦 Chests and Loot System\nBy defeating community Bosses or reaching personal milestones, you will unlock **Supply Chests**. These chests contain everything from 'Reppy Coins' to rare consumables. The thrill of opening a chest and discovering what loot you've earned will add a new layer of reward to every drop of sweat.\n\n## ⚔️ Stats Integration in Combat\nYour **Strength (STR)**, **Power (PWR)**, and **Agility (AGI)** attributes will finally have a direct impact on Boss Fights. Soon, having a high STR level will increase your base damage, while AGI could allow you to land 'Critical Hits' that double the damage of your reps.\n\n**🔥 Get Ready:** Keep your streak high and hoard as many coins as you can. The era of RPG Mechanics in Reppy has just begun!"
-      }
-    }
-  },
-  {
-    "slug": "gero-arias-reto-112",
-    "date": "2026-04-20",
-    "author": "Reppy Editorial",
-    "image": "file:///C:/Users/romai/.gemini/antigravity/brain/5b73b27b-b940-463d-810b-d361821f943b/gero_arias_pullup_112_1776673346472.png",
-    "category": "dominadas",
-    "isPillar": true,
-    "locales": {
-      "es": {
-        "title": "Gero Arias: El Hito de las 112 Dominadas y el Poder de la Constancia",
-        "excerpt": "Gero Arias alcanza el día 112 de su reto épico. Analizamos cómo la disciplina diaria transforma lo imposible en rutina.",
-        "keywords": [
-          "gero arias",
-          "reto dominadas",
-          "dia 112",
-          "calistenia motivación",
-          "constancia fitness"
-        ],
-        "content": "# Gero Arias: Rompiendo la Barrera de las 112 Dominadas\n\nSi sigues el mundo de la calistenia, el nombre de **Gero Arias** no te es desconocido. Su reto de añadir una dominada cada día durante un año entero se ha convertido en una odisea digital que miles de personas siguen a diario. Hoy, Gero ha alcanzado el **día 112**, lo que significa enfrentarse a la barra para realizar 112 repeticiones. Lo que empezó como un juego de nivel 1 es ahora una Boss Fight de proporciones legendarias.\n\nLa verdadera lección de Gero no es solo la fuerza física, sino la **fuerza de voluntad**. En Reppy, predicamos que la constancia es el multiplicador de XP definitivo. No se trata de lo que puedes hacer un día de inspiración, sino de lo que estás dispuesto a hacer el día 112, cuando el cansancio acumulado y la presión mediática están en su punto máximo. Gero es la personificación de un jugador que nunca se salta su racha diaria.\n\n## 🔑 Las 3 Claves del Éxito de Gero:\n1. **Disciplina Innegociable:** No importa si llueve, si viaja o si está cansado. La barra es el destino final de cada uno de sus días.\n2. **Gestión de la Fatiga:** Para llegar a tales niveles de volumen, el descanso y la nutrición (su inventario de pociones) son críticos. No puedes farmear 112 dominadas sin una recuperación optimizada.\n3. **El Factor Mental:** Cuando los antebrazos arden en la repetición 80, es la mente la que tira del cuerpo. Gero nos demuestra que el límite físico suele estar mucho más lejos de lo que nuestra cabeza nos dice.\n\n**🔥 Tu Reto Reppy:** No te pedimos que hagas 112 hoy, pero sí que no rompas tu racha. Registra tus repeticiones en el [Dashboard](/dashboard) e inmediatamente notarás cómo tus marcas en otros ejercicios mejoran gracias a la nueva estabilidad de tu core. ¿Cuál es tu día 1 de hoy?"
-      },
-      "en": {
-        "title": "Gero Arias: The 112 Pull-ups Milestone and the Power of Consistency",
-        "excerpt": "Gero Arias reaches day 112 of his epic challenge. We analyze how daily discipline transforms the impossible into a routine.",
-        "keywords": [
-          "gero arias",
-          "pull-up challenge",
-          "day 112",
-          "calisthenics motivation",
-          "fitness consistency"
-        ],
-        "content": "# Gero Arias: Breaking the 112 Pull-up Barrier\n\nIf you follow the world of calisthenics, **Gero Arias** is a name you surely know. His challenge of adding one pull-up every day for an entire year has become a digital odyssey followed by thousands. Today, Gero has reached **day 112**, which means facing the bar for 112 repetitions. What started as a level 1 game is now a Boss Fight of legendary proportions.\n\nThe real lesson from Gero isn't just about physical strength; it's about **willpower**. At Reppy, we preach that consistency is the ultimate XP multiplier. It's not about what you can do on an inspired day, but what you're willing to do on day 112, when accumulated fatigue and media pressure are at their peak. Gero is the embodiment of a player who never breaks his daily streak.\n\n## 🔑 Gero's 3 Keys to Success:\n1. **Non-negotiable Discipline:** It doesn't matter if it's raining, if he's traveling, or if he's tired. The bar is the final destination of every single day.\n2. **Fatigue Management:** To reach such high volume levels, rest and nutrition (his potion inventory) are critical. You can't farm 112 pull-ups without optimized recovery.\n3. **The Mental Factor:** When forearms burn at rep 80, it's the mind that pulls the body. Gero shows us that the physical limit is usually much further than our heads tell us.\n\n**🔥 Your Reppy Challenge:** We don't ask you to do 112 today, but we do ask you not to break your streak. Log your reps in the [Dashboard](/dashboard) and remember that every day you show up, you are one step closer to your own legendary version. What is your day 1 today?"
+        "content": "# The Great Identity Rebirth in Reppy\n\nYour avatar is not just a profile picture; it's your business card to the community, your visual armor on the [Leaderboard](/leaderboard), and your face in every [Boss Fight](/dashboard). That's why today we are announcing one of our biggest customization updates to date: **RPG Avatars v2.0**.\n\n## 🛡️ More Than an Image: A Statement of Intent\nWe've listened to the community and expanded our gallery to **40 slots**. But it's not just quantity; it's quality. We've selected icons inspired by the most legendary sagas: from *Elden Ring* warriors and Spartan fighters to master chiefs and monster hunters. Each class has been chosen to represent the pillars of calisthenics: strength, agility, and discipline.\n\n## ⚡ Invisible (But Radical) Optimization\nBehind these new icons is a massive technical shift. We've migrated our entire image infrastructure to **next-generation WebP**. \n- **Instant Loading**: Files are now 90% lighter without losing a bit of detail.\n- **Data Savings**: Browsing the [/social](/social) feed now consumes a fraction of what it did before.\n- **HD Quality**: Sharp resolutions that look incredible even on retina displays.\n\n## 🚀 How to Choose Your New Identity?\nIt's very simple. Go to your [Profile](/profile) and click on your current avatar. The new optimized gallery will open, where you can choose from the 40 available options. \n\n**🔥 Daily Challenge:** Change your avatar today and post a message in the feed with your new look. We want to see the Reppy legion stronger than ever!"
       }
     }
   },
@@ -93,12 +25,12 @@
     "slug": "guia-definitiva-dominadas",
     "date": "2026-04-16",
     "author": "Reppy Editorial",
-    "image": "file:///C:/Users/romai/.gemini/antigravity/brain/5b73b27b-b940-463d-810b-d361821f943b/first_pullup_milestone_1776673650022.png",
+    "image": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80",
     "category": "dominadas",
     "isPillar": true,
     "locales": {
       "es": {
-        "title": "Cómo hacer tu primera dominada (y medir tu progreso gratis con Reppy)",
+        "title": "¿Cómo hacer mi primera dominada? Guía para novatos y futuros héroes",
         "excerpt": "Si no puedes hacer ni una dominada, este es tu sitio. Aprende los pasos reales para levantar tu peso por primera vez y empezar tu aventura en Reppy.",
         "keywords": [
           "guía dominadas",
@@ -110,7 +42,7 @@
         "content": "# ¿Cómo hacer mi primera dominada? Guía para futuros héroes\n\n¿Te cuelgas de la barra y sientes que pesas una tonelada? No te preocupes, todos los grandes maestros de la calistenia empezaron con nivel 1. La dominada es el ejercicio rey del tren superior y desbloquear tu primera repetición es como derrotar a tu primer jefe: una vez lo logras, el juego cambia por completo.\n\nPara empezar, olvida el ego. La clave no está en las manos, sino en los hombros. Tienes que aprender a realizar la **retracción escapular**, que consiste en tirar de tus hombros hacia abajo y hacia atrás antes de intentar subir. Esto activa los dorsales, tus músculos más potentes, y te permite aplicar la fuerza necesaria sin lesionarte los tendones del codo.\n\n## 🚀 Los 3 pasos para tu primera repetición\n1. **El Cuelgue Activo:** No te quedes como un trapo colgado. Mantén la tensión en tus hombros y aguanta al menos 30 segundos. Si no tienes fuerza de agarre, no podrás farmear XP en la barra.\n2. **Dominadas Negativas:** Salta hacia la parte alta de la barra y baja lo más LENTO que puedas. Este trabajo excéntrico es el camino más rápido para ganar la fuerza necesaria para la subida.\n3. **Remos Australianos:** Busca una barra baja y tira con los pies en el suelo. Es el tutorial perfecto para fortalecer tu tirón sin cargar con todo tu peso.\n\n**🔥 Tip Reppy:** Tan pronto como consigas esa primera repetición estricta, regístrala en tu [Dashboard](/dashboard). ¡Ese logro te dará tus primeras Reppy Coins para gastar en la [/shop](/shop) y te hará subir de nivel en Fuerza (STR)!"
       },
       "en": {
-        "title": "How to do your first pull-up (and track your progress for free with Reppy)",
+        "title": "How to do my first pull-up? A guide for beginners and future heroes",
         "excerpt": "Stuck at zero pull-ups? Learn the real steps to lift your body weight for the first time and start your Reppy adventure.",
         "keywords": [
           "pull-up guide",
@@ -161,7 +93,7 @@
     "slug": "gamificacion-fitness-ciencia",
     "date": "2026-04-20",
     "author": "Reppy Editorial",
-    "image": "file:///C:/Users/romai/.gemini/antigravity/brain/5b73b27b-b940-463d-810b-d361821f943b/hero_psychology_gamified_training_1776673704570.png",
+    "image": "https://images.unsplash.com/photo-1598971426620-6d4b99824de4?auto=format&fit=crop&w=1200&q=80",
     "category": "rpg",
     "isPillar": false,
     "locales": {
@@ -169,13 +101,13 @@
         "title": "Por qué Reppy engancha más que el Gym: La Psicología del Héroe",
         "excerpt": "Descubre por qué Reppy funciona donde otros fallan. Neurología de la recompensa, Boss Fights y el poder del XP.",
         "keywords": [
-          "gamificación fitness",
+          "juego RPG fitness",
           "psicología deportiva",
           "motivación entrenar",
           "neurociencia ejercicio",
           "fitness RPG"
         ],
-        "content": "# Por qué Reppy engancha más que el Gym: La Psicología del Héroe\n\nIr al gimnasio tradicional puede ser tedioso. Mirarse en el espejo y no notar cambios drásticos día tras día es la razón número uno por la que la gente abandona. En Reppy, hemos hackeado este proceso utilizando la ciencia de la **gamificación**. No te estamos engañando para que entrenes; estamos recompensando cada gota de sudor de la misma forma que tus juegos favoritos recompensan tus misiones.\n\nEl secreto reside en el **bucle de dopamina**. En un gimnasio normal, la recompensa visual tarda meses. En Reppy, la recompensa es instantánea: registras una serie y ves cómo tu barra de experiencia (XP) sube. Este feedback inmediato le dice a tu cerebro que el esfuerzo ha valido la pena, liberando una pequeña dosis de placer que te motiva a hacer la siguiente serie. Estás convirtiendo el cansancio físico en progreso digital medible.\n\n## 🧠 Los 3 Pilares del Vicio Sano\n1. **Recompensa Variable (Gana Oro):** El esfuerzo se convierte en monedas. ¿Quieres ese marco legendario para tu avatar? Necesitas farmear dominadas. El deseo de personalización es un motor potente para la constancia.\n2. **Sentido de Pertenencia (Boss Fights):** En el feed [/social](/social), tus repeticiones no solo te sirven a ti. Ayudas a la comunidad a derrotar a un Boss global. Esa responsabilidad compartida evita que te saltes el entrenamiento hoy.\n3. **Propiedad y Estatus:** Tu perfil en el [Leaderboard](/leaderboard) muestra quién eres. Tus atributos de fuerza (STR) y potencia (PWR) son tu carta de presentación.\n\n**🚀 Misión Final:** Deja de ser un espectador. Entra hoy a tu [Dashboard](/dashboard) y completa tu meta diaria. ¡Tu versión de nivel 100 te está esperando!"
+        "content": "# Por qué Reppy engancha más que el Gym: La Psicología del Héroe\n\nIr al gimnasio tradicional puede ser tedioso. Mirarse en el espejo y no notar cambios drásticos día tras día es la razón número uno por la que la gente abandona. En Reppy, hemos hackeado este proceso utilizando la ciencia de la **juego RPG**. No te estamos engañando para que entrenes; estamos recompensando cada gota de sudor de la misma forma que tus juegos favoritos recompensan tus misiones.\n\nEl secreto reside en el **bucle de dopamina**. En un gimnasio normal, la recompensa visual tarda meses. En Reppy, la recompensa es instantánea: registras una serie y ves cómo tu barra de experiencia (XP) sube. Este feedback inmediato le dice a tu cerebro que el esfuerzo ha valido la pena, liberando una pequeña dosis de placer que te motiva a hacer la siguiente serie. Estás convirtiendo el cansancio físico en progreso digital medible.\n\n## 🧠 Los 3 Pilares del Vicio Sano\n1. **Recompensa Variable (Gana Oro):** El esfuerzo se convierte en monedas. ¿Quieres ese marco legendario para tu avatar? Necesitas farmear dominadas. El deseo de personalización es un motor potente para la constancia.\n2. **Sentido de Pertenencia (Boss Fights):** En el feed [/social](/social), tus repeticiones no solo te sirven a ti. Ayudas a la comunidad a derrotar a un Boss global. Esa responsabilidad compartida evita que te saltes el entrenamiento hoy.\n3. **Propiedad y Estatus:** Tu perfil en el [Leaderboard](/leaderboard) muestra quién eres. Tus atributos de fuerza (STR) y potencia (PWR) son tu carta de presentación.\n\n**🚀 Misión Final:** Deja de ser un espectador. Entra hoy a tu [Dashboard](/dashboard) y completa tu meta diaria. ¡Tu versión de nivel 100 te está esperando!"
       },
       "en": {
         "title": "Why Reppy is More Addictive than the Gym: The Hero's Psychology",
@@ -195,7 +127,7 @@
     "slug": "dolor-codo-dominadas",
     "date": "2026-04-22",
     "author": "Reppy Editorial",
-    "image": "file:///C:/Users/romai/.gemini/antigravity/brain/5b73b27b-b940-463d-810b-d361821f943b/elbow_pain_debuff_rehab_1776673726122.png",
+    "image": "https://images.unsplash.com/photo-1591117207239-7887103447c4?auto=format&fit=crop&w=1200&q=80",
     "category": "dominadas",
     "locales": {
       "es": {
@@ -297,7 +229,7 @@
     "slug": "nutricion-calistenia",
     "date": "2026-04-28",
     "author": "Reppy Editorial",
-    "image": "file:///C:/Users/romai/.gemini/antigravity/brain/5b73b27b-b940-463d-810b-d361821f943b/reppy_fuel_inventory_1776673687262.png",
+    "image": "https://images.unsplash.com/photo-1510894347713-fc3ad6cb0392?auto=format&fit=crop&w=1200&q=80",
     "category": "nutricion",
     "locales": {
       "es": {
@@ -411,7 +343,7 @@
     "slug": "calistenia-vs-pesas",
     "date": "2026-05-08",
     "author": "Reppy Editorial",
-    "image": "file:///C:/Users/romai/.gemini/antigravity/brain/5b73b27b-b940-463d-810b-d361821f943b/calisthenics_vs_weights_duel_1776673669846.png",
+    "image": "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=1200&q=80",
     "category": "principiantes",
     "locales": {
       "es": {
@@ -478,7 +410,7 @@
           "foco mental fitness",
           "quema de grasa"
         ],
-        "content": "# Ayuno Intermitente y Calistenia: Entrenando con el Depósito Vacío\n\nEl ayuno intermitente (IF) se ha vuelto una religión para muchos atletas de calistenia. La idea de entrenar sin haber ingerido nada durante 16 horas puede sonar aterradora para un novato, pero para un guerrero avanzado de Reppy, puede ser la herramienta definitiva para triturar la grasa y mejorar la nitidez mental. ¿Realidad o mito? La ciencia nos dice que entrenar en ayunas puede aumentar la sensibilidad a la insulina y la liberación de la hormona del crecimiento.\n\nEl mayor beneficio del ayuno en calistenia es el **foco mental**. Cuando no estás digiriendo comida, tu sangre se concentra en tus músculos y en tu cerebro. Muchos usuarios del [Dashboard](/dashboard) reportan que sus marcas en ejercicios técnicos como el Handstand mejoran al entrenar en ayunas debido a esta claridad mental. Sin embargo, si tu objetivo es la fuerza explosiva máxima (Boss Fights), puede que necesites una pequeña dosis de carbohidratos antes para no quedarte sin estamina a mitad de sesión.\n\n## ⚡ Puntos de Control del Ayuno:\n- **Define tu Ventana:** El protocolo más común es el 16/8 (16 horas de ayuno, 8 de comida). Ajusta tu entrenamiento hacia el final del ayuno para maximizar la quema de grasas.\n- **La Primera Comida:** Rompe el ayuno con proteínas de alta calidad y grasas saludables. No te lances a por comida basura solo porque tienes hambre; tu personaje merece equipo de calidad.\n- **Escucha a tus Stats:** Si sientes mareos o una baja drástica de fuerza, recarga. El ayuno es un buff temporal, no una obligación para progresar.\n\n**🔥 Debate Reppy:** ¿Eres del equipo #FastedTraining o prefieres desayunar como un rey? Comparte tu rutina de comidas en el feed [/social](/social) y ayuda a otros a optimizar su nutrición."
+        "content": "# Ayuno Intermitente y Calistenia: Entrenando con el Depósito Vacío\n\nEl ayuno intermitente (IF) se ha vuelto una religión para muchos atletas de calistenia. La idea de entrenar sin haber ingerido nada durante 16 horas puede sonar aterradora para un novato, pero para un guerrero avanzado de Reppy, puede ser la herramienta definitiva para triturar la grasa y mejorar la nitidez mental. ¿Realidad o mito? La ciencia nos dice que entrenar en ayunas puede aumentar la sensibilidad a la insulina y la liberación de la hormona del crecimiento.\n\nEl mayor beneficio del ayuno en calistenia es el **foco mental**. Cuando no estás digiriendo comida, tu sangre se concentra en tus músculos y en tu cerebro. Muchos usuarios del [Dashboard](/dashboard) reportan que sus marcas en ejercicios técnicos como el Handstand mejoran al entrenar en ayunas debido a esta claridad mental. Sin embargo, si tu objetivo es la fuerza explosiva máxima (Boss Fights), puede que necesites una pequeña dosis de carbohidratos antes para no quedarte sin estamina a mitad de sesión.\n\n## ⚡ Puntos de Control del Ayuno:\n- **Define tu Ventana:** El misión más común es el 16/8 (16 horas de ayuno, 8 de comida). Ajusta tu entrenamiento hacia el final del ayuno para maximizar la quema de grasas.\n- **La Primera Comida:** Rompe el ayuno con proteínas de alta calidad y grasas saludables. No te lances a por comida basura solo porque tienes hambre; tu personaje merece equipo de calidad.\n- **Escucha a tus Stats:** Si sientes mareos o una baja drástica de fuerza, recarga. El ayuno es un buff temporal, no una obligación para progresar.\n\n**🔥 Debate Reppy:** ¿Eres del equipo #FastedTraining o prefieres desayunar como un rey? Comparte tu rutina de comidas en el feed [/social](/social) y ayuda a otros a optimizar su nutrición."
       },
       "en": {
         "title": "Intermittent Fasting and Calisthenics: Fasted Hero?",
@@ -682,7 +614,7 @@
           "hormona del crecimiento",
           "descanso deportistas"
         ],
-        "content": "# Dormir: La Misión de Recuperación más Importante\n\nMucha gente se obsesiona con el entrenamiento perfecto, pero luego ignora el factor número uno de progreso: el sueño. En calistenia, no creces en la barra de dominadas; creces en la cama. El entrenamiento es el estímulo que le dice a tu cuerpo \"necesitas ser más fuerte\", pero es durante el sueño profundo cuando el sistema endocrino libera la hormona del crecimiento y repara los tejidos dañados. Si no duermes, estás jugando a Reppy con un 50% menos de estamina de base.\n\nOptimizar tu **Higiene del Sueño** es tan crucial como optimizar tu técnica de flexiones. Tu habitación debe ser una zona de recuperación nivel legendario: oscura, fresca y libre de distracciones. Las pantallas azules de los móviles antes de dormir bloquean la melatonina, la poción natural de tu cuerpo para descansar. Intenta desconectar al menos 30 minutos antes de ir a dormir y verás cómo tu energía en el próximo entrenamiento se siente como si hubieras usado un potenciador.\n\n## 🌙 Protocolo de Descanso Maestro:\n- **7 a 9 Horas:** No negocies con esto. Tu cerebro y tus músculos necesitan tiempo para procesar el XP acumulado durante el día.\n- **Rutina Constante:** Intenta acostarte y levantarte a la misma hora, incluso los fines de semana. Tu reloj interno ama la consistencia tanto como el [Leaderboard](/leaderboard).\n- **Magnesio y Oscuridad:** Algunos suplementos como el magnesio pueden ayudar a relajar el sistema nervioso central después de una sesión de Boss Fight muy estresante.\n\n**🔔 Tip Reppy:** No dejes que el móvil te robe horas de progreso. Deja el feed [/social](/social) por la mañana y centra tus noches en descansar. ¡Mañana hay un Boss que derrotar y te necesitamos al 100% de mana!"
+        "content": "# Dormir: La Misión de Recuperación más Importante\n\nMucha gente se obsesiona con el entrenamiento perfecto, pero luego ignora el factor número uno de progreso: el sueño. En calistenia, no creces en la barra de dominadas; creces en la cama. El entrenamiento es el estímulo que le dice a tu cuerpo \"necesitas ser más fuerte\", pero es durante el sueño profundo cuando el sistema endocrino libera la hormona del crecimiento y repara los tejidos dañados. Si no duermes, estás jugando a Reppy con un 50% menos de estamina de base.\n\nOptimizar tu **Higiene del Sueño** es tan crucial como optimizar tu técnica de flexiones. Tu habitación debe ser una zona de recuperación nivel legendario: oscura, fresca y libre de distracciones. Las pantallas azules de los móviles antes de dormir bloquean la melatonina, la poción natural de tu cuerpo para descansar. Intenta desconectar al menos 30 minutos antes de ir a dormir y verás cómo tu energía en el próximo entrenamiento se siente como si hubieras usado un potenciador.\n\n## 🌙 Misión de Descanso Maestro:\n- **7 a 9 Horas:** No negocies con esto. Tu cerebro y tus músculos necesitan tiempo para procesar el XP acumulado durante el día.\n- **Rutina Constante:** Intenta acostarte y levantarte a la misma hora, incluso los fines de semana. Tu reloj interno ama la consistencia tanto como el [Leaderboard](/leaderboard).\n- **Magnesio y Oscuridad:** Algunos suplementos como el magnesio pueden ayudar a relajar el sistema nervioso central después de una sesión de Boss Fight muy estresante.\n\n**🔔 Tip Reppy:** No dejes que el móvil te robe horas de progreso. Deja el feed [/social](/social) por la mañana y centra tus noches en descansar. ¡Mañana hay un Boss que derrotar y te necesitamos al 100% de mana!"
       },
       "en": {
         "title": "Sleep Hygiene: How to Farm Muscle While You Sleep",

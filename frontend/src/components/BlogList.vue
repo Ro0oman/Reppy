@@ -4,11 +4,11 @@
     <nav class="w-full max-w-7xl px-6 py-8 flex items-center justify-between z-50 animate-in">
       <router-link :to="`/${i18n.locale}`" class="flex items-center gap-3 group">
         <div class="w-8 h-8 bg-primary rounded-xl flex items-center justify-center font-bold text-white shadow-lg shadow-primary/20 transition-transform group-hover:scale-110">R</div>
-        <span class="text-xl font-black tracking-tight text-foreground">Reppy<span class="text-primary group-hover:translate-x-0.5 transition-transform">.</span></span>
+        <span class="text-xl font-black tracking-tight text-foreground uppercase italic">Reppy</span>
       </router-link>
       <div class="flex items-center gap-6">
         <router-link :to="`/${i18n.locale}/login`" class="hidden md:block text-xs font-black uppercase tracking-widest text-muted hover:text-primary transition-colors">
-          {{ i18n.t('nav_login') || 'LOG IN' }}
+          {{ i18n.locale === 'es' ? 'ENTRAR' : 'LOG IN' }}
         </router-link>
         <LanguageToggle />
       </div>
@@ -23,7 +23,7 @@
         <!-- Badge -->
         <div class="animate-in fade-in slide-in-from-bottom-4 duration-700">
           <div class="inline-flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-full backdrop-blur-md">
-            <span class="text-[9px] sm:text-[10px] font-black text-muted uppercase tracking-[0.3em]">REPPY <span class="text-primary-500">ENGINEERING</span> BLOG</span>
+            <span class="text-[9px] sm:text-[10px] font-black text-muted uppercase tracking-[0.3em]">REPPY <span class="text-primary-500">MISIONES</span> DIARIAS</span>
           </div>
         </div>
 
@@ -37,8 +37,8 @@
           </h1>
           <p class="text-lg md:text-2xl text-muted font-medium max-w-2xl mx-auto leading-relaxed">
             {{ i18n.locale === 'es' 
-                ? 'Protocolos de entrenamiento, psicología del progreso y el sistema para gamificar tu evolución física.' 
-                : 'Training protocols, progress psychology, and the system to gamify your physical evolution.' 
+                ? 'Aprende a entrenar, sube de nivel y conviértete en un héroe de la calistenia.' 
+                : 'Learn to train, level up, and become a calisthenics hero.' 
             }}
           </p>
         </div>
@@ -66,61 +66,60 @@
     <!-- Main Content Area -->
     <main class="max-w-7xl w-full px-6 py-24 space-y-32">
       
-      <!-- Featured Post (First Pillar) -->
-      <div v-if="sortedPosts.length > 0" class="animate-in">
+      <!-- Hero Post -->
+      <div v-if="featuredPost" class="animate-in">
         <router-link 
-          :to="`/${i18n.locale}/blog/${sortedPosts[0].slug}`"
+          :to="`/${i18n.locale}/blog/${featuredPost.slug}`"
           class="relative group block w-full aspect-[21/9] md:aspect-[3/1] rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl bg-surface-dark/10"
         >
           <img 
-            :src="sortedPosts[0].image" 
+            :src="featuredPost.image" 
             class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-            @load="loadedImages[sortedPosts[0].slug] = true"
+            @load="loadedImages[featuredPost.slug] = true"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
           <div class="absolute bottom-0 left-0 p-8 md:p-16 space-y-4 max-w-3xl">
             <div class="flex items-center gap-4">
-              <span class="px-3 py-1 bg-primary text-[9px] font-black uppercase tracking-widest rounded-full">{{ sortedPosts[0].category }}</span>
-              <span class="text-[10px] font-bold text-white/60 uppercase tracking-widest">{{ i18n.locale === 'es' ? 'LECTURA RECOMENDADA' : 'RECOMMENDED READ' }}</span>
+              <span class="px-3 py-1 bg-primary text-[9px] font-black uppercase tracking-widest rounded-full">{{ featuredPost.category }}</span>
+              <span class="text-[10px] font-bold text-white/60 uppercase tracking-widest">{{ i18n.locale === 'es' ? 'APRENDER' : 'LEARN' }}</span>
             </div>
             <h2 class="text-3xl md:text-6xl font-black text-white tracking-tighter uppercase italic leading-none group-hover:text-primary transition-colors">
-              {{ sortedPosts[0].locales[i18n.locale]?.title || sortedPosts[0].locales.en.title }}
+              {{ featuredPost.locales[i18n.locale]?.title || featuredPost.locales.en.title }}
             </h2>
             <p class="text-lg text-white/70 font-medium line-clamp-2 max-w-xl">
-              {{ sortedPosts[0].locales[i18n.locale]?.excerpt || sortedPosts[0].locales.en.excerpt }}
+              {{ featuredPost.locales[i18n.locale]?.excerpt || featuredPost.locales.en.excerpt }}
             </p>
           </div>
         </router-link>
       </div>
 
       <!-- Blog Grid -->
-      <div v-if="paginatedPosts.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24">
-        <template v-for="(post, index) in paginatedPosts" :key="post.slug">
-          <!-- Inject Conversion Card in the middle -->
-          <div v-if="index === 2" class="col-span-full md:col-span-2 py-12">
+      <div v-if="gridPosts.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24">
+        <template v-for="(post, index) in gridPosts" :key="post.slug">
+          <!-- Inject Conversion Card in the middle of the first page -->
+          <div v-if="currentPage === 1 && index === 2" class="col-span-full md:col-span-2 py-12">
             <div class="relative p-12 md:p-20 rounded-[3rem] overflow-hidden border border-white/10 bg-surface-dark/40 group">
               <div class="absolute inset-0 bg-primary/5 blur-[100px] -translate-x-1/2"></div>
               <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
                 <div class="space-y-6 text-center md:text-left">
                   <h3 class="text-4xl md:text-6xl font-black italic tracking-tighter uppercase leading-none">
-                    {{ i18n.locale === 'es' ? 'DEJA DE ENTRENAR A CIEGAS' : 'STOP TRAINING IN THE DARK' }}
+                    {{ i18n.locale === 'es' ? '¿QUIERES MÁS FUERZA?' : 'WANT MORE STRENGTH?' }}
                   </h3>
                   <p class="text-xl text-muted font-medium max-w-md">
                     {{ i18n.locale === 'es' 
-                        ? 'Registra tus marcas, sube de nivel y compite con la comunidad líder en calistenia.' 
-                        : 'Track your reps, level up, and compete with the leading calisthenics community.' 
+                        ? 'Entrena con misiones RPG, sube de nivel y compite con la comunidad.' 
+                        : 'Train with RPG missions, level up, and compete with the community.' 
                     }}
                   </p>
                 </div>
                 <button @click="router.push(`/${i18n.locale}/login`)" class="btn-reppy !px-16 !py-5 !text-lg shadow-[0_20px_60px_rgba(255,69,0,0.3)] transform hover:scale-110 active:scale-95 transition-all">
-                  {{ i18n.locale === 'es' ? 'EMPIEZA GRATIS' : 'START FREE' }}
+                  {{ i18n.locale === 'es' ? 'JUGAR GRATIS' : 'PLAY FREE' }}
                 </button>
               </div>
             </div>
           </div>
 
           <router-link 
-            v-if="post.slug !== sortedPosts[0].slug"
             :to="`/${i18n.locale}/blog/${post.slug}`" 
             class="group space-y-8 animate-in"
           >
@@ -147,7 +146,7 @@
                 {{ post.locales[i18n.locale]?.excerpt || post.locales.en.excerpt }}
               </p>
               <div class="pt-4 flex items-center gap-2 text-xs font-black text-primary uppercase tracking-widest group-hover:gap-4 transition-all">
-                {{ i18n.locale === 'es' ? 'LEER MÁS' : 'READ MORE' }}
+                {{ i18n.locale === 'es' ? 'APRENDER' : 'LEARN MORE' }}
                 <ArrowRight class="w-4 h-4" />
               </div>
             </div>
@@ -235,9 +234,7 @@ const postsPerPage = 6; // Fewer posts per page for better focus
 const loadedImages = reactive({});
 
 const sortedPosts = computed(() => {
-  const today = new Date();
   return blogPosts
-    .filter(post => new Date(post.date) <= today)
     .sort((a, b) => {
       if (a.isPillar && !b.isPillar) return -1;
       if (!a.isPillar && b.isPillar) return 1;
@@ -245,12 +242,26 @@ const sortedPosts = computed(() => {
     });
 });
 
-const totalPages = computed(() => Math.ceil(sortedPosts.value.length / postsPerPage));
+const featuredPost = computed(() => sortedPosts.value[0]);
 
-const paginatedPosts = computed(() => {
-  const start = (currentPage.value - 1) * postsPerPage;
-  const end = start + postsPerPage;
-  return sortedPosts.value.slice(start, end);
+const gridPosts = computed(() => {
+  const all = [...sortedPosts.value];
+  if (all.length === 0) return [];
+  
+  // If we are on page 1, skip the first post (featured)
+  if (currentPage.value === 1) {
+    const remaining = all.slice(1);
+    return remaining.slice(0, postsPerPage);
+  } else {
+    const start = (currentPage.value - 1) * postsPerPage;
+    return all.slice(start, start + postsPerPage);
+  }
+});
+
+const totalPages = computed(() => {
+  if (sortedPosts.value.length <= 1) return 1;
+  // Subtract the featured post from the count for the first page
+  return Math.ceil((sortedPosts.value.length - 1) / postsPerPage);
 });
 
 const nextPage = () => {

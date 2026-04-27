@@ -1,15 +1,15 @@
 import express from 'express';
 import { query } from './db.js';
-import { authenticate } from './middleware.js';
+import { authenticate, optionalAuthenticate } from './middleware.js';
 import { recalculateUserStats } from './utils/stats.js';
 import { blogData } from './blogData.js';
 
 const router = express.Router();
 
 // Record a blog read event
-router.post('/read', authenticate, async (req, res) => {
+router.post('/read', optionalAuthenticate, async (req, res) => {
   const { slug } = req.body;
-  const userId = req.user.id;
+  const userId = req.user?.id; // Optional
 
   if (!slug) {
     return res.status(400).json({ message: 'Slug is required' });
@@ -19,7 +19,14 @@ router.post('/read', authenticate, async (req, res) => {
     // 0. Validate slug against blogData
     const isValid = blogData.some(p => p.slug === slug);
     if (!isValid) {
+      console.log('Invalid slug request:', slug);
+      console.log('Available slugs:', blogData.map(p => p.slug).join(', '));
       return res.status(404).json({ message: 'Invalid blog slug' });
+    }
+
+    // If not logged in, just return success but no XP
+    if (!userId) {
+      return res.json({ message: 'Blog read seen (guest)', isFirstRead: false });
     }
 
     // 1. Record the read event (ignore if already read)

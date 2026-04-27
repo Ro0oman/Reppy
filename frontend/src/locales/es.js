@@ -31,19 +31,19 @@ export default {
     nav_armory: 'Armería',
     nav_gear: 'Equipo',
     nav_profile: 'Perfil',
-    nav_codex: 'Códice',
+    nav_codex: 'Stats RPG',
     nav_blog: 'Blog',
     audio_mute: 'Silenciar',
     audio_unmute: 'Activar Sonido',
-    back_to_codex: 'Volver al Códice',
+    back_to_codex: 'Volver al Stats RPG',
     nav_go_dashboard: 'Ir al Panel',
 
-    codex_title: 'El Códice',
-    codex_subtitle: 'Registros Biológicos e Intelectuales',
+    codex_title: 'El Stats RPG',
+    codex_subtitle: 'Tus Stats y Niveles',
     codex_subtitle_desc: 'Tu evolución registrada a través del esfuerzo físico e intelectual. Sube de nivel tus atributos para desbloquear tu potencial.',
-    codex_int_vault_desc: 'Gana XP de Inteligencia estudiando los protocolos antiguos. El conocimiento es el multiplicador de fuerza definitivo.',
+    codex_int_vault_desc: 'Gana XP de Inteligencia estudiando los misións antiguos. El conocimiento es el multiplicador de fuerza definitivo.',
     blog_xp_gained: 'Conocimiento Adquirido: +100 INT XP',
-    intelecto_adquirido: 'Intelecto Adquirido',
+    sabiduría_adquirido: 'Sabiduría Adquirido',
 
     codex_str_name: 'Fuerza',
     codex_str_quote: '"Lo pesado hace al humilde."',
@@ -68,7 +68,7 @@ export default {
     codex_int_name: 'Inteligencia',
     codex_int_quote: '"Mente sobre Gravedad."',
     codex_int_desc: 'Mejora la eficiencia del entrenamiento. Un INT alto otorga un bono a todas las ganancias de XP.',
-    codex_int_action: 'Estudia los protocolos del blog en el Conocimiento para subir de nivel.',
+    codex_int_action: 'Estudia los misións del blog en el Conocimiento para subir de nivel.',
 
     codex_fth_name: 'Fe',
     codex_fth_quote: '"La Hermandad es la fuerza."',
@@ -156,7 +156,7 @@ export default {
     stats_effort: 'Esfuerzo Total',
     stats_tonnage: 'Tonelaje Total',
     stats_consistency: 'Racha de Consistencia',
-    stats_protocol_goal: 'Meta del Protocolo',
+    stats_protocol_goal: 'Meta del Misión',
     stats_per_day: 'POR DÍA',
     stats_total_reps: 'REPS TOTALES',
 
@@ -174,7 +174,7 @@ export default {
     boss_claim_loot: 'RECLAMAR BOTÍN',
     boss_reward_acquired: 'RECOMPENSA_ADQUIRIDA',
     boss_login_to_damage: 'Inicia sesión para registrar tu daño y acceder al botín',
-    boss_next_protocol: 'Próximo Protocolo',
+    boss_next_protocol: 'Próximo Misión',
     boss_locked: 'Bloqueado 🔒',
     boss_op_manual: 'Manual de Operaciones',
     boss_community_event: 'Evento de la Comunidad',
@@ -194,7 +194,7 @@ export default {
     economy_legendary: 'DROPS LEGENDARIOS',
     economy_rep: 'RC / REP',
     economy_status_optimal: 'Estado del Sistema: Óptimo',
-    economy_privacy: 'Protocolo de Privacidad',
+    economy_privacy: 'Misión de Privacidad',
     economy_star_github: 'ESTRELLA EN GITHUB',
     economy_admin: 'ADMIN.CMD',
     economy_history_title: 'Historial de Monedas',
@@ -211,7 +211,7 @@ export default {
     // Login
     login_title: 'Iniciar Sesión',
     login_welcome: 'Bienvenido a Reppy',
-    login_subtitle: 'PROTOCOLO DE ACCESO AL SISTEMA',
+    login_subtitle: 'ENTRA EN LA AVENTURA',
     login_password: 'Contraseña',
     login_email: 'Email',
     login_name: 'Nombre completo',
@@ -232,9 +232,9 @@ export default {
     shop_go_to: 'Ir a la página',
 
     // Profile
-    profile_guide_title: 'Guía del Protocolo de Evolución',
+    profile_guide_title: 'Guía del Misión de Evolución',
     profile_file_too_large: 'Archivo demasiado grande (Máx 2MB)',
-    profile_updated: 'Bio-núcleo actualizado',
+    profile_updated: 'Perfil RPG actualizado',
 
     // Notifications
     notif_anomalies: 'ANOMALÍAS DETECTADAS',
@@ -282,7 +282,7 @@ export default {
     faq_q2: '¿Qué ejercicios puedo registrar?',
     faq_a2: 'Puedes registrar movimientos estándar: Dominadas, Flexiones, Fondos, Muscle Ups y Dominadas Lastradas. Cada uno inflige un daño distinto a los bosses.',
     faq_q3: '¿Cómo funciona el sistema RPG?',
-    faq_a3: 'Cada repe te da Reppy Coins y XP en 6 atributos: Fuerza (STR), Destreza (DEX), Resistencia (END), Vigor (VIG), Intelecto (INT) y Fe (FTH). Gasta monedas por estatus cósmico.',
+    faq_a3: 'Cada repe te da Reppy Coins y XP en 6 atributos: Fuerza (STR), Destreza (DEX), Resistencia (END), Vigor (VIG), Sabiduría (INT) y Fe (FTH). Gasta monedas por estatus cósmico.',
     faq_q4: '¿Qué son las Boss Fights?',
     faq_a4: 'Eventos donde toda la comunidad lucha contra un boss épico. Cada repetición inflige daño basado en tus 6 stats RPG. Al ganar, todos obtienen cofres.',
     faq_q5: '¿Puedo ver mi progreso de entrenamiento?',
@@ -297,7 +297,7 @@ export default {
     // Articles
     article_guide_tag: 'Guía de Entrenamiento',
     article_title1: 'Cómo hacer tu primera dominada: Guía Maestra',
-    article_desc1: 'Protocolos de progresión desde cero hasta dominar la barra.',
+    article_desc1: 'Misións de progresión desde cero hasta dominar la barra.',
     article_title2: 'Gamificación y Calistenia: Por qué funciona Reppy',
     article_desc2: 'La ciencia detrás de los puntos de experiencia y la motivación en el fitness.',
     blog_learn_more: 'Aprende la técnica completa en:',
@@ -341,12 +341,12 @@ export default {
     activity_total_reached: 'totales!',
     activity_has_inflicted: 'ha infligido',
     activity_inflicted_you: 'Has infligido',
-    activity_post_comment_placeholder: 'Escribe un comentario operativo...',
+    activity_post_comment_placeholder: 'Escribe un comentario atleta...',
     activity_no_records: 'Aún no hay registros',
-    activity_share_title: 'Reppy - Protocolo de Entrenamiento',
+    activity_share_title: 'Reppy - Misión de Entrenamiento',
     activity_share_msg: 'Echa un vistazo al entrenamiento de {name} en Reppy',
     activity_error_share: 'Error al compartir',
-    activity_comment_hint: 'Escribe un comentario operativo...',
+    activity_comment_hint: 'Escribe un comentario atleta...',
     activity_boost_active: 'POTENCIADOR ACTIVO',
 
     // Ejercicios
@@ -393,7 +393,7 @@ export default {
 
     // Codex
     codex_title: 'EL CODEX',
-    codex_subtitle: 'GUÍA DE EVOLUCIÓN RPG',
+    codex_subtitle: 'GUÍA PARA SUBIR DE NIVEL',
     codex_next_lv: 'PRÓXIMO NIVEL: +100 XP REQUERIDOS',
     codex_lv_up: 'Mejora:',
 
@@ -433,8 +433,8 @@ export default {
     codex_cha_action: 'Da like o comenta en las publicaciones del feed social.',
     
     blog_xp_gained: '¡Conocimiento adquirido! +100 XP de INT ganada.',
-    intelecto_adquirido: 'INTELECTO ADQUIRIDO',
-    blog_read_congrats: 'Protocolo completado: Intelecto aumentado.',
+    sabiduría_adquirido: 'INTELECTO ADQUIRIDO',
+    blog_read_congrats: 'Misión completado: Sabiduría aumentado.',
 
     // Shop Categories
     shop_tab_titles: 'TÍTULOS',
@@ -462,7 +462,7 @@ export default {
     view_all_articles: 'Ver todos los artículos',
     trending: 'Tendencia',
     read_time: 'min de lectura',
-    related_protocols: 'Protocolos Relacionados',
+    related_protocols: 'Misións Relacionados',
     share_knowledge: 'Comparte este conocimiento',
     copy_link: 'Copiar enlace',
     share_x: 'Compartir en X',
@@ -477,14 +477,14 @@ export default {
     push_power: 'Fuerza de Empuje',
     full_ecosystem: 'Ecosistema Completo',
     pullup_guide_title: 'Cómo hacer tu primera dominada: Guía Maestra',
-    pullup_guide_desc: 'Protocolos de progresión desde cero hasta dominar la barra.',
+    pullup_guide_desc: 'Misións de progresión desde cero hasta dominar la barra.',
     gamification_title: 'Gamificación y Calistenia: Por qué funciona Reppy',
     gamification_desc: 'La ciencia detrás de los puntos de experiencia y la motivación en el fitness.',
     pullup_seo_title: 'Contador de Dominadas Online',
     pullup_seo_desc: 'Registra tus pull-ups y compite en el ranking mundial.',
     pushup_seo_title: 'Contador de Flexiones Gratis',
     pushup_seo_desc: 'Lleva la cuenta de tus push-ups y sube de nivel tus atributos.',
-    rpg_protocol_title: 'Explorar Protocolos RPG',
+    rpg_protocol_title: 'Explorar Misións RPG',
     rpg_protocol_desc: 'Descubre todas las funciones de gamificación de Reppy.',
 
     // Exercise Landing - Dominadas
@@ -544,12 +544,12 @@ export default {
     el_latest_blog: 'Último del Blog: Rutina David Goggins',
     
     // Blog List & 404
-    blog_list_title: 'Protocolos y Noticias de Entrenamiento',
-    blog_list_subtitle: 'Las últimas guías de calistenia, protocolos mentales y actualizaciones de la comunidad Reppy.',
+    blog_list_title: 'Misións y Noticias de Entrenamiento',
+    blog_list_subtitle: 'Las últimas guías de calistenia, misións mentales y actualizaciones de la comunidad Reppy.',
     pagination_next: 'Página Siguiente',
     pagination_prev: 'Página Anterior',
     not_found_title: 'ÁREA RESTRINGIDA (404)',
-    not_found_desc: 'El protocolo que buscas ha sido movido o eliminado del mainframe.',
+    not_found_desc: 'El misión que buscas ha sido movido o eliminado del mainframe.',
     not_found_btn: 'VOLVER A ZONA SEGURA',
 
     // Battle Overhaul Modal
@@ -581,7 +581,7 @@ export default {
     btn_cancel: 'Cancelar',
     btn_confirm: 'Confirmar',
     battle_overhaul_boss_alert: 'AUMENTO DE VIDA DE BOSS x10',
-    codex_close: 'Cerrar Protocolo',
+    codex_close: 'Cerrar Misión',
 
     // New common buttons
     btn_save: 'Guardar Cambios',
@@ -611,7 +611,7 @@ export default {
 
     // Shop specific
     shop_armory_title: 'ARMERÍA',
-    shop_armory_subtitle: 'Equipa a tu leyenda con cosméticos de protocolo de élite.',
+    shop_armory_subtitle: 'Equipa a tu leyenda con cosméticos de misión de élite.',
     shop_reppy_coins: 'REPPY COINS',
     shop_elite_pack: 'ELITE_PACK',
     shop_special_deal: 'Oferta Especial',
@@ -642,7 +642,7 @@ export default {
     inner_circle: 'CÍRCULO INTERNO',
     reps_collected: 'REPS COLECTADAS',
     reps_scaled: 'REPS ESCALADAS',
-    protocol_label: 'Protocolo',
+    protocol_label: 'Misión',
     live_sync: 'SINCRONIZACIÓN DE RANGOS EN VIVO',
     friend_added: '¡Amigo añadido con éxito!',
     friend_add_failed: 'Error al añadir amigo',
@@ -765,7 +765,7 @@ export default {
     inv_preview_hint: 'Hover para proyectar, click para enlazar',
 
     // Additional Dashboard
-    dash_global_view_active: 'Vista global activa. Selecciona un protocolo para registrar volumen.',
+    dash_global_view_active: 'Vista global activa. Selecciona un misión para registrar volumen.',
     dash_boss_status: 'Estado del Boss',
     dash_goal_achieved: 'Meta conseguida.',
     dash_analyzing_performance: 'Analizando rendimiento...',
@@ -774,10 +774,10 @@ export default {
     dash_total_tonnage: 'Tonelaje Total',
     dash_history_title: 'Historial de actividad',
     dash_tons_moved: 'TONS MOVIMIENTOS',
-    dash_protocol_null: 'Protocolo Nulo',
+    dash_protocol_null: 'Misión Nulo',
 
     // Reps Input
-    rep_protocol_active: 'Protocolo {type} activo',
+    rep_protocol_active: 'Misión {type} activo',
     rep_manual_entry: 'Entrada manual',
     rep_additional_weight: 'Carga adicional (Kg)',
 
@@ -812,7 +812,7 @@ export default {
     codex_earn_login: 'Acceso Diario',
     codex_earn_streak: 'Racha Activa',
     codex_earn_knowledge: 'Codex Analizado',
-    codex_earn_analysis: 'Protocolo Leído',
+    codex_earn_analysis: 'Misión Leído',
     codex_earn_raid: 'Participación Raid',
     codex_earn_contribution: 'Esfuerzo Fiel',
     codex_earn_social: 'Interacción Social',
