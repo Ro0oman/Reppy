@@ -249,13 +249,12 @@
               </div>
 
               <!-- Compact Item Grid -->
-              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 <div v-for="item in items" :key="item.id" 
                   @mouseenter="markSeen(item)"
-                  class="nexus-slot group relative flex flex-col h-full rounded-2xl border transition-all overflow-hidden" 
+                  class="nexus-item group relative flex flex-col min-h-[180px] rounded-[1.5rem] border transition-all duration-300" 
                   :class="[
-                    getCardClass(item),
-                    item.rarity?.toLowerCase() === 'legendary' ? 'md:col-span-2' : ''
+                    getCardClass(item)
                   ]">
                      <!-- Item Preview -->
                      <div class="relative h-28 flex items-center justify-center p-4 bg-black/40 rounded-t-2xl cursor-pointer overflow-hidden" @click="openItemDetails(item)">
@@ -1114,33 +1113,21 @@ onUnmounted(() => {
 }
 
 /* Nexus Stash Slots */
-.nexus-slot {
-  aspect-ratio: 3/4;
+.nexus-item {
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-}
-
-.nexus-slot:hover {
-  transform: scale(1.05) translateY(-5px);
-}
-
-.nexus-slot-inner {
-  height: 100%;
   background: rgba(20, 20, 20, 0.4);
   backdrop-filter: blur(20px);
-  border-radius: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-  transition: all 0.4s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
-.nexus-slot:hover .nexus-slot-inner {
+
+.nexus-item:hover {
+  transform: translateY(-5px);
   background: rgba(30, 30, 30, 0.6);
-  border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
 }
+
+
 
 /* Rarity Effects */
 .rarity-common { --item-glow: rgba(148, 163, 184, 0.3); }
@@ -1184,7 +1171,7 @@ onUnmounted(() => {
 }
 
 /* Deep selects for items in slots */
-:deep(.nexus-slot h4) {
+:deep(.nexus-item h4) {
   transition: color 0.3s ease;
 }
 
