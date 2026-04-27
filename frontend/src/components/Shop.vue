@@ -385,7 +385,36 @@
           <!-- Category Selector -->
           <div class="space-y-4">
             <h3 class="text-[10px] font-black text-muted uppercase tracking-[0.4em] px-2">{{ i18n.t('shop_filter_categories') || 'CATEGORÍAS' }}</h3>
-            <div class="flex flex-col gap-1">
+            <!-- Mobile Dropdown -->
+            <div class="lg:hidden relative">
+              <button 
+                @click="showMobileCategoryDropdown = !showMobileCategoryDropdown"
+                class="w-full flex items-center justify-between px-5 py-4 bg-surface/30 rounded-2xl border border-white/10 text-[10px] font-black uppercase tracking-widest text-foreground"
+              >
+                <div class="flex items-center gap-4">
+                  <component :is="categories.find(c => c.id === selectedCategory)?.icon || Swords" class="w-4 h-4 text-primary-500" />
+                  <span>{{ i18n.t(categories.find(c => c.id === selectedCategory)?.label || 'cat_all') }}</span>
+                </div>
+                <ChevronDown class="w-4 h-4 transition-transform text-muted" :class="{ 'rotate-180': showMobileCategoryDropdown }" />
+              </button>
+              
+              <div v-if="showMobileCategoryDropdown" 
+                   class="absolute top-full left-0 right-0 mt-2 z-[60] bg-surface/95 backdrop-blur-2xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl animate-in slide-in-from-top-2">
+                <button 
+                  v-for="cat in categories" 
+                  :key="cat.id"
+                  @click="selectedCategory = cat.id; currentPage = 1; showMobileCategoryDropdown = false"
+                  class="w-full flex items-center gap-4 px-5 py-4 text-[10px] font-black uppercase tracking-widest transition-all hover:bg-white/5 border-b border-white/5 last:border-0"
+                  :class="selectedCategory === cat.id ? 'text-primary-500 bg-primary-500/5' : 'text-muted'"
+                >
+                  <component :is="cat.icon" class="w-4 h-4" />
+                  <span>{{ i18n.t(cat.label) || cat.label }}</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Desktop List -->
+            <div class="hidden lg:flex flex-col gap-1">
               <button 
                 v-for="cat in categories" 
                 :key="cat.id"
@@ -871,6 +900,7 @@ const buying = ref(false);
 const nowMs = ref(Date.now());
 const showSeasonal = ref(false);
 const showDropdown = ref(false);
+const showMobileCategoryDropdown = ref(false);
 const showBundleModal = ref(false);
 const showItemModal = ref(false);
 const selectedBundle = ref(null);
