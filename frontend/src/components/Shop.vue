@@ -232,7 +232,7 @@
             v-for="item in bundleItems" 
             :key="item.id"
             @click="openBundleModal(item)"
-            class="group/bundle relative flex flex-col bg-surface/30 backdrop-blur-md border border-white/5 rounded-[2.5rem] overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)] cursor-pointer"
+            class="group/bundle relative flex flex-col bg-surface/30 backdrop-blur-md border border-white/5 rounded-[2.5rem] overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)] cursor-pointer h-full"
             :class="[
               item.rarity?.toLowerCase() === 'legendary' ? 'hover:border-yellow-500/30' : 
               item.rarity?.toLowerCase() === 'especial' || item.rarity?.toLowerCase() === 'epic' ? 'hover:border-purple-500/30' : 
@@ -438,12 +438,8 @@
             <div 
               v-for="item in paginatedItems" 
               :key="item.id"
-              class="card-stats p-0 flex flex-col group/item border-white/10 relative transition-all duration-500"
-              :class="[
-                getCardClass(item),
-                item.rarity?.toLowerCase() === 'legendary' ? 'md:col-span-2 md:row-span-2' : 
-                (item.rarity?.toLowerCase() === 'especial' || item.rarity?.toLowerCase() === 'epic' ? 'md:col-span-2' : '')
-              ]"
+              class="card-stats p-0 flex flex-col group/item border-white/10 relative transition-all duration-500 h-full"
+              :class="getCardClass(item)"
             >
               <!-- Lock Overlay -->
               <div v-if="!item.is_unlocked" class="absolute inset-0 bg-background/60 backdrop-blur-[4px] z-[5] pointer-events-none flex items-center justify-center rounded-[2.5rem]">
@@ -478,8 +474,7 @@
 
               <!-- Preview Area (Dynamic Height for Bento) -->
               <div 
-                class="flex items-center justify-center m-6 mb-2 bg-surface/50 rounded-[2rem] border border-white/5 relative overflow-hidden group-hover/item:border-primary-500/30 transition-all duration-700 shadow-inner"
-                :class="item.rarity?.toLowerCase() === 'legendary' ? 'h-72' : 'h-40'"
+                class="flex items-center justify-center m-6 mb-2 bg-surface/50 rounded-[2rem] border border-white/5 relative overflow-hidden group-hover/item:border-primary-500/30 transition-all duration-700 shadow-inner h-48"
                 @click="openItemDetails(item)"
               >
                  <!-- Background Rarity Glow -->
@@ -508,10 +503,10 @@
                    {{ item.name }}
                  </div>
                  <div v-if="item.type === 'border'" class="transition-transform group-hover/item:scale-110 duration-700">
-                   <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :border-css="item.css_value" :size="item.rarity?.toLowerCase() === 'legendary' ? 120 : 80" />
+                   <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :border-css="item.css_value" :size="96" />
                  </div>
                  <div v-if="item.type === 'avatar'" class="transition-transform group-hover/item:scale-110 duration-700">
-                   <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :avatar-css="item.css_value" :size="item.rarity?.toLowerCase() === 'legendary' ? 120 : 80" />
+                   <AvatarFrame :src="authStore.user?.avatar_url || 'https://api.dicebear.com/7.x/shapes/svg?seed=reppy'" :avatar-css="item.css_value" :size="96" />
                  </div>
                  <div v-if="item.type === 'background'" class="w-full h-full relative group/bg overflow-hidden">
                     <BackgroundEffect :background-css="item.css_value" is-preview class="!absolute !inset-0 !w-full !h-full transition-transform duration-1000 group-hover/item:scale-125" />
@@ -521,7 +516,7 @@
                  <div v-if="['head', 'weapon', 'armor', 'boots'].includes(item.type)" class="flex flex-col items-center gap-4">
                      <div class="p-6 rounded-[2rem] bg-gradient-to-br border shadow-2xl transition-all duration-700 group-hover/item:scale-110 group-hover/item:rotate-3"
                           :class="[getRarityBadge(item).classes, getRarityBadge(item).classes.includes('primary') ? 'from-primary-500/20 to-primary-500/5' : 'from-foreground/10 to-transparent']">
-                       <ItemIcon :name="item.svg_key" :type="item.type" :class-name="item.rarity?.toLowerCase() === 'legendary' ? 'w-20 h-20' : 'w-12 h-12'" :class="getRarityBadge(item).classes?.split(' ')[0]" />
+                       <ItemIcon :name="item.svg_key" :type="item.type" class-name="w-14 h-14" :class="getRarityBadge(item).classes?.split(' ')[0]" />
                      </div>
                   </div>
                   <div v-if="item.type === 'consumable'" class="flex flex-col items-center gap-3">
@@ -692,7 +687,7 @@
              <div 
               v-for="item in seasonalItems" 
               :key="item.id"
-              class="card-stats p-0 flex flex-col group/item border-border"
+              class="card-stats p-0 flex flex-col group/item border-border h-full"
               :class="getCardClass(item)"
             >
               <div v-if="!item.is_unlocked" class="absolute inset-0 bg-background/40 backdrop-blur-[2px] z-[5] pointer-events-none flex items-center justify-center">
