@@ -5,7 +5,8 @@ import axios from 'axios';
 
 export const useThemeStore = defineStore('theme', () => {
   const authStore = useAuthStore();
-  const theme = ref((!import.meta.env.SSR && localStorage.getItem('reppy_theme')) || 'light');
+  // Default to 'dark' if no preference is found
+  const theme = ref((!import.meta.env.SSR && localStorage.getItem('reppy_theme')) || 'dark');
 
   // Sync with DB if user theme changes (e.g., on login)
   watch(() => authStore.user?.theme, (newDbTheme) => {
@@ -18,8 +19,13 @@ export const useThemeStore = defineStore('theme', () => {
   const applyTheme = (newTheme) => {
     if (!import.meta.env.SSR) {
       const root = document.documentElement;
-      const isDark = newTheme === 'dark' || 
-        (newTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      
+      // CORE LOGIC: If not authenticated, force dark mode regardless of preference.
+      // Only logged-in users who explicitly set light mode can have it.
+      const effectiveTheme = authStore.isAuthenticated ? newTheme : 'dark';
+      
+      const isDark = effectiveTheme === 'dark' || 
+        (effectiveTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
       
       if (isDark) {
         root.classList.add('dark');
@@ -27,13 +33,14 @@ export const useThemeStore = defineStore('theme', () => {
         root.classList.remove('dark');
       }
       
-      localStorage.setItem('reppy_theme', newTheme);
+      localStorage.setItem('reppy_theme', effectiveTheme);
     }
   };
 
   // Initialize
   const init = () => {
     if (!import.meta.env.SSR) {
+      // Force dark mode initialization if not logged in
       applyTheme(theme.value);
       
       // Listen for system changes if in system mode
@@ -44,6 +51,12 @@ export const useThemeStore = defineStore('theme', () => {
   };
 
   const setTheme = async (newTheme) => {
+    // Only allow setting theme if authenticated, otherwise keep it dark
+    if (!authStore.isAuthenticated && newTheme !== 'dark') {
+      console.warn('[Theme] Light mode is restricted to logged-in users.');
+      return;
+    }
+
     theme.value = newTheme;
     applyTheme(newTheme);
 
@@ -63,3 +76,4 @@ export const useThemeStore = defineStore('theme', () => {
     init
   };
 });
+
