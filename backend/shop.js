@@ -68,7 +68,7 @@ router.post('/buy/:id', authenticate, async (req, res) => {
     if (itemRes.rows.length === 0) return res.status(404).json({ message: 'Item not found' });
     const item = itemRes.rows[0];
 
-    const userRes = await query('SELECT reppy_coins FROM users WHERE id = $1', [userId]);
+    const userRes = await query('SELECT reppy_coins, reppy_gems FROM users WHERE id = $1', [userId]);
     const user = userRes.rows[0];
 
     // Check inventory
@@ -82,9 +82,10 @@ router.post('/buy/:id', authenticate, async (req, res) => {
     }
 
     let price = item.price || 0;
+    let priceGems = item.price_gems || 0;
     let finalDeduction = price;
 
-    // Bundle Refund Logic
+    // Bundle Refund Logic (Only for Coins for now to keep it simple, or we could skip gems refund)
     if (item.type === 'bundle' && item.bundle_items) {
       const bundleItemIds = item.bundle_items.split(',').map(id => parseInt(id.trim()));
       let refundAmount = 0;
@@ -106,6 +107,10 @@ router.post('/buy/:id', authenticate, async (req, res) => {
 
     if (user.reppy_coins < finalDeduction) {
       return res.status(400).json({ message: 'INSUFFICIENT FUNDS: REPPY COINS REQUIRED' });
+    }
+
+    if (user.reppy_gems < priceGems) {
+      return res.status(400).json({ message: 'INSUFFICIENT GEMS: SECTOR MISSION COMPLETION REQUIRED' });
     }
 
     // Process Purchase
@@ -140,8 +145,15 @@ router.post('/buy/:id', authenticate, async (req, res) => {
       }
     }
 
-    await query('UPDATE users SET reppy_coins = reppy_coins - $1 WHERE id = $2', [finalDeduction, userId]);
+    await query('UPDATE users SET reppy_coins = reppy_coins - $1, reppy_gems = reppy_gems - $2 WHERE id = $3', [finalDeduction, priceGems, userId]);
     
+    if (priceGems > 0) {
+      await query(`
+        INSERT INTO gem_transactions (user_id, amount, source, description)
+        VALUES ($1, $2, 'SHOP', $3)
+      `, [userId, -priceGems, `Purchased ${item.name}`]);
+    }
+
     await query('COMMIT');
 
     // Recalculate stats
@@ -150,6 +162,7 @@ router.post('/buy/:id', authenticate, async (req, res) => {
     res.json({ 
       message: 'Purchase successful', 
       remaining_coins: user.reppy_coins - finalDeduction,
+      remaining_gems: user.reppy_gems - priceGems,
       refunded: price - finalDeduction
     });
   } catch (error) {

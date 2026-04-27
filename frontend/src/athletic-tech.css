@@ -350,6 +350,15 @@
   100% { transform: translateX(100%); }
 }
 
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s ease-in-out infinite;
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; transform: scale(1); filter: brightness(1); }
+  50% { opacity: 0.85; transform: scale(1.02); filter: brightness(1.2); }
+}
+
 /* --- Premium Blog & Authority Content --- */
 .prose table {
   @apply w-full border-collapse rounded-2xl overflow-hidden my-12 border border-border/40;

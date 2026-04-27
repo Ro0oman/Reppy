@@ -85,12 +85,11 @@
               </div>
             </div>
             <div class="flex items-center gap-3 shrink-0">
-            <button @click="showInfoModal = true" 
-                   :title="i18nStore.t('profile_guide_title')"
+            <router-link :to="{ name: 'codex' }" 
                    class="flex items-center gap-3 bg-surface/5 px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[9px] font-black tracking-widest h-fit">
-              <HelpCircle class="w-4 h-4" />
-              {{ i18nStore.t('ui_codex_info') || 'CODEX INFO' }}
-            </button>
+              <BookOpen class="w-4 h-4 text-primary-500" />
+              {{ i18nStore.t('nav_codex') }}
+            </router-link>
             <router-link v-if="isOwnProfile" to="/inventory"
                    class="flex items-center gap-3 bg-primary-500/10 px-6 py-4 rounded-xl border border-primary-500/30 hover:border-primary-500/60 transition-all text-primary-500 hover:text-primary-400 uppercase text-[9px] font-black tracking-widest h-fit">
               <Zap class="w-4 h-4" />
@@ -334,7 +333,7 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
-import { Camera, Settings, LogOut, Activity, Flame, Trophy, HelpCircle, X as XIcon, Swords, Zap, Heart, Shield, Coins, Dumbbell, Target, Globe, User as UserIcon, BarChart3 } from 'lucide-vue-next';
+import { Camera, Settings, LogOut, Activity, Flame, Trophy, HelpCircle, X as XIcon, Swords, Zap, Heart, Shield, Coins, Dumbbell, Target, Globe, User as UserIcon, BarChart3, BookOpen } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';

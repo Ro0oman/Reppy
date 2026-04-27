@@ -311,7 +311,7 @@ const handleBellClick = () => {
 const navLinks = computed(() => [
   { id: 'social', label: 'nav_social', fallback: 'RANKINGS', icon: Users },
   { id: 'dashboard', label: 'nav_dashboard', fallback: 'DASHBOARD', icon: LayoutDashboard },
-  { id: 'codex', label: 'nav_codex', fallback: 'CODEX', icon: Book },
+  { id: 'missions', label: 'nav_missions', fallback: 'MISSIONS', icon: Target },
   { id: 'inventory', label: 'nav_inventory', fallback: 'GEAR', icon: Package },
   { id: 'shop', label: 'nav_shop', fallback: 'ARMORY', icon: ShoppingBag },
   { id: 'profile', label: 'nav_profile', fallback: 'PROFILE', icon: User },
@@ -320,7 +320,7 @@ const navLinks = computed(() => [
 const mobileNavLinks = computed(() => [
   { id: 'dashboard', icon: LayoutDashboard, label: 'nav_dashboard', short: (i18n.t('nav_dashboard') || 'Panel').substring(0, 5).toUpperCase() },
   { id: 'social', icon: Users, label: 'nav_social', short: (i18n.t('nav_social') || 'Social').substring(0, 6).toUpperCase() },
-  { id: 'codex', icon: Book, label: 'nav_codex', short: 'STATS' },
+  { id: 'missions', icon: Target, label: 'nav_missions', short: 'TARGETS' },
   { id: 'inventory', icon: Package, label: 'nav_inventory', short: (i18n.t('nav_inventory') || 'Equipo').substring(0, 6).toUpperCase() },
   { id: 'shop', icon: ShoppingBag, label: 'nav_shop', short: (i18n.t('nav_shop') || 'Tienda').substring(0, 6).toUpperCase() },
   { id: 'profile', icon: User, label: 'nav_profile', short: (i18n.t('nav_profile') || 'Perfil').substring(0, 6).toUpperCase() },

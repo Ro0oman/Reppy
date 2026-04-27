@@ -10,14 +10,27 @@
         <p class="text-muted mt-2 font-bold uppercase tracking-widest text-[10px]">{{ i18n.t('shop_armory_subtitle') }}</p>
       </div>
       
-      <!-- Currency Display (Precision Pill) -->
-      <div class="flex items-center gap-4 bg-surface/40 px-6 py-4 rounded-2xl border border-border shadow-2xl backdrop-blur-xl group hover:border-primary-500/30 transition-all">
-        <div class="p-2 bg-primary-500/10 rounded-lg transition-transform">
-          <Coins class="w-5 h-5 text-primary-500" />
+      <!-- Currency Display (Precision Pills) -->
+      <div class="flex items-center gap-4">
+        <!-- Coins -->
+        <div class="flex items-center gap-4 bg-surface/40 px-6 py-4 rounded-2xl border border-border shadow-2xl backdrop-blur-xl group hover:border-primary-500/30 transition-all">
+          <div class="p-2 bg-primary-500/10 rounded-lg transition-transform">
+            <Coins class="w-5 h-5 text-primary-500" />
+          </div>
+          <div class="flex flex-col">
+            <span data-testid="reppy-coins" class="text-3xl font-black text-precision text-foreground tracking-tighter leading-none">{{ authStore.user?.reppy_coins || 0 }}</span>
+            <span class="text-[8px] uppercase tracking-[0.3em] text-primary-500/70 font-black mt-1">{{ i18n.t('shop_reppy_coins') }}</span>
+          </div>
         </div>
-        <div class="flex flex-col">
-          <span data-testid="reppy-coins" class="text-3xl font-black text-precision text-foreground tracking-tighter leading-none">{{ authStore.user?.reppy_coins || 0 }}</span>
-          <span class="text-[8px] uppercase tracking-[0.3em] text-primary-500/70 font-black mt-1">{{ i18n.t('shop_reppy_coins') }}</span>
+        <!-- Gems -->
+        <div class="flex items-center gap-4 bg-surface/40 px-6 py-4 rounded-2xl border border-border shadow-2xl backdrop-blur-xl group hover:border-emerald-500/30 transition-all">
+          <div class="p-2 bg-emerald-500/10 rounded-lg transition-transform">
+            <Diamond class="w-5 h-5 text-emerald-500" />
+          </div>
+          <div class="flex flex-col">
+            <span class="text-3xl font-black text-precision text-foreground tracking-tighter leading-none">{{ authStore.user?.reppy_gems || 0 }}</span>
+            <span class="text-[8px] uppercase tracking-[0.3em] text-emerald-500/70 font-black mt-1">{{ i18n.t('shop_reppy_gems') || 'REPPY_GEMS' }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -188,18 +201,25 @@
             </div>
           </div>
 
-          <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mt-2">
-            <div class="flex flex-col items-center sm:items-start">
-              <span class="text-[8px] sm:text-[10px] font-black text-muted uppercase tracking-widest mb-0.5 sm:mb-1">{{ i18n.t('shop_acquisition_cost') }}</span>
-              <div class="flex items-baseline gap-1.5 sm:gap-2">
-                <span class="text-2xl sm:text-3xl font-black text-foreground tabular-nums">{{ selectedItem?.price }}</span>
-                <span class="text-[8px] sm:text-[10px] font-black text-muted uppercase tracking-widest">RC</span>
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-6 mt-4 p-6 bg-black/40 rounded-[2rem] border border-white/5">
+            <div class="flex flex-col gap-2">
+              <span class="text-[9px] font-black text-muted uppercase tracking-[0.2em]">{{ i18n.t('shop_acquisition_cost') }}</span>
+              <div class="flex flex-col gap-1">
+                <div v-if="selectedItem?.price > 0" class="flex items-center gap-2">
+                  <span class="text-3xl font-black text-primary-500 tabular-nums leading-none">{{ selectedItem?.price }}</span>
+                  <span class="text-[10px] font-black text-muted uppercase tracking-widest">RC</span>
+                </div>
+                <div v-if="selectedItem?.price_gems > 0" class="flex items-center gap-2">
+                  <span class="text-3xl font-black text-emerald-500 tabular-nums leading-none">{{ selectedItem?.price_gems }}</span>
+                  <span class="text-[10px] font-black text-muted uppercase tracking-widest">GEM</span>
+                </div>
               </div>
             </div>
+
             <button 
               @click="buyItem(selectedItem); showItemModal = false"
               :disabled="!canAfford(selectedItem) || buying || selectedItem?.owned"
-              class="w-full sm:flex-1 bg-primary-500 hover:bg-primary-400 text-white py-4 sm:py-5 rounded-2xl sm:rounded-3xl text-xs sm:text-sm font-black uppercase tracking-[0.2em] transition-all disabled:opacity-20 shadow-2xl shadow-primary-500/20 active:scale-95"
+              class="w-full sm:w-auto px-10 py-5 bg-primary-500 hover:bg-primary-400 text-white rounded-[1.5rem] text-sm font-black uppercase tracking-[0.2em] transition-all disabled:opacity-20 shadow-2xl shadow-primary-500/20 active:scale-95"
             >
               {{ selectedItem?.owned ? i18n.t('btn_acquired') : i18n.t('shop_initiate_acquisition') }}
             </button>
@@ -346,14 +366,22 @@
                     <span class="text-[10px] font-bold text-muted line-through tracking-tighter">{{ item.original_price }}</span>
                     <span class="text-[7px] font-black bg-white/10 px-1 rounded uppercase">VALOR REAL</span>
                   </div>
-                  <div class="flex items-baseline gap-1.5">
-                    <span class="text-2xl font-black text-precision transition-colors"
-                          :class="[
-                            item.rarity?.toLowerCase() === 'legendary' ? 'text-yellow-500' : 
-                            item.rarity?.toLowerCase() === 'especial' || item.rarity?.toLowerCase() === 'epic' ? 'text-purple-400' : 
-                            'text-foreground'
-                          ]">{{ item.price }}</span>
-                    <span class="text-[9px] font-black text-muted uppercase tracking-widest opacity-60">{{ i18n.t('stats_reps') }}</span>
+                  <div class="flex flex-col gap-1">
+                    <!-- RC Price -->
+                    <div v-if="item.price > 0" class="flex items-baseline gap-1.5">
+                      <span class="text-2xl font-black text-precision transition-colors"
+                            :class="[
+                              item.rarity?.toLowerCase() === 'legendary' ? 'text-yellow-500' : 
+                              item.rarity?.toLowerCase() === 'especial' || item.rarity?.toLowerCase() === 'epic' ? 'text-purple-400' : 
+                              'text-foreground'
+                            ]">{{ item.price }}</span>
+                      <span class="text-[9px] font-black text-muted uppercase tracking-widest opacity-60">{{ i18n.t('stats_reps') }}</span>
+                    </div>
+                    <!-- Gem Price -->
+                    <div v-if="item.price_gems > 0" class="flex items-baseline gap-1.5">
+                      <span class="text-2xl font-black text-emerald-500 tabular-nums">{{ item.price_gems }}</span>
+                      <span class="text-[9px] font-black text-emerald-500/60 uppercase tracking-widest">GEM</span>
+                    </div>
                   </div>
                 </div>
 
@@ -599,50 +627,61 @@
                     {{ i18n.t('shop_decrypt_at') }}: {{ getCountdown(item) }}
                   </p>
                 </div>
-              </div>
+              </div>              <!-- Action Footer -->
+              <div class="p-3 sm:p-4 mt-auto border-t border-white/5 bg-black/60">
+                <div class="flex flex-col gap-3">
+                  <!-- Top Row: Prices & Status -->
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="flex flex-col gap-1 min-w-0">
+                      <!-- Owned Status -->
+                      <div v-if="item.owned" class="flex items-center gap-1.5">
+                        <div v-if="item.type !== 'consumable'" class="flex items-center gap-1 text-neon-lime">
+                          <CheckCircle2 class="w-3 h-3" />
+                          <span class="text-[9px] font-black uppercase tracking-widest">{{ i18n.t('btn_acquired') }}</span>
+                        </div>
+                        <div v-else class="flex items-center gap-1 text-primary-500">
+                          <Package class="w-3 h-3" />
+                          <span class="text-[9px] font-black uppercase tracking-widest">{{ i18n.t('shop_stock') }}: {{ item.quantity }}</span>
+                        </div>
+                      </div>
 
-              <!-- Action Footer -->
-              <div class="p-3 sm:p-4 mt-auto border-t border-white/5 bg-foreground/[0.02] flex items-center justify-between gap-2">
-                <div v-if="item.owned && item.type !== 'consumable'" class="flex items-center gap-1.5 text-neon-lime shrink-0">
-                  <CheckCircle2 class="w-3.5 h-3.5" />
-                  <span class="text-[9px] font-black uppercase tracking-widest">{{ i18n.t('btn_acquired') }}</span>
-                </div>
-                <div v-else-if="item.owned && item.type === 'consumable'" class="flex items-center gap-1.5 text-primary-500 shrink-0">
-                  <Package class="w-3.5 h-3.5" />
-                  <span class="text-[10px] font-black uppercase tracking-widest">{{ i18n.t('shop_stock') }}: {{ item.quantity }}</span>
-                </div>
-                <div v-else-if="item.price > 0" class="flex flex-col justify-center shrink-0">
-                  <div v-if="item.original_price" class="flex items-center gap-1 mb-0.5 opacity-40">
-                    <span class="text-[8px] font-bold text-muted line-through">{{ item.original_price }}</span>
-                  </div>
-                  <div class="flex items-baseline gap-1">
-                    <span class="text-lg font-black tabular-nums transition-colors" :class="canAfford(item) ? 'text-primary-500' : 'text-muted'">{{ item.price }}</span>
-                    <span class="text-[7px] font-black text-muted uppercase tracking-widest opacity-40">RC</span>
-                  </div>
-                </div>
+                      <!-- Prices (Only if not owned OR if consumable) -->
+                      <div v-if="!item.owned || item.type === 'consumable'" class="flex flex-col gap-0.5">
+                        <div v-if="item.price > 0" class="flex items-center gap-1.5">
+                          <span class="text-sm font-black tabular-nums leading-none" :class="(authStore.user?.reppy_coins || 0) >= item.price ? 'text-primary-500' : 'text-muted/60'">{{ item.price }}</span>
+                          <span class="text-[7px] font-black text-muted/40 uppercase tracking-widest">RC</span>
+                        </div>
+                        <div v-if="item.price_gems > 0" class="flex items-center gap-1.5">
+                          <span class="text-sm font-black tabular-nums leading-none" :class="(authStore.user?.reppy_gems || 0) >= item.price_gems ? 'text-emerald-400' : 'text-muted/60'">{{ item.price_gems }}</span>
+                          <span class="text-[7px] font-black text-muted/40 uppercase tracking-widest">GEM</span>
+                        </div>
+                      </div>
+                    </div>
 
-                <div class="flex items-center ml-auto">
-                  <button 
-                    v-if="(!item.owned || item.type === 'consumable') && item.price > 0"
-                    @click="buyItem(item)"
-                    :disabled="!canAfford(item) || buying || !item.is_unlocked"
-                    class="px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap min-w-[80px]"
-                    :class="!canAfford(item) || buying || !item.is_unlocked 
-                      ? 'bg-foreground/5 text-muted/40 border border-border/50 cursor-not-allowed' 
-                      : 'bg-primary-500 hover:bg-primary-400 text-white shadow-lg shadow-primary-500/20 active:scale-95'"
-                  >
-                    {{ item.is_unlocked ? i18n.t('btn_get') : i18n.t('btn_lock') }}
-                  </button>
-                  
-                  <button 
-                    v-if="item.owned && item.type !== 'bundle'"
-                    @click="item.type === 'consumable' ? activateConsumable(item) : equipItem(item)"
-                    :disabled="item.type !== 'consumable' && isEquipped(item)"
-                    class="px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 whitespace-nowrap"
-                    :class="item.type === 'consumable' ? 'bg-emerald-500 text-black hover:bg-emerald-400 shadow-lg shadow-emerald-500/20' : (isEquipped(item) ? 'bg-white/5 text-muted border border-white/10 cursor-default' : 'bg-blue-500 text-white hover:bg-blue-400 shadow-lg shadow-blue-500/20')"
-                  >
-                    {{ item.type === 'consumable' ? i18n.t('btn_activate') : (isEquipped(item) ? i18n.t('btn_on') : i18n.t('btn_equip')) }}
-                  </button>
+                    <!-- Primary Action Button (Equip/Activate/Buy) -->
+                    <div class="flex items-center gap-2">
+                      <button 
+                        v-if="item.owned && item.type !== 'bundle'"
+                        @click="item.type === 'consumable' ? activateConsumable(item) : equipItem(item)"
+                        :disabled="item.type !== 'consumable' && isEquipped(item)"
+                        class="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 whitespace-nowrap shadow-lg"
+                        :class="item.type === 'consumable' ? 'bg-emerald-500 text-black hover:bg-emerald-400 shadow-emerald-500/20' : (isEquipped(item) ? 'bg-white/5 text-muted border border-white/10 cursor-default' : 'bg-blue-500 text-white hover:bg-blue-400 shadow-blue-500/20')"
+                      >
+                        {{ item.type === 'consumable' ? i18n.t('btn_activate') : (isEquipped(item) ? i18n.t('btn_on') : i18n.t('btn_equip')) }}
+                      </button>
+
+                      <!-- Buy Button (Secondary if already owned consumable) -->
+                      <button 
+                        v-if="(!item.owned || item.type === 'consumable') && (item.price > 0 || item.price_gems > 0)"
+                        @click="buyItem(item)"
+                        :disabled="!canAfford(item) || buying || !item.is_unlocked"
+                        class="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap shadow-xl"
+                        :class="item.owned && item.type === 'consumable' ? 'bg-white/10 text-white hover:bg-white/20 border border-white/10' : (!canAfford(item) || buying || !item.is_unlocked ? 'bg-white/5 text-muted/40 border border-white/5 cursor-not-allowed' : 'bg-primary-500 hover:bg-primary-400 text-white shadow-primary-500/20 active:scale-95')"
+                      >
+                        {{ item.owned ? i18n.t('btn_buy_more') || 'MÁS' : (item.is_unlocked ? i18n.t('btn_get') : i18n.t('btn_lock')) }}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -884,7 +923,7 @@ import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
-import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Check, Swords, X, Flame, Package, Sword, Shield, Footprints, Construction, FlaskConical, Zap, Info, ChevronUp, ChevronDown as ChevronDownIcon, Users, Activity, Lock, CheckCircle2, Clock } from 'lucide-vue-next';
+import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Diamond, Check, Swords, X, Flame, Package, Sword, Shield, Footprints, Construction, FlaskConical, Zap, Info, ChevronUp, ChevronDown as ChevronDownIcon, Users, Activity, Lock, CheckCircle2, Clock } from 'lucide-vue-next';
 import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
 import ItemIcon from './ItemIcon.vue';
@@ -1026,7 +1065,12 @@ const checkShop = async () => {
   }
 };
 
-const canAfford = (item) => (authStore.user?.reppy_coins || 0) >= item.price;
+const canAfford = (item) => {
+  if (!item) return false;
+  const hasCoins = (authStore.user?.reppy_coins || 0) >= (item.price || 0);
+  const hasGems = (authStore.user?.reppy_gems || 0) >= (item.price_gems || 0);
+  return hasCoins && hasGems;
+};
 
 const getCountdown = (item) => {
   if (!item?.unlock_at) return '00:00:00';
@@ -1057,7 +1101,7 @@ const getRarityBadge = (item) => {
   if (!item) return { label: 'COMÚN', classes: 'text-muted bg-foreground/5 border-border' };
   const rarity = item.rarity?.toLowerCase() || 'common';
   switch (rarity) {
-    case 'calistenico': return { label: 'CALISTÉNICO', classes: 'text-[#ccff00] bg-[#ccff00]/10 border-[#ccff00]/30 shadow-[0_0_10px_rgba(204,255,0,0.2)]' };
+    case 'calistenico': return { label: 'CALISTÉNICO', classes: 'text-[#ccff00] bg-[#ccff00]/10 border-[#ccff00]/40 shadow-[0_0_25px_rgba(204,255,0,0.4)] animate-pulse-subtle' };
     case 'legendary': return { label: 'LEGENDARIO', classes: 'text-primary-500 bg-primary-500/10 border-primary-500/30 shadow-[0_0_10px_rgba(255,69,0,0.2)]' };
     case 'epic':
     case 'especial': return { label: 'ESPECIAL', classes: 'text-purple-400 bg-purple-500/10 border-purple-500/30' };

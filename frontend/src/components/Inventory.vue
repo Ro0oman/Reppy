@@ -9,6 +9,12 @@
         <h1 class="text-4xl md:text-6xl font-black text-foreground tracking-tighter uppercase italic leading-none">
           {{ i18n.t('inv_title') }}
         </h1>
+        <div class="flex items-center justify-center gap-4">
+          <router-link :to="{ name: 'codex' }" class="flex items-center gap-2 bg-surface/10 hover:bg-surface/20 border border-white/5 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-muted hover:text-foreground">
+            <BookOpen class="w-4 h-4 text-primary-500" />
+            {{ i18n.t('nav_codex') }}
+          </router-link>
+        </div>
       </div>
     </div>
     <!-- Tabs Navigation (Redesigned for separation) -->
