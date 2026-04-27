@@ -114,14 +114,17 @@ const rotation = ref(0);
 const prizeResult = ref(null);
 
 const rewards = [
-  { id: 0, name: '200 🪙', bgColor: '#FBBF24', size: 55 },
-  { id: 1, name: '500 🪙', bgColor: '#F59E0B', size: 55 },
-  { id: 2, name: '800 🪙', bgColor: '#D97706', size: 55 },
-  { id: 3, name: '1000 🪙', bgColor: '#B45309', size: 45 },
-  { id: 4, name: '1500 🪙', bgColor: '#4F46E5', size: 45 }, 
-  { id: 5, name: '2500 🪙', bgColor: '#EF4444', size: 30 }, // Jackpot
-  { id: 6, name: '🧪 x1.5', bgColor: '#10B981', size: 35 }, // Strength Potion
-  { id: 7, name: '🎁 LVL', bgColor: '#8B5CF6', size: 40 } // Chest
+  { id: 0, name: '200 🪙', bgColor: '#FBBF24', size: 72 }, // 20 * 3.6
+  { id: 1, name: '400 🪙', bgColor: '#F59E0B', size: 54 }, // 15 * 3.6
+  { id: 2, name: '600 🪙', bgColor: '#D97706', size: 43.2 }, // 12 * 3.6
+  { id: 3, name: '800 🪙', bgColor: '#B45309', size: 36 }, // 10 * 3.6
+  { id: 4, name: '1000 🪙', bgColor: '#4F46E5', size: 28.8 }, // 8 * 3.6
+  { id: 5, name: '2000 🪙', bgColor: '#EF4444', size: 14.4 }, // 4 * 3.6
+  { id: 10, name: '3 💎', bgColor: '#10B981', size: 72 }, // 20 * 3.6
+  { id: 6, name: '🧪', bgColor: '#6366F1', size: 21.6 }, // 6 * 3.6
+  { id: 7, name: '🎁 L', bgColor: '#8B5CF6', size: 10.8 }, // 3 * 3.6
+  { id: 8, name: '🎁 B', bgColor: '#EC4899', size: 5.4 }, // 1.5 * 3.6
+  { id: 9, name: '🎁 E', bgColor: '#F43F5E', size: 1.8 } // 0.5 * 3.6
 ];
 
 // Helper to get cumulative angles
@@ -151,6 +154,7 @@ const getTextCoords = (index) => {
 
 const getPrizeText = (prize) => {
   if (prize.type === 'coins') return i18n.t('wheel_prizemsg_coins', { value: prize.value });
+  if (prize.type === 'gems') return i18n.t('wheel_prizemsg_gems', { value: prize.value }) || `+${prize.value} Gemas`;
   if (prize.type === 'consumable') return i18n.t('wheel_prizemsg_item', { name: prize.item ? prize.item.name : i18n.t('wheel_potion') });
   if (prize.type === 'chest') return i18n.t('wheel_prizemsg_chest');
   return i18n.t('wheel_try_tomorrow');
@@ -187,8 +191,9 @@ const spinWheel = async () => {
       prizeResult.value = { ...data.prize, msg: data.message };
       canSpin.value = false;
       
-      // Update balance
-      authStore.user.reppy_coins = data.new_balance;
+      // Update balances
+      authStore.user.reppy_coins = data.new_coins;
+      authStore.user.reppy_gems = data.new_gems;
 
       if (data.prize.type !== 'nothing') {
         confetti({

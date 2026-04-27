@@ -51,16 +51,17 @@ router.post('/spin', authenticate, async (req, res) => {
 
     // 2. Define Prizes with Weights
     const prizes = [
-      { id: 0, value: 200, weight: 25, type: 'coins' },
-      { id: 1, value: 400, weight: 18, type: 'coins' },
-      { id: 2, value: 600, weight: 15, type: 'coins' },
-      { id: 3, value: 800, weight: 12, type: 'coins' },
-      { id: 4, value: 1000, weight: 10, type: 'coins' },
-      { id: 5, value: 2000, weight: 5, type: 'coins' },
-      { id: 6, rarity: 'common', weight: 8, type: 'consumable', label: 'Poción de Fuerza (x1.5)' },
-      { id: 7, type: 'chest', rarity: 'level', weight: 4, label: 'Cofre de Nivel' },
-      { id: 8, type: 'chest', rarity: 'boss', weight: 2, label: 'Cofre de Boss' },
-      { id: 9, type: 'chest', rarity: 'epic', weight: 1, label: 'Cofre Épico' }
+      { id: 0, value: 200, weight: 20, type: 'coins' },
+      { id: 1, value: 400, weight: 15, type: 'coins' },
+      { id: 2, value: 600, weight: 12, type: 'coins' },
+      { id: 3, value: 800, weight: 10, type: 'coins' },
+      { id: 4, value: 1000, weight: 8, type: 'coins' },
+      { id: 5, value: 2000, weight: 4, type: 'coins' },
+      { id: 10, value: 3, weight: 20, type: 'gems', label: '3 Gemas' },
+      { id: 6, rarity: 'common', weight: 6, type: 'consumable', label: 'Poción de Fuerza (x1.5)' },
+      { id: 7, type: 'chest', rarity: 'level', weight: 3, label: 'Cofre de Nivel' },
+      { id: 8, type: 'chest', rarity: 'boss', weight: 1.5, label: 'Cofre de Boss' },
+      { id: 9, type: 'chest', rarity: 'epic', weight: 0.5, label: 'Cofre Épico' }
     ];
 
     // Pick a prize
@@ -86,6 +87,13 @@ router.post('/spin', authenticate, async (req, res) => {
     // 4. Process Prize
     if (selectedPrize.type === 'coins') {
       await query('UPDATE users SET reppy_coins = reppy_coins + $1 WHERE id = $2', [selectedPrize.value, userId]);
+
+    } else if (selectedPrize.type === 'gems') {
+      await query('UPDATE users SET reppy_gems = reppy_gems + $1 WHERE id = $2', [selectedPrize.value, userId]);
+      await query(`
+        INSERT INTO gem_transactions (user_id, amount, source, description)
+        VALUES ($1, $2, 'roulette', 'Premio de la Ruleta Diaria')
+      `, [userId, selectedPrize.value]);
 
     } else if (selectedPrize.type === 'chest') {
       if (selectedPrize.rarity === 'level') {
@@ -136,10 +144,14 @@ router.post('/spin', authenticate, async (req, res) => {
 
     await query('COMMIT');
 
+    const finalUserRes = await query('SELECT reppy_coins, reppy_gems FROM users WHERE id = $1', [userId]);
+    const finalUser = finalUserRes.rows[0];
+
     res.json({
       message: '¡Giro completado!',
       prize: result,
-      new_balance: result.type === 'coins' ? user.reppy_coins + result.value : user.reppy_coins
+      new_coins: finalUser.reppy_coins,
+      new_gems: finalUser.reppy_gems
     });
 
   } catch (error) {
