@@ -184,16 +184,16 @@ export function setupRouterGuards(router) {
     const currentPath = to.path
     const currentLang = to.params.lang || 'es'
     
-    // Canonical (Client-only)
-    if (!import.meta.env.SSR) {
+    // Canonical
+    if (typeof document !== 'undefined') {
       let canonical = document.querySelector('link[rel="canonical"]')
       if (canonical) {
         canonical.setAttribute('href', `${baseUrl}${currentPath}`)
       }
     }
 
-    // Hreflang alternates (Client-only)
-    if (!import.meta.env.SSR) {
+    // Hreflang alternates
+    if (typeof document !== 'undefined') {
       const langs = ['es', 'en']
       langs.forEach(l => {
         let alt = document.querySelector(`link[hreflang="${l}"]`)
@@ -204,8 +204,8 @@ export function setupRouterGuards(router) {
       })
     }
 
-    // x-default (Client-only)
-    if (!import.meta.env.SSR) {
+    // x-default
+    if (typeof document !== 'undefined') {
       let xDefault = document.querySelector('link[hreflang="x-default"]')
       if (xDefault) {
         const esPath = currentPath.replace(/^\/(es|en)/, '/es')
@@ -217,10 +217,6 @@ export function setupRouterGuards(router) {
     const title = to.meta.titleKey ? `${i18n.t(to.meta.titleKey)} | Reppy` : (to.meta.title || 'Reppy');
     const description = to.meta.descriptionKey ? i18n.t(to.meta.descriptionKey) : 'Registra tus dominadas y flexiones, sube de nivel tus atributos RPG y compite en rankings globales.';
     
-    if (!import.meta.env.SSR) {
-      document.title = title;
-    }
-    
     // Meta tags dinámicos para descripción y redes sociales
     const metas = {
       'description': description,
@@ -231,7 +227,8 @@ export function setupRouterGuards(router) {
       'twitter:description': description
     };
 
-    if (!import.meta.env.SSR) {
+    if (typeof document !== 'undefined') {
+      document.title = title;
       Object.entries(metas).forEach(([name, content]) => {
         let el = document.querySelector(`meta[name="${name}"]`) || document.querySelector(`meta[property="${name}"]`);
         if (el) el.setAttribute('content', content);
