@@ -21,6 +21,7 @@ export default {
     login_subtitle: 'La plataforma premium para entusiastas de las dominadas.',
     login_back: 'Volver al Inicio',
     login_google: 'Iniciar sesión con Google',
+    session_expired: 'Tu sesión ha caducado. Por favor, identifícate de nuevo.',
     
     // Dashboard
     nav_home: 'Inicio',

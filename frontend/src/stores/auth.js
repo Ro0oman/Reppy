@@ -6,6 +6,7 @@ export const useAuthStore = defineStore('auth', {
     user: (!import.meta.env.SSR && JSON.parse(localStorage.getItem('user'))) || null,
     token: (!import.meta.env.SSR && localStorage.getItem('token')) || null,
     interceptorRegistered: false,
+    isLoggingOut: false,
   }),
   getters: {
     isAuthenticated: (state) => !!state.token,
@@ -125,15 +126,15 @@ export const useAuthStore = defineStore('auth', {
     init() {
       if (import.meta.env.SSR) return;
 
-      // 1. Check for stale session (> 48h) to avoid cached component errors
+      // 1. Check for stale session (> 30 days) to avoid cached component errors
       const lastVisit = localStorage.getItem('reppy_last_visit');
       const now = Date.now();
-      const FORTY_EIGHT_HOURS = 48 * 60 * 60 * 1000;
+      const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
 
       if (lastVisit && this.token) {
         const diff = now - parseInt(lastVisit);
-        if (diff > FORTY_EIGHT_HOURS) {
-          console.warn('[AUTH_STORE] Stale session detected (>48h). Forcing logout and refresh...');
+        if (diff > THIRTY_DAYS) {
+          console.warn('[AUTH_STORE] Stale session detected (> 30 days). Forcing logout and refresh...');
           this.logout();
           window.location.reload(); // Hard reload to clear component cache
           return;
@@ -148,9 +149,14 @@ export const useAuthStore = defineStore('auth', {
         axios.interceptors.response.use(
           (response) => response,
           (error) => {
-            if (error.response?.status === 401) {
+            if (error.response?.status === 401 && !this.isLoggingOut) {
+              this.isLoggingOut = true;
               console.warn('Session expired or unauthorized. Logging out...');
               this.logout();
+              
+              // Force redirect to login page with current language and expired flag
+              const lang = localStorage.getItem('locale') || 'es';
+              window.location.href = `/${lang}/login?expired=1`;
             }
             return Promise.reject(error);
           }

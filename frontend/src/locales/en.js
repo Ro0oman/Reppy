@@ -21,6 +21,7 @@ export default {
     login_subtitle: 'The premium tracking platform for pull-up enthusiasts.',
     login_back: 'Back to Home',
     login_google: 'Sign in with Google',
+    session_expired: 'Your session has expired. Please log in again.',
     
     // Dashboard
     nav_home: 'Home',
