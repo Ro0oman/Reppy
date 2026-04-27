@@ -378,10 +378,10 @@
       </section>
 
       <!-- Modern Filters & Layout Interface -->
-      <div class="flex flex-col lg:flex-row gap-8 items-start relative z-30">
+      <div class="flex flex-col lg:flex-row gap-8 items-start relative z-10">
         
         <!-- Sidebar Filters (Desktop) / Top Bar (Mobile) -->
-        <aside class="w-full lg:w-64 flex-shrink-0 space-y-8 sticky top-24">
+        <aside class="w-full lg:w-64 flex-shrink-0 space-y-8 sticky top-24 z-50 lg:z-10">
           <!-- Category Selector -->
           <div class="space-y-4">
             <h3 class="text-[10px] font-black text-muted uppercase tracking-[0.4em] px-2">{{ i18n.t('shop_filter_categories') || 'CATEGORÍAS' }}</h3>
