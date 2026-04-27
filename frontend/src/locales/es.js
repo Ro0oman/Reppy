@@ -40,7 +40,7 @@ export default {
     codex_title: 'El Códice',
     codex_subtitle: 'Registros Biológicos e Intelectuales',
     codex_subtitle_desc: 'Tu evolución registrada a través del esfuerzo físico e intelectual. Sube de nivel tus atributos para desbloquear tu potencial.',
-    codex_int_vault_desc: 'Gana XP de Inteligencia estudiando los protocolos antiguos. El conocimiento es el multiplicador de fuerza definitivo.',
+    codex_int_vault_desc: 'Gana XP de Inteligencia estudiando las guías antiguas. El conocimiento es el multiplicador de fuerza definitivo.',
     blog_xp_gained: 'Conocimiento Adquirido: +100 INT XP',
     intelecto_adquirido: 'Intelecto Adquirido',
 
@@ -67,7 +67,7 @@ export default {
     codex_int_name: 'Inteligencia',
     codex_int_quote: '"Mente sobre Gravedad."',
     codex_int_desc: 'Mejora la eficiencia del entrenamiento. Un INT alto otorga un bono a todas las ganancias de XP.',
-    codex_int_action: 'Estudia los protocolos del blog en el Conocimiento para subir de nivel.',
+    codex_int_action: 'Estudia las guías del blog en el Conocimiento para subir de nivel.',
 
     codex_fth_name: 'Fe',
     codex_fth_quote: '"La Hermandad es la fuerza."',
@@ -134,7 +134,7 @@ export default {
     solo_desc: 'Añade amigos para competir y mantenerte motivado.',
     ui_challenge: 'Retar',
     ui_pvp_combat: 'Duelo PvP',
-    ui_pvp_config: 'Protocolo de Combate',
+    ui_pvp_config: 'Configuración de Combate',
 
     // PvP Battle System
     pvp_tab: 'Combates',
@@ -152,7 +152,7 @@ export default {
     pvp_defeat: 'DERROTA',
     pvp_draw: 'EMPATE',
     pvp_challenge_sent: '¡Reto de Combate Enviado!',
-    pvp_error_init: 'Error al inicializar el protocolo',
+    pvp_error_init: 'Error al inicializar el sistema',
     pvp_error_start: 'Error al iniciar el combate',
     pvp_accept_challenge: 'ACEPTAR RETO ⚔',
     pvp_waiting: 'ESPERANDO AL RIVAL',
@@ -187,7 +187,7 @@ export default {
     lb_empty: 'Aún no hay leyendas.',
     lb_you: 'TÚ',
     lb_pro_athlete: 'ATLETA PRO',
-    lb_data_null: 'DATOS DE PROTOCOLO NULOS',
+    lb_data_null: 'DATOS NULOS',
     lb_level: 'NIVEL',
 
     // Timeframes
@@ -212,7 +212,7 @@ export default {
     boss_class_active: 'CLASE: SECTOR ACTIVO',
     boss_how_damage: '¿CÓMO HAGO MÁS DAÑO?',
     boss_battle_manual: 'MANUAL DE BATALLA',
-    boss_protocol_complete: 'PROTOCOLO DE CAÍDA COMPLETADO',
+    boss_protocol_complete: 'SISTEMA DE DERROTA COMPLETADO',
     boss_target_integrity: 'INTEGRIDAD DEL OBJETIVO',
     boss_neutralized: '0% INTEGRIDAD - OBJETIVO NEUTRALIZADO',
     boss_hist_damage: 'Tu Daño Histórico',
@@ -222,7 +222,7 @@ export default {
     boss_claim_loot: 'RECLAMAR BOTÍN',
     boss_reward_acquired: 'RECOMPENSA_ADQUIRIDA',
     boss_login_to_damage: 'Inicia sesión para registrar tu daño y acceder al botín',
-    boss_next_protocol: 'Próximo Protocolo',
+    boss_next_protocol: 'Siguiente Fase',
     boss_locked: 'Bloqueado 🔒',
     boss_op_manual: 'Manual de Operaciones',
     boss_community_event: 'Evento de la Comunidad',
@@ -237,12 +237,12 @@ export default {
     battle_help_title2: 'PROGRESIÓN E HISTORIA',
     battle_help_desc2: 'Derrotar bosses avanza la historia de la comunidad y desbloquea nuevos sectores en el mundo Reppy.',
     economy_title: 'ECONOMÍA.CODEX',
-    economy_subtitle: 'Protoclo de asignación de recursos',
+    economy_subtitle: 'Manual de asignación de recursos',
     economy_revenue: 'GENERACIÓN DE INGRESOS',
     economy_legendary: 'DROPS LEGENDARIOS',
     economy_rep: 'RC / REP',
     economy_status_optimal: 'Estado del Sistema: Óptimo',
-    economy_privacy: 'Protocolo de Privacidad',
+    economy_privacy: 'Privacidad',
     economy_star_github: 'ESTRELLA EN GITHUB',
     economy_admin: 'ADMIN.CMD',
     economy_history_title: 'Historial de Monedas',
@@ -260,7 +260,7 @@ export default {
     // Login
     login_title: 'Iniciar Sesión',
     login_welcome: 'Bienvenido a Reppy',
-    login_subtitle: 'PROTOCOLO DE ACCESO AL SISTEMA',
+    login_subtitle: 'ACCESO AL SISTEMA',
     login_password: 'Contraseña',
     login_email: 'Email',
     login_name: 'Nombre completo',
@@ -281,7 +281,7 @@ export default {
     shop_go_to: 'Ir a la página',
 
     // Profile
-    profile_guide_title: 'Guía del Protocolo de Evolución',
+    profile_guide_title: 'Guía de Evolución',
     profile_file_too_large: 'Archivo demasiado grande (Máx 2MB)',
     profile_updated: 'Bio-núcleo actualizado',
 
@@ -346,7 +346,7 @@ export default {
     // Articles
     article_guide_tag: 'Guía de Entrenamiento',
     article_title1: 'Cómo hacer tu primera dominada: Guía Maestra',
-    article_desc1: 'Protocolos de progresión desde cero hasta dominar la barra.',
+    article_desc1: 'Guías de progresión desde cero hasta dominar la barra.',
     article_title2: 'Gamificación y Calistenia: Por qué funciona Reppy',
     article_desc2: 'La ciencia detrás de los puntos de experiencia y la motivación en el fitness.',
     blog_learn_more: 'Aprende la técnica completa en:',
@@ -392,7 +392,7 @@ export default {
     activity_inflicted_you: 'Has infligido',
     activity_post_comment_placeholder: 'Escribe un comentario operativo...',
     activity_no_records: 'Aún no hay registros',
-    activity_share_title: 'Reppy - Protocolo de Entrenamiento',
+    activity_share_title: 'Reppy - Registro de Entrenamiento',
     activity_share_msg: 'Echa un vistazo al entrenamiento de {name} en Reppy',
     activity_error_share: 'Error al compartir',
     activity_comment_hint: 'Escribe un comentario operativo...',
@@ -487,10 +487,10 @@ export default {
     
     blog_xp_gained: '¡Conocimiento adquirido! +100 XP de INT ganada.',
     intelecto_adquirido: 'INTELECTO ADQUIRIDO',
-    blog_read_congrats: 'Protocolo completado: Intelecto aumentado.',
+    blog_read_congrats: 'Estudio completado: Intelecto aumentado.',
 
     // Shop Categories
-    shop_cat_all: 'TODO EL PROTOCOLO',
+    shop_cat_all: 'TODO EL CATÁLOGO',
     shop_cat_head: 'CASCOS',
     shop_cat_weapons: 'ARMAMENTO',
     shop_cat_armor: 'ARMADURAS',
@@ -522,7 +522,7 @@ export default {
     view_all_articles: 'Ver todos los artículos',
     trending: 'Tendencia',
     read_time: 'min de lectura',
-    related_protocols: 'Protocolos Relacionados',
+    related_protocols: 'Guías Relacionadas',
     share_knowledge: 'Comparte este conocimiento',
     copy_link: 'Copiar enlace',
     share_x: 'Compartir en X',
@@ -537,14 +537,14 @@ export default {
     push_power: 'Fuerza de Empuje',
     full_ecosystem: 'Ecosistema Completo',
     pullup_guide_title: 'Cómo hacer tu primera dominada: Guía Maestra',
-    pullup_guide_desc: 'Protocolos de progresión desde cero hasta dominar la barra.',
+    pullup_guide_desc: 'Guías de progresión desde cero hasta dominar la barra.',
     gamification_title: 'Gamificación y Calistenia: Por qué funciona Reppy',
     gamification_desc: 'La ciencia detrás de los puntos de experiencia y la motivación en el fitness.',
     pullup_seo_title: 'Contador de Dominadas Online',
     pullup_seo_desc: 'Registra tus pull-ups y compite en el ranking mundial.',
     pushup_seo_title: 'Contador de Flexiones Gratis',
     pushup_seo_desc: 'Lleva la cuenta de tus push-ups y sube de nivel tus atributos.',
-    rpg_protocol_title: 'Explorar Protocolos RPG',
+    rpg_protocol_title: 'Explorar Sistemas RPG',
     rpg_protocol_desc: 'Descubre todas las funciones de gamificación de Reppy.',
 
     // Exercise Landing - Dominadas
@@ -604,12 +604,12 @@ export default {
     el_latest_blog: 'Último del Blog: Rutina David Goggins',
     
     // Blog List & 404
-    blog_list_title: 'Protocolos y Noticias de Entrenamiento',
-    blog_list_subtitle: 'Las últimas guías de calistenia, protocolos mentales y actualizaciones de la comunidad Reppy.',
+    blog_list_title: 'Guías y Noticias de Entrenamiento',
+    blog_list_subtitle: 'Las últimas guías de calistenia, consejos mentales y actualizaciones de la comunidad Reppy.',
     pagination_next: 'Página Siguiente',
     pagination_prev: 'Página Anterior',
     not_found_title: 'ÁREA RESTRINGIDA (404)',
-    not_found_desc: 'El protocolo que buscas ha sido movido o eliminado del mainframe.',
+    not_found_desc: 'Lo que buscas ha sido movido o eliminado del mainframe.',
     not_found_btn: 'VOLVER A ZONA SEGURA',
 
     // Battle Overhaul Modal
@@ -641,7 +641,7 @@ export default {
     btn_cancel: 'Cancelar',
     btn_confirm: 'Confirmar',
     battle_overhaul_boss_alert: 'AUMENTO DE VIDA DE BOSS x10',
-    codex_close: 'Cerrar Protocolo',
+    codex_close: 'Cerrar Registro',
 
     // New common buttons
     btn_save: 'Guardar Cambios',
@@ -661,7 +661,7 @@ export default {
     profile_decrypting: 'DESCRIPTANDO PERFIL...',
     profile_recruit: 'RECLUTA',
     profile_xp_to_next: 'XP PARA SIG. NIVEL',
-    profile_reward_protocol: '🎁 PROTOCOLO DE RECOMPENSA',
+    profile_reward_protocol: '🎁 RECOMPENSA DE NIVEL',
     profile_reward_desc: 'Los cofres de recompensa por subir de nivel se añaden automáticamente al inventario.',
     profile_activity_audit: 'AUDITORÍA DE ACTIVIDAD',
     profile_rc_history: 'HISTORIAL DE REPPY COINS',
@@ -671,16 +671,16 @@ export default {
 
     // Shop specific
     shop_armory_title: 'ARMERÍA',
-    shop_armory_subtitle: 'Equipa a tu leyenda con cosméticos de protocolo de élite.',
+    shop_armory_subtitle: 'Equipa a tu leyenda con cosméticos de élite.',
     shop_reppy_coins: 'REPPY COINS',
     shop_elite_pack: 'PACK ÉLITE',
     shop_special_deal: 'Oferta Especial',
     shop_filter_categories: 'CATEGORÍAS DE FILTRO',
-    shop_filter_rarity: 'PROTOCOLOS DE RAREZA',
+    shop_filter_rarity: 'FILTRAR POR RAREZA',
     shop_status_online: 'ARMERÍA EN LÍNEA',
     shop_artifacts_available: 'ARTEFACTOS DISPONIBLES',
     shop_locked: 'BLOQUEADO',
-    shop_permanent_protocol: 'PROTOCOLO PERMANENTE',
+    shop_permanent_protocol: 'SISTEMA PERMANENTE',
     shop_bundles_title: 'PACKS ÉLITE',
     shop_bundles_subtitle: 'Paquetes tácticos con equipo de alta rareza.',
     shop_screen_preview: 'VISTA.SCRN',
@@ -729,7 +729,7 @@ export default {
     inner_circle: 'CÍRCULO INTERNO',
     reps_collected: 'REPS COLECTADAS',
     reps_scaled: 'REPS ESCALADAS',
-    protocol_label: 'Protocolo',
+    protocol_label: 'Registro',
     live_sync: 'SINCRONIZACIÓN DE RANGOS EN VIVO',
     friend_added: '¡Amigo añadido con éxito!',
     friend_add_failed: 'Error al añadir amigo',
@@ -815,7 +815,7 @@ export default {
     landing_footer_desc: 'Reppy es un tracker de calistenia con sistema RPG para registrar dominadas, flexiones, fondos, muscle ups y dominadas con lastre. Disponible en español e inglés.',
 
     // Additional Shop/UI
-    shop_seasonal_title: 'PROTOCOLO ESTACIONAL',
+    shop_seasonal_title: 'SISTEMA ESTACIONAL',
     shop_seasonal_subtitle: 'Recompensas de eventos especiales y artefactos de hitos.',
     shop_stock: 'STOCK',
     shop_event_badge: 'EVENTO',
@@ -861,7 +861,7 @@ export default {
     inv_slot_helmet: 'CASCO',
 
     // Additional Dashboard
-    dash_global_view_active: 'Vista global activa. Selecciona un protocolo para registrar volumen.',
+    dash_global_view_active: 'Vista global activa. Selecciona un ejercicio para registrar volumen.',
     dash_boss_status: 'Estado del Boss',
     dash_goal_achieved: 'Meta conseguida.',
     dash_analyzing_performance: 'Analizando rendimiento...',
@@ -870,10 +870,10 @@ export default {
     dash_total_tonnage: 'Tonelaje Total',
     dash_history_title: 'Historial de actividad',
     dash_tons_moved: 'TONS MOVIMIENTOS',
-    dash_protocol_null: 'Protocolo Nulo',
+    dash_protocol_null: 'Registro Nulo',
 
     // Reps Input
-    rep_protocol_active: 'Protocolo {type} activo',
+    rep_protocol_active: 'Sistema {type} activo',
     rep_manual_entry: 'Entrada manual',
     rep_additional_weight: 'Carga adicional (Kg)',
 
@@ -897,7 +897,7 @@ export default {
     nav_rank_details: 'DETALLES DE RANGO',
     nav_rank_progress: 'PROGRESO DE RANGO',
     nav_remaining: 'RESTANTE',
-    codex_earnings_protocol: 'PROTOCOLO_GANANCIAS',
+    codex_earnings_protocol: 'SISTEMA_GANANCIAS',
     codex_action_target: 'Iniciar Entrenamiento',
     codex_earn_weighted: 'Rep. con Lastre',
     codex_earn_standard: 'Rep. Estándar',
@@ -908,7 +908,7 @@ export default {
     codex_earn_login: 'Acceso Diario',
     codex_earn_streak: 'Racha Activa',
     codex_earn_knowledge: 'Codex Analizado',
-    codex_earn_analysis: 'Protocolo Leído',
+    codex_earn_analysis: 'Guía Leída',
     codex_earn_raid: 'Participación Raid',
     codex_earn_contribution: 'Esfuerzo Fiel',
     codex_earn_social: 'Interacción Social',
@@ -931,7 +931,7 @@ export default {
     inv_cat_boots: 'MÓDULO_BOTAS',
     inv_cat_gear: 'EQUIPO_COMBATE',
     
-    rarity_all: 'PROTOCOLO_TODO',
+    rarity_all: 'FILTRAR_TODO',
     rarity_common: 'COMÚN',
     rarity_rare: 'RARO',
     rarity_special: 'ESPECIAL',
@@ -957,7 +957,7 @@ export default {
     dash_stat_vig: 'VIGOR_RESILIENCIA',
     dash_stat_int: 'SINC_NEURONAL',
     dash_stat_fth: 'AURA_SAGRADA',
-    dash_stat_cha: 'PROTOCOLO_CARISMA',
+    dash_stat_cha: 'SISTEMA_CARISMA',
     
     inv_active_buffs: 'Potenciadores Activos',
     inv_dmg_mult: 'Multiplicador de Daño',
@@ -1067,7 +1067,7 @@ export default {
     ui_avg: 'Promedio',
     ui_edit: 'Editar',
     ui_op_consistency: 'Consistencia Operativa',
-    ui_eff_protocol: 'Protocolo de Eficiencia',
+    ui_eff_protocol: 'Sistema de Eficiencia',
     ui_verified: 'Verificado',
     ui_legendary_rewards: 'Recompensas Legendarias',
     ui_drop_rates: 'Probabilidades de Botín',
@@ -1084,15 +1084,15 @@ export default {
     ui_magnitude: 'Magnitud',
     ui_timestamp: 'Marca de Tiempo',
     ui_loadout_active: 'Loadout Activo',
-    ui_protocol_active: 'Protocolo Activo',
+    ui_protocol_active: 'Sistema Activo',
     ui_more_details: 'Más Detalles',
     ui_knowledge_vault: 'La Bóveda del Conocimiento',
     ui_challenge: 'Retar',
     ui_comment_placeholder: 'Comentar...',
     ui_submit: 'Ok',
-    ui_protocol_legendary: 'Protocolo Legendario',
+    ui_protocol_legendary: 'Sistema Legendario',
     ui_claim_legendary: 'Reclamar Botín Legendario',
-    ui_protocols: 'Protocolos',
+    ui_protocols: 'Sistemas',
     ui_unlocked: 'Desbloqueados',
     ui_streak_days: 'días de racha',
     ui_acquired: 'Adquirido',
@@ -1106,5 +1106,5 @@ export default {
     shop_reppy_coins: 'Reppy Coins',
     shop_bundles_title: 'Packs Tácticos',
     shop_bundles_subtitle: 'Módulos de rendimiento consolidados',
-    shop_permanent_protocol: 'Protocolos Permanentes',
+    shop_permanent_protocol: 'Sistemas Permanentes',
 };

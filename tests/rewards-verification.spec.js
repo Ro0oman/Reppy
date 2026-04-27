@@ -71,7 +71,7 @@ test.describe('Automated Rewards & Shop Verification', () => {
     await levelChest.click();
     
     // Wait for "DECRYPTION PROTOCOL" text (Legacy mode)
-    await expect(page.getByText(/DECRYPTION PROTOCOL/i)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/DECRYPTION SYSTEM/i)).toBeVisible({ timeout: 10000 });
     
     // Wait for "COLLECT" button
     const collectAssetBtn = page.getByRole('button', { name: /COLLECT|COLECTAR/i }).first();

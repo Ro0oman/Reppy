@@ -13,7 +13,7 @@
             <Swords class="w-6 h-6 text-primary-500" />
           </div>
           <div>
-            <h2 class="text-xl font-black text-white italic uppercase tracking-tighter">BATTLE_PROTOCOL_SETUP</h2>
+            <h2 class="text-xl font-black text-white italic uppercase tracking-tighter">BATTLE_CONFIG_SYSTEM</h2>
             <p class="text-[10px] font-bold text-muted uppercase tracking-[0.2em] mt-1">{{ i18n.t('ui_pvp_config') }} vs {{ target?.user_name || 'Operative' }}</p>
           </div>
         </div>

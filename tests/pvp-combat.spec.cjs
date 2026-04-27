@@ -50,7 +50,7 @@ test.describe('PVP Combat System', () => {
 
     // Open challenge modal
     await pageA.click('text=RETAR A DUELO');
-    await expect(pageA.locator('text=BATTLE_PROTOCOL_SETUP')).toBeVisible();
+    await expect(pageA.locator('text=BATTLE_CONFIG_SYSTEM')).toBeVisible();
 
     // Configure and Send Challenge
     await pageA.click('button:has-text("INICIAR BATALLA")');

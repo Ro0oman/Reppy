@@ -75,7 +75,7 @@
       <div class="mt-8 pt-8 border-t border-border shrink-0 flex items-center justify-between">
            <div class="flex items-center gap-3">
                <div class="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></div>
-               <p class="text-[10px] font-black text-muted uppercase tracking-widest">Protocolo de batalla activo</p>
+               <p class="text-[10px] font-black text-muted uppercase tracking-widest">Registro de batalla guardado</p>
            </div>
            <p class="text-[10px] font-black text-primary-500 uppercase tracking-widest italic">TEMPORADA 1</p>
       </div>

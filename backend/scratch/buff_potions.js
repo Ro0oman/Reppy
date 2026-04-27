@@ -9,7 +9,7 @@ const updates = [
   { name: 'Sérum de Precisión Químico', stats: { duration: 10800, dex_bonus: 150 } },
   { name: 'Ambrosía del Olimpo', stats: { duration: 21600, multiplier: 5.0 } },
   { name: 'Sangre de Dragón', stats: { duration: 21600, dex_bonus: 300 } },
-  { name: 'Protocolo de Gravedad Zero', stats: { duration: 86400, multiplier: 10.0 } },
+  { name: 'Esencia de Gravedad Cero', stats: { duration: 86400, multiplier: 10.0 } },
   { name: 'Maestría del Cuerpo', stats: { duration: 86400, dex_bonus: 1000 } }
 ];
 

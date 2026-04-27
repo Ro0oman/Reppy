@@ -115,7 +115,7 @@
         <div class="pt-10 md:pt-16 pb-6 text-center px-6 md:px-8 z-10">
           <div class="inline-flex items-center gap-3 px-4 py-1.5 bg-primary-500/10 border border-primary-500/20 rounded-full mb-6">
              <Zap class="w-3.5 h-3.5 text-primary-500 animate-pulse" />
-             <span class="text-[9px] md:text-[10px] font-black text-primary-500 uppercase tracking-[0.3em] font-tight">DECRYPTION PROTOCOL ACTIVE</span>
+             <span class="text-[9px] md:text-[10px] font-black text-primary-500 uppercase tracking-[0.3em] font-tight">DECRYPTION SYSTEM ACTIVE</span>
           </div>
           <h2 class="text-3xl md:text-5xl font-black text-industrial text-white uppercase italic tracking-tighter leading-none mb-3">
             ARTIFACT<span class="text-primary-500">.</span>RECOVERY
@@ -156,7 +156,7 @@
         <div v-if="finished" class="p-8 md:p-12 text-center animate-in-up flex flex-col items-center pb-32 md:pb-12 overflow-y-auto max-h-[60vh] scrollbar-hide">
           <div class="mb-6 md:mb-8 inline-flex items-center gap-4 px-6 py-2 rounded-xl bg-neon-lime/10 border border-neon-lime/20">
             <Trophy class="w-4 h-4 md:w-5 md:h-5 text-neon-lime" />
-            <span class="text-[9px] md:text-[10px] font-black text-neon-lime uppercase tracking-[0.4em] font-tight">PROTOCOL SUCCESSFUL</span>
+            <span class="text-[9px] md:text-[10px] font-black text-neon-lime uppercase tracking-[0.4em] font-tight">RECOVERY SUCCESSFUL</span>
           </div>
           <div class="space-y-3 md:space-y-4 mb-8 md:mb-10 max-w-lg">
              <h3 class="text-3xl md:text-5xl font-black text-industrial text-white italic tracking-tighter uppercase leading-none px-4">

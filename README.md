@@ -25,10 +25,10 @@ Reppy features a community-driven battle system where every user contributes to 
 - **Participation**: You must log at least 1 rep during the active event window to be eligible for rewards.
 
 ### 👹 Global Boss Events
-Massive community protocols triggered seasonally. Face legends like **"El Conejo de Acero"**.
+Massive community events triggered seasonally. Face legends like **"El Conejo de Acero"**.
 - **Real-time Sync**: Battle progress updates via polling for all hunters.
 - **Death Phrases**: Bosses taunt the community with dynamic quotes that change based on their health state.
-- **Neutralization**: Once HP hits 0, the boss enters a `PROTOCOL_CLEARED` state, allowing reward claims.
+- **Neutralization**: Once HP hits 0, the boss enters a `DEFEATED` state, allowing reward claims.
 
 ### 🎁 Loot & Chest System
 Victories grant access to a rarity-based reward system:

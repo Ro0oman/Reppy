@@ -115,7 +115,7 @@ const perfectMapping = {
     "Elixir de Resistencia": "glass-heart",
     "Esencia de Guerrero": "muscle-up",
     "Ambrosía del Olimpo": "amphora",
-    "Protocolo de Gravedad Zero": "bubbling-flask"
+    "Esencia de Gravedad Cero": "bubbling-flask"
 };
 
 async function checkAndApply() {

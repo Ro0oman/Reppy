@@ -86,7 +86,7 @@ export const routes = [
         path: 'admin', 
         component: AdminPanel, 
         name: 'admin',
-        meta: { requiresAuth: true, requiresAdmin: true, title: 'Admin Protocol | Reppy' }
+        meta: { requiresAuth: true, requiresAdmin: true, title: 'Admin Panel | Reppy' }
       },
       { 
         path: 'notifications', 

@@ -95,7 +95,7 @@ export async function checkPvpCooldown(userId, fightId, client) {
     const elapsed = Date.now() - new Date(lastSetRes.rows[0].created_at).getTime();
     const cooldown = 3000; // 3 seconds minimum between sets to prevent macro spam
     if (elapsed < cooldown) {
-      return { error: `Protocolo de recuperación activo: espera ${Math.ceil((cooldown - elapsed) / 1000)}s` };
+      return { error: `Sistema de recuperación activo: espera ${Math.ceil((cooldown - elapsed) / 1000)}s` };
     }
   }
   return { success: true };

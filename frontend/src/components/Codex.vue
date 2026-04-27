@@ -74,12 +74,12 @@
             <div class="p-2 bg-primary-500/10 rounded-lg"><Book class="w-4 h-4 text-primary-500" /></div>
             <h2 class="text-3xl font-black tracking-tighter text-foreground italic uppercase leading-none">{{ i18n.t('ui_knowledge_vault') }}</h2>
           </div>
-          <p class="text-muted/60 text-sm max-w-sm">{{ i18n.t('codex_int_vault_desc') || 'Unlock Intelligence XP by studying calisthenics protocols. Knowledge is the ultimate force multiplier.' }}</p>
+          <p class="text-muted/60 text-sm max-w-sm">{{ i18n.t('codex_int_vault_desc') || 'Unlock Intelligence XP by studying calisthenics guides. Knowledge is the ultimate force multiplier.' }}</p>
         </div>
         
         <div class="bg-surface/10 border border-white/5 px-6 py-4 rounded-2xl flex items-center gap-6">
            <div class="text-center border-r border-border pr-6">
-             <span class="text-[9px] font-black text-muted uppercase tracking-widest block mb-1">{{ i18n.t('ui_protocols') || 'Protocolos' }}</span>
+             <span class="text-[9px] font-black text-muted uppercase tracking-widest block mb-1">{{ i18n.t('ui_protocols') || 'Guías' }}</span>
              <span class="text-xl font-black text-foreground">{{ blogPosts.length }}</span>
            </div>
            <div class="text-center">
@@ -127,7 +127,7 @@
         </router-link>
       </div>
 
-      <!-- Upcoming Protocols Section -->
+      <!-- Upcoming Guides Section -->
       <div v-if="upcomingPosts.length > 0" class="pt-20 space-y-8">
         <div class="flex items-center gap-3">
           <div class="p-2 bg-muted/10 rounded-lg"><Timer class="w-4 h-4 text-muted" /></div>

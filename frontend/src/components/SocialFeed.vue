@@ -68,7 +68,7 @@
                 </div>
 
                 <div class="space-y-3">
-                    <label class="text-[10px] font-black text-primary-500 uppercase tracking-widest pl-1">RESUMEN DEL PROTOCOLO</label>
+                    <label class="text-[10px] font-black text-primary-500 uppercase tracking-widest pl-1">RESUMEN DE ACTIVIDAD</label>
                     <textarea v-model="editForm.description" rows="4" placeholder="¿Cómo fue el entrenamiento de hoy?" class="w-full bg-foreground/[0.04] border border-border rounded-3xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary-500/50 transition-all resize-none"></textarea>
                 </div>
              </div>
@@ -225,7 +225,7 @@ const saveEdit = async () => {
         editingActivity.value = null;
     } catch (e) {
         console.error('Error saving edit:', e);
-        notificationStore.notify('Failed to update protocol', 'error');
+        notificationStore.notify('Failed to update registry', 'error');
     }
 };
 

@@ -24,7 +24,7 @@ const potionConfig = {
         stat: "str", // Guerrero = Fuerza
         desc: "Sangre destilada de campeones antiguos. Al beberla, sientes una fuerza bruta e incontrolable fluir por tus venas."
     },
-    "Protocolo de Gravedad Zero": {
+    "Esencia de Gravedad Cero": {
         stat: "dex", // Gravedad Zero = Agilidad/Ligereza
         desc: "Nanotecnología líquida que anula parcialmente tu masa corporal. Te sientes ligero como una pluma, maximizando tu destreza."
     },

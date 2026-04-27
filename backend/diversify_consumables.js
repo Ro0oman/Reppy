@@ -79,7 +79,7 @@ const consumables = [
     },
     // Rarity: calistenico (24h = 86400s)
     {
-        name: 'Protocolo de Gravedad Zero',
+        name: 'Esencia de Gravedad Cero',
         description: 'Domina las leyes de la física. Un día entero de rendimiento supremo.',
         type: 'consumable',
         rarity: 'calistenico',

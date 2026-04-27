@@ -39,7 +39,7 @@ export default {
     codex_title: 'The Codex',
     codex_subtitle: 'Biological & Intellectual Records',
     codex_subtitle_desc: 'Your evolution tracked through physical and intellectual effort. Level up your attributes to unlock your full potential.',
-    codex_int_vault_desc: 'Gain Intelligence XP by studying the ancient protocols. Knowledge is the ultimate force multiplier.',
+    codex_int_vault_desc: 'Gain Intelligence XP by studying the ancient guides. Knowledge is the ultimate force multiplier.',
     blog_xp_gained: 'Knowledge Acquired: +100 INT XP',
     intelecto_adquirido: 'Intellect Acquired',
 
@@ -66,7 +66,7 @@ export default {
     codex_int_name: 'Intelligence',
     codex_int_quote: '"Mind over Gravity."',
     codex_int_desc: 'Enhances training efficiency. High INT grants a bonus to all XP gains.',
-    codex_int_action: 'Study blog protocols in the Knowledge Vault to level up.',
+    codex_int_action: 'Study blog guides in the Knowledge Vault to level up.',
 
     codex_fth_name: 'Faith',
     codex_fth_quote: '"The Brotherhood is the strength."',
@@ -133,7 +133,7 @@ export default {
     solo_desc: 'Add friends to compete and stay motivated.',
     ui_challenge: 'Challenge',
     ui_pvp_combat: 'PvP Duel',
-    ui_pvp_config: 'Combat Protocol',
+    ui_pvp_config: 'Combat System',
 
     // PvP Battle System
     pvp_tab: 'Battles',
@@ -151,7 +151,7 @@ export default {
     pvp_defeat: 'DEFEAT',
     pvp_draw: 'DRAW',
     pvp_challenge_sent: 'Combat Challenge Sent!',
-    pvp_error_init: 'Error initializing protocol',
+    pvp_error_init: 'Error initializing system',
     pvp_error_start: 'Error starting combat',
     pvp_accept_challenge: 'ACCEPT CHALLENGE ⚔',
     pvp_waiting: 'WAITING FOR OPPONENT',
@@ -186,7 +186,7 @@ export default {
     lb_empty: 'No legends found yet.',
     lb_you: 'YOU',
     lb_pro_athlete: 'PRO ATHLETE',
-    lb_data_null: 'PROTOCOL DATA NULL',
+    lb_data_null: 'SYSTEM DATA NULL',
     lb_level: 'LEVEL',
     
     // Timeframes
@@ -200,7 +200,7 @@ export default {
     stats_effort: 'Total Effort',
     stats_tonnage: 'Tonnage Moved',
     stats_consistency: 'Consistency Streak',
-    stats_protocol_goal: 'Protocol Goal',
+    stats_protocol_goal: 'Daily Goal',
     stats_per_day: 'PER DAY',
     stats_total_reps: 'TOTAL REPS',
 
@@ -208,7 +208,7 @@ export default {
     boss_class_active: 'CLASS: ACTIVE SECTOR',
     boss_how_damage: 'HOW DO I DEAL MORE DAMAGE?',
     boss_battle_manual: 'BATTLE MANUAL',
-    boss_protocol_complete: 'DOWN PROTOCOL COMPLETED',
+    boss_protocol_complete: 'BOSS DEFEATED',
     boss_target_integrity: 'TARGET INTEGRITY',
     boss_neutralized: '0% INTEGRITY - TARGET NEUTRALIZED',
     boss_hist_damage: 'Your Historical Damage',
@@ -218,7 +218,7 @@ export default {
     boss_claim_loot: 'CLAIM LOOT',
     boss_reward_acquired: 'REWARD_ACQUIRED',
     boss_login_to_damage: 'Sign in to log damage and access loot',
-    boss_next_protocol: 'Next Protocol',
+    boss_next_protocol: 'Next Phase',
     boss_locked: 'Locked 🔒',
     boss_op_manual: 'Operations Manual',
     boss_community_event: 'Community Event',
@@ -233,15 +233,15 @@ export default {
     battle_help_title2: 'PROGRESSION & LORE',
     battle_help_desc2: 'Defeating bosses advances the community storyline and unlocks new sectors in the Reppy world.',
      economy_title: 'ECONOMY.CODEX',
-    economy_subtitle: 'Resource allocation protocol',
+    economy_subtitle: 'Resource allocation strategy',
     economy_revenue: 'REVENUE GENERATION',
     economy_legendary: 'LEGENDARY DROPS',
     economy_rep: 'RC / REP',
     economy_status_optimal: 'System Status: Optimal',
-    economy_privacy: 'Privacy Protocol',
+    economy_privacy: 'Privacy Settings',
     economy_star_github: 'STAR ON GITHUB',
     economy_admin: 'ADMIN.CMD',
-    economy_history_title: 'Protocol Coins History',
+    economy_history_title: 'Coin Transaction History',
     economy_my_profile: 'My Profile',
     economy_reppy_core: 'Reppy Core © 2026',
 
@@ -255,7 +255,7 @@ export default {
     // Login
     login_title: 'Sign In',
     login_welcome: 'Welcome to Reppy',
-    login_subtitle: 'SYSTEM ACCESS PROTOCOL',
+    login_subtitle: 'SYSTEM ACCESS',
     login_password: 'Password',
     login_email: 'Email',
     login_name: 'Full Name',
@@ -276,7 +276,7 @@ export default {
     shop_go_to: 'Go to page',
 
     // Profile
-    profile_guide_title: 'Evolution Protocol Guide',
+    profile_guide_title: 'Evolution Guide',
     profile_file_too_large: 'File too large (Max 2MB)',
     profile_updated: 'Biometric core updated',
 
@@ -345,7 +345,7 @@ export default {
     activity_inflicted_you: 'You have inflicted',
     activity_post_comment_placeholder: 'Write a tactical comment...',
     activity_no_records: 'No records yet',
-    activity_share_title: 'Reppy - Training Protocol',
+    activity_share_title: 'Reppy - Training Log',
     activity_share_msg: "Check out {name}'s workout on Reppy",
     activity_error_share: 'Error sharing',
     activity_comment_hint: 'Write a tactical comment...',
@@ -354,7 +354,7 @@ export default {
     // Articles
     article_guide_tag: 'Training Guide',
     article_title1: 'How to do your first pull-up: Master Guide',
-    article_desc1: 'Progression protocols from zero to mastering the bar.',
+    article_desc1: 'Progression guides from zero to mastering the bar.',
     article_title2: 'Gamification & Calisthenics: Why Reppy Works',
     article_desc2: 'The science behind experience points and motivation in fitness.',
     blog_learn_more: 'Learn the full technique at:',
@@ -407,7 +407,7 @@ export default {
 
     // Onboarding
     onboarding_title: 'Welcome to Reppy',
-    onboarding_subtitle: 'The elite training protocol for athletes.',
+    onboarding_subtitle: 'The elite training system for athletes.',
     onboarding_mission_title: 'The Mission',
     onboarding_mission_desc: 'Log your reps and earn Reppy Coins (RC). Every set counts towards your progression and status in the global circuit.',
     onboarding_damage_title: 'Universal Impact',
@@ -474,7 +474,7 @@ export default {
     codex_cha_action: 'Like or comment on posts in the social feed.',
     blog_xp_gained: 'Knowledge acquired! +100 INT XP earned.',
     intelecto_adquirido: 'KNOWLEDGE ACQUIRED',
-    blog_read_congrats: 'Protocol complete: Intellect increased.',
+    blog_read_congrats: 'Guide complete: Intellect increased.',
 
     // Shop Categories
     shop_tab_titles: 'TITLES',
@@ -482,7 +482,7 @@ export default {
     shop_tab_avatars: 'AVATARS',
     shop_tab_backgrounds: 'EFFECTS',
     shop_tab_post_backgrounds: 'POSTS',
-    shop_bundles_title: 'ELITE PROTOCOL BUNDLES',
+    shop_bundles_title: 'ELITE SYSTEM BUNDLES',
 
     // Post Backgrounds
     'post-bg-carbon_name': 'Carbon Scan',
@@ -497,12 +497,12 @@ export default {
     'post-bg-void_desc': 'Point of no return with gravitational distortion.',
 
     // New SEO Sections
-    latest_protocols: 'LATEST PROTOCOLS',
+    latest_protocols: 'LATEST GUIDES',
     news_subtitle: 'Training updates, calisthenics guides, and community news.',
     view_all_articles: 'View all articles',
     trending: 'Trending',
     read_time: 'min read',
-    related_protocols: 'Related Protocols',
+    related_protocols: 'Related Guides',
     share_knowledge: 'Share this knowledge',
     copy_link: 'Copy link',
     share_x: 'Share on X',
@@ -517,14 +517,14 @@ export default {
     push_power: 'Push Power',
     full_ecosystem: 'Full Ecosystem',
     pullup_guide_title: 'How to do your first pull-up: Master Guide',
-    pullup_guide_desc: 'Progression protocols from zero to mastering the bar.',
+    pullup_guide_desc: 'Progression guides from zero to mastering the bar.',
     gamification_title: 'Gamification & Calisthenics: Why Reppy Works',
     gamification_desc: 'The science behind XP points and motivation in fitness.',
     pullup_seo_title: 'Online Pull-up Counter',
     pullup_seo_desc: 'Log your pull-ups and compete in the global ranking.',
     pushup_seo_title: 'Free Push-up Counter',
     pushup_seo_desc: 'Keep track of your push-ups and level up your attributes.',
-    rpg_protocol_title: 'Explore RPG Protocols',
+    rpg_protocol_title: 'Explore RPG Systems',
     rpg_protocol_desc: 'Discover all of Reppy\'s gamification features.',
 
     // Exercise Landing - Pull-ups
@@ -584,16 +584,16 @@ export default {
     el_latest_blog: 'Latest from Blog: David Goggins Routine',
     
     // Blog List & 404
-    blog_list_title: 'Protocols & Training News',
-    blog_list_subtitle: 'The latest calisthenics guides, mental protocols, and Reppy community updates.',
+    blog_list_title: 'Guides & Training News',
+    blog_list_subtitle: 'The latest calisthenics guides, mental routines, and Reppy community updates.',
     pagination_next: 'Next Page',
     pagination_prev: 'Previous Page',
     not_found_title: 'AREA RESTRICTED (404)',
-    not_found_desc: 'The protocol you are looking for has been moved or deleted from the mainframe.',
+    not_found_desc: 'The information you are looking for has been moved or deleted from the mainframe.',
     not_found_btn: 'RETURN TO SAFE ZONE',
 
     // Battle Overhaul Modal
-    battle_overhaul_title: 'BATTLE PROTOCOL OVERHAUL',
+    battle_overhaul_title: 'BATTLE SYSTEM OVERHAUL',
     battle_overhaul_subtitle: 'ENHANCED RPG DAMAGE SYSTEM ACTIVE',
     battle_overhaul_str_desc: 'Increase base damage and physical impact.',
     battle_overhaul_dex_desc: 'Increase Critical Hits and precise strikes.',
@@ -618,7 +618,7 @@ export default {
     btn_cancel: 'Cancel',
     btn_confirm: 'Confirm',
     battle_overhaul_boss_alert: 'BOSS HP x10 INCREASE',
-    codex_close: 'Close Protocol',
+    codex_close: 'Close Registry',
 
     // New common buttons
     btn_save: 'Save Changes',
@@ -639,7 +639,7 @@ export default {
     profile_decrypting: 'DECRYPTING PROFILE...',
     profile_recruit: 'RECRUIT',
     profile_xp_to_next: 'XP TO NEXT LVL',
-    profile_reward_protocol: '🎁 REWARD PROTOCOL',
+    profile_reward_protocol: '🎁 REWARD SYSTEM',
     profile_reward_desc: 'Level up reward chests are added automatically to your inventory.',
     profile_activity_audit: 'ACTIVITY AUDIT',
     profile_rc_history: 'REPPY COINS HISTORY',
@@ -649,11 +649,11 @@ export default {
 
     // Shop specific
     shop_armory_title: 'ARMORY',
-    shop_armory_subtitle: 'Equip your legend with elite protocol cosmetics.',
+    shop_armory_subtitle: 'Equip your legend with elite tactical cosmetics.',
     shop_reppy_coins: 'REPPY COINS',
     shop_elite_pack: 'ELITE_PACK',
     shop_special_deal: 'Special Deal',
-    shop_permanent_protocol: 'PERMANENT PROTOCOL',
+    shop_permanent_protocol: 'PERMANENT SYSTEM',
     shop_screen_preview: 'SCRN.PRVW',
     shop_post_preview: 'POST.PRVW',
     shop_decrypt_at: 'DECRYPT AT',
@@ -678,7 +678,7 @@ export default {
     inner_circle: 'INNER_CIRCLE',
     reps_collected: 'REPS COLLECTED',
     reps_scaled: 'REPS SCALED',
-    protocol_label: 'Protocol',
+    protocol_label: 'Registry',
     live_sync: 'LIVE RANKING SYNCHRONIZATION',
     friend_added: 'Friend added successfully!',
     friend_add_failed: 'Failed to add friend',
@@ -762,7 +762,7 @@ export default {
     landing_footer_desc: 'Reppy is a calisthenics tracker with an RPG system to log pull-ups, push-ups, dips, muscle ups and weighted pull-ups. Available in English and Spanish.',
 
     // Additional Shop/UI
-    shop_seasonal_title: 'SEASONAL PROTOCOL',
+    shop_seasonal_title: 'SEASONAL SYSTEM',
     shop_seasonal_subtitle: 'Special event rewards & milestone artifacts.',
     shop_stock: 'STOCK',
     shop_event_badge: 'EVENT',
@@ -772,7 +772,7 @@ export default {
     shop_total_chunks: 'TOTAL_CHUNKS',
 
     // Additional Inventory
-    inv_title: 'ARMORY.PROTOCOL',
+    inv_title: 'ARMORY.SYSTEM',
     inv_subtitle: 'ELITE STATUS & LOADOUT MANAGEMENT',
     inv_tab_stats: 'BIOMETRICS',
     inv_tab_gear: 'TACTICAL GEAR',
@@ -799,7 +799,7 @@ export default {
     inv_preview_hint: 'Hover to project, click to link',
 
     // Additional Dashboard
-    dash_global_view_active: 'Global view active. Select a protocol to log volume.',
+    dash_global_view_active: 'Global view active. Select a log to record volume.',
     dash_boss_status: 'Boss Status',
     dash_goal_achieved: 'Goal achieved.',
     dash_analyzing_performance: 'Analyzing performance...',
@@ -808,10 +808,10 @@ export default {
     dash_total_tonnage: 'Total Tonnage',
     dash_history_title: 'Activity History',
     dash_tons_moved: 'TONS MOVED',
-    dash_protocol_null: 'Protocol Null',
+    dash_protocol_null: 'Registry Null',
 
     // Reps Input
-    rep_protocol_active: 'Protocol {type} active',
+    rep_protocol_active: 'System {type} active',
     rep_manual_entry: 'Manual entry',
     rep_additional_weight: 'Additional load (Kg)',
 
@@ -836,7 +836,7 @@ export default {
     nav_rank_details: 'RANK DETAILS',
     nav_rank_progress: 'RANK PROGRESS',
     nav_remaining: 'REMAINING',
-    codex_earnings_protocol: 'EARNINGS_PROTOCOL',
+    codex_earnings_protocol: 'EARNINGS_SYSTEM',
     codex_action_target: 'Initiate Training',
     codex_earn_weighted: 'Weighted Rep',
     codex_earn_standard: 'Standard Rep',
@@ -847,7 +847,7 @@ export default {
     codex_earn_login: 'Daily Login',
     codex_earn_streak: 'Streak Maintained',
     codex_earn_knowledge: 'Codex Read',
-    codex_earn_analysis: 'Protocol Analyzed',
+    codex_earn_analysis: 'Guide Analyzed',
     codex_earn_raid: 'Raid Participated',
     codex_earn_contribution: 'Faithful Effort',
     codex_earn_social: 'Social Interaction',
@@ -869,7 +869,7 @@ export default {
     inv_cat_boots: 'BOOTS_MODULE',
     inv_cat_gear: 'COMBAT_EQUIP',
     
-    rarity_all: 'PROTOCOL_ALL',
+    rarity_all: 'ALL_UNITS',
     rarity_common: 'COMMON',
     rarity_rare: 'RARE',
     rarity_special: 'SPECIAL',
@@ -890,7 +890,7 @@ export default {
     dash_stat_vig: 'RESILIENCE_VIGOR',
     dash_stat_int: 'NEURAL_SYNC',
     dash_stat_fth: 'HOLY_AURA',
-    dash_stat_cha: 'CHARISMA_PROTOCOL',
+    dash_stat_cha: 'CHARISMA_SYSTEM',
     
     inv_active_buffs: 'Active Power-ups',
     inv_dmg_mult: 'Damage Multiplier',
@@ -922,7 +922,7 @@ export default {
     ui_ready: 'Ready',
     ui_loadout_active: 'Active Loadout',
     ui_select_class: 'Select Class',
-    ui_choose_protocol: 'Choose your visual protocol identifier',
+    ui_choose_protocol: 'Choose your visual identifier',
     ui_lock_selection: 'Classes lock upon selection',
     ui_enc_chain: 'ENCRYPTED_CHAIN',
     dashboard_title: 'Dashboard',
@@ -944,7 +944,7 @@ export default {
     ui_avg: 'Avg',
     ui_edit: 'Edit',
     ui_op_consistency: 'Operational Consistency',
-    ui_eff_protocol: 'Efficiency Protocol',
+    ui_eff_protocol: 'Efficiency System',
     ui_verified: 'Verified',
     ui_legendary_rewards: 'Legendary Rewards',
     ui_drop_rates: 'Drop Rates',
@@ -990,15 +990,15 @@ export default {
     ui_magnitude: 'Magnitude',
     ui_timestamp: 'Timestamp',
     ui_loadout_active: 'Active Loadout',
-    ui_protocol_active: 'Protocol Active',
+    ui_protocol_active: 'System Active',
     ui_more_details: 'More Details',
     ui_knowledge_vault: 'The Knowledge Vault',
     ui_challenge: 'Challenge',
     ui_comment_placeholder: 'Comment...',
     ui_submit: 'Ok',
-    ui_protocol_legendary: 'Legendary Protocol',
+    ui_protocol_legendary: 'Legendary System',
     ui_claim_legendary: 'Claim Legendary Loot',
-    ui_protocols: 'Protocols',
+    ui_protocols: 'Systems',
     ui_unlocked: 'Unlocked',
     ui_streak_days: 'day streak',
     ui_acquired: 'Acquired',
@@ -1018,7 +1018,7 @@ export default {
     inv_aesthetic_title: 'Aesthetic Modules',
     inv_title: 'Armory',
     inv_subtitle: 'Elite status and gear management',
-    inv_tab_combat: 'Combat Protocol',
+    inv_tab_combat: 'Combat System',
     inv_tab_customization: 'Identity and Style',
     inv_total_power: 'Total Power',
     inv_gear_mod: 'Gear Modifier',
@@ -1041,8 +1041,8 @@ export default {
     inv_loadout_identity: 'Identity Loadout',
     inv_crit_prob: 'Critical Probability',
     inv_vault_ready: 'Ready to open',
-    shop_cat_all: 'All Protocols',
-    rarity_all: 'All_Protocol',
+    shop_cat_all: 'All Systems',
+    rarity_all: 'All_Rarities',
     shop_cat_head: 'Helmets',
     shop_cat_weapons: 'Weapons',
     shop_cat_armor: 'Armor',
@@ -1064,5 +1064,5 @@ export default {
     shop_reppy_coins: 'Reppy Coins',
     shop_bundles_title: 'Tactical Bundles',
     shop_bundles_subtitle: 'Consolidated performance modules',
-    shop_permanent_protocol: 'Permanent Protocols',
+    shop_permanent_protocol: 'Permanent Systems',
 };

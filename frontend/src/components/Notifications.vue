@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-4xl mx-auto px-4 py-12">
     <div class="mb-12 space-y-2">
-      <h1 class="text-4xl font-black text-foreground uppercase italic tracking-tighter">PROTOCOLO<span class="text-primary-500">.</span>NOTIFICACIONES</h1>
+      <h1 class="text-4xl font-black text-foreground uppercase italic tracking-tighter">NOTIFICACIONES</h1>
       <p class="text-[12px] font-black text-muted uppercase tracking-[0.4em]">REGISTRO CENTRAL DE INTERACCIONES</p>
     </div>
 

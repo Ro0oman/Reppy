@@ -72,7 +72,7 @@
             </p>
 
             <div class="pt-4 flex items-center gap-3 text-primary group-hover:gap-5 transition-all">
-              <span class="text-xs font-black uppercase tracking-widest">{{ i18n.locale === 'es' ? 'Leer Protocolo' : 'Read Protocol' }}</span>
+              <span class="text-xs font-black uppercase tracking-widest">{{ i18n.locale === 'es' ? 'Leer Guía' : 'Read Guide' }}</span>
               <ArrowRight class="w-5 h-5" />
             </div>
           </div>
@@ -82,7 +82,7 @@
       <!-- Empty State -->
       <div v-else class="py-40 text-center space-y-6">
         <Rocket class="w-16 h-16 text-primary/20 mx-auto animate-bounce" />
-        <p class="text-muted font-bold text-xl">{{ i18n.t('no_posts_found') || 'No se han encontrado protocolos.' }}</p>
+        <p class="text-muted font-bold text-xl">{{ i18n.t('no_posts_found') || 'No se han encontrado guías.' }}</p>
       </div>
 
       <!-- Pagination (Modern Minimal) -->

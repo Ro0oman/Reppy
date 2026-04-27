@@ -38,7 +38,7 @@
         <button @click="activeTab = 'combat'; selectedCategory = 'all'" 
                 class="px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all border"
                 :class="activeTab === 'combat' ? 'bg-primary-500 text-white border-primary-400 shadow-lg shadow-primary-500/20' : 'bg-surface/20 text-muted border-white/5 hover:border-white/10'">
-          {{ i18n.t('inv_tab_combat') || 'COMBAT_PROTOCOL' }}
+          {{ i18n.t('inv_tab_combat') || 'SISTEMA_DE_COMBATE' }}
         </button>
         <button @click="activeTab = 'customization'; selectedCategory = 'all'" 
                 class="px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all border"
@@ -430,7 +430,7 @@
 
           <!-- Rarity Selector -->
           <div class="space-y-4">
-            <h3 class="text-[10px] font-black text-muted uppercase tracking-[0.4em] px-2">{{ i18n.t('shop_filter_rarity') || 'PROTOCOLOS DE RAREZA' }}</h3>
+            <h3 class="text-[10px] font-black text-muted uppercase tracking-[0.4em] px-2">{{ i18n.t('shop_filter_rarity') || 'FILTRAR POR RAREZA' }}</h3>
             <div class="flex flex-wrap gap-2 px-1">
               <button 
                 v-for="rarity in rarities" 

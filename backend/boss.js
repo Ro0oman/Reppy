@@ -407,7 +407,7 @@ router.post('/open-level-chest', authenticate, async (req, res) => {
 
     if (itemRes.rows.length > 0) {
       rewardItem = itemRes.rows[0];
-      message = `¡Protocolo de Nivel completado! Has obtenido: ${rewardItem.name}`;
+      message = `¡Recompensa de Nivel recibida! Has obtenido: ${rewardItem.name}`;
       await query(
         `INSERT INTO user_items (user_id, item_id, is_new) 
          VALUES ($1, $2, TRUE) 
