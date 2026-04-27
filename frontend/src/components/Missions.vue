@@ -50,9 +50,8 @@
                 <p class="text-xs text-muted leading-relaxed max-w-md">{{ i18n.t(mission.description_key) }}</p>
                 
                 <!-- Progress Bar -->
-                <div class="pt-4 space-y-2">
                   <div class="flex justify-between text-[9px] font-bold uppercase tracking-widest">
-                    <span class="text-muted">{{ mission.current_value }} / {{ mission.goal_value }} {{ mission.goal_type }}</span>
+                    <span class="text-muted">{{ mission.current_value }} / {{ mission.goal_value }} {{ getGoalLabel(mission.goal_type) }}</span>
                     <span :class="mission.is_completed ? 'text-emerald-500' : 'text-primary-500'">{{ Math.round((mission.current_value / mission.goal_value) * 100) }}%</span>
                   </div>
                   <div class="h-2 bg-black/40 rounded-full overflow-hidden p-0.5 border border-white/5">
@@ -106,13 +105,12 @@
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import { Target, Loader2, Coins, Gem, Star, Trophy, Zap, Swords, CheckCircle2 } from 'lucide-vue-next';
+import { Target, Loader2, Coins, Gem, Star, Trophy, Zap, Swords, CheckCircle2, BicepsFlexed } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
@@ -136,11 +134,31 @@ const fetchMissions = async () => {
   }
 };
 
+const getGoalLabel = (type) => {
+  switch (type) {
+    case 'reps': return 'Reps';
+    case 'damage': return 'Daño';
+    case 'streak': return 'Días';
+    case 'xp_str': return 'XP Fuerza';
+    case 'xp_pwr': return 'XP Potencia';
+    case 'xp_end': return 'XP Resistencia';
+    case 'xp_agi': return 'XP Agilidad';
+    case 'social_likes': return 'Likes';
+    case 'buy_any': return 'Compras';
+    case 'use_consumable': return 'Pociones';
+    default: return type.toUpperCase();
+  }
+};
+
 const getIcon = (type) => {
   switch (type) {
     case 'reps': return Zap;
     case 'damage': return Swords;
     case 'streak': return Trophy;
+    case 'xp_str': return BicepsFlexed;
+    case 'xp_pwr': return Zap;
+    case 'xp_end': return Target;
+    case 'xp_agi': return Swords;
     default: return Target;
   }
 };

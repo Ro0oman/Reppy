@@ -48,9 +48,19 @@ for (let i = 1; i <= 20; i++) {
   const isDaily = tier === 1;
   const value = tier * 100 * (i % 5 + 1);
   
+  const typeLabels = {
+    'reps': 'repeticiones',
+    'damage': 'puntos de daño al boss',
+    'xp_str': 'puntos de XP de Fuerza',
+    'xp_pwr': 'puntos de XP de Potencia',
+    'xp_end': 'puntos de XP de Resistencia',
+    'xp_agi': 'puntos de XP de Agilidad',
+    'social_likes': 'likes a otros usuarios'
+  };
+
   additionalMissions.push({
     title: `Desafío Táctico ${i}`,
-    desc: `Demuestra tu valía completando el objetivo táctico ${i}.`,
+    desc: `Consigue ${value} ${typeLabels[type] || type} para completar este objetivo.`,
     type: type,
     value: value,
     xp: tier * 100,

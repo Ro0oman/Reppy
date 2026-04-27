@@ -4,6 +4,7 @@ import { authenticate } from './middleware.js';
 import { createNotification } from './utils/notifications.js';
 import { recalculateUserStats } from './utils/stats.js';
 import { calculatePvpDamage, checkPvpCooldown } from './utils/pvp_logic.js';
+import { broadcastPvP } from './socketManager.js';
 
 const router = express.Router();
 
@@ -93,6 +94,8 @@ router.post('/:id/accept', authenticate, async (req, res) => {
       'INSERT INTO pvp_events (fight_id, user_id, type) VALUES ($1, $2, $3)',
       [id, userId, 'start']
     );
+
+    broadcastPvP(id, 'start', { userId });
 
     res.json(updatedFight.rows[0]);
   } catch (error) {
@@ -190,6 +193,24 @@ router.post('/:id/log-set', authenticate, async (req, res) => {
 
     await client.query('COMMIT');
     
+    // Broadcast hit with updated state
+    broadcastPvP(id, 'set', { 
+      userId, 
+      exercise, 
+      reps, 
+      damage, 
+      isCrit,
+      hp1: isChallenger ? fight.hp1 : opponentHp,
+      hp2: isChallenger ? opponentHp : fight.hp2,
+      damage1: isChallenger ? fight.damage1 + damage : fight.damage1,
+      damage2: isChallenger ? fight.damage2 : fight.damage2 + damage
+    });
+
+    // Broadcast finish if needed
+    if (opponentHp <= 0) {
+      broadcastPvP(id, 'finish', { winnerId: userId });
+    }
+
     recalculateUserStats(userId).catch(err => console.error('Stat recalc error:', err));
 
     res.json({ damage, isCrit, opponentHp });
@@ -210,6 +231,7 @@ router.post('/:id/confetti', authenticate, async (req, res) => {
       'INSERT INTO pvp_events (fight_id, user_id, type) VALUES ($1, $2, $3)',
       [id, userId, 'confetti']
     );
+    broadcastPvP(id, 'confetti', { userId });
     res.json({ message: 'Confetti sent!' });
   } catch (error) {
     res.status(500).json({ message: 'Error sending confetti' });
@@ -269,6 +291,8 @@ router.post('/:id/finish', authenticate, async (req, res) => {
             'INSERT INTO pvp_events (fight_id, type, payload) VALUES ($1, $2, $3)',
             [id, 'finish', JSON.stringify({ winnerId })]
         );
+
+        broadcastPvP(id, 'finish', { winnerId });
 
         res.json({ winnerId });
     } catch (error) {

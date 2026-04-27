@@ -5,6 +5,7 @@
         v-for="dmg in damageStore.activeDamages" 
         :key="dmg.id"
         class="absolute opacity-0 pointer-events-none"
+        :class="{ 'is-remote': dmg.userId && dmg.userId !== authStore.user?.id }"
         :style="{ 
           left: `${dmg.x}%`, 
           top: `${dmg.y}%`, 
@@ -12,6 +13,9 @@
         }"
       >
         <div class="damage-wrapper">
+          <span v-if="dmg.userName" class="damage-user text-[8px] uppercase font-black tracking-[0.2em] absolute -bottom-4 left-1/2 -translate-x-1/2 text-white/60 bg-black/40 px-1 rounded-sm backdrop-blur-sm">
+            {{ dmg.userName }}
+          </span>
           <span class="damage-number font-black italic tracking-tighter">
             -{{ dmg.amount }}
           </span>
@@ -26,9 +30,11 @@
 
 <script setup>
 import { useDamageStore } from '../stores/damage';
+import { useAuthStore } from '../stores/auth';
 import { watch } from 'vue';
 
 const damageStore = useDamageStore();
+const authStore = useAuthStore();
 
 // Audio logic moved to interaction points (RepsInput.vue) to comply with browser policies
 
@@ -57,6 +63,17 @@ const getDamageColor = (type) => {
   display: block;
   filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4));
   transform-origin: center;
+}
+
+.is-remote .damage-number {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  opacity: 0.7;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
+}
+
+.is-remote .damage-user {
+  opacity: 1;
+  color: #fff;
 }
 
 .critical-hit {

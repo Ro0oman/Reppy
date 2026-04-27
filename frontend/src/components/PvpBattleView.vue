@@ -213,6 +213,7 @@ import { useI18nStore } from '../stores/i18n';
 import { useNotificationStore } from '../stores/notification';
 import { Loader2, Trophy, Zap } from 'lucide-vue-next';
 import { useDamageStore } from '../stores/damage';
+import { useSocketStore } from '../stores/socket';
 import confetti from 'canvas-confetti';
 
 const route = useRoute();
@@ -221,6 +222,7 @@ const authStore = useAuthStore();
 const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
 const damageStore = useDamageStore();
+const socketStore = useSocketStore();
 
 const fightId = route.params.id;
 const fight = ref(null);
@@ -234,6 +236,7 @@ const presetImages = {
   'Steel Dungeon': '/images/pvp/steel_dungeon.gif'
 };
 const logging = ref(false);
+const isFinishing = ref(false);
 const manualEx = ref('pullups');
 const manualReps = ref(null);
 const winner = ref(null);
@@ -250,10 +253,7 @@ const quickButtons = [
   { exercise: 'dips', reps: 15, label: '+15 Fondos' }
 ];
 
-let pollInterval = null;
 let timerInterval = null;
-let lastEventTimestamp = null;
-// Guard against re-processing the same events — key fix for flying numbers spam
 const processedEventIds = new Set();
 
 const isParticipant = computed(() => {
@@ -311,20 +311,7 @@ const startTimer = () => {
     }, 1000);
 };
 
-const pollEvents = async () => {
-    try {
-        const params = {};
-        if (lastEventTimestamp) params.since = lastEventTimestamp;
-
-        const res = await axios.get(`/api/pvp/${fightId}/events`, { params });
-        const events = res.data;
-        if (events.length > 0) {
-            events.forEach(handleEvent);
-            lastEventTimestamp = events[events.length - 1].created_at;
-            fetchFight();
-        }
-    } catch (e) { console.error('Poll error:', e); }
-};
+// Socket event handling replaces pollEvents
 
 const handleEvent = (ev) => {
     // Skip already-processed events (prevents floating numbers from replaying)
@@ -389,7 +376,6 @@ const acceptChallenge = async () => {
     try {
         await axios.post(`/api/pvp/${fightId}/accept`);
         await fetchFight();
-        if (!pollInterval) pollInterval = setInterval(pollEvents, 4000);
     } catch (e) {
         notificationStore.notify('Error starting combat', 'error');
     }
@@ -407,10 +393,13 @@ const sendConfetti = async () => {
 };
 
 const finishFight = async () => {
-    if (!isChallenger.value) return;
+    if (!isChallenger.value || isFinishing.value || fight.value?.status !== 'active') return;
+    isFinishing.value = true;
     try {
         await axios.post(`/api/pvp/${fightId}/finish`);
-    } catch (e) {}
+    } catch (e) {
+        console.error('Error finishing fight:', e);
+    }
 };
 
 const handleEnd = (winnerId) => {
@@ -429,23 +418,44 @@ const handleEnd = (winnerId) => {
 
     confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 }, useWorker: false, disableForReducedMotion: true });
     if (timerInterval) clearInterval(timerInterval);
-    if (pollInterval) clearInterval(pollInterval);
 };
 
 onMounted(() => {
   fetchFight();
-  pollInterval = setInterval(pollEvents, 4000);
+  
+  // Join socket room for this fight
+  if (socketStore.socket) {
+    socketStore.socket.emit('join_pvp', fightId);
+    
+    // Listen for real-time events
+    socketStore.socket.on('pvp_event', (event) => {
+      console.log('PvP Socket Event:', event);
+      handleEvent(event);
+      
+      // Update fight state directly if data is provided
+      if (event.type === 'set' && fight.value) {
+        if (event.hp1 !== undefined) fight.value.hp1 = event.hp1;
+        if (event.hp2 !== undefined) fight.value.hp2 = event.hp2;
+        if (event.damage1 !== undefined) fight.value.damage1 = event.damage1;
+        if (event.damage2 !== undefined) fight.value.damage2 = event.damage2;
+      } else {
+        // For other events (start, finish), refresh full state
+        fetchFight();
+      }
+    });
+  }
 
   watch(timeLeft, (newVal) => {
-      if (newVal <= 10 && newVal > 0 && pollInterval) {
-          clearInterval(pollInterval);
-          pollInterval = setInterval(pollEvents, 1500);
+      if (newVal <= 0 && isParticipant.value && fight.value?.status === 'active' && !isFinishing.value) {
+          finishFight();
       }
   });
 });
 
 onUnmounted(() => {
-  if (pollInterval) clearInterval(pollInterval);
+  if (socketStore.socket) {
+    socketStore.socket.off('pvp_event');
+  }
   if (timerInterval) clearInterval(timerInterval);
 });
 </script>

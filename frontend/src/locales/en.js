@@ -223,6 +223,7 @@ export default {
     community: 'Community',
     community_subtitle: 'Synchronize with fellow legends and track their progress.',
     active_users: 'ACTIVE OPERATIVES',
+    live_operatives: 'LIVE OPERATIVES',
     boss_raid: 'RAID STATUS',
     find_friends: 'Find Friends',
     search_placeholder: 'Search enthusiasts...',

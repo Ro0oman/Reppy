@@ -11,6 +11,7 @@
       <div class="flex flex-col gap-1 pt-2 relative">
           <h1 class="text-xl font-black text-foreground uppercase italic tracking-tighter">{{ i18n.t('community') }}</h1>
           <p class="text-[10px] text-muted uppercase tracking-widest opacity-60">{{ i18n.t('community_subtitle') }}</p>
+          <LivePresence class="mt-4" />
       </div>
 
 
@@ -210,6 +211,7 @@ import Leaderboard from './Leaderboard.vue';
 import ExerciseSelector from './ExerciseSelector.vue';
 import SocialFeed from './SocialFeed.vue';
 import PvpBattlesTab from './PvpBattlesTab.vue';
+import LivePresence from './LivePresence.vue';
 import { computed } from 'vue';
 
 const emit = defineEmits(['viewProfile', 'start']);

@@ -9,6 +9,7 @@ import { getLocalDateString } from './utils/date.js';
 import { calculateDamage } from './utils/damage.js';
 import { getUserWithGear } from './utils/user.js';
 import { updateMissionProgress } from './utils/missions.js';
+import { broadcastDamage } from './socketManager.js';
 
 
 const router = express.Router();
@@ -166,6 +167,17 @@ router.post('/', authenticate, async (req, res) => {
       earnedCoins, 
       is_crit: dmgResult.isCrit
     });
+
+    // Broadcast damage event for real-time visualization
+    if (actualDamageDealt > 0) {
+      broadcastDamage({
+        userId: userId,
+        userName: augmentedUser.name,
+        amount: actualDamageDealt,
+        exerciseType: exercise_type,
+        isCrit: dmgResult.isCrit
+      });
+    }
 
   } catch (error) {
     if (client) await client.query('ROLLBACK');

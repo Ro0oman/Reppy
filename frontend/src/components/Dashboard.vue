@@ -52,6 +52,10 @@
           <Zap class="w-4 h-4 text-primary-500" />
           <h3 class="text-xs font-black uppercase tracking-widest text-muted/60">{{ i18n.t('dash_boss_status') }}</h3>
         </div>
+        
+        <!-- Live Battle Presence -->
+        <LivePresence class="mb-4" />
+
         <BossHealth ref="bossHealthRef" />
       </div>
 
@@ -285,6 +289,7 @@ import RadialProgress from './RadialProgress.vue';
 import DamageOverhaulModal from './DamageOverhaulModal.vue';
 import AvatarOverhaulModal from './AvatarOverhaulModal.vue';
 import ArmoryUpdateModal from './ArmoryUpdateModal.vue';
+import LivePresence from './LivePresence.vue';
 import { getLocalDateString } from '../utils/dateUtils.js';
 
 const emit = defineEmits(['viewProfile', 'start']);
@@ -519,8 +524,9 @@ onMounted(() => {
   }
 
   fetchData();
-  // Auto-refresh every 60 seconds to keep boss HP and leaderboard updated
-  refreshInterval = setInterval(fetchData, 60000);
+  // Auto-refresh removed to save Supabase/Vercel resources. 
+  // Real-time events via Socket.io handle the live feel.
+  // refreshInterval = setInterval(fetchData, 60000);
   
   // Timer for active effects
   timerInterval = setInterval(() => {

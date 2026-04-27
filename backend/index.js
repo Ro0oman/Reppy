@@ -27,15 +27,22 @@ import testRoutes from './test.js';
 import missionsRoutes from './missions.js';
 
 
+import http from 'http';
+import { initSocket } from './socketManager.js';
+
 const app = express();
 const PORT = process.env.PORT || 5000;
+const server = http.createServer(app);
+
+// Initialize Socket.io
+initSocket(server);
 
 app.use(cors());
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-      "connect-src": ["'self'", "https://*.google-analytics.com", "https://www.google-analytics.com", "https://accounts.google.com"],
+      "connect-src": ["'self'", "http://localhost:5000", "ws://localhost:5000", "http://127.0.0.1:5000", "ws://127.0.0.1:5000", "https://*.google-analytics.com", "https://www.google-analytics.com", "https://accounts.google.com"],
       "script-src": ["'self'", "'unsafe-inline'", "https://www.googletagmanager.com", "https://www.google-analytics.com"],
       "img-src": ["'self'", "data:", "https://www.google-analytics.com", "https://www.googletagmanager.com", "https://static.wikia.nocookie.net", "https://*.wikia.nocookie.net", "https://ssb.wiki.gallery", "https://*.wiki.gallery", "https://ui-avatars.com", "https://images.unsplash.com", "https://fbi.cults3d.com", "https://i.redd.it", "https://preview.redd.it", "https://i.namu.wiki", "https://www.vhv.rs", "https://lh3.googleusercontent.com", "*"],
       "frame-src": ["'self'", "https://accounts.google.com/"],
@@ -442,7 +449,7 @@ app.get('/', (req, res) => {
 
 // Start server only in development or if not imported as a module
 if (process.env.NODE_ENV !== 'production' && process.env.VERCEL !== '1') {
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
 }

@@ -263,8 +263,9 @@ import { useAuthStore } from './stores/auth';
 import { useI18nStore } from './stores/i18n';
 import { useNotificationsStore } from './stores/notifications';
 import { useAudio } from './composables/useAudio';
+import { useSocketStore } from './stores/socket';
 
-// Components
+const socketStore = useSocketStore();
 import AvatarFrame from './components/AvatarFrame.vue'
 import BackgroundEffect from './components/BackgroundEffect.vue'
 import LuckyWheel from './components/LuckyWheel.vue'
@@ -363,14 +364,18 @@ watch(() => authStore.isAuthenticated, (val) => {
     authStore.fetchProfile();
     checkRoulette();
     notifStore.fetchNotifications();
+    socketStore.init();
     if (authStore.user && !authStore.user.has_seen_easter_modal) {
       // Logic removed
     }
+  } else if (!val) {
+    socketStore.disconnect();
   }
 }, { immediate: true });
 
 onMounted(async () => {
   if (authStore.isAuthenticated && !import.meta.env.SSR) {
+    socketStore.init();
     checkRoulette();
     notifStore.fetchNotifications();
     if (authStore.user && !authStore.user.has_seen_easter_modal) {

@@ -224,6 +224,7 @@ export default {
     community: 'Comunidad',
     community_subtitle: 'Sincroniza con otras leyendas y sigue su progreso.',
     active_users: 'OPERATIVOS ACTIVOS',
+    live_operatives: 'OPERATIVOS EN DIRECTO',
     boss_raid: 'ESTADO DE RAID',
     find_friends: 'Buscar Amigos',
     search_placeholder: 'Buscar entusiastas...',

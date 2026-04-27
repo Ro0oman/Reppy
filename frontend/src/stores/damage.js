@@ -8,7 +8,7 @@ export const useDamageStore = defineStore('damage', {
     lastDamageTime: 0
   }),
   actions: {
-    addDamage(amount, type, x, y, isCrit = false) {
+    addDamage(amount, type, x, y, isCrit = false, userName = null, userId = null) {
       const now = Date.now();
       
       const id = now + Math.random();
@@ -22,7 +22,9 @@ export const useDamageStore = defineStore('damage', {
         type,
         x: finalX,
         y: finalY,
-        isCrit
+        isCrit,
+        userName,
+        userId
       });
 
       // SYNC: Remove exactly when animation ends (1.2s)

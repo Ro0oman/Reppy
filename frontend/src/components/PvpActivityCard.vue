@@ -122,15 +122,15 @@
        </div>
     </div>
 
-    <!-- Footer: Call to Action -->
-    <div class="pt-4 border-t border-white/5 flex items-center justify-between">
+    <!-- Footer: Info & Action -->
+    <div class="pt-4 border-t border-white/5 flex items-center justify-between relative z-10">
        <div class="flex items-center gap-3">
-          <div class="flex -space-x-2">
-             <div v-for="i in 3" :key="i" class="w-6 h-6 rounded-full border-2 border-surface bg-white/5 flex items-center justify-center">
-                <User class="w-3 h-3 text-muted/50" />
-             </div>
+          <div class="flex items-center gap-2">
+             <div class="w-1.5 h-1.5 rounded-full" :class="activity.pvp_data?.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-white/20'"></div>
+             <span class="text-[8px] font-bold text-muted uppercase tracking-[0.2em]">
+                {{ activity.pvp_data?.status === 'active' ? 'LIVE_COMBAT_FEED' : activity.pvp_data?.battlefield || 'ARENA_FINISHED' }}
+             </span>
           </div>
-          <span class="text-[8px] font-bold text-muted uppercase tracking-widest">{{ Math.floor(Math.random() * 20) + 5 }} SPECTATING</span>
        </div>
 
        <button 

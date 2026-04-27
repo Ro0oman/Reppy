@@ -1,4 +1,5 @@
 import { query } from '../db.js';
+import { createNotification } from './notifications.js';
 
 /**
  * Updates user mission progress based on an action.
@@ -34,7 +35,14 @@ export const updateMissionProgress = async (userId, goalType, value, isIncrement
       
       if (isCompleted) {
         console.log(`[MISSIONS] User ${userId} completed mission ${mission.id}`);
-        // Here we could trigger a "Mission Completed" event to the frontend
+        // Create persistent and live notification
+        await createNotification(
+          userId, 
+          'MISSION_COMPLETED', 
+          null, 
+          'Misión completada: ¡Reclama tu recompensa!', 
+          mission.id
+        );
       }
     }
   } catch (err) {
