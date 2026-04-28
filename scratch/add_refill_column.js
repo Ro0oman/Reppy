@@ -1,4 +1,4 @@
-import { query } from './db.js';
+import { query } from '../backend/db.js';
 
 const run = async () => {
   try {

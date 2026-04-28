@@ -4,6 +4,9 @@ export default {
     hero_eyebrow: 'Elite Training Platform',
     hero_subtitle: 'The premium tracking platform for pull-up enthusiasts. Record reps, visualize progress, and dominate the rankings.',
     btn_start: 'Get Started',
+    rpg_version_tag: 'RPG VERSION 1.0',
+    rpg_version_title: 'THE RPG AWAKENING',
+    rpg_version_desc: 'We have transformed your training into a complete odyssey. Dynamic attributes, tactical missions, and real-time duels.',
     
     // Landing Leaderboard
     landing_lb_title: 'Hall of Fame',

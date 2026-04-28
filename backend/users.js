@@ -227,4 +227,18 @@ router.patch('/seen-armory-modal', authenticate, async (req, res) => {
   }
 });
 
+// Mark rpg release modal as seen
+router.patch('/seen-rpg-release', authenticate, async (req, res) => {
+  try {
+    await query(
+      'UPDATE users SET has_seen_rpg_release = true WHERE id = $1',
+      [req.user.id]
+    );
+    res.json({ message: 'RPG release modal marked as seen' });
+  } catch (error) {
+    console.error('Error updating modal state:', error);
+    res.status(500).json({ message: 'Error updating modal state' });
+  }
+});
+
 export default router;

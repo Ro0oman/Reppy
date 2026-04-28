@@ -82,10 +82,6 @@
                          class="w-4.5 h-4.5 sm:w-5 sm:h-5 text-muted group-hover:text-primary-500 transition-colors" />
             </button>
 
-            <!-- Language Switcher -->
-            <div class="hidden sm:block">
-              <LanguageToggle />
-            </div>
 
             <!-- Level Module (Responsive) -->
             <div class="flex items-center gap-3">
@@ -276,7 +272,6 @@ import NotificationToast from './components/NotificationToast.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
 import DamageNumbers from './components/DamageNumbers.vue'
 import NotificationsDropdown from './components/NotificationsDropdown.vue'
-import LanguageToggle from './components/LanguageToggle.vue'
 
 const authStore = useAuthStore();
 const { toggleMute, isMuted, playClickBlip } = useAudio();

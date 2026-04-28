@@ -1,10 +1,6 @@
 <template>
   <div class="min-h-screen bg-deep-abyss selection:bg-primary-500 overflow-x-hidden flex flex-col items-center font-industrial text-foreground relative">
     
-    <!-- Fixed Language Switcher for Guest/Landing -->
-    <div class="fixed top-6 right-6 z-[100] animate-in-delay">
-      <LanguageToggle />
-    </div>
 
     <!-- ═══════════════════════════════════════════════════════════
          HERO SECTION — H1 keyword-rich, visible to Google
@@ -23,7 +19,13 @@
       <div class="relative z-10 max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <!-- Text Content -->
         <div class="flex flex-col items-center lg:items-start text-center lg:text-left gap-10">
-          <div class="animate-in fade-in slide-in-from-bottom-4 duration-1000 w-fit">
+          <div class="animate-in fade-in slide-in-from-bottom-4 duration-1000 w-fit space-y-4">
+            <!-- RPG Version Tag -->
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-primary-500/10 border border-primary-500/30 rounded-full">
+              <div class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></div>
+              <span class="text-[8px] font-black text-primary-500 uppercase tracking-[0.3em]">{{ i18n.t('rpg_version_tag') }}</span>
+            </div>
+
             <div class="inline-flex items-center gap-3 px-4 py-2 bg-foreground/5 border border-white/10 rounded-full backdrop-blur-md">
               <span class="flex h-2 w-2 rounded-full bg-primary-500 animate-ping"></span>
               <span class="text-[9px] font-black uppercase tracking-[0.3em] text-foreground/60">{{ authStore.isAuthenticated ? 'REPPY_ACTIVE' : 'READY_TO_TRAIN' }}</span>
@@ -115,6 +117,7 @@
         </div>
       </div>
     </section>
+
 
     <!-- ═══════════════════════════════════════════════════════════
          SEARCH INTENT SECTIONS — Critical for SEO
@@ -668,13 +671,12 @@ import axios from 'axios';
 import { 
   Activity, Trophy, Users, Sword, Flame, Plus, 
   ArrowUp, ArrowDown, ArrowDownUp, Dumbbell, ChevronDown,
-  Github, Star, MessageCircle, Target, CheckCircle2
+  Github, Star, MessageCircle, Target, CheckCircle2, Sparkles, Brain, Book
 } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
 import BossHealth from './BossHealth.vue';
 import BossBanner from './BossBanner.vue';
-import LanguageToggle from './LanguageToggle.vue';
 import { blogPosts } from '../blogPosts';
 
 const Leaderboard = defineAsyncComponent(() => import('./Leaderboard.vue'));

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 
 export const useI18nStore = defineStore('i18n', {
   state: () => ({
-    locale: (!import.meta.env.SSR && localStorage.getItem('locale')) || '',
+    locale: '',
     messages: {
       en: null,
       es: null
@@ -11,14 +11,17 @@ export const useI18nStore = defineStore('i18n', {
   }),
   actions: {
     async init() {
-      // 1. Detection Logic
-      if (!this.locale) {
-        if (!import.meta.env.SSR) {
-          const browserLang = navigator.language.split('-')[0];
-          this.locale = browserLang === 'es' ? 'es' : 'en';
-        } else {
-          this.locale = 'es'; // Default for SSG
-        }
+      // 1. Automatic Detection Logic (Shadow mode)
+      if (!import.meta.env.SSR) {
+        const browserLang = navigator.language.split('-')[0];
+        const detected = browserLang === 'es' ? 'es' : 'en';
+        
+        // If we have a stored locale that differs from browser, 
+        // we might want to stick to it, BUT since we removed the toggle,
+        // it's better to follow the browser "in the shadow".
+        this.locale = detected;
+      } else {
+        this.locale = 'es'; // Default for SSG
       }
 
       // 2. Initial Load

@@ -7,7 +7,6 @@
         <div class="w-8 h-8 bg-primary rounded-xl flex items-center justify-center font-bold text-white shadow-lg shadow-primary/20 transition-transform group-hover:scale-110">R</div>
         <span class="text-xl font-black tracking-tight text-foreground">Reppy<span class="text-primary group-hover:translate-x-0.5 transition-transform">.</span></span>
       </router-link>
-      <LanguageToggle />
     </nav>
 
     <!-- Header (Large & Clean) -->
@@ -133,7 +132,6 @@ import { blogPosts } from '../blogPosts';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
 import { ChevronLeft, ChevronRight, Loader2, CheckCircle2, ArrowRight, ArrowLeft, Rocket } from 'lucide-vue-next';
-import LanguageToggle from './LanguageToggle.vue';
 
 const i18n = useI18nStore();
 const authStore = useAuthStore();

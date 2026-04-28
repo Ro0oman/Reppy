@@ -267,6 +267,11 @@
       :show="showArmoryModal"
       @close="handleCloseArmoryModal"
     />
+    <!-- RPG Release Welcome Modal -->
+    <RPGReleaseModal
+      :show="showRPGModal"
+      @close="handleCloseRPGModal"
+    />
   </div>
 </template>
 
@@ -289,6 +294,7 @@ import RadialProgress from './RadialProgress.vue';
 import DamageOverhaulModal from './DamageOverhaulModal.vue';
 import AvatarOverhaulModal from './AvatarOverhaulModal.vue';
 import ArmoryUpdateModal from './ArmoryUpdateModal.vue';
+import RPGReleaseModal from './RPGReleaseModal.vue';
 import LivePresence from './LivePresence.vue';
 import { getLocalDateString } from '../utils/dateUtils.js';
 
@@ -310,12 +316,13 @@ const activeYear = ref(2026);
 const showDamageModal = ref(false);
 const showAvatarModal = ref(false);
 const showArmoryModal = ref(false);
+const showRPGModal = ref(false);
 const activeTab = ref('heatmap');
 const unclaimedMissions = ref(0);
 
 // Scroll lock when modals are active
-watch([showDamageModal, showAvatarModal, showArmoryModal], ([dModal, aModal, rModal]) => {
-  if (dModal || aModal || rModal) {
+watch([showDamageModal, showAvatarModal, showArmoryModal, showRPGModal], ([dModal, aModal, rModal, rpgModal]) => {
+  if (dModal || aModal || rModal || rpgModal) {
     document.body.style.overflow = 'hidden';
   } else {
     document.body.style.overflow = '';
@@ -425,8 +432,10 @@ const fetchData = async () => {
 
     if (bossHealthRef.value) bossHealthRef.value.refresh();
 
-    // Check for damage overhaul modal
-    if (authStore.user && !authStore.user.has_seen_damage_overhaul) {
+    // Check for update modals (Chained)
+    if (authStore.user && !authStore.user.has_seen_rpg_release) {
+      showRPGModal.value = true;
+    } else if (authStore.user && !authStore.user.has_seen_damage_overhaul) {
       showDamageModal.value = true;
     } else if (authStore.user && !authStore.user.has_seen_avatar_overhaul) {
       showAvatarModal.value = true;
@@ -513,6 +522,21 @@ const handleCloseArmoryModal = () => {
   showArmoryModal.value = false;
   if (authStore.user) {
     authStore.user.has_seen_armory_update = true;
+  }
+};
+
+const handleCloseRPGModal = () => {
+  showRPGModal.value = false;
+  if (authStore.user) {
+    authStore.user.has_seen_rpg_release = true;
+    // Chain to damage modal if eligible
+    if (!authStore.user.has_seen_damage_overhaul) {
+      showDamageModal.value = true;
+    } else if (!authStore.user.has_seen_avatar_overhaul) {
+      showAvatarModal.value = true;
+    } else if (!authStore.user.has_seen_armory_update) {
+      showArmoryModal.value = true;
+    }
   }
 };
 

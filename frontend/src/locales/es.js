@@ -4,6 +4,9 @@ export default {
     hero_eyebrow: 'Plataforma de Entrenamiento de Élite',
     hero_subtitle: 'La plataforma premium para entusiastas de las dominadas. Registra repeticiones, visualiza tu progreso y domina los rankings.',
     btn_start: 'Comenzar Ahora',
+    rpg_version_tag: 'VERSIÓN RPG 1.0',
+    rpg_version_title: 'EL DESPERTAR RPG',
+    rpg_version_desc: 'Hemos transformado tu entrenamiento en una odisea completa. Atributos dinámicos, misiones tácticas y duelos en tiempo real.',
 
     // Landing Leaderboard
     landing_lb_title: 'Muro de la Fama',

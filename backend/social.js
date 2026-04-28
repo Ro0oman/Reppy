@@ -46,6 +46,7 @@ router.post('/add', authenticate, async (req, res) => {
       return res.status(400).json({ message: 'Already friends' });
     }
 
+    await query(
       'INSERT INTO friendships (user_id_1, user_id_2) VALUES ($1, $2)',
       [userId, friendId]
     );
