@@ -251,4 +251,32 @@ export function setupRouterGuards(router) {
       next()
     }
   })
+
+  // Handle dynamic import failures (chunk loading errors)
+  router.onError((error) => {
+    const errorMessages = [
+      'Failed to fetch dynamically imported module',
+      'Importing a module script failed',
+      'error loading dynamically imported module'
+    ];
+    
+    if (errorMessages.some(msg => error.message?.includes(msg))) {
+      // Check if we already tried to reload recently to avoid infinite loops
+      const lastReload = sessionStorage.getItem('last-chunk-error-reload');
+      const now = Date.now();
+      
+      // If we reloaded less than 10 seconds ago, don't reload again to avoid infinite loops
+      if (lastReload && (now - parseInt(lastReload)) < 10000) {
+        console.error('Dynamic import failed repeatedly. Please check your connection.');
+        return;
+      }
+      
+      sessionStorage.setItem('last-chunk-error-reload', now.toString());
+      
+      // Show a small notification before reloading if possible, or just reload
+      // Given we are in the router guard, we might not have easy access to the store here
+      // but a simple reload is the most robust fix for this specific issue.
+      window.location.reload();
+    }
+  });
 }
