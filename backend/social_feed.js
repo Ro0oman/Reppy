@@ -4,6 +4,7 @@ import pool from './db.js';
 import { authenticate } from './middleware.js';
 import { createNotification } from './utils/notifications.js';
 import { recalculateUserStats } from './utils/stats.js';
+import { updateMissionProgress } from './utils/missions.js';
 import { getLocalDateString } from './utils/date.js';
 
 const router = express.Router();
@@ -338,6 +339,9 @@ router.post('/like', authenticate, async (req, res) => {
           
           // Reward Reppy Coins to Author (Buff for interaction)
           await client.query('UPDATE users SET reppy_coins = reppy_coins + 5 WHERE id = $1', [TargetUserId]);
+
+          // Mission: Social Likes
+          await updateMissionProgress(myUserId, 'social_likes', 1);
 
           // Note: we'll recalculate after commit
           await client.query('COMMIT');

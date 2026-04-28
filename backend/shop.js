@@ -2,6 +2,7 @@ import express from 'express';
 import { query } from './db.js';
 import { authenticate } from './middleware.js';
 import { recalculateUserStats } from './utils/stats.js';
+import { updateMissionProgress } from './utils/missions.js';
 
 
 const router = express.Router();
@@ -155,6 +156,17 @@ router.post('/buy/:id', authenticate, async (req, res) => {
     }
 
     await query('COMMIT');
+    
+    // Mission Triggers
+    await updateMissionProgress(userId, 'buy_any', 1);
+    await updateMissionProgress(userId, 'spend_coins', finalDeduction);
+    if (item.rarity === 'Legendary' || item.rarity === 'Calisthenics') {
+      await updateMissionProgress(userId, 'buy_legendary', 1);
+    }
+    
+    // Mission: Own Items (Absolute count)
+    const ownRes = await query('SELECT COUNT(*) as count FROM user_items WHERE user_id = $1', [userId]);
+    await updateMissionProgress(userId, 'own_items', parseInt(ownRes.rows[0].count), false);
 
     // Recalculate stats
     await recalculateUserStats(userId);
@@ -321,6 +333,9 @@ router.post('/activate/:id', authenticate, async (req, res) => {
     }
 
     await query('COMMIT');
+
+    // Mission: Use Consumable
+    await updateMissionProgress(userId, 'use_consumable', 1);
 
     res.json({ 
       message: `${item.name} activado con éxito`, 

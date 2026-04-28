@@ -3,12 +3,23 @@
     <div class="max-w-4xl mx-auto space-y-8">
       
       <!-- Header -->
-      <div class="space-y-2">
-        <h1 class="text-4xl font-black text-foreground italic uppercase tracking-tighter flex items-center gap-4">
-          <Target class="w-10 h-10 text-primary-500" />
-          {{ i18n.t('missions_title') }}
-        </h1>
-        <p class="text-xs font-bold text-muted uppercase tracking-[0.3em]">{{ i18n.t('missions_subtitle') }}</p>
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div class="space-y-2">
+          <h1 class="text-4xl font-black text-foreground italic uppercase tracking-tighter flex items-center gap-4">
+            <Target class="w-10 h-10 text-primary-500" />
+            {{ i18n.t('missions_title') }}
+          </h1>
+          <p class="text-xs font-bold text-muted uppercase tracking-[0.3em]">{{ i18n.t('missions_subtitle') }}</p>
+        </div>
+
+        <!-- Global Reset Timer -->
+        <div v-if="nextReset" class="bg-surface/60 border border-border px-6 py-3 rounded-2xl flex items-center gap-4">
+          <div class="flex flex-col items-end">
+            <span class="text-[8px] font-black text-muted uppercase tracking-widest">{{ i18n.t('missions_next_reset') || 'NEXT_RESET' }}</span>
+            <span class="text-lg font-black text-primary-500 font-mono tracking-tighter">{{ countdown }}</span>
+          </div>
+          <Clock class="w-5 h-5 text-primary-500 animate-pulse" />
+        </div>
       </div>
 
       <!-- Missions List -->
@@ -50,6 +61,7 @@
                 <p class="text-xs text-muted leading-relaxed max-w-md">{{ i18n.t(mission.description_key) }}</p>
                 
                 <!-- Progress Bar -->
+                <div class="space-y-2">
                   <div class="flex justify-between text-[9px] font-bold uppercase tracking-widest">
                     <span class="text-muted">{{ mission.current_value }} / {{ mission.goal_value }} {{ getGoalLabel(mission.goal_type) }}</span>
                     <span :class="mission.is_completed ? 'text-emerald-500' : 'text-primary-500'">{{ Math.round((mission.current_value / mission.goal_value) * 100) }}%</span>
@@ -103,14 +115,30 @@
             </div>
           </div>
         </div>
+
+        <!-- Empty Daily State -->
+        <div v-if="!missions.some(m => m.is_daily)" class="bg-indigo-500/5 border border-indigo-500/10 rounded-[2rem] p-10 text-center space-y-4">
+          <div class="w-16 h-16 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-2">
+            <CheckCircle2 class="w-8 h-8 text-indigo-400" />
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-lg font-black text-foreground uppercase italic tracking-tight">{{ i18n.t('missions_daily_done_title') || 'OPERATIVAS DIARIAS COMPLETADAS' }}</h3>
+            <p class="text-xs text-muted font-bold uppercase tracking-widest">{{ i18n.t('missions_daily_done_subtitle') || 'Vuelve mañana para nuevos objetivos' }}</p>
+          </div>
+          <div class="inline-flex items-center gap-3 bg-black/20 px-6 py-3 rounded-xl border border-white/5">
+             <Clock class="w-4 h-4 text-indigo-400" />
+             <span class="text-xl font-black text-indigo-400 font-mono tracking-tighter">{{ countdown }}</span>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
-import { Target, Loader2, Coins, Gem, Star, Trophy, Zap, Swords, CheckCircle2, BicepsFlexed } from 'lucide-vue-next';
+import { Target, Loader2, Coins, Gem, Star, Trophy, Zap, Swords, CheckCircle2, BicepsFlexed, Clock } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
@@ -122,16 +150,40 @@ const notificationStore = useNotificationStore();
 const missions = ref([]);
 const loading = ref(true);
 const claimingId = ref(null);
+const nextReset = ref(null);
+const countdown = ref('--:--:--');
+let timerInterval = null;
 
 const fetchMissions = async () => {
   try {
     const res = await axios.get('/api/missions');
-    missions.value = res.data;
+    missions.value = res.data.missions;
+    nextReset.value = new Date(res.data.next_reset);
+    updateCountdown();
   } catch (err) {
     console.error('Error fetching missions:', err);
   } finally {
     loading.value = false;
   }
+};
+
+const updateCountdown = () => {
+  if (!nextReset.value) return;
+  const now = new Date();
+  const diff = nextReset.value - now;
+  
+  if (diff <= 0) {
+    countdown.value = '00:00:00';
+    // Optionally refresh missions when countdown hits zero
+    if (diff > -5000) fetchMissions(); 
+    return;
+  }
+
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+  countdown.value = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 };
 
 const getGoalLabel = (type) => {
@@ -188,6 +240,11 @@ const claimReward = async (mission) => {
 onMounted(async () => {
   loading.value = true;
   await fetchMissions();
+  timerInterval = setInterval(updateCountdown, 1000);
+});
+
+onUnmounted(() => {
+  if (timerInterval) clearInterval(timerInterval);
 });
 </script>
 

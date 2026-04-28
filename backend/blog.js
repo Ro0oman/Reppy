@@ -36,6 +36,10 @@ router.post('/read', authenticate, async (req, res) => {
     // 2. Add INT XP (e.g., 100 XP per unique post read)
     // Only recalculate if it's the first time they read this post
     if (isFirstRead) {
+      // Mission: Read Blog
+      const { updateMissionProgress } = await import('./utils/missions.js');
+      await updateMissionProgress(userId, 'read_blog', 1);
+
       const newStats = await recalculateUserStats(userId);
       return res.json({ 
         message: 'Blog read recorded! INT XP awarded.', 

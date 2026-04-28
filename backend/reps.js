@@ -129,6 +129,9 @@ router.post('/', authenticate, async (req, res) => {
         // Trigger boss scaling/sync if defeated
         // (Runs on pool because it might have its own internal queries)
         syncBossHealth().catch(e => console.error('Boss sync error:', e));
+
+        // Mission: Boss Last Hit
+        await updateMissionProgress(userId, 'boss_last_hit', 1);
       }
     }
 
@@ -149,6 +152,33 @@ router.post('/', authenticate, async (req, res) => {
     await updateMissionProgress(userId, 'reps', count);
     if (actualDamageDealt > 0) {
       await updateMissionProgress(userId, 'damage', actualDamageDealt);
+    }
+
+    // Mission: Night Owl (Reps after 22:00)
+    const currentHour = new Date().getHours();
+    if (currentHour >= 22 || currentHour < 5) {
+      await updateMissionProgress(userId, 'night_owl', 1);
+    }
+
+    // Mission: Personal Record
+    const prRes = await client.query(`
+      SELECT 1 FROM (
+        SELECT SUM(count) as day_total 
+        FROM reps 
+        WHERE user_id = $1 AND date = $2
+      ) t
+      WHERE t.day_total > COALESCE((
+        SELECT MAX(day_sum) FROM (
+          SELECT SUM(count) as day_sum 
+          FROM reps 
+          WHERE user_id = $1 AND date < $2
+          GROUP BY date
+        ) history
+      ), 0)
+    `, [userId, date || getLocalDateString()]);
+
+    if (prRes.rows.length > 0) {
+      await updateMissionProgress(userId, 'personal_record', 1);
     }
 
     await client.query('COMMIT');

@@ -413,7 +413,8 @@ const fetchData = async () => {
     reps.value = repsRes.data;
     heatmapData.value = heatmapRes.data;
     totalReps.value = statsRes.data.totalReps;
-    unclaimedMissions.value = missionsRes.data.filter(m => m.is_completed && !m.is_claimed).length;
+    const missionList = missionsRes.data.missions || [];
+    unclaimedMissions.value = missionList.filter(m => m.is_completed && !m.is_claimed).length;
     stats.streak = statsRes.data.streak;
     stats.topMonth = statsRes.data.topMonth;
     stats.topMonthCount = statsRes.data.topMonthCount;

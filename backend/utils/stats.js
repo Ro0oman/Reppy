@@ -323,6 +323,18 @@ export const recalculateUserStats = async (userId, force = false) => {
       additionalCoins,
       newLastStreakRewardDate
     ]);
+    
+    // 7. Mission Triggers (XP and Streaks are absolute values, use isIncremental = false)
+    const { updateMissionProgress } = await import('./missions.js');
+    await updateMissionProgress(userId, 'streak', streak, false);
+    await updateMissionProgress(userId, 'xp_str', strXP, false);
+    await updateMissionProgress(userId, 'xp_pwr', dexXP, false); // dexXP maps to xp_pwr goal type
+    await updateMissionProgress(userId, 'xp_end', endXP, false);
+    await updateMissionProgress(userId, 'xp_agi', dexXP, false); // mapping agi to dex for legacy missions
+    
+    if (newLevel - (user.current_level || 0) >= 2) {
+      await updateMissionProgress(userId, 'level_up_2', 1);
+    }
 
     const result = {
       total_reps: totalReps,
