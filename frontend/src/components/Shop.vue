@@ -9,6 +9,15 @@
         </h1>
         <p class="text-muted mt-2 font-bold uppercase tracking-widest text-[10px]">{{ i18n.t('shop_armory_subtitle') }}</p>
       </div>
+
+      <!-- Rotation Countdown -->
+      <div v-if="shopStore.nextRotation" class="bg-surface/20 border border-white/5 px-4 py-2 rounded-xl flex items-center gap-3 backdrop-blur-md">
+        <Clock class="w-4 h-4 text-primary-500 animate-pulse" />
+        <div class="flex flex-col">
+          <span class="text-[8px] font-black text-muted uppercase tracking-widest">{{ i18n.locale === 'es' ? 'PRÓXIMA ROTACIÓN' : 'NEXT ROTATION' }}</span>
+          <span class="text-xs font-black text-precision text-foreground">{{ getNextRotationCountdown() }}</span>
+        </div>
+      </div>
       
       <!-- Currency Display (Precision Pills) -->
       <div class="flex items-center gap-4">
@@ -205,13 +214,21 @@
             <div class="flex flex-col gap-2">
               <span class="text-[9px] font-black text-muted uppercase tracking-[0.2em]">{{ i18n.t('shop_acquisition_cost') }}</span>
               <div class="flex flex-col gap-1">
-                <div v-if="selectedItem?.price > 0" class="flex items-center gap-2">
-                  <span class="text-3xl font-black text-primary-500 tabular-nums leading-none">{{ selectedItem?.price }}</span>
+                <!-- Coins -->
+                <div v-if="(selectedItem?.discounted_price || selectedItem?.price) > 0" class="flex items-center gap-2">
+                  <span class="text-3xl font-black text-primary-500 tabular-nums leading-none">
+                    {{ selectedItem?.discounted_price || selectedItem?.price }}
+                  </span>
                   <span class="text-[10px] font-black text-muted uppercase tracking-widest">RC</span>
+                  <span v-if="selectedItem?.discounted_price" class="text-[8px] font-black text-muted line-through opacity-50">{{ selectedItem?.price }}</span>
                 </div>
-                <div v-if="selectedItem?.price_gems > 0" class="flex items-center gap-2">
-                  <span class="text-3xl font-black text-emerald-500 tabular-nums leading-none">{{ selectedItem?.price_gems }}</span>
+                <!-- Gems -->
+                <div v-if="(selectedItem?.discounted_gems || selectedItem?.price_gems) > 0" class="flex items-center gap-2">
+                  <span class="text-3xl font-black text-emerald-500 tabular-nums leading-none">
+                    {{ selectedItem?.discounted_gems || selectedItem?.price_gems }}
+                  </span>
                   <span class="text-[10px] font-black text-muted uppercase tracking-widest">GEM</span>
+                  <span v-if="selectedItem?.discounted_gems" class="text-[8px] font-black text-muted line-through opacity-50">{{ selectedItem?.price_gems }}</span>
                 </div>
               </div>
             </div>
@@ -219,15 +236,152 @@
             <button 
               @click="buyItem(selectedItem); showItemModal = false"
               :disabled="!canAfford(selectedItem) || buying || selectedItem?.owned"
-              class="w-full sm:w-auto px-10 py-5 bg-primary-500 hover:bg-primary-400 text-white rounded-[1.5rem] text-sm font-black uppercase tracking-[0.2em] transition-all disabled:opacity-20 shadow-2xl shadow-primary-500/20 active:scale-95"
+              class="w-full sm:w-auto px-10 py-5 rounded-[1.5rem] text-sm font-black uppercase tracking-[0.2em] transition-all shadow-2xl active:scale-95 flex items-center justify-center gap-3"
+              :class="[
+                selectedItem?.owned ? 'bg-white/5 text-muted border border-white/10 shadow-none' : 'bg-primary-500 text-white hover:bg-primary-400 shadow-primary-500/40',
+                !selectedItem?.owned && !canAfford(selectedItem) ? 'grayscale opacity-50 cursor-not-allowed' : ''
+              ]"
             >
               {{ selectedItem?.owned ? i18n.t('btn_acquired') : i18n.t('shop_initiate_acquisition') }}
+              <component :is="selectedItem?.owned ? CheckCircle2 : Diamond" class="w-4 h-4" />
             </button>
           </div>
         </div>
       </div>
     </div>
   </Transition>
+
+  <!-- DAILY SHOP & CHESTS SECTION -->
+  <section v-if="shopStore.dailyItems.length > 0 && selectedCategory === 'all' && activeTab === 'combat'" class="relative space-y-12 mb-16 animate-in p-8 rounded-[3rem] overflow-hidden">
+    <!-- Ambient Background for the whole section -->
+    <div class="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-surface/10 to-emerald-500/5 -z-10"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.02),transparent)] -z-10"></div>
+
+    <!-- Daily Deals Title -->
+    <div class="flex items-center gap-4 relative">
+      <div class="p-3 bg-primary-500/10 rounded-2xl border border-primary-500/20">
+        <Sparkles class="w-6 h-6 text-primary-500 animate-pulse" />
+      </div>
+      <div>
+        <h2 class="text-3xl font-black text-industrial text-foreground tracking-tighter italic uppercase flex items-center gap-3">
+          {{ i18n.locale === 'es' ? 'OFERTAS DIARIAS' : 'DAILY DEALS' }}
+          <span class="px-2 py-0.5 bg-primary-500 text-black text-[9px] font-black rounded italic">20% OFF</span>
+        </h2>
+        <p class="text-[9px] font-black text-muted uppercase tracking-[0.4em] mt-1 opacity-60">{{ i18n.locale === 'es' ? 'Protocolos con descuento por tiempo limitado' : 'Limited time discounted protocols' }}</p>
+      </div>
+      <div class="h-px flex-1 bg-gradient-to-r from-primary-500/20 to-transparent"></div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+      <div 
+        v-for="item in shopStore.dailyItems" 
+        :key="'daily-' + item.id"
+        @click="openItemDetails(item)"
+        class="group relative bg-surface-dark/40 backdrop-blur-xl border border-primary-500/20 rounded-[2.5rem] p-6 hover:scale-[1.02] transition-all duration-500 hover:border-primary-500/40 cursor-pointer overflow-hidden shadow-2xl"
+      >
+        <!-- Seasonal Badge -->
+        <div v-if="item.is_seasonal_deal" class="absolute top-6 left-6 z-10 px-3 py-1 bg-rose-500 text-white text-[8px] font-black rounded-lg shadow-lg shadow-rose-500/20 flex items-center gap-2">
+          <Flame class="w-3 h-3" />
+          {{ i18n.locale === 'es' ? 'TEMPORADA' : 'SEASONAL' }}
+        </div>
+
+        <div class="absolute top-6 right-6 z-10">
+          <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border backdrop-blur-md" :class="getRarityBadge(item).classes">
+            {{ getRarityBadge(item).label }}
+          </span>
+        </div>
+
+        <div class="flex flex-col gap-6">
+          <div class="aspect-square w-full max-w-[120px] mx-auto bg-white/5 rounded-3xl flex items-center justify-center relative group-hover:scale-110 transition-transform duration-700">
+            <ItemIcon :name="item.svg_key" :type="item.type" class-name="w-16 h-16" :class="getRarityBadge(item).classes?.split(' ')[0]" />
+            <div class="absolute inset-0 bg-primary-500/10 blur-2xl rounded-full"></div>
+          </div>
+
+          <div class="text-center space-y-1">
+            <h3 class="text-xl font-black text-foreground uppercase italic tracking-tight">{{ item.name }}</h3>
+            <p class="text-[10px] text-muted font-bold line-clamp-1 opacity-60 uppercase tracking-widest">{{ item.description }}</p>
+          </div>
+
+          <div class="flex items-center justify-between p-4 bg-black/40 rounded-2xl border border-white/5">
+            <div class="flex flex-col">
+              <span class="text-[8px] font-black text-muted uppercase tracking-widest mb-1">{{ i18n.t('shop_acquisition_cost') }}</span>
+              <div class="flex flex-col">
+                <div v-if="item.discounted_price > 0" class="flex items-center gap-2">
+                  <span class="text-2xl font-black text-primary-500 tabular-nums">{{ item.discounted_price }}</span>
+                  <span class="text-[8px] font-black text-muted uppercase tracking-widest opacity-60">RC</span>
+                </div>
+                <div v-if="item.discounted_gems > 0" class="flex items-center gap-2">
+                  <span class="text-2xl font-black text-emerald-400 tabular-nums">{{ item.discounted_gems }}</span>
+                  <span class="text-[8px] font-black text-muted uppercase tracking-widest opacity-60">GEM</span>
+                </div>
+              </div>
+            </div>
+            
+            <button 
+              @click.stop="buyItem(item)"
+              :disabled="item.owned || buying || !canAfford({ price: item.discounted_price, price_gems: item.discounted_gems })"
+              class="px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-xl"
+              :class="[
+                item.owned ? 'bg-white/5 text-muted border border-white/10' : 'bg-primary-500 text-white hover:bg-primary-400 shadow-primary-500/20',
+                !item.owned && !canAfford({ price: item.discounted_price, price_gems: item.discounted_gems }) ? 'grayscale opacity-50 cursor-not-allowed' : ''
+              ]"
+            >
+              {{ item.owned ? i18n.t('btn_acquired') : i18n.t('btn_get') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREMIUM CHESTS -->
+    <div class="space-y-8 mt-16 relative">
+      <div class="flex items-center gap-4">
+        <div class="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
+          <Trophy class="w-5 h-5 text-emerald-500" />
+        </div>
+        <div>
+          <h2 class="text-2xl font-black text-industrial text-foreground tracking-tighter italic uppercase">{{ i18n.locale === 'es' ? 'COFRES PREMIUM' : 'PREMIUM CHESTS' }}</h2>
+          <p class="text-[8px] font-black text-muted uppercase tracking-[0.4em] mt-1 opacity-60">{{ i18n.locale === 'es' ? 'Botín garantizado mediante gemas' : 'Guaranteed loot via gems' }}</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+        <div 
+          v-for="chest in shopStore.chests" 
+          :key="chest.id"
+          class="group relative bg-surface/20 backdrop-blur-md border border-white/5 rounded-3xl p-6 flex flex-col gap-6 hover:border-emerald-500/30 transition-all duration-500"
+        >
+          <div class="flex items-start justify-between">
+            <div class="p-4 rounded-2xl bg-gradient-to-br border" :class="getRarityBadge(chest).classes">
+              <Box class="w-10 h-10" />
+            </div>
+            <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border" :class="getRarityBadge(chest).classes">
+              {{ chest.rarity.toUpperCase() }}
+            </span>
+          </div>
+
+          <div class="space-y-1">
+            <h3 class="text-lg font-black text-foreground uppercase tracking-tight italic">{{ chest.name }}</h3>
+            <p class="text-[10px] text-muted font-bold leading-tight opacity-60">{{ chest.description }}</p>
+          </div>
+
+          <div class="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-2xl font-black text-emerald-500 tabular-nums">{{ chest.price_gems }}</span>
+              <span class="text-[8px] font-black text-emerald-500/60 uppercase tracking-widest">GEMS</span>
+            </div>
+            <button 
+              @click="purchaseChest(chest)"
+              :disabled="buying || (authStore.user?.reppy_gems || 0) < chest.price_gems"
+              class="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-emerald-500/20 disabled:grayscale disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {{ i18n.t('btn_get') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
       <!-- Elite Bundles Highlight (Premium Tactical Look) -->
       <section v-if="bundleItems.length > 0 && selectedCategory === 'all' && selectedRarity === 'all'" class="relative z-10">
@@ -924,7 +1078,7 @@ import { useAuthStore } from '../stores/auth';
 import { useShopStore } from '../stores/shop';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
-import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Diamond, Check, Swords, X, Flame, Package, Sword, Shield, Footprints, Construction, FlaskConical, Zap, Info, ChevronUp, ChevronDown as ChevronDownIcon, Users, Activity, Lock, CheckCircle2, Clock } from 'lucide-vue-next';
+import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Diamond, Check, Swords, X, Flame, Package, Sword, Shield, Footprints, Construction, FlaskConical, Zap, Info, ChevronUp, ChevronDown as ChevronDownIcon, Users, Activity, Lock, CheckCircle2, Clock, Box, Trophy } from 'lucide-vue-next';
 import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
 import ItemIcon from './ItemIcon.vue';
@@ -1003,6 +1157,29 @@ const categories = computed(() => {
   }
 });
 
+const getNextRotationCountdown = () => {
+  if (!shopStore.nextRotation) return '00:00:00';
+  const diff = Math.max(0, new Date(shopStore.nextRotation).getTime() - nowMs.value);
+  const hours = Math.floor(diff / 3600000);
+  const minutes = Math.floor((diff % 3600000) / 60000);
+  const seconds = Math.floor((diff % 60000) / 1000);
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+};
+
+const purchaseChest = async (chest) => {
+  buying.value = true;
+  try {
+    const res = await shopStore.buyChest(chest.id);
+    authStore.user.reppy_gems = res.remaining_gems;
+    notificationStore.notify(`Chest Acquired: ${chest.name}`, 'success');
+    await authStore.fetchProfile();
+  } catch (error) {
+    notificationStore.notify(error.response?.data?.message || 'Exchange failed', 'error');
+  } finally {
+    buying.value = false;
+  }
+};
+
 const selectedRarity = ref('all');
 const rarities = [
   { id: 'all', label: 'TODOS', activeClass: 'bg-foreground text-background border-foreground' },
@@ -1066,8 +1243,10 @@ const checkShop = async () => {
 
 const canAfford = (item) => {
   if (!item) return false;
-  const hasCoins = (authStore.user?.reppy_coins || 0) >= (item.price || 0);
-  const hasGems = (authStore.user?.reppy_gems || 0) >= (item.price_gems || 0);
+  const price = item.discounted_price ?? item.price ?? 0;
+  const gems = item.discounted_gems ?? item.price_gems ?? 0;
+  const hasCoins = (authStore.user?.reppy_coins || 0) >= price;
+  const hasGems = (authStore.user?.reppy_gems || 0) >= gems;
   return hasCoins && hasGems;
 };
 
@@ -1306,6 +1485,7 @@ const openItemDetails = (item) => {
 
 onMounted(() => {
   checkShop();
+  shopStore.fetchDailyShop();
   countdownTimer = setInterval(() => { nowMs.value = Date.now(); }, 1000);
   if (!authStore.user) authStore.fetchProfile();
 });

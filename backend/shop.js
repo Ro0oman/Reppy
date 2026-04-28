@@ -45,6 +45,41 @@ router.get('/cosmetics', authenticate, async (req, res) => {
   }
 });
 
+// Get daily shop items
+router.get('/daily', authenticate, async (req, res) => {
+  try {
+    const dailyRes = await query(`
+      SELECT d.*, i.name, i.description, i.rarity, i.type, i.image_url, i.svg_key,
+             EXISTS(SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = i.id) as owned
+      FROM daily_shop_items d
+      JOIN items i ON d.item_id = i.id
+    `, [req.user.id]);
+    
+    // Fixed chests with gem prices
+    const chests = [
+      { id: 'normal', name: 'Cofre de Batalla', rarity: 'common', price_gems: 10, type: 'chest', description: 'Contiene 1-3 objetos aleatorios y oro.' },
+      { id: 'epic', name: 'Cofre Épico', rarity: 'especial', price_gems: 25, type: 'chest', description: 'Garantiza al menos un objeto ÉPICO.' },
+      { id: 'legendary', name: 'Cofre Legendario', rarity: 'legendary', price_gems: 60, type: 'chest', description: 'Garantiza al menos un objeto LEGENDARIO.' }
+    ];
+
+    const nextRotationRes = await query('SELECT rotated_at FROM daily_shop_items LIMIT 1');
+    let nextRotation = null;
+    if (nextRotationRes.rows.length > 0) {
+      const rotatedAt = new Date(nextRotationRes.rows[0].rotated_at);
+      nextRotation = new Date(rotatedAt.getTime() + 24 * 60 * 60 * 1000);
+    }
+
+    res.json({
+      deals: dailyRes.rows,
+      chests,
+      next_rotation: nextRotation
+    });
+  } catch (error) {
+    console.error('Error fetching daily shop:', error);
+    res.status(500).json({ message: 'Error fetching daily shop' });
+  }
+});
+
 // Mark item as seen
 router.post('/mark-seen/:id', authenticate, async (req, res) => {
   const itemId = parseInt(req.params.id);
@@ -78,12 +113,16 @@ router.post('/buy/:id', authenticate, async (req, res) => {
       return res.status(400).json({ message: 'UNIT DETECTED: PROTOCOL ALREADY ACQUIRED' });
     }
 
-    if (item.is_seasonal) {
+    // Check if it's a daily deal for discount
+    const dailyDealRes = await query('SELECT * FROM daily_shop_items WHERE item_id = $1', [itemId]);
+    const isDailyDeal = dailyDealRes.rows.length > 0;
+
+    if (item.is_seasonal && !isDailyDeal) {
       return res.status(400).json({ message: 'ERROR: SEASONAL UNIT - ACQUISITION VIA EVENT ONLY' });
     }
 
-    let price = item.price || 0;
-    let priceGems = item.price_gems || 0;
+    let price = isDailyDeal ? dailyDealRes.rows[0].discounted_price : (item.price || 0);
+    let priceGems = isDailyDeal ? dailyDealRes.rows[0].discounted_gems : (item.price_gems || 0);
     let finalDeduction = price;
 
     // Bundle Refund Logic (Only for Coins for now to keep it simple, or we could skip gems refund)
@@ -347,6 +386,51 @@ router.post('/activate/:id', authenticate, async (req, res) => {
     await query('ROLLBACK');
     console.error('Error activating consumable:', error);
     res.status(500).json({ message: 'Error al activar el consumible' });
+  }
+});
+
+// Buy chest with gems
+router.post('/buy-chest/:type', authenticate, async (req, res) => {
+  const type = req.params.type; // normal, epic, legendary
+  const userId = req.user.id;
+
+  const chestPrices = {
+    normal: 10,
+    epic: 25,
+    legendary: 60
+  };
+
+  const price = chestPrices[type];
+  if (!price) return res.status(400).json({ message: 'Invalid chest type' });
+
+  try {
+    const userRes = await query('SELECT reppy_gems FROM users WHERE id = $1', [userId]);
+    const user = userRes.rows[0];
+
+    if (user.reppy_gems < price) {
+      return res.status(400).json({ message: 'INSUFFICIENT GEMS' });
+    }
+
+    await query('BEGIN');
+    
+    let column = 'boss_chests';
+    if (type === 'epic') column = 'epic_chests';
+    if (type === 'legendary') column = 'legendary_chests';
+
+    await query(`UPDATE users SET ${column} = ${column} + 1, reppy_gems = reppy_gems - $1 WHERE id = $2`, [price, userId]);
+    
+    await query(`
+      INSERT INTO gem_transactions (user_id, amount, source, description)
+      VALUES ($1, $2, 'SHOP', $3)
+    `, [userId, -price, `Purchased ${type} chest`]);
+
+    await query('COMMIT');
+
+    res.json({ message: 'Chest purchased successfully', remaining_gems: user.reppy_gems - price });
+  } catch (error) {
+    await query('ROLLBACK');
+    console.error('Error buying chest:', error);
+    res.status(500).json({ message: 'Error processing chest purchase' });
   }
 });
 
