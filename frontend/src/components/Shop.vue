@@ -211,39 +211,31 @@
           </div>
 
           <div class="flex flex-col sm:flex-row items-center justify-between gap-6 mt-4 p-6 bg-black/40 rounded-[2rem] border border-white/5">
-            <div class="flex flex-col gap-2">
-              <span class="text-[9px] font-black text-muted uppercase tracking-[0.2em]">{{ i18n.t('shop_acquisition_cost') }}</span>
-              <div class="flex flex-col gap-1">
-                <!-- Coins -->
-                <div v-if="(selectedItem?.discounted_price || selectedItem?.price) > 0" class="flex items-center gap-2">
-                  <span class="text-3xl font-black text-primary-500 tabular-nums leading-none">
-                    {{ selectedItem?.discounted_price || selectedItem?.price }}
-                  </span>
-                  <span class="text-[10px] font-black text-muted uppercase tracking-widest">RC</span>
-                  <span v-if="selectedItem?.discounted_price" class="text-[8px] font-black text-muted line-through opacity-50">{{ selectedItem?.price }}</span>
-                </div>
-                <!-- Gems -->
-                <div v-if="(selectedItem?.discounted_gems || selectedItem?.price_gems) > 0" class="flex items-center gap-2">
-                  <span class="text-3xl font-black text-emerald-500 tabular-nums leading-none">
-                    {{ selectedItem?.discounted_gems || selectedItem?.price_gems }}
-                  </span>
-                  <span class="text-[10px] font-black text-muted uppercase tracking-widest">GEM</span>
-                  <span v-if="selectedItem?.discounted_gems" class="text-[8px] font-black text-muted line-through opacity-50">{{ selectedItem?.price_gems }}</span>
-                </div>
+            <!-- Owned: show equipped status -->
+            <div v-if="selectedItem?.owned" class="flex items-center gap-2 text-neon-lime">
+              <CheckCircle2 class="w-5 h-5" />
+              <span class="text-sm font-black uppercase tracking-widest">{{ i18n.t('btn_acquired') }}</span>
+            </div>
+
+            <!-- Not owned: daily rotation notice -->
+            <div v-else class="flex items-center gap-3 px-5 py-3 bg-primary-500/5 border border-primary-500/20 rounded-2xl">
+              <Clock class="w-4 h-4 text-primary-500 animate-pulse flex-shrink-0" />
+              <div class="flex flex-col">
+                <span class="text-[9px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.locale === 'es' ? 'Solo en rotación diaria' : 'Daily rotation only' }}</span>
+                <span class="text-[8px] text-muted/60 font-bold">{{ i18n.locale === 'es' ? 'Espera a que aparezca en el Mercader del Día' : 'Wait for it to appear in the Daily Merchant' }}</span>
               </div>
             </div>
 
-            <button 
-              @click="buyItem(selectedItem); showItemModal = false"
-              :disabled="!canAfford(selectedItem) || buying || selectedItem?.owned"
+            <!-- Equip button if owned -->
+            <button
+              v-if="selectedItem?.owned && selectedItem?.type !== 'bundle' && selectedItem?.type !== 'consumable'"
+              @click="equipItem(selectedItem); showItemModal = false"
+              :disabled="isEquipped(selectedItem)"
               class="w-full sm:w-auto px-10 py-5 rounded-[1.5rem] text-sm font-black uppercase tracking-[0.2em] transition-all shadow-2xl active:scale-95 flex items-center justify-center gap-3"
-              :class="[
-                selectedItem?.owned ? 'bg-white/5 text-muted border border-white/10 shadow-none' : 'bg-primary-500 text-white hover:bg-primary-400 shadow-primary-500/40',
-                !selectedItem?.owned && !canAfford(selectedItem) ? 'grayscale opacity-50 cursor-not-allowed' : ''
-              ]"
+              :class="isEquipped(selectedItem) ? 'bg-white/5 text-muted border border-white/10 shadow-none' : 'bg-blue-500 text-white hover:bg-blue-400 shadow-blue-500/40'"
             >
-              {{ selectedItem?.owned ? i18n.t('btn_acquired') : i18n.t('shop_initiate_acquisition') }}
-              <component :is="selectedItem?.owned ? CheckCircle2 : Diamond" class="w-4 h-4" />
+              {{ isEquipped(selectedItem) ? i18n.t('btn_on') : i18n.t('btn_equip') }}
+              <component :is="isEquipped(selectedItem) ? CheckCircle2 : Zap" class="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -251,55 +243,104 @@
     </div>
   </Transition>
 
-  <!-- DAILY SHOP & CHESTS SECTION -->
-  <section v-if="shopStore.dailyItems.length > 0 && selectedCategory === 'all' && activeTab === 'combat'" class="relative space-y-12 mb-16 animate-in p-8 rounded-[3rem] overflow-hidden">
-    <!-- Ambient Background for the whole section -->
+  <!-- MERCADER DEL DÍA & CHESTS SECTION -->
+  <section v-if="shopStore.dailyItems.length > 0 && selectedCategory === 'all' && activeTab === 'combat'" class="relative space-y-12 mb-16 animate-in p-8 rounded-[3rem] overflow-hidden border border-white/5">
+    <!-- Ambient Background -->
     <div class="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-surface/10 to-emerald-500/5 -z-10"></div>
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.02),transparent)] -z-10"></div>
 
-    <!-- Daily Deals Title -->
-    <div class="flex items-center gap-4 relative">
-      <div class="p-3 bg-primary-500/10 rounded-2xl border border-primary-500/20">
-        <Sparkles class="w-6 h-6 text-primary-500 animate-pulse" />
+    <!-- Daily Deals Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative">
+      <div class="flex items-center gap-4">
+        <div class="p-3 bg-primary-500/10 rounded-2xl border border-primary-500/20">
+          <Sparkles class="w-6 h-6 text-primary-500 animate-pulse" />
+        </div>
+        <div>
+          <h2 class="text-3xl font-black text-industrial text-foreground tracking-tighter italic uppercase flex items-center gap-3">
+            {{ i18n.locale === 'es' ? 'MERCADER DEL DÍA' : 'DAILY MERCHANT' }}
+          </h2>
+          <p class="text-[9px] font-black text-muted uppercase tracking-[0.4em] mt-1 opacity-60">
+            {{ i18n.locale === 'es' ? 'Nuevas ofertas cada 24h o mediante refresco' : 'New deals every 24h or via refresh' }}
+          </p>
+        </div>
       </div>
-      <div>
-        <h2 class="text-3xl font-black text-industrial text-foreground tracking-tighter italic uppercase flex items-center gap-3">
-          {{ i18n.locale === 'es' ? 'OFERTAS DIARIAS' : 'DAILY DEALS' }}
-          <span class="px-2 py-0.5 bg-primary-500 text-black text-[9px] font-black rounded italic">20% OFF</span>
-        </h2>
-        <p class="text-[9px] font-black text-muted uppercase tracking-[0.4em] mt-1 opacity-60">{{ i18n.locale === 'es' ? 'Protocolos con descuento por tiempo limitado' : 'Limited time discounted protocols' }}</p>
+
+      <div class="flex items-center gap-4">
+        <!-- Refresh Button -->
+        <button 
+          @click="refreshDailyShop"
+          :disabled="buying || (authStore.user?.reppy_gems || 0) < shopStore.refreshCostGems"
+          class="flex items-center gap-3 px-6 py-3 bg-surface/40 hover:bg-surface/60 border border-white/10 rounded-2xl transition-all active:scale-95 group"
+        >
+          <RefreshCcw class="w-4 h-4 text-primary-500 group-hover:rotate-180 transition-transform duration-700" :class="{ 'animate-spin': buying }" />
+          <div class="flex flex-col items-start">
+            <span class="text-[8px] font-black text-muted uppercase tracking-widest">{{ i18n.locale === 'es' ? 'REFRESCAR' : 'REFRESH' }}</span>
+            <div class="flex items-center gap-1">
+              <span class="text-sm font-black text-foreground">{{ shopStore.refreshCostGems }}</span>
+              <div class="w-3 h-3 bg-emerald-500 rounded-full flex items-center justify-center">
+                <Gem class="w-2 h-2 text-white" />
+              </div>
+            </div>
+          </div>
+        </button>
+
+        <div v-if="shopStore.nextRotation" class="h-12 w-px bg-white/5 hidden md:block"></div>
+
+        <div v-if="shopStore.nextRotation" class="hidden md:flex flex-col">
+          <span class="text-[8px] font-black text-muted uppercase tracking-widest">{{ i18n.locale === 'es' ? 'EXPIRA EN' : 'EXPIRES IN' }}</span>
+          <span class="text-sm font-black text-foreground">{{ getNextRotationCountdown() }}</span>
+        </div>
       </div>
-      <div class="h-px flex-1 bg-gradient-to-r from-primary-500/20 to-transparent"></div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+    <!-- Items Grid (2x3 Layout) -->
+    <div class="bg-surface-dark/20 rounded-[3rem] p-8 border border-white/[0.03] shadow-2xl relative overflow-hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative daily-deals-grid">
       <div 
         v-for="item in shopStore.dailyItems" 
         :key="'daily-' + item.id"
         @click="openItemDetails(item)"
-        class="group relative bg-surface-dark/40 backdrop-blur-xl border border-primary-500/20 rounded-[2.5rem] p-6 hover:scale-[1.02] transition-all duration-500 hover:border-primary-500/40 cursor-pointer overflow-hidden shadow-2xl"
+        class="group relative bg-surface-dark/40 backdrop-blur-xl border border-white/5 rounded-[2.5rem] p-6 hover:scale-[1.02] transition-all duration-500 cursor-pointer overflow-hidden shadow-2xl"
+        :class="[
+          item.rarity === 'especial' ? 'hover:border-purple-500/40' : 
+          item.rarity === 'legendary' ? 'hover:border-yellow-500/40' : 
+          item.rarity === 'calistenico' ? 'hover:border-emerald-500/40' : 'hover:border-primary-500/40'
+        ]"
       >
         <!-- Seasonal Badge -->
-        <div v-if="item.is_seasonal_deal" class="absolute top-6 left-6 z-10 px-3 py-1 bg-rose-500 text-white text-[8px] font-black rounded-lg shadow-lg shadow-rose-500/20 flex items-center gap-2">
-          <Flame class="w-3 h-3" />
-          {{ i18n.locale === 'es' ? 'TEMPORADA' : 'SEASONAL' }}
+        <div v-if="item.is_seasonal_deal || item.is_seasonal" class="absolute top-6 left-6 z-10">
+          <div class="px-3 py-1 rounded-lg bg-orange-500/20 border border-orange-500/40 backdrop-blur-sm flex items-center gap-1.5">
+            <Flame class="w-2.5 h-2.5 text-orange-400" />
+            <span class="text-[7px] font-black text-orange-400 uppercase tracking-[0.2em]">{{ i18n.locale === 'es' ? 'TEMPORADA' : 'SEASONAL' }}</span>
+          </div>
         </div>
+        <!-- Rarity Ambient Glow -->
+        <div class="absolute -bottom-10 -right-10 w-32 h-32 blur-[60px] -z-10 opacity-20" :class="[
+          item.rarity === 'especial' ? 'bg-purple-500' : 
+          item.rarity === 'legendary' ? 'bg-yellow-500' : 
+          item.rarity === 'calistenico' ? 'bg-emerald-500' : 'bg-primary-500'
+        ]"></div>
 
+        <!-- Rarity Badge -->
         <div class="absolute top-6 right-6 z-10">
-          <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border backdrop-blur-md" :class="getRarityBadge(item).classes">
+          <span class="px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border" :class="getRarityBadge(item).classes">
             {{ getRarityBadge(item).label }}
           </span>
         </div>
 
         <div class="flex flex-col gap-6">
-          <div class="aspect-square w-full max-w-[120px] mx-auto bg-white/5 rounded-3xl flex items-center justify-center relative group-hover:scale-110 transition-transform duration-700">
-            <ItemIcon :name="item.svg_key" :type="item.type" class-name="w-16 h-16" :class="getRarityBadge(item).classes?.split(' ')[0]" />
-            <div class="absolute inset-0 bg-primary-500/10 blur-2xl rounded-full"></div>
+          <div class="aspect-square w-full max-w-[100px] mx-auto bg-white/5 rounded-3xl flex items-center justify-center relative group-hover:scale-110 transition-transform duration-700">
+            <ItemIcon :name="item.svg_key" :type="item.type" class-name="w-14 h-14" :class="getRarityBadge(item).classes?.split(' ')[0]" />
+            <div class="absolute inset-0 blur-2xl rounded-full opacity-30" :class="[
+              item.rarity === 'especial' ? 'bg-purple-500' : 
+              item.rarity === 'legendary' ? 'bg-yellow-500' : 
+              item.rarity === 'calistenico' ? 'bg-emerald-500' : 'bg-primary-500'
+            ]"></div>
           </div>
 
           <div class="text-center space-y-1">
-            <h3 class="text-xl font-black text-foreground uppercase italic tracking-tight">{{ item.name }}</h3>
-            <p class="text-[10px] text-muted font-bold line-clamp-1 opacity-60 uppercase tracking-widest">{{ item.description }}</p>
+            <h3 class="text-lg font-black text-foreground uppercase italic tracking-tight">{{ item.name }}</h3>
+            <p class="text-[9px] text-muted font-bold line-clamp-1 opacity-60 uppercase tracking-widest">{{ item.description }}</p>
           </div>
 
           <div class="flex items-center justify-between p-4 bg-black/40 rounded-2xl border border-white/5">
@@ -307,37 +348,53 @@
               <span class="text-[8px] font-black text-muted uppercase tracking-widest mb-1">{{ i18n.t('shop_acquisition_cost') }}</span>
               <div class="flex flex-col">
                 <div v-if="item.discounted_price > 0" class="flex items-center gap-2">
-                  <span class="text-2xl font-black text-primary-500 tabular-nums">{{ item.discounted_price }}</span>
+                  <span class="text-xl font-black text-primary-500 tabular-nums">{{ item.discounted_price }}</span>
                   <span class="text-[8px] font-black text-muted uppercase tracking-widest opacity-60">RC</span>
                 </div>
                 <div v-if="item.discounted_gems > 0" class="flex items-center gap-2">
-                  <span class="text-2xl font-black text-emerald-400 tabular-nums">{{ item.discounted_gems }}</span>
+                  <span class="text-xl font-black text-emerald-400 tabular-nums">{{ item.discounted_gems }}</span>
                   <span class="text-[8px] font-black text-muted uppercase tracking-widest opacity-60">GEM</span>
                 </div>
               </div>
             </div>
             
+            <div v-if="item.owned" class="flex flex-col items-end gap-2">
+              <div class="flex items-center gap-1 text-emerald-400">
+                <CheckCircle2 class="w-3 h-3" />
+                <span class="text-[8px] font-black uppercase tracking-widest">{{ i18n.t('btn_acquired') }}</span>
+              </div>
+              <button 
+                @click.stop="equipItem(item)"
+                :disabled="isEquipped(item)"
+                class="px-4 py-2 rounded-lg text-[8px] font-black uppercase tracking-widest transition-all"
+                :class="isEquipped(item) ? 'bg-white/5 text-muted border border-white/10' : 'bg-emerald-500 text-white hover:bg-emerald-400 shadow-lg shadow-emerald-500/20'"
+              >
+                {{ isEquipped(item) ? i18n.t('btn_on') : i18n.t('btn_equip') }}
+              </button>
+            </div>
             <button 
+              v-else
               @click.stop="buyItem(item)"
-              :disabled="item.owned || buying || !canAfford({ price: item.discounted_price, price_gems: item.discounted_gems })"
-              class="px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-xl"
+              :disabled="buying || !canAfford(item)"
+              class="px-5 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-xl"
               :class="[
-                item.owned ? 'bg-white/5 text-muted border border-white/10' : 'bg-primary-500 text-white hover:bg-primary-400 shadow-primary-500/20',
-                !item.owned && !canAfford({ price: item.discounted_price, price_gems: item.discounted_gems }) ? 'grayscale opacity-50 cursor-not-allowed' : ''
+                'bg-primary-500 text-white hover:bg-primary-400 shadow-primary-500/20',
+                !canAfford(item) ? 'grayscale opacity-50 cursor-not-allowed' : ''
               ]"
             >
-              {{ item.owned ? i18n.t('btn_acquired') : i18n.t('btn_get') }}
+              {{ i18n.t('btn_get') }}
             </button>
           </div>
         </div>
       </div>
+      </div>
     </div>
+
 
     <!-- PREMIUM CHESTS -->
     <div class="space-y-8 mt-16 relative">
       <div class="flex items-center gap-4">
         <div class="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
-          <Trophy class="w-5 h-5 text-emerald-500" />
         </div>
         <div>
           <h2 class="text-2xl font-black text-industrial text-foreground tracking-tighter italic uppercase">{{ i18n.locale === 'es' ? 'COFRES PREMIUM' : 'PREMIUM CHESTS' }}</h2>
@@ -345,7 +402,8 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+      <div class="bg-surface-dark/20 rounded-[3rem] p-8 border border-white/[0.03] shadow-2xl relative overflow-hidden">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
         <div 
           v-for="chest in shopStore.chests" 
           :key="chest.id"
@@ -380,6 +438,7 @@
           </div>
         </div>
       </div>
+    </div>
     </div>
   </section>
 
@@ -784,10 +843,10 @@
               </div>              <!-- Action Footer -->
               <div class="p-3 sm:p-4 mt-auto border-t border-white/5 bg-black/60">
                 <div class="flex flex-col gap-3">
-                  <!-- Top Row: Prices & Status -->
+                  <!-- Top Row: Status & Action -->
                   <div class="flex items-center justify-between gap-2">
+                    <!-- Owned status -->
                     <div class="flex flex-col gap-1 min-w-0">
-                      <!-- Owned Status -->
                       <div v-if="item.owned" class="flex items-center gap-1.5">
                         <div v-if="item.type !== 'consumable'" class="flex items-center gap-1 text-neon-lime">
                           <CheckCircle2 class="w-3 h-3" />
@@ -798,22 +857,16 @@
                           <span class="text-[9px] font-black uppercase tracking-widest">{{ i18n.t('shop_stock') }}: {{ item.quantity }}</span>
                         </div>
                       </div>
-
-                      <!-- Prices (Only if not owned OR if consumable) -->
-                      <div v-if="!item.owned || item.type === 'consumable'" class="flex flex-col gap-0.5">
-                        <div v-if="item.price > 0" class="flex items-center gap-1.5">
-                          <span class="text-sm font-black tabular-nums leading-none" :class="(authStore.user?.reppy_coins || 0) >= item.price ? 'text-primary-500' : 'text-muted/60'">{{ item.price }}</span>
-                          <span class="text-[7px] font-black text-muted/40 uppercase tracking-widest">RC</span>
-                        </div>
-                        <div v-if="item.price_gems > 0" class="flex items-center gap-1.5">
-                          <span class="text-sm font-black tabular-nums leading-none" :class="(authStore.user?.reppy_gems || 0) >= item.price_gems ? 'text-emerald-400' : 'text-muted/60'">{{ item.price_gems }}</span>
-                          <span class="text-[7px] font-black text-muted/40 uppercase tracking-widest">GEM</span>
-                        </div>
+                      <!-- Not owned: daily rotation badge -->
+                      <div v-else class="flex items-center gap-1.5">
+                        <Clock class="w-3 h-3 text-primary-500/60 animate-pulse" />
+                        <span class="text-[8px] font-black text-muted/50 uppercase tracking-widest">{{ i18n.locale === 'es' ? 'Rotación diaria' : 'Daily rotation' }}</span>
                       </div>
                     </div>
 
-                    <!-- Primary Action Button (Equip/Activate/Buy) -->
+                    <!-- Action buttons -->
                     <div class="flex items-center gap-2">
+                      <!-- Equip / Activate (owned items only) -->
                       <button 
                         v-if="item.owned && item.type !== 'bundle'"
                         @click="item.type === 'consumable' ? activateConsumable(item) : equipItem(item)"
@@ -822,17 +875,6 @@
                         :class="item.type === 'consumable' ? 'bg-emerald-500 text-black hover:bg-emerald-400 shadow-emerald-500/20' : (isEquipped(item) ? 'bg-white/5 text-muted border border-white/10 cursor-default' : 'bg-blue-500 text-white hover:bg-blue-400 shadow-blue-500/20')"
                       >
                         {{ item.type === 'consumable' ? i18n.t('btn_activate') : (isEquipped(item) ? i18n.t('btn_on') : i18n.t('btn_equip')) }}
-                      </button>
-
-                      <!-- Buy Button (Secondary if already owned consumable) -->
-                      <button 
-                        v-if="(!item.owned || item.type === 'consumable') && (item.price > 0 || item.price_gems > 0)"
-                        @click="buyItem(item)"
-                        :disabled="!canAfford(item) || buying || !item.is_unlocked"
-                        class="px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap shadow-xl"
-                        :class="item.owned && item.type === 'consumable' ? 'bg-white/10 text-white hover:bg-white/20 border border-white/10' : (!canAfford(item) || buying || !item.is_unlocked ? 'bg-white/5 text-muted/40 border border-white/5 cursor-not-allowed' : 'bg-primary-500 hover:bg-primary-400 text-white shadow-primary-500/20 active:scale-95')"
-                      >
-                        {{ item.owned ? i18n.t('btn_buy_more') || 'MÁS' : (item.is_unlocked ? i18n.t('btn_get') : i18n.t('btn_lock')) }}
                       </button>
                     </div>
                   </div>
@@ -1078,7 +1120,7 @@ import { useAuthStore } from '../stores/auth';
 import { useShopStore } from '../stores/shop';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
-import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Diamond, Check, Swords, X, Flame, Package, Sword, Shield, Footprints, Construction, FlaskConical, Zap, Info, ChevronUp, ChevronDown as ChevronDownIcon, Users, Activity, Lock, CheckCircle2, Clock, Box, Trophy } from 'lucide-vue-next';
+import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Diamond, Check, Swords, X, Flame, Package, Sword, Shield, Footprints, Construction, FlaskConical, Zap, Info, ChevronUp, ChevronDown as ChevronDownIcon, Users, Activity, Lock, CheckCircle2, Clock, Box, Trophy, RefreshCcw, Gem } from 'lucide-vue-next';
 import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
 import ItemIcon from './ItemIcon.vue';
@@ -1139,10 +1181,6 @@ const categories = computed(() => {
     return [
       { id: 'all', label: 'cat_all', icon: Swords },
       { id: 'bundle', label: 'cat_bundle', icon: LayoutGrid },
-      { id: 'weapon', label: 'cat_weapon', icon: Sword },
-      { id: 'head', label: 'cat_head', icon: Construction },
-      { id: 'armor', label: 'cat_armor', icon: Shield },
-      { id: 'boots', label: 'cat_boots', icon: Footprints },
       { id: 'consumable', label: 'cat_consumable', icon: Flame }
     ];
   } else {
@@ -1263,15 +1301,16 @@ const getCountdown = (item) => {
 
 const isEquipped = (item) => {
   if (!authStore.user || item.type === 'bundle') return false;
-  if (item.type === 'head') return authStore.user.equipped_head_id === item.id;
-  if (item.type === 'weapon') return authStore.user.equipped_weapon_id === item.id;
-  if (item.type === 'armor') return authStore.user.equipped_armor_id === item.id;
-  if (item.type === 'boots') return authStore.user.equipped_boots_id === item.id;
-  if (item.type === 'title') return authStore.user.equipped_title_id === item.id;
-  if (item.type === 'border') return authStore.user.equipped_border_id === item.id;
-  if (item.type === 'background') return authStore.user.equipped_background_id === item.id;
-  if (item.type === 'avatar') return authStore.user.equipped_avatar_id === item.id;
-  if (item.type === 'post_background') return authStore.user.equipped_post_background_id === item.id;
+  const id = item.item_id || item.id;
+  if (item.type === 'head') return authStore.user.equipped_head_id === id;
+  if (item.type === 'weapon') return authStore.user.equipped_weapon_id === id;
+  if (item.type === 'armor') return authStore.user.equipped_armor_id === id;
+  if (item.type === 'boots') return authStore.user.equipped_boots_id === id;
+  if (item.type === 'title') return authStore.user.equipped_title_id === id;
+  if (item.type === 'border') return authStore.user.equipped_border_id === id;
+  if (item.type === 'background') return authStore.user.equipped_background_id === id;
+  if (item.type === 'avatar') return authStore.user.equipped_avatar_id === id;
+  if (item.type === 'post_background') return authStore.user.equipped_post_background_id === id;
   return false;
 };
 
@@ -1425,10 +1464,13 @@ const getStatDiff = (stat, newValue) => {
 const buyItem = async (item) => {
   buying.value = true;
   try {
-    const res = await axios.post(`/api/shop/buy/${item.id}`);
+    const realId = item.item_id || item.id;
+    const res = await axios.post(`/api/shop/buy/${realId}`);
+    item.owned = true;
     authStore.user.reppy_coins = res.data.remaining_coins;
     notificationStore.notify(`Unit Acquired: ${item.name}`, 'success');
     await checkShop();
+    await shopStore.fetchDailyShop(true); 
   } catch (error) {
     notificationStore.notify(error.response?.data?.message || 'Exchange failed', 'error');
   } finally {
@@ -1438,11 +1480,12 @@ const buyItem = async (item) => {
 
 const equipItem = async (item) => {
   try {
-    await axios.post(`/api/shop/equip/${item.id}?type=${item.type}`);
-    if (item.type === 'head') authStore.user.equipped_head_id = item.id;
-    if (item.type === 'weapon') authStore.user.equipped_weapon_id = item.id;
-    if (item.type === 'armor') authStore.user.equipped_armor_id = item.id;
-    if (item.type === 'boots') authStore.user.equipped_boots_id = item.id;
+    const realId = item.item_id || item.id;
+    await axios.post(`/api/shop/equip/${realId}?type=${item.type}`);
+    if (item.type === 'head') authStore.user.equipped_head_id = realId;
+    if (item.type === 'weapon') authStore.user.equipped_weapon_id = realId;
+    if (item.type === 'armor') authStore.user.equipped_armor_id = realId;
+    if (item.type === 'boots') authStore.user.equipped_boots_id = realId;
     if (item.type === 'title') { authStore.user.equipped_title_id = item.id; authStore.user.title_css = item.css_value; authStore.user.title_name = item.name; }
     if (item.type === 'border') authStore.user.equipped_border_id = item.id;
     if (item.type === 'avatar') authStore.user.equipped_avatar_id = item.id;
@@ -1451,6 +1494,19 @@ const equipItem = async (item) => {
     notificationStore.notify(`${item.name} active`, 'success');
   } catch (error) {
     notificationStore.notify('Activation failed', 'error');
+  }
+};
+
+const refreshDailyShop = async () => {
+  if (buying.value) return;
+  try {
+    buying.value = true;
+    await shopStore.refreshDailyShop();
+    notificationStore.notify(i18n.locale === 'es' ? 'Mercado Actualizado' : 'Market Refreshed', 'success');
+  } catch (error) {
+    notificationStore.notify(error.response?.data?.message || 'Refresh failed', 'error');
+  } finally {
+    buying.value = false;
   }
 };
 

@@ -14,8 +14,8 @@ router.get('/cosmetics', authenticate, async (req, res) => {
       SELECT i.* 
       FROM items i
       LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = $1
-      WHERE i.type IN ('head', 'weapon', 'armor', 'boots', 'consumable', 'bundle', 'title', 'border', 'background', 'post_background', 'avatar')
-      ORDER BY i.is_customizable ASC, i.type ASC, i.id ASC
+      WHERE (i.is_customizable = true OR i.type IN ('bundle', 'consumable'))
+      ORDER BY i.type ASC, i.id ASC
     `, [req.user.id]);
     const inventoryRes = await query('SELECT item_id, is_new, quantity FROM user_items WHERE user_id = $1', [req.user.id]);
     
@@ -48,13 +48,47 @@ router.get('/cosmetics', authenticate, async (req, res) => {
 // Get daily shop items
 router.get('/daily', authenticate, async (req, res) => {
   try {
-    const dailyRes = await query(`
+    const userId = req.user.id;
+    console.log(`GET /daily for userId: ${userId}`);
+    
+    // Check if user has daily deals
+    let dailyRes = await query(`
       SELECT d.*, i.name, i.description, i.rarity, i.type, i.image_url, i.svg_key,
              EXISTS(SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = i.id) as owned
       FROM daily_shop_items d
       JOIN items i ON d.item_id = i.id
-    `, [req.user.id]);
+      WHERE d.user_id = $1
+    `, [userId]);
+
+    console.log(`Found ${dailyRes.rows.length} deals for user`);
+
+    // If no deals found (first time or expired), rotate
+    if (dailyRes.rows.length === 0) {
+      console.log('No deals found, rotating...');
+      await rotateDailyShop(userId);
+      dailyRes = await query(`
+        SELECT d.*, i.name, i.description, i.rarity, i.type, i.image_url, i.svg_key,
+               EXISTS(SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = i.id) as owned
+        FROM daily_shop_items d
+        JOIN items i ON d.item_id = i.id
+        WHERE d.user_id = $1
+      `, [userId]);
+    }
+
+    // Get user refresh status
+    const userRes = await query('SELECT daily_refreshes, last_refresh_at FROM users WHERE id = $1', [userId]);
+    const userData = userRes.rows[0];
     
+    // Reset daily refresh if it's a new day
+    let currentRefreshes = userData.daily_refreshes || 0;
+    const lastRefresh = new Date(userData.last_refresh_at);
+    const today = new Date();
+    
+    if (lastRefresh.toDateString() !== today.toDateString()) {
+      currentRefreshes = 0;
+      await query('UPDATE users SET daily_refreshes = 0 WHERE id = $1', [userId]);
+    }
+
     // Fixed chests with gem prices
     const chests = [
       { id: 'normal', name: 'Cofre de Batalla', rarity: 'common', price_gems: 10, type: 'chest', description: 'Contiene 1-3 objetos aleatorios y oro.' },
@@ -69,14 +103,45 @@ router.get('/daily', authenticate, async (req, res) => {
       nextRotation = new Date(rotatedAt.getTime() + 24 * 60 * 60 * 1000);
     }
 
-    res.json({
-      deals: dailyRes.rows,
-      chests,
-      next_rotation: nextRotation
+    res.json({ 
+      deals: dailyRes.rows, 
+      chests, 
+      next_rotation: null, // No longer global, depends on refresh
+      daily_refreshes: currentRefreshes,
+      refresh_cost_gems: currentRefreshes + 1
     });
   } catch (error) {
-    console.error('Error fetching daily shop:', error);
-    res.status(500).json({ message: 'Error fetching daily shop' });
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Refresh daily shop
+router.post('/daily/refresh', authenticate, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userRes = await query('SELECT reppy_gems, daily_refreshes, last_refresh_at FROM users WHERE id = $1', [userId]);
+    const user = userRes.rows[0];
+    
+    let currentRefreshes = user.daily_refreshes || 0;
+    const lastRefresh = new Date(user.last_refresh_at);
+    const today = new Date();
+    
+    if (lastRefresh.toDateString() !== today.toDateString()) {
+      currentRefreshes = 0;
+    }
+
+    const cost = currentRefreshes + 1;
+    
+    if (user.reppy_gems < cost) {
+      return res.status(400).json({ message: 'INSUFFICIENT GEMS FOR REFRESH' });
+    }
+
+    await query('UPDATE users SET reppy_gems = reppy_gems - $1, daily_refreshes = $2, last_refresh_at = CURRENT_TIMESTAMP WHERE id = $3', [cost, currentRefreshes + 1, userId]);
+    await rotateDailyShop(userId);
+
+    res.json({ message: 'Shop refreshed', remaining_gems: user.reppy_gems - cost });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -113,12 +178,17 @@ router.post('/buy/:id', authenticate, async (req, res) => {
       return res.status(400).json({ message: 'UNIT DETECTED: PROTOCOL ALREADY ACQUIRED' });
     }
 
-    // Check if it's a daily deal for discount
-    const dailyDealRes = await query('SELECT * FROM daily_shop_items WHERE item_id = $1', [itemId]);
+    // Check if it's a daily deal for this user (to get discount AND allow purchase of gear)
+    const dailyDealRes = await query('SELECT * FROM daily_shop_items WHERE item_id = $1 AND user_id = $2', [itemId, userId]);
     const isDailyDeal = dailyDealRes.rows.length > 0;
 
+    // RESTRICTION: Non-customizable combat gear can ONLY be bought via Daily Rotation
+    if (!item.is_customizable && !['bundle', 'consumable'].includes(item.type) && !isDailyDeal) {
+      return res.status(400).json({ message: 'ERROR: UNIT RESTRICTED - ACQUISITION VIA DAILY MERCHANT ONLY' });
+    }
+
     if (item.is_seasonal && !isDailyDeal) {
-      return res.status(400).json({ message: 'ERROR: SEASONAL UNIT - ACQUISITION VIA EVENT ONLY' });
+      return res.status(400).json({ message: 'ERROR: SEASONAL UNIT - ACQUISITION VIA DAILY MERCHANT ONLY' });
     }
 
     let price = isDailyDeal ? dailyDealRes.rows[0].discounted_price : (item.price || 0);

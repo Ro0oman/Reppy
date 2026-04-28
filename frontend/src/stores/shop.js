@@ -7,6 +7,8 @@ export const useShopStore = defineStore('shop', {
     dailyItems: [],
     chests: [],
     nextRotation: null,
+    refreshCost: 0,
+    dailyRefreshes: 0,
     lastFetch: 0,
     lastDailyFetch: 0,
     fetchPromise: null,
@@ -55,6 +57,8 @@ export const useShopStore = defineStore('shop', {
           this.dailyItems = res.data.deals;
           this.chests = res.data.chests;
           this.nextRotation = res.data.next_rotation;
+          this.refreshCostGems = res.data.refresh_cost_gems;
+          this.dailyRefreshes = res.data.daily_refreshes;
           this.lastDailyFetch = Date.now();
           return res.data;
         } catch (error) {
@@ -66,6 +70,17 @@ export const useShopStore = defineStore('shop', {
       })();
 
       return this.dailyFetchPromise;
+    },
+
+    async refreshDailyShop() {
+      try {
+        const res = await axios.post('/api/shop/daily/refresh');
+        await this.fetchDailyShop(true);
+        return res.data;
+      } catch (error) {
+        console.error('Error refreshing daily shop:', error);
+        throw error;
+      }
     },
 
     async buyChest(type) {

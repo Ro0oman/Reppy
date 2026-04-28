@@ -23,6 +23,17 @@ router.post('/add-coins', authenticate, async (req, res) => {
   }
 });
 
+// Give gems to a user
+router.post('/add-gems', authenticate, async (req, res) => {
+  const { amount } = req.body;
+  try {
+    await query('UPDATE users SET reppy_gems = reppy_gems + $1 WHERE id = $2', [amount, req.user.id]);
+    res.json({ message: `Added ${amount} gems` });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Give a specific item to a user
 router.post('/add-item', authenticate, async (req, res) => {
   const { itemName } = req.body;
