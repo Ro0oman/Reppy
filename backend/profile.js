@@ -47,69 +47,58 @@ router.get('/:id', async (req, res) => {
     const typeFilter = isGlobal ? '' : 'AND exercise_type = $2';
     const params = isGlobal ? [userId] : [userId, type];
 
-    const heatmapResult = await query(
-      `SELECT date, exercise_type, SUM(count)::int as count FROM reps 
-       WHERE user_id = $1 ${typeFilter} AND date > CURRENT_DATE - INTERVAL '1 year'
-       GROUP BY date, exercise_type ORDER BY date ASC`,
-      params
-    );
-
-    const totalRes = await query(
-      `SELECT SUM(count)::int as total FROM reps WHERE user_id = $1 ${typeFilter}`,
-      params
-    );
-    const totalReps = parseInt(totalRes.rows[0]?.total || 0);
-
-    const recentLogs = await query(
-      `SELECT id, date, count, exercise_type FROM reps WHERE user_id = $1 ${typeFilter} ORDER BY date DESC LIMIT 20`,
-      params
-    );
-
-    
-
-    // Get read blogs list for indicators
-    const readBlogsRes = await query(
-      'SELECT post_slug FROM user_read_blogs WHERE user_id = $1',
-      [userId]
-    );
-    const readBlogs = readBlogsRes.rows.map(r => r.post_slug);
-
-    // Check for new inventory items
-    const hasNewInventoryRes = await query(
-      'SELECT EXISTS(SELECT 1 FROM user_items WHERE user_id = $1 AND is_new = TRUE)',
-      [userId]
-    );
-    const hasNewInventory = hasNewInventoryRes.rows[0].exists;
-
-    // Calculate favorite exercise
-    const favResult = await query(
-      'SELECT exercise_type, SUM(count) as total FROM reps WHERE user_id = $1 GROUP BY exercise_type ORDER BY total DESC LIMIT 1',
-      [userId]
-    );
-    const favExercise = favResult.rows[0]?.exercise_type || 'pullups';
-
-    // Calculate total breakdown (count and volume) by exercise
-    const breakdownRes = await query(
-      `SELECT r.exercise_type as type, 
-              SUM(r.count)::int as count,
-              SUM(r.count * (COALESCE(r.added_weight, 0) + u.body_weight))::float as volume
-       FROM reps r
-       JOIN users u ON r.user_id = u.id
-       WHERE r.user_id = $1 
-       GROUP BY r.exercise_type 
-       ORDER BY volume DESC`,
-      [userId]
-    );
-
-    // --- BUNDLE AUTO-SYNC PROTOCOL ---
-    // Ensure all items from purchased bundles are assigned to the user's inventory
-    try {
-      const purchasedBundles = await query(`
+    const [
+      heatmapResult,
+      totalRes,
+      recentLogs,
+      readBlogsRes,
+      hasNewInventoryRes,
+      favResult,
+      breakdownRes,
+      purchasedBundles
+    ] = await Promise.all([
+      query(
+        `SELECT date, exercise_type, SUM(count)::int as count FROM reps 
+         WHERE user_id = $1 ${typeFilter} AND date > CURRENT_DATE - INTERVAL '1 year'
+         GROUP BY date, exercise_type ORDER BY date ASC`,
+        params
+      ),
+      query(
+        `SELECT SUM(count)::int as total FROM reps WHERE user_id = $1 ${typeFilter}`,
+        params
+      ),
+      query(
+        `SELECT id, date, count, exercise_type FROM reps WHERE user_id = $1 ${typeFilter} ORDER BY date DESC LIMIT 20`,
+        params
+      ),
+      query('SELECT post_slug FROM user_read_blogs WHERE user_id = $1', [userId]),
+      query('SELECT EXISTS(SELECT 1 FROM user_items WHERE user_id = $1 AND is_new = TRUE)', [userId]),
+      query('SELECT exercise_type, SUM(count) as total FROM reps WHERE user_id = $1 GROUP BY exercise_type ORDER BY total DESC LIMIT 1', [userId]),
+      query(
+        `SELECT r.exercise_type as type, 
+                SUM(r.count)::int as count,
+                SUM(r.count * (COALESCE(r.added_weight, 0) + u.body_weight))::float as volume
+         FROM reps r
+         JOIN users u ON r.user_id = u.id
+         WHERE r.user_id = $1 
+         GROUP BY r.exercise_type 
+         ORDER BY volume DESC`,
+        [userId]
+      ),
+      query(`
         SELECT i.bundle_items FROM user_items ui
         JOIN items i ON ui.item_id = i.id
         WHERE ui.user_id = $1 AND i.type = 'bundle' AND i.bundle_items IS NOT NULL
-      `, [userId]);
+      `, [userId])
+    ]);
 
+    const totalReps = parseInt(totalRes.rows[0]?.total || 0);
+    const readBlogs = readBlogsRes.rows.map(r => r.post_slug);
+    const hasNewInventory = hasNewInventoryRes.rows[0].exists;
+    const favExercise = favResult.rows[0]?.exercise_type || 'pullups';
+
+    // --- BUNDLE AUTO-SYNC PROTOCOL ---
+    try {
       const allItemIds = purchasedBundles.rows
         .flatMap(bundle => bundle.bundle_items.split(','))
         .map(id => parseInt(id.trim()))
@@ -124,7 +113,6 @@ router.get('/:id', async (req, res) => {
       }
     } catch (syncError) {
       console.error('[PROFILE_API] Bundle Sync Warning:', syncError.message);
-      // Non-blocking, continue with profile fetch
     }
 
     // RPG CALCULATIONS - Now handled by shared utility

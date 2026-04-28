@@ -205,6 +205,7 @@ import {
 } from 'lucide-vue-next';
 import { Swords } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
+import { useBossStore } from '../stores/boss';
 import { useNotificationStore } from '../stores/notification';
 import AvatarFrame from './AvatarFrame.vue';
 import Leaderboard from './Leaderboard.vue';
@@ -217,6 +218,7 @@ import { computed } from 'vue';
 const emit = defineEmits(['viewProfile', 'start']);
 
 const i18n = useI18nStore();
+const bossStore = useBossStore();
 const notificationStore = useNotificationStore();
 const searchQuery = ref('');
 const searchResults = ref([]);
@@ -229,22 +231,13 @@ const activeExerciseLabel = computed(() => {
   return i18n.t(activeExercise.value);
 });
 
-const activeBoss = ref(null);
+const activeBoss = computed(() => bossStore.activeBoss?.boss || null);
 const bossHealthPercent = computed(() => {
   if (!activeBoss.value || !activeBoss.value.total_hp) return 0;
   return (activeBoss.value.current_hp / activeBoss.value.total_hp) * 100;
 });
 
-const fetchActiveBoss = async () => {
-  try {
-    const res = await axios.get('/api/boss/active');
-    if (res.data && res.data.boss) {
-      activeBoss.value = res.data.boss;
-    }
-  } catch (e) {
-    console.error('Error fetching boss for health bar:', e);
-  }
-};
+const fetchActiveBoss = () => bossStore.fetchActiveBoss();
 
 const searchUsers = async () => {
   if (!searchQuery.value) {

@@ -270,7 +270,8 @@ import {
 } from 'lucide-vue-next';
 import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
-import { es, enUS } from 'date-fns/locale';
+import { es } from 'date-fns/locale/es';
+import { enUS } from 'date-fns/locale/en-US';
 import { useNotificationStore } from '../stores/notification';
 
 const props = defineProps({

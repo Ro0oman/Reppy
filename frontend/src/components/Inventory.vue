@@ -436,6 +436,7 @@ import {
   FlaskConical, Timer, Construction
 } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
+import { useShopStore } from '../stores/shop';
 import { useI18nStore } from '../stores/i18n';
 import { useNotificationStore } from '../stores/notification';
 import AvatarFrame from './AvatarFrame.vue';
@@ -448,11 +449,12 @@ import ItemIcon from './ItemIcon.vue';
 
 const { playZip, playEquipBlip, playClickBlip } = useAudio();
 const authStore = useAuthStore();
+const shopStore = useShopStore();
 const i18n = useI18nStore();
 const emit = defineEmits(['start', 'viewProfile']);
 const notificationStore = useNotificationStore();
-const inventory = ref([]);
-const loading = ref(true);
+const inventory = computed(() => shopStore.cosmetics.filter(item => item.owned));
+const loading = computed(() => shopStore.loading);
 const currentTime = ref(new Date());
 const equippingSlot = ref(null);
 const recentlyEquipped = ref(false);
@@ -950,10 +952,8 @@ const closeChestModal = async () => {
 
 const fetchInventory = async () => {
   try {
-    const res = await axios.get('/api/shop/cosmetics');
-    inventory.value = res.data.filter(item => item.owned);
+    await shopStore.fetchCosmetics();
   } catch (err) { console.error('Inventory sync error:', err); }
-  finally { loading.value = false; }
 };
 
 const groupedItems = computed(() => {

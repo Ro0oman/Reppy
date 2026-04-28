@@ -115,7 +115,25 @@ export const augmentUserWithLevels = (user) => {
 
 
 
-export const recalculateUserStats = async (userId) => {
+const recalcCache = new Map();
+
+/**
+ * Shared utility to recalculate and sync user stats (total_reps and XP levels)
+ * based on the absolute history of their reps.
+ * @param {string} userId - The ID of the user to recalculate
+ * @param {boolean} force - If true, bypasses the 10-second throttle
+ */
+export const recalculateUserStats = async (userId, force = false) => {
+  const now = Date.now();
+  if (!force && recalcCache.has(userId)) {
+    const last = recalcCache.get(userId);
+    if (now - last < 10000) { // 10s throttle
+       // Return current data from DB instead of recalculating
+       const currentRes = await query('SELECT * FROM users WHERE id = $1', [userId]);
+       return currentRes.rows[0];
+    }
+  }
+
   try {
     // 1. Get user data for level tracking
     const userRes = await query(`
@@ -306,7 +324,7 @@ export const recalculateUserStats = async (userId) => {
       newLastStreakRewardDate
     ]);
 
-    return {
+    const result = {
       total_reps: totalReps,
       str_xp: strXP,
       dex_xp: dexXP,
@@ -322,6 +340,9 @@ export const recalculateUserStats = async (userId) => {
       streak,
       total_volume: totalVolume
     };
+
+    recalcCache.set(userId, Date.now());
+    return result;
 
   } catch (err) {
     console.error(`[STATS_UTILS] CRITICAL: Failed to recalculate stats for user ${userId}:`, err);

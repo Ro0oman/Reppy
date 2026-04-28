@@ -73,7 +73,8 @@ import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
-import { es, enUS } from 'date-fns/locale';
+import { es } from 'date-fns/locale/es';
+import { enUS } from 'date-fns/locale/en-US';
 import AvatarFrame from './AvatarFrame.vue';
 
 const store = useNotificationsStore();

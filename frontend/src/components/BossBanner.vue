@@ -41,45 +41,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
+import { useBossStore } from '../stores/boss';
 import { useI18nStore } from '../stores/i18n';
 
 const i18n = useI18nStore();
+const bossStore = useBossStore();
 
-const CACHE_KEY = 'reppy_last_boss';
-const cachedBoss = !import.meta.env.SSR && localStorage.getItem(CACHE_KEY);
+const boss = computed(() => bossStore.activeBoss?.boss);
+const loading = computed(() => bossStore.loading);
 
-const boss = ref(cachedBoss ? JSON.parse(cachedBoss) : null);
-const loading = ref(!boss.value);
-let lastFetchTime = 0;
-const CACHE_TTL = 60000; // 1 minute cache for landing teaser
-
-const fetchBoss = async (force = false) => {
-  const now = Date.now();
-  if (!force && lastFetchTime && (now - lastFetchTime < CACHE_TTL) && boss.value) {
-    return;
-  }
-  
-  if (!boss.value) loading.value = true;
-  
-  try {
-    const res = await axios.get('/api/boss/active');
-    if (res.data && res.data.boss) {
-      boss.value = res.data.boss;
-      if (!import.meta.env.SSR) {
-        localStorage.setItem(CACHE_KEY, JSON.stringify(boss.value));
-      }
-      lastFetchTime = now;
-    } else {
-      boss.value = null;
-    }
-  } catch (error) {
-    console.error('Error fetching boss for banner:', error);
-  } finally {
-    loading.value = false;
-  }
-};
+const fetchBoss = (force = false) => bossStore.fetchActiveBoss(force);
 
 onMounted(() => {
   if (!import.meta.env.SSR) {

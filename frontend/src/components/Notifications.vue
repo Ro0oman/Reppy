@@ -71,7 +71,8 @@ import { Bell, BicepsFlexed, MessageSquare, Trophy, Package, Swords, PartyPopper
 import { useNotificationsStore } from '../stores/notifications';
 import { useI18nStore } from '../stores/i18n';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
-import { es, enUS } from 'date-fns/locale';
+import { es } from 'date-fns/locale/es';
+import { enUS } from 'date-fns/locale/en-US';
 import AvatarFrame from './AvatarFrame.vue';
 
 const store = useNotificationsStore();

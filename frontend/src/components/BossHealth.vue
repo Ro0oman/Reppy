@@ -311,6 +311,7 @@
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
+import { useBossStore } from '../stores/boss';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
 import { History, Check, X as XIcon } from 'lucide-vue-next';
@@ -319,48 +320,25 @@ import confetti from 'canvas-confetti';
 import BossHistoryModal from './BossHistoryModal.vue';
 import CodexModal from './CodexModal.vue';
 
-const boss = ref(null);
-const nextBoss = ref(null);
-const loading = ref(true);
+const authStore = useAuthStore();
+const bossStore = useBossStore();
+const i18nStore = useI18nStore();
+const notificationStore = useNotificationStore();
+
 const claiming = ref(false);
-const personalDamage = ref(0);
-const dailyDamage = ref(0);
-const chestsClaimed = ref(0);
 const showHelp = ref(false);
 const showHistory = ref(false);
 const showCodex = ref(false);
-const authStore = useAuthStore();
-const i18nStore = useI18nStore();
-const notificationStore = useNotificationStore();
-const topDamageDealer = ref(null);
-let lastFetchTime = 0;
-const CACHE_TTL = 30000; // 30 seconds
 
-const fetchBoss = async (force = false) => {
-  const now = Date.now();
-  if (!force && lastFetchTime && (now - lastFetchTime < CACHE_TTL) && boss.value) {
-    return;
-  }
+const boss = computed(() => bossStore.activeBoss?.boss);
+const nextBoss = computed(() => bossStore.activeBoss?.next_boss);
+const personalDamage = computed(() => bossStore.activeBoss?.personal_damage || 0);
+const dailyDamage = computed(() => bossStore.activeBoss?.daily_damage || 0);
+const chestsClaimed = computed(() => bossStore.activeBoss?.chests_claimed || 0);
+const topDamageDealer = computed(() => bossStore.activeBoss?.top_damage_dealer);
+const loading = computed(() => bossStore.loading);
 
-  try {
-    const res = await axios.get('/api/boss/active');
-    if (res.data && res.data.boss) {
-      boss.value = res.data.boss;
-      nextBoss.value = res.data.next_boss;
-      personalDamage.value = res.data.personal_damage;
-      dailyDamage.value = res.data.daily_damage || 0;
-      chestsClaimed.value = res.data.chests_claimed;
-      topDamageDealer.value = res.data.top_damage_dealer;
-      lastFetchTime = now;
-    } else {
-      boss.value = null;
-    }
-  } catch (error) {
-    console.error('Error fetching boss:', error);
-  } finally {
-    loading.value = false;
-  }
-};
+const fetchBoss = (force = false) => bossStore.fetchActiveBoss(force);
 
 const isDefeated = computed(() => {
   if (!boss.value) return false;
@@ -404,7 +382,7 @@ onMounted(() => {
   fetchBoss();
 });
 
-defineExpose({ refresh: () => fetchBoss(true) });
+defineExpose({ refresh: () => fetchBoss() });
 </script>
 
 <style scoped>

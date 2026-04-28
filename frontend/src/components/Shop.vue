@@ -921,6 +921,7 @@
 import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue';
 import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
+import { useShopStore } from '../stores/shop';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
 import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Diamond, Check, Swords, X, Flame, Package, Sword, Shield, Footprints, Construction, FlaskConical, Zap, Info, ChevronUp, ChevronDown as ChevronDownIcon, Users, Activity, Lock, CheckCircle2, Clock } from 'lucide-vue-next';
@@ -930,11 +931,12 @@ import ItemIcon from './ItemIcon.vue';
 
 const emit = defineEmits(['start', 'viewProfile']);
 const authStore = useAuthStore();
+const shopStore = useShopStore();
 const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
 
-const items = ref([]);
-const loading = ref(true);
+const items = computed(() => shopStore.cosmetics);
+const loading = computed(() => shopStore.loading);
 const buying = ref(false);
 const nowMs = ref(Date.now());
 const showSeasonal = ref(false);
@@ -1056,12 +1058,9 @@ watch([selectedCategory, selectedRarity, activeTab], () => {
 
 const checkShop = async () => {
   try {
-    const res = await axios.get('/api/shop/cosmetics');
-    items.value = res.data;
+    await shopStore.fetchCosmetics();
   } catch (error) {
     if (error.response?.status !== 401) notificationStore.notify('Armory sync failed', 'error');
-  } finally {
-    loading.value = false;
   }
 };
 
