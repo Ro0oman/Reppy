@@ -6,8 +6,10 @@ import { createNotification } from './utils/notifications.js';
 import { recalculateUserStats } from './utils/stats.js';
 import { updateMissionProgress } from './utils/missions.js';
 import { getLocalDateString } from './utils/date.js';
+import { autoFinishExpiredFights } from './utils/pvp_cleanup.js';
 
 const router = express.Router();
+
 const SOCIAL_XP_DAILY_CAP = 200;
 
 // Ensure local xp rewards tracking table exists
@@ -58,6 +60,10 @@ router.get('/feed', authenticate, async (req, res) => {
   const limit = 10;
   const offset = (page - 1) * limit;
   const userId = req.user.id;
+  
+  // Clean up expired fights before fetching feed
+  await autoFinishExpiredFights();
+
 
   try {
     let whereClause = '';

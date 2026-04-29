@@ -5,13 +5,17 @@ import { createNotification } from './utils/notifications.js';
 import { recalculateUserStats } from './utils/stats.js';
 import { calculatePvpDamage, checkPvpCooldown } from './utils/pvp_logic.js';
 import { broadcastPvP } from './socketManager.js';
+import { autoFinishExpiredFights } from './utils/pvp_cleanup.js';
 
 const router = express.Router();
+
 
 // 0. Get My Fights
 router.get('/my-fights', authenticate, async (req, res) => {
   const userId = req.user.id;
+  await autoFinishExpiredFights();
   try {
+
     const result = await query(
       `SELECT f.*, 
               u1.name as challenger_name, u1.avatar_url as challenger_avatar,

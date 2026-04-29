@@ -243,13 +243,28 @@ export default {
     ui_pvp_config: 'Combat System',
 
     // PvP Battle System
+    pvp_config_title: 'BATTLE CONFIG SYSTEM',
     pvp_tab: 'Battles',
+
     pvp_incoming_challenges: 'INCOMING CHALLENGES',
+    pvp_sent_challenges: 'SENT CHALLENGES',
     pvp_active_fights: 'ACTIVE FIGHTS',
+
     pvp_history: 'HISTORY',
     pvp_no_fights: 'No active fights',
     pvp_no_fights_desc: 'Challenge someone from their profile to start a duel',
+    pvp_select_battlefield: 'SELECT BATTLEFIELD',
+    pvp_custom_bg: 'CUSTOM BACKGROUND',
+    pvp_custom_bg_desc: 'Enter an image URL for the battlefield background',
+    pvp_target_hp: 'TARGET HP',
+    pvp_time_limit: 'TIME LIMIT',
+    pvp_custom_time: 'CUSTOM',
+    pvp_allowed_exercises: 'ALLOWED EXERCISES',
+    pvp_anticheat: 'ANTICHEAT SYSTEM',
+    pvp_anticheat_desc: 'Automatically validates suspicious repetitions',
+    pvp_init_battle: 'INITIALIZE BATTLE COMMAND',
     pvp_scanning: 'SCANNING COMBAT LOGS...',
+
     pvp_challenge_received: 'has challenged you to a duel',
     pvp_accept: 'ACCEPT ⚔',
     pvp_live: 'LIVE',

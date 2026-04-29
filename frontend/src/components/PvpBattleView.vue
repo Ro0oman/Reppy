@@ -301,6 +301,10 @@ const startTimer = () => {
     const start = new Date(fight.value.started_at);
     const limit = fight.value.time_limit;
 
+    // Set initial value immediately
+    const initialElapsed = Math.floor((new Date() - start) / 1000);
+    timeLeft.value = Math.max(0, limit - initialElapsed);
+
     timerInterval = setInterval(() => {
         const elapsed = Math.floor((new Date() - start) / 1000);
         timeLeft.value = Math.max(0, limit - elapsed);

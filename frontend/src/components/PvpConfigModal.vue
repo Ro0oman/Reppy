@@ -13,8 +13,8 @@
             <Swords class="w-6 h-6 text-primary-500" />
           </div>
           <div>
-            <h2 class="text-xl font-black text-white italic uppercase tracking-tighter">BATTLE_CONFIG_SYSTEM</h2>
-            <p class="text-[10px] font-bold text-muted uppercase tracking-[0.2em] mt-1">{{ i18n.t('ui_pvp_config') }} vs {{ target?.user_name || 'Operative' }}</p>
+            <h2 class="text-xl font-black text-white italic uppercase tracking-tighter">{{ i18n.t('pvp_config_title') || 'BATTLE_CONFIG_SYSTEM' }}</h2>
+            <p class="text-[10px] font-bold text-muted uppercase tracking-[0.2em] mt-1">{{ i18n.t('ui_pvp_config') }} vs {{ target?.user_name || target?.name || 'Operative' }}</p>
           </div>
         </div>
         <button @click="$emit('close')" class="p-2 hover:bg-white/5 rounded-xl transition-all">
@@ -24,6 +24,20 @@
 
       <!-- Config Form -->
       <div class="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar">
+        <!-- Battlefield Preview -->
+        <div class="relative w-full h-40 rounded-[2rem] overflow-hidden border border-white/10 group">
+           <img 
+             :src="currentBgUrl" 
+             class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110" 
+             @error="(e) => e.target.src = '/images/pvp/default.webp'"
+           />
+           <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
+           <div class="absolute bottom-4 left-6">
+              <span class="text-[8px] font-black text-primary-500 uppercase tracking-[0.4em] block mb-1">FIELD_PREVIEW</span>
+              <span class="text-xs font-black text-white uppercase italic tracking-widest">{{ form.customBattlefield ? 'CUSTOM_ARENA' : form.battlefield }}</span>
+           </div>
+        </div>
+
         <!-- Battlefield Selector -->
         <div class="space-y-4">
           <label class="text-[10px] font-black text-primary-500 uppercase tracking-[0.3em]">{{ i18n.t('pvp_select_battlefield') }}</label>
@@ -164,7 +178,7 @@
 
 <script setup>
 import { reactive, ref, computed } from 'vue';
-import { X, Swords, ShieldCheck, Loader2, ArrowBigUp, Shield, Footprints } from 'lucide-vue-next';
+import { X, Swords, ShieldCheck, Loader2, ArrowBigUp, Shield, Footprints, Image as ImageIcon } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
@@ -182,6 +196,13 @@ const notificationStore = useNotificationStore();
 
 const loading = ref(false);
 const battlefields = ['Default Reppy', 'Dark Arena', 'Neon Gym', 'Forest Temple', 'Steel Dungeon'];
+const presetImages = {
+  'Default Reppy': '/images/pvp/default.webp',
+  'Dark Arena': '/images/pvp/dark_arena.webp',
+  'Neon Gym': '/images/pvp/neon_gym.webp',
+  'Forest Temple': '/images/pvp/forest_temple.webp',
+  'Steel Dungeon': '/images/pvp/steel_dungeon.webp'
+};
 const durations = [
   { val: 60, label: '1 min' },
   { val: 300, label: '5 min' },
@@ -198,6 +219,13 @@ const form = reactive({
   customBattlefield: '',
   allowedExercises: ['pullups', 'pushups'],
   anticheatEnabled: true
+});
+
+const currentBgUrl = computed(() => {
+  if (form.customBattlefield && form.customBattlefield.startsWith('http')) {
+    return form.customBattlefield;
+  }
+  return presetImages[form.battlefield] || presetImages['Default Reppy'];
 });
 
 const toggleExercise = (ex) => {

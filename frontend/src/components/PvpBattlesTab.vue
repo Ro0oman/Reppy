@@ -38,7 +38,7 @@
         </div>
       </section>
 
-      <!-- Active / Sent Pending -->
+      <!-- Active Fights (Combatting now) -->
       <section v-if="active.length > 0" class="space-y-4">
         <div class="flex items-center gap-2">
           <div class="w-2 h-2 rounded-full bg-primary-500 animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.8)]"></div>
@@ -74,8 +74,35 @@
             </div>
           </div>
           <div class="flex flex-col items-end gap-2">
-            <span v-if="fight.status === 'active'" class="px-3 py-1 bg-primary-500/20 border border-primary-500/40 rounded-full text-[8px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('pvp_live') }}</span>
-            <span v-else class="px-3 py-1 bg-amber-500/20 border border-amber-500/40 rounded-full text-[8px] font-black text-amber-500 uppercase tracking-widest">{{ i18n.t('pvp_pending') }}</span>
+            <span class="px-3 py-1 bg-primary-500/20 border border-primary-500/40 rounded-full text-[8px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('pvp_live') }}</span>
+            <ChevronRight class="w-4 h-4 text-muted/30 group-hover:text-primary-500 transition-colors" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Sent Pending Challenges -->
+      <section v-if="sent.length > 0" class="space-y-4">
+        <div class="flex items-center gap-2">
+          <div class="w-2 h-2 rounded-full bg-white/20"></div>
+          <h3 class="text-[10px] font-black text-muted uppercase tracking-[0.4em]">{{ i18n.t('pvp_sent_challenges') }}</h3>
+          <span class="px-2 py-0.5 rounded-full bg-white/5 text-[8px] font-black text-muted border border-white/10">{{ sent.length }}</span>
+        </div>
+        <div v-for="fight in sent" :key="fight.id"
+          @click="goToBattle(fight.id)"
+          class="bg-white/[0.02] border border-white/5 rounded-3xl p-6 flex items-center justify-between gap-4 hover:bg-white/[0.04] transition-all cursor-pointer group">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+              <Swords class="w-5 h-5 text-muted/40" />
+            </div>
+            <div>
+              <p class="text-sm font-black text-white/60 uppercase italic tracking-tighter">
+                {{ fight.challenged_name }}
+              </p>
+              <p class="text-[9px] text-muted/40 uppercase tracking-widest font-bold mt-0.5">{{ fight.battlefield }}</p>
+            </div>
+          </div>
+          <div class="flex flex-col items-end gap-2">
+            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[8px] font-black text-muted uppercase tracking-widest">{{ i18n.t('pvp_pending') }}</span>
             <ChevronRight class="w-4 h-4 text-muted/30 group-hover:text-primary-500 transition-colors" />
           </div>
         </div>
@@ -139,7 +166,8 @@ const route = useRoute();
 
 const loading = ref(true);
 const pending = ref([]);  // challenges I need to accept
-const active = ref([]);   // active fights + my sent pending challenges
+const active = ref([]);   // strictly active fights
+const sent = ref([]);     // challenges I sent but are still pending
 const history = ref([]);  // completed
 
 const fetchMyFights = async () => {
@@ -148,7 +176,8 @@ const fetchMyFights = async () => {
     const res = await axios.get('/api/pvp/my-fights');
     const fights = res.data;
     pending.value = fights.filter(f => f.status === 'pending' && f.challenged_id === authStore.user?.id);
-    active.value = fights.filter(f => f.status === 'active' || (f.status === 'pending' && f.challenger_id === authStore.user?.id));
+    active.value = fights.filter(f => f.status === 'active');
+    sent.value = fights.filter(f => f.status === 'pending' && f.challenger_id === authStore.user?.id);
     history.value = fights.filter(f => f.status === 'completed');
   } catch (e) {
     console.error('Error fetching fights:', e);

@@ -36,8 +36,9 @@
         <div>
           <h3 class="text-xs font-black text-white uppercase italic tracking-[0.2em]">{{ activity.title }}</h3>
           <p class="text-[9px] font-bold text-muted uppercase tracking-widest mt-0.5">
-            {{ activity.pvp_data?.status === 'active' ? 'COMBAT_PROTOCOL_RUNNING' : 'COMBAT_PROTOCOL_TERMINATED' }}
+            {{ (activity.pvp_data?.status === 'active' && timeLeft > 0) ? 'COMBAT_PROTOCOL_RUNNING' : 'COMBAT_PROTOCOL_TERMINATED' }}
           </p>
+
         </div>
       </div>
       
@@ -126,9 +127,9 @@
     <div class="pt-4 border-t border-white/5 flex items-center justify-between relative z-10">
        <div class="flex items-center gap-3">
           <div class="flex items-center gap-2">
-             <div class="w-1.5 h-1.5 rounded-full" :class="activity.pvp_data?.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-white/20'"></div>
+             <div class="w-1.5 h-1.5 rounded-full" :class="(activity.pvp_data?.status === 'active' && timeLeft > 0) ? 'bg-emerald-500 animate-pulse' : 'bg-white/20'"></div>
              <span class="text-[8px] font-bold text-muted uppercase tracking-[0.2em]">
-                {{ activity.pvp_data?.status === 'active' ? 'LIVE_COMBAT_FEED' : activity.pvp_data?.battlefield || 'ARENA_FINISHED' }}
+                {{ (activity.pvp_data?.status === 'active' && timeLeft > 0) ? 'LIVE_COMBAT_FEED' : 'COMBAT_FINISHED' }}
              </span>
           </div>
        </div>

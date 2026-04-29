@@ -243,11 +243,17 @@ export default {
     ui_challenge: 'Retar',
     ui_pvp_combat: 'Duelo PvP',
     ui_pvp_config: 'Configuración de Combate',
+    ui_compare: 'COMPARAR',
+    pvp_challenge_btn: 'RETAR A DUELO',
 
     // PvP Battle System
+    pvp_config_title: 'SISTEMA DE CONFIGURACIÓN',
     pvp_tab: 'Combates',
+
     pvp_incoming_challenges: 'RETOS RECIBIDOS',
+    pvp_sent_challenges: 'RETOS ENVIADOS',
     pvp_active_fights: 'COMBATES EN CURSO',
+
     pvp_history: 'HISTORIAL',
     pvp_no_fights: 'Sin combates activos',
     pvp_no_fights_desc: 'Reta a alguien desde su perfil para iniciar un duelo',
@@ -259,6 +265,17 @@ export default {
     pvp_victory: 'VICTORIA',
     pvp_defeat: 'DERROTA',
     pvp_draw: 'EMPATE',
+    pvp_select_battlefield: 'SELECCIONAR CAMPO DE BATALLA',
+    pvp_custom_bg: 'FONDO PERSONALIZADO',
+    pvp_custom_bg_desc: 'Introduce la URL de una imagen para el fondo',
+    pvp_target_hp: 'VIDA OBJETIVO (HP)',
+    pvp_time_limit: 'LÍMITE DE TIEMPO',
+    pvp_custom_time: 'PERSONALIZADO',
+    pvp_allowed_exercises: 'EJERCICIOS PERMITIDOS',
+    pvp_anticheat: 'SISTEMA ANTICHEAT',
+    pvp_anticheat_desc: 'Valida repeticiones sospechosas automáticamente',
+    pvp_init_battle: 'INICIALIZAR COMANDO DE BATALLA',
+
     pvp_challenge_sent: '¡Reto de Combate Enviado!',
     pvp_error_init: 'Error al inicializar el sistema',
     pvp_error_start: 'Error al iniciar el combate',
