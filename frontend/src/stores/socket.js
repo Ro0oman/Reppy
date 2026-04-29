@@ -47,14 +47,15 @@ export const useSocketStore = defineStore('socket', {
       });
 
       // 1. Global Presence Channel (NATIVE)
+      console.log('[PUSHER] Attempting to subscribe to presence-global...');
       const presenceChannel = this.pusher.subscribe('presence-global');
       this.channels.presence = presenceChannel;
       
       const updateActiveOperatives = () => {
         const members = [];
-        console.log(`[PUSHER PRESENCE] Current members count: ${presenceChannel.members.count}`);
+        console.log(`[PUSHER PRESENCE] Member update event. Current count: ${presenceChannel.members.count}`);
         presenceChannel.members.each((member) => {
-          console.log(`[PUSHER MEMBER] Found: ${member.info.name} (ID: ${member.id})`);
+          console.log(`[PUSHER MEMBER] Online: ${member.info.name} (ID: ${member.id})`);
           members.push({
             id: member.id,
             name: member.info.name,
@@ -65,9 +66,20 @@ export const useSocketStore = defineStore('socket', {
         this.activeOperatives = members;
       };
 
-      presenceChannel.bind('pusher:subscription_succeeded', updateActiveOperatives);
-      presenceChannel.bind('pusher:member_added', updateActiveOperatives);
-      presenceChannel.bind('pusher:member_removed', updateActiveOperatives);
+      presenceChannel.bind('pusher:subscription_succeeded', () => {
+        console.log('[PUSHER] Subscription to presence-global SUCCEEDED');
+        updateActiveOperatives();
+      });
+      
+      presenceChannel.bind('pusher:member_added', (member) => {
+        console.log(`[PUSHER] Member ADDED: ${member.info.name}`);
+        updateActiveOperatives();
+      });
+      
+      presenceChannel.bind('pusher:member_removed', (member) => {
+        console.log(`[PUSHER] Member REMOVED: ${member.info.name}`);
+        updateActiveOperatives();
+      });
       
       presenceChannel.bind('pusher:subscription_error', (error) => {
         console.error('[PUSHER PRESENCE ERROR] Subscription failed:', error);
