@@ -27,7 +27,7 @@ import testRoutes from './test.js';
 import missionsRoutes from './missions.js';
 import pushRoutes from './push.js';
 import http from 'http';
-import pusher from './pusher.js';
+import getPusher from './pusher.js';
 import { updatePresence } from './socketManager.js';
 import { authenticate } from './middleware.js';
 import { initSocket } from './socketManager.js';
@@ -118,8 +118,9 @@ apiRouter.post('/pusher/auth', (req, res) => {
   };
 
   try {
-    if (!socketId || !channel) {
-      throw new Error(`Missing socketId (${socketId}) or channel (${channel})`);
+    const pusher = getPusher();
+    if (!pusher) {
+      throw new Error('Pusher not initialized. Check environment variables.');
     }
     const auth = pusher.authorizeChannel(socketId, channel, presenceData);
     res.send(auth);

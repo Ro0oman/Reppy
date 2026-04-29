@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import pusher from './pusher.js';
+import getPusher from './pusher.js';
 
 let io;
 const activeUsers = new Map(); // userId -> { name, lastActive }
@@ -79,9 +79,12 @@ export const broadcastPresence = () => {
   if (io) io.emit('presence_update', users);
   
   // Broadcast via Pusher (production)
-  pusher.trigger("presence-global", "presence_update", users).catch(err => {
-    console.error('[PUSHER] Error broadcasting presence:', err.message);
-  });
+  const pusher = getPusher();
+  if (pusher) {
+    pusher.trigger("presence-global", "presence_update", users).catch(err => {
+      console.error('[PUSHER] Error broadcasting presence:', err.message);
+    });
+  }
 };
 
 export const sendToUser = (userId, event, data) => {
@@ -94,26 +97,35 @@ export const sendToUser = (userId, event, data) => {
   }
   
   // Send via Pusher (private channel)
-  pusher.trigger(`private-user-${userId}`, event, data).catch(err => {
-    console.warn('[PUSHER] Error sending to user:', err.message);
-  });
+  const pusher = getPusher();
+  if (pusher) {
+    pusher.trigger(`private-user-${userId}`, event, data).catch(err => {
+      console.warn('[PUSHER] Error sending to user:', err.message);
+    });
+  }
 };
 
 export const broadcastPvP = (fightId, type, data) => {
   const payload = { type, ...data };
   if (io) io.to(`pvp_${fightId}`).emit('pvp_event', payload);
   
-  pusher.trigger(`presence-pvp-${fightId}`, "pvp_event", payload).catch(err => {
-    console.error('[PUSHER] Error broadcasting PvP:', err.message);
-  });
+  const pusher = getPusher();
+  if (pusher) {
+    pusher.trigger(`presence-pvp-${fightId}`, "pvp_event", payload).catch(err => {
+      console.error('[PUSHER] Error broadcasting PvP:', err.message);
+    });
+  }
 };
 
 export const broadcastDamage = (damageData) => {
   if (io) io.emit('boss_damage', damageData);
   
-  pusher.trigger("global-events", "boss_damage", damageData).catch(err => {
-    console.warn('[PUSHER] Error broadcasting damage:', err.message);
-  });
+  const pusher = getPusher();
+  if (pusher) {
+    pusher.trigger("global-events", "boss_damage", damageData).catch(err => {
+      console.warn('[PUSHER] Error broadcasting damage:', err.message);
+    });
+  }
   
   if (damageData.userId && activeUsers.has(damageData.userId)) {
     const user = activeUsers.get(damageData.userId);
