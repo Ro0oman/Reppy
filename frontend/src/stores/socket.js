@@ -30,9 +30,14 @@ export const useSocketStore = defineStore('socket', {
             user_id: authStore.user?.id,
             user_name: authStore.user?.name,
             avatar_url: authStore.user?.avatar_url
+          },
+          headers: {
+            'Accept': 'application/json'
           }
         }
       });
+
+      console.log('[PUSHER] Instance created, auth endpoint:', `${apiURL}/api/pusher/auth`);
 
       this.pusher.connection.bind('connected', () => {
         this.connected = true;

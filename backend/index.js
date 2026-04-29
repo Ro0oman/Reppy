@@ -92,6 +92,7 @@ apiRouter.use('/push', pushRoutes);
 
 // Pusher Auth Endpoint
 apiRouter.post('/pusher/auth', (req, res) => {
+  console.log('[PUSHER AUTH REQUEST RECEIVED]', req.body);
   const socketId = req.body.socket_id;
   const channel = req.body.channel_name;
   
