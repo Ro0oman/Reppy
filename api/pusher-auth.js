@@ -29,6 +29,7 @@ export default async function handler(req, res) {
     const userId = body.user_id || 'anon-' + Math.random().toString(36).substr(2, 9);
     const userName = body.user_name || 'Anonymous';
     const avatarUrl = body.avatar_url || '';
+    const userLevel = body.level || 1;
 
     // Log request details for debugging in Vercel
     console.log('[PUSHER AUTH] Request received:', { 
@@ -36,6 +37,8 @@ export default async function handler(req, res) {
       channel, 
       userId, 
       userName,
+      avatarUrl: avatarUrl ? 'PRESENT' : 'MISSING',
+      level: userLevel,
       method: req.method,
       contentType: req.headers['content-type']
     });
@@ -75,11 +78,16 @@ export default async function handler(req, res) {
     // 4. Authorize the channel
     const auth = pusher.authorizeChannel(socketId, channel, {
       user_id: String(userId),
-      user_info: { name: userName, avatar_url: avatarUrl },
+      user_info: { 
+        name: userName, 
+        avatar_url: avatarUrl,
+        level: parseInt(userLevel)
+      },
     });
 
-    console.log('[PUSHER AUTH] Authorization successful');
+    console.log('[PUSHER AUTH] Authorization successful for:', userName);
     return res.status(200).json(auth);
+
   } catch (error) {
     console.error('CRITICAL_AUTH_ERROR:', error);
     return res.status(500).json({ 

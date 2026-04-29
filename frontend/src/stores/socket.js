@@ -29,9 +29,12 @@ export const useSocketStore = defineStore('socket', {
           params: {
             user_id: authStore.user?.id,
             user_name: authStore.user?.name,
-            avatar_url: authStore.user?.avatar_url?.startsWith('http') ? authStore.user?.avatar_url : ''
+            avatar_url: authStore.user?.avatar_url,
+            level: authStore.user?.current_level || 1
           }
+
         }
+
       });
 
 
@@ -58,14 +61,17 @@ export const useSocketStore = defineStore('socket', {
         const members = [];
         console.log(`[PUSHER PRESENCE] Member update event. Current count: ${presenceChannel.members.count}`);
         presenceChannel.members.each((member) => {
-          console.log(`[PUSHER MEMBER] Online: ${member.info.name} (ID: ${member.id})`);
+          console.log(`[PUSHER MEMBER] Online: ${member.info.name} (ID: ${member.id})`, member.info.avatar_url ? 'With Avatar' : 'No Avatar');
           members.push({
             id: member.id,
             name: member.info.name,
             avatar_url: member.info.avatar_url,
+            level: member.info.level || 1,
             lastActive: Date.now()
           });
+
         });
+
         this.activeOperatives = members;
       };
 
