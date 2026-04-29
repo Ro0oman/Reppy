@@ -257,7 +257,14 @@ router.post('/daily/claim/:id', authenticate, async (req, res) => {
     await query('UPDATE daily_shop_items SET is_claimed = TRUE WHERE id = $1', [dealId]);
     await query('COMMIT');
 
-    res.json({ message: 'Reward claimed', type: deal.reward_type, amount: deal.reward_amount });
+    const userBalance = await query('SELECT reppy_coins, reppy_gems FROM users WHERE id = $1', [userId]);
+    res.json({ 
+      message: 'Reward claimed', 
+      type: deal.reward_type, 
+      amount: deal.reward_amount,
+      reppy_coins: userBalance.rows[0].reppy_coins,
+      reppy_gems: userBalance.rows[0].reppy_gems
+    });
   } catch (error) {
     await query('ROLLBACK');
     res.status(500).json({ error: error.message });

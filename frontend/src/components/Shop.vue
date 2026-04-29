@@ -110,7 +110,8 @@
 
           <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
             <div v-for="item in shopStore.dailyItems" :key="'daily-' + item.id"
-              class="premium-card group/item relative h-full flex flex-col" :class="getCardClass(item)"
+              class="premium-card group/item relative h-full flex flex-col" 
+              :class="[getCardClass(item), item.reward_type ? 'border-emerald-500/50 bg-emerald-500/10 shadow-[0_0_30px_rgba(16,185,129,0.2)]' : '']"
               @click="item.reward_type ? claimReward(item) : openItemDetails(item)">
               <!-- Rarity Aura Overlay -->
               <div class="absolute inset-0 opacity-10 pointer-events-none rounded-[22px]" :class="[
@@ -161,8 +162,8 @@
                 </h3>
                 <div
                   class="px-3 py-1 rounded-xl border font-black text-[8px] sm:text-[10px] tracking-[0.2em] uppercase mb-4"
-                  :class="getRarityBadge(item).classes">
-                  {{ getRarityBadge(item).label }}
+                  :class="[item.reward_type ? 'text-emerald-400 border-emerald-500/50 bg-emerald-500/20' : getRarityBadge(item).classes]">
+                  {{ item.reward_type ? i18n.t('shop_free_reward') : getRarityBadge(item).label }}
                 </div>
 
                 <!-- Stats Preview -->
@@ -897,7 +898,11 @@ const claimReward = async (deal) => {
   try {
     const res = await shopStore.claimDailyReward(deal.id);
     notificationStore.notify(`${res.type === 'coins' ? 'RC' : 'Gems'} claimed: ${res.amount}`, 'success');
-    await authStore.fetchProfile();
+    if (authStore.user) {
+      if (res.reppy_coins !== undefined) authStore.user.reppy_coins = res.reppy_coins;
+      if (res.reppy_gems !== undefined) authStore.user.reppy_gems = res.reppy_gems;
+    }
+    await authStore.fetchProfile(true);
   } catch (error) {
     notificationStore.notify(error.response?.data?.message || 'Claim failed', 'error');
   } finally {
