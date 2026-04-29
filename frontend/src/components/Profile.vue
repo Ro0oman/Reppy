@@ -12,7 +12,7 @@
         <div class="absolute -top-32 -right-32 w-[500px] h-[500px] bg-primary-500/5 blur-[120px] rounded-full pointer-events-none group-hover:bg-primary-500/10 transition-colors duration-1000"></div>
 
         <!-- Avatar Core -->
-        <div class="relative group/avatar shrink-0">
+        <div class="relative group/avatar shrink-0 cursor-pointer transition-transform hover:scale-105 active:scale-95" @click="showZoom = true">
           <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :avatar-css="user.avatar_css" :size="windowWidth < 768 ? 100 : 160" />
           <button v-if="isOwnProfile" 
                   @click="showAvatarSelector = true" 
@@ -339,6 +339,32 @@
         </div>
       </div>
     </Teleport>
+    
+    <!-- Avatar Zoom Modal -->
+    <Teleport to="body">
+      <Transition name="modal-fade">
+        <div v-if="showZoom" 
+             class="fixed inset-0 z-[1100] flex items-center justify-center p-4 md:p-12 bg-black/95 backdrop-blur-xl cursor-zoom-out"
+             @click="showZoom = false">
+          <div class="relative max-w-4xl w-full aspect-square md:aspect-auto md:h-[80vh] flex items-center justify-center animate-modal-in" @click.stop>
+            <div class="absolute -top-12 right-0 md:-right-12">
+              <button @click="showZoom = false" class="p-3 bg-white/10 hover:bg-white/20 rounded-2xl transition-all group">
+                <XIcon class="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
+              </button>
+            </div>
+            
+            <div class="relative group/zoom-image h-full w-full flex items-center justify-center">
+              <!-- Frame Decoration -->
+              <div class="absolute inset-0 border-2 border-primary-500/30 rounded-[2.5rem] -m-4 md:-m-8 animate-pulse pointer-events-none"></div>
+              
+              <img :src="user.avatar_url" 
+                   class="max-w-full max-h-full object-contain rounded-3xl shadow-[0_0_80px_rgba(0,0,0,0.8)] border border-white/10"
+                   :style="user.avatar_css" />
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -390,6 +416,7 @@ const activeExercise = ref('all');
 const showInfoModal = ref(false);
 const showSettingsModal = ref(false);
 const showAvatarSelector = ref(false);
+const showZoom = ref(false);
 const challengingUser = ref(null);
 const comparingUser = ref(null);
 const fileInput = ref(null);
@@ -593,4 +620,10 @@ watch(() => props.userId, fetchProfile);
 .text-precision { font-family: 'JetBrains Mono', monospace; }
 .animate-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.modal-fade-enter-active, .modal-fade-leave-active { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.modal-fade-enter-from, .modal-fade-leave-to { opacity: 0; backdrop-filter: blur(0px); }
+
+.animate-modal-in { animation: modalZoom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes modalZoom { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 </style>
