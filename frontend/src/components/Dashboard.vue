@@ -12,20 +12,20 @@
               class="drop-shadow-[0_0_20px_rgba(255,69,0,0.1)]"
             >
               <div class="flex flex-col items-center">
-                <span class="text-xl font-black tracking-tighter text-white italic leading-none">
+                 <span class="text-xl font-black tracking-tighter text-foreground italic leading-none drop-shadow-sm">
                   {{ Math.round((todayProgress / stats.dailyGoal) * 100) }}%
                 </span>
-                <span class="text-[7px] font-black text-primary-500 uppercase tracking-widest mt-0.5">OBJETIVO</span>
+                <span class="text-[7px] font-black text-primary-500 uppercase tracking-widest mt-0.5">{{ i18n.t('ui_objective') }}</span>
               </div>
             </RadialProgress>
           </div>
 
           <div>
-            <h2 class="text-4xl font-black tracking-tighter text-foreground italic uppercase leading-none">Command Hub</h2>
+            <h2 class="text-4xl font-black tracking-tighter text-foreground italic uppercase leading-none drop-shadow-md">{{ i18n.t('dashboard_title') }}</h2>
             <div class="flex items-center gap-2 mt-2">
               <div class="flex items-center gap-1.5 bg-primary-500/10 px-2 py-0.5 rounded-full border border-primary-500/20">
                 <Target class="w-3 h-3 text-primary-500" />
-                <span class="text-[9px] font-black text-primary-500 uppercase tracking-widest">{{ todayProgress }} / {{ stats.dailyGoal }} REPS</span>
+                <span class="text-[9px] font-black text-primary-500 uppercase tracking-widest">{{ todayProgress }} / {{ stats.dailyGoal }} {{ i18n.t('ui_reps') }}</span>
               </div>
             </div>
           </div>
@@ -52,39 +52,121 @@
           <Zap class="w-4 h-4 text-primary-500" />
           <h3 class="text-xs font-black uppercase tracking-widest text-muted/60">{{ i18n.t('dash_boss_status') }}</h3>
         </div>
+        
+        <!-- Live Battle Presence -->
+        <LivePresence class="mb-4" />
+
         <BossHealth ref="bossHealthRef" />
       </div>
 
       <!-- Quick Metrics Bento -->
       <div class="grid grid-cols-1 gap-4 h-full">
-         <!-- Streak -->
-         <div class="bg-surface/10 backdrop-blur-xl border border-white/5 rounded-[2rem] p-8 flex flex-col justify-between group">
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] font-black text-muted/40 uppercase tracking-widest">{{ i18n.t('dash_streak') }}</span>
-              <Flame class="w-4 h-4 text-primary-500" />
+         <!-- Combat Power (New Breakdown Card) -->
+         <div class="bg-gradient-to-br from-primary-500/10 to-surface/5 backdrop-blur-xl border border-primary-500/20 rounded-[2rem] p-8 flex flex-col justify-between group relative overflow-hidden">
+            <div class="absolute -right-4 -top-4 opacity-5 group-hover:scale-110 transition-transform duration-700">
+               <Sword class="w-32 h-32 text-primary-500" />
             </div>
-            <div class="mt-4">
-              <span class="text-5xl font-black text-white italic tracking-tighter">{{ stats.streak }}</span>
-              <p class="text-[10px] font-black text-primary-500 uppercase tracking-widest mt-1">{{ i18n.t('stats_days') }}</p>
+            
+            <div class="flex items-center justify-between relative z-10">
+              <span class="text-[10px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('ui_combat_power') }}</span>
+              <Sword class="w-4 h-4 text-primary-500 animate-pulse" />
+            </div>
+
+            <div class="mt-4 relative z-10">
+              <div class="flex items-baseline gap-2">
+                <span class="text-4xl font-black text-foreground italic tracking-tighter">
+                  {{ stats.combatPower.minDamage }} - {{ stats.combatPower.maxDamage }}
+                </span>
+                <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18n.t('ui_dmg_range') }}</span>
+              </div>
+              <div class="text-[9px] font-bold text-primary-500/60 uppercase tracking-[0.2em] mt-1 italic">
+                 {{ i18n.t('ui_avg_estimated') }}: {{ stats.combatPower.total }}
+              </div>
+              
+              <!-- Detailed Breakdown -->
+              <div class="grid grid-cols-1 gap-2 mt-6 pt-6 border-t border-white/5">
+                <div class="flex justify-between items-center">
+                  <span class="text-[9px] font-bold text-muted/60 uppercase">{{ i18n.t('dash_base_skill') }}</span>
+                  <span class="text-xs font-black text-foreground italic">{{ stats.combatPower.base }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-[9px] font-bold text-primary-400 uppercase">⚔️ {{ i18n.t('dash_gear_bonus') }}</span>
+                  <span class="text-xs font-black text-primary-400 italic">+{{ stats.combatPower.gear }}</span>
+                </div>
+                <div class="flex justify-between items-center" v-if="stats.combatPower.buff > 0">
+                  <span class="text-[9px] font-bold text-neon-lime uppercase">🧪 {{ i18n.t('dash_active_buffs') }}</span>
+                  <span class="text-xs font-black text-neon-lime italic">+{{ stats.combatPower.buff }}</span>
+                </div>
+
+                <!-- Crit Stats -->
+                <div class="flex justify-between items-center mt-2 pt-2 border-t border-white/5 opacity-60">
+                   <div class="flex items-center gap-1.5">
+                      <Zap class="w-2.5 h-2.5 text-amber-400" />
+                      <span class="text-[8px] font-bold text-foreground uppercase">{{ stats.combatPower.critChance }}% {{ i18n.t('ui_crit') }}</span>
+                   </div>
+                   <div class="flex items-center gap-1.5">
+                      <Target class="w-2.5 h-2.5 text-amber-400" />
+                      <span class="text-[8px] font-bold text-foreground uppercase">x{{ stats.combatPower.critMultiplier }} {{ i18n.t('ui_mult') }}</span>
+                   </div>
+                </div>
+
+                <!-- Contribution Bar -->
+                <div class="mt-4 space-y-1.5" v-if="stats.combatPower.buff > 0">
+                  <div class="h-1 bg-white/5 rounded-full overflow-hidden">
+                    <div class="h-full bg-neon-lime shadow-[0_0_10px_rgba(183,255,0,0.4)] transition-all duration-1000" 
+                         :style="{ width: Math.min(100, (stats.combatPower.buff / stats.combatPower.total) * 100) + '%' }"></div>
+                  </div>
+                  <div class="flex justify-between text-[7px] font-black uppercase tracking-widest text-muted/40">
+                    <span>{{ i18n.t('dash_potion_impact') }}</span>
+                    <span class="text-neon-lime">{{ Math.round((stats.combatPower.buff / stats.combatPower.total) * 100) }}% {{ i18n.t('dash_of_total') }}</span>
+                  </div>
+                </div>
+                
+                <!-- Active Potion Timer (Real-time) -->
+                <div v-for="boost in activePotions" :key="boost.type" class="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <FlaskConical class="w-3.5 h-3.5 text-emerald-500 animate-bounce" />
+                    <span class="text-[9px] font-black text-emerald-500 uppercase tracking-widest">{{ boost.label }} {{ boost.value }}</span>
+                  </div>
+                  <span class="text-[10px] font-black text-foreground font-mono">{{ boost.timeLeft }}</span>
+                </div>
+              </div>
             </div>
          </div>
 
          <div class="grid grid-cols-2 gap-4">
-            <!-- Peak -->
+            <!-- Streak -->
             <div class="bg-surface/10 backdrop-blur-xl border border-white/5 rounded-[2rem] p-6 flex flex-col justify-between group">
-              <Activity class="w-3.5 h-3.5 text-accent mb-4" />
+              <Flame class="w-3.5 h-3.5 text-primary-500 mb-4" />
               <div>
-                <span class="text-3xl font-black text-white italic tracking-tighter">{{ stats.topMonthCount }}</span>
-                <p class="text-[9px] font-black text-muted/40 uppercase tracking-widest mt-1">{{ i18n.t('dash_max_month') }}</p>
+                <span class="text-3xl font-black text-foreground italic tracking-tighter">{{ stats.streak }}</span>
+                <p class="text-[9px] font-black text-muted/40 uppercase tracking-widest mt-1">{{ i18n.t('dash_streak') }}</p>
               </div>
             </div>
             <!-- Tonnage -->
             <div class="bg-surface/10 backdrop-blur-xl border border-white/5 rounded-[2rem] p-6 flex flex-col justify-between group">
               <Trophy class="w-3.5 h-3.5 text-primary-500 mb-4" />
               <div>
-                <span class="text-3xl font-black text-white italic tracking-tighter">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</span>
+                <span class="text-3xl font-black text-foreground italic tracking-tighter">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</span>
                 <p class="text-[9px] font-black text-muted/40 uppercase tracking-widest mt-1">{{ i18n.t('dash_tons_moved') }}</p>
               </div>
+            </div>
+         </div>
+
+         <!-- Missions Entry Point -->
+         <div 
+          @click="router.push({ name: 'missions', params: { lang: i18n.locale } })"
+          class="bg-indigo-500/10 hover:bg-indigo-500/20 backdrop-blur-xl border border-indigo-500/20 rounded-[2rem] p-6 flex flex-col justify-between group cursor-pointer transition-all hover:scale-[1.02] active:scale-95"
+         >
+            <div class="flex items-center justify-between">
+              <Target class="w-4 h-4 text-indigo-400" />
+              <div v-if="unclaimedMissions > 0" class="flex items-center gap-1.5 px-2 py-0.5 bg-indigo-500 text-[8px] font-black text-foreground uppercase rounded-full animate-pulse">
+                {{ unclaimedMissions }} {{ i18n.t('missions_available') || 'READY' }}
+              </div>
+            </div>
+            <div class="mt-4">
+              <span class="text-xl font-black text-foreground italic tracking-tighter uppercase">{{ i18n.t('nav_missions') }}</span>
+              <p class="text-[9px] font-black text-indigo-400/60 uppercase tracking-widest mt-1">{{ i18n.t('missions_subtitle') }}</p>
             </div>
          </div>
       </div>
@@ -96,14 +178,14 @@
         <button 
           @click="activeTab = 'heatmap'"
           class="px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
-          :class="activeTab === 'heatmap' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-muted/40 hover:text-foreground'"
+          :class="activeTab === 'heatmap' ? 'bg-primary-500 text-foreground shadow-lg shadow-primary-500/20' : 'text-muted/40 hover:text-foreground'"
         >
           {{ i18n.t('activity_stream') }}
         </button>
         <button 
           @click="activeTab = 'history'"
           class="px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
-          :class="activeTab === 'history' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-muted/40 hover:text-foreground'"
+          :class="activeTab === 'history' ? 'bg-primary-500 text-foreground shadow-lg shadow-primary-500/20' : 'text-muted/40 hover:text-foreground'"
         >
           {{ i18n.t('dash_history_title') }}
         </button>
@@ -127,8 +209,8 @@
             <table class="w-full text-left">
               <thead>
                 <tr class="text-muted/40 text-[9px] uppercase font-black tracking-[0.3em] border-b border-white/5">
-                  <th class="px-10 py-6">Timestamp</th>
-                  <th class="px-10 py-6 text-right">Magnitude</th>
+                  <th class="px-10 py-6">{{ i18n.t('ui_timestamp') }}</th>
+                  <th class="px-10 py-6 text-right">{{ i18n.t('ui_magnitude') }}</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-white/[0.02]">
@@ -146,7 +228,7 @@
                       <button @click="saveEdit(rep.id)" class="text-primary-500"><Check class="w-4 h-4" /></button>
                     </div>
                     <div v-else class="flex items-center justify-end gap-6">
-                      <span @click="startEdit(rep)" class="text-2xl font-black italic tracking-tighter text-white cursor-pointer hover:text-primary-500 transition-colors">
+                      <span @click="startEdit(rep)" class="text-2xl font-black italic tracking-tighter text-foreground cursor-pointer hover:text-primary-500 transition-colors">
                         {{ rep.count }}
                       </span>
                       <button @click="confirmDelete(rep.id)" class="opacity-0 group-hover:opacity-100 text-muted/20 hover:text-red-500 transition-all">
@@ -168,26 +250,21 @@
       </transition>
     </section>
 
-    <!-- Battle Overhaul Welcome Modal -->
-    <DamageOverhaulModal 
-      :show="showDamageModal" 
-      @close="handleCloseDamageModal" 
-    />
-
-    <!-- Avatar Overhaul Welcome Modal -->
-    <AvatarOverhaulModal 
-      :show="showAvatarModal" 
-      @close="handleCloseAvatarModal" 
+    <!-- RPG Release Welcome Modal -->
+    <RPGReleaseModal
+      :show="showRPGModal"
+      @close="handleCloseRPGModal"
     />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed, reactive, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 import {
   Trophy, Target, Flame, Zap, Activity, History, Inbox,
-  BarChart3, Check, X, Trash2, Globe
+  BarChart3, Check, X, Trash2, Globe, Sword, Swords, FlaskConical
 } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
@@ -197,14 +274,15 @@ import RepsInput from './RepsInput.vue';
 import ExerciseSelector from './ExerciseSelector.vue';
 import BossHealth from './BossHealth.vue';
 import RadialProgress from './RadialProgress.vue';
-import DamageOverhaulModal from './DamageOverhaulModal.vue';
-import AvatarOverhaulModal from './AvatarOverhaulModal.vue';
+import RPGReleaseModal from './RPGReleaseModal.vue';
+import LivePresence from './LivePresence.vue';
 import { getLocalDateString } from '../utils/dateUtils.js';
 
 const emit = defineEmits(['viewProfile', 'start']);
 const authStore = useAuthStore();
 const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
+const router = useRouter();
 
 const reps = ref([]);
 const heatmapData = ref([]);
@@ -212,16 +290,17 @@ const totalReps = ref(0);
 const activeExercise = ref('pullups');
 const editingId = ref(null);
 const editValue = ref(0);
+const deletingRepIds = ref(new Set());
 const bossHealthRef = ref(null);
 const isLoading = ref(false);
 const activeYear = ref(2026);
-const showDamageModal = ref(false);
-const showAvatarModal = ref(false);
+const showRPGModal = ref(false);
 const activeTab = ref('heatmap');
+const unclaimedMissions = ref(0);
 
-// Scroll lock when damage modal is active
-watch([showDamageModal, showAvatarModal], ([dModal, aModal]) => {
-  if (dModal || aModal) {
+// Scroll lock when modals are active
+watch(showRPGModal, (rpgModal) => {
+  if (rpgModal) {
     document.body.style.overflow = 'hidden';
   } else {
     document.body.style.overflow = '';
@@ -234,7 +313,8 @@ const stats = reactive({
   topMonthCount: 0,
   dailyGoal: 50,
   totalVolume: 0,
-  bodyWeight: 75
+  bodyWeight: 75,
+  combatPower: { total: 0, base: 0, gear: 0, buff: 0, critChance: 0, critMultiplier: 1, minDamage: 0, maxDamage: 0 }
 });
 
 const activeExerciseLabel = computed(() => {
@@ -248,6 +328,71 @@ const todayProgress = computed(() => {
     .reduce((acc, curr) => acc + Number(curr.count), 0);
 });
 
+const currentTime = ref(new Date());
+let timerInterval = null;
+
+const formatTimeLeft = (diff) => {
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+};
+
+const activePotions = computed(() => {
+  const user = authStore.user;
+  if (!user) return [];
+  
+  const now = currentTime.value;
+  const boosts = [];
+
+  // Check Damage Multiplier
+  if (user.damage_multiplier_expiry && new Date(user.damage_multiplier_expiry) > now) {
+    const expiry = new Date(user.damage_multiplier_expiry);
+    const diff = expiry - now;
+    boosts.push({
+      type: 'multiplier',
+      label: i18n.t('inv_dmg_mult'),
+      value: `x${parseFloat(user.damage_multiplier).toFixed(1)}`,
+      timeLeft: formatTimeLeft(diff)
+    });
+  }
+
+  // Check DEX Bonus
+  if (user.dex_bonus_expiry && new Date(user.dex_bonus_expiry) > now) {
+    const expiry = new Date(user.dex_bonus_expiry);
+    const diff = expiry - now;
+    boosts.push({
+      type: 'dex',
+      label: i18n.t('inv_dex_boost'),
+      value: `+${user.dex_bonus}`,
+      timeLeft: formatTimeLeft(diff)
+    });
+  }
+
+  return boosts;
+});
+
+// Watch for potion expiry to refresh combat stats
+watch(() => activePotions.value.length, (newLen, oldLen) => {
+  if (newLen < oldLen) {
+    fetchData();
+  }
+});
+
+const fetchGlobalData = async () => {
+  try {
+    const t = Date.now();
+    const [missionsRes] = await Promise.all([
+      axios.get('/api/missions', { params: { t } }),
+      authStore.fetchProfile()
+    ]);
+    const missionList = missionsRes.data.missions || [];
+    unclaimedMissions.value = missionList.filter(m => m.is_completed && !m.is_claimed).length;
+  } catch (err) {
+    console.error('Error fetching global dashboard data:', err);
+  }
+};
+
 const fetchData = async () => {
   isLoading.value = true;
   try {
@@ -255,11 +400,11 @@ const fetchData = async () => {
       type: activeExercise.value,
       year: activeYear.value 
     };
+    const t = Date.now();
     const [repsRes, heatmapRes, statsRes] = await Promise.all([
-      axios.get('/api/reps', { params }),
-      axios.get('/api/reps/heatmap', { params }),
-      axios.get('/api/reps/stats', { params }),
-      authStore.fetchProfile()
+      axios.get('/api/reps', { params: { ...params, t } }),
+      axios.get('/api/reps/heatmap', { params: { ...params, t } }),
+      axios.get('/api/reps/stats', { params: { ...params, t } })
     ]);
 
     reps.value = repsRes.data;
@@ -271,15 +416,13 @@ const fetchData = async () => {
     stats.dailyGoal = statsRes.data.dailyGoal || 50;
     stats.totalVolume = statsRes.data.totalVolume || 0;
     stats.bodyWeight = statsRes.data.bodyWeight || 75;
+    stats.combatPower = statsRes.data.combatPower || { total: 0, base: 0, gear: 0, buff: 0 };
 
     if (bossHealthRef.value) bossHealthRef.value.refresh();
 
-    // Check for damage overhaul modal
-    if (authStore.user && !authStore.user.has_seen_damage_overhaul) {
-      showDamageModal.value = true;
-    } else if (authStore.user && !authStore.user.has_seen_avatar_overhaul) {
-      // Only show avatar modal if damage modal is not showing
-      showAvatarModal.value = true;
+    // Check for update modals
+    if (authStore.user && !authStore.user.has_seen_rpg_release) {
+      showRPGModal.value = true;
     }
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -318,16 +461,26 @@ watch(activeExercise, () => {
 });
 
 const confirmDelete = (id) => {
+  if (deletingRepIds.value.has(id)) return;
   notificationStore.confirm(
     'Delete Log',
     'Are you sure you want to delete this entry?',
     async () => {
       try {
+        deletingRepIds.value.add(id);
         await axios.delete(`/api/reps/${id}`);
         notificationStore.notify('Entry deleted', 'success');
         fetchData();
       } catch (err) {
+        if (err?.response?.status === 404) {
+          // Already deleted or stale client state: update UI silently
+          reps.value = reps.value.filter(r => r.id !== id);
+          notificationStore.notify('Entry already removed', 'info');
+          return;
+        }
         notificationStore.notify('Delete failed', 'error');
+      } finally {
+        deletingRepIds.value.delete(id);
       }
     }
   );
@@ -335,21 +488,10 @@ const confirmDelete = (id) => {
 
 let refreshInterval = null;
 
-const handleCloseDamageModal = () => {
-  showDamageModal.value = false;
+const handleCloseRPGModal = () => {
+  showRPGModal.value = false;
   if (authStore.user) {
-    authStore.user.has_seen_damage_overhaul = true;
-    // Chain to avatar modal if eligible
-    if (!authStore.user.has_seen_avatar_overhaul) {
-      showAvatarModal.value = true;
-    }
-  }
-};
-
-const handleCloseAvatarModal = () => {
-  showAvatarModal.value = false;
-  if (authStore.user) {
-    authStore.user.has_seen_avatar_overhaul = true;
+    authStore.user.has_seen_rpg_release = true;
   }
 };
 
@@ -362,12 +504,20 @@ onMounted(() => {
   }
 
   fetchData();
-  // Auto-refresh every 60 seconds to keep boss HP and leaderboard updated
-  refreshInterval = setInterval(fetchData, 60000);
+  fetchGlobalData();
+  // Auto-refresh removed to save Supabase/Vercel resources. 
+  // Real-time events via Socket.io handle the live feel.
+  // refreshInterval = setInterval(fetchData, 60000);
+  
+  // Timer for active effects
+  timerInterval = setInterval(() => {
+    currentTime.value = new Date();
+  }, 1000);
 });
 
 onUnmounted(() => {
   if (refreshInterval) clearInterval(refreshInterval);
+  if (timerInterval) clearInterval(timerInterval);
 });
 </script>
 

@@ -15,7 +15,17 @@
               <p class="text-[10px] font-bold text-muted/60 tracking-tight uppercase">{{ i18n.t('rep_protocol_active', { type: activeLabel }) }}</p>
             </div>
           </div>
-          <div class="p-3 bg-primary-500/10 rounded-xl border border-primary-500/20">
+          <div v-if="damagePreview.total > 0" class="flex flex-col items-end text-right">
+            <span class="text-[10px] font-black text-muted/40 uppercase tracking-widest">{{ i18n.t('rep_estimated_impact') || 'ESTIMATED_IMPACT' }}</span>
+            <div class="flex items-center gap-2">
+              <span class="text-xl font-black italic tracking-tighter text-white">{{ damagePreview.total }}</span>
+              <Sword class="w-3.5 h-3.5 text-primary-500 animate-pulse" />
+            </div>
+            <p class="text-[8px] font-bold text-muted/40 uppercase tracking-tighter mt-0.5">
+              {{ damagePreview.base }} BASE + <span class="text-primary-400">{{ damagePreview.gear }} GEAR</span>
+            </p>
+          </div>
+          <div v-else class="p-3 bg-primary-500/10 rounded-xl border border-primary-500/20">
             <Zap class="w-4 h-4 text-primary-500" />
           </div>
         </div>
@@ -84,15 +94,17 @@
 <script setup>
 import { ref, computed } from 'vue';
 import axios from 'axios';
-import { Zap, Check } from 'lucide-vue-next';
+import { Zap, Check, Sword } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
 import { useNotificationStore } from '../stores/notification';
 import { useDamageStore } from '../stores/damage';
 import { getLocalDateString } from '../utils/dateUtils.js';
 import { useAudio } from '../composables/useAudio';
+import { estimateDamage } from '../utils/damageCalculator';
 
 const { playHit } = useAudio();
+const authStore = useAuthStore();
 const props = defineProps({
   exerciseType: {
     type: String,
@@ -111,6 +123,11 @@ const activeLabel = computed(() => {
 });
 
 const loading = ref(false);
+
+const damagePreview = computed(() => {
+  const reps = customReps.value || 0;
+  return estimateDamage(authStore.user, reps, props.exerciseType);
+});
 
 const addReps = async (count) => {
   if (!count || loading.value) return;

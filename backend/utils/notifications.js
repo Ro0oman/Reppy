@@ -1,4 +1,6 @@
 import { query } from '../db.js';
+import { sendToUser } from '../socketManager.js';
+import { sendPushNotification } from './pushNotifications.js';
 
 /**
  * Creates a persistent notification for a user.
@@ -20,6 +22,19 @@ export async function createNotification(userId, type, actorId, content, targetI
        VALUES ($1, $2, $3, $4, $5, $6)`,
       [userId, type, actorId, content, targetId, targetUserId || userId]
     );
+
+    // Emit live notification
+    sendToUser(userId, 'notification', { type, actorId, content, targetId, targetUserId });
+
+    // Send Web Push Notification
+    sendPushNotification(userId, {
+      title: 'Reppy',
+      body: content,
+      data: {
+        url: `/profile/${targetUserId || userId}`,
+        type: type
+      }
+    });
   } catch (error) {
     console.error('[NOTIFICATION_UTILS] Failed to create notification:', error);
   }

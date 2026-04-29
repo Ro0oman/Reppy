@@ -6,12 +6,6 @@
         <div class="w-8 h-8 bg-primary rounded-xl flex items-center justify-center font-bold text-white shadow-lg shadow-primary/20 transition-transform group-hover:scale-110">R</div>
         <span class="text-xl font-black tracking-tight text-foreground uppercase italic">Reppy</span>
       </router-link>
-      <div class="flex items-center gap-6">
-        <router-link :to="`/${i18n.locale}/login`" class="hidden md:block text-xs font-black uppercase tracking-widest text-muted hover:text-primary transition-colors">
-          {{ i18n.locale === 'es' ? 'ENTRAR' : 'LOG IN' }}
-        </router-link>
-        <LanguageToggle />
-      </div>
     </nav>
 
     <!-- Hero Section -->
@@ -43,21 +37,39 @@
           </p>
         </div>
 
-        <!-- Hero Stats/FOMO -->
-        <div class="flex flex-wrap items-center justify-center gap-8 md:gap-16 pt-8 opacity-60 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-500">
-          <div class="text-center">
-            <div class="text-2xl font-black text-foreground">1.2M+</div>
-            <div class="text-[9px] font-bold text-muted uppercase tracking-widest">{{ i18n.locale === 'es' ? 'REPETICIONES' : 'REPETITIONS' }}</div>
+            <div class="pt-4 flex items-center gap-3 text-primary group-hover:gap-5 transition-all">
+              <span class="text-xs font-black uppercase tracking-widest">{{ i18n.locale === 'es' ? 'Leer Guía' : 'Read Guide' }}</span>
+              <ArrowRight class="w-5 h-5" />
+            </div>
           </div>
-          <div class="w-px h-8 bg-white/10 hidden sm:block"></div>
-          <div class="text-center">
-            <div class="text-2xl font-black text-foreground">+5,400</div>
-            <div class="text-[9px] font-bold text-muted uppercase tracking-widest">{{ i18n.locale === 'es' ? 'ATLETAS ACTIVOS' : 'ACTIVE ATHLETES' }}</div>
-          </div>
-          <div class="w-px h-8 bg-white/10 hidden sm:block"></div>
-          <div class="text-center">
-            <div class="text-2xl font-black text-foreground">100%</div>
-            <div class="text-[9px] font-bold text-muted uppercase tracking-widest">{{ i18n.locale === 'es' ? 'GRATIS' : 'FREE' }}</div>
+        </router-link>
+      </div>
+
+      <!-- Empty State -->
+      <div v-else class="py-40 text-center space-y-6">
+        <Rocket class="w-16 h-16 text-primary/20 mx-auto animate-bounce" />
+        <p class="text-muted font-bold text-xl">{{ i18n.t('no_posts_found') || 'No se han encontrado guías.' }}</p>
+      </div>
+
+      <!-- Pagination (Modern Minimal) -->
+      <div v-if="totalPages > 1" class="mt-32 flex flex-col items-center gap-10">
+        <div class="flex items-center gap-4">
+          <button 
+            @click="prevPage" 
+            :disabled="currentPage === 1"
+            class="p-6 rounded-full bg-surface border border-border/20 text-muted hover:text-foreground disabled:opacity-10 transition-all hover:scale-110 active:scale-95"
+          >
+            <ChevronLeft class="w-6 h-6" />
+          </button>
+          
+          <div class="flex gap-3">
+            <span 
+              v-for="p in totalPages" 
+              :key="p"
+              @click="currentPage = p"
+              class="w-3 h-3 rounded-full cursor-pointer transition-all duration-500"
+              :class="currentPage === p ? 'bg-primary w-12' : 'bg-muted/20 hover:bg-muted/40'"
+            ></span>
           </div>
         </div>
       </div>
@@ -219,7 +231,6 @@ import { blogPosts } from '../blogPosts';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
 import { ChevronLeft, ChevronRight, Loader2, CheckCircle2, ArrowRight, ArrowLeft, Rocket } from 'lucide-vue-next';
-import LanguageToggle from './LanguageToggle.vue';
 
 const i18n = useI18nStore();
 const authStore = useAuthStore();
@@ -234,7 +245,11 @@ const postsPerPage = 6; // Fewer posts per page for better focus
 const loadedImages = reactive({});
 
 const sortedPosts = computed(() => {
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  
   return blogPosts
+    .filter(post => post.date <= todayStr)
     .sort((a, b) => {
       if (a.isPillar && !b.isPillar) return -1;
       if (!a.isPillar && b.isPillar) return 1;

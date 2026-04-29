@@ -1,6 +1,7 @@
 import express from 'express';
 import { query } from './db.js';
 import { authenticate } from './middleware.js';
+import { updateMissionProgress } from './utils/missions.js';
 
 const router = express.Router();
 
@@ -49,6 +50,13 @@ router.post('/add', authenticate, async (req, res) => {
       'INSERT INTO friendships (user_id_1, user_id_2) VALUES ($1, $2)',
       [userId, friendId]
     );
+
+    // Mission: Social Friends (Absolute count)
+    const friendCountRes = await query(
+      'SELECT COUNT(*) as count FROM friendships WHERE user_id_1 = $1 OR user_id_2 = $1',
+      [userId]
+    );
+    await updateMissionProgress(userId, 'social_friends', parseInt(friendCountRes.rows[0].count), false);
 
     res.json({ message: 'Friend added' });
   } catch (error) {

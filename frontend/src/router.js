@@ -15,6 +15,8 @@ const ExerciseLanding = () => import('./components/ExerciseLanding.vue')
 const Notifications = () => import('./components/Notifications.vue')
 const BlogList = () => import('./components/BlogList.vue')
 const Codex = () => import('./components/Codex.vue')
+const PvpBattleView = () => import('./components/PvpBattleView.vue')
+const Missions = () => import('./components/Missions.vue')
 const NotFound = () => import('./components/NotFound.vue')
 
 export const routes = [
@@ -48,50 +50,62 @@ export const routes = [
         path: 'dashboard', 
         component: Dashboard, 
         name: 'dashboard',
-        meta: { requiresAuth: true, title: 'Dashboard | Reppy' }
+        meta: { requiresAuth: true, titleKey: 'nav_dashboard' }
       },
       { 
         path: 'social', 
         component: Social, 
         name: 'social',
-        meta: { requiresAuth: true, title: 'Rankings Globales | Reppy' }
+        meta: { requiresAuth: true, titleKey: 'nav_social' }
       },
       { 
         path: 'shop', 
         component: Shop, 
         name: 'shop',
-        meta: { requiresAuth: true, title: 'Armería - Tienda de Cosméticos | Reppy' }
+        meta: { requiresAuth: true, titleKey: 'nav_shop' }
       },
       { 
         path: 'codex', 
         component: Codex, 
         name: 'codex',
-        meta: { requiresAuth: true, title: 'The Codex - RPG Evolution | Reppy' }
+        meta: { requiresAuth: true, titleKey: 'nav_codex' }
       },
       { 
         path: 'inventory', 
         component: Inventory, 
         name: 'inventory',
-        meta: { requiresAuth: true, title: 'Equipo e Inventario | Reppy' }
+        meta: { requiresAuth: true, titleKey: 'nav_inventory' }
       },
       { 
         path: 'profile/:userId?', 
         component: Profile, 
         name: 'profile', 
         props: true,
-        meta: { requiresAuth: true, title: 'Perfil de Atleta | Reppy' }
+        meta: { requiresAuth: true, titleKey: 'nav_profile' }
       },
       { 
         path: 'admin', 
         component: AdminPanel, 
         name: 'admin',
-        meta: { requiresAuth: true, requiresAdmin: true, title: 'Admin Protocol | Reppy' }
+        meta: { requiresAuth: true, requiresAdmin: true, title: 'Admin Panel | Reppy' }
       },
       { 
         path: 'notifications', 
         component: Notifications, 
         name: 'notifications',
         meta: { requiresAuth: true, title: 'Notificaciones | Reppy' }
+      },
+      { 
+        path: 'pvp/:id', 
+        component: PvpBattleView, 
+        name: 'pvp',
+        meta: { requiresAuth: true, title: 'PvP Battle | Reppy' }
+      },
+      { 
+        path: 'missions', 
+        component: Missions, 
+        name: 'missions',
+        meta: { requiresAuth: true, titleKey: 'nav_missions' }
       },
       // SEO Routes
       { 
@@ -245,7 +259,7 @@ export function setupRouterGuards(router) {
       next({ name: 'social', params: { lang: currentLang } })
     } else if (to.name === 'dashboard' && !isAuthenticated) {
       next()
-    } else if (to.meta.requiresAdmin && (!authStore.user || !authStore.user.is_admin)) {
+    } else if (to.meta.requiresAdmin && (!authStore.user || authStore.user.role !== 'admin')) {
       next({ name: 'dashboard', params: { lang: currentLang } })
     } else {
       next()

@@ -69,33 +69,61 @@
           <div class="w-14 h-14 bg-primary-500/10 rounded-2xl flex items-center justify-center text-primary-500 transition-transform group-hover:scale-110">
             <component :is="feature.icon" class="w-7 h-7" />
           </div>
-          <div class="space-y-3">
-            <h3 class="text-2xl font-black text-foreground uppercase italic tracking-tight">{{ feature.title }}</h3>
-            <p class="text-muted/60 font-medium leading-relaxed">{{ feature.desc }}</p>
+
+          <div class="space-y-1 sm:space-y-2">
+            <h3 class="text-xl sm:text-2xl font-black tracking-tighter uppercase italic text-foreground leading-none">{{ i18n.t(`codex_${stat.id}_name`) }}</h3>
+            <p class="hidden sm:block text-[10px] font-black text-primary-500/80 uppercase tracking-widest italic line-clamp-1">{{ i18n.t(`codex_${stat.id}_quote`) }}</p>
+          </div>
+          <p class="hidden sm:block text-xs text-muted/80 leading-relaxed line-clamp-2">{{ i18n.t(`codex_${stat.id}_desc`) }}</p>
+
+          <!-- Progress Bar (Desktop Only) -->
+          <div class="hidden sm:block space-y-3">
+             <div class="flex justify-between items-end">
+                <span class="text-[9px] font-black text-muted uppercase tracking-widest">{{ i18n.t('nav_progress') }}</span>
+                <span class="text-[10px] font-black text-foreground text-precision">{{ Math.floor((getStatXP(stat.id) / Math.max(getStatXPMax(stat.id), 1)) * 100) }}%</span>
+             </div>
+             <div class="h-2 bg-white/5 rounded-full overflow-hidden border border-white/5 p-0.5">
+                <div class="h-full rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
+                     :style="{ width: `${(getStatXP(stat.id) / Math.max(getStatXPMax(stat.id), 1)) * 100}%`, backgroundColor: stat.color }">
+                   <div class="absolute inset-0 bg-white/20 animate-shimmer"></div>
+                </div>
+             </div>
+          </div>
+
+          <!-- FooterRow (Desktop Only) -->
+          <div class="hidden sm:flex pt-4 items-center justify-between border-t border-white/5">
+            <div class="flex items-center gap-2">
+              <div class="w-1.5 h-1.5 rounded-full animate-pulse" :style="{ backgroundColor: stat.color }"></div>
+              <span class="text-[8px] font-black text-muted uppercase tracking-widest">{{ i18n.t('ui_protocol_active') }}</span>
+            </div>
+            <div class="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+              <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('ui_more_details') }}</span>
+              <ChevronRight class="w-2.5 h-2.5 text-primary-500" />
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ═══════════════════════════════════════════════════════════
-         BLOG SECTION — SEO Knowledge Vault
-    ═══════════════════════════════════════════════════════════ -->
-    <section class="max-w-7xl mx-auto px-4 py-24 space-y-12">
-      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/5 pb-8">
-        <div class="space-y-3">
-          <h2 class="text-4xl md:text-6xl font-black italic tracking-tighter text-foreground uppercase leading-none">
-            {{ i18n.locale === 'es' ? 'APRENDE Y MEJORA' : 'LEARN & IMPROVE' }}
-          </h2>
-          <p class="text-muted/60 text-lg font-medium">{{ i18n.t('codex_int_vault_desc') || 'Unlock Intelligence XP by studying calisthenics protocols.' }}</p>
+    <!-- 3. Intelligence / Blog Modules (The Knowledge Vault) -->
+    <section class="space-y-8 pt-12 border-t border-border">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div class="space-y-2">
+          <div class="flex items-center gap-3">
+            <div class="p-2 bg-primary-500/10 rounded-lg"><Book class="w-4 h-4 text-primary-500" /></div>
+            <h2 class="text-3xl font-black tracking-tighter text-foreground italic uppercase leading-none">{{ i18n.t('ui_knowledge_vault') }}</h2>
+          </div>
+          <p class="text-muted/60 text-sm max-w-sm">{{ i18n.t('codex_int_vault_desc') || 'Unlock Intelligence XP by studying calisthenics guides. Knowledge is the ultimate force multiplier.' }}</p>
         </div>
-        <div class="flex items-center gap-4 bg-surface/10 border border-white/5 p-2 rounded-2xl">
-           <div class="px-6 py-3 border-r border-white/5 text-center">
-             <span class="text-[9px] font-black text-muted uppercase tracking-widest block mb-1">PROTOCOLS</span>
-             <span class="text-xl font-black text-foreground tabular-nums">{{ blogPosts.length }}</span>
+        
+        <div class="bg-surface/10 border border-white/5 px-6 py-4 rounded-2xl flex items-center gap-6">
+           <div class="text-center border-r border-border pr-6">
+             <span class="text-[9px] font-black text-muted uppercase tracking-widest block mb-1">{{ i18n.t('ui_protocols') || 'Guías' }}</span>
+             <span class="text-xl font-black text-foreground">{{ blogPosts.length }}</span>
            </div>
-           <div class="px-6 py-3 text-center">
-             <span class="text-[9px] font-black text-muted uppercase tracking-widest block mb-1">UNLOCKED</span>
-             <span class="text-xl font-black text-neon-lime tabular-nums">{{ readPostsCount }}</span>
+           <div class="text-center">
+             <span class="text-[9px] font-black text-muted uppercase tracking-widest block mb-1">{{ i18n.t('ui_unlocked') || 'Desbloqueados' }}</span>
+             <span class="text-xl font-black text-neon-lime">{{ readPostsCount}}</span>
            </div>
         </div>
       </div>
@@ -116,9 +144,13 @@
             />
             <div class="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent"></div>
             
-            <div v-if="isRead(post.slug)" class="absolute top-4 right-4 bg-neon-lime/20 backdrop-blur-md border border-neon-lime/40 px-4 py-1.5 rounded-full flex items-center gap-2">
-               <CheckCircle2 class="w-4 h-4 text-neon-lime" />
-               <span class="text-[9px] font-black text-neon-lime uppercase tracking-widest">ACQUIRED</span>
+            <div v-if="isRead(post.slug)" class="absolute top-4 right-4 bg-neon-lime/20 backdrop-blur-md border border-neon-lime/40 px-3 py-1 rounded-full flex items-center gap-1.5">
+               <CheckCircle2 class="w-3.5 h-3.5 text-neon-lime" />
+               <span class="text-[8px] font-black text-neon-lime uppercase tracking-widest italic">{{ i18n.t('ui_acquired') || 'ACQUIRED' }}</span>
+            </div>
+            <div v-else class="absolute top-4 right-4 bg-primary-500/20 backdrop-blur-md border border-primary-500/40 px-3 py-1 rounded-full flex items-center gap-1.5">
+               <ShieldAlert class="w-3.5 h-3.5 text-primary-500" />
+               <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest italic">{{ i18n.t('ui_locked') || 'LOCKED' }}</span>
             </div>
             <span class="absolute bottom-4 left-6 px-3 py-1 bg-primary-500 text-[9px] font-black text-white uppercase tracking-widest rounded-lg">{{ post.category }}</span>
           </div>
@@ -137,19 +169,72 @@
         </router-link>
       </div>
 
-      <!-- Conversion Block Inside Blog Grid -->
-      <div class="card-stats !p-0 overflow-hidden relative border-primary-500/20 bg-primary-500/[0.03] animate-pulse-slow">
-        <div class="grid grid-cols-1 md:grid-cols-2 items-center">
-          <div class="p-10 md:p-16 space-y-8">
-            <div class="space-y-4">
-              <h3 class="text-3xl md:text-5xl font-black italic tracking-tighter text-foreground uppercase leading-none">
-                {{ i18n.locale === 'es' ? '¿ENTRENAS DOMINADAS?' : 'TRAIN PULL-UPS?' }}
-              </h3>
-              <p class="text-lg text-muted font-medium leading-relaxed">
-                {{ i18n.locale === 'es' 
-                  ? 'Registra cada repetición en Reppy y mira tu progreso real con nuestro heatmap estilo GitHub y ranking mundial.' 
-                  : 'Track every rep in Reppy and see your real progress with our GitHub-style heatmap and world ranking.' }}
-              </p>
+      <!-- Upcoming Guides Section -->
+      <div v-if="upcomingPosts.length > 0" class="pt-20 space-y-8">
+        <div class="flex items-center gap-3">
+          <div class="p-2 bg-muted/10 rounded-lg"><Timer class="w-4 h-4 text-muted" /></div>
+          <h2 class="text-xl font-black tracking-tighter text-muted italic uppercase leading-none">{{ i18n.t('ui_upcoming_chronicles') || 'Próximas Crónicas' }}</h2>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
+          <div 
+            v-for="post in upcomingPosts" 
+            :key="post.slug"
+            class="group bg-surface/5 border border-white/5 rounded-[2rem] overflow-hidden pointer-events-none flex flex-col relative aspect-[4/5] sm:aspect-auto"
+          >
+            <!-- 1. Technical Overlay (Scanlines & Matrix effect) -->
+            <div class="absolute inset-0 z-10 pointer-events-none opacity-30 px-4 py-6">
+              <div class="w-full h-full border border-white/5 rounded-2xl flex flex-col justify-between p-4">
+                <div class="flex justify-between items-start">
+                   <div class="w-2 h-2 border-t border-l border-white/40"></div>
+                   <div class="w-2 h-2 border-t border-r border-white/40"></div>
+                </div>
+                <div class="flex justify-between items-end">
+                   <div class="w-2 h-2 border-b border-l border-white/40"></div>
+                   <div class="w-2 h-2 border-b border-r border-white/40"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. The Image with Glitch/Blur -->
+            <div class="relative h-32 sm:h-48 overflow-hidden grayscale contrast-125 opacity-40">
+              <!-- Scanline animation -->
+              <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-10 bg-[length:100%_2px,3px_100%] pointer-events-none"></div>
+              
+              <img :src="post.image" :alt="post.title" class="w-full h-full object-cover blur-[2px]" />
+              <div class="absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background"></div>
+            </div>
+
+            <!-- 3. Central Lock System -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center gap-4 w-full px-4">
+              <div class="relative">
+                <!-- Glowing Rings -->
+                <div class="absolute inset-0 bg-primary-500/20 blur-2xl rounded-full scale-150 animate-pulse"></div>
+                <div class="relative w-12 h-12 sm:w-16 sm:h-16 bg-background/60 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center shadow-2xl ring-4 ring-white/5">
+                   <Lock class="w-5 h-5 sm:w-6 sm:h-6 text-muted/60" />
+                </div>
+              </div>
+              
+              <!-- Countdown Badge -->
+              <div class="bg-primary-500/10 backdrop-blur-md border border-primary-500/20 px-3 py-1.5 rounded-xl flex items-center gap-2 shadow-[0_0_20px_rgba(var(--primary-500-rgb),0.1)]">
+                 <Timer class="w-3 h-3 text-primary-500 animate-pulse" />
+                 <span class="text-[8px] sm:text-[10px] font-black text-primary-500 uppercase tracking-[0.2em] whitespace-nowrap">
+                   {{ i18n.locale === 'es' ? `T-MINUS ${post.daysLeft}D` : `T-MINUS ${post.daysLeft}D` }}
+                 </span>
+              </div>
+            </div>
+
+            <!-- 4. Footer Info -->
+            <div class="p-4 sm:p-6 mt-auto bg-background/40 backdrop-blur-sm border-t border-white/5 space-y-1 sm:space-y-2">
+              <span class="text-[7px] sm:text-[9px] font-black text-muted/30 uppercase tracking-[0.3em] block">{{ post.category }}</span>
+              <h3 class="text-[10px] sm:text-sm font-black text-muted/50 line-clamp-1 sm:line-clamp-2 uppercase italic tracking-tighter leading-tight">{{ post.title }}</h3>
+              
+              <div class="flex items-center gap-1.5 pt-2">
+                <div class="h-0.5 w-8 bg-white/5 rounded-full overflow-hidden">
+                   <div class="h-full bg-primary-500/20 w-1/3"></div>
+                </div>
+                <span class="text-[6px] font-black text-muted/20 uppercase tracking-widest">{{ i18n.locale === 'es' ? 'ENCRIPTADO' : 'ENCRYPTED' }}</span>
+              </div>
             </div>
             <ul class="grid grid-cols-2 gap-4">
               <li v-for="item in ['Heatmap', 'Ranking', 'RPG', '100% Free']" :key="item" class="flex items-center gap-3 text-xs font-black text-foreground uppercase tracking-widest">
@@ -255,10 +340,10 @@ const features = computed(() => [
 
 const localizedPosts = computed(() => {
   const now = new Date();
-  now.setHours(0, 0, 0, 0);
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   
   return blogPosts
-    .filter(post => new Date(post.date) <= now)
+    .filter(post => post.date <= todayStr)
     .map(post => ({
       ...post,
       title: post.locales[i18n.locale]?.title || post.locales.en.title
@@ -268,6 +353,30 @@ const localizedPosts = computed(() => {
       if (!a.isPillar && b.isPillar) return 1;
       return new Date(b.date) - new Date(a.date);
     });
+});
+
+const upcomingPosts = computed(() => {
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  
+  const upcoming = blogPosts
+    .filter(post => post.date > todayStr)
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .slice(0, 3);
+    
+  return upcoming.map(post => {
+    const releaseDate = new Date(post.date);
+    const diffTime = releaseDate - now;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    return {
+      slug: post.slug,
+      image: post.image,
+      category: post.category,
+      title: post.locales[i18n.locale]?.title || post.locales.en.title,
+      daysLeft: diffDays
+    };
+  });
 });
 
 const isRead = (slug) => {

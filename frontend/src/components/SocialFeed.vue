@@ -1,18 +1,27 @@
 <template>
-  <div class="space-y-12">
+  <div class="space-y-8">
+
 
     <!-- Feed Content -->
-    <div class="space-y-8 min-h-[600px] relative">
+    <div class="space-y-12 min-h-[600px] relative">
       <TransitionGroup name="stagger">
-        <ActivityCard 
-          v-for="activity in activities" 
-          :key="activity.user_id + activity.date"
-          :activity="activity"
-          :highlighted="isHighlighted(activity)"
-          @toggleLike="handleLike(activity)"
-          @viewProfile="$emit('viewProfile', $event)"
-          @edit="openEditModal(activity)"
-        />
+        <template v-for="activity in activities" :key="activity.post_type === 'pvp' ? 'pvp-' + activity.pvp_data.id : (activity.summary_id || 'reps-' + activity.user_id + '-' + activity.date)">
+          <ActivityCard 
+            v-if="activity.post_type !== 'pvp'"
+            :activity="activity" 
+            :highlighted="isHighlighted(activity)"
+            @toggleLike="handleLike(activity)"
+            @commentAdded="handleComment"
+            @viewProfile="$emit('viewProfile', $event)"
+            @edit="openEditModal(activity)"
+            @compare="openCompareModal(activity)"
+            @challenge="openChallengeModal(activity)"
+          />
+          <PvpActivityCard
+            v-else
+            :activity="activity"
+          />
+        </template>
       </TransitionGroup>
 
       <!-- Loading State -->
@@ -27,10 +36,10 @@
       </div>
 
       <!-- Empty State -->
-      <div v-if="!loading && activities.length === 0" class="py-32 text-center card-stats border-dashed bg-transparent">
-          <ZapOff class="w-12 h-12 text-muted/20 mx-auto mb-6" />
-          <h3 class="text-xl font-black text-foreground uppercase italic tracking-tighter mb-2">Registry Silent</h3>
-          <p class="text-sm text-muted/60 max-w-xs mx-auto">No activity detected in this sector. Follow more athletes to populate your inner circle.</p>
+      <div v-if="!loading && activities.length === 0" class="py-32 text-center bg-surface/5 rounded-[3rem] border-2 border-dashed border-border/20">
+          <ZapOff class="w-16 h-16 text-muted/20 mx-auto mb-6" />
+          <h3 class="text-2xl font-black text-foreground uppercase tracking-tight mb-2">Registry Silent</h3>
+          <p class="text-sm text-muted max-w-xs mx-auto font-medium opacity-60">No activity detected in this sector. Follow more athletes to populate your inner circle.</p>
       </div>
 
       <!-- Sentinel for Infinite Scroll -->
@@ -40,7 +49,7 @@
     <!-- Edit Modal (Teleported) -->
     <Teleport to="body">
       <div v-if="editingActivity" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/90 backdrop-blur-md" @click.self="editingActivity = null">
-        <div class="card-stats max-w-xl w-full p-8 md:p-12 border-border space-y-10 relative overflow-hidden">
+        <div class="card-stats max-w-xl w-full p-6 md:p-12 border-border space-y-8 relative overflow-y-auto max-h-[90vh]">
              <div class="flex items-center justify-between">
                 <div class="space-y-1">
                     <h2 class="text-2xl font-black text-industrial text-foreground uppercase italic tracking-tighter">DATA<span class="text-primary-500">.</span>OVERRIDE</h2>
@@ -53,12 +62,13 @@
 
              <div class="space-y-6">
                 <div class="space-y-3">
-                    <label class="text-[10px] font-black text-primary-500 uppercase tracking-widest pl-1">Mission Title</label>
-                    <input v-model="editForm.title" placeholder="E.g. Morning Grind, Road to 1000..." class="w-full bg-foreground/[0.04] border border-border rounded-2xl px-6 py-4 text-sm font-bold focus:outline-none focus:border-primary-500/50 transition-all font-industrial" />
+                    <label class="text-[10px] font-black text-primary-500 uppercase tracking-widest pl-1">TITULO DEL POST</label>
+                    <input v-model="editForm.title" type="text" placeholder="Ponle un título a tu entrenamiento..." class="w-full bg-foreground/[0.04] border border-border rounded-2xl px-6 py-4 text-sm font-black uppercase italic focus:outline-none focus:border-primary-500/50 transition-all" />
                 </div>
+
                 <div class="space-y-3">
-                    <label class="text-[10px] font-black text-primary-500 uppercase tracking-widest pl-1">Protocol Briefing</label>
-                    <textarea v-model="editForm.description" rows="4" placeholder="How was the workout today?" class="w-full bg-foreground/[0.04] border border-border rounded-3xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary-500/50 transition-all resize-none"></textarea>
+                    <label class="text-[10px] font-black text-primary-500 uppercase tracking-widest pl-1">RESUMEN DE ACTIVIDAD</label>
+                    <textarea v-model="editForm.description" rows="4" placeholder="¿Cómo fue el entrenamiento de hoy?" class="w-full bg-foreground/[0.04] border border-border rounded-3xl px-6 py-4 text-sm font-medium focus:outline-none focus:border-primary-500/50 transition-all resize-none"></textarea>
                 </div>
              </div>
 
@@ -69,6 +79,25 @@
         </div>
       </div>
     </Teleport>
+
+    <!-- Comparison Modal (Teleported) -->
+    <Teleport to="body">
+       <UserCompareModal 
+         :show="!!comparingUser" 
+         :me="authStore.user" 
+         :target="comparingUser" 
+         @close="comparingUser = null" 
+       />
+    </Teleport>
+
+    <!-- PvP Config Modal (Teleported) -->
+    <Teleport to="body">
+       <PvpConfigModal 
+         :show="!!challengingUser" 
+         :target="challengingUser" 
+         @close="challengingUser = null" 
+       />
+    </Teleport>
   </div>
 </template>
 
@@ -77,10 +106,17 @@ import { ref, onMounted, onUnmounted, reactive, watch } from 'vue';
 import axios from 'axios';
 import ActivityCard from './ActivityCard.vue';
 import ActivitySkeleton from './ActivitySkeleton.vue';
+import UserCompareModal from './UserCompareModal.vue';
+import PvpActivityCard from './PvpActivityCard.vue';
+import PvpConfigModal from './PvpConfigModal.vue';
+import MiniActivityHeatmap from './MiniActivityHeatmap.vue';
 import { ZapOff, X } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
+import { useI18nStore } from '../stores/i18n';
 import { useRoute } from 'vue-router';
+
+const i18n = useI18nStore();
 
 const props = defineProps({
     initialFilter: { type: String, default: 'global' }
@@ -107,6 +143,9 @@ const editForm = reactive({
     title: '',
     description: ''
 });
+
+const comparingUser = ref(null);
+const challengingUser = ref(null);
 
 const fetchFeed = async () => {
     if (loading.value || finished.value) return;
@@ -158,6 +197,11 @@ const handleLike = async (activity) => {
     }
 };
 
+const handleComment = (activity) => {
+    notificationStore.notify('💬 COMENTARIO REGISTRADO', 'success');
+    authStore.fetchProfile(); // Charisma XP update
+};
+
 const openEditModal = (activity) => {
     editingActivity.value = activity;
     editForm.title = activity.title || '';
@@ -180,8 +224,18 @@ const saveEdit = async () => {
         editingActivity.value = null;
     } catch (e) {
         console.error('Error saving edit:', e);
-        notificationStore.notify('Failed to update protocol', 'error');
+        notificationStore.notify('Failed to update registry', 'error');
     }
+};
+
+const openCompareModal = async (activity) => {
+    // If we only have basic info from the card, we might want to fetch full stats
+    // But ActivityCard already has most stats from the query update in social_feed.js
+    comparingUser.value = activity;
+};
+
+const openChallengeModal = (activity) => {
+    challengingUser.value = activity;
 };
 
 const normalizeDate = (d) => {

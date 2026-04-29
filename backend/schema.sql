@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS users (
     damage_multiplier_expiry TIMESTAMP WITH TIME ZONE,
     cha_xp INTEGER DEFAULT 0,
     last_streak_reward_date DATE,
+    reppy_gems INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -116,6 +117,17 @@ CREATE TABLE IF NOT EXISTS user_read_blogs (
     UNIQUE(user_id, post_slug)
 );
 
+CREATE TABLE IF NOT EXISTS gem_transactions (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    amount INTEGER NOT NULL,
+    source VARCHAR(50) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_gem_trans_user ON gem_transactions(user_id);
+
 -- Index for better performance
 CREATE INDEX IF NOT EXISTS idx_reps_user_date ON reps(user_id, date);
 CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(user_id_1, user_id_2);
@@ -158,4 +170,14 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS cha_xp INTEGER DEFAULT 0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS last_spin_at TIMESTAMP WITH TIME ZONE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_avatar_overhaul BOOLEAN DEFAULT FALSE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS last_streak_reward_date DATE;
+ 
++-- Push Notifications
++CREATE TABLE IF NOT EXISTS push_subscriptions (
++    id SERIAL PRIMARY KEY,
++    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
++    subscription_json JSONB NOT NULL,
++    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
++    UNIQUE(user_id, subscription_json)
++);
++CREATE INDEX IF NOT EXISTS idx_push_subs_user ON push_subscriptions(user_id);
 

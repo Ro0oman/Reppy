@@ -1,0 +1,397 @@
+{
+  "head": [],
+  "weapon": [],
+  "armor": [],
+  "boots": [],
+  "consumable": [],
+  "other": [
+    {
+      "slug": "abdominal-armor",
+      "name": "Abdominal Armor"
+    },
+    {
+      "slug": "amphora",
+      "name": "Amphora"
+    },
+    {
+      "slug": "armor-cuisses",
+      "name": "Armor Cuisses"
+    },
+    {
+      "slug": "armor-vest",
+      "name": "Armor Vest"
+    },
+    {
+      "slug": "armored-pants",
+      "name": "Armored Pants"
+    },
+    {
+      "slug": "bandana",
+      "name": "Bandana"
+    },
+    {
+      "slug": "barbute",
+      "name": "Barbute"
+    },
+    {
+      "slug": "barefoot",
+      "name": "Barefoot"
+    },
+    {
+      "slug": "battle-axe",
+      "name": "Battle Axe"
+    },
+    {
+      "slug": "blade-drag",
+      "name": "Blade Drag"
+    },
+    {
+      "slug": "boot-kick",
+      "name": "Boot Kick"
+    },
+    {
+      "slug": "boot-stomp",
+      "name": "Boot Stomp"
+    },
+    {
+      "slug": "boots",
+      "name": "Boots"
+    },
+    {
+      "slug": "bordered-shield",
+      "name": "Bordered Shield"
+    },
+    {
+      "slug": "bottled-bolt",
+      "name": "Bottled Bolt"
+    },
+    {
+      "slug": "bow-arrow",
+      "name": "Bow Arrow"
+    },
+    {
+      "slug": "bracers",
+      "name": "Bracers"
+    },
+    {
+      "slug": "breastplate",
+      "name": "Breastplate"
+    },
+    {
+      "slug": "broadsword",
+      "name": "Broadsword"
+    },
+    {
+      "slug": "bubbling-flask",
+      "name": "Bubbling Flask"
+    },
+    {
+      "slug": "cape-armor",
+      "name": "Cape Armor"
+    },
+    {
+      "slug": "chain-mail",
+      "name": "Chain Mail"
+    },
+    {
+      "slug": "chelsea-boot",
+      "name": "Chelsea Boot"
+    },
+    {
+      "slug": "chest-armor",
+      "name": "Chest Armor"
+    },
+    {
+      "slug": "claws",
+      "name": "Claws"
+    },
+    {
+      "slug": "claymore-explosive",
+      "name": "Claymore Explosive"
+    },
+    {
+      "slug": "closed-barbute",
+      "name": "Closed Barbute"
+    },
+    {
+      "slug": "crested-helmet",
+      "name": "Crested Helmet"
+    },
+    {
+      "slug": "crown-coin",
+      "name": "Crown Coin"
+    },
+    {
+      "slug": "crown",
+      "name": "Crown"
+    },
+    {
+      "slug": "crystal-bars",
+      "name": "Crystal Bars"
+    },
+    {
+      "slug": "cultist",
+      "name": "Cultist"
+    },
+    {
+      "slug": "dragon-head",
+      "name": "Dragon Head"
+    },
+    {
+      "slug": "explosive-materials",
+      "name": "Explosive Materials"
+    },
+    {
+      "slug": "flail",
+      "name": "Flail"
+    },
+    {
+      "slug": "frostfire",
+      "name": "Frostfire"
+    },
+    {
+      "slug": "gem-pendant",
+      "name": "Gem Pendant"
+    },
+    {
+      "slug": "gladius",
+      "name": "Gladius"
+    },
+    {
+      "slug": "glass-heart",
+      "name": "Glass Heart"
+    },
+    {
+      "slug": "greaves",
+      "name": "Greaves"
+    },
+    {
+      "slug": "halberd",
+      "name": "Halberd"
+    },
+    {
+      "slug": "headband-knot",
+      "name": "Headband Knot"
+    },
+    {
+      "slug": "heavy-helm",
+      "name": "Heavy Helm"
+    },
+    {
+      "slug": "helmet",
+      "name": "Helmet"
+    },
+    {
+      "slug": "hood",
+      "name": "Hood"
+    },
+    {
+      "slug": "hoof",
+      "name": "Hoof"
+    },
+    {
+      "slug": "horned-helm",
+      "name": "Horned Helm"
+    },
+    {
+      "slug": "insect-jaws",
+      "name": "Insect Jaws"
+    },
+    {
+      "slug": "jeweled-chalice",
+      "name": "Jeweled Chalice"
+    },
+    {
+      "slug": "lamellar",
+      "name": "Lamellar"
+    },
+    {
+      "slug": "laurel-crown",
+      "name": "Laurel Crown"
+    },
+    {
+      "slug": "leather-armor",
+      "name": "Leather Armor"
+    },
+    {
+      "slug": "leather-boot",
+      "name": "Leather Boot"
+    },
+    {
+      "slug": "leather-vest",
+      "name": "Leather Vest"
+    },
+    {
+      "slug": "leg-armor",
+      "name": "Leg Armor"
+    },
+    {
+      "slug": "leg",
+      "name": "Leg"
+    },
+    {
+      "slug": "mace-head",
+      "name": "Mace Head"
+    },
+    {
+      "slug": "mc-creeper",
+      "name": "Mc Creeper"
+    },
+    {
+      "slug": "metal-boot",
+      "name": "Metal Boot"
+    },
+    {
+      "slug": "metal-plate",
+      "name": "Metal Plate"
+    },
+    {
+      "slug": "muscle-up",
+      "name": "Muscle Up"
+    },
+    {
+      "slug": "necklace",
+      "name": "Necklace"
+    },
+    {
+      "slug": "ninja-armor",
+      "name": "Ninja Armor"
+    },
+    {
+      "slug": "ninja-mask",
+      "name": "Ninja Mask"
+    },
+    {
+      "slug": "party-popper",
+      "name": "Party Popper"
+    },
+    {
+      "slug": "pitchfork",
+      "name": "Pitchfork"
+    },
+    {
+      "slug": "polar-star",
+      "name": "Polar Star"
+    },
+    {
+      "slug": "present",
+      "name": "Present"
+    },
+    {
+      "slug": "ring",
+      "name": "Ring"
+    },
+    {
+      "slug": "robe",
+      "name": "Robe"
+    },
+    {
+      "slug": "robot-leg",
+      "name": "Robot Leg"
+    },
+    {
+      "slug": "round-shield",
+      "name": "Round Shield"
+    },
+    {
+      "slug": "rubber-boot",
+      "name": "Rubber Boot"
+    },
+    {
+      "slug": "running-shoe",
+      "name": "Running Shoe"
+    },
+    {
+      "slug": "sandal",
+      "name": "Sandal"
+    },
+    {
+      "slug": "scythe",
+      "name": "Scythe"
+    },
+    {
+      "slug": "shoulder-armor",
+      "name": "Shoulder Armor"
+    },
+    {
+      "slug": "ski-boot",
+      "name": "Ski Boot"
+    },
+    {
+      "slug": "spartan-helmet",
+      "name": "Spartan Helmet"
+    },
+    {
+      "slug": "spear-feather",
+      "name": "Spear Feather"
+    },
+    {
+      "slug": "spear-hook",
+      "name": "Spear Hook"
+    },
+    {
+      "slug": "spiked-armor",
+      "name": "Spiked Armor"
+    },
+    {
+      "slug": "spiked-mace",
+      "name": "Spiked Mace"
+    },
+    {
+      "slug": "star-medal",
+      "name": "Star Medal"
+    },
+    {
+      "slug": "steeltoe-boots",
+      "name": "Steeltoe Boots"
+    },
+    {
+      "slug": "sticky-boot",
+      "name": "Sticky Boot"
+    },
+    {
+      "slug": "sunglasses",
+      "name": "Sunglasses"
+    },
+    {
+      "slug": "sword-spin",
+      "name": "Sword Spin"
+    },
+    {
+      "slug": "tiara",
+      "name": "Tiara"
+    },
+    {
+      "slug": "tomahawk",
+      "name": "Tomahawk"
+    },
+    {
+      "slug": "trident",
+      "name": "Trident"
+    },
+    {
+      "slug": "trophy",
+      "name": "Trophy"
+    },
+    {
+      "slug": "walking-boot",
+      "name": "Walking Boot"
+    },
+    {
+      "slug": "warhammer",
+      "name": "Warhammer"
+    },
+    {
+      "slug": "warlock-hood",
+      "name": "Warlock Hood"
+    },
+    {
+      "slug": "winged-leg",
+      "name": "Winged Leg"
+    },
+    {
+      "slug": "wizard-face",
+      "name": "Wizard Face"
+    }
+  ]
+}

@@ -4,31 +4,31 @@
     <!-- Timeframe & Filter Controls (Tactical & Compact) -->
     <div class="flex flex-col sm:flex-row items-center gap-2 relative z-10 px-1">
       <!-- Friends vs Global -->
-      <div v-if="authStore.isAuthenticated" class="flex p-0.5 bg-black/40 rounded-lg border border-white/5 w-full sm:w-auto">
+      <div v-if="authStore.isAuthenticated" class="flex p-0.5 bg-foreground/5 rounded-lg border border-border/40 w-full sm:w-auto">
         <button 
           @click="type = 'friends'"
           class="flex-1 sm:px-4 py-1.5 text-[9px] font-black uppercase tracking-widest transition-all rounded-md relative z-10"
-          :class="type === 'friends' ? 'text-primary-400 bg-white/5' : 'text-muted/60 hover:text-foreground'"
+          :class="type === 'friends' ? 'text-primary-400 bg-foreground/5 shadow-sm' : 'text-muted/60 hover:text-foreground'"
         >
           {{ i18n.t('lb_friends') }}
         </button>
         <button 
           @click="type = 'global'"
           class="flex-1 sm:px-4 py-1.5 text-[9px] font-black uppercase tracking-widest transition-all rounded-md relative z-10"
-          :class="type === 'global' ? 'text-primary-400 bg-white/5' : 'text-muted/60 hover:text-foreground'"
+          :class="type === 'global' ? 'text-primary-400 bg-foreground/5 shadow-sm' : 'text-muted/60 hover:text-foreground'"
         >
           {{ i18n.t('lb_global') }}
         </button>
       </div>
 
       <!-- Timeframe -->
-      <div class="flex flex-1 p-0.5 bg-black/40 border border-white/5 rounded-lg overflow-x-auto no-scrollbar w-full">
+      <div class="flex flex-1 p-0.5 bg-foreground/5 border border-border/40 rounded-lg overflow-x-auto no-scrollbar w-full">
         <button 
           v-for="tf in ['today', 'week', 'month', 'year', 'all']" 
           :key="tf"
           @click="timeframe = tf"
           class="flex-1 min-w-[50px] py-1.5 text-[8px] font-black uppercase tracking-widest transition-all rounded-md relative z-10"
-          :class="timeframe === tf ? 'text-primary-400 bg-white/5' : 'text-muted/60 hover:text-foreground'"
+          :class="timeframe === tf ? 'text-primary-400 bg-foreground/5 shadow-sm' : 'text-muted/60 hover:text-foreground'"
         >
           {{ i18n.t('tf_' + tf) }}
         </button>
@@ -36,7 +36,7 @@
     </div>
 
     <!-- Podium Section (Flatter & Horizontal) -->
-    <div v-if="!loading && podiumUsers.length > 0" class="flex items-center justify-center gap-4 sm:gap-12 py-4 mb-2 relative z-10 bg-foreground/[0.02] rounded-2xl border border-white/5">
+    <div v-if="!loading && podiumUsers.length > 0" class="flex items-center justify-center gap-4 sm:gap-12 py-4 mb-2 relative z-10 bg-foreground/[0.02] rounded-2xl border border-border/40">
       <!-- 2nd Place -->
       <button v-if="podiumUsers[1]" 
         @click="$emit('viewProfile', podiumUsers[1].id)"

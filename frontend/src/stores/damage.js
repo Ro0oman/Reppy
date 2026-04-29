@@ -8,24 +8,23 @@ export const useDamageStore = defineStore('damage', {
     lastDamageTime: 0
   }),
   actions: {
-    addDamage(amount, type) {
-      const audioStore = useAudioStore();
+    addDamage(amount, type, x, y, isCrit = false, userName = null, userId = null) {
       const now = Date.now();
-      // Throttle rapid calls
-      if (now - this.lastDamageTime < 1000) return;
       
-      this.lastDamageTime = now;
       const id = now + Math.random();
-      // Generate random position near the center/target area
-      const x = 50 + (Math.random() * 20 - 10);
-      const y = 40 + (Math.random() * 20 - 10);
+      // Use provided coordinates or random near center
+      const finalX = x !== undefined ? x : (50 + (Math.random() * 20 - 10));
+      const finalY = y !== undefined ? y : (40 + (Math.random() * 20 - 10));
       
       this.activeDamages.push({
         id,
         amount,
         type,
-        x,
-        y
+        x: finalX,
+        y: finalY,
+        isCrit,
+        userName,
+        userId
       });
 
       // SYNC: Remove exactly when animation ends (1.2s)

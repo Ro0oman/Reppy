@@ -4,7 +4,8 @@ import axios from 'axios';
 export const useNotificationsStore = defineStore('notifications', {
   state: () => ({
     notifications: [],
-    loading: false
+    loading: false,
+    lastFetch: 0
   }),
   
   getters: {
@@ -12,16 +13,29 @@ export const useNotificationsStore = defineStore('notifications', {
   },
   
   actions: {
-    async fetchNotifications() {
-      this.loading = true;
-      try {
-        const res = await axios.get('/api/notifications');
-        this.notifications = res.data;
-      } catch (e) {
-        console.error('Error fetching notifications:', e);
-      } finally {
-        this.loading = false;
+    async fetchNotifications(force = false) {
+      if (this.fetchPromise) return this.fetchPromise;
+
+      const now = Date.now();
+      if (!force && this.lastFetch && now - this.lastFetch < 10000) {
+        return;
       }
+
+      this.loading = true;
+      this.fetchPromise = (async () => {
+        try {
+          const res = await axios.get('/api/notifications');
+          this.notifications = res.data;
+          this.lastFetch = Date.now();
+        } catch (e) {
+          console.error('Error fetching notifications:', e);
+        } finally {
+          this.loading = false;
+          this.fetchPromise = null;
+        }
+      })();
+
+      return this.fetchPromise;
     },
     
     async markAsRead(id) {

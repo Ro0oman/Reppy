@@ -6,7 +6,8 @@ export const useAuthStore = defineStore('auth', {
     user: (!import.meta.env.SSR && JSON.parse(localStorage.getItem('user'))) || null,
     token: (!import.meta.env.SSR && localStorage.getItem('token')) || null,
     interceptorRegistered: false,
-    isLoggingOut: false,
+    lastFetch: 0,
+    fetchPromise: null,
   }),
   getters: {
     isAuthenticated: (state) => !!state.token,
@@ -64,24 +65,39 @@ export const useAuthStore = defineStore('auth', {
         throw error;
       }
     },
-    async fetchProfile() {
-      try {
-        const response = await axios.get('/api/users/me');
-        const oldLevel = this.user?.current_level;
-        this.user = response.data;
-        localStorage.setItem('user', JSON.stringify(this.user));
-        
-        // Detect Level Up
-        if (oldLevel && this.user.current_level > oldLevel) {
-          const { useAudioStore } = await import('./audio');
-          const audioStore = useAudioStore();
-          audioStore.play('level_up');
-        }
-        
+    async fetchProfile(force = false) {
+      // 1. If already fetching, return the existing promise
+      if (this.fetchPromise) return this.fetchPromise;
+
+      const now = Date.now();
+      if (!force && this.lastFetch && now - this.lastFetch < 10000) {
         return this.user;
-      } catch (error) {
-        console.error('Fetch profile failed:', error);
       }
+
+      this.fetchPromise = (async () => {
+        try {
+          const response = await axios.get('/api/users/me');
+          this.lastFetch = Date.now();
+          const oldLevel = this.user?.current_level;
+          this.user = response.data;
+          localStorage.setItem('user', JSON.stringify(this.user));
+          
+          if (oldLevel && this.user.current_level > oldLevel) {
+            const { useAudioStore } = await import('./audio');
+            const audioStore = useAudioStore();
+            audioStore.play('level_up');
+          }
+          
+          return this.user;
+        } catch (error) {
+          console.error('Fetch profile failed:', error);
+          throw error;
+        } finally {
+          this.fetchPromise = null;
+        }
+      })();
+
+      return this.fetchPromise;
     },
     async updateProfile(data) {
       try {
@@ -134,9 +150,9 @@ export const useAuthStore = defineStore('auth', {
       if (lastVisit && this.token) {
         const diff = now - parseInt(lastVisit);
         if (diff > THIRTY_DAYS) {
-          console.warn('[AUTH_STORE] Stale session detected (> 30 days). Forcing logout and refresh...');
+          console.warn('[AUTH_STORE] Stale session detected (>30d). Forcing logout and refresh...');
           this.logout();
-          window.location.reload(); // Hard reload to clear component cache
+          window.location.reload(); 
           return;
         }
       }
@@ -149,14 +165,14 @@ export const useAuthStore = defineStore('auth', {
         axios.interceptors.response.use(
           (response) => response,
           (error) => {
-            if (error.response?.status === 401 && !this.isLoggingOut) {
-              this.isLoggingOut = true;
-              console.warn('Session expired or unauthorized. Logging out...');
+            const url = error.config?.url || '';
+            // Shop routes use 4xx for business logic (insufficient gems, item restrictions, etc.)
+            // Only trigger logout for auth/profile endpoints, not shop/social/etc.
+            const isShopOrBusinessRoute = url.includes('/api/shop') || url.includes('/api/social') || url.includes('/api/blog') || url.includes('/api/missions');
+            if (!isShopOrBusinessRoute && error.response?.status === 401) {
+              console.warn('Session expired. Logging out...');
               this.logout();
-              
-              // Force redirect to login page with current language and expired flag
-              const lang = localStorage.getItem('locale') || 'es';
-              window.location.href = `/${lang}/login?expired=1`;
+              if (!import.meta.env.SSR) window.location.reload();
             }
             return Promise.reject(error);
           }

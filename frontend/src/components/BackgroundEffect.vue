@@ -151,7 +151,7 @@ const matrixColumns = computed(() => {
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: -1;
+  z-index: -2;
   pointer-events: none;
   overflow: hidden;
   transition: all 1s ease-in-out;

@@ -23,7 +23,7 @@
             <h2 class="text-2xl md:text-3xl font-black italic tracking-tighter text-foreground uppercase leading-tight">
               {{ i18n.t('settings_title') }}<span class="text-primary-500">.</span>MOD
             </h2>
-            <p class="text-[9px] md:text-[10px] font-black text-muted uppercase tracking-[0.4em] mt-3">Interface & Protocol Override</p>
+            <p class="text-[9px] md:text-[10px] font-black text-muted uppercase tracking-[0.4em] mt-3">Interface & System Override</p>
           </div>
 
           <div class="flex-1 space-y-8 overflow-y-auto pr-2 custom-scrollbar pb-24 md:pb-4">

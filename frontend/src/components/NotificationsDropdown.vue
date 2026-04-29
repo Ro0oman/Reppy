@@ -67,13 +67,14 @@
 </template>
 
 <script setup>
-import { Bell, Heart, MessageSquare, Trophy, Package, Swords, PartyPopper } from 'lucide-vue-next';
+import { Bell, BicepsFlexed, MessageSquare, Trophy, Package, Swords, PartyPopper } from 'lucide-vue-next';
 import { useNotificationsStore } from '../stores/notifications';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
-import { es, enUS } from 'date-fns/locale';
+import { es } from 'date-fns/locale/es';
+import { enUS } from 'date-fns/locale/en-US';
 import AvatarFrame from './AvatarFrame.vue';
 
 const store = useNotificationsStore();
@@ -85,21 +86,25 @@ const emit = defineEmits(['close']);
 
 const getIcon = (type) => {
   switch (type) {
-    case 'LIKE': return Heart;
+    case 'LIKE': return BicepsFlexed;
     case 'COMMENT': return MessageSquare;
     case 'LEVEL_UP': return Trophy;
     case 'NEW_CHEST': return Package;
     case 'BOSS_DEFEATED': return Swords;
+    case 'PVP_CHALLENGE': return Swords;
+    case 'MISSION_COMPLETED': return Target;
     default: return Bell;
   }
 };
 
 const getIconColor = (type) => {
   switch (type) {
-    case 'LIKE': return 'text-red-500';
+    case 'LIKE': return 'text-amber-500';
     case 'COMMENT': return 'text-blue-500';
     case 'LEVEL_UP': return 'text-yellow-500';
     case 'NEW_CHEST': return 'text-primary-500';
+    case 'PVP_CHALLENGE': return 'text-primary-500';
+    case 'MISSION_COMPLETED': return 'text-emerald-500';
     default: return 'text-muted';
   }
 };
@@ -131,6 +136,10 @@ const handleNotifClick = (notif) => {
     router.push('/profile');
   } else if (notif.type === 'BOSS_DEFEATED') {
     router.push('/dashboard');
+  } else if (notif.type === 'PVP_CHALLENGE') {
+    router.push({ name: 'pvp', params: { id: notif.target_id } });
+  } else if (notif.type === 'MISSION_COMPLETED') {
+    router.push('/missions');
   }
 
   emit('close');

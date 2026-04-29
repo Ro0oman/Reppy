@@ -1,0 +1,527 @@
+[
+  {
+    "id": 567,
+    "name": "Máscara de Oolacile",
+    "icon": "gi:ninja-mask"
+  },
+  {
+    "id": 568,
+    "name": "Diadema de Leviatán",
+    "icon": "gi:jeweled-chalice"
+  },
+  {
+    "id": 569,
+    "name": "Corona de Dragón",
+    "icon": "gi:crown"
+  },
+  {
+    "id": 570,
+    "name": "Capuchón del Aldeano",
+    "icon": "gi:hood"
+  },
+  {
+    "id": 571,
+    "name": "Diadema de Muspelheim",
+    "icon": "gi:tiara"
+  },
+  {
+    "id": 572,
+    "name": "Casco del Ender Dragon",
+    "icon": "gi:dragon-head"
+  },
+  {
+    "id": 573,
+    "name": "Casco de Asesino de Dragones",
+    "icon": "gi:spartan-helmet"
+  },
+  {
+    "id": 574,
+    "name": "Escarcha Casco de Sub-Zero",
+    "icon": "gi:frostfire"
+  },
+  {
+    "id": 575,
+    "name": "Pixelado Cofia de Hierro",
+    "icon": "gi:helmet"
+  },
+  {
+    "id": 576,
+    "name": "Casco Espartano",
+    "icon": "gi:crested-helmet"
+  },
+  {
+    "id": 577,
+    "name": "Catarina Yelmo de Artorias",
+    "icon": "gi:closed-barbute"
+  },
+  {
+    "id": 578,
+    "name": "Cinta del Infierno",
+    "icon": "gi:headband-knot"
+  },
+  {
+    "id": 579,
+    "name": "Protector de Scorpion",
+    "icon": "gi:insect-jaws"
+  },
+  {
+    "id": 580,
+    "name": "Yelmo de Muspelheim",
+    "icon": "gi:heavy-helm"
+  },
+  {
+    "id": 581,
+    "name": "Casco del Creepers",
+    "icon": "gi:mc-creeper"
+  },
+  {
+    "id": 582,
+    "name": "Yelmo de Anor Londo",
+    "icon": "gi:barbute"
+  },
+  {
+    "id": 583,
+    "name": "Diadema de Atreus",
+    "icon": "gi:laurel-crown"
+  },
+  {
+    "id": 584,
+    "name": "Fatal Casco de Johnny Cage",
+    "icon": "gi:sunglasses"
+  },
+  {
+    "id": 585,
+    "name": "Casco de Caos",
+    "icon": "gi:visored-helmet"
+  },
+  {
+    "id": 586,
+    "name": "Casco Divino",
+    "icon": "gi:roman-helmet"
+  },
+  {
+    "id": 587,
+    "name": "Obsidiana Capuchón de Diamante",
+    "icon": "gi:wizard-face"
+  },
+  {
+    "id": 588,
+    "name": "Casco de Liu Kang",
+    "icon": "gi:bandana"
+  },
+  {
+    "id": 589,
+    "name": "Frontal de Muspelheim",
+    "icon": "gi:horned-helm"
+  },
+  {
+    "id": 590,
+    "name": "Obsidiana Cofia del Ender Dragon",
+    "icon": "gi:cowl"
+  },
+  {
+    "id": 591,
+    "name": "Crafteado Cofia de Diamante",
+    "icon": "gi:crystal-bars"
+  },
+  {
+    "id": 592,
+    "name": "Azada Pixelado",
+    "icon": "gi:pitchfork"
+  },
+  {
+    "id": 593,
+    "name": "Escudo de Alfheim",
+    "icon": "gi:round-shield"
+  },
+  {
+    "id": 594,
+    "name": "Overworld Azada de Oro",
+    "icon": "gi:scythe"
+  },
+  {
+    "id": 595,
+    "name": "Jotunheim Lanza de Freya",
+    "icon": "gi:halberd"
+  },
+  {
+    "id": 596,
+    "name": "Espada Espartano",
+    "icon": "gi:gladius"
+  },
+  {
+    "id": 597,
+    "name": "Abanico de Outworld",
+    "icon": "gi:blade-drag"
+  },
+  {
+    "id": 598,
+    "name": "Maldito Maza del Cazador de Dragones",
+    "icon": "gi:mace-head"
+  },
+  {
+    "id": 599,
+    "name": "Escudo de Helheim",
+    "icon": "gi:bordered-shield"
+  },
+  {
+    "id": 600,
+    "name": "Infierno Kunai de Shao Kahn",
+    "icon": "gi:kunai"
+  },
+  {
+    "id": 601,
+    "name": "Maza del Abismo",
+    "icon": "gi:flail"
+  },
+  {
+    "id": 602,
+    "name": "Hacha de Midgard",
+    "icon": "gi:battle-axe"
+  },
+  {
+    "id": 603,
+    "name": "Maza de Atreus",
+    "icon": "gi:warhammer"
+  },
+  {
+    "id": 604,
+    "name": "Maza de Artorias",
+    "icon": "gi:spiked-mace"
+  },
+  {
+    "id": 605,
+    "name": "Lanza de Astora",
+    "icon": "gi:trident"
+  },
+  {
+    "id": 606,
+    "name": "Garras de Raiden",
+    "icon": "gi:tiger-claws"
+  },
+  {
+    "id": 607,
+    "name": "Garras de Escarcha",
+    "icon": "gi:claws"
+  },
+  {
+    "id": 608,
+    "name": "Espada Divino",
+    "icon": "gi:sword-blade"
+  },
+  {
+    "id": 609,
+    "name": "Helheim Hacha de Kratos",
+    "icon": "gi:tomahawk"
+  },
+  {
+    "id": 610,
+    "name": "End Espada del Aldeano",
+    "icon": "gi:broadsword"
+  },
+  {
+    "id": 611,
+    "name": "Arco del Aldeano",
+    "icon": "gi:bow-arrow"
+  },
+  {
+    "id": 612,
+    "name": "Espadón del Abismo",
+    "icon": "gi:greatsword"
+  },
+  {
+    "id": 613,
+    "name": "Lanza de Solaire",
+    "icon": "gi:spear-feather"
+  },
+  {
+    "id": 614,
+    "name": "Espadón del Gran Maestro",
+    "icon": "gi:claymore-explosive"
+  },
+  {
+    "id": 615,
+    "name": "Abanico de Liu Kang",
+    "icon": "gi:sword-spin"
+  },
+  {
+    "id": 616,
+    "name": "Lanza de Freya",
+    "icon": "gi:spear-hook"
+  },
+  {
+    "id": 617,
+    "name": "Obsidiana Peto de Oro",
+    "icon": "gi:chest-armor"
+  },
+  {
+    "id": 618,
+    "name": "Infierno Hombreras de Raiden",
+    "icon": "gi:shoulder-armor"
+  },
+  {
+    "id": 619,
+    "name": "Túnica del Nether",
+    "icon": "gi:cultist"
+  },
+  {
+    "id": 620,
+    "name": "Peto del Ender Dragon",
+    "icon": "gi:plate-armor"
+  },
+  {
+    "id": 621,
+    "name": "Maldito Coraza del Gran Maestro",
+    "icon": "gi:breastplate"
+  },
+  {
+    "id": 622,
+    "name": "Placas del End",
+    "icon": "gi:metal-plate"
+  },
+  {
+    "id": 623,
+    "name": "Chaqueta de Redstone",
+    "icon": "gi:leather-armor"
+  },
+  {
+    "id": 624,
+    "name": "Midgard Brazares de Atreus",
+    "icon": "gi:bracers"
+  },
+  {
+    "id": 625,
+    "name": "Almas Coraza de Scorpion",
+    "icon": "gi:ninja-armor"
+  },
+  {
+    "id": 626,
+    "name": "Pixelado Chaqueta del Creepers",
+    "icon": "gi:explosive-materials"
+  },
+  {
+    "id": 627,
+    "name": "Túnica del Cazador de Dragones",
+    "icon": "gi:robe"
+  },
+  {
+    "id": 628,
+    "name": "Redstone Chaqueta del Aldeano",
+    "icon": "gi:tunic"
+  },
+  {
+    "id": 629,
+    "name": "Bedrock Túnica del Wither",
+    "icon": "gi:warlock-hood"
+  },
+  {
+    "id": 630,
+    "name": "Tierra Hombreras de Shao Kahn",
+    "icon": "gi:spiked-armor"
+  },
+  {
+    "id": 631,
+    "name": "Coraza del Gran Maestro",
+    "icon": "gi:cuirass"
+  },
+  {
+    "id": 632,
+    "name": "Chaqueta del End",
+    "icon": "gi:cape-armor"
+  },
+  {
+    "id": 633,
+    "name": "Outworld Hombreras de Johnny Cage",
+    "icon": "gi:shoulder-pads"
+  },
+  {
+    "id": 634,
+    "name": "Outworld Coraza de Liu Kang",
+    "icon": "gi:abdominal-armor"
+  },
+  {
+    "id": 635,
+    "name": "Dragón Cota de Solaire",
+    "icon": "gi:chain-mail"
+  },
+  {
+    "id": 636,
+    "name": "Coraza de Obsidiana",
+    "icon": "gi:armor-vest"
+  },
+  {
+    "id": 637,
+    "name": "Tabardo de Solaire",
+    "icon": "gi:tabard"
+  },
+  {
+    "id": 638,
+    "name": "Armadura de Vanaheim",
+    "icon": "gi:lamellar"
+  },
+  {
+    "id": 639,
+    "name": "Peto Encantado",
+    "icon": "gi:magic-armor"
+  },
+  {
+    "id": 640,
+    "name": "Chaleco de Liu Kang",
+    "icon": "gi:leather-vest"
+  },
+  {
+    "id": 641,
+    "name": "Muspelheim Brazares de Kratos",
+    "icon": "gi:vambrace"
+  },
+  {
+    "id": 642,
+    "name": "Botas de Almas",
+    "icon": "gi:walking-boot"
+  },
+  {
+    "id": 643,
+    "name": "Botas de Escarcha",
+    "icon": "gi:ski-boot"
+  },
+  {
+    "id": 644,
+    "name": "Espinilleras de Oolacile",
+    "icon": "gi:greaves"
+  },
+  {
+    "id": 645,
+    "name": "Soportes de Odín",
+    "icon": "gi:robot-leg"
+  },
+  {
+    "id": 646,
+    "name": "Polainas de Havel",
+    "icon": "gi:armor-cuisses"
+  },
+  {
+    "id": 647,
+    "name": "Tierra Soportes de Johnny Cage",
+    "icon": "gi:shoes"
+  },
+  {
+    "id": 648,
+    "name": "Polainas de Solaire",
+    "icon": "gi:leg"
+  },
+  {
+    "id": 649,
+    "name": "Espartano Soportes de Valquiria",
+    "icon": "gi:winged-leg"
+  },
+  {
+    "id": 650,
+    "name": "Grebas de Liu Kang",
+    "icon": "gi:leg-armor"
+  },
+  {
+    "id": 651,
+    "name": "Botas del No Muerto",
+    "icon": "gi:boots"
+  },
+  {
+    "id": 652,
+    "name": "Calzado de Johnny Cage",
+    "icon": "gi:running-shoe"
+  },
+  {
+    "id": 653,
+    "name": "Soportes de Vanaheim",
+    "icon": "gi:leather-boot"
+  },
+  {
+    "id": 654,
+    "name": "Calzado del Abismo",
+    "icon": "gi:armored-pants"
+  },
+  {
+    "id": 655,
+    "name": "Botas de Caos",
+    "icon": "gi:rubber-boot"
+  },
+  {
+    "id": 656,
+    "name": "Sandalias de Freya",
+    "icon": "gi:sandal"
+  },
+  {
+    "id": 657,
+    "name": "Netherite Soportes de Hierro",
+    "icon": "gi:steeltoe-boots"
+  },
+  {
+    "id": 658,
+    "name": "Grebas del Caballero Alaba",
+    "icon": "gi:gaiter"
+  },
+  {
+    "id": 659,
+    "name": "Soportes del Wither",
+    "icon": "gi:pegleg"
+  },
+  {
+    "id": 660,
+    "name": "Midgard Grebas de Odín",
+    "icon": "gi:metal-boot"
+  },
+  {
+    "id": 661,
+    "name": "Grebas de Outworld",
+    "icon": "gi:hoof"
+  },
+  {
+    "id": 662,
+    "name": "Pies de Bedrock",
+    "icon": "gi:boot-stomp"
+  },
+  {
+    "id": 663,
+    "name": "Tierra Calzado de Liu Kang",
+    "icon": "gi:sticky-boot"
+  },
+  {
+    "id": 664,
+    "name": "Botas de Combate",
+    "icon": "gi:chelsea-boot"
+  },
+  {
+    "id": 665,
+    "name": "Sandalias de Alfheim",
+    "icon": "gi:barefoot"
+  },
+  {
+    "id": 666,
+    "name": "Sangriento Botas de Raiden",
+    "icon": "gi:boot-kick"
+  },
+  {
+    "id": 735,
+    "name": "Vial de Energía Básica",
+    "icon": "gi:bottled-bolt"
+  },
+  {
+    "id": 737,
+    "name": "Elixir de Resistencia",
+    "icon": "gi:glass-heart"
+  },
+  {
+    "id": 739,
+    "name": "Esencia de Guerrero",
+    "icon": "gi:muscle-up"
+  },
+  {
+    "id": 741,
+    "name": "Ambrosía del Olimpo",
+    "icon": "gi:amphora"
+  },
+  {
+    "id": 743,
+    "name": "Esencia de Gravedad Cero",
+    "icon": "gi:bubbling-flask"
+  }
+]

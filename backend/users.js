@@ -2,6 +2,7 @@ import express from 'express';
 import { query } from './db.js';
 import { authenticate } from './middleware.js';
 import { autoGrantPendingChests } from './utils/bossRewards.js';
+import sharp from 'sharp';
 
 import { recalculateUserStats, getXPForLevel, augmentUserWithLevels } from './utils/stats.js';
 
@@ -14,16 +15,24 @@ router.get('/me', authenticate, async (req, res) => {
     await autoGrantPendingChests(req.user.id);
 
     const result = await query(
-      `SELECT u.id, u.name, u.email, u.avatar_url, u.total_reps, u.is_private, u.has_seen_easter_modal, u.has_seen_damage_overhaul, u.has_seen_avatar_overhaul, u.daily_goal, u.body_weight, u.reppy_coins, u.boss_chests, u.level_chests, u.str_xp, u.dex_xp, u.end_xp, u.vig_xp, u.int_xp, u.fth_xp, u.cha_xp, u.total_xp, u.current_level, u.equipped_title_id, u.equipped_border_id, u.equipped_avatar_id, u.equipped_background_id, u.equipped_post_background_id, u.is_admin, u.theme,
+      `SELECT u.*,
               t.name as title_name, t.css_value as title_css,
               b.css_value as border_css,
               a.css_value as avatar_css,
-              bg.css_value as background_css
+              bg.css_value as background_css,
+              iHead.stats as head_stats,
+              iWeapon.stats as weapon_stats,
+              iArmor.stats as armor_stats,
+              iBoots.stats as boots_stats
        FROM users u
        LEFT JOIN cosmetics t ON u.equipped_title_id = t.id
        LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
        LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
        LEFT JOIN cosmetics bg ON u.equipped_background_id = bg.id
+       LEFT JOIN items iHead ON u.equipped_head_id = iHead.id
+       LEFT JOIN items iWeapon ON u.equipped_weapon_id = iWeapon.id
+       LEFT JOIN items iArmor ON u.equipped_armor_id = iArmor.id
+       LEFT JOIN items iBoots ON u.equipped_boots_id = iBoots.id
        WHERE u.id = $1`,
       [req.user.id]
     );
@@ -97,13 +106,38 @@ router.patch('/profile', authenticate, async (req, res) => {
 
 // Update avatar (specifically) - Supporting both PATCH and POST
 const updateAvatar = async (req, res) => {
-  const { avatar_url } = req.body;
+  let { avatar_url, is_custom } = req.body;
   
-  // Only allow valid avatar paths
-  const validAvatars = [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 14, 16, 17, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40].map(i => `/img/avatars/avatar_${i}.webp`);
-  
-  if (!validAvatars.includes(avatar_url)) {
-    return res.status(400).json({ message: 'Invalid avatar selection' });
+  if (is_custom) {
+    // Basic safety check for base64 images
+    if (!avatar_url.startsWith('data:image/')) {
+      return res.status(400).json({ message: 'Invalid custom avatar format' });
+    }
+
+    try {
+      // Server-side compression/optimization to guarantee small size
+      const base64Data = avatar_url.split(';base64,').pop();
+      const buffer = Buffer.from(base64Data, 'base64');
+      
+      const optimizedBuffer = await sharp(buffer)
+        .resize(128, 128, { fit: 'cover' })
+        .webp({ quality: 70 })
+        .toBuffer();
+      
+      avatar_url = `data:image/webp;base64,${optimizedBuffer.toString('base64')}`;
+      
+      console.log(`[AVATAR] Optimized custom avatar. New size: ${Math.round(avatar_url.length / 1024)}KB`);
+    } catch (sharpError) {
+      console.error('Sharp optimization failed:', sharpError);
+      return res.status(400).json({ message: 'Failed to process image' });
+    }
+  } else {
+    // Only allow valid avatar paths
+    const validAvatars = [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 14, 16, 17, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40].map(i => `/img/avatars/avatar_${i}.webp`);
+    
+    if (!validAvatars.includes(avatar_url)) {
+      return res.status(400).json({ message: 'Invalid avatar selection' });
+    }
   }
 
   try {
@@ -121,20 +155,6 @@ const updateAvatar = async (req, res) => {
 router.patch('/avatar', authenticate, updateAvatar);
 router.post('/avatar', authenticate, updateAvatar);
 
-// Mark easter modal as seen
-router.patch('/seen-easter-modal', authenticate, async (req, res) => {
-  try {
-    await query(
-      'UPDATE users SET has_seen_easter_modal = true WHERE id = $1',
-      [req.user.id]
-    );
-    res.json({ message: 'Modal marked as seen' });
-  } catch (error) {
-    console.error('Error updating modal state:', error);
-    res.status(500).json({ message: 'Error updating modal state' });
-  }
-});
-
 // Delete account (New requirement)
 router.delete('/me', authenticate, async (req, res) => {
   try {
@@ -151,31 +171,45 @@ router.delete('/me', authenticate, async (req, res) => {
   }
 });
 
-// Mark damage overhaul modal as seen
-router.patch('/seen-damage-modal', authenticate, async (req, res) => {
+// Mark rpg release modal as seen
+router.patch('/seen-rpg-release', authenticate, async (req, res) => {
   try {
     await query(
-      'UPDATE users SET has_seen_damage_overhaul = true WHERE id = $1',
+      'UPDATE users SET has_seen_rpg_release = true WHERE id = $1',
       [req.user.id]
     );
-    res.json({ message: 'Damage modal marked as seen' });
+    res.json({ message: 'RPG release modal marked as seen' });
   } catch (error) {
     console.error('Error updating modal state:', error);
     res.status(500).json({ message: 'Error updating modal state' });
   }
 });
 
-// Mark avatar overhaul modal as seen
-router.patch('/seen-avatar-modal', authenticate, async (req, res) => {
+// Get user inventory (all items owned)
+router.get('/inventory', authenticate, async (req, res) => {
   try {
-    await query(
-      'UPDATE users SET has_seen_avatar_overhaul = true WHERE id = $1',
+    const result = await query(
+      `SELECT ui.*, i.name, i.description, i.type, i.rarity, i.svg_key, i.image_url, i.stats, i.css_value, i.is_customizable
+       FROM user_items ui
+       JOIN items i ON ui.item_id = i.id
+       WHERE ui.user_id = $1
+       ORDER BY ui.acquired_at DESC`,
       [req.user.id]
     );
-    res.json({ message: 'Avatar modal marked as seen' });
+    
+    // Parse stats if they are string
+    const items = result.rows.map(item => {
+      let parsedStats = item.stats;
+      if (typeof item.stats === 'string') {
+        try { parsedStats = JSON.parse(item.stats); } catch(e) { parsedStats = {}; }
+      }
+      return { ...item, stats: parsedStats || {}, owned: true, is_unlocked: true };
+    });
+    
+    res.json(items);
   } catch (error) {
-    console.error('Error updating modal state:', error);
-    res.status(500).json({ message: 'Error updating modal state' });
+    console.error('Error fetching inventory:', error);
+    res.status(500).json({ message: 'Error fetching inventory' });
   }
 });
 

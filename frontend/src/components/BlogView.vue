@@ -396,6 +396,7 @@ const shareWhatsapp = () => {
 };
 
 const recordBlogRead = async () => {
+  if (!authStore.isAuthenticated) return;
   const slug = route.params.slug;
   if (!slug) return;
   try {

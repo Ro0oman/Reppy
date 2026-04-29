@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-4xl mx-auto px-4 py-12">
     <div class="mb-12 space-y-2">
-      <h1 class="text-4xl font-black text-foreground uppercase italic tracking-tighter">PROTOCOLO<span class="text-primary-500">.</span>NOTIFICACIONES</h1>
+      <h1 class="text-4xl font-black text-foreground uppercase italic tracking-tighter">NOTIFICACIONES</h1>
       <p class="text-[12px] font-black text-muted uppercase tracking-[0.4em]">REGISTRO CENTRAL DE INTERACCIONES</p>
     </div>
 
@@ -66,36 +66,40 @@
 
 <script setup>
 import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { Bell, Heart, MessageSquare, Trophy, Package, Swords, PartyPopper, ChevronRight } from 'lucide-vue-next';
+import { useRouter, useRoute } from 'vue-router';
+import { Bell, BicepsFlexed, MessageSquare, Trophy, Package, Swords, PartyPopper, ChevronRight } from 'lucide-vue-next';
 import { useNotificationsStore } from '../stores/notifications';
 import { useI18nStore } from '../stores/i18n';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
-import { es, enUS } from 'date-fns/locale';
+import { es } from 'date-fns/locale/es';
+import { enUS } from 'date-fns/locale/en-US';
 import AvatarFrame from './AvatarFrame.vue';
 
 const store = useNotificationsStore();
 const i18n = useI18nStore();
 const router = useRouter();
+const route = useRoute();
 const emit = defineEmits(['start', 'viewProfile']);
 
 const getIcon = (type) => {
   switch (type) {
-    case 'LIKE': return Heart;
+    case 'LIKE': return BicepsFlexed;
     case 'COMMENT': return MessageSquare;
     case 'LEVEL_UP': return Trophy;
     case 'NEW_CHEST': return Package;
     case 'BOSS_DEFEATED': return Swords;
+    case 'PVP_CHALLENGE': return Swords;
     default: return Bell;
   }
 };
 
 const getIconColor = (type) => {
   switch (type) {
-    case 'LIKE': return 'text-red-500';
+    case 'LIKE': return 'text-amber-500';
     case 'COMMENT': return 'text-primary-500';
     case 'LEVEL_UP': return 'text-yellow-500';
     case 'NEW_CHEST': return 'text-green-500';
+    case 'PVP_CHALLENGE': return 'text-primary-500';
     default: return 'text-muted';
   }
 };
@@ -124,6 +128,9 @@ const handleNotifClick = (notif) => {
     router.push('/profile');
   } else if (notif.type === 'BOSS_DEFEATED') {
     router.push('/dashboard');
+  } else if (notif.type === 'PVP_CHALLENGE') {
+    const lang = route.params.lang || i18n.locale || 'es';
+    router.push(`/${lang}/pvp/${notif.target_id}`);
   }
 };
 

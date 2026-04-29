@@ -131,15 +131,29 @@
   .card-stats {
     background: hsla(var(--card), var(--card-alpha));
     backdrop-filter: blur(16px) saturate(160%);
-    border: 1px solid hsla(var(--border), var(--border-alpha, 1));
+    border: 1px solid hsla(var(--foreground) / 0.05);
     border-radius: 32px;
     padding: 28px;
     transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
     overflow: hidden;
     position: relative;
     box-shadow: 
-      0 10px 30px -15px rgba(0, 0, 0, 0.2),
+      0 10px 30px -15px rgba(0, 0, 0, 0.1),
       inset 0 0 0 1px hsla(var(--foreground) / 0.02);
+  }
+
+  .dark .card-stats {
+    border: 1px solid hsla(var(--border), var(--border-alpha, 1));
+    box-shadow: 
+      0 10px 30px -15px rgba(0, 0, 0, 0.3),
+      inset 0 0 0 1px hsla(var(--foreground) / 0.02);
+  }
+
+  @media (max-width: 640px) {
+    .card-stats {
+      padding: 16px;
+      border-radius: 24px;
+    }
   }
 
   .card-stats:hover {
@@ -153,17 +167,22 @@
 
   /* Tactical Elements */
   .input-tactical {
-    @apply w-full bg-black/40 border border-white/5 rounded-xl px-5 py-4 
+    @apply w-full bg-foreground/5 border border-foreground/5 rounded-xl px-5 py-4 
            text-foreground font-medium outline-none transition-all duration-300
            placeholder:text-muted/30 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 
-           shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)];
+           shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)];
     font-family: 'JetBrains Mono', monospace;
   }
 
   .select-tactical {
-    @apply w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 
+    @apply w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 
            text-foreground font-medium outline-none transition-all duration-300
            focus:border-primary/50 focus:ring-4 focus:ring-primary/10;
+  }
+
+  .bg-tactical {
+    background-color: hsla(var(--foreground) / 0.05);
+    border: 1px solid hsla(var(--foreground) / 0.1);
   }
 }
 
@@ -269,7 +288,7 @@
   /* Precision UI Classes */
   .ranking-1-gold {
     position: relative;
-    background: linear-gradient(135deg, #121215 0%, #1a1a1e 100%) !important;
+    background: hsla(var(--card), 1) !important;
     overflow: visible !important;
   }
 
@@ -343,6 +362,15 @@
   100% { transform: translateX(100%); }
 }
 
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s ease-in-out infinite;
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; transform: scale(1); filter: brightness(1); }
+  50% { opacity: 0.85; transform: scale(1.02); filter: brightness(1.2); }
+}
+
 /* --- Premium Blog & Authority Content --- */
 .prose table {
   @apply w-full border-collapse rounded-2xl overflow-hidden my-12 border border-border/40;
@@ -366,4 +394,37 @@
 /* Smooth reveal for TOC */
 .blog-toc-active {
   @apply text-primary border-primary;
+}
+
+/* Stagger List Animations */
+.stagger-move,
+.stagger-enter-active,
+.stagger-leave-active {
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.stagger-enter-from {
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+}
+
+.stagger-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.stagger-leave-active {
+  position: absolute;
+}
+
+/* Floating Data Animations */
+@keyframes float-up-fade {
+  0% { transform: translateY(0); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateY(-80px); opacity: 0; }
+}
+
+.floating-data-enter-active {
+  animation: float-up-fade 1.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
 }

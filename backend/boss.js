@@ -60,6 +60,8 @@ router.get('/active', optionalAuthenticate, async (req, res) => {
     let daily_damage = 0;
     let chests_claimed = 0;
     let boss_chests = 0;
+    let epic_chests = 0;
+    let legendary_chests = 0;
 
     if (req.user) {
       // Get user's personal participation and chest status
@@ -94,8 +96,10 @@ router.get('/active', optionalAuthenticate, async (req, res) => {
       await autoGrantPendingChests(req.user.id);
 
       // Refresh user chest count
-      const finalUserRes = await query('SELECT boss_chests FROM users WHERE id = $1', [req.user.id]);
+      const finalUserRes = await query('SELECT boss_chests, epic_chests, legendary_chests FROM users WHERE id = $1', [req.user.id]);
       boss_chests = finalUserRes.rows[0]?.boss_chests || 0;
+      epic_chests = finalUserRes.rows[0]?.epic_chests || 0;
+      legendary_chests = finalUserRes.rows[0]?.legendary_chests || 0;
     }
 
     // Get Top Damage Dealer for this boss
@@ -121,6 +125,8 @@ router.get('/active', optionalAuthenticate, async (req, res) => {
       daily_damage,
       chests_claimed,
       boss_chests,
+      epic_chests,
+      legendary_chests,
       top_damage_dealer: req.user ? top_damage_dealer : null
     });
   } catch (error) {
@@ -153,13 +159,22 @@ router.post('/claim-chest/:bossId', authenticate, async (req, res) => {
     }
 
     await query('BEGIN');
-    await query('UPDATE users SET boss_chests = boss_chests + 1 WHERE id = $2', [userId]);
+    if (boss.is_legendary) {
+      await query('UPDATE users SET legendary_chests = legendary_chests + 1 WHERE id = $1', [userId]);
+    } else if (boss.is_epic) {
+      await query('UPDATE users SET epic_chests = epic_chests + 1 WHERE id = $1', [userId]);
+    } else {
+      await query('UPDATE users SET boss_chests = boss_chests + 1 WHERE id = $1', [userId]);
+    }
     await query('UPDATE event_participants SET chests_claimed = 1 WHERE boss_fight_id = $1 AND user_id = $2', [bossId, userId]);
     await query('COMMIT');
 
+    const chestType = boss.is_legendary ? 'legendary' : (boss.is_epic ? 'epic' : 'normal');
+
     res.json({ 
-      message: '¡Cofre reclamado con éxito! Ve a tu inventario para abrirlo.',
-      new_chests_claimed: 1 
+      message: boss.is_legendary ? '¡Cofre LEGENDARIO reclamado!' : (boss.is_epic ? '¡Cofre ÉPICO reclamado!' : '¡Cofre reclamado!'),
+      new_chests_claimed: 1,
+      chest_type: chestType
     });
   } catch (error) {
     await query('ROLLBACK');
@@ -168,7 +183,7 @@ router.post('/claim-chest/:bossId', authenticate, async (req, res) => {
   }
 });
 
-// Open Chest - CS:GO Style Reward Logic
+// Open Chest - Clash Royale Style (1-3 items + Gold)
 router.post('/open-chest', authenticate, async (req, res) => {
   const userId = req.user.id;
 
@@ -180,72 +195,99 @@ router.post('/open-chest', authenticate, async (req, res) => {
 
     await query('BEGIN');
 
-    let rewardItem = null;
-    let rewardCoins = 250; // Base coins if no item
-    let message = '';
+    // 1. Determine number of item rewards (1 to 2) - slight nerf for normal chest
+    const numItems = Math.floor(Math.random() * 2) + 1;
+    const rewards = [];
+    let totalCoins = 0;
 
-    // 1. Try to find a random unowned Seasonal item
-    const seasonalRes = await query(`
-      SELECT c.* FROM cosmetics c
-      WHERE c.is_seasonal = TRUE
-      AND NOT EXISTS (SELECT 1 FROM user_inventory ui WHERE ui.cosmetic_id = c.id AND ui.user_id = $1)
-      ORDER BY RANDOM() LIMIT 1
-    `, [userId]);
+    // 2. Base Gold (always given)
+    const baseGold = 200;
+    totalCoins += baseGold;
+    rewards.push({ type: 'coins', amount: baseGold, message: 'Oro garantizado' });
 
-    if (seasonalRes.rows.length > 0) {
-      rewardItem = seasonalRes.rows[0];
-      message = `¡Increíble! Has obtenido un objeto de TEMPORADA: ${rewardItem.name}`;
-      rewardCoins = 100; // Bonus coins
-    } else {
-      // 2. Try to find a random unowned Normal item
-      const normalRes = await query(`
-        SELECT c.* FROM cosmetics c
-        WHERE c.is_seasonal = FALSE
-        AND NOT EXISTS (SELECT 1 FROM user_inventory ui WHERE ui.cosmetic_id = c.id AND ui.user_id = $1)
-        ORDER BY RANDOM() LIMIT 1
-      `, [userId]);
+    for (let i = 0; i < numItems; i++) {
+        // Random rarity weighted logic
+        const rand = Math.random();
+        let targetRarity = 'common';
+        if (rand < 0.005) targetRarity = 'calistenico';
+        else if (rand < 0.03) targetRarity = 'legendary';
+        else if (rand < 0.12) targetRarity = 'especial';
+        else if (rand < 0.35) targetRarity = 'rare';
 
-      if (normalRes.rows.length > 0) {
-        rewardItem = normalRes.rows[0];
-        message = `¡Genial! Has obtenido: ${rewardItem.name}`;
-        rewardCoins = 50; // Bonus coins
-      } else {
-        // 3. Give coins only
-        rewardCoins = 1000;
-        message = '¡Ya tienes todos los cosméticos disponibles! Has recibido Reppy Coins adicionales.';
-      }
+        // Try to find an unowned item of that rarity
+        let itemRes = await query(`
+            SELECT * FROM items 
+            WHERE rarity = $1 
+            AND type != 'bundle'
+            AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $2 AND item_id = items.id)
+            ORDER BY RANDOM() LIMIT 1
+        `, [targetRarity, userId]);
+
+        if (itemRes.rows.length > 0) {
+            const rewardItem = itemRes.rows[0];
+            rewards.push({ type: 'item', data: rewardItem });
+            await query(`
+                INSERT INTO user_items (user_id, item_id, is_new)
+                VALUES ($1, $2, TRUE)
+                ON CONFLICT (user_id, item_id) DO NOTHING
+            `, [userId, rewardItem.id]);
+        } else {
+            // User owns all items of this rarity. Try to find ANY unowned item.
+            let fallbackRes = await query(`
+                SELECT * FROM items 
+                WHERE type != 'bundle'
+                AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = items.id)
+                ORDER BY RANDOM() LIMIT 1
+            `, [userId]);
+
+            if (fallbackRes.rows.length > 0) {
+                const rewardItem = fallbackRes.rows[0];
+                rewards.push({ type: 'item', data: rewardItem, message: `Reemplazo de ${targetRarity}` });
+                await query(`
+                    INSERT INTO user_items (user_id, item_id, is_new)
+                    VALUES ($1, $2, TRUE)
+                    ON CONFLICT (user_id, item_id) DO NOTHING
+                `, [userId, rewardItem.id]);
+            } else {
+                // User owns EVERYTHING? Give gold compensation proportional to price of a random item of targetRarity
+                const priceRes = await query(`
+                    SELECT price FROM items 
+                    WHERE rarity = $1 AND type != 'bundle'
+                    ORDER BY RANDOM() LIMIT 1
+                `, [targetRarity]);
+                
+                const goldAmount = priceRes.rows[0]?.price || (targetRarity === 'calistenico' ? 5000 : 500);
+                totalCoins += goldAmount;
+                rewards.push({ 
+                    type: 'coins', 
+                    amount: goldAmount, 
+                    message: `Compensación: ${targetRarity.toUpperCase()} duplicado` 
+                });
+            }
+        }
     }
 
-    // Process Reward
-    if (rewardItem) {
-      await query(
-        `INSERT INTO user_inventory (user_id, cosmetic_id, is_new) 
-         VALUES ($1, $2, TRUE) 
-         ON CONFLICT (user_id, cosmetic_id) DO NOTHING`, 
-        [userId, rewardItem.id]
-      );
-    }
+    await query('UPDATE users SET boss_chests = boss_chests - 1, reppy_coins = reppy_coins + $1 WHERE id = $2', [totalCoins, userId]);
 
-    await query('UPDATE users SET boss_chests = boss_chests - 1, reppy_coins = reppy_coins + $1 WHERE id = $2', [rewardCoins, userId]);
-    
-    // Log the transaction (DEPRECATED: coin_transactions table removed)
-
-    // Get dummy items for the reel animation
-    const dummiesRes = await query(`
-      SELECT name, type, css_value, is_seasonal FROM cosmetics 
-      ORDER BY RANDOM() LIMIT 40
-    `);
+    // Reel items for legacy animation support
+    const dummiesRes = await query(`SELECT name, type, rarity FROM items WHERE type != 'bundle' ORDER BY RANDOM() LIMIT 40`);
 
     await query('COMMIT');
+
+    // For backward compatibility, pick the first item as 'main'
+    const firstItem = rewards.find(r => r.type === 'item');
 
     res.json({ 
       success: true,
       reward: {
-        item: rewardItem,
-        coins: rewardCoins,
-        message
+        item: firstItem ? firstItem.data : null,
+        coins: totalCoins,
+        message: `Has recuperado ${numItems} artefactos del boss.`,
+        rewards // New field for updated UI
       },
-      reel_items: dummiesRes.rows // Used for CS:GO animation
+      rewards, 
+      totalCoins,
+      reel_items: dummiesRes.rows
     });
   } catch (error) {
     await query('ROLLBACK');
@@ -254,7 +296,191 @@ router.post('/open-chest', authenticate, async (req, res) => {
   }
 });
 
-// Open Level-up Chest - Restricted to Common Items
+// Open Legendary Chest - Guaranteed Legendary + Usual Drops
+router.post('/open-legendary-chest', authenticate, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const userRes = await query('SELECT legendary_chests FROM users WHERE id = $1', [userId]);
+    if (userRes.rows.length === 0 || userRes.rows[0].legendary_chests <= 0) {
+      return res.status(400).json({ message: 'No tienes cofres legendarios para abrir' });
+    }
+
+    await query('BEGIN');
+
+    const rewards = [];
+    let totalCoins = 0;
+
+    // 1. Base Gold
+    const baseGold = 1000; // Legendary chest gives more base gold
+    totalCoins += baseGold;
+    rewards.push({ type: 'coins', amount: baseGold, message: 'Oro Legendario' });
+
+    // 2. GUARANTEED LEGENDARY ITEM
+    let legItemRes = await query(`
+        SELECT * FROM items 
+        WHERE rarity = 'legendary' AND type != 'bundle'
+        AND is_seasonal = TRUE
+        AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = items.id)
+        ORDER BY RANDOM() LIMIT 1
+    `, [userId]);
+
+    if (legItemRes.rows.length > 0) {
+        const rewardItem = legItemRes.rows[0];
+        rewards.push({ type: 'item', data: rewardItem, message: 'LEGENDARIO GARANTIZADO' });
+        await query(`INSERT INTO user_items (user_id, item_id, is_new) VALUES ($1, $2, TRUE)`, [userId, rewardItem.id]);
+    } else {
+        // User has all legendaries? Give huge gold compensation
+        totalCoins += 2500;
+        rewards.push({ type: 'coins', amount: 2500, message: 'Compensación: Todos los Legendarios obtenidos' });
+    }
+
+    // 3. 1-3 additional items (standard drops)
+    const extraItems = Math.floor(Math.random() * 3) + 1;
+    for (let i = 0; i < extraItems; i++) {
+        const rand = Math.random();
+        let targetRarity = 'common';
+        if (rand < 0.10) targetRarity = 'calistenico';
+        else if (rand < 0.25) targetRarity = 'legendary';
+        else if (rand < 0.50) targetRarity = 'especial';
+        else if (rand < 0.75) targetRarity = 'rare';
+
+        let itemRes = await query(`
+            SELECT * FROM items 
+            WHERE rarity = $1 AND type != 'bundle'
+            AND is_seasonal = TRUE
+            AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $2 AND item_id = items.id)
+            ORDER BY RANDOM() LIMIT 1
+        `, [targetRarity, userId]);
+
+        if (itemRes.rows.length > 0) {
+            const rewardItem = itemRes.rows[0];
+            rewards.push({ type: 'item', data: rewardItem });
+            await query(`INSERT INTO user_items (user_id, item_id, is_new) VALUES ($1, $2, TRUE)`, [userId, rewardItem.id]);
+        } else {
+             // Fallback gold
+             totalCoins += 500;
+             rewards.push({ type: 'coins', amount: 500, message: 'Botín extra en oro' });
+        }
+    }
+
+    await query('UPDATE users SET legendary_chests = legendary_chests - 1, reppy_coins = reppy_coins + $1 WHERE id = $2', [totalCoins, userId]);
+    
+    const dummiesRes = await query(`SELECT name, type, rarity FROM items WHERE type != 'bundle' ORDER BY RANDOM() LIMIT 40`);
+    await query('COMMIT');
+
+    const firstItem = rewards.find(r => r.type === 'item');
+
+    res.json({ 
+      success: true,
+      reward: {
+        item: firstItem ? firstItem.data : null,
+        coins: totalCoins,
+        message: `¡Cofre Legendario abierto!`,
+        rewards
+      },
+      rewards, 
+      totalCoins,
+      reel_items: dummiesRes.rows
+    });
+  } catch (error) {
+    await query('ROLLBACK');
+    console.error('Error opening legendary chest:', error);
+    res.status(500).json({ message: 'Error al abrir el cofre legendario' });
+  }
+});
+// Open Epic Chest - Guaranteed Special + Usual Drops
+router.post('/open-epic-chest', authenticate, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const userRes = await query('SELECT epic_chests FROM users WHERE id = $1', [userId]);
+    if (userRes.rows.length === 0 || userRes.rows[0].epic_chests <= 0) {
+      return res.status(400).json({ message: 'No tienes cofres épicos para abrir' });
+    }
+
+    await query('BEGIN');
+
+    const rewards = [];
+    let totalCoins = 0;
+
+    // 1. Base Gold
+    const baseGold = 800; 
+    totalCoins += baseGold;
+    rewards.push({ type: 'coins', amount: baseGold, message: 'Oro Épico' });
+
+    // 2. GUARANTEED SPECIAL ITEM
+    let epicItemRes = await query(`
+        SELECT * FROM items 
+        WHERE rarity = 'especial' AND type != 'bundle'
+        AND is_seasonal = TRUE
+        AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = items.id)
+        ORDER BY RANDOM() LIMIT 1
+    `, [userId]);
+
+    if (epicItemRes.rows.length > 0) {
+        const rewardItem = epicItemRes.rows[0];
+        rewards.push({ type: 'item', data: rewardItem, message: 'EPICO GARANTIZADO' });
+        await query(`INSERT INTO user_items (user_id, item_id, is_new) VALUES ($1, $2, TRUE)`, [userId, rewardItem.id]);
+    } else {
+        // Fallback gold
+        totalCoins += 1200;
+        rewards.push({ type: 'coins', amount: 1200, message: 'Compensación: Todos los Épicos obtenidos' });
+    }
+
+    // 3. 1-2 additional items
+    const extraItems = Math.floor(Math.random() * 2) + 1;
+    for (let i = 0; i < extraItems; i++) {
+        const rand = Math.random();
+        let targetRarity = 'common';
+        if (rand < 0.10) targetRarity = 'legendary';
+        else if (rand < 0.30) targetRarity = 'especial';
+        else if (rand < 0.60) targetRarity = 'rare';
+
+        let itemRes = await query(`
+            SELECT * FROM items 
+            WHERE rarity = $1 AND type != 'bundle'
+            AND is_seasonal = TRUE
+            AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $2 AND item_id = items.id)
+            ORDER BY RANDOM() LIMIT 1
+        `, [targetRarity, userId]);
+
+        if (itemRes.rows.length > 0) {
+            const rewardItem = itemRes.rows[0];
+            rewards.push({ type: 'item', data: rewardItem });
+            await query(`INSERT INTO user_items (user_id, item_id, is_new) VALUES ($1, $2, TRUE)`, [userId, rewardItem.id]);
+        } else {
+             totalCoins += 400;
+             rewards.push({ type: 'coins', amount: 400, message: 'Botín extra en oro' });
+        }
+    }
+
+    await query('UPDATE users SET epic_chests = epic_chests - 1, reppy_coins = reppy_coins + $1 WHERE id = $2', [totalCoins, userId]);
+    
+    const dummiesRes = await query(`SELECT name, type, rarity FROM items WHERE type != 'bundle' ORDER BY RANDOM() LIMIT 40`);
+    await query('COMMIT');
+
+    const firstItem = rewards.find(r => r.type === 'item');
+
+    res.json({ 
+      success: true,
+      reward: {
+        item: firstItem ? firstItem.data : null,
+        coins: totalCoins,
+        message: `¡Cofre Épico abierto!`,
+        rewards
+      },
+      rewards, 
+      totalCoins,
+      reel_items: dummiesRes.rows
+    });
+  } catch (error) {
+    await query('ROLLBACK');
+    console.error('Error opening epic chest:', error);
+    res.status(500).json({ message: 'Error al abrir el cofre épico' });
+  }
+});
+
 router.post('/open-level-chest', authenticate, async (req, res) => {
   const userId = req.user.id;
 
@@ -266,46 +492,39 @@ router.post('/open-level-chest', authenticate, async (req, res) => {
 
     await query('BEGIN');
 
+    // Level chest always gives 1 item + coins
     let rewardItem = null;
-    let rewardCoins = 0;
+    let rewardCoins = 200;
     let message = '';
 
-    // 1. Try to find a random unowned Common (non-seasonal) item
-    const commonRes = await query(`
-      SELECT c.* FROM cosmetics c
-      WHERE c.is_seasonal = FALSE
-      AND NOT EXISTS (SELECT 1 FROM user_inventory ui WHERE ui.cosmetic_id = c.id AND ui.user_id = $1)
+    // Try to find a random unowned Common/Rare item
+    const itemRes = await query(`
+      SELECT * FROM items
+      WHERE rarity IN ('common', 'rare')
+      AND type != 'bundle'
+      AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = items.id)
       ORDER BY RANDOM() LIMIT 1
     `, [userId]);
 
-    if (commonRes.rows.length > 0) {
-      rewardItem = commonRes.rows[0];
-      message = `¡Protocolo de Nivel completado! Has obtenido: ${rewardItem.name}`;
-      rewardCoins = 100; // Bonus coins
-    } else {
-      // 2. Give coins only (higher amount as consolation)
-      rewardCoins = 1000;
-      message = '¡Ya tienes todas las recompensas comunes disponibles! Has recibido Reppy Coins de alto nivel.';
-    }
-
-    // Process Reward
-    if (rewardItem) {
+    if (itemRes.rows.length > 0) {
+      rewardItem = itemRes.rows[0];
+      message = `¡Recompensa de Nivel recibida! Has obtenido: ${rewardItem.name}`;
       await query(
-        `INSERT INTO user_inventory (user_id, cosmetic_id, is_new) 
+        `INSERT INTO user_items (user_id, item_id, is_new) 
          VALUES ($1, $2, TRUE) 
-         ON CONFLICT (user_id, cosmetic_id) DO NOTHING`, 
+         ON CONFLICT (user_id, item_id) DO NOTHING`, 
         [userId, rewardItem.id]
       );
+    } else {
+      rewardCoins += 800;
+      message = '¡Ya tienes todas las recompensas de nivel! Has recibido Reppy Coins adicionales.';
     }
 
     await query('UPDATE users SET level_chests = level_chests - 1, reppy_coins = reppy_coins + $1 WHERE id = $2', [rewardCoins, userId]);
     
-    // Log the transaction (DEPRECATED: coin_transactions table removed)
-
-    // Get dummy items for the reel animation (filtered to common items for thematic consistency)
     const dummiesRes = await query(`
-      SELECT name, type, css_value, is_seasonal FROM cosmetics 
-      WHERE is_seasonal = FALSE
+      SELECT name, type, rarity FROM items 
+      WHERE rarity = 'common'
       ORDER BY RANDOM() LIMIT 40
     `);
 

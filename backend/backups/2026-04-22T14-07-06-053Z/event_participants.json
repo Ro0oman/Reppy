@@ -1,0 +1,170 @@
+[
+  {
+    "id": 22,
+    "boss_fight_id": 4,
+    "user_id": "user_15b566c0-0895-4802-971c-bf2b98e56c7c",
+    "damage_dealt": 0,
+    "chests_claimed": 0,
+    "joined_at": "2026-04-05T09:03:39.275Z"
+  },
+  {
+    "id": 94,
+    "boss_fight_id": 5,
+    "user_id": "101063640127017375063",
+    "damage_dealt": 0,
+    "chests_claimed": 1,
+    "joined_at": "2026-04-12T10:45:03.761Z"
+  },
+  {
+    "id": 102,
+    "boss_fight_id": 6,
+    "user_id": "101063640127017375063",
+    "damage_dealt": 0,
+    "chests_claimed": 0,
+    "joined_at": "2026-04-13T20:03:18.797Z"
+  },
+  {
+    "id": 90,
+    "boss_fight_id": 5,
+    "user_id": "113903862264612270084",
+    "damage_dealt": 0,
+    "chests_claimed": 1,
+    "joined_at": "2026-04-11T13:36:05.898Z"
+  },
+  {
+    "id": 84,
+    "boss_fight_id": 5,
+    "user_id": "104874471911797443021",
+    "damage_dealt": 0,
+    "chests_claimed": 1,
+    "joined_at": "2026-04-09T15:30:22.674Z"
+  },
+  {
+    "id": 1,
+    "boss_fight_id": 3,
+    "user_id": "113903862264612270084",
+    "damage_dealt": 0,
+    "chests_claimed": 1,
+    "joined_at": "2026-04-03T21:13:26.895Z"
+  },
+  {
+    "id": 19,
+    "boss_fight_id": 3,
+    "user_id": "104874471911797443021",
+    "damage_dealt": 0,
+    "chests_claimed": 1,
+    "joined_at": "2026-04-04T15:41:20.143Z"
+  },
+  {
+    "id": 10,
+    "boss_fight_id": 3,
+    "user_id": "user_15b566c0-0895-4802-971c-bf2b98e56c7c",
+    "damage_dealt": 0,
+    "chests_claimed": 1,
+    "joined_at": "2026-04-04T09:33:01.505Z"
+  },
+  {
+    "id": 4,
+    "boss_fight_id": 3,
+    "user_id": "101063640127017375063",
+    "damage_dealt": 0,
+    "chests_claimed": 1,
+    "joined_at": "2026-04-03T21:20:51.445Z"
+  },
+  {
+    "id": 104,
+    "boss_fight_id": 6,
+    "user_id": "104874471911797443021",
+    "damage_dealt": 0,
+    "chests_claimed": 1,
+    "joined_at": "2026-04-16T10:28:00.158Z"
+  },
+  {
+    "id": 114,
+    "boss_fight_id": 6,
+    "user_id": "113903862264612270084",
+    "damage_dealt": 0,
+    "chests_claimed": 1,
+    "joined_at": "2026-04-16T13:33:58.566Z"
+  },
+  {
+    "id": 31,
+    "boss_fight_id": 4,
+    "user_id": "108603121271969361100",
+    "damage_dealt": 0,
+    "chests_claimed": 0,
+    "joined_at": "2026-04-06T13:21:37.635Z"
+  },
+  {
+    "id": 23,
+    "boss_fight_id": 4,
+    "user_id": "104874471911797443021",
+    "damage_dealt": 0,
+    "chests_claimed": 1,
+    "joined_at": "2026-04-05T13:36:15.333Z"
+  },
+  {
+    "id": 28,
+    "boss_fight_id": 4,
+    "user_id": "113903862264612270084",
+    "damage_dealt": 0,
+    "chests_claimed": 1,
+    "joined_at": "2026-04-06T10:21:57.980Z"
+  },
+  {
+    "id": 33,
+    "boss_fight_id": 4,
+    "user_id": "101063640127017375063",
+    "damage_dealt": 0,
+    "chests_claimed": 1,
+    "joined_at": "2026-04-06T18:53:58.896Z"
+  },
+  {
+    "id": 143,
+    "boss_fight_id": 7,
+    "user_id": "113903862264612270084",
+    "damage_dealt": 8315,
+    "chests_claimed": 1,
+    "joined_at": "2026-04-17T14:59:03.261Z"
+  },
+  {
+    "id": 285,
+    "boss_fight_id": 8,
+    "user_id": "113903862264612270084",
+    "damage_dealt": 109,
+    "chests_claimed": 0,
+    "joined_at": "2026-04-22T12:33:16.558Z"
+  },
+  {
+    "id": 168,
+    "boss_fight_id": 7,
+    "user_id": "user_eed346b0-2e60-4d34-a228-59aba0c4552e",
+    "damage_dealt": 617,
+    "chests_claimed": 0,
+    "joined_at": "2026-04-18T09:04:56.014Z"
+  },
+  {
+    "id": 151,
+    "boss_fight_id": 7,
+    "user_id": "118413847408343069597",
+    "damage_dealt": 8197,
+    "chests_claimed": 0,
+    "joined_at": "2026-04-17T17:21:34.364Z"
+  },
+  {
+    "id": 166,
+    "boss_fight_id": 7,
+    "user_id": "101063640127017375063",
+    "damage_dealt": 322,
+    "chests_claimed": 0,
+    "joined_at": "2026-04-18T08:25:52.449Z"
+  },
+  {
+    "id": 120,
+    "boss_fight_id": 7,
+    "user_id": "104874471911797443021",
+    "damage_dealt": 9764,
+    "chests_claimed": 0,
+    "joined_at": "2026-04-17T10:08:28.240Z"
+  }
+]

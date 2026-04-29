@@ -17,11 +17,18 @@ router.post('/read', optionalAuthenticate, async (req, res) => {
 
   try {
     // 0. Validate slug against blogData
-    const isValid = blogData.some(p => p.slug === slug);
+    console.log(`[BLOG_DEBUG] Received slug: "${slug}" (Type: ${typeof slug})`);
+    
+    const availableSlugs = blogData.map(p => p.slug);
+    const isValid = availableSlugs.includes(slug);
+    
     if (!isValid) {
-      console.log('Invalid slug request:', slug);
-      console.log('Available slugs:', blogData.map(p => p.slug).join(', '));
-      return res.status(404).json({ message: 'Invalid blog slug' });
+      console.log(`[BLOG_ERROR] Slug mismatch! Received: "${slug}". Available Slugs: ${availableSlugs.join(', ')}`);
+      return res.status(404).json({ 
+        message: 'Invalid blog slug',
+        received: slug,
+        available: availableSlugs.slice(0, 5) // Send back a few for debugging
+      });
     }
 
     // If not logged in, just return success but no XP
@@ -43,12 +50,22 @@ router.post('/read', optionalAuthenticate, async (req, res) => {
     // 2. Add INT XP (e.g., 100 XP per unique post read)
     // Only recalculate if it's the first time they read this post
     if (isFirstRead) {
+      // Mission: Read Blog
+      const { updateMissionProgress } = await import('./utils/missions.js');
+      await updateMissionProgress(userId, 'read_blog', 1);
+
       const newStats = await recalculateUserStats(userId);
+      if (!newStats) {
+        return res.json({ 
+          message: 'Blog read recorded! (Stats sync delayed)', 
+          isFirstRead: true
+        });
+      }
       return res.json({ 
         message: 'Blog read recorded! INT XP awarded.', 
         isFirstRead: true,
-        intXP: newStats.intXP,
-        totalXP: newStats.totalXP 
+        intXP: newStats.int_xp || newStats.intXP,
+        totalXP: newStats.total_xp || newStats.totalXP 
       });
     }
 

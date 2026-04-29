@@ -11,7 +11,7 @@ router.post('/cosmetics', authenticate, isAdmin, async (req, res) => {
   const { name, description, type, price, css_value, is_seasonal, rarity } = req.body;
   try {
     const result = await query(
-      'INSERT INTO cosmetics (name, description, type, price, css_value, is_seasonal, rarity) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      'INSERT INTO items (name, description, type, price, css_value, is_seasonal, rarity) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
       [name, description, type, price, css_value, is_seasonal || false, rarity || 'common']
     );
     res.status(201).json(result.rows[0]);
@@ -26,7 +26,7 @@ router.put('/cosmetics/:id', authenticate, isAdmin, async (req, res) => {
   const { name, description, type, price, css_value, is_seasonal, rarity } = req.body;
   try {
     const result = await query(
-      'UPDATE cosmetics SET name=$1, description=$2, type=$3, price=$4, css_value=$5, is_seasonal=$6, rarity=$7 WHERE id=$8 RETURNING *',
+      'UPDATE items SET name=$1, description=$2, type=$3, price=$4, css_value=$5, is_seasonal=$6, rarity=$7 WHERE id=$8 RETURNING *',
       [name, description, type, price, css_value, is_seasonal || false, rarity || 'common', id]
     );
     res.json(result.rows[0]);
@@ -39,7 +39,7 @@ router.put('/cosmetics/:id', authenticate, isAdmin, async (req, res) => {
 router.delete('/cosmetics/:id', authenticate, isAdmin, async (req, res) => {
   const { id } = req.params;
   try {
-    await query('DELETE FROM cosmetics WHERE id = $1', [id]);
+    await query('DELETE FROM items WHERE id = $1', [id]);
     res.json({ message: 'Cosmetic deleted' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting cosmetic' });

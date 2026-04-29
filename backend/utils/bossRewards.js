@@ -19,25 +19,50 @@ export async function autoGrantPendingChests(userId) {
     );
 
     if (pendingChestsRes.rows.length > 0) {
-      const pendingCount = pendingChestsRes.rows.length;
+      const pendingBossIds = pendingChestsRes.rows.map(b => b.id);
+      
+      // Separate normal, epic and legendary chests
+      const typesRes = await query(
+        `SELECT is_legendary, is_epic, COUNT(*) as count 
+         FROM boss_fights 
+         WHERE id = ANY($1) 
+         GROUP BY is_legendary, is_epic`,
+        [pendingBossIds]
+      );
+      
+      let normalCount = 0;
+      let epicCount = 0;
+      let legendaryCount = 0;
+      
+      typesRes.rows.forEach(row => {
+        if (row.is_legendary) legendaryCount = parseInt(row.count);
+        else if (row.is_epic) epicCount = parseInt(row.count);
+        else normalCount = parseInt(row.count);
+      });
+
       await query('BEGIN');
       try {
-        // Increase user's chest count
-        await query(
-          'UPDATE users SET boss_chests = boss_chests + $1 WHERE id = $2', 
-          [pendingCount, userId]
-        );
+        // Increase user's chest count correctly
+        if (normalCount > 0) {
+          await query('UPDATE users SET boss_chests = boss_chests + $1 WHERE id = $2', [normalCount, userId]);
+        }
+        if (epicCount > 0) {
+          await query('UPDATE users SET epic_chests = epic_chests + $1 WHERE id = $2', [epicCount, userId]);
+        }
+        if (legendaryCount > 0) {
+          await query('UPDATE users SET legendary_chests = legendary_chests + $1 WHERE id = $2', [legendaryCount, userId]);
+        }
         
         // Mark these bosses as claimed for this user
         await query(
           `UPDATE event_participants SET chests_claimed = 1 
-           WHERE user_id = $1 AND boss_fight_id IN (
-             SELECT id FROM boss_fights WHERE status = 'defeated'
-           ) AND damage_dealt > 0 AND chests_claimed = 0`,
-          [userId]
+           WHERE user_id = $1 AND boss_fight_id = ANY($2)`,
+          [userId, pendingBossIds]
         );
         
         await query('COMMIT');
+
+        const pendingCount = normalCount + epicCount + legendaryCount;
 
         // Trigger Notification
         await createNotification(

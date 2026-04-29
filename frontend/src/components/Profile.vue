@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 pt-12 pb-32 space-y-12 animate-in relative z-10">
+  <div class="max-w-7xl mx-auto px-4 pt-24 pb-32 space-y-12 animate-in relative z-10">
     <div v-if="loading" class="flex flex-col items-center justify-center py-32">
       <div class="w-12 h-12 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
       <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em] mt-8">{{ i18nStore.t('profile_decrypting') }}</p>
@@ -7,13 +7,13 @@
     
     <template v-else>
       <!-- Profile Header Showcase (The Command Center) -->
-      <div class="card-stats p-8 md:p-12 relative flex flex-col md:flex-row items-center md:items-start gap-10 text-center md:text-left border-border group">
+      <div class="card-stats p-5 md:p-12 relative flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-10 text-center md:text-left border-border group overflow-hidden">
         <!-- Background Power Detail -->
         <div class="absolute -top-32 -right-32 w-[500px] h-[500px] bg-primary-500/5 blur-[120px] rounded-full pointer-events-none group-hover:bg-primary-500/10 transition-colors duration-1000"></div>
 
         <!-- Avatar Core -->
-        <div class="relative group/avatar">
-          <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :avatar-css="user.avatar_css" :size="160" />
+        <div class="relative group/avatar shrink-0">
+          <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :avatar-css="user.avatar_css" :size="windowWidth < 768 ? 100 : 160" />
           <button v-if="isOwnProfile" 
                   @click="showAvatarSelector = true" 
                   :title="i18nStore.locale === 'es' ? 'Cambiar Clase/Icono' : 'Change Class/Icon'"
@@ -25,17 +25,17 @@
         <!-- Identity & Status -->
         <div class="flex-1 space-y-6">
           <div class="space-y-1">
-            <h2 class="text-4xl md:text-5xl font-black text-industrial tracking-tighter text-foreground uppercase italic" :class="user.title_css">
+            <h1 class="text-4xl md:text-7xl font-black text-foreground italic uppercase tracking-tighter leading-none mb-2 drop-shadow-2xl break-words">
               {{ user.name }}
-            </h2>
+            </h1>
             <div class="flex items-center justify-center md:justify-start gap-3">
               <span class="w-2 h-2 rounded-full bg-neon-lime animate-pulse"></span>
               <p class="text-xs font-black text-muted uppercase tracking-[0.25em] font-tight">{{ user.title_name || i18nStore.t('profile_recruit') }}</p>
             </div>
           </div>
 
-          <div class="flex flex-wrap items-center justify-center md:justify-start gap-4">
-            <div class="flex items-center gap-3 bg-surface/5 px-5 py-3 rounded-xl border border-border group/coins">
+          <div class="flex flex-col sm:flex-row flex-wrap items-center justify-center md:justify-start gap-4">
+            <div class="w-full sm:w-auto flex items-center justify-center sm:justify-start gap-3 bg-surface/5 px-5 py-3 rounded-xl border border-border group/coins">
               <Coins class="w-4 h-4 text-primary-500 transition-transform" />
               <div class="flex items-baseline gap-1.5">
                 <span class="text-2xl font-black text-precision text-foreground leading-none">{{ user.reppy_coins || 0 }}</span>
@@ -44,18 +44,18 @@
             </div>
 
             <!-- Global Character Level Display -->
-            <div class="flex items-center gap-4 bg-primary-500/5 px-6 py-3 rounded-2xl border border-primary-500/20 group/level shadow-lg shadow-primary-500/5">
-              <div class="flex flex-col">
-                <div class="flex items-baseline gap-2">
-                  <span class="text-[10px] font-black text-primary-500 uppercase tracking-[0.2em]">{{ i18nStore.t('codex_lv_up').toUpperCase() }}</span>
+            <div class="w-full sm:w-auto flex items-center gap-4 bg-primary-500/5 px-6 py-3 rounded-2xl border border-primary-500/20 group/level shadow-lg shadow-primary-500/5">
+              <div class="flex flex-col w-full sm:w-auto">
+                <div class="flex items-baseline justify-center sm:justify-start gap-2">
+                  <span class="text-[9px] font-black text-primary-500 uppercase tracking-[0.2em]">{{ i18nStore.t('codex_lv_up').toUpperCase() }}</span>
                   <span class="text-3xl font-black text-foreground italic leading-none font-industrial">{{ user.current_level || 1 }}</span>
                 </div>
                 <!-- XP Needed Info -->
-                <div class="flex items-center gap-2 mt-1">
-                  <div class="h-1 w-24 bg-surface rounded-full overflow-hidden border border-white/5">
+                <div class="flex items-center justify-center sm:justify-start gap-2 mt-1">
+                  <div class="h-1.5 w-full sm:w-32 bg-foreground/10 rounded-full overflow-hidden border border-border/40">
                     <div class="h-full bg-primary-500 transition-all duration-1000" :style="{ width: `${((user.xp_into_level || 0) / (user.xp_for_next_level || 1000)) * 100}%` }"></div>
                   </div>
-                  <span class="text-[8px] font-black text-muted uppercase tracking-tighter">
+                  <span class="text-[8px] font-black text-muted uppercase tracking-tighter shrink-0">
                     {{ (user.xp_for_next_level || 1000) - (user.xp_into_level || 0) }} {{ i18nStore.t('profile_xp_to_next') }}
                   </span>
                 </div>
@@ -69,30 +69,46 @@
           </div>
           
           <!-- RPG Metrics (The Attributes Grid) -->
-          <div class="flex flex-col xl:flex-row items-center xl:items-end gap-10 w-full mt-8">
-            <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 w-full max-w-3xl">
+          <div class="flex flex-col xl:flex-row items-center xl:items-end gap-6 md:gap-10 w-full mt-8">
+            <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-2 md:gap-3 w-full max-w-4xl">
               <div v-for="attr in attributes" :key="attr.key" 
                   class="p-4 rounded-xl border border-border bg-surface/20 group/attr transition-all"
                   :class="getAttrColor(attr.lvl)">
                 <p class="text-[9px] font-black uppercase tracking-[0.2em] mb-2 font-tight" :class="attr.labelColor">{{ attr.key }}</p>
                 <div class="flex flex-col leading-none">
-                  <span class="text-2xl font-black text-precision text-foreground">LVL {{ attr.lvl }}</span>
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-2xl font-black text-precision text-foreground">LVL {{ attr.lvl }}</span>
+                    <span v-if="attr.bonus > 0" class="text-[10px] font-black text-neon-lime animate-pulse">(+{{ attr.bonus }})</span>
+                  </div>
                   <span class="text-[8px] font-bold text-muted mt-1 tabular-nums">{{ attr.xp }} XP</span>
                 </div>
               </div>
             </div>
-            <div class="flex items-center gap-3 shrink-0">
-            <button @click="showInfoModal = true" 
-                   :title="i18nStore.t('profile_guide_title')"
-                   class="flex items-center gap-3 bg-surface/5 px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[9px] font-black tracking-widest h-fit">
-              <HelpCircle class="w-4 h-4" />
-              CODEX INFO
-            </button>
+            <div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
+            <router-link :to="{ name: 'codex' }" 
+                   class="flex items-center gap-3 bg-surface/5 px-4 md:px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[9px] font-black tracking-widest h-fit">
+              <BookOpen class="w-4 h-4 text-primary-500" />
+              {{ i18nStore.t('nav_codex') }}
+            </router-link>
             <router-link v-if="isOwnProfile" to="/inventory"
-                   class="flex items-center gap-3 bg-primary-500/10 px-6 py-4 rounded-xl border border-primary-500/30 hover:border-primary-500/60 transition-all text-primary-500 hover:text-primary-400 uppercase text-[9px] font-black tracking-widest h-fit">
+                   class="flex items-center gap-3 bg-primary-500/10 px-4 md:px-6 py-4 rounded-xl border border-primary-500/30 hover:border-primary-500/60 transition-all text-primary-500 hover:text-primary-400 uppercase text-[9px] font-black tracking-widest h-fit">
               <Zap class="w-4 h-4" />
               VER ATRIBUTOS
             </router-link>
+            
+            <!-- Other User Actions -->
+            <template v-else>
+              <button @click="challengingUser = user"
+                      class="flex items-center gap-3 bg-primary-500 hover:bg-primary-600 text-white px-4 md:px-6 py-4 rounded-xl border border-primary-500/30 transition-all uppercase text-[9px] font-black tracking-widest h-fit shadow-lg shadow-primary-500/20 active:scale-95">
+                <Swords class="w-4 h-4" />
+                {{ i18nStore.t('pvp_challenge_btn') || 'RETAR A DUELO' }}
+              </button>
+              <button @click="comparingUser = user"
+                      class="flex items-center gap-3 bg-surface/5 px-4 md:px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[9px] font-black tracking-widest h-fit active:scale-95">
+                <BarChart3 class="w-4 h-4" />
+                {{ i18nStore.t('ui_compare') || 'COMPARAR' }}
+              </button>
+            </template>
           </div>
           </div>
         </div>
@@ -123,40 +139,40 @@
                 <h3 class="text-sm font-black text-industrial text-foreground tracking-widest uppercase">{{ i18nStore.t('rankings') }}</h3>
               </div>
               
-              <div class="grid grid-cols-2 lg:grid-cols-1 gap-6">
+              <div class="grid grid-cols-2 lg:grid-cols-1 gap-2 md:gap-6">
                 <!-- Total Reps Pill -->
-                <div class="group/stat">
-                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">{{ i18nStore.t('stats_effort') }}</p>
-                   <div class="flex items-baseline gap-2">
-                      <span class="text-4xl font-black text-precision text-foreground tracking-tighter">{{ stats.totalReps || 0 }}</span>
-                      <span class="text-[10px] font-black text-primary-500 uppercase tracking-widest">{{ i18nStore.t('stats_reps') }}</span>
-                   </div>
-                </div>
+                 <div class="group/stat">
+                    <p class="text-[9px] font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t('stats_effort') }}</p>
+                    <div class="flex items-baseline gap-2">
+                       <span class="text-3xl md:text-4xl font-black text-precision text-foreground tracking-tighter">{{ stats.totalReps || 0 }}</span>
+                       <span class="text-[10px] font-black text-primary-500 uppercase tracking-widest">{{ i18nStore.t('stats_reps') }}</span>
+                    </div>
+                 </div>
 
                 <!-- Total Volume Pill -->
-                <div class="group/stat">
-                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">{{ i18nStore.t('stats_tonnage') }}</p>
-                   <div class="flex items-baseline gap-2">
-                      <span class="text-4xl font-black text-precision text-red-500 tracking-tighter">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</span>
-                      <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18nStore.t('stats_tonnage').split(' ')[0] }}</span>
-                   </div>
-                </div>
+                 <div class="group/stat">
+                    <p class="text-[9px] font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t('stats_tonnage') }}</p>
+                    <div class="flex items-baseline gap-2">
+                       <span class="text-3xl md:text-4xl font-black text-precision text-red-500 tracking-tighter">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</span>
+                       <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18nStore.t('stats_tonnage').split(' ')[0] }}</span>
+                    </div>
+                 </div>
  
                 <!-- Streak Pill -->
-                <div class="group/stat">
-                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">{{ i18nStore.t('stats_consistency') }}</p>
-                   <div class="flex items-center gap-3">
-                      <span class="text-4xl font-black text-precision text-orange-500 tracking-tighter">{{ stats.streak || 0 }}</span>
-                      <Flame class="w-6 h-6 text-orange-500 animate-pulse" />
-                   </div>
-                </div>
+                 <div class="group/stat">
+                    <p class="text-[9px] font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t('stats_consistency') }}</p>
+                    <div class="flex items-center gap-3">
+                       <span class="text-3xl md:text-4xl font-black text-precision text-orange-500 tracking-tighter">{{ stats.streak || 0 }}</span>
+                       <Flame class="w-6 h-6 text-orange-500 animate-pulse" />
+                    </div>
+                 </div>
  
                 <!-- Goal Pill -->
-                <div class="group/stat">
-                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">{{ i18nStore.t('stats_protocol_goal') }}</p>
-                   <div class="flex items-baseline gap-2">
-                      <span class="text-4xl font-black text-precision text-neon-lime tracking-tighter">{{ user.daily_goal || 0 }}</span>
-                      <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18nStore.t('stats_per_day') }}</span>
+                 <div class="group/stat">
+                    <p class="text-[9px] font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t('stats_protocol_goal') }}</p>
+                    <div class="flex items-baseline gap-2">
+                       <span class="text-3xl md:text-4xl font-black text-precision text-neon-lime tracking-tighter">{{ user.daily_goal || 0 }}</span>
+                       <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18nStore.t('stats_per_day') }}</span>
                     </div>
                  </div>
               </div>
@@ -179,7 +195,7 @@
                          <p class="text-[9px] font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t(item.type) }}</p>
                          <div class="flex items-baseline gap-2">
                            <span class="text-xs font-black text-foreground tabular-nums">{{ item.count }}</span>
-                           <span class="text-[7px] font-bold text-zinc-600 uppercase">REPS</span>
+                           <span class="text-[7px] font-bold text-zinc-600 uppercase">{{ i18nStore.t('ui_reps') }}</span>
                          </div>
                        </div>
                      </div>
@@ -221,7 +237,7 @@
                     <p class="text-[9px] font-black text-muted uppercase tracking-[0.3em] font-tight">{{ i18nStore.t('profile_rc_history') }}</p>
                   </div>
                 </div>
-                <span class="text-[10px] font-black bg-white/5 border border-white/5 px-3 py-1 rounded-full text-zinc-500 tracking-tighter uppercase font-precision opacity-40">CADENA_ENCRIPTADA</span>
+                <span class="text-[10px] font-black bg-white/5 border border-white/5 px-3 py-1 rounded-full text-zinc-500 tracking-tighter uppercase font-precision opacity-40">{{ i18nStore.t('ui_enc_chain') }}</span>
               </div>
 
               <div v-if="transactions?.length > 0" class="space-y-3 font-precision">
@@ -265,18 +281,44 @@
     <!-- Issue 88: Settings Modal -->
     <SettingsModal :show="showSettingsModal" :initial-data="settingsForm" @close="showSettingsModal = false" @updated="onProfileUpdated" />
 
+    <!-- PvP and Comparison Modals -->
+    <Teleport to="body">
+       <PvpConfigModal 
+         :show="!!challengingUser" 
+         :target="challengingUser" 
+         @close="challengingUser = null" 
+       />
+       <UserCompareModal 
+         :show="!!comparingUser" 
+         :me="authStore.user" 
+         :target="comparingUser" 
+         @close="comparingUser = null" 
+       />
+    </Teleport>
+
     <!-- NEW: Avatar Selector Modal -->
     <Teleport to="body">
       <div v-if="showAvatarSelector" class="fixed inset-0 z-[1001] flex justify-center items-start overflow-y-auto p-4 md:p-8 bg-background/90 backdrop-blur-md" @click.self="showAvatarSelector = false">
         <div class="card-stats max-w-2xl w-full p-6 md:p-12 border-border space-y-8 md:space-y-10 relative overflow-visible my-auto animate-in">
              <div class="flex items-center justify-between">
                 <div class="space-y-1">
-                    <h2 class="text-2xl font-black text-industrial text-foreground uppercase italic tracking-tighter">SELECT<span class="text-primary-500">.</span>CLASS</h2>
-                    <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em]">Choose your visual protocol identifier</p>
+                    <h2 class="text-2xl font-black text-industrial text-foreground uppercase italic tracking-tighter">{{ i18nStore.t('ui_select_class') }}<span class="text-primary-500">.</span></h2>
+                    <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em]">{{ i18nStore.t('ui_choose_protocol') }}</p>
                 </div>
                 <button @click="showAvatarSelector = false" class="p-2 bg-surface/10 rounded-xl hover:bg-surface/20 transition-all">
                     <XIcon class="w-5 h-5 text-foreground" />
                 </button>
+             </div>
+
+             <div class="flex flex-col items-center gap-6 p-8 border-2 border-dashed border-white/10 rounded-[2.5rem] bg-surface/5 hover:bg-surface/10 hover:border-primary-500/30 transition-all cursor-pointer group/upload" @click="$refs.fileInput.click()">
+                <div class="w-16 h-16 bg-primary-500/20 rounded-2xl flex items-center justify-center group-hover/upload:scale-110 transition-transform">
+                   <Camera class="w-8 h-8 text-primary-500" />
+                </div>
+                <div class="text-center">
+                   <p class="text-xs font-black text-foreground uppercase tracking-widest">{{ i18nStore.t('ui_upload_custom') || 'SUBIR AVATAR PERSONALIZADO' }}</p>
+                   <p class="text-[9px] font-bold text-muted uppercase tracking-widest mt-1 opacity-60">{{ i18nStore.t('ui_compressed_info') || 'Se comprimirá automáticamente para optimizar carga' }}</p>
+                </div>
+                <input type="file" ref="fileInput" hidden accept="image/*" @change="handleCustomAvatar" />
              </div>
 
              <div class="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
@@ -293,7 +335,7 @@
                 </div>
              </div>
 
-             <p class="text-[9px] font-bold text-muted text-center uppercase tracking-widest opacity-40">RPG CLASSES LOCK UPON SELECTION</p>
+             <p class="text-[9px] font-bold text-muted text-center uppercase tracking-widest opacity-40">{{ i18nStore.t('ui_lock_selection') }}</p>
         </div>
       </div>
     </Teleport>
@@ -301,8 +343,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue';
-import { Camera, Settings, LogOut, Activity, Flame, Trophy, HelpCircle, X as XIcon, Sword, Zap, Heart, Shield, Coins, Dumbbell, Target, Globe, User as UserIcon } from 'lucide-vue-next';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
+import { Camera, Settings, LogOut, Activity, Flame, Trophy, HelpCircle, X as XIcon, Swords, Zap, Heart, Shield, Coins, Dumbbell, Target, Globe, User as UserIcon, BarChart3, BookOpen } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
@@ -312,6 +354,8 @@ import AvatarFrame from './AvatarFrame.vue';
 import ExerciseSelector from './ExerciseSelector.vue';
 import CodexModal from './CodexModal.vue';
 import SettingsModal from './SettingsModal.vue';
+import PvpConfigModal from './PvpConfigModal.vue';
+import UserCompareModal from './UserCompareModal.vue';
 import axios from 'axios';
 import { Moon, Sun, Monitor } from 'lucide-vue-next';
 
@@ -325,7 +369,19 @@ const emit = defineEmits(['start', 'viewProfile']);
 const notificationStore = useNotificationStore();
 const themeStore = useThemeStore();
 
+const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1200);
+const handleResize = () => { windowWidth.value = window.innerWidth; };
+
 const user = ref({ avatar_url: '', border_css: '', avatar_css: '', name: '', total_xp: 0, current_level: 1 });
+
+onMounted(() => {
+  fetchProfile();
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 const stats = ref({});
 const heatmapData = ref([]);
 const transactions = ref([]);
@@ -334,6 +390,60 @@ const activeExercise = ref('all');
 const showInfoModal = ref(false);
 const showSettingsModal = ref(false);
 const showAvatarSelector = ref(false);
+const challengingUser = ref(null);
+const comparingUser = ref(null);
+const fileInput = ref(null);
+
+const handleCustomAvatar = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const img = new Image();
+    img.onload = async () => {
+      const canvas = document.createElement('canvas');
+      const MAX_SIZE = 256;
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > MAX_SIZE) {
+          height *= MAX_SIZE / width;
+          width = MAX_SIZE;
+        }
+      } else {
+        if (height > MAX_SIZE) {
+          width *= MAX_SIZE / height;
+          height = MAX_SIZE;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const compressedBase64 = canvas.toDataURL('image/webp', 0.8);
+
+      try {
+        const res = await axios.post('/api/users/avatar', { 
+          avatar_url: compressedBase64,
+          is_custom: true 
+        });
+        const finalUrl = res.data?.user?.avatar_url || res.data?.avatar_url;
+        user.value.avatar_url = finalUrl;
+        authStore.user.avatar_url = finalUrl;
+        notificationStore.notify(i18nStore.t('profile_updated'), 'success');
+        showAvatarSelector.value = false;
+      } catch (err) {
+        notificationStore.notify('Error uploading avatar', 'error');
+      }
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+};
 
 // Pagination State
 const transactionsPage = ref(1);
@@ -352,14 +462,29 @@ const getIconForType = (type) => {
   return icons[type] || Dumbbell;
 };
 
+const itemBonuses = computed(() => {
+  const bonuses = { STR: 0, DEX: 0, END: 0, VIG: 0, INT: 0, FTH: 0, CHA: 0 };
+  const slots = ['head', 'weapon', 'armor', 'boots'];
+  slots.forEach(slot => {
+    const stats = user.value[`${slot}_stats`] || {};
+    Object.keys(stats).forEach(key => {
+      const upperKey = key.toUpperCase();
+      if (bonuses[upperKey] !== undefined) {
+        bonuses[upperKey] += stats[key];
+      }
+    });
+  });
+  return bonuses;
+});
+
 const attributes = computed(() => [
-  { key: 'STR', xp: user.value.str_xp || 0, lvl: user.value.str_lvl || 1, labelColor: 'text-orange-500' },
-  { key: 'DEX', xp: user.value.dex_xp || 0, lvl: user.value.dex_lvl || 1, labelColor: 'text-cyan-400' },
-  { key: 'END', xp: user.value.end_xp || 0, lvl: user.value.end_lvl || 1, labelColor: 'text-emerald-500' },
-  { key: 'VIG', xp: user.value.vig_xp || 0, lvl: user.value.vig_lvl || 1, labelColor: 'text-red-500' },
-  { key: 'INT', xp: user.value.int_xp || 0, lvl: user.value.int_lvl || 1, labelColor: 'text-blue-400' },
-  { key: 'FTH', xp: user.value.fth_xp || 0, lvl: user.value.fth_lvl || 1, labelColor: 'text-yellow-400' },
-  { key: 'CHA', xp: user.value.cha_xp || 0, lvl: user.value.cha_lvl || 1, labelColor: 'text-pink-400' },
+  { key: 'STR', xp: user.value.str_xp || 0, lvl: user.value.str_lvl || 1, labelColor: 'text-orange-500', bonus: itemBonuses.value.STR },
+  { key: 'DEX', xp: user.value.dex_xp || 0, lvl: user.value.dex_lvl || 1, labelColor: 'text-cyan-400', bonus: itemBonuses.value.DEX },
+  { key: 'END', xp: user.value.end_xp || 0, lvl: user.value.end_lvl || 1, labelColor: 'text-emerald-500', bonus: itemBonuses.value.END },
+  { key: 'VIG', xp: user.value.vig_xp || 0, lvl: user.value.vig_lvl || 1, labelColor: 'text-red-500', bonus: itemBonuses.value.VIG },
+  { key: 'INT', xp: user.value.int_xp || 0, lvl: user.value.int_lvl || 1, labelColor: 'text-blue-400', bonus: itemBonuses.value.INT },
+  { key: 'FTH', xp: user.value.fth_xp || 0, lvl: user.value.fth_lvl || 1, labelColor: 'text-yellow-400', bonus: itemBonuses.value.FTH },
+  { key: 'CHA', xp: user.value.cha_xp || 0, lvl: user.value.cha_lvl || 1, labelColor: 'text-pink-400', bonus: itemBonuses.value.CHA },
 ]);
 
 const getAttrColor = (lvl) => {
@@ -375,8 +500,9 @@ const settingsForm = ref({ name: '', daily_goal: 0, body_weight: 0 });
 const selectAvatar = async (url) => {
   try {
     const res = await axios.post('/api/users/avatar', { avatar_url: url });
-    user.value.avatar_url = url;
-    authStore.user.avatar_url = url;
+    const finalUrl = res.data?.user?.avatar_url || url;
+    user.value.avatar_url = finalUrl;
+    authStore.user.avatar_url = finalUrl;
     notificationStore.notify(i18nStore.t('profile_updated'), 'success');
     showAvatarSelector.value = false;
   } catch (err) {
@@ -459,7 +585,6 @@ const fetchMoreTransactions = async () => {
 };
 
 watch(activeExercise, fetchProfile);
-onMounted(fetchProfile);
 watch(() => props.userId, fetchProfile);
 </script>
 

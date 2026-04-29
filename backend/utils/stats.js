@@ -59,23 +59,54 @@ export const augmentUserWithLevels = (user) => {
     xp_for_next_level: xpNextLevelStart - xpCurrentLevelStart
   };
 
+  // Calculate Item Bonuses from fields like head_stats, weapon_stats, etc.
+  const itemBonuses = { str: 0, dex: 0, end: 0, vig: 0, int: 0, fth: 0, cha: 0 };
+  ['head', 'weapon', 'armor', 'boots'].forEach(slot => {
+    const stats = user[`${slot}_stats`] || {};
+    Object.keys(stats).forEach(key => {
+      const k = key.toLowerCase();
+      if (itemBonuses[k] !== undefined) {
+        itemBonuses[k] += (stats[key] || 0);
+      }
+    });
+  });
+
   stats.forEach(stat => {
     const xp = user[`${stat}_xp`] || 0;
-    const lvl = getStatLevel(xp);
-    const lvlStart = getXPForLevel(lvl, 100);
-    const lvlNext = getXPForLevel(lvl + 1, 100);
+    const baseLvl = getStatLevel(xp);
+    let itemBonus = itemBonuses[stat] || 0;
     
-    augmented[`${stat}_lvl`] = lvl;
+    // Check for temporary stat bonuses (e.g., DEX potion)
+    if (stat === 'dex' && user.dex_bonus && user.dex_bonus_expiry) {
+      if (new Date(user.dex_bonus_expiry) > new Date()) {
+        itemBonus += user.dex_bonus;
+      }
+    }
+
+    const totalLvl = baseLvl + itemBonus;
+    
+    const lvlStart = getXPForLevel(baseLvl, 100);
+    const lvlNext = getXPForLevel(baseLvl + 1, 100);
+    
+    augmented[`base_${stat}_lvl`] = baseLvl;
+    augmented[`${stat}_lvl`] = totalLvl;
+    augmented[`${stat}_bonus_lvl`] = itemBonus;
     augmented[`${stat}_xp_into_level`] = xp - lvlStart;
     augmented[`${stat}_xp_for_next_level`] = lvlNext - lvlStart;
   });
 
   // Include charisma
   const chaXp = user.cha_xp || 0;
-  const chaLvl = getStatLevel(chaXp);
-  const chaStart = getXPForLevel(chaLvl, 100);
-  const chaNext = getXPForLevel(chaLvl + 1, 100);
-  augmented.cha_lvl = chaLvl;
+  const baseChaLvl = getStatLevel(chaXp);
+  const itemChaBonus = itemBonuses.cha || 0;
+  const totalChaLvl = baseChaLvl + itemChaBonus;
+  
+  const chaStart = getXPForLevel(baseChaLvl, 100);
+  const chaNext = getXPForLevel(baseChaLvl + 1, 100);
+  
+  augmented.base_cha_lvl = baseChaLvl;
+  augmented.cha_lvl = totalChaLvl;
+  augmented.cha_bonus_lvl = itemChaBonus;
   augmented.cha_xp_into_level = chaXp - chaStart;
   augmented.cha_xp_for_next_level = chaNext - chaStart;
 
@@ -84,10 +115,32 @@ export const augmentUserWithLevels = (user) => {
 
 
 
-export const recalculateUserStats = async (userId) => {
+const recalcCache = new Map();
+
+/**
+ * Shared utility to recalculate and sync user stats (total_reps and XP levels)
+ * based on the absolute history of their reps.
+ * @param {string} userId - The ID of the user to recalculate
+ * @param {boolean} force - If true, bypasses the 10-second throttle
+ */
+export const recalculateUserStats = async (userId, force = false) => {
+  const now = Date.now();
+  if (!force && recalcCache.has(userId)) {
+    const last = recalcCache.get(userId);
+    if (now - last < 10000) { // 10s throttle
+       // Return current data from DB instead of recalculating
+       const currentRes = await query('SELECT * FROM users WHERE id = $1', [userId]);
+       return currentRes.rows[0];
+    }
+  }
+
   try {
     // 1. Get user data for level tracking
-    const userRes = await query('SELECT body_weight, current_level, level_chests_claimed, level_chests, cha_xp, last_streak_reward_date FROM users WHERE id = $1', [userId]);
+    const userRes = await query(`
+      SELECT body_weight, current_level, level_chests_claimed, level_chests, cha_xp, last_streak_reward_date,
+             equipped_head_id, equipped_weapon_id, equipped_armor_id, equipped_boots_id
+      FROM users WHERE id = $1
+    `, [userId]);
     if (userRes.rows.length === 0) return;
     const user = userRes.rows[0];
     const bodyWeight = parseFloat(user.body_weight) || 75.0;
@@ -148,12 +201,28 @@ export const recalculateUserStats = async (userId) => {
     // VIG: Resilience (mapped from streak and consistency)
     const baseVigXP = Math.floor((streak * 100) + (varietyCount * 50));
 
+    // 4. Item Bonuses
+    const equipmentRes = await query(`
+      SELECT stats FROM items 
+      WHERE id IN ($1, $2, $3, $4)
+    `, [user.equipped_head_id, user.equipped_weapon_id, user.equipped_armor_id, user.equipped_boots_id]);
+    
+    const itemBonuses = { str: 0, dex: 0, end: 0, vig: 0, int: 0, fth: 0, cha: 0 };
+    equipmentRes.rows.forEach(item => {
+      const stats = item.stats || {};
+      Object.keys(stats).forEach(key => {
+        if (itemBonuses[key] !== undefined) {
+          itemBonuses[key] += (stats[key] || 0);
+        }
+      });
+    });
+
     // Core Stats (STR, END)
     const baseStrXP = Math.floor(totalVolume * 0.05);
     const baseEndXP = Math.floor(totalReps * 5);
 
     // INT BONUS: Knowledge makes training more efficient
-    const intLvl = getStatLevel(intXP);
+    const intLvl = getStatLevel(intXP); // Base INT level
     const intBonus = 1 + ((intLvl - 1) * 0.05); // +5% XP gain per level above 1
 
     const strXP = Math.round(baseStrXP * intBonus);
@@ -161,8 +230,10 @@ export const recalculateUserStats = async (userId) => {
     const endXP = Math.round(baseEndXP * intBonus);
     const vigXP = Math.round(baseVigXP * intBonus);
 
-    // Total XP for Character Level
+    // Include charisma
     const chaXP = user.cha_xp || 0;
+
+    // Total XP for Character Level
     const totalXP = strXP + dexXP + endXP + vigXP + intXP + fthXP + chaXP;
 
     // 4. Character Level Calculation (Dynamic Quadratic: base 1000)
@@ -252,23 +323,38 @@ export const recalculateUserStats = async (userId) => {
       additionalCoins,
       newLastStreakRewardDate
     ]);
+    
+    // 7. Mission Triggers (XP and Streaks are absolute values, use isIncremental = false)
+    const { updateMissionProgress } = await import('./missions.js');
+    await updateMissionProgress(userId, 'streak', streak, false);
+    await updateMissionProgress(userId, 'xp_str', strXP, false);
+    await updateMissionProgress(userId, 'xp_pwr', dexXP, false); // dexXP maps to xp_pwr goal type
+    await updateMissionProgress(userId, 'xp_end', endXP, false);
+    await updateMissionProgress(userId, 'xp_agi', dexXP, false); // mapping agi to dex for legacy missions
+    
+    if (newLevel - (user.current_level || 0) >= 2) {
+      await updateMissionProgress(userId, 'level_up_2', 1);
+    }
 
-    return {
-      totalReps,
-      strXP,
-      dexXP,
-      endXP,
-      vigXP,
-      intXP,
-      fthXP,
-      chaXP,
-      totalXP,
-      currentLevel: newLevel,
-      xpIntoLevel,
-      xpForNextLevel,
+    const result = {
+      total_reps: totalReps,
+      str_xp: strXP,
+      dex_xp: dexXP,
+      end_xp: endXP,
+      vig_xp: vigXP,
+      int_xp: intXP,
+      fth_xp: fthXP,
+      cha_xp: chaXP,
+      total_xp: totalXP,
+      current_level: newLevel,
+      xp_into_level: xpIntoLevel,
+      xp_for_next_level: xpForNextLevel,
       streak,
-      totalVolume
+      total_volume: totalVolume
     };
+
+    recalcCache.set(userId, Date.now());
+    return result;
 
   } catch (err) {
     console.error(`[STATS_UTILS] CRITICAL: Failed to recalculate stats for user ${userId}:`, err);
