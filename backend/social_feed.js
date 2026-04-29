@@ -423,7 +423,20 @@ router.post('/comment', authenticate, async (req, res) => {
       summaryId = summaryRes.rows[0].id;
     }
 
-    // 2. Insert Comment
+    // 2. Prevent duplicate comments (same user, same content, same summary, within 5 seconds)
+    const duplicateCheck = await client.query(
+      `SELECT 1 FROM summary_interactions 
+       WHERE summary_id = $1 AND user_id = $2 AND content = $3 AND type = 'COMMENT'
+       AND created_at > CURRENT_TIMESTAMP - INTERVAL '5 seconds'`,
+      [summaryId, myUserId, content]
+    );
+
+    if (duplicateCheck.rows.length > 0) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ message: 'DUPLICATE COMMENT' });
+    }
+
+    // 3. Insert Comment
     const result = await client.query(
       `INSERT INTO summary_interactions (summary_id, user_id, type, content) 
        VALUES ($1, $2, 'COMMENT', $3) RETURNING *`,

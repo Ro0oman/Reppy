@@ -238,7 +238,8 @@
               v-model="commentText" @keyup.enter="submitComment" :placeholder="i18n.t('ui_comment_placeholder') || 'Comentar...'" 
               class="flex-1 bg-foreground/5 border-none rounded-xl px-3 py-2 text-xs outline-none focus:ring-1 ring-primary-500/20"
             />
-            <button @click="submitComment" class="text-[10px] font-black uppercase text-primary-500 disabled:opacity-30" :disabled="!commentText.trim()">
+            <button @click="submitComment" class="text-[10px] font-black uppercase text-primary-500 disabled:opacity-30" :disabled="!commentText.trim() || submittingComment">
+              <span v-if="submittingComment" class="w-3 h-3 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mr-2"></span>
               {{ i18n.t('ui_submit') || 'Ok' }}
             </button>
           </div>
@@ -408,6 +409,7 @@ const showDetails = ref(false);
 const showItemModal = ref(false);
 const selectedItem = ref(null);
 const loadingItem = ref(false);
+const submittingComment = ref(false);
 
 const statLabels = {
   str: 'Fuerza',
@@ -611,14 +613,21 @@ const toggleLike = () => {
 };
 
 const submitComment = async () => {
-    if (!commentText.value.trim()) return;
+    if (!commentText.value.trim() || submittingComment.value) return;
+    submittingComment.value = true;
     try {
         const res = await axios.post('/api/social-feed/comment', {
             targetUserId: props.activity.user_id,
             date: props.activity.date,
             content: commentText.value
         });
-        comments.value.unshift(res.data);
+        
+        // Prevent local duplication if fetchComments is about to run or has run
+        const isDuplicate = comments.value.some(c => c.id === res.data.id);
+        if (!isDuplicate) {
+            comments.value.push(res.data); // Use push to add at the end, or unshift if you want newest first
+        }
+        
         commentText.value = '';
         props.activity.comment_count = (Number(props.activity.comment_count) || 0) + 1;
         addFeedback('+20 XP CARISMA', 'xp');
@@ -626,6 +635,8 @@ const submitComment = async () => {
         emit('commentAdded');
     } catch (e) {
         console.error('Error adding comment:', e);
+    } finally {
+        submittingComment.value = false;
     }
 };
 
