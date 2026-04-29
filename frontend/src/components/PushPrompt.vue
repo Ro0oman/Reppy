@@ -75,7 +75,10 @@
 import { ref, onMounted } from 'vue';
 import { Bell, Zap, ShieldCheck } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
+import { useAuthStore } from '../stores/auth';
 import { getPushStatus, subscribeToPush } from '../utils/pushService';
+
+const authStore = useAuthStore();
 
 const i18n = useI18nStore();
 const isVisible = ref(false);
@@ -100,6 +103,7 @@ const checkPermission = async () => {
 };
 
 const handleSubscribe = async (silent = false) => {
+  if (!authStore.isAuthenticated) return;
   try {
     const success = await subscribeToPush();
     if (success) {
