@@ -3,13 +3,13 @@
     
     <!-- Navigation -->
     <nav class="w-full max-w-7xl px-6 py-10 flex items-center justify-between z-10 animate-in">
-      <router-link :to="`/${i18n.locale}`" class="flex items-center gap-3 group">
+      <router-link :to="'/' + i18n.locale" class="flex items-center gap-3 group">
         <div class="w-8 h-8 bg-primary rounded-xl flex items-center justify-center font-bold text-white shadow-lg shadow-primary/20 transition-transform group-hover:scale-110">R</div>
         <span class="text-xl font-black tracking-tight text-foreground">Reppy<span class="text-primary group-hover:translate-x-0.5 transition-transform">.</span></span>
       </router-link>
     </nav>
 
-    <!-- Header (Large & Clean) -->
+    <!-- Header -->
     <header class="max-w-7xl w-full px-6 py-20 text-center space-y-8 animate-in">
       <h1 class="text-5xl md:text-[10rem] font-black tracking-tighter text-foreground leading-none uppercase italic border-b-8 border-primary/20 pb-4 inline-block">
         {{ i18n.t('nav_codex') }}
@@ -19,13 +19,13 @@
       </p>
     </header>
 
-    <!-- Blog Grid (Focused) -->
+    <!-- Blog Grid -->
     <section class="max-w-7xl w-full px-6 pb-40">
       <div v-if="paginatedPosts.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
         <router-link 
           v-for="post in paginatedPosts" 
           :key="post.slug" 
-          :to="`/${i18n.locale}/blog/${post.slug}`" 
+          :to="'/' + i18n.locale + '/blog/' + post.slug" 
           class="group flex flex-col space-y-8 animate-in"
         >
           <div class="relative aspect-video overflow-hidden rounded-[2.5rem] bg-surface-dark/10 flex items-center justify-center border border-white/5 shadow-2xl transition-all duration-500 group-hover:shadow-primary/10">
@@ -40,10 +40,10 @@
               class="w-full h-full object-cover transition-all duration-1000 group-hover:scale-105" 
               :class="loadedImages[post.slug] ? 'opacity-100' : 'opacity-0'"
               @load="loadedImages[post.slug] = true"
-              @error="(e) => handleImageError(e, post.slug)"
+              @error="handleImageError($event, post.slug)"
             />
             
-            <!-- Read Indicator Overlay -->
+            <!-- Read Indicator -->
             <div 
               v-if="isRead(post.slug)" 
               class="absolute top-6 right-6 w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/40 border-2 border-white/20 z-20 backdrop-blur-sm"
@@ -81,7 +81,7 @@
         <p class="text-muted font-bold text-xl">{{ i18n.t('no_posts_found') || 'No se han encontrado guías.' }}</p>
       </div>
 
-      <!-- Pagination (Modern Minimal) -->
+      <!-- Pagination -->
       <div v-if="totalPages > 1" class="mt-32 flex flex-col items-center gap-10">
         <div class="flex items-center gap-4">
           <button 
@@ -113,9 +113,9 @@
       </div>
     </section>
 
-    <!-- Footer link back -->
+    <!-- Footer -->
     <footer class="py-20 border-t border-border/10 w-full flex flex-col items-center gap-8 bg-surface-dark/5">
-      <router-link :to="`/${i18n.locale}`" class="text-xs font-black text-muted hover:text-primary transition-all uppercase tracking-widest flex items-center gap-2 group">
+      <router-link :to="'/' + i18n.locale" class="text-xs font-black text-muted hover:text-primary transition-all uppercase tracking-widest flex items-center gap-2 group">
         <ArrowLeft class="w-4 h-4 group-hover:-translate-x-2 transition-transform" />
         {{ i18n.t('el_back_home') }}
       </router-link>
@@ -139,12 +139,12 @@ const isRead = (slug) => {
 };
 
 const currentPage = ref(1);
-const postsPerPage = 6; // Fewer posts per page for better focus
+const postsPerPage = 6;
 const loadedImages = reactive({});
 
-const handleImageError = (e, slug) => {
+const handleImageError = (event, slug) => {
   loadedImages[slug] = true;
-  e.target.src = 'https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?auto=format&fit=crop&w=800&q=60';
+  event.target.src = 'https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?auto=format&fit=crop&w=800&q=60';
 };
 
 const sortedPosts = computed(() => {
@@ -190,9 +190,5 @@ onMounted(() => {
 <style scoped>
 .animate-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-/* Ensure the background matches the Reppy theme but cleaner */
-.bg-background {
-  background-color: #0c0d0d; /* Reppy's deep abyss */
-}
+.bg-background { background-color: #0c0d0d; }
 </style>
