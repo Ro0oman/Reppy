@@ -48,31 +48,29 @@
         </div>
 
         <!-- System Status & User Profile -->
-        <div class="flex items-center gap-3 sm:gap-6">
-          <!-- Desktop GitHub Module -->
-
-          <div class="flex items-center gap-2 sm:gap-4">
+        <div class="flex items-center gap-2 sm:gap-6">
+          <div class="flex items-center gap-1.5 sm:gap-4">
              <!-- Currency Module -->
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-1.5 sm:gap-2">
                 <button @click="showCoinsInfo = true" 
                     :title="i18n.t('economy_history_title')"
-                    class="flex items-center gap-2 bg-surface/5 px-2.5 sm:px-4 py-2 rounded-xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-primary-500/50">
+                    class="flex items-center gap-2 bg-surface/5 px-2.5 sm:px-4 py-2 rounded-2xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-primary-500/50">
                   <Coins class="w-3.5 h-3.5 text-primary-500 transition-transform group-hover:scale-110" />
                   <span class="text-[12px] sm:text-sm font-black text-precision text-foreground">{{ authStore.user?.reppy_coins || 0 }}</span>
                 </button>
 
                 <button 
                     :title="i18n.t('economy_gems')"
-                    class="flex items-center gap-2 bg-indigo-500/5 px-2.5 sm:px-4 py-2 rounded-xl border border-indigo-500/20 hover:border-indigo-500/40 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
+                    class="flex items-center gap-2 bg-indigo-500/5 px-2.5 sm:px-4 py-2 rounded-2xl border border-indigo-500/20 hover:border-indigo-500/40 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
                   <Gem class="w-3.5 h-3.5 text-indigo-500 transition-transform group-hover:scale-110" />
                   <span class="text-[12px] sm:text-sm font-black text-precision text-foreground">{{ authStore.user?.reppy_gems || 0 }}</span>
                 </button>
               </div>
 
             <!-- Notification Bell -->
-            <div class="relative">
+            <div class="relative flex items-center">
               <button @click="handleBellClick" 
-                      class="p-2 sm:p-2.5 rounded-xl transition-all group relative border"
+                      class="p-2 sm:p-2.5 rounded-2xl transition-all group relative border flex items-center justify-center"
                       :class="showNotifications ? 'bg-primary-500/10 border-primary-500/30 text-primary-500' : 'bg-surface/5 border-border hover:bg-surface/10'">
                 <Bell class="w-4.5 h-4.5 sm:w-5 sm:h-5 transition-colors" :class="showNotifications ? 'text-primary-500' : 'text-muted group-hover:text-primary-500'" />
                 <div v-if="notifStore.unreadCount > 0" 
@@ -89,7 +87,7 @@
             <!-- Mute Toggle -->
             <button @click="toggleMute(); playClickBlip();" 
                     :title="isMuted() ? i18n.t('audio_unmute') : i18n.t('audio_mute')"
-                    class="p-2 sm:p-2.5 rounded-xl transition-all group bg-surface/5 border border-border hover:bg-surface/10">
+                    class="p-2 sm:p-2.5 rounded-2xl transition-all group bg-surface/5 border border-border hover:bg-surface/10 flex items-center justify-center">
               <component :is="isMuted() ? VolumeX : Volume2" 
                          class="w-4.5 h-4.5 sm:w-5 sm:h-5 text-muted group-hover:text-primary-500 transition-colors" />
             </button>
@@ -98,7 +96,7 @@
             <div v-if="authStore.isAuthenticated" 
                  @click="openLiveModal"
                  :title="i18n.t('live_operatives')"
-                 class="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/5 border border-emerald-500/20 rounded-xl cursor-pointer hover:bg-emerald-500/10 transition-all group shrink-0">
+                 class="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl cursor-pointer hover:bg-emerald-500/10 transition-all group shrink-0">
               <div class="relative">
                 <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
                 <div class="absolute inset-0 w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping opacity-40"></div>
@@ -110,11 +108,11 @@
 
 
             <!-- Level Module (Responsive) -->
-            <div class="flex items-center gap-3">
+            <div class="flex items-center">
               <!-- Compact for mobile, full for desktop -->
-              <div class="sm:hidden flex items-center gap-1.5 bg-primary-500/10 px-2 py-1.5 rounded-lg border border-primary-500/20">
+              <div class="sm:hidden flex items-center gap-1.5 bg-primary-500/10 px-2 py-1.5 rounded-xl border border-primary-500/20">
                 <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest">LVL</span>
-                <span class="text-sm font-black text-foreground italic">{{ authStore.user?.current_level || 1 }}</span>
+                <span class="text-sm font-black text-foreground italic leading-none">{{ authStore.user?.current_level || 1 }}</span>
               </div>
               <div class="hidden sm:block">
                 <LevelBar 
