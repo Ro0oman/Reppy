@@ -1058,6 +1058,7 @@ export default {
     codex_earn_contribution: 'Esfuerzo Fiel',
     codex_earn_social: 'Interacción Social',
     codex_earn_cheer: 'Ánimo Enviado',
+    ui_share: 'Compartir',
 
     // Inventory Redesign
     inv_artifact_detail: 'DETALLE',

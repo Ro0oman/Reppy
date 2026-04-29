@@ -46,6 +46,31 @@ router.get('/cosmetics', authenticate, async (req, res) => {
   }
 });
 
+// Get single item details
+router.get('/item/:id', authenticate, async (req, res) => {
+  try {
+    const itemId = parseInt(req.params.id, 10);
+    if (!Number.isFinite(itemId)) {
+      return res.status(400).json({ message: 'Invalid item id' });
+    }
+
+    const itemRes = await query('SELECT * FROM items WHERE id = $1', [itemId]);
+    if (itemRes.rows.length === 0) {
+      return res.status(404).json({ message: 'Item not found' });
+    }
+
+    const item = itemRes.rows[0];
+    if (typeof item.stats === 'string') {
+        try { item.stats = JSON.parse(item.stats); } catch(e) { item.stats = {}; }
+    }
+
+    res.json(item);
+  } catch (error) {
+    console.error('Error fetching item:', error);
+    res.status(500).json({ message: 'Error fetching item details' });
+  }
+});
+
 // Get concrete bundle contents (resolved items) to power pack preview modal
 router.get('/bundle/:id/contents', authenticate, async (req, res) => {
   try {

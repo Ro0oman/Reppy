@@ -120,10 +120,26 @@ router.get('/feed', authenticate, async (req, res) => {
                 )
             )) as exercises,
             JSON_BUILD_OBJECT(
-                'head', JSON_BUILD_OBJECT('name', iHead.name, 'rarity', iHead.rarity),
-                'weapon', JSON_BUILD_OBJECT('name', iWeapon.name, 'rarity', iWeapon.rarity),
-                'armor', JSON_BUILD_OBJECT('name', iArmor.name, 'rarity', iArmor.rarity),
-                'boots', JSON_BUILD_OBJECT('name', iBoots.name, 'rarity', iBoots.rarity)
+                'head', JSON_BUILD_OBJECT(
+                    'id', iHead.id, 'name', iHead.name, 'rarity', iHead.rarity, 
+                    'type', iHead.type, 'svg_key', iHead.svg_key, 'css_value', iHead.css_value,
+                    'stats', iHead.stats, 'description', iHead.description
+                ),
+                'weapon', JSON_BUILD_OBJECT(
+                    'id', iWeapon.id, 'name', iWeapon.name, 'rarity', iWeapon.rarity, 
+                    'type', iWeapon.type, 'svg_key', iWeapon.svg_key, 'css_value', iWeapon.css_value,
+                    'stats', iWeapon.stats, 'description', iWeapon.description
+                ),
+                'armor', JSON_BUILD_OBJECT(
+                    'id', iArmor.id, 'name', iArmor.name, 'rarity', iArmor.rarity, 
+                    'type', iArmor.type, 'svg_key', iArmor.svg_key, 'css_value', iArmor.css_value,
+                    'stats', iArmor.stats, 'description', iArmor.description
+                ),
+                'boots', JSON_BUILD_OBJECT(
+                    'id', iBoots.id, 'name', iBoots.name, 'rarity', iBoots.rarity, 
+                    'type', iBoots.type, 'svg_key', iBoots.svg_key, 'css_value', iBoots.css_value,
+                    'stats', iBoots.stats, 'description', iBoots.description
+                )
             ) as equipment,
             (SELECT COUNT(*) FROM summary_interactions WHERE summary_id = ds.id AND type = 'LIKE') as like_count,
             (SELECT COUNT(*) FROM summary_interactions WHERE summary_id = ds.id AND type = 'COMMENT') as comment_count,
@@ -147,7 +163,7 @@ router.get('/feed', authenticate, async (req, res) => {
           u.id, r.date, ds.id, ds.title, ds.description,
           b.css_value, a.css_value, pb.css_value, t.name,
           u.name, u.avatar_url, u.current_level, u.total_reps, u.cha_xp,
-          iHead.name, iHead.rarity, iWeapon.name, iWeapon.rarity, iArmor.name, iArmor.rarity, iBoots.name, iBoots.rarity
+          iHead.id, iWeapon.id, iArmor.id, iBoots.id
       ),
       pvp_feed AS (
         SELECT 
