@@ -1,5 +1,5 @@
 <template>
-  <div v-if="socketStore.activeOperatives.length > 0" class="flex flex-col gap-3 animate-in fade-in slide-in-from-right-4 duration-500">
+  <div v-if="authStore.isAuthenticated" class="flex flex-col gap-3 animate-in fade-in slide-in-from-right-4 duration-500">
     <div 
       class="flex items-center justify-between mb-4 cursor-pointer group/title"
       @click="showModal = true"
@@ -14,13 +14,13 @@
         </h3>
       </div>
       <span class="text-[9px] font-bold text-white/40 group-hover/title:text-emerald-400 transition-colors uppercase tracking-widest flex items-center gap-1">
-        {{ socketStore.activeOperatives.length }} <Users class="w-3 h-3" />
+        {{ displayOperatives.length }} <Users class="w-3 h-3" />
       </span>
     </div>
     
     <div class="flex -space-x-2 overflow-hidden p-1">
       <div 
-        v-for="user in socketStore.activeOperatives.slice(0, 8)" 
+        v-for="user in displayOperatives.slice(0, 8)" 
         :key="user.id"
         class="relative group"
         @click="showModal = true"
@@ -36,11 +36,11 @@
       
       <!-- More indicator -->
       <div 
-        v-if="socketStore.activeOperatives.length > 8"
+        v-if="displayOperatives.length > 8"
         class="w-9 h-9 rounded-full border-2 border-background bg-surface/80 backdrop-blur-md flex items-center justify-center text-[10px] font-bold text-white/60 cursor-pointer hover:bg-emerald-500/20 hover:text-emerald-400 transition-colors"
         @click="showModal = true"
       >
-        +{{ socketStore.activeOperatives.length - 8 }}
+        +{{ displayOperatives.length - 8 }}
       </div>
     </div>
 
@@ -58,7 +58,7 @@
                 {{ i18n.t('live_operatives') }}
               </h2>
               <p class="text-[10px] font-bold text-emerald-500/60 uppercase tracking-[0.2em] mt-1">
-                {{ socketStore.activeOperatives.length }} LEGENDS SYNCHRONIZED
+                {{ displayOperatives.length }} LEGENDS SYNCHRONIZED
               </p>
             </div>
             <button @click="showModal = false" class="p-2 hover:bg-white/5 rounded-full transition-colors">
@@ -70,7 +70,7 @@
           <div class="max-h-[60vh] overflow-y-auto p-4 custom-scrollbar">
             <div class="grid gap-3">
               <div 
-                v-for="user in socketStore.activeOperatives" 
+                v-for="user in displayOperatives" 
                 :key="user.id"
                 class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:border-emerald-500/30 transition-all group"
               >
@@ -115,16 +115,32 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useSocketStore } from '../stores/socket';
-import { Users, X } from 'lucide-vue-next';
-import { useRouter } from 'vue-router';
+import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
+import { useRouter } from 'vue-router';
+import { Users, X } from 'lucide-vue-next';
 
 const socketStore = useSocketStore();
+const authStore = useAuthStore();
 const router = useRouter();
 const i18n = useI18nStore();
 const showModal = ref(false);
+
+const displayOperatives = computed(() => {
+  const ops = [...socketStore.activeOperatives];
+  // If user is authenticated but not in the list, add them as a fallback
+  if (authStore.user && !ops.find(o => o.id === authStore.user.id)) {
+    ops.unshift({
+      id: authStore.user.id,
+      name: authStore.user.name,
+      avatar_url: authStore.user.avatar_url,
+      level: authStore.user.current_level || 1
+    });
+  }
+  return ops;
+});
 
 const goToProfile = (userId) => {
   showModal.value = false;
