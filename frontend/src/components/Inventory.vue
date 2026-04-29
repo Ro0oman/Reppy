@@ -307,7 +307,7 @@
                         <button @click.stop="toggleEquip(item)"
                                 class="mt-3 w-full py-2 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all active:scale-95"
                                 :class="isEquipped(item) ? 'bg-blue-500 text-white' : 'bg-white/5 text-muted hover:bg-white/10 hover:text-primary-500 border border-white/10'">
-                           {{ isEquipped(item) ? i18n.t('btn_on') : i18n.t('btn_equip') }}
+                           {{ isEquipped(item) ? i18n.t('inv_unlink_artifact') : i18n.t('btn_equip') }}
                         </button>
                      </div>
                 </div>
@@ -413,8 +413,8 @@
             <!-- Modal Footer (Fixed) -->
             <div class="p-6 md:p-8 bg-black/60 border-t border-white/10 shrink-0 relative z-10">
               <div class="flex flex-col sm:flex-row gap-4">
-                <!-- ONLY for Consumables - strictly consumable type -->
-                <button v-if="selectedItem.type === 'consumable'" 
+                <!-- ONLY for Consumables or explicit custom type -->
+                <button v-if="selectedItem.type === 'consumable' || selectedItem.type === 'custom'"
                   @click="handleActivate(selectedItem); showItemModal = false"
                   :disabled="isPotionTypeActive(selectedItem)"
                   class="flex-1 py-5 rounded-[22px] bg-primary-500 text-white font-black text-sm uppercase tracking-[0.2em] transition-all shadow-2xl shadow-primary-500/20 active:scale-95 disabled:opacity-40 disabled:grayscale">
@@ -779,7 +779,7 @@ function getEquippedItem(type) {
   };
   const id = equippedIdMap[type];
   if (!id) return null;
-  return inventory.value.find(item => item.id === id);
+  return inventory.value.find(item => (item.item_id || item.id) === id);
 }
 
 const equippedStats = computed(() => {
@@ -1078,15 +1078,15 @@ const toggleEquip = async (item) => {
   playEquipBlip();
   try {
     await axios.post(`/api/shop/equip/${targetId}?type=${item.type}`);
-    if (item.type === 'head') authStore.user.equipped_head_id = alreadyEquipped ? null : item.id;
-    else if (item.type === 'weapon') authStore.user.equipped_weapon_id = alreadyEquipped ? null : item.id;
-    else if (item.type === 'armor') authStore.user.equipped_armor_id = alreadyEquipped ? null : item.id;
-    else if (item.type === 'boots') authStore.user.equipped_boots_id = alreadyEquipped ? null : item.id;
-    else if (item.type === 'title') { authStore.user.equipped_title_id = alreadyEquipped ? null : item.id; authStore.user.title_css = alreadyEquipped ? '' : item.css_value; authStore.user.title_name = alreadyEquipped ? '' : item.name; }
-    else if (item.type === 'border') { authStore.user.equipped_border_id = alreadyEquipped ? null : item.id; authStore.user.border_css = alreadyEquipped ? '' : item.css_value; }
-    else if (item.type === 'background') { authStore.user.equipped_background_id = alreadyEquipped ? null : item.id; authStore.user.background_css = alreadyEquipped ? '' : item.css_value; }
-    else if (item.type === 'post_background') { authStore.user.equipped_post_background_id = alreadyEquipped ? null : item.id; authStore.user.post_background_css = alreadyEquipped ? '' : item.css_value; }
-    else if (item.type === 'avatar') { authStore.user.equipped_avatar_id = alreadyEquipped ? null : item.id; authStore.user.avatar_css = alreadyEquipped ? '' : item.css_value; }
+    if (item.type === 'head') authStore.user.equipped_head_id = alreadyEquipped ? null : realId;
+    else if (item.type === 'weapon') authStore.user.equipped_weapon_id = alreadyEquipped ? null : realId;
+    else if (item.type === 'armor') authStore.user.equipped_armor_id = alreadyEquipped ? null : realId;
+    else if (item.type === 'boots') authStore.user.equipped_boots_id = alreadyEquipped ? null : realId;
+    else if (item.type === 'title') { authStore.user.equipped_title_id = alreadyEquipped ? null : realId; authStore.user.title_css = alreadyEquipped ? '' : item.css_value; authStore.user.title_name = alreadyEquipped ? '' : item.name; }
+    else if (item.type === 'border') { authStore.user.equipped_border_id = alreadyEquipped ? null : realId; authStore.user.border_css = alreadyEquipped ? '' : item.css_value; }
+    else if (item.type === 'background') { authStore.user.equipped_background_id = alreadyEquipped ? null : realId; authStore.user.background_css = alreadyEquipped ? '' : item.css_value; }
+    else if (item.type === 'post_background') { authStore.user.equipped_post_background_id = alreadyEquipped ? null : realId; authStore.user.post_background_css = alreadyEquipped ? '' : item.css_value; }
+    else if (item.type === 'avatar') { authStore.user.equipped_avatar_id = alreadyEquipped ? null : realId; authStore.user.avatar_css = alreadyEquipped ? '' : item.css_value; }
     
     // TACTILE FEEDBACK LOGIC
     equippingSlot.value = item.type;
@@ -1100,8 +1100,8 @@ const toggleEquip = async (item) => {
     await authStore.fetchProfile();
     await fetchStats();
     
-    notificationStore.notify(alreadyEquipped ? 'Deactivated' : 'Activated', 'success');
-  } catch (err) { notificationStore.notify('Activation error', 'error'); }
+    notificationStore.notify(alreadyEquipped ? (i18n.locale === 'es' ? 'Desequipado' : 'Unequipped') : (i18n.locale === 'es' ? 'Equipado' : 'Equipped'), 'success');
+  } catch (err) { notificationStore.notify(i18n.locale === 'es' ? 'Error al equipar' : 'Equip failed', 'error'); }
 };
 
 const handleActivate = async (item) => {

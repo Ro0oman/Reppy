@@ -93,11 +93,11 @@ router.get('/daily', authenticate, async (req, res) => {
       await query('UPDATE users SET daily_refreshes = 0 WHERE id = $1', [userId]);
     }
 
-    // Fixed chests with gem prices
+    // Fixed chests pricing
     const chests = [
-      { id: 'normal', name: 'Cofre de Batalla', rarity: 'common', price_gems: 10, type: 'chest', description: 'Contiene 1-3 objetos aleatorios y oro.' },
-      { id: 'epic', name: 'Cofre Épico', rarity: 'especial', price_gems: 25, type: 'chest', description: 'Garantiza al menos un objeto ÉPICO.' },
-      { id: 'legendary', name: 'Cofre Legendario', rarity: 'legendary', price_gems: 60, type: 'chest', description: 'Garantiza al menos un objeto LEGENDARIO.' }
+      { id: 'normal', name: 'Cofre de Batalla', rarity: 'common', price: 1000, currency: 'coins', type: 'chest', description: 'Contiene 1-3 objetos aleatorios y oro.' },
+      { id: 'epic', name: 'Cofre Épico', rarity: 'especial', price_gems: 25, currency: 'gems', type: 'chest', description: 'Garantiza al menos un objeto ÉPICO.' },
+      { id: 'legendary', name: 'Cofre Legendario', rarity: 'legendary', price_gems: 60, currency: 'gems', type: 'chest', description: 'Garantiza al menos un objeto LEGENDARIO.' }
     ];
 
     const nextRotationRes = await query('SELECT rotated_at FROM daily_shop_items LIMIT 1');
@@ -531,25 +531,29 @@ router.post('/activate/:id', authenticate, async (req, res) => {
   }
 });
 
-// Buy chest with gems
+// Buy chest (coins or gems depending on chest type)
 router.post('/buy-chest/:type', authenticate, async (req, res) => {
   const type = req.params.type; // normal, epic, legendary
   const userId = req.user.id;
 
-  const chestPrices = {
-    normal: 10,
-    epic: 25,
-    legendary: 60
+  const chestPricing = {
+    normal: { amount: 1000, currency: 'coins' },
+    epic: { amount: 25, currency: 'gems' },
+    legendary: { amount: 60, currency: 'gems' }
   };
 
-  const price = chestPrices[type];
-  if (!price) return res.status(400).json({ message: 'Invalid chest type' });
+  const pricing = chestPricing[type];
+  if (!pricing) return res.status(400).json({ message: 'Invalid chest type' });
 
   try {
-    const userRes = await query('SELECT reppy_gems FROM users WHERE id = $1', [userId]);
+    const userRes = await query('SELECT reppy_coins, reppy_gems FROM users WHERE id = $1', [userId]);
     const user = userRes.rows[0];
 
-    if (user.reppy_gems < price) {
+    if (pricing.currency === 'coins' && user.reppy_coins < pricing.amount) {
+      return res.status(400).json({ message: 'INSUFFICIENT COINS' });
+    }
+
+    if (pricing.currency === 'gems' && user.reppy_gems < pricing.amount) {
       return res.status(400).json({ message: 'INSUFFICIENT GEMS' });
     }
 
@@ -559,16 +563,23 @@ router.post('/buy-chest/:type', authenticate, async (req, res) => {
     if (type === 'epic') column = 'epic_chests';
     if (type === 'legendary') column = 'legendary_chests';
 
-    await query(`UPDATE users SET ${column} = ${column} + 1, reppy_gems = reppy_gems - $1 WHERE id = $2`, [price, userId]);
-    
-    await query(`
-      INSERT INTO gem_transactions (user_id, amount, source, description)
-      VALUES ($1, $2, 'SHOP', $3)
-    `, [userId, -price, `Purchased ${type} chest`]);
+    if (pricing.currency === 'coins') {
+      await query(`UPDATE users SET ${column} = ${column} + 1, reppy_coins = reppy_coins - $1 WHERE id = $2`, [pricing.amount, userId]);
+    } else {
+      await query(`UPDATE users SET ${column} = ${column} + 1, reppy_gems = reppy_gems - $1 WHERE id = $2`, [pricing.amount, userId]);
+      await query(`
+        INSERT INTO gem_transactions (user_id, amount, source, description)
+        VALUES ($1, $2, 'SHOP', $3)
+      `, [userId, -pricing.amount, `Purchased ${type} chest`]);
+    }
 
     await query('COMMIT');
 
-    res.json({ message: 'Chest purchased successfully', remaining_gems: user.reppy_gems - price });
+    res.json({
+      message: 'Chest purchased successfully',
+      remaining_coins: pricing.currency === 'coins' ? user.reppy_coins - pricing.amount : user.reppy_coins,
+      remaining_gems: pricing.currency === 'gems' ? user.reppy_gems - pricing.amount : user.reppy_gems
+    });
   } catch (error) {
     await query('ROLLBACK');
     console.error('Error buying chest:', error);

@@ -247,10 +247,11 @@
                   {{ chest.description }}</p>
 
                 <button @click="purchaseChest(chest)"
-                  :disabled="buying || (authStore.user?.reppy_gems || 0) < chest.price_gems"
+                  :disabled="buying || ((chest.currency === 'coins' ? (authStore.user?.reppy_coins || 0) : (authStore.user?.reppy_gems || 0)) < (chest.price ?? chest.price_gems ?? 0))"
                   class="w-full py-4 rounded-[22px] bg-emerald-500 text-white text-xs font-black uppercase tracking-[0.2em] hover:bg-emerald-400 shadow-xl shadow-emerald-500/30 transition-all active:scale-95 disabled:grayscale disabled:opacity-50 flex items-center justify-center gap-3">
-                  <span class="tabular-nums text-xl">{{ chest.price_gems }}</span>
-                  <Gem class="w-5 h-5 fill-white/20" />
+                  <span class="tabular-nums text-xl">{{ chest.price ?? chest.price_gems }}</span>
+                  <Coins v-if="chest.currency === 'coins'" class="w-5 h-5 fill-white/20" />
+                  <Gem v-else class="w-5 h-5 fill-white/20" />
                 </button>
               </div>
             </div>
@@ -698,11 +699,11 @@
                 <CheckCircle2 class="w-5 h-5" />
                 <span class="text-sm font-black uppercase tracking-widest">{{ i18n.t('btn_acquired') }}</span>
               </div>
-              <button v-if="selectedItem.type !== 'bundle' && selectedItem.type !== 'consumable'"
+              <button v-if="selectedItem.type !== 'bundle' && selectedItem.type !== 'consumable' && selectedItem.type !== 'custom'"
                 @click="equipItem(selectedItem); showItemModal = false" :disabled="isEquipped(selectedItem)"
                 class="w-full py-5 rounded-[22px] font-black text-sm uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 active:scale-95"
                 :class="isEquipped(selectedItem) ? 'bg-white/5 text-muted border border-white/10 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-400 shadow-xl shadow-blue-600/20'">
-                {{ isEquipped(selectedItem) ? i18n.t('btn_on') : i18n.t('btn_equip') }}
+                {{ isEquipped(selectedItem) ? i18n.t('inv_unlink_artifact') : i18n.t('btn_equip') }}
                 <component :is="isEquipped(selectedItem) ? Check : Zap" class="w-4 h-4" />
               </button>
             </div>
@@ -976,9 +977,9 @@ const equipItem = async (item) => {
     const realId = item.item_id || item.id;
     await axios.post(`/api/shop/equip/${realId}?type=${item.type}`);
     await authStore.fetchProfile();
-    notificationStore.notify(`${item.name} active`, 'success');
+    notificationStore.notify(i18n.locale === 'es' ? `${item.name} equipado` : `${item.name} equipped`, 'success');
   } catch (error) {
-    notificationStore.notify('Activation failed', 'error');
+    notificationStore.notify(i18n.locale === 'es' ? 'Error al equipar' : 'Equip failed', 'error');
   }
 };
 
