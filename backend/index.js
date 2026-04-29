@@ -95,23 +95,27 @@ apiRouter.post('/pusher/auth', (req, res) => {
   const socketId = req.body.socket_id;
   const channel = req.body.channel_name;
   
-  const userId = req.body.user_id || 'anonymous';
-  const userName = req.body.user_name || 'Anonymous';
+  // Try to get params from body or query (pusher-js can send them in different ways)
+  const userId = String(req.body.user_id || req.query.user_id || 'anonymous-' + Math.random().toString(36).substr(2, 9));
+  const userName = req.body.user_name || req.query.user_name || 'Anonymous';
+  const avatarUrl = req.body.avatar_url || req.query.avatar_url || '';
+
+  console.log(`[PUSHER AUTH] Channel: ${channel}, User: ${userName} (${userId}), Socket: ${socketId}`);
 
   const presenceData = {
     user_id: userId,
     user_info: {
       name: userName,
-      avatar_url: req.body.avatar_url || ''
+      avatar_url: avatarUrl
     },
   };
 
   try {
     const auth = pusher.authorizeChannel(socketId, channel, presenceData);
     res.send(auth);
-  } catch (e) {
-    const auth = pusher.authenticate(socketId, channel);
-    res.send(auth);
+  } catch (error) {
+    console.error(`[PUSHER AUTH ERROR] Channel: ${channel}`, error);
+    res.status(403).send('Forbidden');
   }
 });
 

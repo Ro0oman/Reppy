@@ -16,8 +16,11 @@ export const useSocketStore = defineStore('socket', {
       if (this.pusher) return;
 
       const authStore = useAuthStore();
-      const apiURL = import.meta.env.VITE_API_URL || '';
+      // Use relative path in production, or the env var in development
+      const apiURL = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_URL || '');
       
+      console.log(`[PUSHER INIT] Initializing with User: ${authStore.user?.name} (ID: ${authStore.user?.id})`);
+
       this.pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
         cluster: import.meta.env.VITE_PUSHER_CLUSTER,
         forceTLS: true,
@@ -49,7 +52,9 @@ export const useSocketStore = defineStore('socket', {
       
       const updateActiveOperatives = () => {
         const members = [];
+        console.log(`[PUSHER PRESENCE] Current members count: ${presenceChannel.members.count}`);
         presenceChannel.members.each((member) => {
+          console.log(`[PUSHER MEMBER] Found: ${member.info.name} (ID: ${member.id})`);
           members.push({
             id: member.id,
             name: member.info.name,
