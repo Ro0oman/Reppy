@@ -101,6 +101,12 @@ apiRouter.post('/pusher/auth', (req, res) => {
   const userName = req.body.user_name || req.query.user_name || 'Anonymous';
   const avatarUrl = req.body.avatar_url || req.query.avatar_url || '';
 
+  // Debug env vars (hidden secret for safety)
+  if (!process.env.PUSHER_APP_ID || !process.env.PUSHER_KEY || !process.env.PUSHER_SECRET) {
+    console.error('[PUSHER] Missing environment variables!');
+    return res.status(500).json({ error: 'Missing Pusher Environment Variables on Server' });
+  }
+
   console.log(`[PUSHER AUTH] Channel: ${channel}, User: ${userName} (${userId}), Socket: ${socketId}`);
 
   const presenceData = {
