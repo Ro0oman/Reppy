@@ -3,6 +3,7 @@
   "outputDirectory": "frontend/dist",
   "rewrites": [
     { "source": "/sitemap.xml", "destination": "/api/sitemap" },
+    { "source": "/api/pusher/auth", "destination": "/api/pusher-auth.js" },
     { "source": "/api/(.*)", "destination": "/api/index.js" },
     { "source": "/((?!api/|_nuxt/|assets/|src/|favicon|og-image|manifest|robots|sitemap).*)", "destination": "/index.html" }
   ],
