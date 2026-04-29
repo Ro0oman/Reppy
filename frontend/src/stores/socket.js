@@ -25,20 +25,15 @@ export const useSocketStore = defineStore('socket', {
         cluster: import.meta.env.VITE_PUSHER_CLUSTER,
         forceTLS: true,
         authEndpoint: `${apiURL}/api/pusher/auth`,
-        authTransport: 'ajax',
         auth: {
           params: {
             user_id: authStore.user?.id,
             user_name: authStore.user?.name,
-            // Don't send base64 over Pusher (too large)
             avatar_url: authStore.user?.avatar_url?.startsWith('http') ? authStore.user?.avatar_url : ''
-          },
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
           }
         }
       });
+
 
       console.log('[PUSHER] Instance created, auth endpoint:', `${apiURL}/api/pusher/auth`);
 
