@@ -358,7 +358,7 @@
               <div class="absolute inset-0 border-2 border-primary-500/30 rounded-[2.5rem] -m-4 md:-m-8 animate-pulse pointer-events-none"></div>
               
               <img :src="user.avatar_url" 
-                   class="max-w-full max-h-full object-contain rounded-3xl shadow-[0_0_80px_rgba(0,0,0,0.8)] border border-white/10"
+                   class="w-full h-full max-w-[512px] max-h-[512px] object-cover rounded-3xl shadow-[0_0_80px_rgba(0,0,0,0.8)] border border-white/10"
                    :style="user.avatar_css" />
             </div>
           </div>
@@ -430,7 +430,7 @@ const handleCustomAvatar = async (event) => {
     const img = new Image();
     img.onload = async () => {
       const canvas = document.createElement('canvas');
-      const MAX_SIZE = 256;
+      const MAX_SIZE = 512;
       let width = img.width;
       let height = img.height;
 
