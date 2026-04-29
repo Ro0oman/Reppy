@@ -387,6 +387,15 @@ const initializeApp = async () => {
   rouletteStore.checkStatus();
   notifStore.fetchNotifications();
   socketStore.init();
+
+  // Periodic presence ping for Pusher/Backend tracking
+  const pingInterval = setInterval(() => {
+    if (authStore.isAuthenticated) {
+      socketStore.syncPresence();
+    } else {
+      clearInterval(pingInterval);
+    }
+  }, 30000);
 };
 
 watch(() => authStore.isAuthenticated, (val) => {

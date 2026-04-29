@@ -1,10 +1,12 @@
 import { Server } from 'socket.io';
+import pusher from './pusher.js';
 
 let io;
 const activeUsers = new Map(); // userId -> { name, lastActive }
 const userSockets = new Map(); // userId -> Set of socketIds
 
 export const initSocket = (server) => {
+  // We keep Socket.io for local development compatibility if needed
   io = new Server(server, {
     cors: {
       origin: "*",
@@ -19,7 +21,6 @@ export const initSocket = (server) => {
       if (user && user.id) {
         socket.userId = user.id;
         
-        // Track socket for targeted messaging
         if (!userSockets.has(user.id)) {
           userSockets.set(user.id, new Set());
         }
@@ -35,16 +36,8 @@ export const initSocket = (server) => {
       }
     });
 
-    // PvP Room logic
-    socket.on('join_pvp', (fightId) => {
-      socket.join(`pvp_${fightId}`);
-      console.log(`User joined PvP room: pvp_${fightId}`);
-    });
-
     socket.on('disconnect', () => {
-      console.log('User disconnected:', socket.id);
       if (socket.userId) {
-        // Remove socket from tracking
         if (userSockets.has(socket.userId)) {
           userSockets.get(socket.userId).delete(socket.id);
           if (userSockets.get(socket.userId).size === 0) {
@@ -52,7 +45,6 @@ export const initSocket = (server) => {
           }
         }
 
-        // We could keep them for a while, but for "live" we can remove or set timeout
         setTimeout(() => {
             const user = activeUsers.get(socket.userId);
             if (user && Date.now() - user.lastActive > 30000) {
@@ -67,32 +59,62 @@ export const initSocket = (server) => {
   return io;
 };
 
+export const updatePresence = (user) => {
+  if (!user || !user.id) return;
+  activeUsers.set(user.id, { 
+    id: user.id,
+    name: user.name, 
+    avatar_url: user.avatar_url,
+    lastActive: Date.now() 
+  });
+  broadcastPresence();
+};
+
+// --- PUSHER INTEGRATION ---
+// We use Pusher for production broadcasts
 export const broadcastPresence = () => {
-  if (!io) return;
   const users = Array.from(activeUsers.values()).filter(u => Date.now() - u.lastActive < 60000);
-  io.emit('presence_update', users);
+  
+  // Broadcast via Socket.io (local)
+  if (io) io.emit('presence_update', users);
+  
+  // Broadcast via Pusher (production)
+  pusher.trigger("reppy-global-presence", "presence_update", users).catch(err => {
+    console.error('[PUSHER] Error broadcasting presence:', err.message);
+  });
 };
 
 export const sendToUser = (userId, event, data) => {
+  // Send via Socket.io
   if (io && userSockets.has(userId)) {
     const sockets = userSockets.get(userId);
     sockets.forEach(socketId => {
       io.to(socketId).emit(event, data);
     });
   }
+  
+  // Send via Pusher (private channel)
+  pusher.trigger(`private-user-${userId}`, event, data).catch(err => {
+    console.warn('[PUSHER] Error sending to user:', err.message);
+  });
 };
 
 export const broadcastPvP = (fightId, type, data) => {
-  if (io) {
-    io.to(`pvp_${fightId}`).emit('pvp_event', { type, ...data });
-  }
+  const payload = { type, ...data };
+  if (io) io.to(`pvp_${fightId}`).emit('pvp_event', payload);
+  
+  pusher.trigger(`pvp-${fightId}`, "pvp_event", payload).catch(err => {
+    console.warn('[PUSHER] Error broadcasting PvP:', err.message);
+  });
 };
 
 export const broadcastDamage = (damageData) => {
-  if (!io) return;
-  io.emit('boss_damage', damageData);
+  if (io) io.emit('boss_damage', damageData);
   
-  // Also update lastActive for the user who did damage
+  pusher.trigger("global-events", "boss_damage", damageData).catch(err => {
+    console.warn('[PUSHER] Error broadcasting damage:', err.message);
+  });
+  
   if (damageData.userId && activeUsers.has(damageData.userId)) {
     const user = activeUsers.get(damageData.userId);
     user.lastActive = Date.now();

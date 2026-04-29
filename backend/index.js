@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 
 // 1. Initialize environment variables first
-dotenv.config();
+dotenv.config({ path: './backend/.env' });
 
 import authRoutes from './auth.js';
 import repsRoutes from './reps.js';
@@ -26,9 +26,10 @@ import pvpRoutes from './pvp.js';
 import testRoutes from './test.js';
 import missionsRoutes from './missions.js';
 import pushRoutes from './push.js';
-
-
 import http from 'http';
+import pusher from './pusher.js';
+import { updatePresence } from './socketManager.js';
+import { authenticate } from './middleware.js';
 import { initSocket } from './socketManager.js';
 import cron from 'node-cron';
 import { runStreakReminders } from './utils/streakReminders.js';
@@ -55,7 +56,7 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-      "connect-src": ["'self'", "http://localhost:5000", "ws://localhost:5000", "http://127.0.0.1:5000", "ws://127.0.0.1:5000", "https://*.google-analytics.com", "https://www.google-analytics.com", "https://accounts.google.com"],
+      "connect-src": ["'self'", "http://localhost:5001", "ws://localhost:5001", "http://127.0.0.1:5001", "ws://127.0.0.1:5001", "https://*.pusher.com", "wss://*.pusher.com", "https://*.google-analytics.com", "https://www.google-analytics.com", "https://accounts.google.com"],
       "script-src": ["'self'", "'unsafe-inline'", "https://www.googletagmanager.com", "https://www.google-analytics.com"],
       "img-src": ["'self'", "data:", "https://www.google-analytics.com", "https://www.googletagmanager.com", "https://static.wikia.nocookie.net", "https://*.wikia.nocookie.net", "https://ssb.wiki.gallery", "https://*.wiki.gallery", "https://ui-avatars.com", "https://images.unsplash.com", "https://fbi.cults3d.com", "https://i.redd.it", "https://preview.redd.it", "https://i.namu.wiki", "https://www.vhv.rs", "https://lh3.googleusercontent.com", "*"],
       "frame-src": ["'self'", "https://accounts.google.com/"],
@@ -89,6 +90,29 @@ apiRouter.use('/test', testRoutes);
 apiRouter.use('/missions', missionsRoutes);
 apiRouter.use('/push', pushRoutes);
 
+// Pusher Auth Endpoint
+apiRouter.post('/pusher/auth', (req, res) => {
+  const socketId = req.body.socket_id;
+  const channel = req.body.channel_name;
+  
+  const userId = req.body.user_id || 'anonymous';
+  const userName = req.body.user_name || 'Anonymous';
+
+  const presenceData = {
+    user_id: userId,
+    user_info: {
+      name: userName,
+    },
+  };
+
+  try {
+    const auth = pusher.authorizeChannel(socketId, channel, presenceData);
+    res.send(auth);
+  } catch (e) {
+    const auth = pusher.authenticate(socketId, channel);
+    res.send(auth);
+  }
+});
 
 // Health check (within router)
 apiRouter.get('/health', (req, res) => {
@@ -98,6 +122,23 @@ apiRouter.get('/health', (req, res) => {
     env: process.env.NODE_ENV || 'development',
     vercel: process.env.VERCEL || '0'
   });
+});
+
+// Ping for presence
+apiRouter.post('/test/ping', authenticate, async (req, res) => {
+  try {
+    const userRes = await query('SELECT name, avatar_url FROM users WHERE id = $1', [req.user.id]);
+    if (userRes.rows.length > 0) {
+      const fullUser = { ...req.user, ...userRes.rows[0] };
+      updatePresence(fullUser);
+    } else {
+      updatePresence(req.user);
+    }
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('[PRESENCE] Ping error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 // Mounting the router at both /api and /

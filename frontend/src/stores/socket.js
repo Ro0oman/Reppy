@@ -1,73 +1,109 @@
 import { defineStore } from 'pinia';
-import { io } from 'socket.io-client';
+import Pusher from 'pusher-js';
 import { useAuthStore } from './auth';
 import { useDamageStore } from './damage';
 import { useNotificationStore } from './notification';
 
 export const useSocketStore = defineStore('socket', {
   state: () => ({
-    socket: null,
+    pusher: null,
     connected: false,
-    activeOperatives: []
+    activeOperatives: [],
+    channels: {}
   }),
   actions: {
     init() {
-      if (this.socket) return;
+      if (this.pusher) return;
 
       const authStore = useAuthStore();
-      // Use VITE_API_URL if available, otherwise fallback to same host
       const apiURL = import.meta.env.VITE_API_URL || '';
-      const socketHost = apiURL || (window.location.origin.includes('localhost') 
-        ? 'http://localhost:5000' 
-        : window.location.origin);
-
-      this.socket = io(socketHost, {
-        transports: ['websocket', 'polling'],
-        reconnectionAttempts: 5
-      });
-
-      this.socket.on('connect', () => {
-        this.connected = true;
-        if (authStore.user) {
-          this.socket.emit('join_battle', {
-            id: authStore.user.id,
-            name: authStore.user.name,
-            avatar_url: authStore.user.avatar_url
-          });
+      
+      this.pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
+        cluster: import.meta.env.VITE_PUSHER_CLUSTER,
+        forceTLS: true,
+        authEndpoint: `${apiURL}/api/pusher/auth`,
+        auth: {
+          params: {
+            user_id: authStore.user?.id,
+            user_name: authStore.user?.name
+          }
         }
       });
 
-      this.socket.on('disconnect', () => {
+      this.pusher.connection.bind('connected', () => {
+        this.connected = true;
+        console.log('[PUSHER] Connected');
+        
+        // Signal presence to backend (since Pusher doesn't have a direct "join" event like Socket.io)
+        // We do this via a regular API call or just by being active
+        if (authStore.user) {
+          this.syncPresence();
+        }
+      });
+
+      this.pusher.connection.bind('disconnected', () => {
         this.connected = false;
       });
 
-      this.socket.on('presence_update', (users) => {
+      // 1. Global Presence Channel
+      const presenceChannel = this.pusher.subscribe('reppy-global-presence');
+      this.channels.presence = presenceChannel;
+      
+      presenceChannel.bind('presence_update', (users) => {
         this.activeOperatives = users;
       });
 
-      this.socket.on('boss_damage', (data) => {
-        const authStore = useAuthStore();
+      // 2. Global Events (Boss Damage)
+      const eventsChannel = this.pusher.subscribe('global-events');
+      this.channels.events = eventsChannel;
+      
+      eventsChannel.bind('boss_damage', (data) => {
         const damageStore = useDamageStore();
-        
-        // Only show damage from OTHER users to avoid double numbers
         if (data.userId !== authStore.user?.id) {
-          // Trigger the global damage animation
           damageStore.addDamage(data.amount, data.exerciseType, undefined, undefined, data.isCrit, data.userName, data.userId);
         }
       });
 
-      this.socket.on('notification', (data) => {
-        const notificationStore = useNotificationStore();
-        // Format the message nicely for the toast
-        const message = `${data.content}`;
-        notificationStore.notify(message, 'info');
-      });
+      // 3. Private User Channel
+      if (authStore.user) {
+        const userChannel = this.pusher.subscribe(`private-user-${authStore.user.id}`);
+        this.channels.user = userChannel;
+        
+        userChannel.bind('notification', (data) => {
+          const notificationStore = useNotificationStore();
+          notificationStore.notify(data.content, 'info');
+        });
+      }
     },
+
+    async syncPresence() {
+      const authStore = useAuthStore();
+      if (!authStore.isAuthenticated) return;
+      
+      // We can use a lightweight endpoint just to say "I'm here"
+      try {
+        await fetch(`${import.meta.env.VITE_API_URL || ''}/api/test/ping`, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authStore.token}`
+          },
+          body: JSON.stringify({ userId: authStore.user.id })
+        });
+      } catch (e) {
+        console.warn('[PUSHER] Failed to sync presence:', e);
+      }
+    },
+
     disconnect() {
-      if (this.socket) {
-        this.socket.disconnect();
-        this.socket = null;
+      if (this.pusher) {
+        Object.values(this.channels).forEach(channel => {
+          this.pusher.unsubscribe(channel.name);
+        });
+        this.pusher.disconnect();
+        this.pusher = null;
         this.connected = false;
+        this.channels = {};
       }
     }
   }
