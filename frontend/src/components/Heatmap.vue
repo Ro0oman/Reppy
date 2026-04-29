@@ -36,8 +36,8 @@
 
     <!-- Calendar Grid -->
     <div
-      class="relative bg-surface/30 border border-white/5 rounded-2xl p-4 group/board backdrop-blur-md overflow-x-auto custom-scrollbar min-w-0">
-      <div class="min-w-[300px]"> <!-- Ensure a minimum readable width for the grid -->
+      class="relative bg-surface/30 border border-white/5 rounded-2xl p-2 sm:p-4 group/board backdrop-blur-md overflow-x-auto custom-scrollbar min-w-0">
+      <div class="w-full"> <!-- Fluid width for the grid -->
         <!-- Day Detail Modal (Centered) -->
         <Teleport to="body">
           <transition name="modal">
@@ -117,27 +117,27 @@
         </Teleport>
 
         <!-- Weekday Headers -->
-        <div class="grid grid-cols-7 mb-4 ">
+        <div class="grid grid-cols-7 mb-2 ">
           <div v-for="day in weekdays" :key="day"
-            class="text-center text-[10px] font-black uppercase tracking-widest text-zinc-500 pb-2">
+            class="text-center text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-zinc-500 pb-1">
             {{ day }}
           </div>
         </div>
 
         <!-- Days Grid -->
-        <div class="grid grid-cols-7 gap-1.5 sm:gap-2 lg:gap-3 rounded-2xl ">
+        <div class="grid grid-cols-7 gap-1 sm:gap-2 lg:gap-3 rounded-2xl ">
           <button v-for="(day, index) in calendarDays" :key="day.date || index"
-            class="aspect-square relative flex items-center justify-center rounded-xl transition-all duration-400 group/day hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            class="aspect-square relative flex items-center justify-center rounded-lg sm:rounded-xl transition-all duration-400 group/day hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary/50"
             :class="[
               day.isCurrentMonth ? 'cursor-pointer' : 'opacity-20 pointer-events-none grayscale',
             ]" @click="day.isCurrentMonth && (selectedDay = day)"
             :title="day.isCurrentMonth ? `${day.dayNumber} ${currentMonthName}: ${day.count} reps` : ''">
             <!-- Activity Indicator (Background Circle) -->
-            <div v-if="day.isCurrentMonth" class="absolute inset-1 rounded-lg transition-transform duration-500"
+            <div v-if="day.isCurrentMonth" class="absolute inset-0.5 sm:inset-1 rounded-md sm:rounded-lg transition-transform duration-500"
               :class="getColorClass(day)"></div>
 
             <!-- Day Number -->
-            <span class="relative z-10 text-[11px] lg:text-sm font-black transition-colors" :class="[
+            <span class="relative z-10 text-[9px] sm:text-[11px] lg:text-sm font-black transition-colors" :class="[
               day.count > 0 ? 'text-white' : 'text-zinc-500',
               day.isToday ? 'text-primary' : ''
             ]">

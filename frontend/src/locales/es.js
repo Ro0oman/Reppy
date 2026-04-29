@@ -797,7 +797,7 @@ export default {
     profile_reward_desc: 'Los cofres de recompensa por subir de nivel se añaden automáticamente al inventario.',
     profile_activity_audit: 'AUDITORÍA DE ACTIVIDAD',
     profile_rc_history: 'HISTORIAL DE REPPY COINS',
-    profile_no_transactions: 'SIN_TRANSACCIONES_REGISTRADAS',
+    profile_no_transactions: 'No hay transacciones aún',
     profile_load_more: 'CARGAR MÁS TRANSACCIONES',
     profile_loading: 'COMUNICANDO...',
     // Shop specific
@@ -1184,7 +1184,7 @@ export default {
     ui_upload_custom: 'Subir Avatar Personalizado',
     ui_compressed_info: 'Se comprimirá automáticamente para optimizar carga',
     ui_lock_selection: 'SELECCIÓN BLOQUEADA HASTA EL PRÓXIMO REINICIO DE CICLO',
-    ui_enc_chain: 'CADENA_ENCRIPTADA',
+    ui_enc_chain: 'Protocolo Seguro',
     rarity_common: 'Común',
     rarity_rare: 'Raro',
     rarity_special: 'Epico',

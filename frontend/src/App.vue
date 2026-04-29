@@ -162,11 +162,11 @@
 
     <!-- Mobile Bottom Operational Dock -->
     <nav v-if="authStore.isAuthenticated && $route.name !== 'pvp'" 
-      class="lg:hidden fixed bottom-6 left-4 right-4 z-[60] bg-surface/60 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-1.5 transition-all duration-500">
-      <div class="flex items-center justify-around h-14">
+      class="lg:hidden fixed bottom-6 left-4 right-4 z-[60] bg-surface/60 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-2 transition-all duration-500">
+      <div class="flex items-center justify-around h-14 gap-1">
         <router-link v-for="nav in mobileNavLinks" :key="nav.id" :to="{ name: nav.id, params: { lang: i18n.locale, ...(nav.id === 'profile' ? { userId: authStore.user?.id } : {}) } }"
-                     class="flex flex-col items-center justify-center py-2 flex-1 group relative transition-all"
-                     :class="$route.name === nav.id ? 'bg-primary-500/5' : 'opacity-60 hover:opacity-100'">
+                     class="flex flex-col items-center justify-center py-2 flex-1 group relative transition-all rounded-2xl overflow-hidden"
+                     :class="$route.name === nav.id ? 'bg-primary-500/10' : 'opacity-60 hover:opacity-100 hover:bg-white/5'">
           <div class="relative">
             <component :is="nav.icon" class="w-5 h-5 transition-transform group-active:scale-90 relative z-10" 
                        :class="$route.name === nav.id ? 'text-primary-500 drop-shadow-[0_0_10px_rgba(255,69,0,0.4)]' : ''" />
