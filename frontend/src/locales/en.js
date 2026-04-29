@@ -1209,4 +1209,12 @@ export default {
     shop_bundles_title: 'Tactical Bundles',
     shop_bundles_subtitle: 'Consolidated performance modules',
     shop_permanent_protocol: 'Permanent Systems',
+    notif_push_title: 'ACTIVATE YOUR POTENTIAL',
+    notif_push_desc: 'Receive streak alerts, friend comments, and Boss insults in real-time.',
+    notif_push_streak_title: 'Streak Alerts',
+    notif_push_streak_desc: 'Avoid losing your daily training streak.',
+    notif_push_secure_title: '100% Secure',
+    notif_push_secure_desc: 'No spam, only the important stuff.',
+    notif_push_allow: 'ACTIVATE NOTIFICATIONS',
+    notif_push_later: 'MAYBE LATER',
 };

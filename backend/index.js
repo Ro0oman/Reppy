@@ -25,10 +25,13 @@ import blogRoutes from './blog.js';
 import pvpRoutes from './pvp.js';
 import testRoutes from './test.js';
 import missionsRoutes from './missions.js';
+import pushRoutes from './push.js';
 
 
 import http from 'http';
 import { initSocket } from './socketManager.js';
+import cron from 'node-cron';
+import { runStreakReminders } from './utils/streakReminders.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -36,6 +39,16 @@ const server = http.createServer(app);
 
 // Initialize Socket.io
 initSocket(server);
+
+// --- SCHEDULED TASKS ---
+// Run streak reminders every day at 18:00 (6 PM)
+cron.schedule('0 18 * * *', () => {
+  console.log('[CRON] Iniciando recordatorios de racha diarios...');
+  runStreakReminders()
+    .then(count => console.log(`[CRON] Recordatorios enviados: ${count}`))
+    .catch(err => console.error('[CRON] Error en recordatorios:', err));
+});
+// -----------------------
 
 app.use(cors());
 app.use(helmet({
@@ -74,6 +87,7 @@ apiRouter.use('/blog-tracking', blogRoutes);
 apiRouter.use('/pvp', pvpRoutes);
 apiRouter.use('/test', testRoutes);
 apiRouter.use('/missions', missionsRoutes);
+apiRouter.use('/push', pushRoutes);
 
 
 // Health check (within router)

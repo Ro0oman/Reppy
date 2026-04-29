@@ -253,6 +253,8 @@
         </button>
       </div>
 
+      <PushPrompt />
+
   </div>
 </template>
 
@@ -281,6 +283,7 @@ import NotificationToast from './components/NotificationToast.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
 import DamageNumbers from './components/DamageNumbers.vue'
 import NotificationsDropdown from './components/NotificationsDropdown.vue'
+import PushPrompt from './components/PushPrompt.vue'
 
 const authStore = useAuthStore();
 const { toggleMute, isMuted, playClickBlip } = useAudio();

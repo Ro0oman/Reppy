@@ -797,7 +797,6 @@ export default {
     profile_no_transactions: 'SIN_TRANSACCIONES_REGISTRADAS',
     profile_load_more: 'CARGAR MÁS TRANSACCIONES',
     profile_loading: 'COMUNICANDO...',
-
     // Shop specific
     btn_buy:"COMPRAR",
     shop_upgrade_badge: "MEJORA",
@@ -1261,4 +1260,12 @@ export default {
     shop_bundles_title: 'Packs Tácticos',
     shop_bundles_subtitle: 'Módulos de rendimiento consolidados',
     shop_permanent_protocol: 'Sistemas Permanentes',
+    notif_push_title: 'ACTIVA TU POTENCIAL',
+    notif_push_desc: 'Recibe alertas de racha, comentarios de tus amigos e insultos del Boss en tiempo real.',
+    notif_push_streak_title: 'Alertas de Racha',
+    notif_push_streak_desc: 'Evita perder tu racha diaria.',
+    notif_push_secure_title: '100% Seguro',
+    notif_push_secure_desc: 'Sin spam, solo lo importante.',
+    notif_push_allow: 'ACTIVAR NOTIFICACIONES',
+    notif_push_later: 'QUIZÁS MÁS TARDE',
 };
