@@ -110,6 +110,7 @@ export const useSocketStore = defineStore('socket', {
       const channel = this.pusher.subscribe(channelName);
       channel.bind('pvp_event', onEvent);
       this.channels[channelName] = channel;
+      console.log(`[PVP] Subscribed to channel: ${channelName}`);
       return channel;
     },
 
@@ -126,7 +127,7 @@ export const useSocketStore = defineStore('socket', {
       if (!authStore.isAuthenticated) return;
       
       try {
-        await fetch(`${import.meta.env.VITE_API_URL || ''}/api/test/ping`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/test/ping`, {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -137,6 +138,11 @@ export const useSocketStore = defineStore('socket', {
             avatar_url: authStore.user.avatar_url 
           })
         });
+        if (res.ok) {
+          console.log('[PRESENCE] Sync successful');
+        } else {
+          console.warn('[PRESENCE] Sync failed with status:', res.status);
+        }
       } catch (e) {
         console.warn('[PUSHER] Failed to sync presence:', e);
       }
