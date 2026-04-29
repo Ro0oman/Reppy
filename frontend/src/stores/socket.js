@@ -69,6 +69,10 @@ export const useSocketStore = defineStore('socket', {
       presenceChannel.bind('pusher:member_added', updateActiveOperatives);
       presenceChannel.bind('pusher:member_removed', updateActiveOperatives);
       
+      presenceChannel.bind('pusher:subscription_error', (error) => {
+        console.error('[PUSHER PRESENCE ERROR] Subscription failed:', error);
+      });
+      
       // Fallback for manual updates if needed
       presenceChannel.bind('presence_update', (users) => {
         if (!this.activeOperatives.length) this.activeOperatives = users;
