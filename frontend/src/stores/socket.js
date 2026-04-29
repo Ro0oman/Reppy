@@ -24,13 +24,8 @@ export const useSocketStore = defineStore('socket', {
       this.pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
         cluster: import.meta.env.VITE_PUSHER_CLUSTER,
         forceTLS: true,
-        authEndpoint: `${apiURL}/api/pusher/auth`,
+        authEndpoint: `${apiURL}/api/pusher/auth?user_id=${authStore.user?.id || ''}&user_name=${encodeURIComponent(authStore.user?.name || '')}&avatar_url=${encodeURIComponent(authStore.user?.avatar_url || '')}`,
         auth: {
-          params: {
-            user_id: authStore.user?.id,
-            user_name: authStore.user?.name,
-            avatar_url: authStore.user?.avatar_url
-          },
           headers: {
             'Accept': 'application/json'
           }
