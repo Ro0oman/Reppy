@@ -423,27 +423,22 @@ const handleEnd = (winnerId) => {
 onMounted(() => {
   fetchFight();
   
-  // Join socket room for this fight
-  if (socketStore.socket) {
-    socketStore.socket.emit('join_pvp', fightId);
+  // Join pusher channel for this fight
+  socketStore.subscribeToPvp(fightId, (event) => {
+    console.log('PvP Pusher Event:', event);
+    handleEvent(event);
     
-    // Listen for real-time events
-    socketStore.socket.on('pvp_event', (event) => {
-      console.log('PvP Socket Event:', event);
-      handleEvent(event);
-      
-      // Update fight state directly if data is provided
-      if (event.type === 'set' && fight.value) {
-        if (event.hp1 !== undefined) fight.value.hp1 = event.hp1;
-        if (event.hp2 !== undefined) fight.value.hp2 = event.hp2;
-        if (event.damage1 !== undefined) fight.value.damage1 = event.damage1;
-        if (event.damage2 !== undefined) fight.value.damage2 = event.damage2;
-      } else {
-        // For other events (start, finish), refresh full state
-        fetchFight();
-      }
-    });
-  }
+    // Update fight state directly if data is provided
+    if (event.type === 'set' && fight.value) {
+      if (event.hp1 !== undefined) fight.value.hp1 = event.hp1;
+      if (event.hp2 !== undefined) fight.value.hp2 = event.hp2;
+      if (event.damage1 !== undefined) fight.value.damage1 = event.damage1;
+      if (event.damage2 !== undefined) fight.value.damage2 = event.damage2;
+    } else {
+      // For other events (start, finish), refresh full state
+      fetchFight();
+    }
+  });
 
   watch(timeLeft, (newVal) => {
       if (newVal <= 0 && isParticipant.value && fight.value?.status === 'active' && !isFinishing.value) {
@@ -453,9 +448,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  if (socketStore.socket) {
-    socketStore.socket.off('pvp_event');
-  }
+  socketStore.unsubscribeFromPvp(fightId);
   if (timerInterval) clearInterval(timerInterval);
 });
 </script>

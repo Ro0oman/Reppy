@@ -79,7 +79,7 @@ export const broadcastPresence = () => {
   if (io) io.emit('presence_update', users);
   
   // Broadcast via Pusher (production)
-  pusher.trigger("reppy-global-presence", "presence_update", users).catch(err => {
+  pusher.trigger("presence-global", "presence_update", users).catch(err => {
     console.error('[PUSHER] Error broadcasting presence:', err.message);
   });
 };
@@ -103,8 +103,8 @@ export const broadcastPvP = (fightId, type, data) => {
   const payload = { type, ...data };
   if (io) io.to(`pvp_${fightId}`).emit('pvp_event', payload);
   
-  pusher.trigger(`pvp-${fightId}`, "pvp_event", payload).catch(err => {
-    console.warn('[PUSHER] Error broadcasting PvP:', err.message);
+  pusher.trigger(`presence-pvp-${fightId}`, "pvp_event", payload).catch(err => {
+    console.error('[PUSHER] Error broadcasting PvP:', err.message);
   });
 };
 

@@ -102,6 +102,7 @@ apiRouter.post('/pusher/auth', (req, res) => {
     user_id: userId,
     user_info: {
       name: userName,
+      avatar_url: req.body.avatar_url || ''
     },
   };
 

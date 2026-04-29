@@ -25,7 +25,8 @@ export const useSocketStore = defineStore('socket', {
         auth: {
           params: {
             user_id: authStore.user?.id,
-            user_name: authStore.user?.name
+            user_name: authStore.user?.name,
+            avatar_url: authStore.user?.avatar_url
           }
         }
       });
@@ -33,9 +34,6 @@ export const useSocketStore = defineStore('socket', {
       this.pusher.connection.bind('connected', () => {
         this.connected = true;
         console.log('[PUSHER] Connected');
-        
-        // Signal presence to backend (since Pusher doesn't have a direct "join" event like Socket.io)
-        // We do this via a regular API call or just by being active
         if (authStore.user) {
           this.syncPresence();
         }
@@ -45,12 +43,30 @@ export const useSocketStore = defineStore('socket', {
         this.connected = false;
       });
 
-      // 1. Global Presence Channel
-      const presenceChannel = this.pusher.subscribe('reppy-global-presence');
+      // 1. Global Presence Channel (NATIVE)
+      const presenceChannel = this.pusher.subscribe('presence-global');
       this.channels.presence = presenceChannel;
       
+      const updateActiveOperatives = () => {
+        const members = [];
+        presenceChannel.members.each((member) => {
+          members.push({
+            id: member.id,
+            name: member.info.name,
+            avatar_url: member.info.avatar_url,
+            lastActive: Date.now()
+          });
+        });
+        this.activeOperatives = members;
+      };
+
+      presenceChannel.bind('pusher:subscription_succeeded', updateActiveOperatives);
+      presenceChannel.bind('pusher:member_added', updateActiveOperatives);
+      presenceChannel.bind('pusher:member_removed', updateActiveOperatives);
+      
+      // Fallback for manual updates if needed
       presenceChannel.bind('presence_update', (users) => {
-        this.activeOperatives = users;
+        if (!this.activeOperatives.length) this.activeOperatives = users;
       });
 
       // 2. Global Events (Boss Damage)
@@ -88,11 +104,27 @@ export const useSocketStore = defineStore('socket', {
       }
     },
 
+    subscribeToPvp(fightId, onEvent) {
+      if (!this.pusher) this.init();
+      const channelName = `presence-pvp-${fightId}`;
+      const channel = this.pusher.subscribe(channelName);
+      channel.bind('pvp_event', onEvent);
+      this.channels[channelName] = channel;
+      return channel;
+    },
+
+    unsubscribeFromPvp(fightId) {
+      const channelName = `presence-pvp-${fightId}`;
+      if (this.pusher && this.channels[channelName]) {
+        this.pusher.unsubscribe(channelName);
+        delete this.channels[channelName];
+      }
+    },
+
     async syncPresence() {
       const authStore = useAuthStore();
       if (!authStore.isAuthenticated) return;
       
-      // We can use a lightweight endpoint just to say "I'm here"
       try {
         await fetch(`${import.meta.env.VITE_API_URL || ''}/api/test/ping`, {
           method: 'POST',
@@ -100,7 +132,10 @@ export const useSocketStore = defineStore('socket', {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${authStore.token}`
           },
-          body: JSON.stringify({ userId: authStore.user.id })
+          body: JSON.stringify({ 
+            userId: authStore.user.id,
+            avatar_url: authStore.user.avatar_url 
+          })
         });
       } catch (e) {
         console.warn('[PUSHER] Failed to sync presence:', e);
@@ -109,8 +144,8 @@ export const useSocketStore = defineStore('socket', {
 
     disconnect() {
       if (this.pusher) {
-        Object.values(this.channels).forEach(channel => {
-          this.pusher.unsubscribe(channel.name);
+        Object.keys(this.channels).forEach(name => {
+          this.pusher.unsubscribe(name);
         });
         this.pusher.disconnect();
         this.pusher = null;
