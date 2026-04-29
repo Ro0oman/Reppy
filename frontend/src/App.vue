@@ -1,9 +1,21 @@
 <template>
   <div class="min-h-screen selection:bg-primary-500/30 relative text-foreground transition-colors duration-500"
-       :class="authStore.user?.background_css ? 'bg-transparent' : 'bg-background'">
+       :class="[
+         authStore.user?.background_css ? 'bg-transparent' : 'bg-background',
+         { 'has-custom-bg': authStore.user?.background_css }
+       ]"
+  >
     
-    <!-- Animated background system -->
-    <BackgroundEffect v-if="authStore.isAuthenticated" :background-css="authStore.user?.background_css" />
+    <!-- Background System -->
+    <BackgroundEffect :background-css="authStore.user?.background_css" />
+
+    <!-- Contrast Shield for Custom Backgrounds -->
+    <div v-if="authStore.user?.background_css" 
+         class="fixed inset-0 pointer-events-none transition-all duration-700 z-[-1]"
+         :class="[
+           authStore.user?.background_css.includes('{') ? 'bg-background/60 backdrop-blur-[2px]' : 'bg-background/25 backdrop-blur-[1px]',
+           'contrast-shield'
+         ]"></div>
 
     <!-- Industrial Navigation Bar -->
     <nav v-if="authStore.isAuthenticated && $route.name !== 'pvp'"
@@ -390,3 +402,4 @@ onMounted(async () => {
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 </style>
 >
+ 

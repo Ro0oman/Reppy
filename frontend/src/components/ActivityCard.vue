@@ -184,7 +184,7 @@
            <p class="text-[8px] font-black text-muted/40 uppercase tracking-[0.3em]">{{ i18n.t('ui_loadout_active') }}</p>
            <div class="flex gap-2">
               <div v-for="(item, slot) in activity.equipment" :key="slot" 
-                   class="w-10 h-10 flex items-center justify-center rounded-lg bg-black/40 border-2 relative group/item"
+                   class="w-10 h-10 flex items-center justify-center rounded-lg bg-tactical border-2 relative group/item"
                    :class="item?.name ? getRarityClass(item.rarity, 'border') : 'border-dashed border-border/10 opacity-20'">
                  <component :is="getSlotIcon(slot)" class="w-5 h-5" :class="item?.name ? getRarityClass(item.rarity) : ''" />
                  <div v-if="item?.name" class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-primary-500 shadow-sm ring-2 ring-background"></div>
@@ -211,6 +211,10 @@
             <button @click="$emit('challenge', activity)" class="flex-shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl transition-all hover:bg-foreground/5 text-muted/60 hover:text-amber-500">
               <Swords class="w-4 h-4" />
               <span class="text-[10px] font-black uppercase tracking-tighter">{{ i18n.t('ui_challenge') || 'Retar' }}</span>
+            </button>
+            <button @click="sharePost" class="flex-shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl transition-all hover:bg-foreground/5 text-muted/60 hover:text-blue-500">
+              <Share2 class="w-4 h-4" />
+              <span class="text-[10px] font-black uppercase tracking-tighter">{{ i18n.t('ui_share') || 'Compartir' }}</span>
             </button>
           </div>
 
@@ -255,7 +259,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
 import AvatarFrame from './AvatarFrame.vue';
@@ -285,6 +289,11 @@ const authStore = useAuthStore();
 const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
 
+const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1200);
+const handleResize = () => { windowWidth.value = window.innerWidth; };
+onMounted(() => { window.addEventListener('resize', handleResize); });
+onUnmounted(() => { window.removeEventListener('resize', handleResize); });
+
 const showComments = ref(false);
 const commentText = ref('');
 const comments = ref([]);
@@ -299,6 +308,22 @@ const timeAgo = computed(() => {
         return formatDistanceToNow(date, { addSuffix: true, locale: i18n.locale === 'es' ? es : enUS });
     } catch (e) { return ''; }
 });
+
+const sharePost = async () => {
+  const text = `Check out this training by ${props.activity.user_name} on Reppy!`;
+  const url = window.location.origin + '/social?post=' + props.activity.id;
+  
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: 'Reppy Activity', text, url });
+    } catch (e) { console.log('Share failed', e); }
+  } else {
+    try {
+      await navigator.clipboard.writeText(`${text} ${url}`);
+      notificationStore.addNotification({ type: 'success', message: i18n.t('ui_link_copied') || 'Link copiado!' });
+    } catch (e) { console.log('Copy failed', e); }
+  }
+};
 
 const calculateStatLevel = (xp) => {
     if (!xp) return 1;

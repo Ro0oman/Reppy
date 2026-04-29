@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-background p-4 md:p-8 pb-24">
+  <div class="min-h-screen p-4 md:p-8 pb-24">
     <div class="max-w-4xl mx-auto space-y-8">
       
       <!-- Header -->
@@ -13,7 +13,7 @@
         </div>
 
         <!-- Global Reset Timer -->
-        <div v-if="nextReset" class="bg-surface/60 border border-border px-6 py-3 rounded-2xl flex items-center gap-4">
+        <div v-if="nextReset" class="bg-foreground/[0.04] border border-border px-6 py-3 rounded-2xl flex items-center gap-4 backdrop-blur-xl">
           <div class="flex flex-col items-end">
             <span class="text-[8px] font-black text-muted uppercase tracking-widest">{{ i18n.t('missions_next_reset') || 'NEXT_RESET' }}</span>
             <span class="text-lg font-black text-primary-500 font-mono tracking-tighter">{{ countdown }}</span>
@@ -32,7 +32,7 @@
         <div 
           v-for="mission in missions" 
           :key="mission.id"
-          class="mission-card group relative overflow-hidden bg-surface/40 border border-border rounded-[2rem] p-6 transition-all hover:border-primary-500/30 hover:bg-surface/60"
+          class="mission-card group relative overflow-hidden bg-foreground/[0.02] border border-border rounded-[2rem] p-6 transition-all hover:border-primary-500/30 hover:bg-foreground/[0.04] backdrop-blur-sm"
           :class="{ 'opacity-60': mission.is_claimed }"
         >
           <!-- Background Glow -->
@@ -44,7 +44,7 @@
               <div 
                 class="p-4 rounded-2xl border transition-all"
                 :class="[
-                  mission.is_completed && !mission.is_claimed ? 'bg-primary-500 border-primary-400 text-white shadow-lg shadow-primary-500/20' : 'bg-surface border-border text-muted',
+                  mission.is_completed && !mission.is_claimed ? 'bg-primary-500 border-primary-400 text-white shadow-lg shadow-primary-500/20' : 'bg-foreground/5 border-border text-muted',
                   mission.is_claimed ? 'grayscale opacity-50' : ''
                 ]"
               >
@@ -66,7 +66,7 @@
                     <span class="text-muted">{{ mission.current_value }} / {{ mission.goal_value }} {{ getGoalLabel(mission.goal_type) }}</span>
                     <span :class="mission.is_completed ? 'text-emerald-500' : 'text-primary-500'">{{ Math.round((mission.current_value / mission.goal_value) * 100) }}%</span>
                   </div>
-                  <div class="h-2 bg-black/40 rounded-full overflow-hidden p-0.5 border border-white/5">
+                  <div class="h-2 bg-foreground/10 rounded-full overflow-hidden p-0.5 border border-border/10">
                     <div 
                       class="h-full rounded-full transition-all duration-1000 ease-out"
                       :class="mission.is_completed ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-primary-500'"
@@ -79,7 +79,7 @@
 
             <!-- Rewards & Action -->
             <div class="flex md:flex-col items-center md:items-end gap-4 shrink-0">
-              <div class="flex items-center gap-3 bg-black/20 px-4 py-2 rounded-xl border border-white/5">
+              <div class="flex items-center gap-3 bg-foreground/5 px-4 py-2 rounded-xl border border-border">
                 <div v-if="mission.reward_coins > 0" class="flex items-center gap-1.5">
                   <Coins class="w-3.5 h-3.5 text-primary-500" />
                   <span class="text-xs font-black text-foreground">{{ mission.reward_coins }}</span>
@@ -99,7 +99,7 @@
                 @click="claimReward(mission)"
                 :disabled="!mission.is_completed || claimingId === mission.id"
                 class="flex-1 md:flex-none px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95 disabled:opacity-30 disabled:grayscale"
-                :class="mission.is_completed ? 'bg-primary-500 hover:bg-primary-600 text-white shadow-lg shadow-primary-500/20' : 'bg-white/5 text-muted border border-white/10'"
+                :class="mission.is_completed ? 'bg-primary-500 hover:bg-primary-600 text-white shadow-lg shadow-primary-500/20' : 'bg-foreground/5 text-muted border border-border'"
               >
                 <span v-if="claimingId === mission.id" class="flex items-center gap-2">
                   <Loader2 class="w-3 h-3 animate-spin" />
@@ -125,7 +125,7 @@
             <h3 class="text-lg font-black text-foreground uppercase italic tracking-tight">{{ i18n.t('missions_daily_done_title') || 'OPERATIVAS DIARIAS COMPLETADAS' }}</h3>
             <p class="text-xs text-muted font-bold uppercase tracking-widest">{{ i18n.t('missions_daily_done_subtitle') || 'Vuelve mañana para nuevos objetivos' }}</p>
           </div>
-          <div class="inline-flex items-center gap-3 bg-black/20 px-6 py-3 rounded-xl border border-white/5">
+          <div class="inline-flex items-center gap-3 bg-foreground/5 px-6 py-3 rounded-xl border border-border">
              <Clock class="w-4 h-4 text-indigo-400" />
              <span class="text-xl font-black text-indigo-400 font-mono tracking-tighter">{{ countdown }}</span>
           </div>

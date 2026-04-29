@@ -131,14 +131,21 @@
   .card-stats {
     background: hsla(var(--card), var(--card-alpha));
     backdrop-filter: blur(16px) saturate(160%);
-    border: 1px solid hsla(var(--border), var(--border-alpha, 1));
+    border: 1px solid hsla(var(--foreground) / 0.05);
     border-radius: 32px;
     padding: 28px;
     transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
     overflow: hidden;
     position: relative;
     box-shadow: 
-      0 10px 30px -15px rgba(0, 0, 0, 0.2),
+      0 10px 30px -15px rgba(0, 0, 0, 0.1),
+      inset 0 0 0 1px hsla(var(--foreground) / 0.02);
+  }
+
+  .dark .card-stats {
+    border: 1px solid hsla(var(--border), var(--border-alpha, 1));
+    box-shadow: 
+      0 10px 30px -15px rgba(0, 0, 0, 0.3),
       inset 0 0 0 1px hsla(var(--foreground) / 0.02);
   }
 
@@ -160,17 +167,22 @@
 
   /* Tactical Elements */
   .input-tactical {
-    @apply w-full bg-black/40 border border-white/5 rounded-xl px-5 py-4 
+    @apply w-full bg-foreground/5 border border-foreground/5 rounded-xl px-5 py-4 
            text-foreground font-medium outline-none transition-all duration-300
            placeholder:text-muted/30 focus:border-primary/50 focus:ring-4 focus:ring-primary/10 
-           shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)];
+           shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)];
     font-family: 'JetBrains Mono', monospace;
   }
 
   .select-tactical {
-    @apply w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 
+    @apply w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 
            text-foreground font-medium outline-none transition-all duration-300
            focus:border-primary/50 focus:ring-4 focus:ring-primary/10;
+  }
+
+  .bg-tactical {
+    background-color: hsla(var(--foreground) / 0.05);
+    border: 1px solid hsla(var(--foreground) / 0.1);
   }
 }
 
@@ -276,7 +288,7 @@
   /* Precision UI Classes */
   .ranking-1-gold {
     position: relative;
-    background: linear-gradient(135deg, #121215 0%, #1a1a1e 100%) !important;
+    background: hsla(var(--card), 1) !important;
     overflow: visible !important;
   }
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 pt-12 pb-32 space-y-12 animate-in relative z-10">
+  <div class="max-w-7xl mx-auto px-4 pt-24 pb-32 space-y-12 animate-in relative z-10">
     <div v-if="loading" class="flex flex-col items-center justify-center py-32">
       <div class="w-12 h-12 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
       <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em] mt-8">{{ i18nStore.t('profile_decrypting') }}</p>
@@ -7,13 +7,13 @@
     
     <template v-else>
       <!-- Profile Header Showcase (The Command Center) -->
-      <div class="card-stats p-8 md:p-12 relative flex flex-col md:flex-row items-center md:items-start gap-10 text-center md:text-left border-border group">
+      <div class="card-stats p-5 md:p-12 relative flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-10 text-center md:text-left border-border group overflow-hidden">
         <!-- Background Power Detail -->
         <div class="absolute -top-32 -right-32 w-[500px] h-[500px] bg-primary-500/5 blur-[120px] rounded-full pointer-events-none group-hover:bg-primary-500/10 transition-colors duration-1000"></div>
 
         <!-- Avatar Core -->
-        <div class="relative group/avatar">
-          <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :avatar-css="user.avatar_css" :size="160" />
+        <div class="relative group/avatar shrink-0">
+          <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :avatar-css="user.avatar_css" :size="windowWidth < 768 ? 100 : 160" />
           <button v-if="isOwnProfile" 
                   @click="showAvatarSelector = true" 
                   :title="i18nStore.locale === 'es' ? 'Cambiar Clase/Icono' : 'Change Class/Icon'"
@@ -25,17 +25,17 @@
         <!-- Identity & Status -->
         <div class="flex-1 space-y-6">
           <div class="space-y-1">
-            <h2 class="text-4xl md:text-5xl font-black text-industrial tracking-tighter text-foreground uppercase italic" :class="user.title_css">
+            <h1 class="text-4xl md:text-7xl font-black text-foreground italic uppercase tracking-tighter leading-none mb-2 drop-shadow-2xl break-words">
               {{ user.name }}
-            </h2>
+            </h1>
             <div class="flex items-center justify-center md:justify-start gap-3">
               <span class="w-2 h-2 rounded-full bg-neon-lime animate-pulse"></span>
               <p class="text-xs font-black text-muted uppercase tracking-[0.25em] font-tight">{{ user.title_name || i18nStore.t('profile_recruit') }}</p>
             </div>
           </div>
 
-          <div class="flex flex-wrap items-center justify-center md:justify-start gap-4">
-            <div class="flex items-center gap-3 bg-surface/5 px-5 py-3 rounded-xl border border-border group/coins">
+          <div class="flex flex-col sm:flex-row flex-wrap items-center justify-center md:justify-start gap-4">
+            <div class="w-full sm:w-auto flex items-center justify-center sm:justify-start gap-3 bg-surface/5 px-5 py-3 rounded-xl border border-border group/coins">
               <Coins class="w-4 h-4 text-primary-500 transition-transform" />
               <div class="flex items-baseline gap-1.5">
                 <span class="text-2xl font-black text-precision text-foreground leading-none">{{ user.reppy_coins || 0 }}</span>
@@ -44,18 +44,18 @@
             </div>
 
             <!-- Global Character Level Display -->
-            <div class="flex items-center gap-4 bg-primary-500/5 px-6 py-3 rounded-2xl border border-primary-500/20 group/level shadow-lg shadow-primary-500/5">
-              <div class="flex flex-col">
-                <div class="flex items-baseline gap-2">
-                  <span class="text-[10px] font-black text-primary-500 uppercase tracking-[0.2em]">{{ i18nStore.t('codex_lv_up').toUpperCase() }}</span>
+            <div class="w-full sm:w-auto flex items-center gap-4 bg-primary-500/5 px-6 py-3 rounded-2xl border border-primary-500/20 group/level shadow-lg shadow-primary-500/5">
+              <div class="flex flex-col w-full sm:w-auto">
+                <div class="flex items-baseline justify-center sm:justify-start gap-2">
+                  <span class="text-[9px] font-black text-primary-500 uppercase tracking-[0.2em]">{{ i18nStore.t('codex_lv_up').toUpperCase() }}</span>
                   <span class="text-3xl font-black text-foreground italic leading-none font-industrial">{{ user.current_level || 1 }}</span>
                 </div>
                 <!-- XP Needed Info -->
-                <div class="flex items-center gap-2 mt-1">
-                  <div class="h-1 w-24 bg-surface rounded-full overflow-hidden border border-white/5">
+                <div class="flex items-center justify-center sm:justify-start gap-2 mt-1">
+                  <div class="h-1.5 w-full sm:w-32 bg-foreground/10 rounded-full overflow-hidden border border-border/40">
                     <div class="h-full bg-primary-500 transition-all duration-1000" :style="{ width: `${((user.xp_into_level || 0) / (user.xp_for_next_level || 1000)) * 100}%` }"></div>
                   </div>
-                  <span class="text-[8px] font-black text-muted uppercase tracking-tighter">
+                  <span class="text-[8px] font-black text-muted uppercase tracking-tighter shrink-0">
                     {{ (user.xp_for_next_level || 1000) - (user.xp_into_level || 0) }} {{ i18nStore.t('profile_xp_to_next') }}
                   </span>
                 </div>
@@ -69,8 +69,8 @@
           </div>
           
           <!-- RPG Metrics (The Attributes Grid) -->
-          <div class="flex flex-col xl:flex-row items-center xl:items-end gap-10 w-full mt-8">
-            <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 w-full max-w-3xl">
+          <div class="flex flex-col xl:flex-row items-center xl:items-end gap-6 md:gap-10 w-full mt-8">
+            <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-2 md:gap-3 w-full max-w-4xl">
               <div v-for="attr in attributes" :key="attr.key" 
                   class="p-4 rounded-xl border border-border bg-surface/20 group/attr transition-all"
                   :class="getAttrColor(attr.lvl)">
@@ -84,14 +84,14 @@
                 </div>
               </div>
             </div>
-            <div class="flex items-center gap-3 shrink-0">
+            <div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
             <router-link :to="{ name: 'codex' }" 
-                   class="flex items-center gap-3 bg-surface/5 px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[9px] font-black tracking-widest h-fit">
+                   class="flex items-center gap-3 bg-surface/5 px-4 md:px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[9px] font-black tracking-widest h-fit">
               <BookOpen class="w-4 h-4 text-primary-500" />
               {{ i18nStore.t('nav_codex') }}
             </router-link>
             <router-link v-if="isOwnProfile" to="/inventory"
-                   class="flex items-center gap-3 bg-primary-500/10 px-6 py-4 rounded-xl border border-primary-500/30 hover:border-primary-500/60 transition-all text-primary-500 hover:text-primary-400 uppercase text-[9px] font-black tracking-widest h-fit">
+                   class="flex items-center gap-3 bg-primary-500/10 px-4 md:px-6 py-4 rounded-xl border border-primary-500/30 hover:border-primary-500/60 transition-all text-primary-500 hover:text-primary-400 uppercase text-[9px] font-black tracking-widest h-fit">
               <Zap class="w-4 h-4" />
               VER ATRIBUTOS
             </router-link>
@@ -99,12 +99,12 @@
             <!-- Other User Actions -->
             <template v-else>
               <button @click="challengingUser = user"
-                      class="flex items-center gap-3 bg-primary-500 hover:bg-primary-600 text-white px-6 py-4 rounded-xl border border-primary-500/30 transition-all uppercase text-[9px] font-black tracking-widest h-fit shadow-lg shadow-primary-500/20 active:scale-95">
+                      class="flex items-center gap-3 bg-primary-500 hover:bg-primary-600 text-white px-4 md:px-6 py-4 rounded-xl border border-primary-500/30 transition-all uppercase text-[9px] font-black tracking-widest h-fit shadow-lg shadow-primary-500/20 active:scale-95">
                 <Swords class="w-4 h-4" />
                 {{ i18nStore.t('pvp_challenge_btn') || 'RETAR A DUELO' }}
               </button>
               <button @click="comparingUser = user"
-                      class="flex items-center gap-3 bg-surface/5 px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[9px] font-black tracking-widest h-fit active:scale-95">
+                      class="flex items-center gap-3 bg-surface/5 px-4 md:px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[9px] font-black tracking-widest h-fit active:scale-95">
                 <BarChart3 class="w-4 h-4" />
                 {{ i18nStore.t('ui_compare') || 'COMPARAR' }}
               </button>
@@ -139,40 +139,40 @@
                 <h3 class="text-sm font-black text-industrial text-foreground tracking-widest uppercase">{{ i18nStore.t('rankings') }}</h3>
               </div>
               
-              <div class="grid grid-cols-2 lg:grid-cols-1 gap-6">
+              <div class="grid grid-cols-2 lg:grid-cols-1 gap-2 md:gap-6">
                 <!-- Total Reps Pill -->
-                <div class="group/stat">
-                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">{{ i18nStore.t('stats_effort') }}</p>
-                   <div class="flex items-baseline gap-2">
-                      <span class="text-4xl font-black text-precision text-foreground tracking-tighter">{{ stats.totalReps || 0 }}</span>
-                      <span class="text-[10px] font-black text-primary-500 uppercase tracking-widest">{{ i18nStore.t('stats_reps') }}</span>
-                   </div>
-                </div>
+                 <div class="group/stat">
+                    <p class="text-[9px] font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t('stats_effort') }}</p>
+                    <div class="flex items-baseline gap-2">
+                       <span class="text-3xl md:text-4xl font-black text-precision text-foreground tracking-tighter">{{ stats.totalReps || 0 }}</span>
+                       <span class="text-[10px] font-black text-primary-500 uppercase tracking-widest">{{ i18nStore.t('stats_reps') }}</span>
+                    </div>
+                 </div>
 
                 <!-- Total Volume Pill -->
-                <div class="group/stat">
-                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">{{ i18nStore.t('stats_tonnage') }}</p>
-                   <div class="flex items-baseline gap-2">
-                      <span class="text-4xl font-black text-precision text-red-500 tracking-tighter">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</span>
-                      <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18nStore.t('stats_tonnage').split(' ')[0] }}</span>
-                   </div>
-                </div>
+                 <div class="group/stat">
+                    <p class="text-[9px] font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t('stats_tonnage') }}</p>
+                    <div class="flex items-baseline gap-2">
+                       <span class="text-3xl md:text-4xl font-black text-precision text-red-500 tracking-tighter">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</span>
+                       <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18nStore.t('stats_tonnage').split(' ')[0] }}</span>
+                    </div>
+                 </div>
  
                 <!-- Streak Pill -->
-                <div class="group/stat">
-                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">{{ i18nStore.t('stats_consistency') }}</p>
-                   <div class="flex items-center gap-3">
-                      <span class="text-4xl font-black text-precision text-orange-500 tracking-tighter">{{ stats.streak || 0 }}</span>
-                      <Flame class="w-6 h-6 text-orange-500 animate-pulse" />
-                   </div>
-                </div>
+                 <div class="group/stat">
+                    <p class="text-[9px] font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t('stats_consistency') }}</p>
+                    <div class="flex items-center gap-3">
+                       <span class="text-3xl md:text-4xl font-black text-precision text-orange-500 tracking-tighter">{{ stats.streak || 0 }}</span>
+                       <Flame class="w-6 h-6 text-orange-500 animate-pulse" />
+                    </div>
+                 </div>
  
                 <!-- Goal Pill -->
-                <div class="group/stat">
-                   <p class="text-[9px] font-black text-muted uppercase tracking-widest mb-1">{{ i18nStore.t('stats_protocol_goal') }}</p>
-                   <div class="flex items-baseline gap-2">
-                      <span class="text-4xl font-black text-precision text-neon-lime tracking-tighter">{{ user.daily_goal || 0 }}</span>
-                      <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18nStore.t('stats_per_day') }}</span>
+                 <div class="group/stat">
+                    <p class="text-[9px] font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t('stats_protocol_goal') }}</p>
+                    <div class="flex items-baseline gap-2">
+                       <span class="text-3xl md:text-4xl font-black text-precision text-neon-lime tracking-tighter">{{ user.daily_goal || 0 }}</span>
+                       <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18nStore.t('stats_per_day') }}</span>
                     </div>
                  </div>
               </div>
@@ -343,7 +343,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 import { Camera, Settings, LogOut, Activity, Flame, Trophy, HelpCircle, X as XIcon, Swords, Zap, Heart, Shield, Coins, Dumbbell, Target, Globe, User as UserIcon, BarChart3, BookOpen } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
@@ -369,7 +369,19 @@ const emit = defineEmits(['start', 'viewProfile']);
 const notificationStore = useNotificationStore();
 const themeStore = useThemeStore();
 
+const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1200);
+const handleResize = () => { windowWidth.value = window.innerWidth; };
+
 const user = ref({ avatar_url: '', border_css: '', avatar_css: '', name: '', total_xp: 0, current_level: 1 });
+
+onMounted(() => {
+  fetchProfile();
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 const stats = ref({});
 const heatmapData = ref([]);
 const transactions = ref([]);
@@ -573,7 +585,6 @@ const fetchMoreTransactions = async () => {
 };
 
 watch(activeExercise, fetchProfile);
-onMounted(fetchProfile);
 watch(() => props.userId, fetchProfile);
 </script>
 
