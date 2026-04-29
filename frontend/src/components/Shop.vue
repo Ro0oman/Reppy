@@ -89,7 +89,7 @@
                 <div class="flex items-center gap-2 mt-1.5">
                   <Clock class="w-3.5 h-3.5 text-primary-500/60" />
                   <span class="text-[9px] font-black text-muted uppercase tracking-[0.3em]">{{
-                    getNextRotationCountdown() }}</span>
+                    countdownText }}</span>
                 </div>
               </div>
             </div>
@@ -145,6 +145,9 @@
                     <component :is="item.reward_type === 'coins' ? Coins : Diamond"
                       class="w-16 h-16 sm:w-24 sm:h-24 drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]"
                       :class="item.reward_type === 'coins' ? 'text-primary-500' : 'text-emerald-500'" />
+                    <span class="mt-2 text-xl font-black italic tracking-tighter" :class="item.reward_type === 'coins' ? 'text-primary-500' : 'text-emerald-500'">
+                      +{{ item.reward_amount }}
+                    </span>
                   </div>
                   <ItemIcon v-else :name="item.svg_key" :type="item.type"
                     class-name="w-1/2 h-1/2 transform group-hover/item:scale-110 transition-transform duration-700"
@@ -154,7 +157,7 @@
                 <!-- Info Area -->
                 <h3
                   class="font-black text-xs sm:text-xl uppercase italic tracking-tighter text-center line-clamp-1 mb-1">
-                  {{ item.reward_type ? i18n.t('shop_free_reward') : item.name }}
+                  {{ item.reward_type ? `${item.reward_amount} ${item.reward_type === 'coins' ? 'Reppy Coins' : 'Reppy Gems'}` : item.name }}
                 </h3>
                 <div
                   class="px-3 py-1 rounded-xl border font-black text-[8px] sm:text-[10px] tracking-[0.2em] uppercase mb-4"
@@ -823,14 +826,17 @@ const categories = computed(() => {
   }
 });
 
-const getNextRotationCountdown = () => {
+const countdownText = computed(() => {
   if (!shopStore.nextRotation) return '00:00:00';
-  const diff = Math.max(0, new Date(shopStore.nextRotation).getTime() - nowMs.value);
+  const target = new Date(shopStore.nextRotation).getTime();
+  if (isNaN(target)) return '00:00:00';
+  
+  const diff = Math.max(0, target - nowMs.value);
   const hours = Math.floor(diff / 3600000);
   const minutes = Math.floor((diff % 3600000) / 60000);
   const seconds = Math.floor((diff % 60000) / 1000);
   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-};
+});
 
 const purchaseChest = async (chest) => {
   const required = chest.price ?? chest.price_gems ?? 0;

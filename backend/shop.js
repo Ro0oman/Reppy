@@ -123,9 +123,18 @@ router.get('/daily', authenticate, async (req, res) => {
 
     console.log(`Found ${dailyRes.rows.length} deals for user`);
 
-    // If no deals found (first time or expired), rotate
-    if (dailyRes.rows.length === 0) {
-      console.log('No deals found, rotating...');
+    // Check if rotation is expired (24h)
+    let needsRotation = dailyRes.rows.length === 0;
+    if (!needsRotation) {
+      const rotatedAt = new Date(dailyRes.rows[0].rotated_at);
+      const now = new Date();
+      if (now.getTime() - rotatedAt.getTime() > 24 * 60 * 60 * 1000) {
+        console.log(`Deals for user ${userId} expired (${rotatedAt}), rotating...`);
+        needsRotation = true;
+      }
+    }
+
+    if (needsRotation) {
       await rotateDailyShop(userId);
       dailyRes = await query(`
         SELECT d.*, i.name, i.description, i.rarity, i.type, i.image_url, i.svg_key, i.stats,
@@ -160,11 +169,11 @@ router.get('/daily', authenticate, async (req, res) => {
       { id: 'legendary', name: 'Cofre Legendario', rarity: 'legendary', price_gems: 60, currency: 'gems', type: 'chest', description: 'Garantiza al menos un objeto LEGENDARIO.' }
     ];
 
-    const nextRotationRes = await query('SELECT rotated_at FROM daily_shop_items LIMIT 1');
+    // Calculate next rotation time from the deals themselves
     let nextRotation = null;
-    if (nextRotationRes.rows.length > 0 && nextRotationRes.rows[0].rotated_at) {
-      const rotatedAt = new Date(nextRotationRes.rows[0].rotated_at);
-      nextRotation = new Date(rotatedAt.getTime() + 24 * 60 * 60 * 1000);
+    if (dailyRes.rows.length > 0 && dailyRes.rows[0].rotated_at) {
+      const rotatedAt = new Date(dailyRes.rows[0].rotated_at);
+      nextRotation = new Date(rotatedAt.getTime() + 24 * 60 * 60 * 1000).toISOString();
     }
 
     // Map deals to ensure stats are objects
@@ -175,6 +184,8 @@ router.get('/daily', authenticate, async (req, res) => {
       }
       return { ...item, stats: parsedStats || {} };
     });
+
+    console.log(`Sending ${deals.length} deals to user ${userId}. Next rotation: ${nextRotation}`);
 
     res.json({ 
       deals, 

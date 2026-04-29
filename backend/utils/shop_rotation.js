@@ -39,9 +39,9 @@ export const rotateDailyShop = async (userId = null) => {
     const selectedItems = [];
     const availablePool = [...allItems];
     
-    // Determine if we should have a free reward (50% chance)
-    const hasFreeReward = Math.random() < 0.5;
-    const rewardSlot = hasFreeReward ? Math.floor(Math.random() * 6) : -1;
+    // Determine if we should have a free reward (Always 1 per rotation)
+    const hasFreeReward = true;
+    const rewardSlot = Math.floor(Math.random() * 6);
 
     for (let i = 0; i < 6; i++) {
       if (i === rewardSlot) {
@@ -86,16 +86,16 @@ export const rotateDailyShop = async (userId = null) => {
     for (const item of selectedItems) {
       if (item.is_reward) {
         await query(`
-          INSERT INTO daily_shop_items (reward_type, reward_amount, user_id)
-          VALUES ($1, $2, $3)
+          INSERT INTO daily_shop_items (reward_type, reward_amount, user_id, rotated_at)
+          VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
         `, [item.reward_type, item.reward_amount, userId]);
       } else {
-        const discPrice = Math.floor((item.price || 0) * 0.8);
-        const discGems = Math.floor((item.price_gems || 0) * 0.8);
+        const discPrice = Math.max(0, Math.floor((item.price || 0) * 0.8));
+        const discGems = Math.max(0, Math.floor((item.price_gems || 0) * 0.8));
         
         await query(`
-          INSERT INTO daily_shop_items (item_id, discounted_price, discounted_gems, is_seasonal_deal, user_id)
-          VALUES ($1, $2, $3, $4, $5)
+          INSERT INTO daily_shop_items (item_id, discounted_price, discounted_gems, is_seasonal_deal, user_id, rotated_at)
+          VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP)
         `, [item.id, discPrice, discGems, item.is_seasonal, userId]);
       }
     }
