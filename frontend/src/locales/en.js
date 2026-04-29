@@ -24,6 +24,7 @@ export default {
     login_subtitle: 'The premium tracking platform for pull-up enthusiasts.',
     login_back: 'Back to Home',
     login_google: 'Sign in with Google',
+    session_expired: 'Your session has expired. Please log in again.',
     
     // Dashboard
     nav_home: 'Home',
@@ -37,7 +38,7 @@ export default {
     nav_blog: 'Blog',
     audio_mute: 'Mute',
     audio_unmute: 'Unmute',
-    back_to_codex: 'Back to Codex',
+    back_to_codex: 'Back to RPG Stats',
     nav_go_dashboard: 'Go to Dashboard',
 
     codex_title: 'The Codex',
@@ -45,7 +46,7 @@ export default {
     codex_subtitle_desc: 'Your evolution tracked through physical and intellectual effort. Level up your attributes to unlock your full potential.',
     codex_int_vault_desc: 'Gain Intelligence XP by studying the ancient guides. Knowledge is the ultimate force multiplier.',
     blog_xp_gained: 'Knowledge Acquired: +100 INT XP',
-    intelecto_adquirido: 'Intellect Acquired',
+    intelecto_adquirido: 'Wisdom Acquired',
 
     codex_str_name: 'Strength',
     codex_str_quote: '"The heavy makes the humble."',
@@ -452,7 +453,7 @@ export default {
     faq_q2: 'What exercises can I track?',
     faq_a2: 'You can track standard calisthenics movements: Pullups, Pushups, Dips, Muscle Ups, and Weighted Pullups. Each deals a different amount of damage to bosses.',
     faq_q3: 'How does the RPG system work?',
-    faq_a3: 'Every rep gives you Reppy Coins and XP in 6 attributes: Strength (STR), Dexterity (DEX), Endurance (END), Vigor (VIG), Intellect (INT), and Faith (FTH). Spend coins for cosmic status.',
+    faq_a3: 'Every rep gives you Reppy Coins and XP in 6 attributes: Strength (STR), Dexterity (DEX), Endurance (END), Vigor (VIG), Wisdom (INT), and Faith (FTH). Spend coins for cosmic status.',
     faq_q4: 'What are Boss Fights?',
     faq_a4: 'They are community events where everyone fights an epic boss. Every rep you track deals damage based on your 6 RPG stats. When defeated, everyone wins loot chests.',
     faq_q5: 'Can I see my training progress?',
@@ -559,9 +560,9 @@ export default {
     exercise_mastery: 'Exercise Mastery',
     exercise_mastery_desc: 'HISTORICAL REPOSITORY OF EFFORT BY EXERCISE',
 
-    // Codex
+    // RPG Stats
     codex_title: 'THE CODEX',
-    codex_subtitle: 'RPG EVOLUTION GUIDE',
+    codex_subtitle: 'LEVEL UP GUIDE',
     codex_next_lv: 'NEXT LEVEL: +100 XP POINTS REQUIRED',
     codex_lv_up: 'Level Up:',
 
@@ -815,7 +816,7 @@ export default {
     social_wall: 'SOCIAL WALL',
     rankings: 'RANKINGS',
     global_rankings: 'GLOBAL.RANKINGS',
-    find_operatives: 'FIND_OPERATIVES',
+    find_athletes: 'FIND_OPERATIVES',
     inner_circle: 'INNER_CIRCLE',
     reps_collected: 'REPS COLLECTED',
     reps_scaled: 'REPS SCALED',

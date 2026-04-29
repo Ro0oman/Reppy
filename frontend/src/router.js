@@ -198,16 +198,16 @@ export function setupRouterGuards(router) {
     const currentPath = to.path
     const currentLang = to.params.lang || 'es'
     
-    // Canonical (Client-only)
-    if (!import.meta.env.SSR) {
+    // Canonical
+    if (typeof document !== 'undefined') {
       let canonical = document.querySelector('link[rel="canonical"]')
       if (canonical) {
         canonical.setAttribute('href', `${baseUrl}${currentPath}`)
       }
     }
 
-    // Hreflang alternates (Client-only)
-    if (!import.meta.env.SSR) {
+    // Hreflang alternates
+    if (typeof document !== 'undefined') {
       const langs = ['es', 'en']
       langs.forEach(l => {
         let alt = document.querySelector(`link[hreflang="${l}"]`)
@@ -218,8 +218,8 @@ export function setupRouterGuards(router) {
       })
     }
 
-    // x-default (Client-only)
-    if (!import.meta.env.SSR) {
+    // x-default
+    if (typeof document !== 'undefined') {
       let xDefault = document.querySelector('link[hreflang="x-default"]')
       if (xDefault) {
         const esPath = currentPath.replace(/^\/(es|en)/, '/es')
@@ -231,10 +231,6 @@ export function setupRouterGuards(router) {
     const title = to.meta.titleKey ? `${i18n.t(to.meta.titleKey)} | Reppy` : (to.meta.title || 'Reppy');
     const description = to.meta.descriptionKey ? i18n.t(to.meta.descriptionKey) : 'Registra tus dominadas y flexiones, sube de nivel tus atributos RPG y compite en rankings globales.';
     
-    if (!import.meta.env.SSR) {
-      document.title = title;
-    }
-    
     // Meta tags dinámicos para descripción y redes sociales
     const metas = {
       'description': description,
@@ -245,7 +241,8 @@ export function setupRouterGuards(router) {
       'twitter:description': description
     };
 
-    if (!import.meta.env.SSR) {
+    if (typeof document !== 'undefined') {
+      document.title = title;
       Object.entries(metas).forEach(([name, content]) => {
         let el = document.querySelector(`meta[name="${name}"]`) || document.querySelector(`meta[property="${name}"]`);
         if (el) el.setAttribute('content', content);
@@ -268,4 +265,32 @@ export function setupRouterGuards(router) {
       next()
     }
   })
+
+  // Handle dynamic import failures (chunk loading errors)
+  router.onError((error) => {
+    const errorMessages = [
+      'Failed to fetch dynamically imported module',
+      'Importing a module script failed',
+      'error loading dynamically imported module'
+    ];
+    
+    if (errorMessages.some(msg => error.message?.includes(msg))) {
+      // Check if we already tried to reload recently to avoid infinite loops
+      const lastReload = sessionStorage.getItem('last-chunk-error-reload');
+      const now = Date.now();
+      
+      // If we reloaded less than 10 seconds ago, don't reload again to avoid infinite loops
+      if (lastReload && (now - parseInt(lastReload)) < 10000) {
+        console.error('Dynamic import failed repeatedly. Please check your connection.');
+        return;
+      }
+      
+      sessionStorage.setItem('last-chunk-error-reload', now.toString());
+      
+      // Show a small notification before reloading if possible, or just reload
+      // Given we are in the router guard, we might not have easy access to the store here
+      // but a simple reload is the most robust fix for this specific issue.
+      window.location.reload();
+    }
+  });
 }

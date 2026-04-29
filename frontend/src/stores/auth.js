@@ -142,7 +142,7 @@ export const useAuthStore = defineStore('auth', {
     init() {
       if (import.meta.env.SSR) return;
 
-      // 1. Check for stale session (> 48h) to avoid cached component errors
+      // 1. Check for stale session (> 30 days) to avoid cached component errors
       const lastVisit = localStorage.getItem('reppy_last_visit');
       const now = Date.now();
       const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;

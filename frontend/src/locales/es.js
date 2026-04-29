@@ -25,6 +25,7 @@ export default {
     login_subtitle: 'La plataforma premium para entusiastas de las dominadas.',
     login_back: 'Volver al Inicio',
     login_google: 'Iniciar sesión con Google',
+    session_expired: 'Tu sesión ha caducado. Por favor, identifícate de nuevo.',
     
     // Dashboard
     nav_home: 'Inicio',
@@ -39,15 +40,15 @@ export default {
     nav_blog: 'Blog',
     audio_mute: 'Silenciar',
     audio_unmute: 'Activar Sonido',
-    back_to_codex: 'Volver al Códice',
+    back_to_codex: 'Volver al Stats RPG',
     nav_go_dashboard: 'Ir al Panel',
 
-    codex_title: 'El Códice',
-    codex_subtitle: 'Registros Biológicos e Intelectuales',
+    codex_title: 'El Stats RPG',
+    codex_subtitle: 'Tus Stats y Niveles',
     codex_subtitle_desc: 'Tu evolución registrada a través del esfuerzo físico e intelectual. Sube de nivel tus atributos para desbloquear tu potencial.',
     codex_int_vault_desc: 'Gana XP de Inteligencia estudiando las guías antiguas. El conocimiento es el multiplicador de fuerza definitivo.',
     blog_xp_gained: 'Conocimiento Adquirido: +100 INT XP',
-    intelecto_adquirido: 'Intelecto Adquirido',
+    sabiduría_adquirido: 'Sabiduría Adquirido',
 
     codex_str_name: 'Fuerza',
     codex_str_quote: '"Lo pesado hace al humilde."',
@@ -409,7 +410,7 @@ export default {
     // Profile
     profile_guide_title: 'Guía de Evolución',
     profile_file_too_large: 'Archivo demasiado grande (Máx 2MB)',
-    profile_updated: 'Bio-núcleo actualizado',
+    profile_updated: 'Perfil RPG actualizado',
 
     // Notifications
     notif_anomalies: 'ANOMALÍAS DETECTADAS',
@@ -457,7 +458,7 @@ export default {
     faq_q2: '¿Qué ejercicios puedo registrar?',
     faq_a2: 'Puedes registrar movimientos estándar: Dominadas, Flexiones, Fondos, Muscle Ups y Dominadas Lastradas. Cada uno inflige un daño distinto a los bosses.',
     faq_q3: '¿Cómo funciona el sistema RPG?',
-    faq_a3: 'Cada repe te da Reppy Coins y XP en 6 atributos: Fuerza (STR), Destreza (DEX), Resistencia (END), Vigor (VIG), Intelecto (INT) y Fe (FTH). Gasta monedas por estatus cósmico.',
+    faq_a3: 'Cada repe te da Reppy Coins y XP en 6 atributos: Fuerza (STR), Destreza (DEX), Resistencia (END), Vigor (VIG), Sabiduría (INT) y Fe (FTH). Gasta monedas por estatus cósmico.',
     faq_q4: '¿Qué son las Boss Fights?',
     faq_a4: 'Eventos donde toda la comunidad lucha contra un boss épico. Cada repetición inflige daño basado en tus 6 stats RPG. Al ganar, todos obtienen cofres.',
     faq_q5: '¿Puedo ver mi progreso de entrenamiento?',
@@ -516,12 +517,12 @@ export default {
     activity_total_reached: 'totales!',
     activity_has_inflicted: 'ha infligido',
     activity_inflicted_you: 'Has infligido',
-    activity_post_comment_placeholder: 'Escribe un comentario operativo...',
+    activity_post_comment_placeholder: 'Escribe un comentario atleta...',
     activity_no_records: 'Aún no hay registros',
     activity_share_title: 'Reppy - Registro de Entrenamiento',
     activity_share_msg: 'Echa un vistazo al entrenamiento de {name} en Reppy',
     activity_error_share: 'Error al compartir',
-    activity_comment_hint: 'Escribe un comentario operativo...',
+    activity_comment_hint: 'Escribe un comentario atleta...',
     activity_boost_active: 'POTENCIADOR ACTIVO',
 
     // Ejercicios
@@ -572,7 +573,7 @@ export default {
 
     // Codex
     codex_title: 'EL CODEX',
-    codex_subtitle: 'GUÍA DE EVOLUCIÓN RPG',
+    codex_subtitle: 'GUÍA PARA SUBIR DE NIVEL',
     codex_next_lv: 'PRÓXIMO NIVEL: +100 XP REQUERIDOS',
     codex_lv_up: 'Mejora:',
 

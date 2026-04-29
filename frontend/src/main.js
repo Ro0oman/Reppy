@@ -7,6 +7,8 @@ import { routes, setupRouterGuards } from './router'
 import { useI18nStore } from './stores/i18n'
 import { useAuthStore } from './stores/auth'
 import { useThemeStore } from './stores/theme'
+import { useNotificationStore } from './stores/notification'
+import { initLogger } from './utils/logger'
 
 export const createApp = ViteSSG(
   App,
@@ -32,10 +34,14 @@ export const createApp = ViteSSG(
     setupRouterGuards(router)
 
     const i18nStore = useI18nStore(pinia)
+    const notificationStore = useNotificationStore(pinia)
     
     if (isClient) {
       const authStore = useAuthStore(pinia)
       const themeStore = useThemeStore(pinia)
+
+      // Initialize logger
+      initLogger(notificationStore)
 
       // Initialize all on client
       await Promise.all([

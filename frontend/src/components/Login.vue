@@ -127,17 +127,28 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch } from 'vue';
+import { ref, reactive, watch, onMounted } from 'vue';
 import { GoogleSignInButton } from 'vue3-google-signin';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
+import { useNotificationStore } from '../stores/notification';
 import { ChevronLeft, Loader2, AlertCircle } from 'lucide-vue-next';
 
 const router = useRouter();
+const route = useRoute();
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();
+const notificationStore = useNotificationStore();
+
+onMounted(() => {
+  if (route.query.expired === '1') {
+    notificationStore.notify(i18n.t('session_expired'), 'info');
+    // Clear the query parameter without reloading
+    router.replace({ query: {} });
+  }
+});
 const emit = defineEmits(['back', 'start', 'viewProfile']);
 
 const mode = ref('login');
