@@ -86,3 +86,63 @@ export async function autoGrantPendingChests(userId) {
     return 0;
   }
 }
+
+/**
+ * Grants a special bonus to the user who delivered the "Last Hit" (Golpe de Gracia) to a boss.
+ * Bonus can be a random amount of coins or a random unowned item.
+ */
+export async function grantLastHitBonus(userId, bossId, client = null) {
+  const q = client ? client.query.bind(client) : query;
+  
+  try {
+    const bossRes = await q('SELECT name FROM boss_fights WHERE id = $1', [bossId]);
+    const bossName = bossRes.rows[0]?.name || 'Boss';
+
+    const rand = Math.random();
+    let reward = null;
+
+    if (rand < 0.5) {
+      // 50% chance: Coin bonus
+      const coinAmount = Math.floor(Math.random() * 1501) + 1000; // 1000 to 2500
+      await q('UPDATE users SET reppy_coins = reppy_coins + $1 WHERE id = $2', [coinAmount, userId]);
+      reward = { type: 'coins', amount: coinAmount, message: `¡GOLPE DE GRACIA! Has recibido ${coinAmount} Reppy Coins.` };
+    } else {
+      // 50% chance: Item bonus
+      const itemRes = await q(`
+        SELECT * FROM items 
+        WHERE rarity IN ('rare', 'especial') 
+        AND type != 'bundle'
+        AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = items.id)
+        ORDER BY RANDOM() LIMIT 1
+      `, [userId]);
+
+      if (itemRes.rows.length > 0) {
+        const item = itemRes.rows[0];
+        await q(`INSERT INTO user_items (user_id, item_id, is_new) VALUES ($1, $2, TRUE) ON CONFLICT DO NOTHING`, [userId, item.id]);
+        reward = { type: 'item', data: item, message: `¡GOLPE DE GRACIA! Has obtenido un objeto raro: ${item.name}` };
+      } else {
+        // Fallback coins if all items are owned
+        const coinAmount = 2000;
+        await q('UPDATE users SET reppy_coins = reppy_coins + $1 WHERE id = $2', [coinAmount, userId]);
+        reward = { type: 'coins', amount: coinAmount, message: `¡GOLPE DE GRACIA! (Colección completa) Has recibido ${coinAmount} Reppy Coins.` };
+      }
+    }
+
+    // Update boss record with last hit info
+    await q('UPDATE boss_fights SET last_hit_user_id = $1 WHERE id = $2', [userId, bossId]);
+
+    // Create Notification
+    await createNotification(
+      userId,
+      'BOSS_DEFEATED',
+      null,
+      `¡Has asestado el golpe de gracia a ${bossName}! Recompensa otorgada.`,
+      'BOSS_REWARD'
+    );
+
+    return reward;
+  } catch (error) {
+    console.error('Error granting last hit bonus:', error);
+    return null;
+  }
+}

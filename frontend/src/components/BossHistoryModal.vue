@@ -23,6 +23,10 @@
               <span class="w-1 h-1 rounded-full bg-border"></span>
               <span>{{ contributors.length }} PARTICIPANTES</span>
           </div>
+          <!-- Last Hit Info -->
+          <div v-if="boss?.last_hit_user_name" class="mt-2 flex items-center gap-2 px-3 py-1 bg-primary-500/10 border border-primary-500/20 rounded-full w-fit">
+              <span class="text-[9px] font-black text-primary-500 uppercase tracking-widest italic">Golpe de Gracia: {{ boss.last_hit_user_name }}</span>
+          </div>
         </div>
       </div>
 
@@ -54,7 +58,10 @@
                   <AvatarFrame :src="user.avatar_url" :size="40" 
                     :border-css="idx === 0 ? 'border-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.3)]' : ''" />
                   <div>
-                    <p class="text-sm font-bold text-foreground group-hover:text-primary-500 transition-colors">{{ user.name }}</p>
+                    <p class="text-sm font-bold text-foreground group-hover:text-primary-500 transition-colors">
+                      {{ user.name }}
+                      <span v-if="user.id === boss?.last_hit_user_id" class="ml-2 text-[7px] px-2 py-0.5 bg-primary-500 text-white rounded-full italic font-black tracking-tighter">LAST HIT</span>
+                    </p>
                     <p class="text-[9px] font-black text-muted uppercase tracking-widest">{{ getPercentage(user.damage_dealt) }}% DEL TOTAL</p>
                   </div>
               </div>

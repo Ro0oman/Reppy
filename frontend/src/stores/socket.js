@@ -59,6 +59,18 @@ export const useSocketStore = defineStore('socket', {
       
       eventsChannel.bind('boss_damage', (data) => {
         const damageStore = useDamageStore();
+        const notificationStore = useNotificationStore();
+
+        if (data.type === 'LAST_HIT') {
+          const isMe = data.userId === authStore.user?.id;
+          const msg = isMe 
+            ? `¡HAS ASESADO EL GOLPE DE GRACIA! ${data.reward?.message || ''}`
+            : `¡${data.userName} ha asestado el GOLPE DE GRACIA a ${data.bossName}!`;
+          
+          notificationStore.notify(msg, isMe ? 'success' : 'info', 10000);
+          return;
+        }
+
         if (data.userId !== authStore.user?.id) {
           damageStore.addDamage(data.amount, data.exerciseType, undefined, undefined, data.isCrit, data.userName, data.userId);
         }

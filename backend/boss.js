@@ -561,7 +561,10 @@ router.get('/history/:bossId', authenticate, async (req, res) => {
 
     // Get the boss name/info for the header
     const bossInfoRes = await query(
-      `SELECT name, image_url, total_hp, current_hp FROM boss_fights WHERE id = $1`,
+      `SELECT b.*, u.name as last_hit_user_name 
+       FROM boss_fights b
+       LEFT JOIN users u ON b.last_hit_user_id = u.id
+       WHERE b.id = $1`,
       [bossId]
     );
 

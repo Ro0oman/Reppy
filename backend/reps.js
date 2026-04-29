@@ -10,6 +10,7 @@ import { calculateDamage } from './utils/damage.js';
 import { getUserWithGear } from './utils/user.js';
 import { updateMissionProgress } from './utils/missions.js';
 import { broadcastDamage } from './socketManager.js';
+import { grantLastHitBonus } from './utils/bossRewards.js';
 
 
 const router = express.Router();
@@ -132,6 +133,19 @@ router.post('/', authenticate, async (req, res) => {
 
         // Mission: Boss Last Hit
         await updateMissionProgress(userId, 'boss_last_hit', 1);
+
+        // Grant Last Hit Bonus
+        const lastHitReward = await grantLastHitBonus(userId, bossId, client);
+        if (lastHitReward) {
+          // You could add this to the response or broadcast it
+          broadcastDamage({
+            type: 'LAST_HIT',
+            userId: userId,
+            userName: augmentedUser.name,
+            bossName: boss.name,
+            reward: lastHitReward
+          });
+        }
       }
     }
 
