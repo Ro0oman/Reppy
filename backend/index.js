@@ -112,11 +112,18 @@ apiRouter.post('/pusher/auth', (req, res) => {
   };
 
   try {
+    if (!socketId || !channel) {
+      throw new Error(`Missing socketId (${socketId}) or channel (${channel})`);
+    }
     const auth = pusher.authorizeChannel(socketId, channel, presenceData);
     res.send(auth);
   } catch (error) {
     console.error(`[PUSHER AUTH ERROR] Channel: ${channel}`, error);
-    res.status(403).send('Forbidden');
+    res.status(500).json({ 
+      error: error.message, 
+      stack: error.stack,
+      details: 'Check if PUSHER_APP_ID, KEY, SECRET are set in Vercel'
+    });
   }
 });
 
