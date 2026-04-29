@@ -15,12 +15,16 @@ export const useSocketStore = defineStore('socket', {
       if (this.socket) return;
 
       const authStore = useAuthStore();
-      // Use the same host as the API
-      const socketHost = window.location.origin.includes('localhost') 
+      // Use VITE_API_URL if available, otherwise fallback to same host
+      const apiURL = import.meta.env.VITE_API_URL || '';
+      const socketHost = apiURL || (window.location.origin.includes('localhost') 
         ? 'http://localhost:5000' 
-        : window.location.origin;
+        : window.location.origin);
 
-      this.socket = io(socketHost);
+      this.socket = io(socketHost, {
+        transports: ['websocket', 'polling'],
+        reconnectionAttempts: 5
+      });
 
       this.socket.on('connect', () => {
         this.connected = true;

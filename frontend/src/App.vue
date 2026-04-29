@@ -94,6 +94,20 @@
                          class="w-4.5 h-4.5 sm:w-5 sm:h-5 text-muted group-hover:text-primary-500 transition-colors" />
             </button>
 
+            <!-- Live Status Module -->
+            <div v-if="authStore.isAuthenticated" 
+                 @click="openLiveModal"
+                 :title="i18n.t('live_operatives')"
+                 class="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/5 border border-emerald-500/20 rounded-xl cursor-pointer hover:bg-emerald-500/10 transition-all group shrink-0">
+              <div class="relative">
+                <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
+                <div class="absolute inset-0 w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping opacity-40"></div>
+              </div>
+              <span class="text-[10px] font-black text-emerald-500 tabular-nums">
+                {{ Math.max(1, socketStore.activeOperatives.length) }}
+              </span>
+            </div>
+
 
             <!-- Level Module (Responsive) -->
             <div class="flex items-center gap-3">
@@ -113,18 +127,6 @@
 
           </div>
           
-          <!-- Live Status Module -->
-          <div v-if="authStore.isAuthenticated" 
-               @click="openLiveModal"
-               class="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/5 border border-emerald-500/20 rounded-xl cursor-pointer hover:bg-emerald-500/10 transition-all group">
-            <div class="relative">
-              <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
-              <div class="absolute inset-0 w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping opacity-40"></div>
-            </div>
-            <span class="text-[10px] font-black text-emerald-500 tabular-nums">
-              {{ socketStore.activeOperatives.length || 1 }}
-            </span>
-          </div>
         </div>
       </div>
     </nav>
