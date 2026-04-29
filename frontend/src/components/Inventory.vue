@@ -56,6 +56,9 @@
             </div>
           </div>
 
+          <!-- Active Effects Display -->
+          <ActiveEffects />
+
           <!-- Character Diagram (Sidebar Compact) -->
           <div class="relative w-full aspect-[4/5] max-w-[320px] mx-auto flex items-center justify-center bg-surface/5 rounded-[3rem] border border-white/5 backdrop-blur-3xl overflow-hidden">
              <!-- Background FX -->
@@ -410,18 +413,32 @@
             <!-- Modal Footer (Fixed) -->
             <div class="p-6 md:p-8 bg-black/60 border-t border-white/10 shrink-0 relative z-10">
               <div class="flex flex-col sm:flex-row gap-4">
+                <!-- ONLY for Consumables - strictly consumable type -->
                 <button v-if="selectedItem.type === 'consumable'" 
                   @click="handleActivate(selectedItem); showItemModal = false"
                   :disabled="isPotionTypeActive(selectedItem)"
                   class="flex-1 py-5 rounded-[22px] bg-primary-500 text-white font-black text-sm uppercase tracking-[0.2em] transition-all shadow-2xl shadow-primary-500/20 active:scale-95 disabled:opacity-40 disabled:grayscale">
                   {{ isPotionTypeActive(selectedItem) ? i18n.t('inv_already_active') : i18n.t('inv_activate_module') }} (x{{ selectedItem.quantity || 1 }})
                 </button>
-                <button v-else-if="selectedItem.type !== 'bundle'" @click="toggleEquip(selectedItem); showItemModal = false"
+
+                <!-- For Combat Gear ONLY (not consumable, not bundle, not customization items) -->
+                <button v-else-if="selectedItem.type !== 'bundle' && !['title', 'border', 'background', 'post_background', 'avatar'].includes(selectedItem.type)" 
+                  @click="toggleEquip(selectedItem); showItemModal = false"
                   class="flex-1 py-5 rounded-[22px] font-black text-sm uppercase tracking-[0.2em] transition-all shadow-2xl active:scale-95 flex items-center justify-center gap-3"
                   :class="isEquipped(selectedItem) ? 'bg-white/5 text-muted border border-white/10' : 'bg-blue-600 text-white hover:bg-blue-500 shadow-blue-600/30'">
                   {{ isEquipped(selectedItem) ? i18n.t('inv_unlink_artifact') : i18n.t('inv_link_artifact') }}
                   <component :is="isEquipped(selectedItem) ? X : Check" class="w-4 h-4" />
                 </button>
+
+                <!-- Customization Items (title, border, background, avatar) -->
+                <button v-else-if="['title', 'border', 'background', 'post_background', 'avatar'].includes(selectedItem.type)"
+                  @click="toggleEquip(selectedItem); showItemModal = false"
+                  class="flex-1 py-5 rounded-[22px] font-black text-sm uppercase tracking-[0.2em] transition-all shadow-2xl active:scale-95 flex items-center justify-center gap-3"
+                  :class="isEquipped(selectedItem) ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40' : 'bg-purple-600 text-white hover:bg-purple-500 shadow-purple-600/30'">
+                  {{ isEquipped(selectedItem) ? i18n.t('inv_unlink_artifact') : i18n.t('inv_link_artifact') }}
+                  <component :is="isEquipped(selectedItem) ? X : Check" class="w-4 h-4" />
+                </button>
+
                 <button @click="showItemModal = false" class="px-10 py-5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-[22px] text-[10px] font-black uppercase tracking-widest text-zinc-400 transition-all active:scale-95">
                   {{ i18n.t('inv_close') }}
                 </button>
@@ -461,6 +478,7 @@ import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
 import ChestOpening from './ChestOpening.vue';
 import CompareModal from './CompareModal.vue';
+import ActiveEffects from './ActiveEffects.vue';
 import axios from 'axios';
 import { useAudio } from '../composables/useAudio';
 import ItemIcon from './ItemIcon.vue';
@@ -1116,7 +1134,8 @@ const markCategorySeen = async (type) => {
 const getCardClass = (item) => {
   const r = item.rarity?.toLowerCase();
   if (isEquipped(item)) return 'ring-2 ring-blue-500 border-transparent bg-blue-500/5 cursor-pointer';
-  if (!item.is_unlocked) return 'opacity-60 grayscale';
+  // If not owned or not unlocked, show gray - but be sure it's not from the user inventory
+  if (!item.owned && !item.is_unlocked) return 'opacity-60 grayscale';
 
   if (r === 'legendary') return 'border-yellow-400 bg-yellow-400/5 cursor-pointer';
   if (r === 'epic' || r === 'especial') return 'border-purple-500/50 bg-purple-500/5 cursor-pointer';

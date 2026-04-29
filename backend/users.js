@@ -259,7 +259,7 @@ router.get('/inventory', authenticate, async (req, res) => {
       if (typeof item.stats === 'string') {
         try { parsedStats = JSON.parse(item.stats); } catch(e) { parsedStats = {}; }
       }
-      return { ...item, stats: parsedStats || {}, owned: true };
+      return { ...item, stats: parsedStats || {}, owned: true, is_unlocked: true };
     });
     
     res.json(items);

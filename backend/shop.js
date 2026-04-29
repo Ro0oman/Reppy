@@ -348,6 +348,12 @@ router.post('/equip/:id', authenticate, async (req, res) => {
   const userId = req.user.id;
 
   try {
+    // Validate type
+    const validTypes = ['head', 'weapon', 'armor', 'boots', 'title', 'border', 'avatar', 'background', 'post_background'];
+    if (!validTypes.includes(typeParam)) {
+      return res.status(400).json({ message: `Invalid equipment type: ${typeParam}` });
+    }
+
     if (itemId === 0) {
       const slotMap = {
         head: 'equipped_head_id',
@@ -373,7 +379,6 @@ router.post('/equip/:id', authenticate, async (req, res) => {
     
     if (inventoryRes.rows.length === 0) {
       console.log(`[SHOP_EQUIP_ERROR] User ${userId} does NOT own item ${itemId}. Inventory check failed.`);
-      // Optional: Check if the item exists at all
       const itemExists = await query('SELECT name FROM items WHERE id = $1', [itemId]);
       const itemName = itemExists.rows[0]?.name || 'Unknown Item';
       return res.status(403).json({ 
@@ -384,7 +389,13 @@ router.post('/equip/:id', authenticate, async (req, res) => {
     
     const itemRes = await query('SELECT type FROM items WHERE id = $1', [itemId]);
     if (itemRes.rows.length === 0) return res.status(404).json({ message: 'Item not found in database' });
-    const type = itemRes.rows[0].type;
+    const actualType = itemRes.rows[0].type;
+    
+    // Verify type matches what was sent
+    if (actualType !== typeParam) {
+      console.warn(`[SHOP_EQUIP_MISMATCH] Item ${itemId} is type '${actualType}' but frontend sent '${typeParam}'`);
+      return res.status(400).json({ message: `Item type mismatch. Expected ${actualType}, got ${typeParam}` });
+    }
     
     const slotMap = {
       head: 'equipped_head_id',
@@ -398,8 +409,9 @@ router.post('/equip/:id', authenticate, async (req, res) => {
       post_background: 'equipped_post_background_id'
     };
 
-    const column = slotMap[type];
+    const column = slotMap[actualType];
     if (column) {
+      // Only update the specific slot for this item type - don't touch other slots
       await query(`UPDATE users SET ${column} = $1 WHERE id = $2`, [itemId, userId]);
     }
 

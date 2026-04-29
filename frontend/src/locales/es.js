@@ -1,5 +1,6 @@
 export default {
     // Landing
+    dash_active_effects: 'Efectos Activos',
     landing_title: 'Plataforma de Entrenamiento de Élite',
     hero_eyebrow: 'Plataforma de Entrenamiento de Élite',
     hero_subtitle: 'La plataforma premium para entusiastas de las dominadas. Registra repeticiones, visualiza tu progreso y domina los rankings.',
