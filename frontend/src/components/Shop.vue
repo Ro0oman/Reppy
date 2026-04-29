@@ -188,12 +188,12 @@
                   <Gift class="w-4 h-4" />
                 </button>
                 <button v-else @click.stop="openItemDetails(item)"
-                  class="w-full py-3 bg-primary-500 text-white rounded-xl flex items-center justify-center gap-3 active:scale-95 transition-all shadow-lg shadow-primary-500/20 hover:bg-primary-400 group/buy"
+                  class="w-full min-h-[64px] p-2 bg-primary-500 text-white rounded-xl flex flex-col items-center justify-center gap-1 active:scale-95 transition-all shadow-lg shadow-primary-500/20 hover:bg-primary-400 group/buy"
                   :disabled="!canAfford(item)">
                   <span
-                    class="text-[10px] font-black uppercase tracking-[0.2em] group-hover/buy:translate-x-[-2px] transition-transform">{{
+                    class="text-[10px] font-black uppercase tracking-[0.2em] text-center leading-tight break-words group-hover/buy:translate-x-[-2px] transition-transform">{{
                       i18n.t('btn_buy') || 'COMPRAR' }}</span>
-                  <div class="flex items-center gap-2 bg-black/20 px-2 py-1 rounded-lg">
+                  <div class="flex flex-wrap items-center justify-center gap-2 bg-black/20 px-2 py-1 rounded-lg max-w-full">
                     <template v-if="item.price > 0">
                       <span class="text-xs font-black tabular-nums">{{ item.price }}</span>
                       <Coins class="w-3.5 h-3.5 text-primary-300" />
