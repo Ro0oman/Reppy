@@ -155,20 +155,6 @@ const updateAvatar = async (req, res) => {
 router.patch('/avatar', authenticate, updateAvatar);
 router.post('/avatar', authenticate, updateAvatar);
 
-// Mark easter modal as seen
-router.patch('/seen-easter-modal', authenticate, async (req, res) => {
-  try {
-    await query(
-      'UPDATE users SET has_seen_easter_modal = true WHERE id = $1',
-      [req.user.id]
-    );
-    res.json({ message: 'Modal marked as seen' });
-  } catch (error) {
-    console.error('Error updating modal state:', error);
-    res.status(500).json({ message: 'Error updating modal state' });
-  }
-});
-
 // Delete account (New requirement)
 router.delete('/me', authenticate, async (req, res) => {
   try {
@@ -182,48 +168,6 @@ router.delete('/me', authenticate, async (req, res) => {
   } catch (error) {
     console.error('Error deleting account:', error);
     res.status(500).json({ message: 'Error deleting account' });
-  }
-});
-
-// Mark damage overhaul modal as seen
-router.patch('/seen-damage-modal', authenticate, async (req, res) => {
-  try {
-    await query(
-      'UPDATE users SET has_seen_damage_overhaul = true WHERE id = $1',
-      [req.user.id]
-    );
-    res.json({ message: 'Damage modal marked as seen' });
-  } catch (error) {
-    console.error('Error updating modal state:', error);
-    res.status(500).json({ message: 'Error updating modal state' });
-  }
-});
-
-// Mark avatar overhaul modal as seen
-router.patch('/seen-avatar-modal', authenticate, async (req, res) => {
-  try {
-    await query(
-      'UPDATE users SET has_seen_avatar_overhaul = true WHERE id = $1',
-      [req.user.id]
-    );
-    res.json({ message: 'Avatar modal marked as seen' });
-  } catch (error) {
-    console.error('Error updating modal state:', error);
-    res.status(500).json({ message: 'Error updating modal state' });
-  }
-});
-
-// Mark armory update modal as seen
-router.patch('/seen-armory-modal', authenticate, async (req, res) => {
-  try {
-    await query(
-      'UPDATE users SET has_seen_armory_update = true WHERE id = $1',
-      [req.user.id]
-    );
-    res.json({ message: 'Armory modal marked as seen' });
-  } catch (error) {
-    console.error('Error updating modal state:', error);
-    res.status(500).json({ message: 'Error updating modal state' });
   }
 });
 
