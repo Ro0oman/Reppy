@@ -90,46 +90,32 @@ apiRouter.use('/test', testRoutes);
 apiRouter.use('/missions', missionsRoutes);
 apiRouter.use('/push', pushRoutes);
 
-// Pusher Auth Endpoint
-apiRouter.post('/pusher/auth', (req, res) => {
-  console.log('[PUSHER AUTH REQUEST RECEIVED] Body:', req.body, 'Query:', req.query);
+// Pusher Auth Endpoint (Directly on app for Vercel compatibility)
+app.post('/api/pusher/auth', async (req, res) => {
+  console.log('[PUSHER AUTH REQUEST RECEIVED] Body:', req.body);
   const socketId = req.body.socket_id;
   const channel = req.body.channel_name;
   
-  // Try to get params from body or query (pusher-js can send them in different ways)
   const userId = String(req.body.user_id || req.query.user_id || 'anonymous-' + Math.random().toString(36).substr(2, 9));
   const userName = req.body.user_name || req.query.user_name || 'Anonymous';
   const avatarUrl = req.body.avatar_url || req.query.avatar_url || '';
 
-  // Debug env vars (hidden secret for safety)
-  if (!process.env.PUSHER_APP_ID || !process.env.PUSHER_KEY || !process.env.PUSHER_SECRET) {
-    console.error('[PUSHER] Missing environment variables!');
-    return res.status(500).json({ error: 'Missing Pusher Environment Variables on Server' });
-  }
-
-  console.log(`[PUSHER AUTH] Channel: ${channel}, User: ${userName} (${userId}), Socket: ${socketId}`);
-
-  const presenceData = {
-    user_id: userId,
-    user_info: {
-      name: userName,
-      avatar_url: avatarUrl
-    },
-  };
-
   try {
+    const getPusher = (await import('./pusher.js')).default;
     const pusher = getPusher();
     if (!pusher) {
       throw new Error('Pusher not initialized. Check environment variables.');
     }
-    const auth = pusher.authorizeChannel(socketId, channel, presenceData);
+    const auth = pusher.authorizeChannel(socketId, channel, {
+      user_id: userId,
+      user_info: { name: userName, avatar_url: avatarUrl }
+    });
     res.send(auth);
   } catch (error) {
-    console.error(`[PUSHER AUTH ERROR] Channel: ${channel}`, error);
+    console.error(`[PUSHER AUTH ERROR]`, error);
     res.status(500).json({ 
       error: error.message, 
-      stack: error.stack,
-      details: 'Check if PUSHER_APP_ID, KEY, SECRET are set in Vercel'
+      details: 'Error during authorizeChannel'
     });
   }
 });
