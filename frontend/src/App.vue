@@ -137,25 +137,19 @@
     <nav v-if="authStore.isAuthenticated && $route.name !== 'pvp'" 
       class="lg:hidden fixed bottom-6 left-4 right-4 z-[60] bg-surface/60 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-1.5 transition-all duration-500">
       <div class="flex items-center justify-around h-14">
-        <router-link v-for="nav in mobileNavLinks" :key="nav.id"
-          :to="{ name: nav.id, params: { lang: i18n.locale, ...(nav.id === 'profile' ? { userId: authStore.user?.id } : {}) } }" 
-          :title="i18n.t(nav.label)"
-          class="flex flex-col items-center justify-center flex-1 h-full transition-all relative group"
-          :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted hover:text-foreground'">
-          
-          
+        <router-link v-for="nav in mobileNavLinks" :key="nav.id" :to="{ name: nav.id, params: { lang: i18n.locale, ...(nav.id === 'profile' ? { userId: authStore.user?.id } : {}) } }"
+                     class="flex flex-col items-center justify-center py-2 flex-1 group relative transition-all"
+                     :class="$route.name === nav.id ? 'bg-primary-500/5' : 'opacity-60 hover:opacity-100'">
           <div class="relative">
-            <!-- Background Glow for Active Icon -->
-            <div v-if="$route.name === nav.id" class="absolute inset-0 bg-primary-500/30 blur-xl rounded-full scale-125 animate-pulse"></div>
+            <component :is="nav.icon" class="w-5 h-5 transition-transform group-active:scale-90 relative z-10" 
+                       :class="$route.name === nav.id ? 'text-primary-500 drop-shadow-[0_0_10px_rgba(255,69,0,0.4)]' : ''" />
             
-            <component :is="nav.icon" class="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-active:scale-90 relative z-10" :class="$route.name === nav.id ? 'text-primary-500 drop-shadow-[0_0_15px_rgba(255,69,0,0.6)]' : ''" />
-            
-            <!-- Contextual Badges -->
             <div v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory)" 
-                 class="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full border border-surface shadow-[0_0_10px_rgba(59,130,246,0.5)] animate-pulse"></div>
+                 class="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full border border-surface shadow-[0_0_8px_rgba(255,69,0,0.5)] animate-ping"></div>
           </div>
 
-          <span class="text-[7px] xs:text-[8px] font-black uppercase tracking-tighter mt-1 opacity-60 group-hover:opacity-100 transition-opacity text-center px-0.5 line-clamp-1" :class="$route.name === nav.id ? 'opacity-100 text-primary-500' : ''">
+          <span class="text-[7px] font-black uppercase tracking-tighter mt-1 truncate w-full px-0.5 text-center" 
+                :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted'">
             {{ nav.short || i18n.t(nav.label) }}
           </span>
         </router-link>
@@ -226,26 +220,26 @@
       </div>
     </Teleport>
     
-     <!-- Floating Roulette Module (Issue 86) -->
-     <div v-if="rouletteStore.canSpin" 
-          class="fixed bottom-32 right-8 md:bottom-12 md:right-12 z-[70] flex flex-col items-end gap-5 group">
-       <!-- Logic Tooltip -->
-       <div class="bg-primary-500 text-white text-[9px] font-black uppercase tracking-[0.3em] px-5 py-2.5 rounded-full shadow-2xl opacity-0 group-hover:opacity-100 transition-all border border-white/20 whitespace-nowrap">
-         {{ i18n.t('roulette_exe_available') }}
-       </div>
-       
-       <button @click="showRoulette = true" 
-         class="relative bg-steel-grey/60 backdrop-blur-xl p-6 rounded-3xl shadow-2xl transition-all duration-500 border border-white/10 group overflow-hidden active:scale-95">
-         
-         <div class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-transparent"></div>
-         <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer pointer-events-none"></div>
-         
-         <Dices class="w-8 h-8 text-white relative z-10 transition-transform duration-700 group-hover:rotate-[360deg]" />
-         
-         <!-- Urgent Alert Dot -->
-         <div class="absolute top-4 right-4 w-3 h-3 bg-primary-500 rounded-full border-2 border-deep-abyss animate-ping shadow-[0_0_15px_rgba(255,69,0,0.5)]"></div>
-       </button>
-     </div>
+      <!-- Floating Roulette Module (Issue 86/142) -->
+      <div v-if="rouletteStore.canSpin" 
+           class="fixed bottom-24 right-4 md:bottom-12 md:right-12 z-[70] flex flex-col items-end gap-5 group">
+        <!-- Logic Tooltip -->
+        <div class="bg-primary-500 text-white text-[9px] font-black uppercase tracking-[0.3em] px-5 py-2.5 rounded-full shadow-2xl opacity-0 group-hover:opacity-100 transition-all border border-white/20 whitespace-nowrap hidden md:block">
+          {{ i18n.t('roulette_exe_available') }}
+        </div>
+        
+        <button @click="showRoulette = true" 
+          class="relative bg-steel-grey/60 backdrop-blur-xl p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-2xl transition-all duration-500 border border-white/10 group overflow-hidden active:scale-95">
+          
+          <div class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-transparent"></div>
+          <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer pointer-events-none"></div>
+          
+          <Dices class="w-6 h-6 md:w-8 md:h-8 text-white relative z-10 transition-transform duration-700 group-hover:rotate-[360deg]" />
+          
+          <!-- Urgent Alert Dot -->
+          <div class="absolute top-3 right-3 md:top-4 md:right-4 w-2.5 h-2.5 bg-primary-500 rounded-full border-2 border-deep-abyss animate-ping shadow-[0_0_15px_rgba(255,69,0,0.5)]"></div>
+        </button>
+      </div>
 
   </div>
 </template>

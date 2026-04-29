@@ -1,7 +1,6 @@
 <template>
   <div class="space-y-8">
-    <!-- Activity Spotlight (Heatmap Header) -->
-    <MiniActivityHeatmap class="mb-8" />
+
 
     <!-- Feed Content -->
     <div class="space-y-12 min-h-[600px] relative">

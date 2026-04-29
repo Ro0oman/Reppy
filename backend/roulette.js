@@ -12,22 +12,18 @@ router.get('/status', optionalAuthenticate, async (req, res) => {
       return res.json({ canSpin: false });
     }
 
-    const userRes = await query('SELECT last_spin_at FROM users WHERE id = $1', [req.user.id]);
-    const lastSpin = userRes.rows[0].last_spin_at;
+    const userRes = await query(`
+      SELECT last_spin_at, 
+      (last_spin_at AT TIME ZONE 'UTC')::date = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')::date as already_spun
+      FROM users WHERE id = $1
+    `, [req.user.id]);
 
-    if (!lastSpin) {
-      return res.json({ canSpin: true });
-    }
-
-    const now = new Date();
-    const lastSpinDate = new Date(lastSpin);
-
-    // Reset daily at midnight in server time (or user time if we had it, but server time is safer)
-    const canSpin = now.toDateString() !== lastSpinDate.toDateString();
+    const row = userRes.rows[0];
+    const canSpin = !row.last_spin_at || !row.already_spun;
 
     res.json({ 
       canSpin,
-      lastSpinAt: lastSpin 
+      lastSpinAt: row.last_spin_at 
     });
   } catch (error) {
     console.error('Error checking roulette status:', error);
@@ -41,11 +37,15 @@ router.post('/spin', authenticate, async (req, res) => {
 
   try {
     // 1. Double check eligibility
-    const userRes = await query('SELECT last_spin_at, reppy_coins FROM users WHERE id = $1', [userId]);
+    const userRes = await query(`
+      SELECT last_spin_at, reppy_coins,
+      (last_spin_at AT TIME ZONE 'UTC')::date = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')::date as already_spun
+      FROM users WHERE id = $1
+    `, [userId]);
+    
     const user = userRes.rows[0];
-    const now = new Date();
 
-    if (user.last_spin_at && new Date(user.last_spin_at).toDateString() === now.toDateString()) {
+    if (user.last_spin_at && user.already_spun) {
       return res.status(400).json({ message: 'Ya has girado la ruleta hoy. Vuelve mañana!' });
     }
 

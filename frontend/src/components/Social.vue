@@ -20,7 +20,7 @@
         <button 
           @click="activeTab = 'feed'"
           class="flex-none px-4 sm:px-6 py-3 rounded-xl text-[9px] sm:text-[11px] font-black uppercase tracking-[0.15em] transition-all flex items-center justify-center gap-2.5 relative group overflow-hidden whitespace-nowrap"
-          :class="activeTab === 'feed' ? 'text-primary-400' : 'text-muted/50 hover:text-foreground hover:bg-white/5'"
+          :class="activeTab === 'feed' ? 'text-primary-400' : 'text-muted hover:text-foreground hover:bg-white/5'"
         >
           <Activity class="w-3.5 h-3.5" :class="activeTab === 'feed' ? 'animate-pulse' : ''" />
           <span>{{ i18n.t('social_wall') }}</span>
@@ -34,7 +34,7 @@
         <button 
           @click="activeTab = 'rankings'"
           class="flex-none px-4 sm:px-6 py-3 rounded-xl text-[9px] sm:text-[11px] font-black uppercase tracking-[0.15em] transition-all flex items-center justify-center gap-2.5 relative group overflow-hidden whitespace-nowrap"
-          :class="activeTab === 'rankings' ? 'text-primary-400' : 'text-muted/50 hover:text-foreground hover:bg-white/5'"
+          :class="activeTab === 'rankings' ? 'text-primary-400' : 'text-muted hover:text-foreground hover:bg-white/5'"
         >
           <Trophy class="w-3.5 h-3.5" :class="activeTab === 'rankings' ? 'animate-pulse' : ''" />
           <span>{{ i18n.t('rankings') }}</span>
@@ -48,7 +48,7 @@
         <button 
           @click="activeTab = 'battles'"
           class="flex-none px-4 sm:px-6 py-3 rounded-xl text-[9px] sm:text-[11px] font-black uppercase tracking-[0.15em] transition-all flex items-center justify-center gap-2.5 relative group overflow-hidden whitespace-nowrap"
-          :class="activeTab === 'battles' ? 'text-primary-400' : 'text-muted/50 hover:text-foreground hover:bg-white/5'"
+          :class="activeTab === 'battles' ? 'text-primary-400' : 'text-muted hover:text-foreground hover:bg-white/5'"
         >
           <Swords class="w-3.5 h-3.5" :class="activeTab === 'battles' ? 'animate-pulse' : ''" />
           <span>{{ i18n.t('pvp_tab') }}</span>

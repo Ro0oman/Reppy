@@ -222,6 +222,8 @@ const spinWheel = async () => {
     
     spinning.value = true;
     prizeResult.value = null;
+    rouletteStore.setSpun();
+    emit('spun');
 
     // Calculate rotation
     const extraSpins = 5 + Math.floor(Math.random() * 5);
@@ -242,7 +244,6 @@ const spinWheel = async () => {
     setTimeout(() => {
       spinning.value = false;
       prizeResult.value = { ...data.prize, msg: data.message };
-      rouletteStore.setSpun();
       showResultModal.value = true;
       
       // Update balances
@@ -260,8 +261,6 @@ const spinWheel = async () => {
       } else {
         notificationStore.notify(i18n.t('wheel_return_info'), 'info');
       }
-
-      emit('spun');
     }, 4000);
 
   } catch (error) {

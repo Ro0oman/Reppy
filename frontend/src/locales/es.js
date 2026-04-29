@@ -783,6 +783,8 @@ export default {
     settings_title: 'Ajustes de Perfil',
     settings_success: 'Ajustes de perfil actualizados con éxito.',
     settings_error: 'Error al actualizar los ajustes.',
+    ui_reward_unlocked: '¡RECOMPENSA DESBLOQUEADA!',
+    ui_reward_congrats: '¡FELICIDADES! HAS DESBLOQUEADO UNA RECOMPENSA.',
 
     // Profile specific
     profile_decrypting: 'DESCRIPTANDO PERFIL...',

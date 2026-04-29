@@ -402,6 +402,20 @@ watch(() => activePotions.value.length, (newLen, oldLen) => {
   }
 });
 
+const fetchGlobalData = async () => {
+  try {
+    const t = Date.now();
+    const [missionsRes] = await Promise.all([
+      axios.get('/api/missions', { params: { t } }),
+      authStore.fetchProfile()
+    ]);
+    const missionList = missionsRes.data.missions || [];
+    unclaimedMissions.value = missionList.filter(m => m.is_completed && !m.is_claimed).length;
+  } catch (err) {
+    console.error('Error fetching global dashboard data:', err);
+  }
+};
+
 const fetchData = async () => {
   isLoading.value = true;
   try {
@@ -410,19 +424,15 @@ const fetchData = async () => {
       year: activeYear.value 
     };
     const t = Date.now();
-    const [repsRes, heatmapRes, statsRes, missionsRes] = await Promise.all([
+    const [repsRes, heatmapRes, statsRes] = await Promise.all([
       axios.get('/api/reps', { params: { ...params, t } }),
       axios.get('/api/reps/heatmap', { params: { ...params, t } }),
-      axios.get('/api/reps/stats', { params: { ...params, t } }),
-      axios.get('/api/missions', { params: { t } }),
-      authStore.fetchProfile()
+      axios.get('/api/reps/stats', { params: { ...params, t } })
     ]);
 
     reps.value = repsRes.data;
     heatmapData.value = heatmapRes.data;
     totalReps.value = statsRes.data.totalReps;
-    const missionList = missionsRes.data.missions || [];
-    unclaimedMissions.value = missionList.filter(m => m.is_completed && !m.is_claimed).length;
     stats.streak = statsRes.data.streak;
     stats.topMonth = statsRes.data.topMonth;
     stats.topMonthCount = statsRes.data.topMonthCount;
@@ -560,6 +570,7 @@ onMounted(() => {
   }
 
   fetchData();
+  fetchGlobalData();
   // Auto-refresh removed to save Supabase/Vercel resources. 
   // Real-time events via Socket.io handle the live feel.
   // refreshInterval = setInterval(fetchData, 60000);
