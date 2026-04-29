@@ -8,16 +8,47 @@
       </router-link>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="relative w-full pt-12 pb-24 px-6 overflow-hidden border-b border-white/5">
-      <!-- Ambient Glows -->
-      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary-500/10 blur-[120px] rounded-full pointer-events-none"></div>
-      
-      <div class="max-w-7xl mx-auto relative z-10 text-center space-y-10">
-        <!-- Badge -->
-        <div class="animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <div class="inline-flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-full backdrop-blur-md">
-            <span class="text-[9px] sm:text-[10px] font-black text-muted uppercase tracking-[0.3em]">REPPY <span class="text-primary-500">MISIONES</span> DIARIAS</span>
+    <!-- Header (Large & Clean) -->
+    <header class="max-w-7xl w-full px-6 py-20 text-center space-y-8 animate-in">
+      <h1 class="text-5xl md:text-[10rem] font-black tracking-tighter text-foreground leading-none uppercase italic border-b-8 border-primary/20 pb-4 inline-block">
+        {{ i18n.t('nav_codex') }}
+      </h1>
+      <p class="text-xl md:text-2xl text-muted max-w-3xl mx-auto leading-relaxed font-medium">
+        {{ i18n.t('blog_list_subtitle') }}
+      </p>
+    </header>
+
+    <!-- Blog Grid (Focused) -->
+    <section class="max-w-7xl w-full px-6 pb-40">
+      <div v-if="paginatedPosts.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
+        <router-link 
+          v-for="post in paginatedPosts" 
+          :key="post.slug" 
+          :to="`/${i18n.locale}/blog/${post.slug}`" 
+          class="group flex flex-col space-y-8 animate-in"
+        >
+          <div class="relative aspect-video overflow-hidden rounded-[2.5rem] bg-surface-dark/10 flex items-center justify-center border border-white/5 shadow-2xl transition-all duration-500 group-hover:shadow-primary/10">
+            <!-- Loading Spinner -->
+            <div v-if="!loadedImages[post.slug]" class="absolute inset-0 flex items-center justify-center">
+              <Loader2 class="w-8 h-8 text-primary/40 animate-spin" />
+            </div>
+
+            <img 
+              :src="post.image" 
+              :alt="post.locales[i18n.locale]?.title" 
+              class="w-full h-full object-cover transition-all duration-1000 group-hover:scale-105" 
+              :class="loadedImages[post.slug] ? 'opacity-100' : 'opacity-0'"
+              @load="loadedImages[post.slug] = true"
+              @error="(e) => handleImageError(e, post.slug)"
+            />
+            
+            <!-- Read Indicator Overlay -->
+            <div 
+              v-if="isRead(post.slug)" 
+              class="absolute top-6 right-6 w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/40 border-2 border-white/20 z-20 backdrop-blur-sm"
+            >
+              <CheckCircle2 class="w-6 h-6 text-white" />
+            </div>
           </div>
         </div>
 
@@ -243,6 +274,11 @@ const isRead = (slug) => {
 const currentPage = ref(1);
 const postsPerPage = 6; // Fewer posts per page for better focus
 const loadedImages = reactive({});
+
+const handleImageError = (e, slug) => {
+  loadedImages[slug] = true;
+  e.target.src = 'https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?auto=format&fit=crop&w=800&q=60';
+};
 
 const sortedPosts = computed(() => {
   const now = new Date();
