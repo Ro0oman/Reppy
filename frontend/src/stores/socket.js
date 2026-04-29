@@ -19,7 +19,7 @@ export const useSocketStore = defineStore('socket', {
       // Use relative path in production, or the env var in development
       const apiURL = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_URL || '');
       
-      console.log(`[PUSHER v4] Initializing with User: ${authStore.user?.name} (ID: ${authStore.user?.id})`);
+      console.log(`[PUSHER v5] Initializing with User: ${authStore.user?.name} (ID: ${authStore.user?.id})`);
 
       this.pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
         cluster: import.meta.env.VITE_PUSHER_CLUSTER,
