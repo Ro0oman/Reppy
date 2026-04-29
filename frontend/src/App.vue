@@ -112,6 +112,19 @@
             </div>
 
           </div>
+          
+          <!-- Live Status Module -->
+          <div v-if="authStore.isAuthenticated" 
+               @click="openLiveModal"
+               class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-emerald-500/5 border border-emerald-500/20 rounded-xl cursor-pointer hover:bg-emerald-500/10 transition-all group">
+            <div class="relative">
+              <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
+              <div class="absolute inset-0 w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping opacity-40"></div>
+            </div>
+            <span class="text-[10px] font-black text-emerald-500 tabular-nums">
+              {{ socketStore.activeOperatives.length || 1 }}
+            </span>
+          </div>
         </div>
       </div>
     </nav>
@@ -348,6 +361,10 @@ const checkRoulette = async () => {
 };
 
 const onSpun = () => { rouletteStore.setSpun(); };
+
+const openLiveModal = () => {
+  router.push({ name: 'social', params: { lang: i18n.locale } });
+};
 
 const openProfile = (id) => { 
   router.push({ name: 'profile', params: { userId: id } });

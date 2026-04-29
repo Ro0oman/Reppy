@@ -183,6 +183,8 @@ export default {
     codex_cha_quote: '"El aura de un Rey."',
     codex_cha_desc: 'Tu presencia en la comunidad. Se gana actualmente a través de eventos especiales y objetos de la tienda.',
     codex_cha_action: 'Interactúa con la comunidad y colecciona equipo legendario.',
+    live_operatives: 'Leyendas en Directo',
+    live_sync: 'Sincronización en tiempo real',
 
     stats_total: 'Reps Totales',
     stats_goal: 'Objetivo Diario',

@@ -181,6 +181,8 @@ export default {
     codex_cha_quote: '"The aura of a King."',
     codex_cha_desc: 'Your presence in the community. Currently earned through special events and shop items.',
     codex_cha_action: 'Interact with the community and collect legendary gear.',
+    live_operatives: 'Live Operatives',
+    live_sync: 'Real-time Synchronization',
 
     stats_total: 'Total Reps',
     stats_goal: 'Daily Goal',
