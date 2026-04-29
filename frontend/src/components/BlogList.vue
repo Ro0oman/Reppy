@@ -40,10 +40,7 @@
               class="w-full h-full object-cover transition-all duration-1000 group-hover:scale-105" 
               :class="loadedImages[post.slug] ? 'opacity-100' : 'opacity-0'"
               @load="loadedImages[post.slug] = true"
-              @error="(e) => { 
-                loadedImages[post.slug] = true;
-                e.target.src = 'https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?auto=format&fit=crop&w=800&q=60';
-              }"
+              @error="(e) => handleImageError(e, post.slug)"
             />
             
             <!-- Read Indicator Overlay -->
@@ -144,6 +141,11 @@ const isRead = (slug) => {
 const currentPage = ref(1);
 const postsPerPage = 6; // Fewer posts per page for better focus
 const loadedImages = reactive({});
+
+const handleImageError = (e, slug) => {
+  loadedImages[slug] = true;
+  e.target.src = 'https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?auto=format&fit=crop&w=800&q=60';
+};
 
 const sortedPosts = computed(() => {
   const now = new Date();
