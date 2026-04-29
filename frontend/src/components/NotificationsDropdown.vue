@@ -67,7 +67,7 @@
 </template>
 
 <script setup>
-import { Bell, BicepsFlexed, MessageSquare, Trophy, Package, Swords, PartyPopper } from 'lucide-vue-next';
+import { Bell, BicepsFlexed, MessageSquare, Trophy, Package, Swords, PartyPopper, Target } from 'lucide-vue-next';
 import { useNotificationsStore } from '../stores/notifications';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
