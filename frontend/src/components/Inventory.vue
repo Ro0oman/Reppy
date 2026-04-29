@@ -371,7 +371,7 @@
                        <BackgroundEffect v-if="selectedItem.type === 'background'" :background-css="selectedItem.css_value" is-preview class="!absolute !inset-0 !w-full !h-full" />
                        <div v-else :class="selectedItem.css_value" class="absolute inset-0"></div>
                     </div>
-                    <Package v-else class="w-24 h-24 text-primary-500" />
+                    <ChestIcon v-else class-name="w-24 h-24 text-primary-500" />
                  </div>
               </div>
 
@@ -477,10 +477,12 @@ import { useNotificationStore } from '../stores/notification';
 import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
 import ChestOpening from './ChestOpening.vue';
+import ChestIcon from './ChestIcon.vue';
 import CompareModal from './CompareModal.vue';
 import ActiveEffects from './ActiveEffects.vue';
 import axios from 'axios';
 import { useAudio } from '../composables/useAudio';
+import { isItemUpgrade, normalizeStats } from '../composables/useItemUpgrade';
 import ItemIcon from './ItemIcon.vue';
 
 const { playZip, playEquipBlip, playClickBlip } = useAudio();
@@ -498,34 +500,10 @@ let timerInterval = null;
 
 function isUpgrade(item, specificStat = null) {
   if (!item) return false;
-  
-  // Ensure stats are parsed
-  let stats = item.stats;
-  if (typeof stats === 'string') {
-    try { stats = JSON.parse(stats); } catch (e) { stats = {}; }
-  }
+  const stats = normalizeStats(item.stats);
   if (!stats || Object.keys(stats).length === 0) return false;
-
   const equipped = getEquippedItem(item.type);
-  if (!equipped) return true; // If nothing equipped, it's an upgrade
-
-  let equippedStats = equipped.stats;
-  if (typeof equippedStats === 'string') {
-    try { equippedStats = JSON.parse(equippedStats); } catch (e) { equippedStats = {}; }
-  }
-  
-  if (specificStat) {
-    const newVal = stats[specificStat] || 0;
-    const oldVal = equippedStats?.[specificStat] || 0;
-    return newVal > oldVal;
-  }
-  
-  // Global check: is ANY stat better?
-  return Object.entries(stats).some(([stat, val]) => {
-    if (stat === 'duration' || stat === 'multiplier') return false;
-    const oldVal = equippedStats?.[stat] || 0;
-    return val > oldVal;
-  });
+  return isItemUpgrade({ item, equippedItem: equipped, specificStat });
 }
 
 const formatTimeLeft = (diff) => {

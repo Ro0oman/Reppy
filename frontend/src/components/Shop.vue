@@ -187,9 +187,9 @@
                   {{ i18n.t('boss_claim_loot') }}
                   <Gift class="w-4 h-4" />
                 </button>
-                <button v-else @click.stop="openItemDetails(item)"
+                <button v-else @click.stop="tryOpenItemDetails(item)"
                   class="w-full min-h-[64px] p-2 bg-primary-500 text-white rounded-xl flex flex-col items-center justify-center gap-1 active:scale-95 transition-all shadow-lg shadow-primary-500/20 hover:bg-primary-400 group/buy"
-                  :disabled="!canAfford(item)">
+                  :disabled="false">
                   <span
                     class="text-[10px] font-black uppercase tracking-[0.2em] text-center leading-tight break-words group-hover/buy:translate-x-[-2px] transition-transform">{{
                       i18n.t('btn_buy') || 'COMPRAR' }}</span>
@@ -214,7 +214,7 @@
           class="animate-in">
           <div class="flex items-center gap-4 mb-8">
             <div class="p-3 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 shadow-lg shadow-emerald-500/10">
-              <Package class="w-6 h-6 text-emerald-500" />
+              <ChestIcon variant="normal" class-name="w-6 h-6" />
             </div>
             <h2
               class="text-2xl sm:text-3xl font-black text-industrial text-foreground tracking-tighter uppercase italic leading-none">
@@ -232,8 +232,7 @@
                 <!-- Animated Chest Visual -->
                 <div
                   class="relative w-32 h-32 sm:w-40 sm:h-40 mb-6 group-hover/chest:scale-110 transition-transform duration-700 flex items-center justify-center">
-                  <Package class="w-full h-full text-precision relative z-10"
-                    :class="getRarityBadge(chest).classes?.split(' ')[0]" />
+                  <ChestIcon :variant="chest.id" class-name="w-full h-full relative z-10 object-contain" />
                   <div
                     class="absolute inset-0 bg-emerald-500/20 blur-[50px] -z-10 opacity-0 group-hover/chest:opacity-100 transition-opacity">
                   </div>
@@ -247,7 +246,7 @@
                   {{ chest.description }}</p>
 
                 <button @click="purchaseChest(chest)"
-                  :disabled="buying || ((chest.currency === 'coins' ? (authStore.user?.reppy_coins || 0) : (authStore.user?.reppy_gems || 0)) < (chest.price ?? chest.price_gems ?? 0))"
+                  :disabled="buying"
                   class="w-full py-4 rounded-[22px] bg-emerald-500 text-white text-xs font-black uppercase tracking-[0.2em] hover:bg-emerald-400 shadow-xl shadow-emerald-500/30 transition-all active:scale-95 disabled:grayscale disabled:opacity-50 flex items-center justify-center gap-3">
                   <span class="tabular-nums text-xl">{{ chest.price ?? chest.price_gems }}</span>
                   <Coins v-if="chest.currency === 'coins'" class="w-5 h-5 fill-white/20" />
@@ -589,7 +588,7 @@
               </div>
 
               <button v-if="!selectedBundle.owned" @click="buyItem(selectedBundle); showBundleModal = false"
-                :disabled="buying || !canAfford(selectedBundle)"
+                :disabled="buying"
                 class="flex-1 sm:flex-initial px-10 py-5 bg-yellow-500 hover:bg-yellow-400 text-black rounded-[22px] font-black text-sm uppercase tracking-[0.2em] transition-all shadow-xl shadow-yellow-500/20 active:scale-95 disabled:grayscale">
                 {{ i18n.t('shop_initiate_acquisition') }}
               </button>
@@ -725,7 +724,7 @@
               </div>
 
               <button @click="buyItem(selectedItem); showItemModal = false"
-                :disabled="buying || !canAfford(selectedItem)"
+                :disabled="buying"
                 class="w-full sm:w-auto px-12 py-5 rounded-[22px] bg-primary-500 hover:bg-primary-400 text-white font-black text-sm uppercase tracking-[0.2em] transition-all shadow-2xl shadow-primary-500/30 active:scale-95 disabled:grayscale">
                 {{ i18n.t('btn_get') }}
               </button>
@@ -734,6 +733,15 @@
         </div>
       </div>
     </Transition>
+
+    <!-- Chest Opening Modal -->
+    <ChestOpening
+      v-if="showChestModal"
+      :show="showChestModal"
+      :reward="chestReward"
+      :reel-items="reelItems"
+      @close="closeChestModal"
+    />
 
   </div>
 </template>
@@ -749,6 +757,9 @@ import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRig
 import AvatarFrame from './AvatarFrame.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
 import ItemIcon from './ItemIcon.vue';
+import ChestIcon from './ChestIcon.vue';
+import ChestOpening from './ChestOpening.vue';
+import { getCombatScore, isItemUpgrade, normalizeStats } from '../composables/useItemUpgrade';
 
 const emit = defineEmits(['start', 'viewProfile']);
 const authStore = useAuthStore();
@@ -768,6 +779,9 @@ const selectedItem = ref(null);
 const selectedBundleItems = ref([]);
 const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1200);
 let countdownTimer = null;
+const showChestModal = ref(false);
+const chestReward = ref(null);
+const reelItems = ref([]);
 
 const statLabels = {
   str: 'Fuerza',
@@ -819,17 +833,56 @@ const getNextRotationCountdown = () => {
 };
 
 const purchaseChest = async (chest) => {
+  const required = chest.price ?? chest.price_gems ?? 0;
+  const hasFunds = chest.currency === 'coins'
+    ? (authStore.user?.reppy_coins || 0) >= required
+    : (authStore.user?.reppy_gems || 0) >= required;
+  if (!hasFunds) {
+    notificationStore.notify(i18n.locale === 'es' ? 'No tienes suficiente dinero' : 'Not enough funds', 'error');
+    return;
+  }
   buying.value = true;
   try {
     const res = await shopStore.buyChest(chest.id);
-    authStore.user.reppy_gems = res.remaining_gems;
+    if (authStore.user) {
+      if (typeof res.remaining_coins === 'number') authStore.user.reppy_coins = res.remaining_coins;
+      if (typeof res.remaining_gems === 'number') authStore.user.reppy_gems = res.remaining_gems;
+    }
     notificationStore.notify(`Chest Acquired: ${chest.name}`, 'success');
     await authStore.fetchProfile();
+    await openPurchasedChest(chest.id);
   } catch (error) {
     notificationStore.notify(error.response?.data?.message || 'Exchange failed', 'error');
   } finally {
     buying.value = false;
   }
+};
+
+const openPurchasedChest = async (type) => {
+  try {
+    let endpoint = '/api/boss/open-chest';
+    if (type === 'epic') endpoint = '/api/boss/open-epic-chest';
+    if (type === 'legendary') endpoint = '/api/boss/open-legendary-chest';
+
+    const res = await axios.post(endpoint);
+    chestReward.value = res.data?.reward || res.data;
+    reelItems.value = res.data?.reel_items || [];
+    showChestModal.value = true;
+    await authStore.fetchProfile();
+  } catch (error) {
+    notificationStore.notify(
+      i18n.locale === 'es'
+        ? 'Cofre comprado. No se pudo abrir automáticamente, puedes abrirlo desde Inventario.'
+        : 'Chest purchased. Auto-open failed, you can open it from Inventory.',
+      'warning'
+    );
+  }
+};
+
+const closeChestModal = async () => {
+  showChestModal.value = false;
+  await authStore.fetchProfile();
+  await shopStore.fetchInventory(true);
 };
 
 const claimReward = async (deal) => {
@@ -864,9 +917,38 @@ const consumableItems = computed(() => items.value.filter(item => item.type === 
 const hasLegendaryDaily = computed(() => shopStore.dailyItems.some(item => item.rarity === 'legendary' || item.rarity === 'calistenico'));
 
 const getBundlePreviewItems = (bundle) => {
-  if (!bundle.bundle_items) return [];
-  const ids = bundle.bundle_items.split(',').map(id => parseInt(id.trim()));
-  return allPossibleItems.value.filter(i => ids.includes(i.id)).slice(0, 4);
+  const ids = extractBundleItemIds(bundle);
+  return allPossibleItems.value
+    .filter(i => ids.includes(i.id) || ids.includes(i.item_id))
+    .slice(0, 4);
+};
+
+const extractBundleItemIds = (bundle) => {
+  if (!bundle) return [];
+
+  // Supports legacy CSV field: "12,13,14"
+  if (typeof bundle.bundle_items === 'string' && bundle.bundle_items.trim()) {
+    return bundle.bundle_items
+      .split(',')
+      .map(id => parseInt(id.trim(), 10))
+      .filter(Number.isFinite);
+  }
+
+  // Supports array/object payloads from API variants: pack.items / pack.contents
+  const rawList = bundle.items || bundle.contents || bundle.bundle_items;
+  if (Array.isArray(rawList)) {
+    return rawList
+      .map(entry => {
+        if (typeof entry === 'number') return entry;
+        if (typeof entry === 'string') return parseInt(entry, 10);
+        if (entry && typeof entry === 'object') return entry.id ?? entry.item_id;
+        return null;
+      })
+      .map(v => (typeof v === 'string' ? parseInt(v, 10) : v))
+      .filter(Number.isFinite);
+  }
+
+  return [];
 };
 
 const regularItems = computed(() => {
@@ -896,6 +978,14 @@ const canAfford = (item) => {
   const price = item.discounted_price ?? item.price ?? 0;
   const gems = item.discounted_gems ?? item.price_gems ?? 0;
   return (authStore.user?.reppy_coins || 0) >= price && (authStore.user?.reppy_gems || 0) >= gems;
+};
+
+const tryOpenItemDetails = (item) => {
+  if (!canAfford(item)) {
+    notificationStore.notify(i18n.locale === 'es' ? 'No tienes suficiente dinero' : 'Not enough funds', 'error');
+    return;
+  }
+  openItemDetails(item);
 };
 
 const isEquipped = (item) => {
@@ -935,25 +1025,52 @@ const getCardClass = (item) => {
 };
 
 function getStatDifference(item, stat) {
-  if (!authStore.user || !item.stats || item.type === 'consumable') return item.stats[stat] || 0;
+  const itemStats = normalizeStats(item?.stats);
+  if (!authStore.user || !itemStats || item.type === 'consumable') return itemStats?.[stat] || 0;
   const slotMap = { head: 'equipped_head_id', weapon: 'equipped_weapon_id', armor: 'equipped_armor_id', boots: 'equipped_boots_id' };
   const equippedId = authStore.user[slotMap[item.type]];
-  if (!equippedId) return item.stats[stat] || 0;
+  if (!equippedId) return itemStats[stat] || 0;
   const equippedItem = allPossibleItems.value.find(i => i.id === equippedId);
-  if (!equippedItem || !equippedItem.stats) return item.stats[stat] || 0;
-  return (item.stats[stat] || 0) - (equippedItem.stats[stat] || 0);
+  const equippedStats = normalizeStats(equippedItem?.stats);
+  if (!equippedItem || !equippedStats) return itemStats[stat] || 0;
+  return (itemStats[stat] || 0) - (equippedStats[stat] || 0);
 }
 
 function isUpgrade(item, stat = null) {
   if (!['head', 'weapon', 'armor', 'boots'].includes(item.type) || !item.stats || item.owned) return false;
-  if (stat) return getStatDifference(item, stat) > 0;
-  for (const s in item.stats) {
-    if (s !== 'duration' && s !== 'multiplier' && getStatDifference(item, s) > 0) return true;
+  if (!authStore.user) return false;
+
+  if (stat) {
+    // Keep per-stat display local to that stat.
+    return getStatDifference(item, stat) > 0;
   }
-  return false;
+
+  const slotMap = {
+    head: 'equipped_head_id',
+    weapon: 'equipped_weapon_id',
+    armor: 'equipped_armor_id',
+    boots: 'equipped_boots_id'
+  };
+
+  const equippedId = authStore.user[slotMap[item.type]];
+  if (!equippedId) {
+    // Nothing equipped in slot: treat as upgrade if item has positive score.
+    return getCombatScore(item.stats) > 0;
+  }
+
+  const equippedItem = allPossibleItems.value.find(i => i.id === equippedId || i.item_id === equippedId);
+  if (!equippedItem || !equippedItem.stats) {
+    return getCombatScore(item.stats) > 0;
+  }
+
+  return isItemUpgrade({ item, equippedItem });
 }
 
 const buyItem = async (item) => {
+  if (!canAfford(item)) {
+    notificationStore.notify(i18n.locale === 'es' ? 'No tienes suficiente dinero' : 'Not enough funds', 'error');
+    return;
+  }
   buying.value = true;
   try {
     const realId = item.item_id || item.id;
@@ -996,10 +1113,20 @@ const refreshDailyShop = async () => {
   }
 };
 
-const openBundleModal = (bundle) => {
+const openBundleModal = async (bundle) => {
   selectedBundle.value = bundle;
-  const ids = bundle.bundle_items?.split(',').map(id => parseInt(id.trim())) || [];
-  selectedBundleItems.value = allPossibleItems.value.filter(i => ids.includes(i.id));
+  const ids = extractBundleItemIds(bundle);
+  selectedBundleItems.value = allPossibleItems.value.filter(i => ids.includes(i.id) || ids.includes(i.item_id));
+
+  // Robust fallback: fetch resolved bundle contents directly from backend
+  try {
+    const res = await axios.get(`/api/shop/bundle/${bundle.id}/contents`);
+    if (Array.isArray(res.data?.items) && res.data.items.length > 0) {
+      selectedBundleItems.value = res.data.items;
+    }
+  } catch (error) {
+    // Keep local fallback silently if request fails
+  }
   showBundleModal.value = true;
 };
 

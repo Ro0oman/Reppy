@@ -195,13 +195,13 @@ router.post('/open-chest', authenticate, async (req, res) => {
 
     await query('BEGIN');
 
-    // 1. Determine number of item rewards (1 to 3)
-    const numItems = Math.floor(Math.random() * 3) + 1;
+    // 1. Determine number of item rewards (1 to 2) - slight nerf for normal chest
+    const numItems = Math.floor(Math.random() * 2) + 1;
     const rewards = [];
     let totalCoins = 0;
 
     // 2. Base Gold (always given)
-    const baseGold = 500;
+    const baseGold = 200;
     totalCoins += baseGold;
     rewards.push({ type: 'coins', amount: baseGold, message: 'Oro garantizado' });
 
@@ -209,10 +209,10 @@ router.post('/open-chest', authenticate, async (req, res) => {
         // Random rarity weighted logic
         const rand = Math.random();
         let targetRarity = 'common';
-        if (rand < 0.05) targetRarity = 'calistenico';
-        else if (rand < 0.15) targetRarity = 'legendary';
-        else if (rand < 0.35) targetRarity = 'especial';
-        else if (rand < 0.65) targetRarity = 'rare';
+        if (rand < 0.005) targetRarity = 'calistenico';
+        else if (rand < 0.03) targetRarity = 'legendary';
+        else if (rand < 0.12) targetRarity = 'especial';
+        else if (rand < 0.35) targetRarity = 'rare';
 
         // Try to find an unowned item of that rarity
         let itemRes = await query(`

@@ -46,6 +46,41 @@ router.get('/cosmetics', authenticate, async (req, res) => {
   }
 });
 
+// Get concrete bundle contents (resolved items) to power pack preview modal
+router.get('/bundle/:id/contents', authenticate, async (req, res) => {
+  try {
+    const bundleId = parseInt(req.params.id, 10);
+    if (!Number.isFinite(bundleId)) {
+      return res.status(400).json({ message: 'Invalid bundle id' });
+    }
+
+    const bundleRes = await query('SELECT id, bundle_items FROM items WHERE id = $1 AND type = $2', [bundleId, 'bundle']);
+    if (bundleRes.rows.length === 0) {
+      return res.status(404).json({ message: 'Bundle not found' });
+    }
+
+    const raw = bundleRes.rows[0].bundle_items || '';
+    const ids = raw
+      .split(',')
+      .map(v => parseInt(v.trim(), 10))
+      .filter(Number.isFinite);
+
+    if (ids.length === 0) return res.json({ items: [] });
+
+    const itemsRes = await query(`
+      SELECT id, name, type, rarity, svg_key, css_value, description, stats, price, price_gems
+      FROM items
+      WHERE id = ANY($1::int[])
+      ORDER BY array_position($1::int[], id)
+    `, [ids]);
+
+    res.json({ items: itemsRes.rows });
+  } catch (error) {
+    console.error('Error fetching bundle contents:', error);
+    res.status(500).json({ message: 'Error fetching bundle contents' });
+  }
+});
+
 // Get daily shop items
 router.get('/daily', authenticate, async (req, res) => {
   try {

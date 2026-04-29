@@ -310,6 +310,7 @@ const totalReps = ref(0);
 const activeExercise = ref('pullups');
 const editingId = ref(null);
 const editValue = ref(0);
+const deletingRepIds = ref(new Set());
 const bossHealthRef = ref(null);
 const isLoading = ref(false);
 const activeYear = ref(2026);
@@ -479,16 +480,26 @@ watch(activeExercise, () => {
 });
 
 const confirmDelete = (id) => {
+  if (deletingRepIds.value.has(id)) return;
   notificationStore.confirm(
     'Delete Log',
     'Are you sure you want to delete this entry?',
     async () => {
       try {
+        deletingRepIds.value.add(id);
         await axios.delete(`/api/reps/${id}`);
         notificationStore.notify('Entry deleted', 'success');
         fetchData();
       } catch (err) {
+        if (err?.response?.status === 404) {
+          // Already deleted or stale client state: update UI silently
+          reps.value = reps.value.filter(r => r.id !== id);
+          notificationStore.notify('Entry already removed', 'info');
+          return;
+        }
         notificationStore.notify('Delete failed', 'error');
+      } finally {
+        deletingRepIds.value.delete(id);
       }
     }
   );

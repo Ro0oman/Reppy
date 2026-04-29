@@ -318,12 +318,12 @@ const navLinks = computed(() => [
 ]);
 
 const mobileNavLinks = computed(() => [
-  { id: 'dashboard', icon: LayoutDashboard, label: 'nav_dashboard', short: (i18n.t('nav_dashboard') || 'Panel').substring(0, 5).toUpperCase() },
-  { id: 'social', icon: Users, label: 'nav_social', short: (i18n.t('nav_social') || 'Social').substring(0, 6).toUpperCase() },
-  { id: 'missions', icon: Target, label: 'nav_missions', short: 'TARGETS' },
-  { id: 'inventory', icon: Package, label: 'nav_inventory', short: (i18n.t('nav_inventory') || 'Equipo').substring(0, 6).toUpperCase() },
-  { id: 'shop', icon: ShoppingBag, label: 'nav_shop', short: (i18n.t('nav_shop') || 'Tienda').substring(0, 6).toUpperCase() },
-  { id: 'profile', icon: User, label: 'nav_profile', short: (i18n.t('nav_profile') || 'Perfil').substring(0, 6).toUpperCase() },
+  { id: 'dashboard', icon: LayoutDashboard, label: 'nav_dashboard', short: 'Panel' },
+  { id: 'social', icon: Users, label: 'nav_social', short: 'Social' },
+  { id: 'missions', icon: Target, label: 'nav_missions', short: 'Misiones' },
+  { id: 'inventory', icon: Package, label: 'nav_inventory', short: 'Inventario' },
+  { id: 'shop', icon: ShoppingBag, label: 'nav_shop', short: 'Tienda' },
+  { id: 'profile', icon: User, label: 'nav_profile', short: 'Perfil' },
 ]);
 
 const earnings = [

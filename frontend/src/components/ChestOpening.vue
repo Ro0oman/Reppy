@@ -18,7 +18,7 @@
                   <div class="absolute -inset-10 blur-[50px] rounded-full animate-pulse bg-white/5 pointer-events-none"></div>
                </template>
 
-               <Archive class="w-40 h-40 md:w-64 md:h-64 relative z-10 transition-all" 
+               <ChestIcon :variant="isLegendaryChest ? 'legendary' : (isEpicChest ? 'epic' : 'normal')" class-name="w-40 h-40 md:w-64 md:h-64 relative z-10 transition-all object-contain" 
                         :class="[
                           isLegendaryChest ? 'text-amber-500 drop-shadow-[0_0_80px_rgba(245,158,11,0.6)]' : 
                           (isEpicChest ? 'text-purple-500 drop-shadow-[0_0_50px_rgba(168,85,247,0.4)]' : 
@@ -208,9 +208,10 @@
 
 <script setup>
 import { ref, onMounted, nextTick, computed } from 'vue';
-import { X, Trophy, Sparkles, Zap, Coins, Archive } from 'lucide-vue-next';
+import { X, Trophy, Sparkles, Zap, Coins } from 'lucide-vue-next';
 import BackgroundEffect from './BackgroundEffect.vue';
 import ItemIcon from './ItemIcon.vue';
+import ChestIcon from './ChestIcon.vue';
 import confetti from 'canvas-confetti';
 import { useAudio } from '../composables/useAudio';
 

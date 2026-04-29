@@ -419,7 +419,7 @@ const handleCustomAvatar = async (event) => {
           avatar_url: compressedBase64,
           is_custom: true 
         });
-        const finalUrl = res.data.avatar_url;
+        const finalUrl = res.data?.user?.avatar_url || res.data?.avatar_url;
         user.value.avatar_url = finalUrl;
         authStore.user.avatar_url = finalUrl;
         notificationStore.notify(i18nStore.t('profile_updated'), 'success');
@@ -488,8 +488,9 @@ const settingsForm = ref({ name: '', daily_goal: 0, body_weight: 0 });
 const selectAvatar = async (url) => {
   try {
     const res = await axios.post('/api/users/avatar', { avatar_url: url });
-    user.value.avatar_url = url;
-    authStore.user.avatar_url = url;
+    const finalUrl = res.data?.user?.avatar_url || url;
+    user.value.avatar_url = finalUrl;
+    authStore.user.avatar_url = finalUrl;
     notificationStore.notify(i18nStore.t('profile_updated'), 'success');
     showAvatarSelector.value = false;
   } catch (err) {
