@@ -85,7 +85,7 @@
     <!-- Result Modal (Victory UI) -->
     <Transition name="scale">
       <div v-if="showResultModal" class="fixed inset-0 z-[110] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/90 backdrop-blur-xl" @click="closeResult"></div>
+        <div class="absolute inset-0 bg-black/95 backdrop-blur-xl"></div>
         
         <div class="relative w-full max-w-sm bg-zinc-900 border border-white/10 rounded-[3rem] p-8 text-center shadow-[0_0_100px_rgba(79,70,229,0.3)] animate-scale-in">
           <div class="absolute -top-12 left-1/2 -translate-x-1/2">

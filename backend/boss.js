@@ -219,7 +219,6 @@ router.post('/open-chest', authenticate, async (req, res) => {
             SELECT * FROM items 
             WHERE rarity = $1 
             AND type != 'bundle'
-            AND is_seasonal = TRUE
             AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $2 AND item_id = items.id)
             ORDER BY RANDOM() LIMIT 1
         `, [targetRarity, userId]);
@@ -237,7 +236,6 @@ router.post('/open-chest', authenticate, async (req, res) => {
             let fallbackRes = await query(`
                 SELECT * FROM items 
                 WHERE type != 'bundle'
-                AND is_seasonal = TRUE
                 AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = items.id)
                 ORDER BY RANDOM() LIMIT 1
             `, [userId]);

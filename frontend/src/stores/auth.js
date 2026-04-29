@@ -169,8 +169,8 @@ export const useAuthStore = defineStore('auth', {
             // Shop routes use 4xx for business logic (insufficient gems, item restrictions, etc.)
             // Only trigger logout for auth/profile endpoints, not shop/social/etc.
             const isShopOrBusinessRoute = url.includes('/api/shop') || url.includes('/api/social') || url.includes('/api/blog') || url.includes('/api/missions');
-            if (!isShopOrBusinessRoute && (error.response?.status === 401 || error.response?.status === 404)) {
-              console.warn('Session expired or user not found. Logging out...');
+            if (!isShopOrBusinessRoute && error.response?.status === 401) {
+              console.warn('Session expired. Logging out...');
               this.logout();
               if (!import.meta.env.SSR) window.location.reload();
             }

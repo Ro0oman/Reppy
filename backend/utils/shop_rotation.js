@@ -39,7 +39,22 @@ export const rotateDailyShop = async (userId = null) => {
     const selectedItems = [];
     const availablePool = [...allItems];
     
+    // Determine if we should have a free reward (50% chance)
+    const hasFreeReward = Math.random() < 0.5;
+    const rewardSlot = hasFreeReward ? Math.floor(Math.random() * 6) : -1;
+
     for (let i = 0; i < 6; i++) {
+      if (i === rewardSlot) {
+        // Generate a free reward
+        const isGems = Math.random() < 0.2; // 20% gems, 80% coins
+        selectedItems.push({
+          is_reward: true,
+          reward_type: isGems ? 'gems' : 'coins',
+          reward_amount: isGems ? Math.floor(Math.random() * 5) + 5 : Math.floor(Math.random() * 151) + 50
+        });
+        continue;
+      }
+
       if (availablePool.length === 0) break;
 
       const totalWeight = availablePool.reduce((sum, item) => sum + (RARITY_WEIGHTS[item.rarity] || 10), 0);
@@ -62,34 +77,27 @@ export const rotateDailyShop = async (userId = null) => {
     }
 
     // 3. Clear and Insert into DB
-    // If userId is provided, we only update for that user? 
-    // Wait, the requirement implies a global daily rotation but manual refresh per user.
-    // So the daily_shop_items table should probably have a user_id column if we want per-user rotation.
-    // But the issue description implies "daily rotation" like Clash Royale.
-    // In Clash Royale, everyone sees different things? Actually, yes.
-    
-    // If the table daily_shop_items is global, then a refresh by one user changes it for everyone.
-    // We need to add a user_id column to daily_shop_items to make it individual.
-
     if (userId) {
-      console.log(`Rotating for user: ${userId}`);
-      // Manual refresh for specific user
       await query('DELETE FROM daily_shop_items WHERE user_id = $1', [userId]);
     } else {
-      console.log('Rotating for SYSTEM');
-      // Global daily rotation (legacy support or system-wide)
       await query('DELETE FROM daily_shop_items WHERE user_id IS NULL');
     }
     
     for (const item of selectedItems) {
-      const discPrice = Math.floor((item.price || 0) * 0.8);
-      const discGems = Math.floor((item.price_gems || 0) * 0.8);
-      
-      console.log(`Inserting item ${item.id} for user ${userId || 'SYSTEM'}`);
-      await query(`
-        INSERT INTO daily_shop_items (item_id, discounted_price, discounted_gems, is_seasonal_deal, user_id)
-        VALUES ($1, $2, $3, $4, $5)
-      `, [item.id, discPrice, discGems, item.is_seasonal, userId]);
+      if (item.is_reward) {
+        await query(`
+          INSERT INTO daily_shop_items (reward_type, reward_amount, user_id)
+          VALUES ($1, $2, $3)
+        `, [item.reward_type, item.reward_amount, userId]);
+      } else {
+        const discPrice = Math.floor((item.price || 0) * 0.8);
+        const discGems = Math.floor((item.price_gems || 0) * 0.8);
+        
+        await query(`
+          INSERT INTO daily_shop_items (item_id, discounted_price, discounted_gems, is_seasonal_deal, user_id)
+          VALUES ($1, $2, $3, $4, $5)
+        `, [item.id, discPrice, discGems, item.is_seasonal, userId]);
+      }
     }
     
     console.log(`Daily Shop rotated successfully for ${userId || 'SYSTEM'}. ${selectedItems.length} items added.`);

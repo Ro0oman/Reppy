@@ -170,12 +170,12 @@
 
     <Teleport to="body">
       <div v-if="showCoinsInfo" 
-           class="fixed inset-0 z-[100] flex justify-center items-start overflow-y-auto p-4 md:p-8 bg-background/90 backdrop-blur-md"
+           class="fixed inset-0 z-[100] flex justify-center items-center p-4 md:p-8 bg-background/90 backdrop-blur-md"
            @click.self="showCoinsInfo = false">
-        <div class="card-stats max-w-xl w-full p-8 md:p-12 border-border space-y-10 relative overflow-hidden max-h-[90vh] my-auto">
+        <div class="bg-surface/90 border border-white/10 w-full max-w-4xl rounded-[3rem] shadow-2xl overflow-y-auto relative flex flex-col max-h-[90vh] no-scrollbar">
           <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between p-8 md:p-12 pb-0">
             <div class="space-y-1">
               <h2 class="text-3xl font-black text-industrial text-foreground uppercase italic tracking-tighter">{{ i18n.t('economy_title') }}</h2>
               <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em]">{{ i18n.t('economy_subtitle') }}</p>
@@ -261,9 +261,12 @@ import { useNotificationsStore } from './stores/notifications';
 import { useAudio } from './composables/useAudio';
 import { useSocketStore } from './stores/socket';
 import { useRouletteStore } from './stores/roulette';
+import { useShopStore } from './stores/shop';
+
 
 const socketStore = useSocketStore();
 const rouletteStore = useRouletteStore();
+const shopStore = useShopStore();
 import AvatarFrame from './components/AvatarFrame.vue'
 import BackgroundEffect from './components/BackgroundEffect.vue'
 import LuckyWheel from './components/LuckyWheel.vue'
@@ -335,7 +338,7 @@ const checkRoulette = async () => {
   await rouletteStore.checkStatus();
 };
 
-const onSpun = () => { rouletteStore.setSpun(); showRoulette.value = false; };
+const onSpun = () => { rouletteStore.setSpun(); };
 
 const openProfile = (id) => { 
   router.push({ name: 'profile', params: { userId: id } });
@@ -354,6 +357,7 @@ const initializeApp = async () => {
   
   // These are throttled at the store level, but calling them here ensures initial load
   authStore.fetchProfile();
+  shopStore.fetchInventory();
   rouletteStore.checkStatus();
   notifStore.fetchNotifications();
   socketStore.init();

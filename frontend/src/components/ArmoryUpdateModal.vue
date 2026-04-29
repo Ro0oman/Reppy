@@ -9,7 +9,7 @@
       <div class="fixed inset-0 bg-black/95 backdrop-blur-xl" @click="close"></div>
 
       <!-- Content Card -->
-      <div class="relative max-w-lg w-full bg-zinc-900 border border-white/10 rounded-[2.5rem] shadow-[0_0_100px_rgba(255,165,0,0.4)] p-8 md:p-10 overflow-hidden animate-in my-auto text-center">
+      <div class="relative max-w-lg w-full bg-zinc-900 border border-white/10 rounded-[2.5rem] shadow-[0_0_100px_rgba(255,165,0,0.4)] p-8 md:p-10 overflow-y-auto max-h-[90vh] animate-in my-auto text-center no-scrollbar">
         
         <!-- Close Button -->
         <button @click="close" class="absolute top-6 right-6 z-20 p-2 text-muted hover:text-white transition-colors">

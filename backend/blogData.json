@@ -1,5 +1,27 @@
 [
   {
+    "slug": "lanzamiento-oficial-reppy-rpg",
+    "date": "2026-04-28",
+    "author": "Ro0oman",
+    "image": "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80",
+    "category": "noticias",
+    "isPillar": true,
+    "locales": {
+      "es": {
+        "title": "🚀 Reppy RPG: El Ecosistema de Entrenamiento Definitivo ya está aquí",
+        "excerpt": "Hemos transformado Reppy en un RPG completo. Descubre las misiones diarias, el sistema de PvP y la nueva Armería.",
+        "keywords": ["lanzamiento reppy", "fitness rpg", "misiones diarias", "pvp calistenia", "armería rpg"],
+        "content": "# 🚀 El Despertar de Reppy RPG: Más que una App de Entrenamiento\n\nHoy no es un día cualquiera en el mainframe. Después de meses de desarrollo y pruebas en la sombra, finalmente abrimos las puertas a **Reppy RPG**, la actualización más masiva en nuestra historia. No solo hemos arreglado bugs; hemos reconstruido la forma en que interactúas con la calistenia.\n\n## ⚔️ ¿Qué hay de nuevo en esta Versión RPG?\n\n### 1. Sistema de Atributos 2.0\nTus 6 estadísticas (STR, DEX, END, VIG, INT, FTH) ahora tienen un impacto real en el campo de batalla. No solo son números en tu perfil; determinan tu daño contra Bosses, tu probabilidad de crítico y tu eficiencia de XP.\n\n### 2. Misiones Diarias y Objetivos Tácticos\nYa no entrenas solo por entrenar. Cada día recibirás misiones que te otorgarán Reppy Coins y XP extra. Desde calentar con 20 reps hasta infligir daño masivo a un Boss, siempre hay un objetivo que cumplir.\n\n### 3. Duelos PvP Sincronizados\n¿Crees que eres el mejor de tu barrio? Reta a tus amigos a un duelo en tiempo real. Configura el campo de batalla, elige el tiempo límite y demuestra quién tiene más aguante en la barra.\n\n### 4. La Nueva Armería y Tienda Goggins\nHemos expandido la tienda con decenas de nuevos objetos: cascos, armaduras, botas y cosméticos legendarios. Cada objeto no solo te hace lucir mejor, sino que muestra tu estatus como atleta de élite.\n\n## 👹 El Boss Global: \"El Conejo de Acero\"\nHemos liberado una nueva amenaza comunitaria. Un Boss con millones de puntos de vida que requiere el esfuerzo coordinado de toda la comunidad. ¡Participa hoy para ganar cofres de botín exclusivos de temporada!\n\n**🔥 Tu Primera Misión:** Entra en el [Dashboard](/dashboard), equipa tu mejor avatar y completa tu meta diaria. ¡La era del Fitness RPG ha comenzado!"
+      },
+      "en": {
+        "title": "🚀 Reppy RPG: The Ultimate Training Ecosystem is Here",
+        "excerpt": "We've transformed Reppy into a full RPG. Discover daily missions, the PvP system, and the new Armory.",
+        "keywords": ["reppy launch", "fitness rpg", "daily missions", "calisthenics pvp", "rpg armory"],
+        "content": "# 🚀 The Awakening of Reppy RPG: More Than a Training App\n\nToday is not just any day in the mainframe. After months of development and testing in the shadows, we are finally opening the doors to **Reppy RPG**, the most massive update in our history. We haven't just fixed bugs; we've rebuilt how you interact with calisthenics.\n\n## ⚔️ What's New in this RPG Version?\n\n### 1. Attribute System 2.0\nYour 6 stats (STR, DEX, END, VIG, INT, FTH) now have a real impact on the battlefield. They aren't just numbers on your profile; they determine your damage against Bosses, your critical hit chance, and your XP efficiency.\n\n### 2. Daily Missions and Tactical Objectives\nYou no longer train just to train. Every day you'll receive missions that grant Reppy Coins and extra XP. From warming up with 20 reps to dealing massive damage to a Boss, there's always an objective to meet.\n\n### 3. Synchronized PvP Duels\nThink you're the best in your neighborhood? Challenge your friends to a real-time duel. Set the battlefield, choose the time limit, and prove who has the most stamina on the bar.\n\n### 4. The New Armory and Goggins Shop\nWe've expanded the shop with dozens of new items: helmets, armor, boots, and legendary cosmetics. Each item not only makes you look better but shows your status as an elite athlete.\n\n## 👹 The Global Boss: \"The Steel Rabbit\"\nWe've released a new community threat. A Boss with millions of health points that requires the coordinated effort of the entire community. Participate today to earn exclusive seasonal loot chests!\n\n**🔥 Your First Mission:** Enter the [Dashboard](/dashboard), equip your best avatar, and complete your daily goal. The era of Fitness RPG has begun!"
+      }
+    }
+  },
+  {
     "slug": "guia-recompensas-cofres-bosses",
     "date": "2026-04-27",
     "author": "Reppy HQ",

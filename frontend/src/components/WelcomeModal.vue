@@ -12,7 +12,7 @@
               @click="close"></button>
 
       <!-- Content Card -->
-      <div class="relative max-w-2xl w-full bg-surface/40 backdrop-blur-3xl border border-border rounded-[2.5rem] shadow-[0_0_100px_rgba(255,69,0,0.1)] p-6 md:p-12 overflow-hidden animate-in my-auto">
+      <div class="relative max-w-2xl w-full bg-surface/40 backdrop-blur-3xl border border-border rounded-[2.5rem] shadow-[0_0_100px_rgba(255,69,0,0.1)] p-6 md:p-12 overflow-y-auto max-h-[90vh] animate-in my-auto no-scrollbar">
         
         <!-- Decorative Background Element -->
         <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary-500/10 rounded-full blur-[100px] pointer-events-none"></div>

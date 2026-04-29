@@ -1,23 +1,13 @@
 import { query } from '../db.js';
 
-async function checkSchema() {
+async function check() {
   try {
-    const bossFightsCols = await query(`
-      SELECT column_name, data_type 
-      FROM information_schema.columns 
-      WHERE table_name = 'boss_fights'
-    `);
-    console.log('--- boss_fights columns ---');
-    bossFightsCols.rows.forEach(col => console.log(`${col.column_name}: ${col.data_type}`));
-
-    const usersCols = await query(`
-      SELECT column_name, data_type 
-      FROM information_schema.columns 
-      WHERE table_name = 'users'
-    `);
-    console.log('\n--- users columns ---');
-    usersCols.rows.forEach(col => console.log(`${col.column_name}: ${col.data_type}`));
-
+    const res = await query("SELECT column_name, is_nullable, data_type FROM information_schema.columns WHERE table_name = 'daily_shop_items'");
+    console.log('Columns of daily_shop_items:', res.rows);
+    
+    const itemsRes = await query("SELECT column_name, is_nullable, data_type FROM information_schema.columns WHERE table_name = 'items'");
+    console.log('Columns of items:', itemsRes.rows);
+    
     process.exit(0);
   } catch (err) {
     console.error(err);
@@ -25,4 +15,4 @@ async function checkSchema() {
   }
 }
 
-checkSchema();
+check();

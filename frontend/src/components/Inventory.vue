@@ -282,7 +282,10 @@
                           <Package v-else class="w-10 h-10 text-muted/40" />
                         </div>
 
-                        <div v-if="item.is_new" class="absolute top-2 right-2 px-1.5 py-0.5 rounded-full bg-primary-500 text-[6px] font-black text-white uppercase tracking-widest animate-pulse border border-white/20">NEW</div>
+                        <div v-if="item.is_new" class="absolute top-2 left-2 px-1.5 py-0.5 rounded-full bg-primary-500 text-[6px] font-black text-white uppercase tracking-widest animate-pulse border border-white/20 z-10">NEW</div>
+                        <div v-if="isUpgrade(item)" class="absolute top-2 right-2 px-1.5 py-0.5 bg-emerald-500 text-white text-[6px] font-black uppercase tracking-widest rounded shadow-lg animate-pulse z-10">
+                           {{ i18n.t('shop_upgrade_badge') || 'MEJORA' }}
+                        </div>
                      </div>
 
                      <!-- Item Details -->
@@ -323,95 +326,110 @@
     />
 
     <!-- Item Details Modal (Issue #135) -->
+    <!-- Item Details Modal -->
     <Teleport to="body">
-      <div v-if="showItemModal && selectedItem" class="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-xl animate-in">
-        <div class="relative w-full max-w-xl bg-surface/40 border border-white/10 rounded-[2.5rem] shadow-[0_0_100px_rgba(255,69,0,0.1)] overflow-hidden flex flex-col max-h-[90vh]">
+      <Transition name="modal-fade">
+        <div v-if="showItemModal && selectedItem" class="fixed inset-0 z-[1000] flex items-center justify-center p-4">
+          <!-- Backdrop -->
+          <div class="absolute inset-0 bg-black/90 backdrop-blur-2xl" @click="showItemModal = false"></div>
           
-          <!-- Modal Header -->
-          <div class="p-6 md:p-8 pb-4 flex items-center justify-between shrink-0">
-            <div class="flex items-center gap-3">
-              <div class="p-2 bg-primary-500/10 rounded-lg border border-primary-500/20">
-                <Package class="w-4 h-4 text-primary-500" />
-              </div>
-              <div>
-                <p class="text-[10px] font-black text-primary-500 uppercase tracking-[0.3em] font-mono leading-none mb-1">{{ i18n.t('inv_artifact_detail') }}</p>
-                <h3 class="text-2xl font-black text-white italic uppercase tracking-tighter">{{ selectedItem.name }}</h3>
-              </div>
-            </div>
-            <button @click="showItemModal = false" class="p-2 hover:bg-white/5 rounded-xl transition-all">
-              <X class="w-6 h-6 text-muted" />
-            </button>
-          </div>
-
-          <!-- Modal Body -->
-          <div class="p-6 md:p-8 pt-0 space-y-6 overflow-y-auto no-scrollbar">
-            <!-- Visual Preview -->
-            <div class="aspect-video bg-black/40 rounded-3xl border border-white/5 flex items-center justify-center relative overflow-hidden group">
-               <!-- Scan Effect -->
-               <div class="absolute inset-x-0 h-px bg-primary-500/20 top-0 group-hover:top-full transition-all duration-[3s] ease-linear pointer-events-none"></div>
-               
-               <div class="scale-150">
-                  <ItemIcon v-if="['head', 'weapon', 'armor', 'boots'].includes(selectedItem.type)" :name="selectedItem.svg_key" :type="selectedItem.type" class-name="w-24 h-24 text-primary-500" />
-                  <FlaskConical v-else-if="selectedItem.type === 'consumable'" class="w-24 h-24 text-primary-500 animate-pulse" />
-                  <div v-else-if="selectedItem.type === 'title'" class="text-xl font-black uppercase italic" :class="selectedItem.css_value">{{ selectedItem.name }}</div>
-                  <AvatarFrame v-else-if="selectedItem.type === 'border'" :src="authStore.user?.avatar_url" :border-css="selectedItem.css_value" :size="100" />
-                  <div v-else-if="selectedItem.type === 'background'" class="w-32 h-32 rounded-2xl overflow-hidden border border-white/10 relative">
-                     <BackgroundEffect :background-css="selectedItem.css_value" is-preview class="!absolute !inset-0" />
-                  </div>
-                  <div v-else-if="selectedItem.type === 'avatar'" class="w-32 h-32 rounded-2xl overflow-hidden border border-white/10 relative">
-                     <div :class="selectedItem.css_value" class="absolute inset-0"></div>
-                  </div>
-                  <div v-else-if="selectedItem.type === 'post_background'" class="w-32 h-32 rounded-2xl overflow-hidden border border-white/10 relative">
-                     <div :class="selectedItem.css_value" class="absolute inset-0"></div>
-                  </div>
-                  <Package v-else class="w-24 h-24 text-primary-500" />
-               </div>
-            </div>
-
-            <!-- Stats & Description -->
-            <div class="space-y-4">
-              <div v-if="selectedItem.description" class="p-4 bg-white/5 rounded-2xl border border-white/5">
-                <p class="text-[10px] font-black text-muted uppercase tracking-widest mb-1">{{ i18n.t('inv_artifact_description') }}</p>
-                <p class="text-sm font-bold text-zinc-400 leading-relaxed">{{ selectedItem.description }}</p>
-              </div>
-
-              <div v-if="selectedItem.stats" class="grid grid-cols-2 gap-4">
-                <div v-for="(val, key) in selectedItem.stats" :key="key" class="p-4 bg-white/5 rounded-2xl border border-white/5 flex flex-col gap-1">
-                  <p class="text-[8px] font-black text-primary-500/60 uppercase tracking-widest">{{ statLabels[key] || key.replace('_', ' ') }}</p>
-                  <p class="text-lg font-black text-white italic">
-                    {{ key === 'multiplier' ? 'x' : '+' }}{{ val }}{{ key.includes('percent') || key.includes('chance') ? '%' : '' }}
-                  </p>
+          <!-- Modal Content -->
+          <div class="relative w-full max-w-xl bg-[#0a0a0a] border border-white/10 rounded-[32px] overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.9)] animate-modal-in flex flex-col max-h-[90vh]">
+            
+            <!-- Modal Header -->
+            <div class="p-6 md:p-8 pb-4 flex items-center justify-between shrink-0 relative z-10">
+              <div class="flex items-center gap-4">
+                <div class="p-3 bg-primary-500/10 rounded-2xl border border-primary-500/20">
+                  <Package class="w-5 h-5 text-primary-500" />
+                </div>
+                <div>
+                  <p class="text-[9px] font-black text-primary-500 uppercase tracking-[0.3em] leading-none mb-1.5">{{ i18n.t('inv_artifact_detail') }}</p>
+                  <h3 class="text-2xl sm:text-3xl font-black text-white italic uppercase tracking-tighter leading-none">{{ selectedItem.name }}</h3>
                 </div>
               </div>
+              <button @click="showItemModal = false" class="p-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all">
+                <X class="w-5 h-5 text-muted" />
+              </button>
+            </div>
 
-              <!-- Rarity Badge -->
-              <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
-                <p class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18n.t('inv_artifact_rarity') }}</p>
-                <span class="px-3 py-1 rounded-lg border text-[10px] font-black uppercase tracking-widest" :class="getRarityClass(selectedItem.rarity)">
-                  {{ getRarityLabel(selectedItem.rarity) }}
-                </span>
+            <!-- Modal Body (Scrollable) -->
+            <div class="p-6 md:p-8 pt-0 space-y-8 flex-1 overflow-y-auto no-scrollbar relative z-10">
+              <!-- Visual Preview Area -->
+              <div class="aspect-video bg-black/40 rounded-[22px] border border-white/5 flex items-center justify-center relative overflow-hidden group shadow-inner">
+                 <!-- Background Glow -->
+                 <div class="absolute inset-0 blur-3xl opacity-20 pointer-events-none" :class="getRarityClass(selectedItem.rarity).split(' ')[0].replace('text-', 'bg-')"></div>
+                 
+                 <div class="transform group-hover:scale-110 transition-transform duration-1000">
+                    <ItemIcon v-if="['head', 'weapon', 'armor', 'boots'].includes(selectedItem.type)" :name="selectedItem.svg_key" :type="selectedItem.type" class-name="w-24 h-24 sm:w-32 sm:h-32 text-primary-500 drop-shadow-2xl" />
+                    <FlaskConical v-else-if="selectedItem.type === 'consumable'" class="w-24 h-24 sm:w-32 sm:h-32 text-primary-500 animate-pulse drop-shadow-2xl" />
+                    <div v-else-if="selectedItem.type === 'title'" class="text-xl sm:text-4xl font-black uppercase italic tracking-tighter text-center px-6 leading-tight" :class="selectedItem.css_value">{{ selectedItem.name }}</div>
+                    <AvatarFrame v-else-if="selectedItem.type === 'border'" :src="authStore.user?.avatar_url" :border-css="selectedItem.css_value" :size="windowWidth < 640 ? 120 : 180" />
+                    <div v-else-if="selectedItem.type === 'background' || selectedItem.type === 'post_background'" class="w-40 h-40 sm:w-56 sm:h-56 rounded-[22px] overflow-hidden border border-white/10 relative shadow-2xl">
+                       <BackgroundEffect v-if="selectedItem.type === 'background'" :background-css="selectedItem.css_value" is-preview class="!absolute !inset-0 !w-full !h-full" />
+                       <div v-else :class="selectedItem.css_value" class="absolute inset-0"></div>
+                    </div>
+                    <Package v-else class="w-24 h-24 text-primary-500" />
+                 </div>
+              </div>
+
+              <!-- Info & Stats -->
+              <div class="space-y-6">
+                <div v-if="selectedItem.description" class="p-6 bg-white/5 rounded-[22px] border border-white/5">
+                  <p class="text-[9px] font-black text-muted uppercase tracking-[0.2em] mb-2 opacity-60">{{ i18n.t('inv_artifact_description') }}</p>
+                  <p class="text-sm font-bold text-zinc-300 leading-relaxed">{{ selectedItem.description }}</p>
+                </div>
+
+                <div v-if="selectedItem.stats && Object.keys(selectedItem.stats).length > 0" class="space-y-4">
+                   <h4 class="text-[9px] font-black text-muted uppercase tracking-[0.3em] flex items-center gap-3">
+                     {{ i18n.t('shop_combat_analysis') }}
+                     <div class="h-px flex-1 bg-white/5"></div>
+                   </h4>
+                   <div class="grid grid-cols-2 gap-4">
+                    <div v-for="(val, key) in selectedItem.stats" :key="key" class="p-4 bg-white/5 rounded-2xl border border-white/5 flex flex-col gap-1">
+                      <p class="text-[8px] font-black text-primary-500/60 uppercase tracking-widest">{{ statLabels[key] || key.replace('_', ' ') }}</p>
+                      <p class="text-xl font-black text-white italic tabular-nums">
+                        {{ key === 'multiplier' ? 'x' : '+' }}{{ val }}{{ key.includes('percent') || key.includes('chance') ? '%' : '' }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Rarity Section -->
+                <div class="flex items-center justify-between p-6 bg-white/5 rounded-[22px] border border-white/5">
+                  <div class="flex items-center gap-3">
+                    <Sparkles class="w-4 h-4 text-muted" />
+                    <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18n.t('inv_artifact_rarity') }}</span>
+                  </div>
+                  <span class="px-4 py-1.5 rounded-xl border text-[10px] font-black uppercase tracking-widest shadow-lg" :class="getRarityClass(selectedItem.rarity)">
+                    {{ getRarityLabel(selectedItem.rarity) }}
+                  </span>
+                </div>
               </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row gap-4 pt-4 shrink-0 p-6 md:p-8 pt-0">
-              <button v-if="selectedItem.type === 'consumable'" 
-                @click="handleActivate(selectedItem); showItemModal = false"
-                :disabled="isPotionTypeActive(selectedItem)"
-                class="flex-1 btn-reppy !py-5 shadow-2xl shadow-primary-500/20 disabled:opacity-40 disabled:grayscale disabled:cursor-not-allowed">
-                {{ isPotionTypeActive(selectedItem) ? i18n.t('inv_already_active') || 'ALREADY_ACTIVE' : i18n.t('inv_activate_module') }} (x{{ selectedItem.quantity || 1 }})
-              </button>
-              <button v-else-if="selectedItem.type !== 'bundle'" @click="toggleEquip(selectedItem); showItemModal = false"
-                class="flex-1 btn-reppy !py-5 shadow-2xl" :class="isEquipped(selectedItem) ? '!bg-zinc-800 !text-muted' : 'shadow-primary-500/20'">
-                {{ isEquipped(selectedItem) ? i18n.t('inv_unlink_artifact') : i18n.t('inv_link_artifact') }}
-              </button>
-              <button @click="showItemModal = false" class="px-8 bg-white/5 hover:bg-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-zinc-400 transition-all">
-                {{ i18n.t('inv_close') }}
-              </button>
+            <!-- Modal Footer (Fixed) -->
+            <div class="p-6 md:p-8 bg-black/60 border-t border-white/10 shrink-0 relative z-10">
+              <div class="flex flex-col sm:flex-row gap-4">
+                <button v-if="selectedItem.type === 'consumable'" 
+                  @click="handleActivate(selectedItem); showItemModal = false"
+                  :disabled="isPotionTypeActive(selectedItem)"
+                  class="flex-1 py-5 rounded-[22px] bg-primary-500 text-white font-black text-sm uppercase tracking-[0.2em] transition-all shadow-2xl shadow-primary-500/20 active:scale-95 disabled:opacity-40 disabled:grayscale">
+                  {{ isPotionTypeActive(selectedItem) ? i18n.t('inv_already_active') : i18n.t('inv_activate_module') }} (x{{ selectedItem.quantity || 1 }})
+                </button>
+                <button v-else-if="selectedItem.type !== 'bundle'" @click="toggleEquip(selectedItem); showItemModal = false"
+                  class="flex-1 py-5 rounded-[22px] font-black text-sm uppercase tracking-[0.2em] transition-all shadow-2xl active:scale-95 flex items-center justify-center gap-3"
+                  :class="isEquipped(selectedItem) ? 'bg-white/5 text-muted border border-white/10' : 'bg-blue-600 text-white hover:bg-blue-500 shadow-blue-600/30'">
+                  {{ isEquipped(selectedItem) ? i18n.t('inv_unlink_artifact') : i18n.t('inv_link_artifact') }}
+                  <component :is="isEquipped(selectedItem) ? X : Check" class="w-4 h-4" />
+                </button>
+                <button @click="showItemModal = false" class="px-10 py-5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-[22px] text-[10px] font-black uppercase tracking-widest text-zinc-400 transition-all active:scale-95">
+                  {{ i18n.t('inv_close') }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </Transition>
     </Teleport>
 
     <!-- Comparison Modal -->
@@ -453,12 +471,44 @@ const shopStore = useShopStore();
 const i18n = useI18nStore();
 const emit = defineEmits(['start', 'viewProfile']);
 const notificationStore = useNotificationStore();
-const inventory = computed(() => shopStore.cosmetics.filter(item => item.owned));
+const inventory = computed(() => shopStore.inventory);
 const loading = computed(() => shopStore.loading);
 const currentTime = ref(new Date());
 const equippingSlot = ref(null);
 const recentlyEquipped = ref(false);
 let timerInterval = null;
+
+function isUpgrade(item, specificStat = null) {
+  if (!item) return false;
+  
+  // Ensure stats are parsed
+  let stats = item.stats;
+  if (typeof stats === 'string') {
+    try { stats = JSON.parse(stats); } catch (e) { stats = {}; }
+  }
+  if (!stats || Object.keys(stats).length === 0) return false;
+
+  const equipped = getEquippedItem(item.type);
+  if (!equipped) return true; // If nothing equipped, it's an upgrade
+
+  let equippedStats = equipped.stats;
+  if (typeof equippedStats === 'string') {
+    try { equippedStats = JSON.parse(equippedStats); } catch (e) { equippedStats = {}; }
+  }
+  
+  if (specificStat) {
+    const newVal = stats[specificStat] || 0;
+    const oldVal = equippedStats?.[specificStat] || 0;
+    return newVal > oldVal;
+  }
+  
+  // Global check: is ANY stat better?
+  return Object.entries(stats).some(([stat, val]) => {
+    if (stat === 'duration' || stat === 'multiplier') return false;
+    const oldVal = equippedStats?.[stat] || 0;
+    return val > oldVal;
+  });
+}
 
 const formatTimeLeft = (diff) => {
   const hours = Math.floor(diff / (1000 * 60 * 60));
@@ -697,7 +747,7 @@ const getSlotIcon = (type) => {
   return allSlots.find(s => s.type === type)?.icon || Package;
 };
 
-const getEquippedItem = (type) => {
+function getEquippedItem(type) {
   const equippedIdMap = {
     head: authStore.user?.equipped_head_id,
     weapon: authStore.user?.equipped_weapon_id,
@@ -712,7 +762,7 @@ const getEquippedItem = (type) => {
   const id = equippedIdMap[type];
   if (!id) return null;
   return inventory.value.find(item => item.id === id);
-};
+}
 
 const equippedStats = computed(() => {
   const stats = {
@@ -952,7 +1002,7 @@ const closeChestModal = async () => {
 
 const fetchInventory = async () => {
   try {
-    await shopStore.fetchCosmetics();
+    await shopStore.fetchInventory(true);
   } catch (err) { console.error('Inventory sync error:', err); }
 };
 
@@ -990,21 +1040,23 @@ const groupedItems = computed(() => {
 });
 
 const isEquipped = (item) => {
-  if (item.type === 'head') return authStore.user?.equipped_head_id === item.id;
-  if (item.type === 'weapon') return authStore.user?.equipped_weapon_id === item.id;
-  if (item.type === 'armor') return authStore.user?.equipped_armor_id === item.id;
-  if (item.type === 'boots') return authStore.user?.equipped_boots_id === item.id;
-  if (item.type === 'title') return authStore.user?.equipped_title_id === item.id;
-  if (item.type === 'border') return authStore.user?.equipped_border_id === item.id;
-  if (item.type === 'background') return authStore.user?.equipped_background_id === item.id;
-  if (item.type === 'post_background') return authStore.user?.equipped_post_background_id === item.id;
-  if (item.type === 'avatar') return authStore.user?.equipped_avatar_id === item.id;
+  const id = item.item_id || item.id;
+  if (item.type === 'head') return authStore.user?.equipped_head_id === id;
+  if (item.type === 'weapon') return authStore.user?.equipped_weapon_id === id;
+  if (item.type === 'armor') return authStore.user?.equipped_armor_id === id;
+  if (item.type === 'boots') return authStore.user?.equipped_boots_id === id;
+  if (item.type === 'title') return authStore.user?.equipped_title_id === id;
+  if (item.type === 'border') return authStore.user?.equipped_border_id === id;
+  if (item.type === 'background') return authStore.user?.equipped_background_id === id;
+  if (item.type === 'post_background') return authStore.user?.equipped_post_background_id === id;
+  if (item.type === 'avatar') return authStore.user?.equipped_avatar_id === id;
   return false;
 };
 
 const toggleEquip = async (item) => {
   const alreadyEquipped = isEquipped(item);
-  const targetId = alreadyEquipped ? 0 : item.id;
+  const realId = item.item_id || item.id;
+  const targetId = alreadyEquipped ? 0 : realId;
   playEquipBlip();
   try {
     await axios.post(`/api/shop/equip/${targetId}?type=${item.type}`);
@@ -1036,7 +1088,8 @@ const toggleEquip = async (item) => {
 
 const handleActivate = async (item) => {
   try {
-    const res = await axios.post(`/api/shop/activate/${item.id}`);
+    const realId = item.item_id || item.id;
+    const res = await axios.post(`/api/shop/activate/${realId}`);
     notificationStore.notify(res.data.message, 'success');
     await fetchInventory();
     await authStore.fetchProfile();

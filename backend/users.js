@@ -241,4 +241,32 @@ router.patch('/seen-rpg-release', authenticate, async (req, res) => {
   }
 });
 
+// Get user inventory (all items owned)
+router.get('/inventory', authenticate, async (req, res) => {
+  try {
+    const result = await query(
+      `SELECT ui.*, i.name, i.description, i.type, i.rarity, i.svg_key, i.image_url, i.stats, i.css_value, i.is_customizable
+       FROM user_items ui
+       JOIN items i ON ui.item_id = i.id
+       WHERE ui.user_id = $1
+       ORDER BY ui.acquired_at DESC`,
+      [req.user.id]
+    );
+    
+    // Parse stats if they are string
+    const items = result.rows.map(item => {
+      let parsedStats = item.stats;
+      if (typeof item.stats === 'string') {
+        try { parsedStats = JSON.parse(item.stats); } catch(e) { parsedStats = {}; }
+      }
+      return { ...item, stats: parsedStats || {}, owned: true };
+    });
+    
+    res.json(items);
+  } catch (error) {
+    console.error('Error fetching inventory:', error);
+    res.status(500).json({ message: 'Error fetching inventory' });
+  }
+});
+
 export default router;

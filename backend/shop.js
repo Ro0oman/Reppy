@@ -3,6 +3,7 @@ import { query } from './db.js';
 import { authenticate } from './middleware.js';
 import { recalculateUserStats } from './utils/stats.js';
 import { updateMissionProgress } from './utils/missions.js';
+import { rotateDailyShop } from './utils/shop_rotation.js';
 
 
 const router = express.Router();
@@ -53,10 +54,10 @@ router.get('/daily', authenticate, async (req, res) => {
     
     // Check if user has daily deals
     let dailyRes = await query(`
-      SELECT d.*, i.name, i.description, i.rarity, i.type, i.image_url, i.svg_key,
-             EXISTS(SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = i.id) as owned
+      SELECT d.*, i.name, i.description, i.rarity, i.type, i.image_url, i.svg_key, i.stats,
+             CASE WHEN d.item_id IS NOT NULL THEN EXISTS(SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = i.id) ELSE d.is_claimed END as owned
       FROM daily_shop_items d
-      JOIN items i ON d.item_id = i.id
+      LEFT JOIN items i ON d.item_id = i.id
       WHERE d.user_id = $1
     `, [userId]);
 
@@ -67,16 +68,19 @@ router.get('/daily', authenticate, async (req, res) => {
       console.log('No deals found, rotating...');
       await rotateDailyShop(userId);
       dailyRes = await query(`
-        SELECT d.*, i.name, i.description, i.rarity, i.type, i.image_url, i.svg_key,
-               EXISTS(SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = i.id) as owned
+        SELECT d.*, i.name, i.description, i.rarity, i.type, i.image_url, i.svg_key, i.stats,
+               CASE WHEN d.item_id IS NOT NULL THEN EXISTS(SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = i.id) ELSE d.is_claimed END as owned
         FROM daily_shop_items d
-        JOIN items i ON d.item_id = i.id
+        LEFT JOIN items i ON d.item_id = i.id
         WHERE d.user_id = $1
       `, [userId]);
     }
 
     // Get user refresh status
     const userRes = await query('SELECT daily_refreshes, last_refresh_at FROM users WHERE id = $1', [userId]);
+    if (userRes.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found in database' });
+    }
     const userData = userRes.rows[0];
     
     // Reset daily refresh if it's a new day
@@ -98,15 +102,24 @@ router.get('/daily', authenticate, async (req, res) => {
 
     const nextRotationRes = await query('SELECT rotated_at FROM daily_shop_items LIMIT 1');
     let nextRotation = null;
-    if (nextRotationRes.rows.length > 0) {
+    if (nextRotationRes.rows.length > 0 && nextRotationRes.rows[0].rotated_at) {
       const rotatedAt = new Date(nextRotationRes.rows[0].rotated_at);
       nextRotation = new Date(rotatedAt.getTime() + 24 * 60 * 60 * 1000);
     }
 
+    // Map deals to ensure stats are objects
+    const deals = dailyRes.rows.map(item => {
+      let parsedStats = item.stats;
+      if (typeof item.stats === 'string') {
+        try { parsedStats = JSON.parse(item.stats); } catch(e) { parsedStats = {}; }
+      }
+      return { ...item, stats: parsedStats || {} };
+    });
+
     res.json({ 
-      deals: dailyRes.rows, 
+      deals, 
       chests, 
-      next_rotation: null, // No longer global, depends on refresh
+      next_rotation: nextRotation, 
       daily_refreshes: currentRefreshes,
       refresh_cost_gems: currentRefreshes + 1
     });
@@ -141,6 +154,41 @@ router.post('/daily/refresh', authenticate, async (req, res) => {
 
     res.json({ message: 'Shop refreshed', remaining_gems: user.reppy_gems - cost });
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Claim free reward
+router.post('/daily/claim/:id', authenticate, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const dealId = req.params.id;
+
+    const dealRes = await query('SELECT * FROM daily_shop_items WHERE id = $1 AND user_id = $2', [dealId, userId]);
+    if (dealRes.rows.length === 0) return res.status(404).json({ message: 'DEAL NOT FOUND' });
+    
+    const deal = dealRes.rows[0];
+    if (deal.is_claimed) return res.status(400).json({ message: 'REWARD ALREADY CLAIMED' });
+    if (!deal.reward_type) return res.status(400).json({ message: 'NOT A FREE REWARD' });
+
+    await query('BEGIN');
+    
+    if (deal.reward_type === 'coins') {
+      await query('UPDATE users SET reppy_coins = reppy_coins + $1 WHERE id = $2', [deal.reward_amount, userId]);
+    } else if (deal.reward_type === 'gems') {
+      await query('UPDATE users SET reppy_gems = reppy_gems + $1 WHERE id = $2', [deal.reward_amount, userId]);
+      await query(`
+        INSERT INTO gem_transactions (user_id, amount, source, description)
+        VALUES ($1, $2, 'SHOP_FREE', 'Daily Free Reward')
+      `, [userId, deal.reward_amount]);
+    }
+
+    await query('UPDATE daily_shop_items SET is_claimed = TRUE WHERE id = $1', [dealId]);
+    await query('COMMIT');
+
+    res.json({ message: 'Reward claimed', type: deal.reward_type, amount: deal.reward_amount });
+  } catch (error) {
+    await query('ROLLBACK');
     res.status(500).json({ error: error.message });
   }
 });
@@ -320,10 +368,22 @@ router.post('/equip/:id', authenticate, async (req, res) => {
     }
 
     // Check ownership
+    console.log(`[SHOP_EQUIP] User ${userId} attempting to equip item ${itemId} (Type: ${typeParam})`);
     const inventoryRes = await query('SELECT * FROM user_items WHERE user_id = $1 AND item_id = $2', [userId, itemId]);
-    if (inventoryRes.rows.length === 0) return res.status(403).json({ message: 'You do not own this item' });
+    
+    if (inventoryRes.rows.length === 0) {
+      console.log(`[SHOP_EQUIP_ERROR] User ${userId} does NOT own item ${itemId}. Inventory check failed.`);
+      // Optional: Check if the item exists at all
+      const itemExists = await query('SELECT name FROM items WHERE id = $1', [itemId]);
+      const itemName = itemExists.rows[0]?.name || 'Unknown Item';
+      return res.status(403).json({ 
+        message: `You do not own this item: ${itemName} (${itemId})`,
+        debug: { userId, itemId, itemName }
+      });
+    }
     
     const itemRes = await query('SELECT type FROM items WHERE id = $1', [itemId]);
+    if (itemRes.rows.length === 0) return res.status(404).json({ message: 'Item not found in database' });
     const type = itemRes.rows[0].type;
     
     const slotMap = {
