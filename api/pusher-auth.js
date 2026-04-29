@@ -1,11 +1,24 @@
 import Pusher from 'pusher';
 
 export default async function handler(req, res) {
+  // CORS Headers
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { socket_id: socketId, channel_name: channel } = req.body;
+  // Vercel parses the body automatically if it's JSON
+  const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+  const { socket_id: socketId, channel_name: channel } = body;
   const { user_id: userId, user_name: userName, avatar_url: avatarUrl } = req.query;
 
   // Final fallback for user data if not in query
