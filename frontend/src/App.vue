@@ -283,21 +283,19 @@ import { useAudio } from './composables/useAudio';
 import { useSocketStore } from './stores/socket';
 import { useRouletteStore } from './stores/roulette';
 import { useShopStore } from './stores/shop';
-
+import AvatarFrame from './components/AvatarFrame.vue';
+import BackgroundEffect from './components/BackgroundEffect.vue';
+import LuckyWheel from './components/LuckyWheel.vue';
+import LevelBar from './components/LevelBar.vue';
+import NotificationToast from './components/NotificationToast.vue';
+import ConfirmDialog from './components/ConfirmDialog.vue';
+import DamageNumbers from './components/DamageNumbers.vue';
+import NotificationsDropdown from './components/NotificationsDropdown.vue';
+import PushPrompt from './components/PushPrompt.vue';
 
 const socketStore = useSocketStore();
 const rouletteStore = useRouletteStore();
 const shopStore = useShopStore();
-import AvatarFrame from './components/AvatarFrame.vue'
-import BackgroundEffect from './components/BackgroundEffect.vue'
-import LuckyWheel from './components/LuckyWheel.vue'
-import LevelBar from './components/LevelBar.vue'
-import NotificationToast from './components/NotificationToast.vue'
-import ConfirmDialog from './components/ConfirmDialog.vue'
-import DamageNumbers from './components/DamageNumbers.vue'
-import NotificationsDropdown from './components/NotificationsDropdown.vue'
-import PushPrompt from './components/PushPrompt.vue'
-
 const authStore = useAuthStore();
 const { toggleMute, isMuted, playClickBlip } = useAudio();
 const i18n = useI18nStore();
