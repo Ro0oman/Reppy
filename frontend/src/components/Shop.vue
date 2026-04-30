@@ -321,9 +321,6 @@
 
               <div class="flex-1 flex flex-col h-full">
                 <div class="flex items-center gap-3 mb-2">
-                  <span
-                    class="text-[8px] font-black bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 px-2 py-0.5 rounded uppercase tracking-widest">{{
-                      i18n.t('shop_elite_pack') }}</span>
                 </div>
                 <h3 class="text-xl sm:text-3xl font-black tracking-tighter italic uppercase mb-2 leading-tight">{{
                   item.name }}
