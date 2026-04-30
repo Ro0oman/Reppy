@@ -147,9 +147,10 @@ const addReps = async (count) => {
     notificationStore.notify(msg, 'success');
     
     // Trigger JRPG damage animation if boss damage was dealt
-    if (res.data.boss_damage_dealt > 0) {
+    const damageToAnimate = res.data.damage_dealt_this_set ?? res.data.boss_damage_dealt;
+    if (damageToAnimate > 0) {
       const damageStore = useDamageStore();
-      damageStore.addDamage(res.data.boss_damage_dealt, props.exerciseType);
+      damageStore.addDamage(damageToAnimate, props.exerciseType, undefined, undefined, res.data.is_crit);
     }
     
     // Refresh global user state to sync header level/XP

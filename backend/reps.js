@@ -209,7 +209,8 @@ router.post('/', authenticate, async (req, res) => {
     res.json({ 
       ...finalRecord.rows[0], 
       earnedCoins, 
-      is_crit: dmgResult.isCrit
+      is_crit: dmgResult.isCrit,
+      damage_dealt_this_set: actualDamageDealt
     });
 
     // Broadcast damage event for real-time visualization
