@@ -9,8 +9,8 @@ self.addEventListener('push', function(event) {
     
     const options = {
       body: data.body,
-      icon: '/favicon.ico', // Adjust path if needed
-      badge: '/favicon.ico',
+      icon: data.icon || '/favicon.ico',
+      badge: data.badge || '/favicon.ico',
       vibrate: [100, 50, 100],
       data: {
         url: data.data?.url || '/'

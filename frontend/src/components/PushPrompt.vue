@@ -83,6 +83,8 @@ const authStore = useAuthStore();
 const i18n = useI18nStore();
 const isVisible = ref(false);
 
+const NOTIF_VERSION = 'v2'; // Bump this to force re-subscription/re-prompt
+
 const checkPermission = async () => {
   const status = await getPushStatus();
   
@@ -109,6 +111,7 @@ const handleSubscribe = async (silent = false) => {
     if (success) {
       isVisible.value = false;
       localStorage.setItem('reppy_push_asked', 'true');
+      localStorage.setItem('reppy_notif_version', NOTIF_VERSION);
       sessionStorage.setItem('reppy_push_synced', 'true');
     }
   } catch (error) {
@@ -122,14 +125,25 @@ const handleSubscribe = async (silent = false) => {
 const handleDecline = () => {
   isVisible.value = false;
   // Store declination to avoid annoying the user every page load
-  // We can ask again in 7 days or similar
   localStorage.setItem('reppy_push_asked', Date.now());
+  localStorage.setItem('reppy_notif_version', NOTIF_VERSION);
 };
 
 onMounted(async () => {
+  if (!authStore.isAuthenticated) return;
+
   const status = await getPushStatus();
   const lastAsked = localStorage.getItem('reppy_push_asked');
+  const lastVersion = localStorage.getItem('reppy_notif_version');
   
+  // Force Reset Logic: If version mismatch, clear flags to allow re-prompt or silent re-sync
+  if (lastVersion !== NOTIF_VERSION) {
+    console.log('[PUSH_PROMPT] Version mismatch. Resetting notification flags.');
+    localStorage.removeItem('reppy_push_asked');
+    sessionStorage.removeItem('reppy_push_synced');
+    // If we already have permission, we'll re-sync silently via checkPermission -> handleSubscribe
+  }
+
   // If already granted, we always try to sync with backend (silent)
   if (status === 'granted') {
     checkPermission();
