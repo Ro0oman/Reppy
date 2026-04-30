@@ -34,30 +34,41 @@
 
       <div class="divide-y divide-border/20">
         <div v-for="notif in store.notifications" :key="notif.id"
-          class="px-8 py-6 hover:bg-foreground/[0.03] transition-all relative flex gap-6 items-center cursor-pointer"
-          :class="!notif.is_read ? 'bg-primary-500/[0.03]' : 'opacity-60'"
+          class="px-8 py-6 hover:bg-primary-500/[0.05] transition-all relative flex gap-6 items-center cursor-pointer group"
+          :class="!notif.is_read ? 'bg-primary-500/[0.02]' : 'opacity-70 grayscale-[0.5] hover:grayscale-0 hover:opacity-100'"
           @click="handleNotifClick(notif)"
         >
-          <div v-if="!notif.is_read" class="absolute left-0 top-0 bottom-0 w-1 bg-primary-500 shadow-[0_0_15px_rgba(255,69,0,0.5)]"></div>
+          <div v-if="!notif.is_read" class="absolute left-0 top-0 bottom-0 w-1 bg-primary-500 shadow-[0_0_20px_rgba(255,69,0,0.6)] z-10"></div>
 
           <div class="relative shrink-0">
             <template v-if="notif.actor_avatar">
-              <AvatarFrame :src="notif.actor_avatar" :size="48" />
+              <div class="relative">
+                <AvatarFrame :src="notif.actor_avatar" :size="52" />
+                <!-- Personality Badge -->
+                <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-lg bg-surface border border-border shadow-xl flex items-center justify-center z-10 group-hover:scale-110 transition-transform">
+                  <component :is="getIcon(notif.type)" class="w-3 h-3" :class="getIconColor(notif.type)" />
+                </div>
+              </div>
             </template>
-            <div v-else class="w-12 h-12 rounded-2xl bg-surface/5 flex items-center justify-center border border-border/50">
-              <component :is="getIcon(notif.type)" class="w-5 h-5" :class="getIconColor(notif.type)" />
+            <div v-else class="w-14 h-14 rounded-2xl bg-surface/10 flex items-center justify-center border border-border/50 group-hover:border-primary-500/50 transition-colors shadow-inner">
+              <component :is="getIcon(notif.type)" class="w-6 h-6" :class="getIconColor(notif.type)" />
             </div>
           </div>
 
-          <div class="flex-1 space-y-1">
-            <p class="text-sm font-medium leading-relaxed text-foreground">
-              <span v-if="notif.actor_name" class="font-black uppercase tracking-tight text-primary-500 mr-2">{{ notif.actor_name }}</span>
-              {{ notif.content }}
+          <div class="flex-1 space-y-1.5">
+            <p class="text-[15px] font-medium leading-relaxed text-foreground/90">
+              <span v-if="notif.actor_name" class="font-black uppercase tracking-tight text-primary-400 group-hover:text-primary-500 transition-colors mr-2">{{ notif.actor_name }}</span>
+              <span class="font-bold opacity-90">{{ notif.content }}</span>
             </p>
-            <p class="text-[10px] font-black text-muted uppercase tracking-widest opacity-50">{{ formatTime(notif.created_at) }}</p>
+            <div class="flex items-center gap-3">
+              <p class="text-[10px] font-black text-muted uppercase tracking-[0.2em] opacity-40">{{ formatTime(notif.created_at) }}</p>
+              <div v-if="!notif.is_read" class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></div>
+            </div>
           </div>
           
-          <ChevronRight class="w-5 h-5 text-muted/30 group-hover:text-primary-500 transition-colors" />
+          <div class="w-10 h-10 rounded-xl bg-foreground/[0.03] flex items-center justify-center group-hover:bg-primary-500/10 transition-all">
+            <ChevronRight class="w-5 h-5 text-muted/30 group-hover:text-primary-500 transition-colors" />
+          </div>
         </div>
       </div>
     </div>
