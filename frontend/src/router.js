@@ -174,7 +174,7 @@ export function setupRouterGuards(router) {
       const currentLang = i18n.locale || 'es';
       const knownPaths = [
         'dashboard', 'social', 'shop', 'codex', 'inventory', 
-        'profile', 'admin', 'notifications', 'blog', 'login',
+        'profile', 'admin', 'notifications', 'blog', 'login', 'missions',
         'contador-dominadas', 'contador-flexiones', 'app-calistenia'
       ];
       

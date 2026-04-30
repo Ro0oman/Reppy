@@ -131,15 +131,15 @@ const handleNotifClick = (notif) => {
       } 
     });
   } else if (notif.type === 'NEW_CHEST') {
-    router.push('/inventory');
+    router.push({ name: 'inventory', params: { lang: i18n.locale } });
   } else if (notif.type === 'LEVEL_UP') {
-    router.push('/profile');
+    router.push({ name: 'profile', params: { lang: i18n.locale } });
   } else if (notif.type === 'BOSS_DEFEATED') {
-    router.push('/dashboard');
+    router.push({ name: 'dashboard', params: { lang: i18n.locale } });
   } else if (notif.type === 'PVP_CHALLENGE') {
-    router.push({ name: 'pvp', params: { id: notif.target_id } });
+    router.push({ name: 'pvp', params: { id: notif.target_id, lang: i18n.locale } });
   } else if (notif.type === 'MISSION_COMPLETED') {
-    router.push('/missions');
+    router.push({ name: 'missions', params: { lang: i18n.locale } });
   }
 
   emit('close');
@@ -147,7 +147,7 @@ const handleNotifClick = (notif) => {
 
 const handleRegistryClick = () => {
     emit('close');
-    router.push('/notifications');
+    router.push({ name: 'notifications', params: { lang: i18n.locale } });
 };
 </script>
 

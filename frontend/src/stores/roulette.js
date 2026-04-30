@@ -5,11 +5,21 @@ import { useAuthStore } from './auth';
 export const useRouletteStore = defineStore('roulette', {
   state: () => ({
     canSpin: false,
+    hasTicket: false,
+    ticketCount: 0,
+    extraSpinCost: 5,
     lastCheck: 0,
-    fetchPromise: null
+    fetchPromise: null,
+    showModal: false
   }),
   
   actions: {
+    openModal() {
+      this.showModal = true;
+    },
+    closeModal() {
+      this.showModal = false;
+    },
     async checkStatus(force = false) {
       const authStore = useAuthStore();
       if (!authStore.isAuthenticated || !authStore.token) {
@@ -28,6 +38,9 @@ export const useRouletteStore = defineStore('roulette', {
         try {
           const res = await axios.get('/api/roulette/status');
           this.canSpin = res.data.canSpin;
+          this.hasTicket = res.data.hasTicket;
+          this.ticketCount = res.data.ticketCount;
+          this.extraSpinCost = res.data.extraSpinCost || 5;
           this.lastCheck = Date.now();
           return this.canSpin;
         } catch (e) {

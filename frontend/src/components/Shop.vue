@@ -216,9 +216,9 @@
         <!-- SECTION 2: COFRES PREMIUM -->
         <section v-if="shopStore.chests.length > 0 && activeTab === 'combat' && selectedCategory === 'all'"
           class="animate-in">
-          <div class="flex items-center gap-4 mb-8">
+          <div class="flex items-center gap-4 mb-8 ">
             <div class="p-3 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 shadow-lg shadow-emerald-500/10">
-              <ChestIcon variant="normal" class-name="w-6 h-6" />
+              <ChestIcon variant="normal" class-name=" w-6 h-6" />
             </div>
             <h2
               class="text-2xl sm:text-3xl font-black text-industrial text-foreground tracking-tighter uppercase italic leading-none">
@@ -226,9 +226,10 @@
             </h2>
           </div>
 
-          <div class="flex items-stretch gap-6 overflow-x-auto no-scrollbar pb-8 px-1 scroll-smooth">
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 sm:gap-8">
+            <!-- Premium Chests -->
             <div v-for="chest in shopStore.chests" :key="chest.type"
-              class="premium-card min-w-[260px] sm:min-w-[320px] p-0 flex flex-col group/chest relative overflow-hidden transition-all duration-500 hover:scale-[1.05] shadow-2xl border-emerald-500/10 hover:border-emerald-500/40">
+              class="premium-card w-full p-0 flex flex-col group/chest relative overflow-hidden transition-all duration-500 hover:scale-[1.05] shadow-2xl border-emerald-500/10 hover:border-emerald-500/40">
               <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent -z-10">
               </div>
 
@@ -256,6 +257,33 @@
                   <Coins v-if="chest.currency === 'coins'" class="w-5 h-5 fill-white/20" />
                   <Gem v-else class="w-5 h-5 fill-white/20" />
                 </button>
+              </div>
+            </div>
+
+            <!-- Roulette Ticket Special Card in Chests Section -->
+            <div v-if="rouletteTicketItem" 
+              class="premium-card w-full p-0 flex flex-col group/ticket relative overflow-hidden transition-all duration-500 hover:scale-[1.05] shadow-2xl border-emerald-500/10 hover:border-emerald-500/40">
+              <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent -z-10"></div>
+              
+              <div class="p-8 flex flex-col items-center">
+                <div class="relative w-32 h-32 sm:w-40 sm:h-40 mb-6 group-hover/ticket:scale-110 transition-transform duration-700 flex items-center justify-center">
+                  <ItemIcon name="ticket" type="consumable" class-name="w-full h-full relative z-10 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] opacity-90 group-hover/ticket:opacity-100" />
+                  <div class="absolute inset-0 bg-emerald-500/20 blur-[50px] -z-10 opacity-0 group-hover/ticket:opacity-100 transition-opacity"></div>
+                </div>
+
+                <h3 class="font-black text-xl sm:text-2xl uppercase italic mb-2 text-center tracking-tighter">{{ rouletteTicketItem.name }}</h3>
+                <p class="text-[10px] text-muted font-bold uppercase tracking-tight opacity-60 text-center mb-8 px-6 leading-relaxed">
+                  {{ rouletteTicketItem.description }}
+                </p>
+
+                <div class="mt-auto w-full">
+                  <button @click="buyItem(rouletteTicketItem)"
+                    :disabled="buying"
+                    class="w-full py-4 rounded-[22px] bg-emerald-500 text-white text-xs font-black uppercase tracking-[0.2em] hover:bg-emerald-400 shadow-xl shadow-emerald-500/30 transition-all active:scale-95 disabled:grayscale disabled:opacity-50 flex items-center justify-center gap-3">
+                    <span class="tabular-nums text-xl">{{ rouletteTicketItem.price_gems }}</span>
+                    <Gem class="w-5 h-5 fill-white/20" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -755,6 +783,7 @@ import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue';
 import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
 import { useShopStore } from '../stores/shop';
+import { useRouletteStore } from '../stores/roulette';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
 import { LayoutGrid, Type, Frame, Sparkles, ChevronDown, ChevronLeft, ChevronRight, Coins, Diamond, Check, Swords, X, Flame, Package, Sword, Shield, Footprints, Construction, FlaskConical, Zap, Info, ChevronUp, Users, Activity, Lock, CheckCircle2, Clock, Timer, Box, Trophy, RefreshCcw, Gem, Gift, ArrowRight } from 'lucide-vue-next';
@@ -768,6 +797,7 @@ import { getCombatScore, isItemUpgrade, normalizeStats } from '../composables/us
 const emit = defineEmits(['start', 'viewProfile']);
 const authStore = useAuthStore();
 const shopStore = useShopStore();
+const rouletteStore = useRouletteStore();
 const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
 
@@ -923,7 +953,8 @@ const filteredItems = computed(() => {
   return result.sort((a, b) => a.price - b.price);
 });
 
-const bundleItems = computed(() => filteredItems.value.filter(item => item.type === 'bundle'));
+const rouletteTicketItem = computed(() => items.value.find(item => item.name === 'Ticket de Ruleta'));
+const bundleItems = computed(() => filteredItems.value.filter(item => item.type === 'bundle' && item.name !== 'Ticket de Ruleta'));
 const consumableItems = computed(() => items.value.filter(item => item.type === 'consumable'));
 const hasLegendaryDaily = computed(() => shopStore.dailyItems.some(item => item.rarity === 'legendary' || item.rarity === 'calistenico'));
 
@@ -1093,6 +1124,12 @@ const buyItem = async (item) => {
     await checkShop();
     await shopStore.fetchDailyShop(true);
     await shopStore.fetchInventory(true); // SYNC INVENTORY
+    
+    // Auto-open roulette if it's a ticket
+    if (item.name === 'Ticket de Ruleta') {
+      rouletteStore.checkStatus(true);
+      rouletteStore.openModal();
+    }
   } catch (error) {
     notificationStore.notify(error.response?.data?.message || 'Exchange failed', 'error');
   } finally {

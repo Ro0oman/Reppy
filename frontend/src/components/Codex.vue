@@ -1,10 +1,11 @@
 <template>
-  <div class="min-h-screen bg-background selection:bg-primary-500/30 overflow-x-hidden">
+  <div class="codex-root-wrapper">
+    <div class="min-h-screen bg-background selection:bg-primary-500/30 overflow-x-hidden">
     
     <!-- ═══════════════════════════════════════════════════════════
-         HERO SECTION — Conversion Focused
+         HERO SECTION — Conversion Focused (Only for Guests)
     ═══════════════════════════════════════════════════════════ -->
-    <section class="relative pt-12 pb-24 px-4 overflow-hidden border-b border-white/5">
+    <section v-if="!authStore.isAuthenticated" class="  relative pt-12 pb-24 px-4 overflow-hidden border-b border-white/5">
       <!-- Ambient Glows -->
       <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary-500/10 blur-[120px] rounded-full pointer-events-none"></div>
       
@@ -60,44 +61,64 @@
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════
-         WHY REPPY? — Value Props
+         AUTHENTICATED HEADER (Only for Users)
     ═══════════════════════════════════════════════════════════ -->
-    <section class="max-w-7xl mx-auto px-4 py-24">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-10">
-        <div v-for="feature in features" :key="feature.title" 
-             class="card-stats p-10 flex flex-col gap-6 group hover:border-primary-500/30 transition-all">
-          <div class="w-14 h-14 bg-primary-500/10 rounded-2xl flex items-center justify-center text-primary-500 transition-transform group-hover:scale-110">
-            <component :is="feature.icon" class="w-7 h-7" />
+    <header v-if="authStore.isAuthenticated" class="max-w-7xl mx-auto px-4 pt-12">
+      <div class="flex items-center gap-4 animate-in fade-in slide-in-from-left-4 duration-700">
+        <div class="w-1.5 h-8 bg-primary-500 rounded-full"></div>
+        <div class="space-y-1">
+          <h2 class="text-4xl font-black italic tracking-tighter text-foreground uppercase leading-none">{{ i18n.t('CODEX_DASHBOARD') }}<span class="text-primary-500"></span></h2>
+          <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em]">{{ i18n.locale === 'es' ? 'ATRIBUTOS ACTIVOS' : 'ATTRIBUTE PROTOCOL ACTIVE' }}</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         STATS SECTION — User Attributes
+    ═══════════════════════════════════════════════════════════ -->
+    <section class="max-w-7xl mx-auto px-4 py-24 ">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+        <div v-for="stat in attributeDescriptions" :key="stat.key" 
+             @click="openStatModal(stat.key)"
+             class="card-stats p-8 flex flex-col gap-6 group hover:border-primary-500/30 transition-all cursor-pointer">
+          
+          <div class="flex items-center justify-between">
+            <div class="w-14 h-14 bg-primary-500/10 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110" :class="stat.iconColor">
+              <component :is="stat.icon" class="w-7 h-7" />
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] font-black text-muted uppercase tracking-widest block">{{ i18n.t('ui_level') || 'NIVEL' }}</span>
+              <span class="text-2xl font-black italic tracking-tighter text-foreground">{{ getStatLevel(stat.key) }}</span>
+            </div>
           </div>
 
           <div class="space-y-1 sm:space-y-2">
-            <h3 class="text-xl sm:text-2xl font-black tracking-tighter uppercase italic text-foreground leading-none">{{ i18n.t(`codex_${stat.id}_name`) }}</h3>
-            <p class="hidden sm:block text-[10px] font-black text-primary-500/80 uppercase tracking-widest italic line-clamp-1">{{ i18n.t(`codex_${stat.id}_quote`) }}</p>
+            <h3 class="text-xl sm:text-2xl font-black tracking-tighter uppercase italic text-foreground leading-none">{{ i18n.t(`codex_${stat.key.toLowerCase()}_name`) }}</h3>
+            <p class="text-[10px] font-black text-primary-500/80 uppercase tracking-widest italic line-clamp-1 opacity-60">{{ i18n.t(`codex_${stat.key.toLowerCase()}_quote`) || stat.key }}</p>
           </div>
-          <p class="hidden sm:block text-xs text-muted/80 leading-relaxed line-clamp-2">{{ i18n.t(`codex_${stat.id}_desc`) }}</p>
 
-          <!-- Progress Bar (Desktop Only) -->
-          <div class="hidden sm:block space-y-3">
+          <!-- Progress Bar -->
+          <div class="space-y-3">
              <div class="flex justify-between items-end">
                 <span class="text-[9px] font-black text-muted uppercase tracking-widest">{{ i18n.t('nav_progress') }}</span>
-                <span class="text-[10px] font-black text-foreground text-precision">{{ Math.floor((getStatXP(stat.id) / Math.max(getStatXPMax(stat.id), 1)) * 100) }}%</span>
+                <span class="text-[10px] font-black text-foreground text-precision">{{ Math.floor((getStatXP(stat.key) / Math.max(getStatXPMax(stat.key), 1)) * 100) }}%</span>
              </div>
              <div class="h-2 bg-white/5 rounded-full overflow-hidden border border-white/5 p-0.5">
                 <div class="h-full rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
-                     :style="{ width: `${(getStatXP(stat.id) / Math.max(getStatXPMax(stat.id), 1)) * 100}%`, backgroundColor: stat.color }">
+                     :style="{ width: `${(getStatXP(stat.key) / Math.max(getStatXPMax(stat.key), 1)) * 100}%`, backgroundColor: stat.hex }">
                    <div class="absolute inset-0 bg-white/20 animate-shimmer"></div>
                 </div>
              </div>
           </div>
 
-          <!-- FooterRow (Desktop Only) -->
-          <div class="hidden sm:flex pt-4 items-center justify-between border-t border-white/5">
+          <!-- FooterRow -->
+          <div class="flex pt-4 items-center justify-between border-t border-white/5">
             <div class="flex items-center gap-2">
-              <div class="w-1.5 h-1.5 rounded-full animate-pulse" :style="{ backgroundColor: stat.color }"></div>
-              <span class="text-[8px] font-black text-muted uppercase tracking-widest">{{ i18n.t('ui_protocol_active') }}</span>
+              <div class="w-1.5 h-1.5 rounded-full animate-pulse" :style="{ backgroundColor: stat.hex }"></div>
+              <span class="text-[8px] font-black text-muted uppercase tracking-widest">{{ i18n.t('ui_protocol_active') || 'ACTIVE' }}</span>
             </div>
             <div class="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-              <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('ui_more_details') }}</span>
+              <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('ui_more_details') || 'DETAILS' }}</span>
               <ChevronRight class="w-2.5 h-2.5 text-primary-500" />
             </div>
           </div>
@@ -236,27 +257,19 @@
                 <span class="text-[6px] font-black text-muted/20 uppercase tracking-widest">{{ i18n.locale === 'es' ? 'ENCRIPTADO' : 'ENCRYPTED' }}</span>
               </div>
             </div>
-            <ul class="grid grid-cols-2 gap-4">
-              <li v-for="item in ['Heatmap', 'Ranking', 'RPG', '100% Free']" :key="item" class="flex items-center gap-3 text-xs font-black text-foreground uppercase tracking-widest">
-                <CheckCircle2 class="w-4 h-4 text-neon-lime" />
-                {{ item }}
-              </li>
-            </ul>
-            <button @click="onStartAction" class="btn-reppy !px-10 !py-5">
-              {{ i18n.locale === 'es' ? 'EMPIEZA AHORA GRATIS' : 'START NOW FOR FREE' }}
-            </button>
           </div>
-          <div class="hidden md:block relative h-full bg-surface/10 overflow-hidden">
-             <img src="/assets/dashboard_mockup.png" alt="Reppy App" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-auto rotate-12 scale-110 opacity-40 group-hover:rotate-0 transition-all duration-1000" />
+          <div class="hidden md:block relative h-full bg-surface/10 overflow-hidden rounded-[2rem] border border-white/5">
+             <img src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&w=800&q=80" alt="Reppy App" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-auto rotate-12 scale-110 opacity-20 group-hover:rotate-0 transition-all duration-1000" />
+             <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════
-         FINAL CTA
+         FINAL CTA (Only for Guests)
     ═══════════════════════════════════════════════════════════ -->
-    <section class="max-w-4xl mx-auto px-4 py-32 text-center space-y-12">
+    <section v-if="!authStore.isAuthenticated" class="max-w-4xl mx-auto px-4 py-32 text-center space-y-12">
       <h2 class="text-4xl md:text-7xl font-black italic tracking-tighter text-foreground uppercase leading-none">
         {{ i18n.locale === 'es' ? 'TU LEYENDA EMPIEZA HOY' : 'YOUR LEGEND STARTS TODAY' }}
       </h2>
@@ -265,6 +278,12 @@
           ? 'Deja de entrenar a ciegas. Cuenta cada repetición, compite con la comunidad y alcanza el nivel de un atleta de élite.' 
           : 'Stop training in the dark. Count every rep, compete with the community, and reach elite athlete level.' }}
       </p>
+      <ul class="flex flex-wrap justify-center gap-8 py-8">
+        <li v-for="item in ['Heatmap', 'Ranking', 'RPG', '100% Free']" :key="item" class="flex items-center gap-3 text-sm font-black text-foreground uppercase tracking-widest">
+          <CheckCircle2 class="w-5 h-5 text-neon-lime" />
+          {{ item }}
+        </li>
+      </ul>
       <button @click="onStartAction" class="btn-reppy !text-xl !px-16 !py-8 shadow-[0_20px_50px_rgba(var(--primary),0.3)]">
         {{ i18n.t('btn_create_account_free').toUpperCase() }}
       </button>
@@ -286,22 +305,33 @@
          <span class="text-[11px] font-bold tracking-[0.4em] uppercase">EST. ATHLETE_V2</span>
        </div>
     </footer>
+    <!-- Codex Modal -->
+    <CodexModal 
+      :show="showCodexModal" 
+      :initialTab="selectedStat"
+      @close="showCodexModal = false"
+    />
   </div>
+</div>
 </template>
 
 <script setup>
 import { 
-  Sparkles, 
   Activity, 
-  Trophy, 
-  Target,
   ChevronRight,
   CheckCircle2,
   Book,
-  Zap,
-  LayoutDashboard,
-  Users
+  ShieldAlert,
+  Timer,
+  Lock,
+  Sword, 
+  Heart, 
+  Shield, 
+  Dumbbell, 
+  Brain, 
+  Church 
 } from 'lucide-vue-next';
+import CodexModal from './CodexModal.vue';
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
@@ -312,6 +342,63 @@ const authStore = useAuthStore();
 const i18n = useI18nStore();
 const router = useRouter();
 
+const showCodexModal = ref(false);
+const selectedStat = ref('STR');
+
+const attributeDescriptions = [
+  { 
+    key: 'STR', 
+    icon: Dumbbell, 
+    iconColor: 'text-orange-500', 
+    hex: '#f97316'
+  },
+  { 
+    key: 'DEX', 
+    icon: Sword, 
+    iconColor: 'text-cyan-400', 
+    hex: '#22d3ee'
+  },
+  { 
+    key: 'END', 
+    icon: Activity, 
+    iconColor: 'text-green-400', 
+    hex: '#4ade80'
+  },
+  { 
+    key: 'VIG', 
+    icon: Heart, 
+    iconColor: 'text-red-500', 
+    hex: '#ef4444'
+  },
+  { 
+    key: 'INT', 
+    icon: Brain, 
+    iconColor: 'text-blue-400', 
+    hex: '#60a5fa'
+  },
+  { 
+    key: 'FTH', 
+    icon: Church, 
+    iconColor: 'text-yellow-400', 
+    hex: '#facc15'
+  },
+  { 
+    key: 'CHA', 
+    icon: Heart, 
+    iconColor: 'text-pink-400', 
+    hex: '#f472b6'
+  }
+];
+
+const openStatModal = (key) => {
+  selectedStat.value = key;
+  showCodexModal.value = true;
+};
+
+const getStatLevel = (key) => authStore.user?.[`${key.toLowerCase()}_lvl`] || 1;
+const getStatXP = (key) => authStore.user?.[`${key.toLowerCase()}_xp_into_level`] || 0;
+const getStatXPMax = (key) => authStore.user?.[`${key.toLowerCase()}_xp_for_next_level`] || 100;
+
 const onStartAction = () => {
   if (authStore.isAuthenticated) {
     router.push(`/${i18n.locale}/social`);
@@ -319,24 +406,6 @@ const onStartAction = () => {
     router.push(`/${i18n.locale}/login`);
   }
 };
-
-const features = computed(() => [
-  {
-    icon: Activity,
-    title: i18n.locale === 'es' ? 'MEJORA MÁS RÁPIDO' : 'IMPROVE FASTER',
-    desc: i18n.locale === 'es' ? 'Mide tus dominadas reales y progreso semanal con datos precisos.' : 'Track your real pull-ups and weekly progress with precise data.'
-  },
-  {
-    icon: Zap,
-    title: i18n.locale === 'es' ? 'ENTRENA CON MOTIVACIÓN' : 'TRAIN MOTIVATED',
-    desc: i18n.locale === 'es' ? 'Cada repetición suma XP, monedas y nivel en tu perfil RPG.' : 'Every rep adds XP, coins, and level to your RPG profile.'
-  },
-  {
-    icon: Trophy,
-    title: i18n.locale === 'es' ? 'COMPITE CON OTROS' : 'COMPETE WITH OTHERS',
-    desc: i18n.locale === 'es' ? 'Ranking global en vivo y eventos de Boss comunitarios.' : 'Live global ranking and community Boss fight events.'
-  }
-]);
 
 const localizedPosts = computed(() => {
   const now = new Date();
@@ -391,6 +460,8 @@ const handleImageError = (e) => {
   e.target.src = 'https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?auto=format&fit=crop&w=1200&q=80';
 };
 
+const emit = defineEmits(['start', 'viewProfile']);
+
 onMounted(() => {
   if (authStore.isAuthenticated) {
     authStore.fetchProfile();
@@ -405,4 +476,3 @@ onMounted(() => {
 .animate-pulse-slow { animation: pulseSlow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
 @keyframes pulseSlow { 0%, 100% { opacity: 1; border-color: rgba(var(--primary), 0.2); } 50% { opacity: 0.8; border-color: rgba(var(--primary), 0.4); } }
 </style>
-

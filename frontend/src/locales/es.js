@@ -42,6 +42,12 @@ export default {
     audio_unmute: 'Activar Sonido',
     back_to_codex: 'Volver al Stats RPG',
     nav_go_dashboard: 'Ir al Panel',
+    ui_level: 'Nivel',
+    CODEX_DASHBOARD:'ESTADISTICAS',
+    CODEX_TITLE:"EL STATS RPG",
+    ui_gems: 'Gemas',
+    ui_coins: 'Monedas',
+    
 
     codex_title: 'El Stats RPG',
     codex_subtitle: 'Tus Stats y Niveles',
@@ -455,6 +461,8 @@ export default {
     wheel_prizemsg_coins: '+{value} MONEDAS',
     wheel_prizemsg_item: '¡{name}! 🏆',
     wheel_prizemsg_chest: '¡Cofre de Nivel! 🎁',
+    wheel_spin_again: 'GIRAR DE NUEVO',
+    wheel_return_info: 'Prueba suerte mañana para el giro gratis',
 
     // Level Bar
     level_xp_info: 'Consigue XP para ganar COFRES DE BOTÍN. Cada repetición suma.',

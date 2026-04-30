@@ -371,6 +371,7 @@ export default {
     economy_reppy_core: 'Reppy Core © 2026',
     economy_gems: 'REPPY GEMS',
     economy_gems_desc: 'Premium currency for mythical items.',
+    ui_gems: 'Gems',
     nav_missions: 'Missions',
     missions_title: 'Active Missions',
     missions_subtitle: 'Elite Training Objectives',
@@ -448,6 +449,8 @@ export default {
     wheel_prizemsg_coins: '+{value} REPPY COINS',
     wheel_prizemsg_item: '¡{name}! 🏆',
     wheel_prizemsg_chest: '¡Level Chest! 🎁',
+    wheel_spin_again: 'SPIN AGAIN',
+    wheel_return_info: 'Try your luck tomorrow for the free spin',
 
     // Level Bar
     level_xp_info: 'Earn XP to gain LOOT CHESTS. Every rep counts.',

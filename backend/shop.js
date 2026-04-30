@@ -7,6 +7,29 @@ import { rotateDailyShop } from './utils/shop_rotation.js';
 
 
 const router = express.Router();
+
+// Helper to get current roulette ticket price
+async function getRouletteTicketPrice(userId, basePrice) {
+  const userRes = await query('SELECT roulette_tickets_bought_today, last_roulette_ticket_bought_at FROM users WHERE id = $1', [userId]);
+  if (userRes.rows.length === 0) return basePrice;
+  
+  const user = userRes.rows[0];
+  let boughtToday = user.roulette_tickets_bought_today || 0;
+  const lastBought = user.last_roulette_ticket_bought_at;
+  
+  // Check if reset is needed (if last bought was on a different day)
+  if (lastBought) {
+    const lastDate = new Date(lastBought).toDateString();
+    const today = new Date().toDateString();
+    if (lastDate !== today) {
+      boughtToday = 0;
+    }
+  }
+  
+  // Price = base * 2^boughtToday
+  return basePrice * Math.pow(2, boughtToday);
+}
+
 // Get available items
 router.get('/cosmetics', authenticate, async (req, res) => {
   try {
@@ -25,10 +48,17 @@ router.get('/cosmetics', authenticate, async (req, res) => {
       inventoryMap[row.item_id] = { owned: true, is_new: row.is_new, quantity: row.quantity || 1 };
     });
     
-    const shopItems = itemsRes.rows.map((item, index) => {
+    const shopItems = await Promise.all(itemsRes.rows.map(async (item, index) => {
       const invData = inventoryMap[item.id] || { owned: false, is_new: false, quantity: 0 };
+      
+      let finalPriceGems = item.price_gems;
+      if (item.name === 'Ticket de Ruleta') {
+        finalPriceGems = await getRouletteTicketPrice(req.user.id, item.price_gems || 5);
+      }
+
       return {
         ...item,
+        price_gems: finalPriceGems,
         owned: invData.owned,
         is_new: invData.is_new,
         quantity: invData.quantity,
@@ -37,7 +67,7 @@ router.get('/cosmetics', authenticate, async (req, res) => {
         is_unlocked: true,
         seconds_until_unlock: 0
       };
-    });
+    }));
     
     res.json(shopItems);
   } catch (error) {
@@ -319,6 +349,12 @@ router.post('/buy/:id', authenticate, async (req, res) => {
 
     let price = isDailyDeal ? dailyDealRes.rows[0].discounted_price : (item.price || 0);
     let priceGems = isDailyDeal ? dailyDealRes.rows[0].discounted_gems : (item.price_gems || 0);
+
+    // Special logic for Roulette Ticket
+    if (item.name === 'Ticket de Ruleta') {
+      priceGems = await getRouletteTicketPrice(userId, item.price_gems || 5);
+    }
+
     let finalDeduction = price;
 
     // Bundle Refund Logic (Only for Coins for now to keep it simple, or we could skip gems refund)
@@ -382,6 +418,19 @@ router.post('/buy/:id', authenticate, async (req, res) => {
     }
 
     await query('UPDATE users SET reppy_coins = reppy_coins - $1, reppy_gems = reppy_gems - $2 WHERE id = $3', [finalDeduction, priceGems, userId]);
+    
+    // Update ticket tracking if applicable
+    if (item.name === 'Ticket de Ruleta') {
+      await query(`
+        UPDATE users 
+        SET roulette_tickets_bought_today = CASE 
+            WHEN last_roulette_ticket_bought_at::date = CURRENT_DATE THEN roulette_tickets_bought_today + 1 
+            ELSE 1 
+        END,
+        last_roulette_ticket_bought_at = CURRENT_TIMESTAMP
+        WHERE id = $1
+      `, [userId]);
+    }
     
     if (priceGems > 0) {
       await query(`

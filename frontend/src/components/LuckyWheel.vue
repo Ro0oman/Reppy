@@ -54,10 +54,27 @@
           <button 
             @click="spinWheel"
             :disabled="spinning || !rouletteStore.canSpin"
-            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white dark:bg-zinc-800 shadow-2xl border-4 border-primary-500 flex items-center justify-center z-30 transition-all disabled:opacity-50 disabled:grayscale"
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white dark:bg-zinc-800 shadow-2xl border-4 border-primary-500 flex items-center justify-center z-30 transition-all disabled:opacity-50 disabled:grayscale overflow-hidden"
           >
-            <span class="text-[10px] font-black text-primary-600 uppercase tracking-tighter">{{ spinning ? i18n.t('wheel_btn_spinning') : i18n.t('wheel_btn_spin') }}</span>
+            <div v-if="spinning" class="flex flex-col items-center">
+               <span class="text-[8px] font-black text-primary-600 uppercase tracking-tighter">{{ i18n.t('wheel_btn_spinning') }}</span>
+            </div>
+            <div v-else-if="rouletteStore.hasTicket" class="flex flex-col items-center">
+               <ItemIcon name="ticket" type="consumable" class-name="w-6 h-6 mb-0.5" />
+               <span class="text-[8px] font-bold text-primary-500/60 leading-none">{{ rouletteStore.ticketCount }}</span>
+            </div>
+            <span v-else class="text-[10px] font-black text-primary-600 uppercase tracking-tighter">{{ i18n.t('wheel_btn_spin') }}</span>
           </button>
+        </div>
+
+        <!-- Gem Balance Display -->
+        <div class="mt-4 flex items-center gap-2 px-4 py-2 bg-zinc-100 dark:bg-white/5 rounded-full border border-zinc-200 dark:border-white/10">
+           <div class="w-4 h-4 bg-emerald-500/20 rounded-full flex items-center justify-center">
+             <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
+           </div>
+           <span class="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+             {{ authStore.user.reppy_gems }} {{ i18n.t('ui_gems') }}
+           </span>
         </div>
 
         <!-- Result Feedback -->
@@ -119,12 +136,27 @@
             </p>
           </div>
 
-          <button 
-            @click="closeResult"
-            class="w-full py-5 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl text-xs font-black uppercase tracking-[0.4em] transition-all active:scale-95 shadow-xl shadow-primary-600/20"
-          >
-            {{ i18n.t('pvp_return') }}
-          </button>
+          <div class="space-y-3">
+            <button 
+              @click="closeResult"
+              class="w-full py-5 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl text-xs font-black uppercase tracking-[0.4em] transition-all active:scale-95 border border-white/5"
+            >
+              {{ i18n.t('pvp_return') }}
+            </button>
+
+            <button 
+              v-if="!spinning"
+              @click="spinAgainWithGems"
+              :disabled="authStore.user.reppy_gems < rouletteStore.extraSpinCost"
+              class="w-full py-5 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl text-xs font-black uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl shadow-primary-600/20 disabled:opacity-50 disabled:grayscale flex items-center justify-center gap-2 group"
+            >
+              <span>{{ i18n.t('wheel_spin_again') || 'GIRAR DE NUEVO' }}</span>
+              <div class="flex items-center gap-1.5 px-3 py-1 bg-white/10 rounded-full group-hover:bg-white/20 transition-colors">
+                <span class="text-[10px]">{{ rouletteStore.extraSpinCost }}</span>
+                <span>💎</span>
+              </div>
+            </button>
+          </div>
           
           <p class="mt-6 text-[8px] font-bold text-white/20 uppercase tracking-[0.3em]">
             REPPY VAULT SYSTEM v2.0
@@ -143,6 +175,7 @@ import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
 import { useRouletteStore } from '../stores/roulette';
+import ItemIcon from './ItemIcon.vue';
 import confetti from 'canvas-confetti';
 
 const props = defineProps({
@@ -265,6 +298,55 @@ const spinWheel = async () => {
 
   } catch (error) {
     notificationStore.notify(error.response?.data?.message || 'Error al conectar con la ruleta', 'error');
+  }
+};
+
+const spinAgainWithGems = async () => {
+  if (spinning.value || authStore.user.reppy_gems < rouletteStore.extraSpinCost) return;
+
+  try {
+    showResultModal.value = false;
+    spinning.value = true;
+    prizeResult.value = null;
+    
+    const res = await axios.post('/api/roulette/buy-and-spin');
+    const data = res.data;
+    
+    rouletteStore.setSpun();
+    rouletteStore.extraSpinCost = data.extraSpinCost;
+    emit('spun');
+
+    // Calculate rotation (copy from spinWheel)
+    const extraSpins = 5 + Math.floor(Math.random() * 5);
+    const targetId = data.prize.id;
+    const targetStartAngle = getCumulativeAngle(targetId);
+    const targetCenterAngle = targetStartAngle + (rewards[targetId].size / 2);
+    const currentBase = Math.floor(rotation.value / 360) * 360;
+    const targetRotation = currentBase + (extraSpins * 360) + (360 - targetCenterAngle);
+    rotation.value = targetRotation;
+
+    setTimeout(() => {
+      spinning.value = false;
+      prizeResult.value = { ...data.prize, msg: data.message };
+      showResultModal.value = true;
+      
+      authStore.user.reppy_coins = data.new_coins;
+      authStore.user.reppy_gems = data.new_gems;
+
+      if (data.prize.type !== 'nothing') {
+        confetti({
+          particleCount: 150,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#4F46E5', '#8B5CF6', '#F59E0B']
+        });
+        notificationStore.notify(i18n.t('wheel_congrats'), 'success');
+      }
+    }, 4000);
+
+  } catch (error) {
+    spinning.value = false;
+    notificationStore.notify(error.response?.data?.message || 'Error al procesar el giro extra', 'error');
   }
 };
 

@@ -7,6 +7,12 @@
          :alt="name"
          @error="handleError" />
 
+    <!-- ASSETS SUPPORT -->
+    <img v-else-if="name === 'ticket'" 
+         src="/assets/chests/ticket.svg" 
+         class="w-full h-full object-contain " 
+         alt="ticket" />
+
     <!-- DARK SOULS THEME (LEGACY) -->
     <svg v-else-if="name === 'ds_sword'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-full h-full">
       <path d="M14.5 17.5L3 6V3H6L17.5 14.5M14.5 17.5L13 19L11 17L12.5 15.5M14.5 17.5L19 13L17.5 11.5L13 16" />
