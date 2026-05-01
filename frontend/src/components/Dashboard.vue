@@ -61,20 +61,23 @@
     </section>
 
     <section
-      v-else-if="trainingStore.onboardingCompleted"
-      class="rounded-2xl border border-primary-500/25 bg-primary-500/10 p-4"
+      v-else
+      class="rounded-[1.5rem] border border-primary-500/35 bg-primary-500/10 p-4 shadow-[0_0_35px_rgba(255,69,0,0.08)] sm:p-5"
     >
-      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="min-w-0">
           <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary-500">
-            {{ i18n.locale === 'es' ? 'Sin plan guiado' : 'No guided plan' }}
+            {{ i18n.locale === 'es' ? 'Empieza tu progresion' : 'Start your progression' }}
           </p>
-          <h3 class="mt-1 text-lg font-black text-foreground">
-            {{ i18n.locale === 'es' ? 'Elige un objetivo para tener mision diaria' : 'Choose a goal to get a daily mission' }}
+          <h3 class="mt-2 text-2xl font-black uppercase leading-tight text-foreground">
+            {{ i18n.locale === 'es' ? 'Elige un plan guiado' : 'Choose a guided plan' }}
           </h3>
+          <p class="mt-2 max-w-2xl text-sm font-semibold leading-relaxed text-muted/75">
+            {{ i18n.locale === 'es' ? 'Reppy te dira que entrenar hoy, bloqueara el siguiente dia hasta manana y convertira tus reps en progreso real.' : 'Reppy will tell you what to train today, lock the next day until tomorrow, and turn your reps into real progress.' }}
+          </p>
         </div>
-        <button type="button" class="btn-reppy !py-3 px-5" @click="openPlanPicker">
-          {{ i18n.locale === 'es' ? 'Elegir plan' : 'Choose plan' }}
+        <button type="button" class="btn-reppy w-full !py-4 px-5 sm:w-auto" @click="openPlanPicker">
+          {{ i18n.locale === 'es' ? 'Ver planes' : 'View plans' }}
         </button>
       </div>
     </section>
@@ -90,7 +93,7 @@
     </div>
 
     <section
-      v-if="!trainingStore.todayWorkout"
+      v-if="!trainingStore.todayWorkout && !trainingStore.completedToday"
       class="w-full rounded-[2rem] border backdrop-blur-xl p-4 sm:p-6 transition-all duration-500"
       :class="missionCompletionPulse ? 'border-emerald-500/40 bg-emerald-500/10 shadow-[0_0_35px_rgba(16,185,129,0.2)]' : 'border-primary-500/25 bg-primary-500/10'"
     >

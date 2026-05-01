@@ -12,6 +12,22 @@
           {{ i18n.locale === 'es' ? 'Manana sigues. La proxima mision queda bloqueada hasta el nuevo dia.' : 'Continue tomorrow. The next mission unlocks on the next day.' }}
         </p>
       </div>
+      <div class="grid grid-cols-2 gap-2 sm:max-w-sm">
+        <div class="rounded-2xl border border-white/10 bg-deep-abyss/75 p-4 text-center">
+          <p class="text-[9px] font-black uppercase tracking-widest text-muted">
+            {{ i18n.locale === 'es' ? 'Vuelves en' : 'Come back in' }}
+          </p>
+          <p class="mt-1 text-2xl font-black text-primary-500">{{ unlockHours }}</p>
+          <p class="text-[10px] font-black uppercase tracking-widest text-muted">h</p>
+        </div>
+        <div class="rounded-2xl border border-white/10 bg-deep-abyss/75 p-4 text-center">
+          <p class="text-[9px] font-black uppercase tracking-widest text-muted">
+            {{ i18n.locale === 'es' ? 'Minutos' : 'Minutes' }}
+          </p>
+          <p class="mt-1 text-2xl font-black text-primary-500">{{ unlockMinutes }}</p>
+          <p class="text-[10px] font-black uppercase tracking-widest text-muted">min</p>
+        </div>
+      </div>
       <div v-if="nextWorkoutPreview" class="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
         <p class="text-[9px] font-black uppercase tracking-widest text-muted">
           {{ i18n.locale === 'es' ? 'Proxima mision' : 'Next mission' }}
@@ -157,7 +173,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, onUnmounted, ref, watch } from 'vue';
 import { Check, Clock, Coins, Loader2, Minus, Plus, Sparkles, TimerReset, Info } from 'lucide-vue-next';
 import ExerciseDetailModal from './ExerciseDetailModal.vue';
 import { useAuthStore } from '../stores/auth';
@@ -189,6 +205,8 @@ const openExerciseDetail = (slug) => {
   detailModalOpen.value = true;
 };
 const loading = ref(false);
+const now = ref(Date.now());
+let unlockTicker = null;
 
 const completedTitle = computed(() => {
   const plan = props.activePlan || props.nextWorkoutPreview?.plan;
@@ -197,6 +215,40 @@ const completedTitle = computed(() => {
   return i18n.locale === 'es'
     ? `Dia ${day}/${duration} completado`
     : `Day ${day}/${duration} completed`;
+});
+
+const unlockTarget = computed(() => {
+  if (props.nextWorkoutPreview || props.completedToday) {
+    const tomorrow = new Date();
+    tomorrow.setHours(24, 0, 0, 0);
+    return tomorrow.getTime();
+  }
+  return now.value;
+});
+
+const unlockRemainingMs = computed(() => Math.max(0, unlockTarget.value - now.value));
+const unlockHours = computed(() => String(Math.floor(unlockRemainingMs.value / 3600000)).padStart(2, '0'));
+const unlockMinutes = computed(() => String(Math.floor((unlockRemainingMs.value % 3600000) / 60000)).padStart(2, '0'));
+
+watch(
+  () => props.completedToday,
+  (isCompleted) => {
+    if (isCompleted && !unlockTicker) {
+      now.value = Date.now();
+      unlockTicker = setInterval(() => {
+        now.value = Date.now();
+      }, 30000);
+    } else if (!isCompleted && unlockTicker) {
+      clearInterval(unlockTicker);
+      unlockTicker = null;
+    }
+  },
+  { immediate: true }
+);
+
+onUnmounted(() => {
+  if (unlockTicker) clearInterval(unlockTicker);
+  clearAllTimers();
 });
 
 const createSetLogs = () => {
