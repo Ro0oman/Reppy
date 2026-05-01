@@ -139,6 +139,7 @@ const frameVars = computed(() => ({
   height: var(--frame-size);
   border-radius: 50%;
   flex-shrink: 0;
+  isolation: isolate;
 }
 
 .avatar-frame__inner {

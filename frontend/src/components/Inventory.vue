@@ -55,7 +55,6 @@
               <Activity class="absolute -bottom-2 -right-2 w-12 h-12 text-white/5 group-hover:scale-110 transition-transform" />
             </div>
           </div>
-
           <!-- Active Effects Display -->
           <ActiveEffects />
 
@@ -181,10 +180,10 @@
         <!-- CUSTOMIZATION SIDEBAR -->
         <div v-if="activeTab === 'customization'" class="space-y-6">
            <div class="p-8 rounded-[3rem] bg-surface/10 border border-white/5 backdrop-blur-xl text-center space-y-6">
-              <div class="relative inline-block">
+               <div class="relative inline-block isolate z-[1]">
                 <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :size="120" />
-                <div class="absolute -bottom-2 inset-x-0">
-                  <span v-if="authStore.user?.title_name" class="px-4 py-1.5 rounded-full bg-surface/90 border border-white/10 text-[10px] font-black uppercase italic tracking-tighter" :class="authStore.user?.title_css">
+                <div class="absolute -bottom-2 inset-x-0 rounded-full bg-sky-100/95 ">
+                  <span v-if="authStore.user?.title_name" class=" mt-[10px] px-4 py-1.5 rounded-full   text-[10px] font-black uppercase italic tracking-tighter shadow-lg" :class="authStore.user?.title_css">
                     {{ authStore.user?.title_name }}
                   </span>
                 </div>
