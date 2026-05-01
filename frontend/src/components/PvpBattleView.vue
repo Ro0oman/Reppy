@@ -250,7 +250,9 @@ const quickButtons = [
   { exercise: 'pushups', reps: 10, label: '+10 Flexiones' },
   { exercise: 'pushups', reps: 20, label: '+20 Flexiones' },
   { exercise: 'dips', reps: 8, label: '+8 Fondos' },
-  { exercise: 'dips', reps: 15, label: '+15 Fondos' }
+  { exercise: 'dips', reps: 15, label: '+15 Fondos' },
+  { exercise: 'legs', reps: 10, label: '+10 Pierna' },
+  { exercise: 'legs', reps: 20, label: '+20 Pierna' }
 ];
 
 let timerInterval = null;

@@ -545,6 +545,7 @@ export default {
     dips: 'Dips',
     pushups: 'Push-ups',
     weighted_pullups: 'Weighted Pull-ups',
+    legs: 'Legs',
     
     // Auth Errors
     ERR_USER_EXISTS: 'This email is already registered. Please log in.',

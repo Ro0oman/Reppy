@@ -559,6 +559,7 @@ export default {
     dips: 'Fondos',
     pushups: 'Flexiones',
     weighted_pullups: 'Dominadas con Lastre',
+    legs: 'Pierna',
 
     // Auth Errors
     ERR_USER_EXISTS: 'Este correo ya está registrado. Por favor, inicia sesión.',

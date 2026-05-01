@@ -23,6 +23,9 @@ export const getExerciseRewards = (type, count) => {
     coinMultiplier = 5; 
     statToUpgrade = 'dex_xp'; 
     extraStatToUpgrade = 'vig_xp'; 
+  } else if (type === 'legs') { 
+    coinMultiplier = 1; 
+    statToUpgrade = 'end_xp'; 
   }
 
   return {

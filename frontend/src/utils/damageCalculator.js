@@ -11,6 +11,7 @@ export const estimateDamage = (user, reps, type) => {
   else if (t === 'weighted_pullups') exerciseMult = 8.0;
   else if (t === 'dips') exerciseMult = 4.0;
   else if (t === 'pushups') exerciseMult = 2.0;
+  else if (t === 'legs') exerciseMult = 2.0;
 
   const glvl = parseInt(user.current_level) || 1;
   const strLvl = parseInt(user.str_lvl) || 1;

@@ -470,6 +470,7 @@ const quickLogOptions = computed(() => [
   { id: 'pushups', label: i18n.t('pushups') },
   { id: 'dips', label: i18n.t('dips') },
   { id: 'muscleups', label: i18n.t('muscleups') },
+  { id: 'legs', label: i18n.t('legs') },
 ]);
 
 const todayProgress = computed(() => {

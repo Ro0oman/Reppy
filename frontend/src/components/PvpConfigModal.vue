@@ -126,7 +126,7 @@
           <label class="text-[10px] font-black text-primary-500 uppercase tracking-[0.3em]">{{ i18n.t('pvp_allowed_exercises') }}</label>
           <div class="flex flex-wrap gap-3">
              <button 
-               v-for="ex in ['pullups', 'pushups', 'dips']" 
+               v-for="ex in ['pullups', 'pushups', 'dips', 'legs']" 
                :key="ex"
                @click="toggleExercise(ex)"
                class="px-6 py-3 rounded-2xl border flex items-center gap-3 transition-all"

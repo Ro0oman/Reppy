@@ -19,7 +19,8 @@
           ? 'bg-primary-500/15 border-primary-500/40 text-foreground'
           : 'bg-surface/10 border-white/10 text-muted/80'"
       >
-        <component :is="ex.icon" class="w-3.5 h-3.5" :class="modelValue === ex.id ? 'text-primary-500' : ''" />
+        <span v-if="typeof ex.icon === 'string'" class="text-sm">{{ ex.icon }}</span>
+        <component v-else :is="ex.icon" class="w-3.5 h-3.5" :class="modelValue === ex.id ? 'text-primary-500' : ''" />
         <span>{{ labelFor(ex.id, ex.fallbackEs, ex.fallbackEn) }}</span>
       </button>
     </div>
@@ -48,7 +49,9 @@
           : 'bg-surface/10 border-white/10 hover:border-primary-500/25 hover:bg-white/[0.03]'"
       >
         <div class="flex items-start justify-between gap-2">
+          <span v-if="typeof ex.icon === 'string'" class="text-base">{{ ex.icon }}</span>
           <component
+            v-else
             :is="ex.icon"
             class="w-4.5 h-4.5 transition-transform"
             :class="modelValue === ex.id ? 'text-primary-500 scale-110' : 'text-muted/70'"
@@ -144,6 +147,14 @@ const exercises = [
     fallbackEn: 'Weighted Pull-ups',
     hintEs: 'Maxima intensidad',
     hintEn: 'Maximum intensity',
+  },
+  {
+    id: 'legs',
+    icon: '🦵',
+    fallbackEs: 'Pierna',
+    fallbackEn: 'Legs',
+    hintEs: 'Sentadillas y tren inferior',
+    hintEn: 'Squats and lower body',
   },
 ];
 
