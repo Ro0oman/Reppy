@@ -20,16 +20,20 @@
  * @param {Object} boss Optional boss object to check for weaknesses
  * @returns {Object} { totalDamage, isCrit, magicBonus, baseDamage, weaknessBonus }
  */
-export const calculateDamage = (user, reps, type, boss = null, skipBuffs = false, deterministic = false) => {
+export const calculateDamage = (user, reps, type, boss = null, skipBuffs = false, deterministic = false, exerciseMultiplierOverride = null) => {
   // 1. Determine Exercise Multiplier (BUFFED)
   let exerciseMult = 3.0; // Base: Pullups
-  const t = type?.toLowerCase();
+  if (exerciseMultiplierOverride != null) {
+    exerciseMult = Number(exerciseMultiplierOverride);
+  } else {
+    const t = type?.toLowerCase();
   
-  if (t === 'muscleups') exerciseMult = 10.0;
-  else if (t === 'weighted_pullups') exerciseMult = 8.0;
-  else if (t === 'dips') exerciseMult = 4.0;
-  else if (t === 'pushups') exerciseMult = 2.0;
-  else if (t === 'legs') exerciseMult = 2.0;
+    if (t === 'muscleups') exerciseMult = 10.0;
+    else if (t === 'weighted_pullups') exerciseMult = 8.0;
+    else if (t === 'dips') exerciseMult = 4.0;
+    else if (t === 'pushups') exerciseMult = 2.0;
+    else if (t === 'legs') exerciseMult = 2.0;
+  }
   
   // 2. Extract Stats & Levels (Augmented user expected)
   const glvl = parseInt(user.current_level) || 1;

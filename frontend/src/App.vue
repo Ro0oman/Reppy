@@ -352,9 +352,9 @@ const navLinks = computed(() => [
 ]);
 
 const mobileNavLinks = computed(() => [
-  { id: 'dashboard', icon: LayoutDashboard, label: 'nav_dashboard', short: i18n.locale === 'es' ? 'Registrar' : 'Log' },
   { id: 'social', icon: Users, label: 'nav_social', short: i18n.locale === 'es' ? 'Social' : 'Social' },
   { id: 'inventory', icon: Package, label: 'nav_inventory', short: i18n.locale === 'es' ? 'Inventario' : 'Inventory' },
+  { id: 'dashboard', icon: LayoutDashboard, label: 'nav_dashboard', short: i18n.locale === 'es' ? 'Registrar' : 'Log' },
   { id: 'shop', icon: ShoppingBag, label: 'nav_shop', short: i18n.locale === 'es' ? 'Tienda' : 'Shop' },
   { id: 'profile', icon: User, label: 'nav_profile', short: i18n.locale === 'es' ? 'Progreso' : 'Progress' },
 ]);

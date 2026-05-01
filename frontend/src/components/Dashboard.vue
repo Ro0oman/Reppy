@@ -1,41 +1,10 @@
 <template>
   <div class="max-w-7xl mx-auto w-full px-4 space-y-4 sm:space-y-12 pb-32 pt-2 sm:pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
     <!-- 1. Mission Control Header -->
-    <header class="flex flex-col gap-3">
-      <div class="flex items-center gap-3 sm:gap-6">
-          <div class="sm:hidden shrink-0 rounded-2xl border border-primary-500/25 bg-primary-500/10 px-2.5 py-1.5">
-            <p class="text-[8px] font-black uppercase tracking-wider text-primary-500">
-              {{ i18n.t('ui_objective') }}
-            </p>
-            <p class="text-[11px] font-black text-foreground leading-none mt-0.5">
-              {{ todayProgress }}/{{ stats.dailyGoal }}
-            </p>
-          </div>
-
-          <!-- Compact Daily Progress -->
-          <div class="hidden sm:block relative shrink-0 transition-transform duration-500 hover:scale-105">
-             <RadialProgress 
-              :progress="(todayProgress / stats.dailyGoal) * 100" 
-              :size="68"
-              class="drop-shadow-[0_0_20px_rgba(255,69,0,0.1)]"
-            >
-              <div class="flex flex-col items-center">
-                 <span class="text-xl font-black tracking-tighter text-foreground italic leading-none drop-shadow-sm">
-                  {{ Math.round((todayProgress / stats.dailyGoal) * 100) }}%
-                </span>
-                <span class="text-[7px] font-black text-primary-500 uppercase tracking-widest mt-0.5">{{ i18n.t('ui_objective') }}</span>
-              </div>
-            </RadialProgress>
-          </div>
-
+    <header class="flex flex-col gap-3 items-center sm:items-start">
+      <div class="flex items-center justify-center sm:justify-start gap-3 sm:gap-6">
           <div class="min-w-0">
             <h2 class="text-2xl sm:text-4xl font-black tracking-tighter text-foreground italic uppercase leading-none drop-shadow-md">{{ i18n.t('dashboard_title') }}</h2>
-            <div class="hidden sm:flex items-center gap-2 mt-2">
-              <div class="flex items-center gap-1.5 bg-primary-500/10 px-2 py-0.5 rounded-full border border-primary-500/20">
-                <Target class="w-3 h-3 text-primary-500" />
-                <span class="text-[9px] font-black text-primary-500 uppercase tracking-widest">{{ todayProgress }} / {{ stats.dailyGoal }} {{ i18n.t('ui_reps') }}</span>
-              </div>
-            </div>
           </div>
       </div>
       <ExerciseSelector v-model="activeExercise" compact class="w-full md:hidden" />

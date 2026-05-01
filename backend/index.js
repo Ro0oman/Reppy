@@ -27,6 +27,7 @@ import testRoutes from './test.js';
 import missionsRoutes from './missions.js';
 import pushRoutes from './push.js';
 import trainingRoutes from './training.js';
+import exercisesRoutes from './exercises.js';
 import http from 'http';
 import getPusher from './pusher.js';
 import { updatePresence } from './socketManager.js';
@@ -93,6 +94,7 @@ apiRouter.use('/test', testRoutes);
 apiRouter.use('/missions', missionsRoutes);
 apiRouter.use('/push', pushRoutes);
 apiRouter.use('/training', trainingRoutes);
+apiRouter.use('/exercises', exercisesRoutes);
 
 // Pusher Auth Endpoint (Directly on app for Vercel compatibility)
 app.post('/api/pusher/auth', async (req, res) => {
@@ -512,10 +514,36 @@ app.get('/', (req, res) => {
   res.json({ message: 'Reppy API is running' });
 });
 
+async function ensureAllTrainingExercisesExist() {
+  try {
+    const blocksRes = await query('SELECT DISTINCT exercise_type FROM training_plan_blocks WHERE exercise_type IS NOT NULL');
+    const existingExercisesRes = await query('SELECT slug FROM exercises');
+    const existingSlugs = new Set(existingExercisesRes.rows.map(r => r.slug));
+
+    for (const row of blocksRes.rows) {
+      const slug = row.exercise_type;
+      if (!existingSlugs.has(slug)) {
+        console.log(`[Startup check] Inserting missing exercise for training plan: ${slug}`);
+        await query(
+          `INSERT INTO exercises (slug, title_key, description_key, unit, difficulty_multiplier, coin_multiplier, is_active)
+           VALUES ($1, $2, $3, 'reps', 1.0, 1.0, TRUE)
+           ON CONFLICT (slug) DO NOTHING`,
+          [slug, slug, `Ejercicio de entrenamiento: ${slug}`]
+        );
+      }
+    }
+    console.log('[Startup check] All distinct exercises used in training plans verified/created.');
+  } catch (err) {
+    console.error('[Startup check] Failed to check training exercises:', err);
+  }
+}
+
 // Start server only in development or if not imported as a module
 if (process.env.NODE_ENV !== 'production' && process.env.VERCEL !== '1') {
-  server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  ensureAllTrainingExercisesExist().then(() => {
+    server.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
   });
 }
 

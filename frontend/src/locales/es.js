@@ -1319,5 +1319,15 @@ export default {
     notif_push_allow: 'ACTIVAR NOTIFICACIONES',
      notif_push_later: 'QUIZÁS MÁS TARDE',
      notif_push_never: 'No, nunca',
+
+     //Modal de favoritos 
+     ui_edit_favorites: 'Editar Favoritos',
+     ex_legs: 'Pierna',
+     ex_arms: 'Brazos',
+     ex_cardio: 'Cardio',
+     ex_back: 'Espalda',
+     ex_core: 'Core',
+     ex_shoulders: 'Hombros',
+     ex_chest: 'Pecho',
 };
 

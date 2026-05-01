@@ -68,6 +68,7 @@ async function getActivePlanBundle(userId) {
   const activeResult = await query(
     `SELECT
        uap.*,
+       TO_CHAR(uap.last_completed_date, 'YYYY-MM-DD') AS last_completed_date_str,
        tp.slug,
        tp.title_key AS plan_title_key,
        tp.description_key,
@@ -119,6 +120,8 @@ async function getActivePlanBundle(userId) {
       equipment: row.equipment || {},
       status: row.status,
       startedAt: row.started_at,
+      lastCompletedDateStr: row.last_completed_date_str,
+      lastCompletedDay: Number(row.last_completed_day || 0),
     },
     todayWorkout: row.plan_day_id ? shapeWorkout(row, blocksResult.rows) : null,
   };
@@ -126,6 +129,14 @@ async function getActivePlanBundle(userId) {
 
 async function applyGuidedRepLog(client, userId, exerciseType, count) {
   if (!count || count <= 0) return { damage: 0, coins: 0 };
+
+  const exRes = await client.query('SELECT difficulty_multiplier, coin_multiplier FROM exercises WHERE slug = $1', [exerciseType]);
+  let diffMult = null;
+  let coinMult = null;
+  if (exRes.rows.length > 0) {
+    diffMult = Number(exRes.rows[0].difficulty_multiplier);
+    coinMult = Number(exRes.rows[0].coin_multiplier);
+  }
 
   const userResult = await client.query(`
     SELECT u.*,
@@ -142,7 +153,7 @@ async function applyGuidedRepLog(client, userId, exerciseType, count) {
   if (userResult.rows.length === 0) throw new Error('User not found');
 
   const augmentedUser = augmentUserWithLevels(userResult.rows[0]);
-  const dmgResult = calculateDamage(augmentedUser, count, exerciseType);
+  const dmgResult = calculateDamage(augmentedUser, count, exerciseType, null, false, false, diffMult);
   const date = getLocalDateString();
 
   const repResult = await client.query(
@@ -156,7 +167,13 @@ async function applyGuidedRepLog(client, userId, exerciseType, count) {
     [userId, count, date, exerciseType, 0, dmgResult.isCrit]
   );
 
-  const { coins: earnedCoins } = getExerciseRewards(exerciseType, count);
+  let earnedCoins = 0;
+  if (coinMult != null) {
+    earnedCoins = Math.round(count * coinMult);
+  } else {
+    earnedCoins = getExerciseRewards(exerciseType, count).coins;
+  }
+
   await client.query(
     `UPDATE users SET reppy_coins = GREATEST(0, reppy_coins + $1) WHERE id = $2`,
     [earnedCoins, userId]
@@ -311,8 +328,30 @@ router.get('/me', authenticate, async (req, res) => {
     const bundle = await getActivePlanBundle(req.user.id);
     const onboardingCompleted = !!user.goal_onboarding_completed;
 
+    const todayStr = getLocalDateString();
+    const completedToday = !!(bundle.activePlan && bundle.activePlan.lastCompletedDateStr === todayStr);
+
+    const isTrainingLockedToday = completedToday;
+    let lockedUntilDate = null;
+    let todayWorkout = bundle.todayWorkout;
+    let nextWorkoutPreview = null;
+
+    if (completedToday) {
+      nextWorkoutPreview = bundle.todayWorkout;
+      todayWorkout = null;
+
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      lockedUntilDate = tomorrow.toISOString().substring(0, 10);
+    }
+
     res.json({
-      ...bundle,
+      activePlan: bundle.activePlan,
+      todayWorkout,
+      isTrainingLockedToday,
+      lockedUntilDate,
+      completedToday,
+      nextWorkoutPreview,
       onboardingMode: user.onboarding_mode || null,
       onboardingCompleted,
       canShowOnboarding: !onboardingCompleted && Number(user.total_reps || 0) <= 20,
@@ -428,6 +467,21 @@ router.post('/sessions/start', authenticate, async (req, res) => {
   }
 
   try {
+    const checkCompletedToday = await query(
+      `SELECT TO_CHAR(last_completed_date, 'YYYY-MM-DD') AS last_completed_date_str 
+       FROM user_active_plans
+       WHERE user_id = $1 AND status = 'active'`,
+      [req.user.id]
+    );
+
+    if (checkCompletedToday.rows.length > 0) {
+      const row = checkCompletedToday.rows[0];
+      const todayStr = getLocalDateString();
+      if (row.last_completed_date_str === todayStr) {
+        return res.status(403).json({ message: 'Training locked until tomorrow' });
+      }
+    }
+
     const validation = await query(
       `SELECT tp.id AS plan_id, tpd.id AS plan_day_id
        FROM user_active_plans uap
@@ -579,6 +633,69 @@ router.post('/sessions/:id/complete', authenticate, async (req, res) => {
            completed_at = CURRENT_TIMESTAMP
        WHERE id = $6`,
       [totalReps, totalDamage, session.reward_xp || 0, session.reward_coins || 0, completionRate, sessionId]
+    );
+
+    const titleMap = {
+      'plan_first_pullup_title': 'Primera Dominada',
+      'plan_five_pullups_title': '5 Dominadas',
+      'plan_ten_pullups_title': '10 Dominadas',
+      'plan_twenty_pushups_title': '20 Flexiones'
+    };
+    let planName = titleMap[session.plan_title_key] || session.plan_title_key || 'Plan de entrenamiento';
+
+    const exerciseSummaryParts = [];
+    const blockLogsMap = new Map();
+    for (const log of logs) {
+      if (!blockLogsMap.has(log.blockId)) {
+        blockLogsMap.set(log.blockId, []);
+      }
+      blockLogsMap.get(log.blockId).push(log);
+    }
+
+    for (const [blockId, blockLogs] of blockLogsMap.entries()) {
+      const block = blocksById.get(blockId);
+      if (!block) continue;
+      const slug = blockLogs[0].exerciseType || block.exercise_type || 'pullups';
+
+      const exRes = await client.query('SELECT title_key, unit FROM exercises WHERE slug = $1', [slug]);
+      let exerciseName = slug;
+      let unit = '';
+      if (exRes.rows.length > 0) {
+        exerciseName = exRes.rows[0].title_key.toLowerCase();
+        if (exRes.rows[0].unit === 'seconds') unit = 's';
+      }
+      const setsCount = blockLogs.length;
+      const reps = blockLogs[0]?.actualReps || block.target_reps || 0;
+      exerciseSummaryParts.push(`${setsCount}x${reps}${unit} ${exerciseName}`);
+    }
+
+    const exerciseSummary = exerciseSummaryParts.join(' · ');
+    const remainingDays = Math.max(0, Number(session.duration_days || 0) - Number(session.current_day || 1));
+    const postTitle = `Día ${session.current_day}/${session.duration_days} completado · ${planName}`;
+    const postDesc = `Quedan ${remainingDays} días · ${exerciseSummary}`;
+
+    const todayStr = getLocalDateString();
+    await client.query(
+      `INSERT INTO daily_summaries (user_id, date, title, description)
+       VALUES ($1, $2, $3, $4)
+       ON CONFLICT (user_id, date) 
+       DO UPDATE SET
+         title = COALESCE(daily_summaries.title, EXCLUDED.title),
+         description = CASE
+           WHEN daily_summaries.description IS NULL OR daily_summaries.description = ''
+           THEN EXCLUDED.description
+           ELSE daily_summaries.description || E'\n\n' || EXCLUDED.description
+         END`,
+      [req.user.id, todayStr, postTitle, postDesc]
+    );
+
+    // Save daily lock
+    await client.query(
+      `UPDATE user_active_plans
+       SET last_completed_date = CURRENT_DATE,
+           last_completed_day = current_day
+       WHERE user_id = $1 AND plan_id = $2 AND status = 'active'`,
+      [req.user.id, session.plan_id]
     );
 
     const nextDay = Number(session.current_day || 1) + 1;

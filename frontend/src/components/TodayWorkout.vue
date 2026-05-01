@@ -50,7 +50,10 @@
         <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div class="min-w-0">
             <p class="text-[9px] font-black uppercase tracking-widest text-primary-500">{{ block.blockType }}</p>
-            <h4 class="mt-1 text-lg font-black text-foreground">{{ block.title }}</h4>
+            <h4 class="mt-1 text-lg font-black text-foreground cursor-pointer hover:text-primary-500 transition flex items-center gap-2 select-none" @click="openExerciseDetail(block.exerciseType || 'pullups')">
+              {{ block.title }}
+              <Info class="h-3.5 w-3.5 opacity-40 hover:opacity-100 transition" />
+            </h4>
             <p class="mt-1 text-sm font-semibold leading-relaxed text-muted/70">{{ block.instructions }}</p>
           </div>
           <div class="flex shrink-0 items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted">
@@ -79,7 +82,7 @@
               <button type="button" class="icon-btn" @click="increment(set)" aria-label="Sumar rep">
                 <Plus class="h-4 w-4" />
               </button>
-              <button
+               <button
                 type="button"
                 class="rounded-xl px-3 py-2 text-[10px] font-black uppercase tracking-widest transition active:scale-95"
                 :class="set.completed ? 'bg-emerald-500 text-white' : 'bg-white/10 text-foreground hover:bg-white/15'"
@@ -87,8 +90,14 @@
               >
                 {{ set.completed ? 'OK' : 'Hecho' }}
               </button>
-              <button type="button" class="icon-btn" @click="markMissed(set)" aria-label="No pude">
-                <X class="h-4 w-4" />
+              <button
+                v-if="set.timerActive"
+                type="button"
+                class="rounded-xl px-3 py-2 text-[10px] font-black uppercase tracking-widest bg-amber-500/20 text-amber-500 hover:bg-amber-500/30 border border-amber-500/30 transition active:scale-95 flex items-center gap-1 select-none"
+                @click="cancelTimer(set)"
+              >
+                <Clock class="h-3.5 w-3.5 animate-pulse" />
+                {{ set.restTimer }}s
               </button>
             </div>
           </div>
@@ -111,12 +120,20 @@
         </button>
       </div>
     </div>
+
+    <!-- Exercise Detail Modal -->
+    <ExerciseDetailModal
+      :is-open="detailModalOpen"
+      :exercise-slug="selectedExerciseSlug"
+      @close="detailModalOpen = false"
+    />
   </section>
 </template>
 
 <script setup>
 import { computed, ref, watch } from 'vue';
-import { Clock, Coins, Loader2, Minus, Plus, Sparkles, TimerReset, X } from 'lucide-vue-next';
+import { Clock, Coins, Loader2, Minus, Plus, Sparkles, TimerReset, X, Info } from 'lucide-vue-next';
+import ExerciseDetailModal from './ExerciseDetailModal.vue';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
 import { useNotificationStore } from '../stores/notification';
@@ -135,6 +152,13 @@ const trainingStore = useTrainingStore();
 
 const session = ref(null);
 const setLogs = ref([]);
+const detailModalOpen = ref(false);
+const selectedExerciseSlug = ref('');
+
+const openExerciseDetail = (slug) => {
+  selectedExerciseSlug.value = slug;
+  detailModalOpen.value = true;
+};
 const loading = ref(false);
 
 const createSetLogs = () => {
@@ -147,6 +171,10 @@ const createSetLogs = () => {
       targetReps: Number(block.targetReps || 0),
       actualReps: Number(block.targetReps || 0),
       completed: false,
+      restSeconds: Number(block.restSeconds || 60),
+      restTimer: 0,
+      timerActive: false,
+      intervalId: null
     }));
   });
 };
@@ -174,14 +202,54 @@ const decrement = (set) => {
   if (set.actualReps === 0) set.completed = false;
 };
 
+import { useAudio } from '../composables/useAudio';
+
+const clearAllTimers = () => {
+  setLogs.value.forEach(s => {
+    s.restTimer = 0;
+    s.timerActive = false;
+    if (s.intervalId) {
+      clearInterval(s.intervalId);
+      s.intervalId = null;
+    }
+  });
+};
+
 const markDone = (set) => {
   set.completed = true;
   if (set.actualReps === 0) set.actualReps = set.targetReps;
+
+  clearAllTimers();
+
+  set.restTimer = set.restSeconds;
+  set.timerActive = true;
+  if (set.intervalId) clearInterval(set.intervalId);
+
+  set.intervalId = setInterval(() => {
+    if (set.restTimer > 1) {
+      set.restTimer -= 1;
+    } else {
+      set.restTimer = 0;
+      set.timerActive = false;
+      clearInterval(set.intervalId);
+      set.intervalId = null;
+      try {
+        const { playClickBlip } = useAudio();
+        playClickBlip();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, 1000);
 };
 
-const markMissed = (set) => {
-  set.completed = false;
-  set.actualReps = 0;
+const cancelTimer = (set) => {
+  set.restTimer = 0;
+  set.timerActive = false;
+  if (set.intervalId) {
+    clearInterval(set.intervalId);
+    set.intervalId = null;
+  }
 };
 
 const startWorkout = async () => {
@@ -197,6 +265,8 @@ const startWorkout = async () => {
 
 const finishWorkout = async () => {
   if (!session.value?.id) return;
+
+  clearAllTimers();
 
   loading.value = true;
   try {
