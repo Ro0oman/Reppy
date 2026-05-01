@@ -4,7 +4,7 @@
       <div
         v-if="show"
         class="fixed inset-0 z-[120] flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-md px-3 py-4"
-        @click.self="$emit('close')"
+        @click.self="dismissOnboarding"
       >
         <div class="w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-[1.5rem] border border-white/10 bg-deep-abyss shadow-2xl">
           <div class="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-white/10 bg-deep-abyss/95 px-4 py-4 backdrop-blur-xl sm:px-6">
@@ -17,7 +17,8 @@
             <button
               type="button"
               class="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[0.04] text-muted transition hover:text-foreground"
-              @click="$emit('close')"
+              :disabled="loading"
+              @click="dismissOnboarding"
               aria-label="Cerrar"
             >
               <X class="h-4 w-4" />
@@ -182,6 +183,17 @@ const chooseFree = async () => {
   } finally {
     loading.value = false;
   }
+};
+
+const dismissOnboarding = async () => {
+  if (loading.value) return;
+
+  if (trainingStore.canShowOnboarding && !trainingStore.activePlan) {
+    await chooseFree();
+    return;
+  }
+
+  emit('close');
 };
 
 const selectPlan = async () => {
