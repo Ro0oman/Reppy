@@ -1,14 +1,22 @@
 <template>
-  <div class="max-w-7xl mx-auto w-full px-4 space-y-12 pb-32 pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+  <div class="max-w-7xl mx-auto w-full px-4 space-y-4 sm:space-y-12 pb-32 pt-2 sm:pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
     <!-- 1. Mission Control Header -->
-    <header class="flex flex-col gap-8">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div class="flex items-center gap-6">
+    <header class="flex flex-col gap-3">
+      <div class="flex items-center gap-3 sm:gap-6">
+          <div class="sm:hidden shrink-0 rounded-2xl border border-primary-500/25 bg-primary-500/10 px-2.5 py-1.5">
+            <p class="text-[8px] font-black uppercase tracking-wider text-primary-500">
+              {{ i18n.t('ui_objective') }}
+            </p>
+            <p class="text-[11px] font-black text-foreground leading-none mt-0.5">
+              {{ todayProgress }}/{{ stats.dailyGoal }}
+            </p>
+          </div>
+
           <!-- Compact Daily Progress -->
-          <div class="relative shrink-0 transition-transform duration-500 hover:scale-105">
+          <div class="hidden sm:block relative shrink-0 transition-transform duration-500 hover:scale-105">
              <RadialProgress 
               :progress="(todayProgress / stats.dailyGoal) * 100" 
-              :size="80"
+              :size="68"
               class="drop-shadow-[0_0_20px_rgba(255,69,0,0.1)]"
             >
               <div class="flex flex-col items-center">
@@ -20,29 +28,48 @@
             </RadialProgress>
           </div>
 
-          <div>
-            <h2 class="text-4xl font-black tracking-tighter text-foreground italic uppercase leading-none drop-shadow-md">{{ i18n.t('dashboard_title') }}</h2>
-            <div class="flex items-center gap-2 mt-2">
+          <div class="min-w-0">
+            <h2 class="text-2xl sm:text-4xl font-black tracking-tighter text-foreground italic uppercase leading-none drop-shadow-md">{{ i18n.t('dashboard_title') }}</h2>
+            <div class="hidden sm:flex items-center gap-2 mt-2">
               <div class="flex items-center gap-1.5 bg-primary-500/10 px-2 py-0.5 rounded-full border border-primary-500/20">
                 <Target class="w-3 h-3 text-primary-500" />
                 <span class="text-[9px] font-black text-primary-500 uppercase tracking-widest">{{ todayProgress }} / {{ stats.dailyGoal }} {{ i18n.t('ui_reps') }}</span>
               </div>
             </div>
           </div>
-        </div>
-        <ExerciseSelector v-model="activeExercise" class="w-full md:w-auto" />
       </div>
+      <ExerciseSelector v-model="activeExercise" compact class="w-full md:hidden" />
     </header>
 
     <!-- 2. The Hero: Active Session -->
-    <section class="max-w-4xl mx-auto w-full">
-      <div v-if="activeExercise === 'all'" class="bg-surface/10 backdrop-blur-2xl border border-dashed border-white/10 rounded-[3rem] flex flex-col items-center justify-center text-center p-20 opacity-40">
-        <Globe class="w-16 h-16 text-muted mb-6" />
-        <h3 class="text-xl font-black uppercase tracking-tighter">{{ i18n.t('dash_global_view_active') }}</h3>
-        <p class="text-xs text-muted/60 max-w-[200px] mx-auto mt-2 italic">Select a specific protocol to log data</p>
+    <section
+      ref="repsInputSection"
+      class="max-w-4xl mx-auto w-full transition-all duration-500 rounded-[2.5rem]"
+      :class="highlightRepsInput ? 'ring-2 ring-primary-500/60 shadow-[0_0_30px_rgba(255,69,0,0.25)]' : ''"
+    >
+      <div v-if="activeExercise === 'all'" class="bg-surface/10 backdrop-blur-2xl border border-dashed border-white/10 rounded-[3rem] flex flex-col items-center justify-center text-center p-8 sm:p-12">
+        <Globe class="w-12 h-12 text-muted mb-4" />
+        <h3 class="text-xl font-black uppercase tracking-tighter">
+          {{ i18n.locale === 'es' ? 'Modo resumen activo' : 'Overview mode active' }}
+        </h3>
+        <p class="text-xs text-muted/60 max-w-[340px] mx-auto mt-2 italic">
+          {{ i18n.locale === 'es' ? 'Elige un ejercicio para registrar reps ahora.' : 'Pick an exercise below to log reps now.' }}
+        </p>
+        <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-xl">
+          <button
+            v-for="option in quickLogOptions"
+            :key="option.id"
+            @click="activeExercise = option.id"
+            class="h-10 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-primary-500/10 hover:border-primary-500/30 text-[10px] font-black uppercase tracking-wide text-foreground/90 transition-all active:scale-[0.98]"
+          >
+            {{ option.label }}
+          </button>
+        </div>
       </div>
       <RepsInput v-else :exercise-type="activeExercise" @updated="fetchData" class="w-full" />
     </section>
+
+    <ExerciseSelector v-model="activeExercise" class="w-full hidden md:block" />
 
     <!-- 3. Global Intel & Metrics -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -255,11 +282,17 @@
       :show="showRPGModal"
       @close="handleCloseRPGModal"
     />
+    <QuickStartOnboardingModal
+      :show="showQuickStartModal"
+      :locale="i18n.locale"
+      @close="handleCloseQuickStartModal"
+      @start="handleStartQuickStart"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed, reactive, watch } from 'vue';
+import { ref, onMounted, onUnmounted, computed, reactive, watch, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import {
@@ -276,6 +309,7 @@ import BossHealth from './BossHealth.vue';
 import RadialProgress from './RadialProgress.vue';
 import RPGReleaseModal from './RPGReleaseModal.vue';
 import LivePresence from './LivePresence.vue';
+import QuickStartOnboardingModal from './QuickStartOnboardingModal.vue';
 import { getLocalDateString } from '../utils/dateUtils.js';
 
 const emit = defineEmits(['viewProfile', 'start']);
@@ -295,17 +329,68 @@ const bossHealthRef = ref(null);
 const isLoading = ref(false);
 const activeYear = ref(2026);
 const showRPGModal = ref(false);
+const showQuickStartModal = ref(false);
 const activeTab = ref('heatmap');
 const unclaimedMissions = ref(0);
+const highlightRepsInput = ref(false);
+const repsInputSection = ref(null);
+const quickStartEvaluated = ref(false);
+const suppressRPGModal = ref(false);
+const QUICKSTART_SEEN_PREFIX = 'reppy_quickstart_seen_v1';
 
 // Scroll lock when modals are active
-watch(showRPGModal, (rpgModal) => {
-  if (rpgModal) {
+watch([showRPGModal, showQuickStartModal], ([rpgModal, quickStartModal]) => {
+  if (rpgModal || quickStartModal) {
     document.body.style.overflow = 'hidden';
   } else {
     document.body.style.overflow = '';
   }
 });
+
+const getQuickStartStorageKey = () => `${QUICKSTART_SEEN_PREFIX}:${authStore.user?.id || 'guest'}`;
+
+const hasSeenQuickStart = () => {
+  if (typeof window === 'undefined') return true;
+  return localStorage.getItem(getQuickStartStorageKey()) === '1';
+};
+
+const markQuickStartSeen = () => {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(getQuickStartStorageKey(), '1');
+};
+
+const shouldShowQuickStart = (totalRepsCount) => {
+  if (!authStore.user) return false;
+  if (hasSeenQuickStart()) return false;
+  return Number(totalRepsCount || 0) <= 20;
+};
+
+const scrollToRepsInput = async () => {
+  if (activeExercise.value === 'all') {
+    activeExercise.value = 'pullups';
+  }
+  await nextTick();
+  repsInputSection.value?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  highlightRepsInput.value = true;
+  setTimeout(() => {
+    highlightRepsInput.value = false;
+  }, 1500);
+};
+
+const handleCloseQuickStartModal = () => {
+  markQuickStartSeen();
+  suppressRPGModal.value = true;
+  showRPGModal.value = false;
+  showQuickStartModal.value = false;
+};
+
+const handleStartQuickStart = async () => {
+  markQuickStartSeen();
+  suppressRPGModal.value = true;
+  showRPGModal.value = false;
+  showQuickStartModal.value = false;
+  await scrollToRepsInput();
+};
 
 const stats = reactive({
   streak: 0,
@@ -320,6 +405,13 @@ const stats = reactive({
 const activeExerciseLabel = computed(() => {
   return i18n.t(activeExercise.value);
 });
+
+const quickLogOptions = computed(() => [
+  { id: 'pullups', label: i18n.t('pullups') },
+  { id: 'pushups', label: i18n.t('pushups') },
+  { id: 'dips', label: i18n.t('dips') },
+  { id: 'muscleups', label: i18n.t('muscleups') },
+]);
 
 const todayProgress = computed(() => {
   const today = getLocalDateString();
@@ -420,8 +512,16 @@ const fetchData = async () => {
 
     if (bossHealthRef.value) bossHealthRef.value.refresh();
 
-    // Check for update modals
-    if (authStore.user && !authStore.user.has_seen_rpg_release) {
+    if (!quickStartEvaluated.value) {
+      quickStartEvaluated.value = true;
+      if (shouldShowQuickStart(statsRes.data.totalReps)) {
+        showQuickStartModal.value = true;
+        suppressRPGModal.value = true;
+      }
+    }
+
+    // Check for update modal only if quick-start onboarding was not shown
+    if (!suppressRPGModal.value && authStore.user && !authStore.user.has_seen_rpg_release) {
       showRPGModal.value = true;
     }
   } catch (error) {

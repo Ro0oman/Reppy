@@ -1,91 +1,124 @@
 <template>
   <div class="relative overflow-hidden group transition-all duration-500">
-    <!-- Hero Action Card -->
-    <div class="bg-surface/10 backdrop-blur-2xl border border-white/5 rounded-[2.5rem] p-8 sm:p-10 relative overflow-hidden transition-all hover:bg-surface/20">
-      <!-- Decorative BG elements -->
+    <div class="bg-surface/10 backdrop-blur-2xl border border-white/5 rounded-[2.5rem] p-3 sm:p-8 relative overflow-hidden transition-all hover:bg-surface/20">
       <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary-500/5 rounded-full blur-[100px] pointer-events-none group-hover:bg-primary-500/10 transition-all duration-700"></div>
-      
-      <div class="relative z-10 flex flex-col gap-10">
-        <!-- Header -->
-        <div class="flex items-center justify-between">
-          <div class="flex flex-col">
-            <h3 class="text-xs font-black uppercase tracking-[0.2em] text-muted/40 mb-1">{{ activeLabel }}</h3>
-            <div class="flex items-center gap-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
-              <p class="text-[10px] font-bold text-muted/60 tracking-tight uppercase">{{ i18n.t('rep_protocol_active', { type: activeLabel }) }}</p>
-            </div>
-          </div>
-          <div v-if="damagePreview.total > 0" class="flex flex-col items-end text-right">
-            <span class="text-[10px] font-black text-muted/40 uppercase tracking-widest">{{ i18n.t('rep_estimated_impact') || 'ESTIMATED_IMPACT' }}</span>
-            <div class="flex items-center gap-2">
-              <span class="text-xl font-black italic tracking-tighter text-white">{{ damagePreview.total }}</span>
-              <Sword class="w-3.5 h-3.5 text-primary-500 animate-pulse" />
-            </div>
-            <p class="text-[8px] font-bold text-muted/40 uppercase tracking-tighter mt-0.5">
-              {{ damagePreview.base }} BASE + <span class="text-primary-400">{{ damagePreview.gear }} GEAR</span>
-            </p>
-          </div>
-          <div v-else class="p-3 bg-primary-500/10 rounded-xl border border-primary-500/20">
-            <Zap class="w-4 h-4 text-primary-500" />
-          </div>
-        </div>
-        
-        <!-- Quick Add Section -->
-        <div class="grid grid-cols-3 gap-4">
-          <button 
-            v-for="val in [1, 5, 10]" :key="val"
-            @click="addReps(val)"
-            :disabled="loading"
-            class="group relative py-6 bg-white/[0.02] border border-white/5 rounded-2xl transition-all hover:border-primary-500/30 hover:bg-primary-500/[0.05] active:scale-95 disabled:opacity-20"
-          >
-            <span class="text-2xl font-black italic tracking-tighter text-foreground group-hover:text-primary-400 transition-colors">+{{ val }}</span>
-          </button>
-        </div>
 
-        <!-- Manual Input Section -->
-        <div class="space-y-4">
-          <div class="flex gap-3">
-            <div class="relative flex-1 group/input">
-              <input 
-                v-model.number="customReps"
-                type="number"
-                :placeholder="i18n.locale === 'es' ? 'Personalizado' : 'Custom'"
-                class="w-full bg-white/[0.02] border border-white/5 rounded-2xl px-6 py-5 text-foreground font-bold focus:outline-none focus:border-primary-500/30 transition-all text-lg placeholder:text-muted/20"
-              />
-              <div v-if="exerciseType === 'weighted_pullups'" class="absolute right-6 top-1/2 -translate-y-1/2">
-                <span class="text-[9px] font-black text-accent tracking-widest">+WEIGHT</span>
+      <div class="relative z-10 flex flex-col gap-4 sm:gap-6">
+        <header class="space-y-1.5">
+          <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted/40">
+            {{ activeLabel }}
+          </p>
+          <div class="flex items-center justify-between gap-3">
+            <h3 class="text-xl sm:text-2xl font-black tracking-tight text-foreground leading-none">
+              {{ uiText.title }}
+            </h3>
+            <div v-if="damagePreview.total > 0" class="shrink-0 text-right">
+              <p class="text-[8px] font-black uppercase tracking-wider text-muted/50">
+                {{ uiText.impact }}
+              </p>
+              <div class="mt-0.5 flex items-center justify-end gap-1">
+                <span class="text-base sm:text-xl font-black italic tracking-tight text-foreground">{{ damagePreview.total }}</span>
+                <Sword class="w-3.5 h-3.5 text-primary-500 animate-pulse" />
               </div>
             </div>
-            <button 
-              @click="addReps(customReps)"
-              :disabled="!customReps || loading"
-              class="w-20 sm:w-24 bg-primary-500 hover:bg-primary-400 text-white rounded-2xl transition-all active:scale-95 flex items-center justify-center disabled:opacity-20 disabled:grayscale"
+            <div v-else class="p-2 bg-primary-500/10 rounded-xl border border-primary-500/20 shrink-0">
+              <Zap class="w-4 h-4 text-primary-500" />
+            </div>
+          </div>
+          <p class="text-[10px] sm:text-xs text-muted/70">
+            {{ uiText.subtitle }}
+          </p>
+        </header>
+
+        <section class="space-y-2">
+          <p class="text-[10px] font-black uppercase tracking-wider text-muted/50">{{ uiText.quickPresets }}</p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <button
+              v-for="preset in quickPresets"
+              :key="preset"
+              @click="setReps(preset)"
+              :disabled="loading"
+              class="touch-action-manipulation h-12 rounded-xl border text-base font-black transition-all active:scale-95"
+              :class="selectedReps === preset ? 'bg-primary-500 text-white border-primary-400 shadow-[0_0_18px_rgba(255,69,0,0.35)]' : 'bg-white/[0.02] border-white/10 text-foreground hover:border-primary-500/40'"
             >
-              <Check v-if="!loading" class="w-6 h-6" />
-              <div v-else class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              {{ preset }}
             </button>
           </div>
+        </section>
 
-          <!-- Weight Input (Expanded only when needed) -->
-          <transition 
-            enter-active-class="transition duration-300 ease-out" 
-            enter-from-class="transform -translate-y-2 opacity-0" 
-            enter-to-class="transform translate-y-0 opacity-100"
-            leave-active-class="transition duration-200 ease-in"
-            leave-from-class="transform translate-y-0 opacity-100"
-            leave-to-class="transform -translate-y-2 opacity-0"
-          >
-            <div v-if="exerciseType === 'weighted_pullups'" class="relative">
-              <input 
+        <section class="rounded-2xl border border-white/10 bg-black/10 p-2.5 sm:p-4">
+          <p class="text-[10px] font-black uppercase tracking-wider text-muted/50">{{ uiText.repsLabel }}</p>
+          <div class="mt-2 grid grid-cols-[3rem_minmax(0,1fr)_3rem] items-center gap-2">
+            <button
+              @click="decrementReps"
+              :disabled="loading || selectedReps <= 1"
+              class="touch-action-manipulation h-12 w-12 rounded-xl border border-white/10 bg-white/[0.04] text-foreground font-black text-2xl leading-none active:scale-95 disabled:opacity-30"
+              aria-label="Decrease reps"
+            >
+              <Minus class="w-5 h-5 mx-auto" />
+            </button>
+            <input
+              v-model.number="selectedReps"
+              type="number"
+              min="1"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              class="h-12 flex-1 rounded-xl border border-white/10 bg-white/[0.02] px-4 text-center text-2xl font-black italic tracking-tight text-foreground focus:outline-none focus:border-primary-500/40"
+            />
+            <button
+              @click="incrementReps"
+              :disabled="loading"
+              class="touch-action-manipulation h-12 w-12 rounded-xl border border-white/10 bg-white/[0.04] text-foreground font-black text-2xl leading-none active:scale-95 disabled:opacity-30"
+              aria-label="Increase reps"
+            >
+              <Plus class="w-5 h-5 mx-auto" />
+            </button>
+          </div>
+        </section>
+
+        <transition
+          enter-active-class="transition duration-300 ease-out"
+          enter-from-class="transform -translate-y-2 opacity-0"
+          enter-to-class="transform translate-y-0 opacity-100"
+          leave-active-class="transition duration-200 ease-in"
+          leave-from-class="transform translate-y-0 opacity-100"
+          leave-to-class="transform -translate-y-2 opacity-0"
+        >
+          <section v-if="exerciseType === 'weighted_pullups'" class="rounded-2xl border border-accent/20 bg-accent/5 p-2.5 sm:p-4">
+            <p class="text-[10px] font-black uppercase tracking-wider text-accent/80">{{ uiText.extraWeight }}</p>
+            <div class="mt-2 relative">
+              <input
                 v-model.number="addedWeight"
                 type="number"
-                placeholder="0.0"
-                class="w-full bg-accent/5 border border-accent/10 rounded-xl px-4 py-3 text-accent font-bold focus:outline-none focus:border-accent/30 transition-all text-sm"
+                min="0"
+                step="0.5"
+                inputmode="decimal"
+                placeholder="0"
+                class="h-11 w-full rounded-xl border border-accent/20 bg-black/10 px-4 pr-12 text-base font-black text-accent focus:outline-none focus:border-accent/40"
               />
-              <div class="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-accent/40 tracking-widest">KG</div>
+              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-accent/70">KG</span>
             </div>
-          </transition>
-        </div>
+          </section>
+        </transition>
+
+        <footer class="space-y-2 pb-[calc(0.25rem+env(safe-area-inset-bottom))]">
+          <button
+            @click="submitReps"
+            :disabled="!canSubmit"
+            class="touch-action-manipulation h-12 w-full rounded-xl bg-primary-500 hover:bg-primary-400 disabled:opacity-30 disabled:grayscale text-white font-black uppercase tracking-wider text-sm transition-all active:scale-[0.99] flex items-center justify-center gap-2"
+          >
+            <Check v-if="!loading" class="w-4.5 h-4.5" />
+            <div v-else class="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+            <span>{{ ctaText }}</span>
+          </button>
+          <button
+            @click="resetReps"
+            :disabled="loading"
+            class="touch-action-manipulation h-10 w-full rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] text-[11px] font-black uppercase tracking-wider text-muted transition-all disabled:opacity-30"
+          >
+            {{ uiText.reset }}
+          </button>
+        </footer>
       </div>
     </div>
   </div>
@@ -94,7 +127,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import axios from 'axios';
-import { Zap, Check, Sword } from 'lucide-vue-next';
+import { Zap, Check, Sword, Plus, Minus } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
 import { useNotificationStore } from '../stores/notification';
@@ -115,8 +148,36 @@ const props = defineProps({
 const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
 const emit = defineEmits(['updated']);
-const customReps = ref(null);
+const selectedReps = ref(10);
 const addedWeight = ref(null);
+const quickPresets = [1, 5, 10, 20];
+
+const isEs = computed(() => i18n.locale !== 'en');
+
+const uiText = computed(() => {
+  if (isEs.value) {
+    return {
+      title: 'Registra tus reps',
+      subtitle: 'Rapido, claro y pensado para movil',
+      impact: 'Impacto estimado',
+      quickPresets: 'Presets rapidos',
+      repsLabel: 'Repeticiones',
+      extraWeight: 'Lastre adicional',
+      reset: 'Resetear a 10 reps',
+      cta: 'Registrar',
+    };
+  }
+  return {
+    title: 'Log your reps',
+    subtitle: 'Fast, clear and mobile-first',
+    impact: 'Estimated impact',
+    quickPresets: 'Quick presets',
+    repsLabel: 'Repetitions',
+    extraWeight: 'Extra weight',
+    reset: 'Reset to 10 reps',
+    cta: 'Log',
+  };
+});
 
 const activeLabel = computed(() => {
   return i18n.t(props.exerciseType);
@@ -125,9 +186,36 @@ const activeLabel = computed(() => {
 const loading = ref(false);
 
 const damagePreview = computed(() => {
-  const reps = customReps.value || 0;
+  const reps = Number(selectedReps.value) || 0;
   return estimateDamage(authStore.user, reps, props.exerciseType);
 });
+
+const normalizedReps = computed(() => {
+  const parsed = Number(selectedReps.value);
+  if (!Number.isFinite(parsed)) return 0;
+  return Math.max(0, Math.floor(parsed));
+});
+
+const canSubmit = computed(() => normalizedReps.value > 0 && !loading.value);
+
+const ctaText = computed(() => `${uiText.value.cta} ${Math.max(1, normalizedReps.value)} ${i18n.t('ui_reps')}`);
+
+const setReps = (value) => {
+  selectedReps.value = value;
+};
+
+const incrementReps = () => {
+  selectedReps.value = Math.max(1, normalizedReps.value + 1);
+};
+
+const decrementReps = () => {
+  selectedReps.value = Math.max(1, normalizedReps.value - 1);
+};
+
+const resetReps = () => {
+  selectedReps.value = 10;
+  addedWeight.value = null;
+};
 
 const addReps = async (count) => {
   if (!count || loading.value) return;
@@ -157,7 +245,6 @@ const addReps = async (count) => {
     const authStore = useAuthStore();
     await authStore.fetchProfile();
     
-    if (customReps.value === count) customReps.value = null;
     emit('updated');
   } catch (error) {
     console.error('Error logging reps:', error);
@@ -166,9 +253,26 @@ const addReps = async (count) => {
     loading.value = false;
   }
 };
+
+const submitReps = async () => {
+  const repsToSubmit = Math.max(1, normalizedReps.value);
+  await addReps(repsToSubmit);
+};
 </script>
 
 <style scoped>
 .text-industrial { font-family: 'Inter Tight', sans-serif; }
 .text-precision { font-family: 'JetBrains Mono', monospace; }
+.touch-action-manipulation { touch-action: manipulation; }
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
 </style>
