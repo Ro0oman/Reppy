@@ -13,6 +13,7 @@ const blogPosts = JSON.parse(fs.readFileSync(blogPostsPath, 'utf8'));
 const BASE_URL = 'https://reppy-weld.vercel.app';
 const lastmod = new Date().toISOString();
 const languages = ['es', 'en'];
+const today = new Date();
 
 const staticRoutes = [
   { path: '', priority: '1.0', changefreq: 'daily' },
@@ -53,7 +54,27 @@ const generateSitemap = () => {
   });
 
   // 2. Dynamic Blog Posts
-  blogPosts.forEach(post => {
+  // - Exclude future-dated posts (not yet published)
+  // - Deduplicate slugs to avoid duplicate URLs
+  // - Sort for deterministic output (stable diffing and crawlers)
+  const seenSlugs = new Set();
+  const publishedPosts = blogPosts
+    .filter((post) => post?.slug)
+    .filter((post) => {
+      if (!post.date) return true;
+      const postDate = new Date(post.date);
+      return !Number.isNaN(postDate.getTime()) && postDate <= today;
+    })
+    .sort((a, b) => {
+      const da = a.date ? new Date(a.date).getTime() : 0;
+      const db = b.date ? new Date(b.date).getTime() : 0;
+      if (da !== db) return db - da;
+      return String(a.slug).localeCompare(String(b.slug));
+    });
+
+  publishedPosts.forEach((post) => {
+    if (seenSlugs.has(post.slug)) return;
+    seenSlugs.add(post.slug);
     const postLastmod = post.date ? new Date(post.date).toISOString() : lastmod;
     addUrl(`/blog/${post.slug}`, '0.7', 'monthly', postLastmod);
   });
