@@ -228,8 +228,15 @@ export function setupRouterGuards(router) {
     }
 
     // 3. Configurar el título y descripción de la página
+    const defaultDescriptions = {
+      es: 'Registra tus dominadas y flexiones, sube de nivel tus atributos RPG, participa en bosses y recibe notificaciones en tiempo real.',
+      en: 'Track pull-ups and push-ups, level up RPG stats, join boss fights, and get real-time notifications.'
+    };
+
     const title = to.meta.titleKey ? `${i18n.t(to.meta.titleKey)} | Reppy` : (to.meta.title || 'Reppy');
-    const description = to.meta.descriptionKey ? i18n.t(to.meta.descriptionKey) : 'Registra tus dominadas y flexiones, sube de nivel tus atributos RPG y compite en rankings globales.';
+    const description = to.meta.descriptionKey
+      ? i18n.t(to.meta.descriptionKey)
+      : (defaultDescriptions[currentLang] || defaultDescriptions.es);
     
     // Meta tags dinámicos para descripción y redes sociales
     const metas = {
@@ -238,10 +245,12 @@ export function setupRouterGuards(router) {
       'og:description': description,
       'og:url': `${baseUrl}${currentPath}`,
       'twitter:title': title,
-      'twitter:description': description
+      'twitter:description': description,
+      'og:locale': currentLang === 'en' ? 'en_US' : 'es_ES'
     };
 
     if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('lang', currentLang);
       document.title = title;
       Object.entries(metas).forEach(([name, content]) => {
         let el = document.querySelector(`meta[name="${name}"]`) || document.querySelector(`meta[property="${name}"]`);
@@ -294,3 +303,6 @@ export function setupRouterGuards(router) {
     }
   });
 }
+
+
+

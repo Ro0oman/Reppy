@@ -1,98 +1,73 @@
-# Reppy 🚀 - Fitness RPG MMO
+# Reppy - Calisthenics RPG Platform
 
-**Reppy** is not just a pull-up tracker; it's a fitness RPG ecosystem designed to gamify your training. Track your reps, earn coins, level up your attributes, and join community Boss Fights in a premium, glassmorphism-driven interface.
+Reppy is a calisthenics tracker with RPG progression, social feed, global boss fights, PvP duels, and web notifications.
 
-[https://reppy-weld.vercel.app/](https://reppy-weld.vercel.app/)
+Live app: [https://reppy-weld.vercel.app/](https://reppy-weld.vercel.app/)
 
-![Reppy Banner](https://img.shields.io/badge/Fitness-RPG-orange?style=for-the-badge&logo=vitest)
-![Reppy Stars](https://img.shields.io/github/stars/Ro0oman/Reppy?style=for-the-badge)
+## Features
 
-## 🌟 Key Features
+- RPG stats and leveling: STR, DEX, END, VIG, INT, FTH, CHA.
+- Social feed with likes, comments, and comment-thread subscriptions.
+- Real-time notifications (in-app + push).
+- Community boss fights with shared HP and rewards.
+- PvP duels with configurable rules.
+- Heatmap, ranking system, inventory, and cosmetics shop.
 
-### ⚔️ RPG Progression System
-Your character grows with every rep. Progress is tracked through four core attributes that scale your power:
-- **LVL (Account Level)**: Your overall progress. Increases with total XP.
-- **STR (Strength)**: Scales your base damage against Bosses. Raised by Pull-ups and Push-ups.
-- **PWR (Power)**: Critical for high-tier unlocks. Raised by Muscle-ups and weighted sets.
-- **END (Endurance)**: Determines your durability in community events. Raised by high-volume sessions.
-- **AGI (Agility)**: Critical for loot chance. Reward for daily streaks and consistency.
+## Tech Stack
 
-### 🏹 Combat & Damage Mechanics
-Reppy features a community-driven battle system where every user contributes to a global effort:
-- **Calculation**: `Reps × STR LVL = Base Damage`.
-- **Critical Hits**: A 10% base chance (enhanced by items) to deal `2x` damage. 
-- **Global HP**: Bosses feature massive HP pools (e.g., 500K+) that synchronize across all active users in real-time.
-- **Participation**: You must log at least 1 rep during the active event window to be eligible for rewards.
+- Frontend: Vue 3, Vite, Tailwind, Pinia, Axios.
+- Backend: Node.js, Express, PostgreSQL.
+- Realtime/Push: Pusher + Web Push.
 
-### 👹 Global Boss Events
-Massive community events triggered seasonally. Face legends like **"El Conejo de Acero"**.
-- **Real-time Sync**: Battle progress updates via polling for all hunters.
-- **Death Phrases**: Bosses taunt the community with dynamic quotes that change based on their health state.
-- **Neutralization**: Once HP hits 0, the boss enters a `DEFEATED` state, allowing reward claims.
+## Local Setup
 
-### 🎁 Loot & Chest System
-Victories grant access to a rarity-based reward system:
-- **Chests**: Claimable once per boss defeat.
-- **Rarity Tiers**: Common, Rare, Epic, and Legendary items.
-- **Drop Logic**: Higher AGI stats and participation volume influence the quality of rewards (titles, coin modifiers, and borders).
+### Backend
 
-### 🪙 Economy & Elite Bundles
-Earn **Reppy Coins** to spend in the **Goggins Shop**:
-- **Consumables**: Temporary stat boosters and XP multipliers.
-- **Cosmetics**: Dynamic glassmorphism backgrounds and animated profile borders.
-- **Elite Bundles**: Limited-time shop offers featuring Legendary rarity sets at discounted rates.
-
-### 📊 Advanced Visualization
-- **GitHub-style Heatmaps**: Visualize your consistency over the year.
-- **Dynamic Stats**: Track total volume, reps, and progression curves.
-- **Social Interaction**: Public profiles to showcase your RPG attributes and equipped cosmetics.
-
-## 🎨 Design Philosophy
-Reppy uses a **Premium Glassmorphism** aesthetic with:
-- Animated background glows and blobs.
-- Vibrant HSL tailored colors (Furia/Amber themes).
-- Smooth V-Transitions and micro-animations for a "lived-in" feel.
-
-## 🛠️ Tech Stack
-- **Frontend**: Vue 3, Vite, Tailwind CSS, Lucide Icons, Axios.
-- **Backend**: Node.js, Express, JWT, PostgreSQL.
-- **Database**: Supabase / Neon compatible.
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js (v18+)
-- PostgreSQL Instance
-- Google Cloud Console Project (for OAuth)
-
-### 1. Backend Setup
 ```bash
 cd backend
 npm install
-# Create .env based on the following:
-PORT=5000
+```
+
+Create `backend/.env`:
+
+```env
+PORT=5001
 DATABASE_URL=your_postgres_url
-GOOGLE_CLIENT_ID=your_id
-JWT_SECRET=your_secret
+GOOGLE_CLIENT_ID=your_google_client_id
+JWT_SECRET=your_jwt_secret
+VAPID_PUBLIC_KEY=your_vapid_public_key
+VAPID_PRIVATE_KEY=your_vapid_private_key
 ```
-Run the migrations:
-```bash
-node apply_schema.js
-```
-Start the server:
+
+Start backend:
+
 ```bash
 npm run dev
 ```
 
-### 2. Frontend Setup
+### Frontend
+
 ```bash
 cd frontend
 npm install
+```
+
+Create `frontend/.env.local`:
+
+```env
+VITE_API_URL=http://localhost:5001
+VITE_PUSHER_KEY=your_pusher_key
+VITE_PUSHER_CLUSTER=eu
+```
+
+Start frontend:
+
+```bash
 npm run dev
 ```
 
-## 🤝 Contribution
-Star the repo if you like what we're building! ⭐
+## Notes
 
----
-&copy; 2026 Reppy Ecosystem. Stay hard.
+- Build in some Windows setups may fail with `spawn EPERM` from Vite/Rolldown.
+- Backend currently has no automated test suite (`npm test` is placeholder).
+

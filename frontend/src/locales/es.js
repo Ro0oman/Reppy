@@ -909,7 +909,7 @@ export default {
     // Landing Page
     landing_hero_title: 'DOMINA CADA',
     landing_hero_span: 'REPETICIÓN',
-    landing_hero_subtitle: 'La primera plataforma de calistenia con sistema RPG. Cada dominada cuenta. Cada boss cae. Tu leyenda empieza hoy.',
+    landing_hero_subtitle: 'La plataforma de calistenia con sistema RPG, feed social y notificaciones en tiempo real. Cada repeticion cuenta.',
     btn_join_now: 'UNIRSE AHORA',
     btn_continue_adventure: 'CONTINUAR AVENTURA',
     landing_stats_reps: 'Repeticiones',
@@ -925,7 +925,7 @@ export default {
     landing_guia_title: 'Guía Completa para Progresar en Calistenia',
     landing_guia_subtitle: 'Todo lo que necesitas saber sobre el entrenamiento de peso corporal',
     landing_final_cta_title: 'Empieza tu leyenda hoy',
-    landing_final_cta_desc: 'Únete a la comunidad de calistenia de Reppy. Registra flexiones, fondos y muscle ups. 100% gratis, para siempre.',
+    landing_final_cta_desc: 'Unete a la comunidad de Reppy. Registra tus reps, sube de nivel y mantente al dia con notificaciones en tiempo real.',
     btn_create_account_free: 'Crea tu cuenta gratis para siempre',
 
     // Landing Article
@@ -951,7 +951,7 @@ export default {
     landing_feat_rankings_title: 'Rankings Globales',
     landing_feat_rankings_desc: 'Compite en el ranking mundial de dominadas y calistenia. Filtra por hoy, semana, mes o total. Sube de posición y demuestra quién es el mejor.',
     landing_feat_social_title: 'Comunidad Social',
-    landing_feat_social_desc: 'Añade amigos, visita sus perfiles públicos y compara tu progreso de calistenia. Crea tu círculo de entrenamiento y mantén la motivación.',
+    landing_feat_social_desc: 'Anade amigos, comenta entrenamientos y recibe notificaciones cuando te respondan en publicaciones que sigues.',
     
     // Boss Fights
     landing_boss_title: 'Boss Fights Comunitarios',
@@ -984,7 +984,7 @@ export default {
     landing_footer_copy: 'REPPY © 2026',
     landing_footer_free: 'App de Calistenia Gratuita',
     landing_footer_exercises: 'Dominadas · Flexiones · Fondos',
-    landing_footer_desc: 'Reppy es un tracker de calistenia con sistema RPG para registrar dominadas, flexiones, fondos, muscle ups y dominadas con lastre. Disponible en español e inglés.',
+    landing_footer_desc: 'Reppy es una app de calistenia con RPG, feed social, bosses globales y notificaciones en tiempo real. Disponible en espanol e ingles.',
 
     // Additional Shop/UI
     shop_seasonal_title: 'SISTEMA ESTACIONAL',
@@ -1295,5 +1295,7 @@ export default {
     notif_push_secure_title: '100% Seguro',
     notif_push_secure_desc: 'Sin spam, solo lo importante.',
     notif_push_allow: 'ACTIVAR NOTIFICACIONES',
-    notif_push_later: 'QUIZÁS MÁS TARDE',
+     notif_push_later: 'QUIZÁS MÁS TARDE',
+     notif_push_never: 'No, nunca',
 };
+

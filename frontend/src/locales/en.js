@@ -848,7 +848,7 @@ export default {
     // Landing Page
     landing_hero_title: 'DOMINATE EVERY',
     landing_hero_span: 'REP',
-    landing_hero_subtitle: 'The first calisthenics platform with an RPG system. Every rep counts. Every boss falls. Your legend begins today.',
+    landing_hero_subtitle: 'The calisthenics platform with RPG progression, social feed, and real-time notifications. Every rep counts.',
     btn_join_now: 'JOIN NOW',
     btn_continue_adventure: 'CONTINUE ADVENTURE',
     landing_stats_reps: 'Reps Tracked',
@@ -864,7 +864,7 @@ export default {
     landing_guia_title: 'Complete Guide to Progress in Calisthenics',
     landing_guia_subtitle: 'Everything you need to know about bodyweight training',
     landing_final_cta_title: 'Start your legend today',
-    landing_final_cta_desc: 'Join the Reppy calisthenics community. Track push-ups, dips, and muscle-ups. 100% free, forever.',
+    landing_final_cta_desc: 'Join the Reppy community. Track reps, level up, and stay updated with real-time notifications.',
     btn_create_account_free: 'Create your free account forever',
 
     // Landing Article
@@ -890,7 +890,7 @@ export default {
     landing_feat_rankings_title: 'Global Rankings',
     landing_feat_rankings_desc: 'Compete in the world ranking for pull-ups and calisthenics. Filter by today, week, month or all-time. Rise in position and prove who is the best.',
     landing_feat_social_title: 'Social Community',
-    landing_feat_social_desc: 'Add friends, visit their public profiles and compare your calisthenics progress. Create your training circle and stay motivated.',
+    landing_feat_social_desc: 'Add friends, comment on workouts, and get notified when someone replies in posts you follow.',
     
     // Boss Fights
     landing_boss_title: 'Community Boss Fights',
@@ -921,7 +921,7 @@ export default {
     landing_footer_copy: 'REPPY © 2026',
     landing_footer_free: 'Free Calisthenics App',
     landing_footer_exercises: 'Pull-ups · Push-ups · Dips',
-    landing_footer_desc: 'Reppy is a calisthenics tracker with an RPG system to log pull-ups, push-ups, dips, muscle ups and weighted pull-ups. Available in English and Spanish.',
+    landing_footer_desc: 'Reppy is a calisthenics app with RPG progression, social feed, global bosses, and real-time notifications. Available in English and Spanish.',
 
     // Additional Shop/UI
     shop_seasonal_title: 'SEASONAL SYSTEM',
@@ -1237,5 +1237,7 @@ export default {
     notif_push_secure_title: '100% Secure',
     notif_push_secure_desc: 'No spam, only the important stuff.',
     notif_push_allow: 'ACTIVATE NOTIFICATIONS',
-    notif_push_later: 'MAYBE LATER',
+     notif_push_later: 'MAYBE LATER',
+     notif_push_never: 'No, never',
 };
+
