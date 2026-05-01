@@ -459,6 +459,7 @@ export default {
     wheel_level_chest: 'COFRE DE NIVEL',
     wheel_new_balance: 'Nuevo saldo',
     wheel_prizemsg_coins: '+{value} MONEDAS',
+    wheel_prizemsg_gems: '+{value} GEMAS',
     wheel_prizemsg_item: '¡{name}! 🏆',
     wheel_prizemsg_chest: '¡Cofre de Nivel! 🎁',
     wheel_spin_again: 'GIRAR DE NUEVO',

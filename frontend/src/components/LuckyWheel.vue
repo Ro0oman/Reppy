@@ -240,7 +240,11 @@ const getTextCoords = (index) => {
 
 const getPrizeText = (prize) => {
   if (prize.type === 'coins') return i18n.t('wheel_prizemsg_coins', { value: prize.value });
-  if (prize.type === 'gems') return i18n.t('wheel_prizemsg_gems', { value: prize.value }) || `+${prize.value} Gemas`;
+  if (prize.type === 'gems') {
+    const msg = i18n.t('wheel_prizemsg_gems', { value: prize.value });
+    if (msg && msg !== 'wheel_prizemsg_gems') return msg;
+    return `+${prize.value} ${i18n.locale === 'es' ? 'Gemas' : 'Gems'}`;
+  }
   if (prize.type === 'consumable') return i18n.t('wheel_prizemsg_item', { name: prize.item ? prize.item.name : i18n.t('wheel_potion') });
   if (prize.type === 'chest') return i18n.t('wheel_prizemsg_chest');
   return i18n.t('wheel_try_tomorrow');

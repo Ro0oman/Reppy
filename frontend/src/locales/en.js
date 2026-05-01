@@ -447,6 +447,7 @@ export default {
     wheel_level_chest: 'LEVEL CHEST',
     wheel_new_balance: 'New balance',
     wheel_prizemsg_coins: '+{value} REPPY COINS',
+    wheel_prizemsg_gems: '+{value} GEMS',
     wheel_prizemsg_item: '¡{name}! 🏆',
     wheel_prizemsg_chest: '¡Level Chest! 🎁',
     wheel_spin_again: 'SPIN AGAIN',
