@@ -23,6 +23,16 @@ pool.query(`
   )
 `).catch(err => console.error('Error creating social_xp_rewards table:', err));
 
+// Users subscribed to comment updates per summary thread
+pool.query(`
+  CREATE TABLE IF NOT EXISTS summary_comment_subscribers (
+    summary_id INTEGER REFERENCES daily_summaries(id) ON DELETE CASCADE,
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (summary_id, user_id)
+  )
+`).catch(err => console.error('Error creating summary_comment_subscribers table:', err));
+
 /**
  * GET /api/social-feed/stats
  * Returns general stats for the social hub header.
@@ -449,6 +459,14 @@ router.post('/comment', authenticate, async (req, res) => {
       [summaryId, myUserId, content]
     );
 
+    // Auto-subscribe commenter and post owner to comment thread updates.
+    await client.query(
+      `INSERT INTO summary_comment_subscribers (summary_id, user_id)
+       VALUES ($1, $2), ($1, $3)
+       ON CONFLICT (summary_id, user_id) DO NOTHING`,
+      [summaryId, myUserId, targetUserId]
+    );
+
     const userRes = await client.query('SELECT name FROM users WHERE id = $1', [myUserId]);
     
     // Check daily cap and unique reward eligibility for commenting
@@ -486,13 +504,34 @@ router.post('/comment', authenticate, async (req, res) => {
 
     const cleanDate = typeof date === 'string' ? date.substring(0, 10) : date;
 
-    // 3. Notify Owner (if not self)
+    // Notify Owner (if not self)
     if (targetUserId !== myUserId) {
       await createNotification(
         targetUserId,
         'COMMENT',
         myUserId,
         'ha comentado en tu publicación',
+        cleanDate,
+        targetUserId
+      );
+    }
+
+    // Notify other subscribed users in the same thread (excluding actor and owner).
+    const subscribersRes = await query(
+      `SELECT user_id
+       FROM summary_comment_subscribers
+       WHERE summary_id = $1
+       AND user_id <> $2
+       AND user_id <> $3`,
+      [summaryId, myUserId, targetUserId]
+    );
+
+    for (const row of subscribersRes.rows) {
+      await createNotification(
+        row.user_id,
+        'COMMENT',
+        myUserId,
+        'ha respondido en una publicación que sigues',
         cleanDate,
         targetUserId
       );
