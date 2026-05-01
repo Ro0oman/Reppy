@@ -263,9 +263,9 @@ export function setupRouterGuards(router) {
     if (to.meta.requiresAuth && !isAuthenticated) {
       next({ name: 'login', params: { lang: currentLang } })
     } else if (to.name === 'landing' && isAuthenticated) {
-      next({ name: 'social', params: { lang: currentLang } })
+      next({ name: 'dashboard', params: { lang: currentLang } })
     } else if (to.name === 'login' && isAuthenticated) {
-      next({ name: 'social', params: { lang: currentLang } })
+      next({ name: 'dashboard', params: { lang: currentLang } })
     } else if (to.name === 'dashboard' && !isAuthenticated) {
       next()
     } else if (to.meta.requiresAdmin && (!authStore.user || authStore.user.role !== 'admin')) {

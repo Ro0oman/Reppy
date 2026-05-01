@@ -171,7 +171,7 @@ const handleSubmit = async () => {
     } else {
       await authStore.login({ email: form.email, password: form.password });
     }
-    router.push('/social');
+    router.push(`/${i18n.locale}/dashboard`);
   } catch (error) { errorMessage.value = error.message; }
   finally { loading.value = false; }
 };
@@ -179,7 +179,7 @@ const handleSubmit = async () => {
 const handleLoginSuccess = async (response) => {
   try { 
     await authStore.loginWithGoogle(response.credential);
-    router.push('/social');
+    router.push(`/${i18n.locale}/dashboard`);
   }
   catch (error) { console.error('Google link failed:', error); }
 };

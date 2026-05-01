@@ -27,7 +27,7 @@ test.describe('Automated Missions & Rotation Verification', () => {
     await page.locator('input[type="email"]').fill(currentUser.email);
     await page.locator('input[type="password"]').fill(currentUser.password);
     await page.click('button[type="submit"]');
-    await expect(page).toHaveURL(/.*social/, { timeout: 20000 });
+    await expect(page).toHaveURL(/.*dashboard/, { timeout: 20000 });
     
     // Close initial modals if any
     try {

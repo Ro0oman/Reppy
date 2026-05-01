@@ -41,7 +41,24 @@
       <ExerciseSelector v-model="activeExercise" compact class="w-full md:hidden" />
     </header>
 
+    <TodayWorkout
+      v-if="trainingStore.todayWorkout"
+      :workout="trainingStore.todayWorkout"
+      @completed="handleGuidedWorkoutCompleted"
+    />
+
+    <div v-if="trainingStore.todayWorkout" class="flex justify-center">
+      <button
+        type="button"
+        class="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-[10px] font-black uppercase tracking-[0.15em] text-muted transition hover:border-primary-500/30 hover:text-foreground active:scale-95"
+        @click="showFreeLog = !showFreeLog"
+      >
+        {{ i18n.t('today_free_log') }}
+      </button>
+    </div>
+
     <section
+      v-if="!trainingStore.todayWorkout"
       class="w-full rounded-[2rem] border backdrop-blur-xl p-4 sm:p-6 transition-all duration-500"
       :class="missionCompletionPulse ? 'border-emerald-500/40 bg-emerald-500/10 shadow-[0_0_35px_rgba(16,185,129,0.2)]' : 'border-primary-500/25 bg-primary-500/10'"
     >
@@ -95,6 +112,7 @@
 
     <!-- 2. The Hero: Active Session -->
     <section
+      v-if="!trainingStore.todayWorkout || showFreeLog"
       ref="repsInputSection"
       class="max-w-4xl mx-auto w-full transition-all duration-500 rounded-[2.5rem]"
       :class="highlightRepsInput ? 'ring-2 ring-primary-500/60 shadow-[0_0_30px_rgba(255,69,0,0.25)]' : ''"
@@ -340,6 +358,11 @@
       @close="handleCloseQuickStartModal"
       @start="handleStartQuickStart"
     />
+    <GoalOnboardingModal
+      :show="showGoalOnboarding"
+      @close="showGoalOnboarding = false"
+      @selected="handleGuidedPlanSelected"
+    />
   </div>
 </template>
 
@@ -354,6 +377,7 @@ import {
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
 import { useNotificationStore } from '../stores/notification';
+import { useTrainingStore } from '../stores/training';
 import Heatmap from './Heatmap.vue';
 import RepsInput from './RepsInput.vue';
 import ExerciseSelector from './ExerciseSelector.vue';
@@ -362,12 +386,15 @@ import RadialProgress from './RadialProgress.vue';
 import RPGReleaseModal from './RPGReleaseModal.vue';
 import LivePresence from './LivePresence.vue';
 import QuickStartOnboardingModal from './QuickStartOnboardingModal.vue';
+import GoalOnboardingModal from './GoalOnboardingModal.vue';
+import TodayWorkout from './TodayWorkout.vue';
 import { getLocalDateString } from '../utils/dateUtils.js';
 
 const emit = defineEmits(['viewProfile', 'start']);
 const authStore = useAuthStore();
 const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
+const trainingStore = useTrainingStore();
 const router = useRouter();
 
 const reps = ref([]);
@@ -382,6 +409,8 @@ const isLoading = ref(false);
 const activeYear = ref(2026);
 const showRPGModal = ref(false);
 const showQuickStartModal = ref(false);
+const showGoalOnboarding = ref(false);
+const showFreeLog = ref(false);
 const activeTab = ref('heatmap');
 const unclaimedMissions = ref(0);
 const highlightRepsInput = ref(false);
@@ -394,8 +423,8 @@ const missionCompletionStateReady = ref(false);
 const QUICKSTART_SEEN_PREFIX = 'reppy_quickstart_seen_v1';
 
 // Scroll lock when modals are active
-watch([showRPGModal, showQuickStartModal], ([rpgModal, quickStartModal]) => {
-  if (rpgModal || quickStartModal) {
+watch([showRPGModal, showQuickStartModal, showGoalOnboarding], ([rpgModal, quickStartModal, goalOnboarding]) => {
+  if (rpgModal || quickStartModal || goalOnboarding) {
     document.body.style.overflow = 'hidden';
   } else {
     document.body.style.overflow = '';
@@ -416,6 +445,7 @@ const markQuickStartSeen = () => {
 
 const shouldShowQuickStart = (totalRepsCount) => {
   if (!authStore.user) return false;
+  if (trainingStore.canShowOnboarding || trainingStore.onboardingCompleted) return false;
   if (hasSeenQuickStart()) return false;
   return Number(totalRepsCount || 0) <= 20;
 };
@@ -621,13 +651,19 @@ const fetchData = async () => {
     stats.totalVolume = statsRes.data.totalVolume || 0;
     stats.bodyWeight = statsRes.data.bodyWeight || 75;
     stats.combatPower = statsRes.data.combatPower || { total: 0, base: 0, gear: 0, buff: 0 };
-    await fetchGlobalData();
+    await Promise.all([
+      fetchGlobalData(),
+      trainingStore.fetchMine()
+    ]);
 
     if (bossHealthRef.value) bossHealthRef.value.refresh();
 
     if (!quickStartEvaluated.value) {
       quickStartEvaluated.value = true;
-      if (shouldShowQuickStart(statsRes.data.totalReps)) {
+      if (trainingStore.canShowOnboarding) {
+        showGoalOnboarding.value = true;
+        suppressRPGModal.value = true;
+      } else if (shouldShowQuickStart(statsRes.data.totalReps)) {
         showQuickStartModal.value = true;
         suppressRPGModal.value = true;
       }
@@ -716,12 +752,29 @@ const handleTodayMissionAction = async () => {
   await scrollToRepsInput();
 };
 
-onMounted(() => {
+const handleGuidedWorkoutCompleted = async () => {
+  showFreeLog.value = false;
+  await fetchData();
+};
+
+const handleGuidedPlanSelected = async () => {
+  showFreeLog.value = false;
+  await fetchData();
+};
+
+onMounted(async () => {
   // Check for exercise pre-selection from query params
   const urlParams = new URLSearchParams(window.location.search);
   const exerciseParam = urlParams.get('exercise');
   if (exerciseParam) {
     activeExercise.value = exerciseParam;
+  }
+
+  await trainingStore.fetchPlans();
+  await trainingStore.fetchMine();
+  showGoalOnboarding.value = trainingStore.canShowOnboarding;
+  if (showGoalOnboarding.value) {
+    suppressRPGModal.value = true;
   }
 
   fetchData();

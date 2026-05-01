@@ -26,6 +26,7 @@ import pvpRoutes from './pvp.js';
 import testRoutes from './test.js';
 import missionsRoutes from './missions.js';
 import pushRoutes from './push.js';
+import trainingRoutes from './training.js';
 import http from 'http';
 import getPusher from './pusher.js';
 import { updatePresence } from './socketManager.js';
@@ -91,6 +92,7 @@ apiRouter.use('/pvp', pvpRoutes);
 apiRouter.use('/test', testRoutes);
 apiRouter.use('/missions', missionsRoutes);
 apiRouter.use('/push', pushRoutes);
+apiRouter.use('/training', trainingRoutes);
 
 // Pusher Auth Endpoint (Directly on app for Vercel compatibility)
 app.post('/api/pusher/auth', async (req, res) => {
