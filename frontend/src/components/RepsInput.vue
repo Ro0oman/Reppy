@@ -101,7 +101,7 @@
           </section>
         </transition>
 
-        <footer class="space-y-2 pb-[calc(0.25rem+env(safe-area-inset-bottom))]">
+        <footer class="pb-[calc(0.25rem+env(safe-area-inset-bottom))]">
           <button
             @click="submitReps"
             :disabled="!canSubmit"
@@ -110,13 +110,6 @@
             <Check v-if="!loading" class="w-4.5 h-4.5" />
             <div v-else class="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
             <span>{{ ctaText }}</span>
-          </button>
-          <button
-            @click="resetReps"
-            :disabled="loading"
-            class="touch-action-manipulation h-10 w-full rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] text-[11px] font-black uppercase tracking-wider text-muted transition-all disabled:opacity-30"
-          >
-            {{ uiText.reset }}
           </button>
         </footer>
       </div>
@@ -163,7 +156,6 @@ const uiText = computed(() => {
       quickPresets: 'Presets rapidos',
       repsLabel: 'Repeticiones',
       extraWeight: 'Lastre adicional',
-      reset: 'Resetear a 10 reps',
       cta: 'Registrar',
     };
   }
@@ -174,7 +166,6 @@ const uiText = computed(() => {
     quickPresets: 'Quick presets',
     repsLabel: 'Repetitions',
     extraWeight: 'Extra weight',
-    reset: 'Reset to 10 reps',
     cta: 'Log',
   };
 });
@@ -210,11 +201,6 @@ const incrementReps = () => {
 
 const decrementReps = () => {
   selectedReps.value = Math.max(1, normalizedReps.value - 1);
-};
-
-const resetReps = () => {
-  selectedReps.value = 10;
-  addedWeight.value = null;
 };
 
 const addReps = async (count) => {
