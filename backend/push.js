@@ -3,6 +3,59 @@ import { query } from './db.js';
 import { authenticate } from './middleware.js';
 
 const router = express.Router();
+let pushPrefsColumnReady = false;
+
+async function ensurePushPrefsColumn() {
+  if (pushPrefsColumnReady) return;
+  await query('ALTER TABLE users ADD COLUMN IF NOT EXISTS push_disabled BOOLEAN DEFAULT false');
+  pushPrefsColumnReady = true;
+}
+
+/**
+ * Get push notification preference for the authenticated user
+ */
+router.get('/preferences', authenticate, async (req, res) => {
+  try {
+    await ensurePushPrefsColumn();
+    const result = await query(
+      'SELECT push_disabled FROM users WHERE id = $1',
+      [req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ push_disabled: !!result.rows[0].push_disabled });
+  } catch (error) {
+    console.error('[PUSH_PREF_GET] Error:', error);
+    res.status(500).json({ message: 'Error fetching push preferences' });
+  }
+});
+
+/**
+ * Update push notification preference for the authenticated user
+ */
+router.patch('/preferences', authenticate, async (req, res) => {
+  const { push_disabled } = req.body;
+
+  if (typeof push_disabled !== 'boolean') {
+    return res.status(400).json({ message: 'push_disabled must be a boolean' });
+  }
+
+  try {
+    await ensurePushPrefsColumn();
+    await query(
+      'UPDATE users SET push_disabled = $1 WHERE id = $2',
+      [push_disabled, req.user.id]
+    );
+
+    res.json({ message: 'Push preference updated', push_disabled });
+  } catch (error) {
+    console.error('[PUSH_PREF_PATCH] Error:', error);
+    res.status(500).json({ message: 'Error updating push preferences' });
+  }
+});
 
 /**
  * Register a new push subscription for the authenticated user
@@ -16,6 +69,7 @@ router.post('/subscribe', authenticate, async (req, res) => {
   }
 
   try {
+    await ensurePushPrefsColumn();
     // We use JSONB to store the entire subscription object
     await query(
       `INSERT INTO push_subscriptions (user_id, subscription_json) 
@@ -23,6 +77,7 @@ router.post('/subscribe', authenticate, async (req, res) => {
        ON CONFLICT (user_id, subscription_json) DO NOTHING`,
       [userId, JSON.stringify(subscription)]
     );
+    await query('UPDATE users SET push_disabled = false WHERE id = $1', [userId]);
     
     res.status(201).json({ message: 'Subscription saved successfully' });
   } catch (error) {

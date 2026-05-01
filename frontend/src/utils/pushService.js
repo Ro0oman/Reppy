@@ -42,6 +42,14 @@ export async function getPushStatus() {
  */
 export async function subscribeToPush() {
   try {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      throw new Error('Push not supported in this browser');
+    }
+
+    if (Notification.permission === 'denied') {
+      throw new Error('Notifications are blocked by browser permission');
+    }
+
     // 1. Register Service Worker
     const registration = await navigator.serviceWorker.register('/sw.js', {
       scope: '/'
@@ -60,11 +68,15 @@ export async function subscribeToPush() {
     const applicationServerKey = urlBase64ToUint8Array(publicKey);
     console.log('[PUSH_SERVICE] Converted Key Length:', applicationServerKey.length);
 
-    // 3. Subscribe
-    const subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey
-    });
+    // 3. Reuse existing subscription when possible (Brave/Chromium can throw
+    // InvalidStateError if we try to subscribe again with an existing sub).
+    let subscription = await registration.pushManager.getSubscription();
+    if (!subscription) {
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey
+      });
+    }
 
     // 4. Send subscription to backend
     await axios.post(`${API_URL}/api/push/subscribe`, subscription);
@@ -74,6 +86,22 @@ export async function subscribeToPush() {
     console.error('[PUSH_SERVICE] Error subscribing:', error);
     throw error;
   }
+}
+
+/**
+ * Returns user push preference from backend.
+ */
+export async function getPushPreferences() {
+  const { data } = await axios.get(`${API_URL}/api/push/preferences`);
+  return data;
+}
+
+/**
+ * Updates user push preference in backend.
+ */
+export async function updatePushPreferences(push_disabled) {
+  const { data } = await axios.patch(`${API_URL}/api/push/preferences`, { push_disabled });
+  return data;
 }
 
 /**

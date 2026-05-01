@@ -61,6 +61,11 @@
                     class="w-full py-4 text-[10px] font-black text-muted hover:text-foreground uppercase tracking-[0.3em] transition-colors">
               {{ i18n.t('notif_push_later') || 'QUIZÁS MÁS TARDE' }}
             </button>
+            
+            <button @click="handleNever" 
+                    class="w-full py-3 text-[13px] italic font-semibold text-muted/90 bg-white/5 rounded-xl border border-white/10 tracking-normal transition-colors hover:bg-white/10 hover:text-foreground">
+              {{ i18n.t('notif_push_never') || 'No, nunca' }}
+            </button>
           </div>
 
           <!-- Bottom Technical Decoration -->
@@ -76,9 +81,11 @@ import { ref, onMounted } from 'vue';
 import { Bell, Zap, ShieldCheck } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
-import { getPushStatus, subscribeToPush } from '../utils/pushService';
+import { useNotificationStore } from '../stores/notification';
+import { getPushStatus, subscribeToPush, getPushPreferences, updatePushPreferences } from '../utils/pushService';
 
 const authStore = useAuthStore();
+const notificationStore = useNotificationStore();
 
 const i18n = useI18nStore();
 const isVisible = ref(false);
@@ -109,12 +116,29 @@ const handleSubscribe = async (silent = false) => {
   try {
     const success = await subscribeToPush();
     if (success) {
+      await updatePushPreferences(false);
       isVisible.value = false;
       localStorage.setItem('reppy_push_asked', 'true');
       localStorage.setItem('reppy_notif_version', NOTIF_VERSION);
       sessionStorage.setItem('reppy_push_synced', 'true');
     }
   } catch (error) {
+    const msg = String(error?.message || '').toLowerCase();
+    const isBrave = navigator.userAgent.includes('Brave') || navigator.brave;
+    const isPushServiceAbort = msg.includes('registration failed - push service error') || msg.includes('aborterror');
+
+    if (isBrave && isPushServiceAbort) {
+      notificationStore.notify(
+        i18n.locale === 'es'
+          ? 'Brave bloqueó el registro Push. Activa "Use Google services for push messaging" en brave://settings/privacy y vuelve a intentar.'
+          : 'Brave blocked Push registration. Enable "Use Google services for push messaging" in brave://settings/privacy and try again.',
+        'info',
+        9000
+      );
+      if (!silent) isVisible.value = true;
+      return;
+    }
+
     if (!silent) {
       console.error('Failed to subscribe:', error);
       isVisible.value = false;
@@ -124,13 +148,33 @@ const handleSubscribe = async (silent = false) => {
 
 const handleDecline = () => {
   isVisible.value = false;
-  // Store declination to avoid annoying the user every page load
   localStorage.setItem('reppy_push_asked', Date.now());
   localStorage.setItem('reppy_notif_version', NOTIF_VERSION);
 };
 
+const handleNever = () => {
+  isVisible.value = false;
+  localStorage.setItem('reppy_push_asked', 'never');
+  localStorage.setItem('reppy_notif_version', NOTIF_VERSION);
+  updatePushPreferences(true).catch((error) => {
+    console.error('Failed to persist push preference:', error);
+  });
+};
+
 onMounted(async () => {
   if (!authStore.isAuthenticated) return;
+
+  try {
+    const pref = await getPushPreferences();
+    if (pref?.push_disabled) {
+      localStorage.setItem('reppy_push_asked', 'never');
+      localStorage.setItem('reppy_notif_version', NOTIF_VERSION);
+      isVisible.value = false;
+      return;
+    }
+  } catch (error) {
+    console.warn('[PUSH_PROMPT] Could not fetch push preferences, using local fallback.', error);
+  }
 
   const status = await getPushStatus();
   const lastAsked = localStorage.getItem('reppy_push_asked');
@@ -152,7 +196,7 @@ onMounted(async () => {
 
   // If not granted, check if we should show the modal
   const askedDate = parseInt(lastAsked);
-  const shouldAsk = !lastAsked || (!isNaN(askedDate) && Date.now() - askedDate > 3 * 24 * 60 * 60 * 1000);
+  const shouldAsk = lastAsked !== 'never' && (!lastAsked || (!isNaN(askedDate) && Date.now() - askedDate > 3 * 24 * 60 * 60 * 1000));
   
   if (shouldAsk) {
     checkPermission();
