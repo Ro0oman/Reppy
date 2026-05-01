@@ -1,5 +1,5 @@
 import express from 'express';
-import { query } from './db.js';
+import pool, { query } from './db.js';
 import { authenticate } from './middleware.js';
 
 const router = express.Router();
@@ -44,34 +44,37 @@ router.put('/favorites', authenticate, async (req, res) => {
     return res.status(400).json({ message: 'Maximum of 6 favorites allowed' });
   }
 
+  const client = await pool.connect();
   try {
-    await query('BEGIN');
+    await client.query('BEGIN');
 
     // 1. Delete all existing favorites for user
-    await query('DELETE FROM user_favorite_exercises WHERE user_id = $1', [req.user.id]);
+    await client.query('DELETE FROM user_favorite_exercises WHERE user_id = $1', [req.user.id]);
 
     // 2. Insert new favorites
     for (let i = 0; i < slugs.length; i++) {
       const slug = slugs[i];
       // Verify exercise exists and is active
-      const checkEx = await query('SELECT 1 FROM exercises WHERE slug = $1 AND is_active = TRUE', [slug]);
+      const checkEx = await client.query('SELECT 1 FROM exercises WHERE slug = $1 AND is_active = TRUE', [slug]);
       if (checkEx.rows.length === 0) {
         throw new Error(`Exercise ${slug} does not exist or is inactive`);
       }
 
-      await query(
+      await client.query(
         `INSERT INTO user_favorite_exercises (user_id, exercise_slug, position)
          VALUES ($1, $2, $3)`,
         [req.user.id, slug, i]
       );
     }
 
-    await query('COMMIT');
+    await client.query('COMMIT');
     res.json({ message: 'Favorites updated successfully' });
   } catch (error) {
-    await query('ROLLBACK');
+    await client.query('ROLLBACK');
     console.error('Error updating favorites:', error);
     res.status(500).json({ message: error.message || 'Error updating favorites' });
+  } finally {
+    client.release();
   }
 });
 

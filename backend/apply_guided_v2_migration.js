@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config({ path: './backend/.env' });
-import pool from './db.js';
+
+const { default: pool } = await import('./db.js');
 
 const exercisesSeed = [
   { slug: 'pullups', title_key: 'ex_pullups_std', description_key: 'Dominadas estándar para fuerza tracción.', technique_key: 'Sube barbilla por encima de la barra.', unit: 'reps', difficulty_multiplier: 1.0, coin_multiplier: 1.0 },
@@ -28,12 +29,9 @@ async function run() {
       ADD COLUMN IF NOT EXISTS last_completed_day INTEGER;
     `);
 
-    // Drop old table to avoid schema conflicts
-    await client.query(`DROP TABLE IF EXISTS exercises CASCADE;`);
-
-    // 2. Create exercises table
+    // 2. Create exercises table if not exists
     await client.query(`
-      CREATE TABLE exercises (
+      CREATE TABLE IF NOT EXISTS exercises (
         slug VARCHAR(80) PRIMARY KEY,
         title_key VARCHAR(120) NOT NULL,
         description_key TEXT NOT NULL,
@@ -44,6 +42,13 @@ async function run() {
         is_active BOOLEAN DEFAULT TRUE,
         image_url TEXT
       );
+    `);
+    await client.query(`
+      ALTER TABLE exercises ADD COLUMN IF NOT EXISTS image_url TEXT;
+      ALTER TABLE exercises ADD COLUMN IF NOT EXISTS technique_key TEXT;
+      ALTER TABLE exercises ADD COLUMN IF NOT EXISTS difficulty_multiplier DECIMAL(5,2) DEFAULT 1.0;
+      ALTER TABLE exercises ADD COLUMN IF NOT EXISTS coin_multiplier DECIMAL(5,2) DEFAULT 1.0;
+      ALTER TABLE exercises ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;
     `);
 
     // 3. Create user_favorite_exercises table

@@ -9,6 +9,11 @@ export const useTrainingStore = defineStore('training', {
     onboardingMode: null,
     onboardingCompleted: false,
     canShowOnboarding: false,
+    completedToday: false,
+    isTrainingLockedToday: false,
+    lockedUntilDate: null,
+    nextWorkoutPreview: null,
+    isPlanPaused: false,
     loading: false,
   }),
 
@@ -25,6 +30,11 @@ export const useTrainingStore = defineStore('training', {
       this.onboardingMode = res.data.onboardingMode || null;
       this.onboardingCompleted = !!res.data.onboardingCompleted;
       this.canShowOnboarding = !!res.data.canShowOnboarding;
+      this.completedToday = !!res.data.completedToday;
+      this.isTrainingLockedToday = !!res.data.isTrainingLockedToday;
+      this.lockedUntilDate = res.data.lockedUntilDate || null;
+      this.nextWorkoutPreview = res.data.nextWorkoutPreview || null;
+      this.isPlanPaused = !!res.data.isPlanPaused;
     },
 
     async selectPlan(payload) {
@@ -39,6 +49,16 @@ export const useTrainingStore = defineStore('training', {
 
     async abandonPlan() {
       await axios.post('/api/training/abandon');
+      await this.fetchMine();
+    },
+
+    async pausePlan() {
+      await axios.post('/api/training/pause');
+      await this.fetchMine();
+    },
+
+    async resumePlan() {
+      await axios.post('/api/training/resume');
       await this.fetchMine();
     },
 

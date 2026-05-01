@@ -1,5 +1,31 @@
 <template>
   <section class="w-full rounded-[1.5rem] border border-primary-500/30 bg-primary-500/10 p-4 shadow-[0_0_35px_rgba(255,69,0,0.08)] sm:p-6">
+    <div v-if="completedToday" class="space-y-4">
+      <div>
+        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-400">
+          {{ i18n.locale === 'es' ? 'Dia completado' : 'Day completed' }}
+        </p>
+        <h3 class="mt-2 text-2xl font-black uppercase leading-tight tracking-tight text-foreground sm:text-3xl">
+          {{ completedTitle }}
+        </h3>
+        <p class="mt-2 text-sm font-bold text-muted/70">
+          {{ i18n.locale === 'es' ? 'Manana sigues. La proxima mision queda bloqueada hasta el nuevo dia.' : 'Continue tomorrow. The next mission unlocks on the next day.' }}
+        </p>
+      </div>
+      <div v-if="nextWorkoutPreview" class="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+        <p class="text-[9px] font-black uppercase tracking-widest text-muted">
+          {{ i18n.locale === 'es' ? 'Proxima mision' : 'Next mission' }}
+        </p>
+        <p class="mt-1 text-lg font-black text-foreground">
+          {{ i18n.t(nextWorkoutPreview.day.titleKey) }}
+        </p>
+        <p class="mt-1 text-xs font-bold text-muted/70">
+          {{ i18n.t(nextWorkoutPreview.plan.titleKey) }} · {{ i18n.locale === 'es' ? 'Dia' : 'Day' }} {{ nextWorkoutPreview.day.dayNumber }}/{{ nextWorkoutPreview.plan.durationDays }}
+        </p>
+      </div>
+    </div>
+
+    <template v-else-if="workout">
     <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
       <div class="min-w-0">
         <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary-500">
@@ -88,17 +114,15 @@
                 :class="set.completed ? 'bg-emerald-500 text-white' : 'bg-white/10 text-foreground hover:bg-white/15'"
                 @click="markDone(set)"
               >
-                {{ set.completed ? 'OK' : 'Hecho' }}
+                <Check class="h-4 w-4" />
               </button>
-              <button
+              <div
                 v-if="set.timerActive"
-                type="button"
-                class="rounded-xl px-3 py-2 text-[10px] font-black uppercase tracking-widest bg-amber-500/20 text-amber-500 hover:bg-amber-500/30 border border-amber-500/30 transition active:scale-95 flex items-center gap-1 select-none"
-                @click="cancelTimer(set)"
+                class="rounded-xl px-3 py-2 text-[10px] font-black uppercase tracking-widest bg-amber-500/20 text-amber-500 border border-amber-500/30 flex items-center gap-1 select-none"
               >
                 <Clock class="h-3.5 w-3.5 animate-pulse" />
                 {{ set.restTimer }}s
-              </button>
+              </div>
             </div>
           </div>
         </div>
@@ -121,6 +145,8 @@
       </div>
     </div>
 
+    </template>
+
     <!-- Exercise Detail Modal -->
     <ExerciseDetailModal
       :is-open="detailModalOpen"
@@ -132,7 +158,7 @@
 
 <script setup>
 import { computed, ref, watch } from 'vue';
-import { Clock, Coins, Loader2, Minus, Plus, Sparkles, TimerReset, X, Info } from 'lucide-vue-next';
+import { Check, Clock, Coins, Loader2, Minus, Plus, Sparkles, TimerReset, Info } from 'lucide-vue-next';
 import ExerciseDetailModal from './ExerciseDetailModal.vue';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
@@ -140,7 +166,10 @@ import { useNotificationStore } from '../stores/notification';
 import { useTrainingStore } from '../stores/training';
 
 const props = defineProps({
-  workout: { type: Object, required: true },
+  workout: { type: Object, default: null },
+  completedToday: { type: Boolean, default: false },
+  nextWorkoutPreview: { type: Object, default: null },
+  activePlan: { type: Object, default: null },
 });
 
 const emit = defineEmits(['completed']);
@@ -161,7 +190,20 @@ const openExerciseDetail = (slug) => {
 };
 const loading = ref(false);
 
+const completedTitle = computed(() => {
+  const plan = props.activePlan || props.nextWorkoutPreview?.plan;
+  const day = plan?.lastCompletedDay || Math.max(1, Number(plan?.currentDay || 1) - 1);
+  const duration = plan?.durationDays || props.nextWorkoutPreview?.plan?.durationDays || 0;
+  return i18n.locale === 'es'
+    ? `Dia ${day}/${duration} completado`
+    : `Day ${day}/${duration} completed`;
+});
+
 const createSetLogs = () => {
+  if (!props.workout) {
+    setLogs.value = [];
+    return;
+  }
   setLogs.value = props.workout.blocks.flatMap((block) => {
     const count = Math.max(1, Number(block.targetSets || 1));
     return Array.from({ length: count }, (_, index) => ({
@@ -179,7 +221,7 @@ const createSetLogs = () => {
   });
 };
 
-watch(() => props.workout.day.id, () => {
+watch(() => props.workout?.day?.id, () => {
   session.value = null;
   createSetLogs();
 }, { immediate: true });
@@ -241,15 +283,6 @@ const markDone = (set) => {
       }
     }
   }, 1000);
-};
-
-const cancelTimer = (set) => {
-  set.restTimer = 0;
-  set.timerActive = false;
-  if (set.intervalId) {
-    clearInterval(set.intervalId);
-    set.intervalId = null;
-  }
 };
 
 const startWorkout = async () => {

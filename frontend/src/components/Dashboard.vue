@@ -11,10 +11,73 @@
     </header>
 
     <TodayWorkout
-      v-if="trainingStore.todayWorkout"
+      v-if="trainingStore.todayWorkout || trainingStore.completedToday"
       :workout="trainingStore.todayWorkout"
+      :completed-today="trainingStore.completedToday"
+      :next-workout-preview="trainingStore.nextWorkoutPreview"
+      :active-plan="trainingStore.activePlan"
       @completed="handleGuidedWorkoutCompleted"
     />
+
+    <section
+      v-if="trainingStore.activePlan"
+      class="rounded-2xl border border-white/10 bg-white/[0.03] p-3 sm:p-4"
+    >
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div class="min-w-0">
+          <p class="text-[9px] font-black uppercase tracking-[0.2em] text-muted">
+            {{ i18n.locale === 'es' ? 'Plan activo' : 'Active plan' }}
+          </p>
+          <p class="mt-1 text-sm font-black text-foreground">
+            {{ i18n.t(trainingStore.activePlan.titleKey) }}
+            <span v-if="trainingStore.isPlanPaused" class="text-amber-400">· {{ i18n.locale === 'es' ? 'Pausado' : 'Paused' }}</span>
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button
+            v-if="trainingStore.isPlanPaused"
+            type="button"
+            class="plan-action"
+            @click="resumePlan"
+          >
+            {{ i18n.locale === 'es' ? 'Reanudar' : 'Resume' }}
+          </button>
+          <button
+            v-else
+            type="button"
+            class="plan-action"
+            @click="pausePlan"
+          >
+            {{ i18n.locale === 'es' ? 'Pausar' : 'Pause' }}
+          </button>
+          <button type="button" class="plan-action" @click="openPlanPicker">
+            {{ i18n.locale === 'es' ? 'Cambiar plan' : 'Change plan' }}
+          </button>
+          <button type="button" class="plan-action text-red-300 hover:text-red-200" @click="abandonPlan">
+            {{ i18n.locale === 'es' ? 'Abandonar' : 'Abandon' }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section
+      v-else-if="trainingStore.onboardingCompleted"
+      class="rounded-2xl border border-primary-500/25 bg-primary-500/10 p-4"
+    >
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary-500">
+            {{ i18n.locale === 'es' ? 'Sin plan guiado' : 'No guided plan' }}
+          </p>
+          <h3 class="mt-1 text-lg font-black text-foreground">
+            {{ i18n.locale === 'es' ? 'Elige un objetivo para tener mision diaria' : 'Choose a goal to get a daily mission' }}
+          </h3>
+        </div>
+        <button type="button" class="btn-reppy !py-3 px-5" @click="openPlanPicker">
+          {{ i18n.locale === 'es' ? 'Elegir plan' : 'Choose plan' }}
+        </button>
+      </div>
+    </section>
 
     <div v-if="trainingStore.todayWorkout" class="flex justify-center">
       <button
@@ -731,6 +794,46 @@ const handleGuidedPlanSelected = async () => {
   await fetchData();
 };
 
+const openPlanPicker = () => {
+  showGoalOnboarding.value = true;
+};
+
+const pausePlan = async () => {
+  try {
+    await trainingStore.pausePlan();
+    notificationStore.notify(i18n.locale === 'es' ? 'Plan pausado' : 'Plan paused', 'success');
+    await fetchData();
+  } catch (error) {
+    notificationStore.notify(i18n.locale === 'es' ? 'No se pudo pausar el plan' : 'Could not pause plan', 'error');
+  }
+};
+
+const resumePlan = async () => {
+  try {
+    await trainingStore.resumePlan();
+    notificationStore.notify(i18n.locale === 'es' ? 'Plan reanudado' : 'Plan resumed', 'success');
+    await fetchData();
+  } catch (error) {
+    notificationStore.notify(i18n.locale === 'es' ? 'No se pudo reanudar el plan' : 'Could not resume plan', 'error');
+  }
+};
+
+const abandonPlan = async () => {
+  notificationStore.confirm(
+    i18n.locale === 'es' ? 'Abandonar plan' : 'Abandon plan',
+    i18n.locale === 'es' ? 'Podras elegir otro plan despues.' : 'You can choose another plan afterwards.',
+    async () => {
+      try {
+        await trainingStore.abandonPlan();
+        notificationStore.notify(i18n.locale === 'es' ? 'Plan abandonado' : 'Plan abandoned', 'success');
+        await fetchData();
+      } catch (error) {
+        notificationStore.notify(i18n.locale === 'es' ? 'No se pudo abandonar el plan' : 'Could not abandon plan', 'error');
+      }
+    }
+  );
+};
+
 onMounted(async () => {
   // Check for exercise pre-selection from query params
   const urlParams = new URLSearchParams(window.location.search);
@@ -788,6 +891,28 @@ watch(
 .text-precision { font-family: 'JetBrains Mono', monospace; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+.plan-action {
+  border-radius: 0.75rem;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  background: rgb(255 255 255 / 0.04);
+  padding: 0.55rem 0.75rem;
+  color: rgb(255 255 255 / 0.78);
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.plan-action:hover {
+  border-color: rgb(255 69 0 / 0.35);
+  color: rgb(255 255 255 / 0.95);
+}
+
+.plan-action:active {
+  transform: scale(0.97);
+}
 
 .fade-enter-active,
 .fade-leave-active {

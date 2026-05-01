@@ -88,7 +88,7 @@ async function getActivePlanBundle(userId) {
        ON tpd.plan_id = tp.id
       AND tpd.day_number = LEAST(uap.current_day, tp.duration_days)
      WHERE uap.user_id = $1
-       AND uap.status = 'active'
+       AND uap.status IN ('active', 'paused')
        AND tp.is_active = TRUE
      LIMIT 1`,
     [userId]
@@ -123,7 +123,7 @@ async function getActivePlanBundle(userId) {
       lastCompletedDateStr: row.last_completed_date_str,
       lastCompletedDay: Number(row.last_completed_day || 0),
     },
-    todayWorkout: row.plan_day_id ? shapeWorkout(row, blocksResult.rows) : null,
+    todayWorkout: row.status === 'active' && row.plan_day_id ? shapeWorkout(row, blocksResult.rows) : null,
   };
 }
 
@@ -193,7 +193,7 @@ async function applyGuidedRepLog(client, userId, exerciseType, count) {
   if (bossRes.rows.length > 0) {
     const boss = bossRes.rows[0];
     bossId = boss.id;
-    const bossDmgResult = calculateDamage(augmentedUser, count, exerciseType, boss);
+    const bossDmgResult = calculateDamage(augmentedUser, count, exerciseType, boss, false, false, diffMult);
     actualDamageDealt = bossDmgResult.totalDamage;
 
     const updateBossRes = await client.query(
@@ -328,10 +328,12 @@ router.get('/me', authenticate, async (req, res) => {
     const bundle = await getActivePlanBundle(req.user.id);
     const onboardingCompleted = !!user.goal_onboarding_completed;
 
-    const todayStr = getLocalDateString();
+    const todayResult = await query(`SELECT TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD') AS today, TO_CHAR(CURRENT_DATE + INTERVAL '1 day', 'YYYY-MM-DD') AS tomorrow`);
+    const todayStr = todayResult.rows[0].today;
     const completedToday = !!(bundle.activePlan && bundle.activePlan.lastCompletedDateStr === todayStr);
 
-    const isTrainingLockedToday = completedToday;
+    const isPlanPaused = bundle.activePlan?.status === 'paused';
+    const isTrainingLockedToday = completedToday || isPlanPaused;
     let lockedUntilDate = null;
     let todayWorkout = bundle.todayWorkout;
     let nextWorkoutPreview = null;
@@ -339,10 +341,10 @@ router.get('/me', authenticate, async (req, res) => {
     if (completedToday) {
       nextWorkoutPreview = bundle.todayWorkout;
       todayWorkout = null;
-
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      lockedUntilDate = tomorrow.toISOString().substring(0, 10);
+      lockedUntilDate = todayResult.rows[0].tomorrow;
+    } else if (isPlanPaused) {
+      nextWorkoutPreview = null;
+      todayWorkout = null;
     }
 
     res.json({
@@ -351,6 +353,7 @@ router.get('/me', authenticate, async (req, res) => {
       isTrainingLockedToday,
       lockedUntilDate,
       completedToday,
+      isPlanPaused,
       nextWorkoutPreview,
       onboardingMode: user.onboarding_mode || null,
       onboardingCompleted,
@@ -396,7 +399,9 @@ router.post('/select', authenticate, async (req, res) => {
         baseline = EXCLUDED.baseline,
         equipment = EXCLUDED.equipment,
         status = 'active',
-        started_at = CURRENT_DATE`,
+        started_at = CURRENT_DATE,
+        last_completed_date = NULL,
+        last_completed_day = NULL`,
       [
         req.user.id,
         planResult.rows[0].id,
@@ -448,7 +453,7 @@ router.post('/abandon', authenticate, async (req, res) => {
     await query(
       `UPDATE user_active_plans
        SET status = 'abandoned'
-       WHERE user_id = $1 AND status = 'active'`,
+       WHERE user_id = $1 AND status IN ('active', 'paused')`,
       [req.user.id]
     );
 
@@ -456,6 +461,38 @@ router.post('/abandon', authenticate, async (req, res) => {
   } catch (error) {
     console.error('Error abandoning training plan:', error);
     res.status(500).json({ message: 'Error abandoning training plan' });
+  }
+});
+
+router.post('/pause', authenticate, async (req, res) => {
+  try {
+    await query(
+      `UPDATE user_active_plans
+       SET status = 'paused'
+       WHERE user_id = $1 AND status = 'active'`,
+      [req.user.id]
+    );
+
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('Error pausing training plan:', error);
+    res.status(500).json({ message: 'Error pausing training plan' });
+  }
+});
+
+router.post('/resume', authenticate, async (req, res) => {
+  try {
+    await query(
+      `UPDATE user_active_plans
+       SET status = 'active'
+       WHERE user_id = $1 AND status = 'paused'`,
+      [req.user.id]
+    );
+
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('Error resuming training plan:', error);
+    res.status(500).json({ message: 'Error resuming training plan' });
   }
 });
 
@@ -468,7 +505,9 @@ router.post('/sessions/start', authenticate, async (req, res) => {
 
   try {
     const checkCompletedToday = await query(
-      `SELECT TO_CHAR(last_completed_date, 'YYYY-MM-DD') AS last_completed_date_str 
+      `SELECT TO_CHAR(last_completed_date, 'YYYY-MM-DD') AS last_completed_date_str,
+              TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD') AS today,
+              TO_CHAR(CURRENT_DATE + INTERVAL '1 day', 'YYYY-MM-DD') AS tomorrow
        FROM user_active_plans
        WHERE user_id = $1 AND status = 'active'`,
       [req.user.id]
@@ -476,9 +515,9 @@ router.post('/sessions/start', authenticate, async (req, res) => {
 
     if (checkCompletedToday.rows.length > 0) {
       const row = checkCompletedToday.rows[0];
-      const todayStr = getLocalDateString();
+      const todayStr = row.today;
       if (row.last_completed_date_str === todayStr) {
-        return res.status(403).json({ message: 'Training locked until tomorrow' });
+        return res.status(409).json({ message: 'Training locked until tomorrow', lockedUntilDate: row.tomorrow });
       }
     }
 
@@ -530,6 +569,7 @@ router.post('/sessions/:id/complete', authenticate, async (req, res) => {
          tpd.reward_xp,
          tpd.reward_coins,
          tp.duration_days,
+         tp.title_key AS plan_title_key,
          uap.current_day
        FROM workout_sessions ws
        JOIN training_plan_days tpd ON tpd.id = ws.plan_day_id
