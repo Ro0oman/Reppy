@@ -154,22 +154,18 @@
 
     <!-- Mobile Bottom Operational Dock -->
     <nav v-if="authStore.isAuthenticated && $route.name !== 'pvp'"
-      class="lg:hidden fixed bottom-6 left-4 right-4 z-[60] bg-surface/60 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-2 transition-all duration-500">
-      <div class="flex items-center justify-around h-14 gap-1">
+      class="lg:hidden fixed bottom-4 left-4 right-4 z-[60] bg-surface/70 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-2 transition-all duration-500">
+      <div class="flex items-center justify-around h-16 gap-2">
         <router-link v-for="nav in mobileNavLinks" :key="nav.id"
-          :to="{ name: nav.id, params: { lang: i18n.locale, ...(nav.id === 'profile' ? { userId: authStore.user?.id } : {}) } }"
-          class="flex flex-col items-center justify-center py-2 flex-1 group relative transition-all rounded-2xl overflow-hidden"
-          :class="$route.name === nav.id ? 'bg-primary-500/10' : 'opacity-60 hover:opacity-100 hover:bg-white/5'">
+          :to="getMobileNavTo(nav)"
+          class="flex flex-col items-center justify-center min-h-[52px] py-2 flex-1 group relative transition-all rounded-2xl overflow-hidden border"
+          :class="$route.name === nav.id ? 'bg-primary-500/15 border-primary-500/30' : 'opacity-80 hover:opacity-100 hover:bg-white/5 border-transparent'">
           <div class="relative">
             <component :is="nav.icon" class="w-5 h-5 transition-transform group-active:scale-90 relative z-10"
               :class="$route.name === nav.id ? 'text-primary-500 drop-shadow-[0_0_10px_rgba(255,69,0,0.4)]' : ''" />
-
-            <div v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory)"
-              class="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full border border-surface shadow-[0_0_8px_rgba(255,69,0,0.5)] animate-ping">
-            </div>
           </div>
 
-          <span class="text-[7px] font-black uppercase tracking-tighter mt-1 truncate w-full px-0.5 text-center"
+          <span class="text-[8px] font-black uppercase tracking-tight mt-1 truncate w-full px-0.5 text-center"
             :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted'">
             {{ nav.short || i18n.t(nav.label) }}
           </span>
@@ -356,13 +352,19 @@ const navLinks = computed(() => [
 ]);
 
 const mobileNavLinks = computed(() => [
-  { id: 'dashboard', icon: LayoutDashboard, label: 'nav_dashboard', short: 'Panel' },
-  { id: 'social', icon: Users, label: 'nav_social', short: 'Social' },
-  { id: 'missions', icon: Target, label: 'nav_missions', short: 'Misiones' },
-  { id: 'inventory', icon: Package, label: 'nav_inventory', short: 'Inventario' },
-  { id: 'shop', icon: ShoppingBag, label: 'nav_shop', short: 'Tienda' },
-  { id: 'profile', icon: User, label: 'nav_profile', short: 'Perfil' },
+  { id: 'dashboard', icon: LayoutDashboard, label: 'nav_dashboard', short: i18n.locale === 'es' ? 'Registrar' : 'Log' },
+  { id: 'social', icon: Users, label: 'nav_social', short: i18n.locale === 'es' ? 'Social' : 'Social' },
+  { id: 'inventory', icon: Package, label: 'nav_inventory', short: i18n.locale === 'es' ? 'Inventario' : 'Inventory' },
+  { id: 'shop', icon: ShoppingBag, label: 'nav_shop', short: i18n.locale === 'es' ? 'Tienda' : 'Shop' },
+  { id: 'profile', icon: User, label: 'nav_profile', short: i18n.locale === 'es' ? 'Progreso' : 'Progress' },
 ]);
+
+const getMobileNavTo = (nav) => {
+  if (nav.id === 'profile') {
+    return { name: 'profile', params: { lang: i18n.locale, userId: authStore.user?.id } };
+  }
+  return { name: nav.id, params: { lang: i18n.locale } };
+};
 
 const earnings = [
   { key: 'ex_pullups_std', amount: '1' },

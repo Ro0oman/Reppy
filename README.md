@@ -70,4 +70,4 @@ npm run dev
 
 - Build in some Windows setups may fail with `spawn EPERM` from Vite/Rolldown.
 - Backend currently has no automated test suite (`npm test` is placeholder).
-
+- Product metrics spec for Activation/D1/D7/D30: `NORTH_STAR_METRICS.md`.

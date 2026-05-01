@@ -41,6 +41,58 @@
       <ExerciseSelector v-model="activeExercise" compact class="w-full md:hidden" />
     </header>
 
+    <section
+      class="w-full rounded-[2rem] border backdrop-blur-xl p-4 sm:p-6 transition-all duration-500"
+      :class="missionCompletionPulse ? 'border-emerald-500/40 bg-emerald-500/10 shadow-[0_0_35px_rgba(16,185,129,0.2)]' : 'border-primary-500/25 bg-primary-500/10'"
+    >
+      <div class="flex flex-col lg:flex-row lg:items-center gap-4">
+        <div class="flex-1 min-w-0 space-y-2">
+          <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary-500">
+            {{ i18n.locale === 'es' ? 'QUE HAGO HOY' : 'WHAT TO DO TODAY' }}
+          </p>
+          <h3 class="text-lg sm:text-2xl font-black tracking-tight text-foreground leading-tight">
+            {{ todayMissionTitle }}
+          </h3>
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
+              <span class="text-muted">{{ todayMissionProgressLabel }}</span>
+              <span :class="isDailyObjectiveDone ? 'text-emerald-500' : 'text-primary-500'">{{ todayMissionPercent }}%</span>
+            </div>
+            <div class="h-2 rounded-full bg-white/10 border border-white/10 overflow-hidden">
+              <div
+                class="h-full rounded-full transition-all duration-700"
+                :class="isDailyObjectiveDone ? 'bg-emerald-500' : 'bg-primary-500'"
+                :style="{ width: `${todayMissionPercent}%` }"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2 lg:min-w-[160px]">
+          <div class="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2">
+            <p class="text-[8px] font-black uppercase tracking-widest text-muted/70">{{ i18n.locale === 'es' ? 'Racha' : 'Streak' }}</p>
+            <p class="mt-1 text-xs font-black" :class="isDailyObjectiveDone ? 'text-emerald-400' : 'text-amber-400'">
+              {{ isDailyObjectiveDone ? (i18n.locale === 'es' ? 'Hoy completado' : 'Today completed') : (i18n.locale === 'es' ? 'Pendiente hoy' : 'Pending today') }}
+            </p>
+          </div>
+          <div class="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2">
+            <p class="text-[8px] font-black uppercase tracking-widest text-muted/70">{{ i18n.locale === 'es' ? 'Recompensa' : 'Reward' }}</p>
+            <div class="mt-1 flex items-center gap-2 text-xs font-black text-foreground">
+              <Coins class="w-3.5 h-3.5 text-primary-500" />
+              <span>{{ todayMissionRewardLabel }}</span>
+            </div>
+          </div>
+          <button
+            @click="handleTodayMissionAction"
+            class="col-span-2 sm:col-span-1 lg:col-span-1 rounded-xl px-4 py-2.5 text-[10px] font-black uppercase tracking-[0.15em] transition-all active:scale-95"
+            :class="isDailyObjectiveDone ? 'bg-emerald-500 hover:bg-emerald-400 text-white' : 'bg-primary-500 hover:bg-primary-400 text-white'"
+          >
+            {{ todayMissionActionLabel }}
+          </button>
+        </div>
+      </div>
+    </section>
+
     <!-- 2. The Hero: Active Session -->
     <section
       ref="repsInputSection"
@@ -297,7 +349,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import {
   Trophy, Target, Flame, Zap, Activity, History, Inbox,
-  BarChart3, Check, X, Trash2, Globe, Sword, Swords, FlaskConical
+  BarChart3, Check, X, Trash2, Globe, Sword, Swords, FlaskConical, Coins
 } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
@@ -336,6 +388,9 @@ const highlightRepsInput = ref(false);
 const repsInputSection = ref(null);
 const quickStartEvaluated = ref(false);
 const suppressRPGModal = ref(false);
+const todayMission = ref(null);
+const missionCompletionPulse = ref(false);
+const missionCompletionStateReady = ref(false);
 const QUICKSTART_SEEN_PREFIX = 'reppy_quickstart_seen_v1';
 
 // Scroll lock when modals are active
@@ -384,11 +439,15 @@ const handleCloseQuickStartModal = () => {
   showQuickStartModal.value = false;
 };
 
-const handleStartQuickStart = async () => {
+const handleStartQuickStart = async (payload = null) => {
   markQuickStartSeen();
   suppressRPGModal.value = true;
   showRPGModal.value = false;
   showQuickStartModal.value = false;
+  if (payload?.exerciseType) {
+    activeExercise.value = payload.exerciseType;
+  }
+  await fetchData();
   await scrollToRepsInput();
 };
 
@@ -418,6 +477,56 @@ const todayProgress = computed(() => {
   return reps.value
     .filter(r => getLocalDateString(r.date) === today)
     .reduce((acc, curr) => acc + Number(curr.count), 0);
+});
+
+const isDailyObjectiveDone = computed(() => {
+  if (todayMission.value?.is_completed) return true;
+  return todayProgress.value >= stats.dailyGoal;
+});
+
+const todayMissionPercent = computed(() => {
+  if (todayMission.value?.goal_value) {
+    const pct = Math.round((Number(todayMission.value.current_value || 0) / Number(todayMission.value.goal_value || 1)) * 100);
+    return Math.max(0, Math.min(100, pct));
+  }
+  const fallbackPct = Math.round((todayProgress.value / Math.max(1, stats.dailyGoal)) * 100);
+  return Math.max(0, Math.min(100, fallbackPct));
+});
+
+const todayMissionTitle = computed(() => {
+  if (todayMission.value?.title_key) return i18n.t(todayMission.value.title_key);
+  return i18n.locale === 'es' ? 'Completa tu objetivo diario de reps' : 'Complete your daily reps objective';
+});
+
+const todayMissionProgressLabel = computed(() => {
+  if (todayMission.value?.goal_value) {
+    return `${todayMission.value.current_value || 0} / ${todayMission.value.goal_value}`;
+  }
+  return `${todayProgress.value} / ${stats.dailyGoal}`;
+});
+
+const todayMissionRewardLabel = computed(() => {
+  if (!todayMission.value) {
+    return i18n.locale === 'es' ? '+50 RC' : '+50 RC';
+  }
+  const coins = Number(todayMission.value.reward_coins || 0);
+  const gems = Number(todayMission.value.reward_gems || 0);
+  const xp = Number(todayMission.value.reward_xp || 0);
+  const parts = [];
+  if (coins > 0) parts.push(`+${coins} RC`);
+  if (gems > 0) parts.push(`+${gems} G`);
+  if (xp > 0) parts.push(`+${xp} XP`);
+  return parts.length ? parts.join(' · ') : (i18n.locale === 'es' ? 'Recompensa activa' : 'Active reward');
+});
+
+const todayMissionActionLabel = computed(() => {
+  if (todayMission.value?.is_completed && !todayMission.value?.is_claimed) {
+    return i18n.locale === 'es' ? 'Reclamar en Misiones' : 'Claim in Missions';
+  }
+  if (isDailyObjectiveDone.value) {
+    return i18n.locale === 'es' ? 'Objetivo completado' : 'Objective completed';
+  }
+  return i18n.locale === 'es' ? 'Registrar reps ahora' : 'Log reps now';
 });
 
 const currentTime = ref(new Date());
@@ -480,6 +589,8 @@ const fetchGlobalData = async () => {
     ]);
     const missionList = missionsRes.data.missions || [];
     unclaimedMissions.value = missionList.filter(m => m.is_completed && !m.is_claimed).length;
+    const dailyMissions = missionList.filter(m => m.is_daily);
+    todayMission.value = dailyMissions.find(m => !m.is_completed) || dailyMissions[0] || null;
   } catch (err) {
     console.error('Error fetching global dashboard data:', err);
   }
@@ -509,6 +620,7 @@ const fetchData = async () => {
     stats.totalVolume = statsRes.data.totalVolume || 0;
     stats.bodyWeight = statsRes.data.bodyWeight || 75;
     stats.combatPower = statsRes.data.combatPower || { total: 0, base: 0, gear: 0, buff: 0 };
+    await fetchGlobalData();
 
     if (bossHealthRef.value) bossHealthRef.value.refresh();
 
@@ -595,6 +707,14 @@ const handleCloseRPGModal = () => {
   }
 };
 
+const handleTodayMissionAction = async () => {
+  if (todayMission.value?.is_completed && !todayMission.value?.is_claimed) {
+    router.push({ name: 'missions', params: { lang: i18n.locale } });
+    return;
+  }
+  await scrollToRepsInput();
+};
+
 onMounted(() => {
   // Check for exercise pre-selection from query params
   const urlParams = new URLSearchParams(window.location.search);
@@ -604,7 +724,6 @@ onMounted(() => {
   }
 
   fetchData();
-  fetchGlobalData();
   // Auto-refresh removed to save Supabase/Vercel resources. 
   // Real-time events via Socket.io handle the live feel.
   // refreshInterval = setInterval(fetchData, 60000);
@@ -619,6 +738,26 @@ onUnmounted(() => {
   if (refreshInterval) clearInterval(refreshInterval);
   if (timerInterval) clearInterval(timerInterval);
 });
+
+watch(
+  () => !!todayMission.value && !!todayMission.value.is_completed,
+  (isCompleted) => {
+    if (!missionCompletionStateReady.value) {
+      missionCompletionStateReady.value = true;
+      return;
+    }
+    if (isCompleted) {
+      missionCompletionPulse.value = true;
+      notificationStore.notify(
+        i18n.locale === 'es' ? 'Mision diaria completada' : 'Daily mission completed',
+        'success'
+      );
+      setTimeout(() => {
+        missionCompletionPulse.value = false;
+      }, 1800);
+    }
+  }
+);
 </script>
 
 <style scoped>
