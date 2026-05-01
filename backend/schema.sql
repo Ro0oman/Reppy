@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255),
     avatar_url TEXT,
+    theme VARCHAR(20) DEFAULT 'dark',
     total_reps INTEGER DEFAULT 0,
     -- RPG and Currency fields
     reppy_coins INTEGER DEFAULT 0,

@@ -8,14 +8,13 @@ async function migrate() {
         console.log('Adding "theme" column to users table...');
         await query(`
             ALTER TABLE users 
-            ADD COLUMN IF NOT EXISTS theme VARCHAR(20) DEFAULT 'light';
+            ADD COLUMN IF NOT EXISTS theme VARCHAR(20) DEFAULT 'dark';
         `);
         
-        // 2. Ensure all existing users are set to light mode by default
-        // (Even if they had a default before, let's enforce the user's request)
-        console.log('Setting default theme to "light" for all users...');
+        // 2. Keep explicit user choices, but dark is the default for users without a preference.
+        console.log('Setting missing user themes to "dark"...');
         await query(`
-            UPDATE users SET theme = 'light' WHERE theme IS NULL;
+            UPDATE users SET theme = 'dark' WHERE theme IS NULL;
         `);
 
         console.log('Migration completed successfully.');
