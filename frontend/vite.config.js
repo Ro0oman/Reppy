@@ -2,6 +2,8 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import fs from 'fs'
 
+const apiProxyTarget = process.env.VITE_API_PROXY_TARGET || 'http://127.0.0.1:5001';
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
@@ -33,7 +35,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:5000',
+        target: apiProxyTarget,
         changeOrigin: true
       }
     }

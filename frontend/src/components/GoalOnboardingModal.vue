@@ -3,7 +3,7 @@
     <transition name="fade">
       <div
         v-if="show"
-        class="fixed inset-0 z-[120] flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-md px-3 py-4"
+        class="fixed inset-0 z-[120] flex items-center justify-center bg-black/70 backdrop-blur-md px-3 py-4"
         @click.self="dismissOnboarding"
       >
         <div class="w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-[1.5rem] border border-white/10 bg-deep-abyss shadow-2xl">
@@ -177,7 +177,7 @@ const chooseFree = async () => {
   try {
     await trainingStore.chooseFreeMode();
     notificationStore.notify(i18n.locale === 'es' ? 'Modo libre activado' : 'Free mode enabled', 'success');
-    emit('close');
+    emit('close', { reason: 'free_mode' });
   } catch (error) {
     notificationStore.notify(i18n.locale === 'es' ? 'No se pudo guardar la preferencia' : 'Preference could not be saved', 'error');
   } finally {
@@ -187,13 +187,7 @@ const chooseFree = async () => {
 
 const dismissOnboarding = async () => {
   if (loading.value) return;
-
-  if (trainingStore.canShowOnboarding && !trainingStore.activePlan) {
-    await chooseFree();
-    return;
-  }
-
-  emit('close');
+  emit('close', { reason: 'dismissed' });
 };
 
 const selectPlan = async () => {
@@ -213,7 +207,7 @@ const selectPlan = async () => {
     });
     notificationStore.notify(i18n.locale === 'es' ? 'Mision guiada creada' : 'Guided mission created', 'success');
     emit('selected');
-    emit('close');
+    emit('close', { reason: 'selected_plan' });
   } catch (error) {
     notificationStore.notify(i18n.locale === 'es' ? 'No se pudo elegir el plan' : 'Plan could not be selected', 'error');
   } finally {

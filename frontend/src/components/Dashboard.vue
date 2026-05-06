@@ -7,7 +7,17 @@
             <h2 class="text-2xl sm:text-4xl font-black tracking-tighter text-foreground italic uppercase leading-none drop-shadow-md">{{ i18n.t('dashboard_title') }}</h2>
           </div>
       </div>
-      <ExerciseSelector v-model="activeExercise" compact class="w-full md:hidden" />
+      <div class="w-full flex items-center gap-2">
+        <button
+          v-if="!trainingStore.activePlan"
+          type="button"
+          class="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-muted transition hover:border-primary-500/30 hover:text-foreground active:scale-95"
+          @click="openPlanPicker"
+        >
+          {{ i18n.locale === 'es' ? 'Planes guiados' : 'Guided plans' }}
+        </button>
+        <ExerciseSelector v-model="activeExercise" compact class="w-full md:hidden" />
+      </div>
     </header>
 
     <TodayWorkout
@@ -61,14 +71,24 @@
     </section>
 
     <section
-      v-else
+      v-else-if="!planPromoDismissed"
       class="rounded-[1.5rem] border border-primary-500/35 bg-primary-500/10 p-4 shadow-[0_0_35px_rgba(255,69,0,0.08)] sm:p-5"
     >
       <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div class="min-w-0">
-          <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary-500">
-            {{ i18n.locale === 'es' ? 'Empieza tu progresion' : 'Start your progression' }}
-          </p>
+          <div class="flex items-start justify-between gap-3">
+            <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary-500">
+              {{ i18n.locale === 'es' ? 'Empieza tu progresion' : 'Start your progression' }}
+            </p>
+            <button
+              type="button"
+              class="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-white/10 bg-white/[0.04] text-muted transition hover:text-foreground active:scale-95"
+              :aria-label="i18n.locale === 'es' ? 'Ocultar bloque de plan guiado' : 'Hide guided plan block'"
+              @click="dismissPlanPromo"
+            >
+              <X class="h-4 w-4" />
+            </button>
+          </div>
           <h3 class="mt-2 text-2xl font-black uppercase leading-tight text-foreground">
             {{ i18n.locale === 'es' ? 'Elige un plan guiado' : 'Choose a guided plan' }}
           </h3>
@@ -105,6 +125,9 @@
           <h3 class="text-lg sm:text-2xl font-black tracking-tight text-foreground leading-tight">
             {{ todayMissionTitle }}
           </h3>
+          <p class="text-[11px] font-semibold text-muted/75 leading-relaxed">
+            {{ todayMissionHowTo }}
+          </p>
           <div class="space-y-1.5">
             <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
               <span class="text-muted">{{ todayMissionProgressLabel }}</span>
@@ -395,7 +418,7 @@
     />
     <GoalOnboardingModal
       :show="showGoalOnboarding"
-      @close="showGoalOnboarding = false"
+      @close="handleGoalOnboardingClose"
       @selected="handleGuidedPlanSelected"
     />
   </div>
@@ -455,7 +478,10 @@ const suppressRPGModal = ref(false);
 const todayMission = ref(null);
 const missionCompletionPulse = ref(false);
 const missionCompletionStateReady = ref(false);
+const planPromoDismissed = ref(false);
 const QUICKSTART_SEEN_PREFIX = 'reppy_quickstart_seen_v1';
+const GOAL_ONBOARDING_DISMISSED_PREFIX = 'reppy_goal_onboarding_dismissed_v1';
+const PLAN_PROMO_DISMISSED_PREFIX = 'reppy_plan_promo_dismissed_v1';
 
 // Scroll lock when modals are active
 watch([showRPGModal, showQuickStartModal, showGoalOnboarding], ([rpgModal, quickStartModal, goalOnboarding]) => {
@@ -467,6 +493,8 @@ watch([showRPGModal, showQuickStartModal, showGoalOnboarding], ([rpgModal, quick
 });
 
 const getQuickStartStorageKey = () => `${QUICKSTART_SEEN_PREFIX}:${authStore.user?.id || 'guest'}`;
+const getGoalOnboardingDismissedKey = () => `${GOAL_ONBOARDING_DISMISSED_PREFIX}:${authStore.user?.id || 'guest'}`;
+const getPlanPromoDismissedKey = () => `${PLAN_PROMO_DISMISSED_PREFIX}:${authStore.user?.id || 'guest'}`;
 
 const hasSeenQuickStart = () => {
   if (typeof window === 'undefined') return true;
@@ -483,6 +511,33 @@ const shouldShowQuickStart = (totalRepsCount) => {
   if (trainingStore.canShowOnboarding || trainingStore.onboardingCompleted) return false;
   if (hasSeenQuickStart()) return false;
   return Number(totalRepsCount || 0) <= 20;
+};
+
+const hasDismissedGoalOnboarding = () => {
+  if (typeof window === 'undefined') return false;
+  return localStorage.getItem(getGoalOnboardingDismissedKey()) === '1';
+};
+
+const markGoalOnboardingDismissed = () => {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(getGoalOnboardingDismissedKey(), '1');
+};
+
+const clearGoalOnboardingDismissed = () => {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(getGoalOnboardingDismissedKey());
+};
+
+const dismissPlanPromo = () => {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(getPlanPromoDismissedKey(), '1');
+  planPromoDismissed.value = true;
+};
+
+const clearPlanPromoDismissed = () => {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(getPlanPromoDismissedKey());
+  planPromoDismissed.value = false;
 };
 
 const scrollToRepsInput = async () => {
@@ -546,11 +601,14 @@ const todayProgress = computed(() => {
 });
 
 const isDailyObjectiveDone = computed(() => {
-  if (todayMission.value?.is_completed) return true;
+  // If there is an active daily mission from backend, trust that source of truth.
+  if (todayMission.value) return !!todayMission.value.is_completed;
+  // Fallback only when there is no mission payload.
   return todayProgress.value >= stats.dailyGoal;
 });
 
 const todayMissionPercent = computed(() => {
+  if (isDailyObjectiveDone.value) return 100;
   if (todayMission.value?.goal_value) {
     const pct = Math.round((Number(todayMission.value.current_value || 0) / Number(todayMission.value.goal_value || 1)) * 100);
     return Math.max(0, Math.min(100, pct));
@@ -565,10 +623,17 @@ const todayMissionTitle = computed(() => {
 });
 
 const todayMissionProgressLabel = computed(() => {
-  if (todayMission.value?.goal_value) {
-    return `${todayMission.value.current_value || 0} / ${todayMission.value.goal_value}`;
+  const goalLabel = getGoalTypeLabel(todayMission.value?.goal_type);
+  if (isDailyObjectiveDone.value) {
+    if (todayMission.value?.goal_value) {
+      return `${todayMission.value.goal_value} / ${todayMission.value.goal_value}${goalLabel ? ` ${goalLabel}` : ''}`;
+    }
+    return `${stats.dailyGoal} / ${stats.dailyGoal}${goalLabel ? ` ${goalLabel}` : ''}`;
   }
-  return `${todayProgress.value} / ${stats.dailyGoal}`;
+  if (todayMission.value?.goal_value) {
+    return `${todayMission.value.current_value || 0} / ${todayMission.value.goal_value}${goalLabel ? ` ${goalLabel}` : ''}`;
+  }
+  return `${todayProgress.value} / ${stats.dailyGoal}${goalLabel ? ` ${goalLabel}` : ''}`;
 });
 
 const todayMissionRewardLabel = computed(() => {
@@ -592,7 +657,68 @@ const todayMissionActionLabel = computed(() => {
   if (isDailyObjectiveDone.value) {
     return i18n.locale === 'es' ? 'Objetivo completado' : 'Objective completed';
   }
+  const goalType = todayMission.value?.goal_type;
+  if (goalType === 'social_likes') return i18n.locale === 'es' ? 'Ir a Social' : 'Go to Social';
+  if (goalType === 'buy_any') return i18n.locale === 'es' ? 'Ir a Tienda' : 'Go to Shop';
+  if (goalType === 'use_consumable') return i18n.locale === 'es' ? 'Ir a Inventario' : 'Go to Inventory';
   return i18n.locale === 'es' ? 'Registrar reps ahora' : 'Log reps now';
+});
+
+const getGoalTypeLabel = (goalType) => {
+  const labels = {
+    reps: i18n.locale === 'es' ? 'REPS' : 'REPS',
+    damage: i18n.locale === 'es' ? 'DAÑO' : 'DAMAGE',
+    streak: i18n.locale === 'es' ? 'DÍAS' : 'DAYS',
+    xp_str: i18n.locale === 'es' ? 'XP FUERZA' : 'XP STRENGTH',
+    xp_pwr: i18n.locale === 'es' ? 'XP POTENCIA' : 'XP POWER',
+    xp_end: i18n.locale === 'es' ? 'XP RESISTENCIA' : 'XP ENDURANCE',
+    xp_agi: i18n.locale === 'es' ? 'XP AGILIDAD' : 'XP AGILITY',
+    social_likes: i18n.locale === 'es' ? 'LIKES' : 'LIKES',
+    buy_any: i18n.locale === 'es' ? 'COMPRAS' : 'PURCHASES',
+    use_consumable: i18n.locale === 'es' ? 'USOS' : 'USES',
+    night_owl: i18n.locale === 'es' ? 'SESIÓN NOCTURNA' : 'NIGHT SESSION',
+    personal_record: i18n.locale === 'es' ? 'RÉCORD' : 'RECORD',
+  };
+  return labels[goalType] || '';
+};
+
+const todayMissionHowTo = computed(() => {
+  const goalType = todayMission.value?.goal_type;
+  if (!goalType) return i18n.locale === 'es' ? 'Registra entrenamiento para avanzar.' : 'Log training to progress.';
+
+  const mapEs = {
+    reps: 'Haz repeticiones (cualquier ejercicio) en Registrar.',
+    damage: 'Registra reps para infligir daño al boss.',
+    streak: 'Entrena hoy para mantener/subir tu racha.',
+    xp_str: 'Prioriza volumen y lastre para subir XP de Fuerza.',
+    xp_pwr: 'Haz muscle-ups o dominadas lastradas para subir XP de Potencia.',
+    xp_end: 'Acumula muchas reps totales para subir XP de Resistencia.',
+    xp_agi: 'Trabaja ejercicios técnicos/explosivos para subir XP de Agilidad.',
+    social_likes: 'Ve a Social y da likes a publicaciones.',
+    buy_any: 'Compra cualquier objeto en Tienda.',
+    use_consumable: 'Usa una poción/consumible desde Inventario.',
+    night_owl: 'Registra reps después de las 22:00.',
+    personal_record: 'Supera tu mejor marca diaria de reps.',
+  };
+
+  const mapEn = {
+    reps: 'Do reps (any exercise) in Register.',
+    damage: 'Log reps to deal damage to the boss.',
+    streak: 'Train today to keep/increase your streak.',
+    xp_str: 'Prioritize volume and weighted work for Strength XP.',
+    xp_pwr: 'Do muscle-ups or weighted pull-ups for Power XP.',
+    xp_end: 'Accumulate high total reps for Endurance XP.',
+    xp_agi: 'Do technical/explosive work for Agility XP.',
+    social_likes: 'Go to Social and like posts.',
+    buy_any: 'Buy any item in Shop.',
+    use_consumable: 'Use a potion/consumable from Inventory.',
+    night_owl: 'Log reps after 22:00.',
+    personal_record: 'Beat your daily reps personal record.',
+  };
+
+  return i18n.locale === 'es'
+    ? (mapEs[goalType] || 'Completa la acción indicada en Misiones.')
+    : (mapEn[goalType] || 'Complete the required action in Missions.');
 });
 
 const currentTime = ref(new Date());
@@ -656,7 +782,8 @@ const fetchGlobalData = async () => {
     const missionList = missionsRes.data.missions || [];
     unclaimedMissions.value = missionList.filter(m => m.is_completed && !m.is_claimed).length;
     const dailyMissions = missionList.filter(m => m.is_daily);
-    todayMission.value = dailyMissions.find(m => !m.is_completed) || dailyMissions[0] || null;
+    const completedUnclaimedDaily = dailyMissions.find(m => m.is_completed && !m.is_claimed);
+    todayMission.value = completedUnclaimedDaily || dailyMissions.find(m => !m.is_completed) || dailyMissions[0] || null;
   } catch (err) {
     console.error('Error fetching global dashboard data:', err);
   }
@@ -695,7 +822,7 @@ const fetchData = async () => {
 
     if (!quickStartEvaluated.value) {
       quickStartEvaluated.value = true;
-      if (trainingStore.canShowOnboarding) {
+      if (trainingStore.canShowOnboarding && !hasDismissedGoalOnboarding()) {
         showGoalOnboarding.value = true;
         suppressRPGModal.value = true;
       } else if (shouldShowQuickStart(statsRes.data.totalReps)) {
@@ -780,8 +907,26 @@ const handleCloseRPGModal = () => {
 };
 
 const handleTodayMissionAction = async () => {
-  if (todayMission.value?.is_completed && !todayMission.value?.is_claimed) {
-    router.push({ name: 'missions', params: { lang: i18n.locale } });
+  if (isDailyObjectiveDone.value) {
+    const targetMissionId = todayMission.value?.id;
+    router.push({
+      name: 'missions',
+      params: { lang: i18n.locale },
+      query: targetMissionId ? { missionId: String(targetMissionId) } : {}
+    });
+    return;
+  }
+  const goalType = todayMission.value?.goal_type;
+  if (goalType === 'social_likes') {
+    router.push({ name: 'social', params: { lang: i18n.locale } });
+    return;
+  }
+  if (goalType === 'buy_any') {
+    router.push({ name: 'shop', params: { lang: i18n.locale } });
+    return;
+  }
+  if (goalType === 'use_consumable') {
+    router.push({ name: 'inventory', params: { lang: i18n.locale } });
     return;
   }
   await scrollToRepsInput();
@@ -793,11 +938,27 @@ const handleGuidedWorkoutCompleted = async () => {
 };
 
 const handleGuidedPlanSelected = async () => {
+  clearGoalOnboardingDismissed();
+  clearPlanPromoDismissed();
   showFreeLog.value = false;
   await fetchData();
 };
 
+const handleGoalOnboardingClose = (payload = {}) => {
+  showGoalOnboarding.value = false;
+
+  if (
+    payload?.reason === 'dismissed' &&
+    trainingStore.canShowOnboarding &&
+    !trainingStore.activePlan
+  ) {
+    markGoalOnboardingDismissed();
+  }
+};
+
 const openPlanPicker = () => {
+  clearGoalOnboardingDismissed();
+  clearPlanPromoDismissed();
   showGoalOnboarding.value = true;
 };
 
@@ -847,7 +1008,8 @@ onMounted(async () => {
 
   await trainingStore.fetchPlans();
   await trainingStore.fetchMine();
-  showGoalOnboarding.value = trainingStore.canShowOnboarding;
+  planPromoDismissed.value = typeof window !== 'undefined' && localStorage.getItem(getPlanPromoDismissedKey()) === '1';
+  showGoalOnboarding.value = trainingStore.canShowOnboarding && !hasDismissedGoalOnboarding();
   if (showGoalOnboarding.value) {
     suppressRPGModal.value = true;
   }

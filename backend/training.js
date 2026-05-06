@@ -22,6 +22,32 @@ const normalizeJson = (value) => {
   return value;
 };
 
+const SOCIAL_PLAN_NAME_MAP = {
+  plan_first_pullup_title: 'Primera Dominada',
+  plan_five_pullups_title: '5 Dominadas',
+  plan_ten_pullups_title: '10 Dominadas',
+  plan_twenty_pushups_title: '20 Flexiones',
+};
+
+const SOCIAL_EXERCISE_NAME_MAP = {
+  pullups: 'Dominadas',
+  pushups: 'Flexiones',
+  dips: 'Fondos',
+  muscleups: 'Muscle Ups',
+  weighted_pullups: 'Dominadas lastradas',
+  legs: 'Pierna',
+  scapular_pulls: 'Escapulares',
+  dead_hang: 'Dead Hang',
+  negative_pullups: 'Negativas de dominada',
+  inverted_rows: 'Remos invertidos',
+  plank: 'Plancha',
+};
+
+const toReadableSlug = (slug = '') =>
+  String(slug)
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, c => c.toUpperCase());
+
 const shapePlan = (row) => ({
   id: row.id,
   slug: row.slug,
@@ -675,39 +701,38 @@ router.post('/sessions/:id/complete', authenticate, async (req, res) => {
       [totalReps, totalDamage, session.reward_xp || 0, session.reward_coins || 0, completionRate, sessionId]
     );
 
-    const titleMap = {
-      'plan_first_pullup_title': 'Primera Dominada',
-      'plan_five_pullups_title': '5 Dominadas',
-      'plan_ten_pullups_title': '10 Dominadas',
-      'plan_twenty_pushups_title': '20 Flexiones'
-    };
-    let planName = titleMap[session.plan_title_key] || session.plan_title_key || 'Plan de entrenamiento';
+    const planName = SOCIAL_PLAN_NAME_MAP[session.plan_title_key] || session.plan_title_key || 'Plan de entrenamiento';
 
-    const exerciseSummaryParts = [];
-    const blockLogsMap = new Map();
+    // Aggregate all performed sets by exercise so social summaries reflect the full routine.
+    const performedByExercise = new Map();
     for (const log of logs) {
-      if (!blockLogsMap.has(log.blockId)) {
-        blockLogsMap.set(log.blockId, []);
+      const slug = log.exerciseType || 'pullups';
+      if (!performedByExercise.has(slug)) {
+        performedByExercise.set(slug, { sets: 0, total: 0 });
       }
-      blockLogsMap.get(log.blockId).push(log);
+      const agg = performedByExercise.get(slug);
+      agg.sets += 1;
+      agg.total += Number(log.actualReps || 0);
     }
 
-    for (const [blockId, blockLogs] of blockLogsMap.entries()) {
-      const block = blocksById.get(blockId);
-      if (!block) continue;
-      const slug = blockLogs[0].exerciseType || block.exercise_type || 'pullups';
+    const exerciseMetaRes = await client.query(
+      `SELECT slug, title_key, unit
+       FROM exercises
+       WHERE slug = ANY($1::text[])`,
+      [Array.from(performedByExercise.keys())]
+    );
+    const metaBySlug = new Map(exerciseMetaRes.rows.map(row => [row.slug, row]));
 
-      const exRes = await client.query('SELECT title_key, unit FROM exercises WHERE slug = $1', [slug]);
-      let exerciseName = slug;
-      let unit = '';
-      if (exRes.rows.length > 0) {
-        exerciseName = exRes.rows[0].title_key.toLowerCase();
-        if (exRes.rows[0].unit === 'seconds') unit = 's';
-      }
-      const setsCount = blockLogs.length;
-      const reps = blockLogs[0]?.actualReps || block.target_reps || 0;
-      exerciseSummaryParts.push(`${setsCount}x${reps}${unit} ${exerciseName}`);
-    }
+    const exerciseSummaryParts = Array.from(performedByExercise.entries()).map(([slug, agg]) => {
+      const meta = metaBySlug.get(slug);
+      const unit = meta?.unit === 'seconds' ? 's' : '';
+      const exerciseName =
+        SOCIAL_EXERCISE_NAME_MAP[slug] ||
+        (meta?.title_key?.startsWith('ex_') ? SOCIAL_EXERCISE_NAME_MAP[slug] : meta?.title_key) ||
+        toReadableSlug(slug);
+
+      return `${agg.sets}x${agg.total}${unit} ${exerciseName}`;
+    });
 
     const exerciseSummary = exerciseSummaryParts.join(' · ');
     const remainingDays = Math.max(0, Number(session.duration_days || 0) - Number(session.current_day || 1));

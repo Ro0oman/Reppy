@@ -3,9 +3,13 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-// 1. Initialize environment variables first
-dotenv.config({ path: './backend/.env' });
+// 1. Initialize environment variables first (works from repo root and backend cwd)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 import authRoutes from './auth.js';
 import repsRoutes from './reps.js';
@@ -37,7 +41,7 @@ import cron from 'node-cron';
 import { runStreakReminders } from './utils/streakReminders.js';
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 const server = http.createServer(app);
 
 // Initialize Socket.io
