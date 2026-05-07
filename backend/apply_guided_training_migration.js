@@ -266,6 +266,8 @@ async function run() {
         days_per_week INTEGER DEFAULT 3,
         baseline JSONB DEFAULT '{}'::jsonb,
         equipment JSONB DEFAULT '{}'::jsonb,
+        last_completed_date DATE,
+        last_completed_day INTEGER,
         status VARCHAR(30) DEFAULT 'active'
       )
     `);

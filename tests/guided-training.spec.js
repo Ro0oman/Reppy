@@ -132,6 +132,58 @@ test.describe('Guided Training MVP', () => {
     expect(reps.body.reduce((sum, entry) => sum + Number(entry.count || 0), 0)).toBeGreaterThan(0);
   });
 
+  test('a stale duplicate session cannot complete after the training day advances', async ({ page }) => {
+    await signup(page);
+
+    const select = await api(page, '/api/training/select', {
+      method: 'POST',
+      body: JSON.stringify({
+        planSlug: 'twenty_pushups_14d',
+        daysPerWeek: 3,
+        baseline: { pullups: 0, pushups: 4, dips: 0 },
+        equipment: { pullupBar: false },
+      }),
+    });
+    expect(select.ok).toBeTruthy();
+
+    const mine = await api(page, '/api/training/me');
+    expect(mine.ok).toBeTruthy();
+
+    const startA = await api(page, '/api/training/sessions/start', {
+      method: 'POST',
+      body: JSON.stringify({ planDayId: mine.body.todayWorkout.day.id }),
+    });
+    const startB = await api(page, '/api/training/sessions/start', {
+      method: 'POST',
+      body: JSON.stringify({ planDayId: mine.body.todayWorkout.day.id }),
+    });
+    expect(startA.ok).toBeTruthy();
+    expect(startB.ok).toBeTruthy();
+
+    const sets = mine.body.todayWorkout.blocks.flatMap(block =>
+      Array.from({ length: block.targetSets }, (_, index) => ({
+        blockId: block.id,
+        setIndex: index + 1,
+        exerciseType: block.exerciseType,
+        targetReps: block.targetReps,
+        actualReps: block.targetReps,
+        completed: true,
+      }))
+    );
+
+    const completeA = await api(page, `/api/training/sessions/${startA.body.session.id}/complete`, {
+      method: 'POST',
+      body: JSON.stringify({ sets }),
+    });
+    expect(completeA.ok).toBeTruthy();
+
+    const completeB = await api(page, `/api/training/sessions/${startB.body.session.id}/complete`, {
+      method: 'POST',
+      body: JSON.stringify({ sets }),
+    });
+    expect(completeB.status).toBe(409);
+  });
+
   test('free logging still works after abandoning a plan', async ({ page }) => {
     await signup(page);
 

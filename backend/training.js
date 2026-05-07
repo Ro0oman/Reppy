@@ -604,13 +604,19 @@ router.post('/sessions/:id/complete', authenticate, async (req, res) => {
        WHERE ws.id = $1
          AND ws.user_id = $2
          AND ws.status = 'started'
-       FOR UPDATE`,
+         AND uap.status = 'active'
+         AND tpd.day_number = LEAST(uap.current_day, tp.duration_days)
+         AND (
+           uap.last_completed_date IS NULL
+           OR uap.last_completed_date <> CURRENT_DATE
+         )
+       FOR UPDATE OF ws, uap`,
       [sessionId, req.user.id]
     );
 
     if (sessionResult.rows.length === 0) {
       await client.query('ROLLBACK');
-      return res.status(404).json({ message: 'Active workout session not found' });
+      return res.status(409).json({ message: 'Workout session is no longer available for the current training day' });
     }
 
     const session = sessionResult.rows[0];
@@ -701,6 +707,19 @@ router.post('/sessions/:id/complete', authenticate, async (req, res) => {
       [totalReps, totalDamage, session.reward_xp || 0, session.reward_coins || 0, completionRate, sessionId]
     );
 
+    const bonusXp = clampInt(session.reward_xp, 0);
+    const bonusCoins = clampInt(session.reward_coins, 0);
+    if (bonusXp > 0 || bonusCoins > 0) {
+      await client.query(
+        `UPDATE users
+         SET cha_xp = COALESCE(cha_xp, 0) + $1,
+             reppy_coins = GREATEST(0, COALESCE(reppy_coins, 0) + $2)
+         WHERE id = $3`,
+        [bonusXp, bonusCoins, req.user.id]
+      );
+      earnedCoins += bonusCoins;
+    }
+
     const planName = SOCIAL_PLAN_NAME_MAP[session.plan_title_key] || session.plan_title_key || 'Plan de entrenamiento';
 
     // Aggregate all performed sets by exercise so social summaries reflect the full routine.
@@ -782,7 +801,7 @@ router.post('/sessions/:id/complete', authenticate, async (req, res) => {
     }
 
     await client.query('COMMIT');
-    await recalculateUserStats(req.user.id);
+    await recalculateUserStats(req.user.id, true);
 
     res.json({
       ok: true,
