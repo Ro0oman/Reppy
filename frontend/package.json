@@ -7,7 +7,7 @@
     "dev": "vite",
     "sitemap": "node scripts/generate-sitemap.js",
     "sync-blog": "node -e \"const fs = require('fs'); fs.copyFileSync('../backend/blogData.json', './src/blogPosts.json')\"",
-    "build": "npm run sync-blog && npm run sitemap && vite-ssg build",
+    "build": "npm run sync-blog && npm run sitemap && vite-ssg build && node scripts/fix-ssg-seo.js",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -1,10 +1,24 @@
 {
   "version": 2,
   "outputDirectory": "frontend/dist",
+  "cleanUrls": true,
+  "redirects": [
+    { "source": "/", "destination": "/es", "permanent": true },
+    { "source": "/blog/:slug", "destination": "/es/blog/:slug", "permanent": true },
+    { "source": "/contador-flexiones", "destination": "/es/contador-flexiones", "permanent": true },
+    { "source": "/contador-dominadas", "destination": "/es/contador-dominadas", "permanent": true },
+    { "source": "/app-calistenia", "destination": "/es/app-calistenia", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/sitemap.xml", "destination": "/api/sitemap" },
     { "source": "/api/pusher/auth", "destination": "/api/pusher-auth.js" },
     { "source": "/api/(.*)", "destination": "/api/index.js" },
+    { "source": "/:lang(es|en)", "destination": "/:lang.html" },
+    { "source": "/:lang(es|en)/blog", "destination": "/:lang/blog.html" },
+    { "source": "/:lang(es|en)/blog/:slug", "destination": "/:lang/blog/:slug.html" },
+    { "source": "/:lang(es|en)/contador-dominadas", "destination": "/:lang/contador-dominadas.html" },
+    { "source": "/:lang(es|en)/contador-flexiones", "destination": "/:lang/contador-flexiones.html" },
+    { "source": "/:lang(es|en)/app-calistenia", "destination": "/:lang/app-calistenia.html" },
     { "source": "/((?!api/|_nuxt/|assets/|src/|favicon|og-image|manifest|robots|sitemap).*)", "destination": "/index.html" }
   ],
   "headers": [
