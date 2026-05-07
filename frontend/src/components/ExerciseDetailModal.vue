@@ -10,7 +10,9 @@
       <!-- Loading State -->
       <div v-if="loading" class="flex flex-col items-center justify-center py-12 gap-3 min-h-[300px]">
         <Loader2 class="w-8 h-8 animate-spin text-primary-500" />
-        <p class="text-xs font-black uppercase tracking-wider text-muted/60">Cargando detalles...</p>
+        <p class="text-xs font-black uppercase tracking-wider text-muted/60">
+          {{ i18n.locale === 'es' ? 'Cargando detalles...' : 'Loading details...' }}
+        </p>
       </div>
 
       <!-- Content -->
@@ -26,7 +28,7 @@
               {{ exercise.title_key?.startsWith('ex_') ? i18n.t(exercise.title_key) : exercise.title_key || exercise.slug }}
             </h3>
             <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary-500 mt-1">
-              Unidad: {{ exercise.unit === 'seconds' ? 'Segundos (s)' : 'Repeticiones' }}
+              {{ i18n.locale === 'es' ? 'Unidad' : 'Unit' }}: {{ unitText }}
             </p>
           </div>
         </div>
@@ -34,27 +36,35 @@
         <!-- Description & Multipliers -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div class="p-3 rounded-xl border border-white/5 bg-white/[0.02]">
-            <p class="text-[9px] font-black uppercase tracking-wider text-muted mb-1">Descripción</p>
+            <p class="text-[9px] font-black uppercase tracking-wider text-muted mb-1">
+              {{ i18n.locale === 'es' ? 'Descripcion' : 'Description' }}
+            </p>
             <p class="text-xs font-semibold leading-relaxed text-foreground/80">
               {{ exercise.description_key }}
             </p>
           </div>
 
           <div class="p-3 rounded-xl border border-white/5 bg-white/[0.02]">
-            <p class="text-[9px] font-black uppercase tracking-wider text-muted mb-1">Técnica</p>
+            <p class="text-[9px] font-black uppercase tracking-wider text-muted mb-1">
+              {{ i18n.locale === 'es' ? 'Tecnica correcta' : 'Correct technique' }}
+            </p>
             <p class="text-xs font-semibold leading-relaxed text-foreground/80">
-              {{ exercise.technique_key || 'Mantén una técnica correcta en todo el rango de movimiento.' }}
+              {{ exercise.technique_key || fallbackTechnique }}
             </p>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3 p-3 rounded-xl border border-white/5 bg-white/[0.02] text-center">
           <div>
-            <p class="text-[8px] font-black uppercase tracking-wider text-muted">Dificultad</p>
+            <p class="text-[8px] font-black uppercase tracking-wider text-muted">
+              {{ i18n.locale === 'es' ? 'Dificultad' : 'Difficulty' }}
+            </p>
             <p class="text-lg font-black tracking-tight text-amber-500">x{{ exercise.difficulty_multiplier || 1 }}</p>
           </div>
           <div>
-            <p class="text-[8px] font-black uppercase tracking-wider text-muted">Multiplicador Monedas</p>
+            <p class="text-[8px] font-black uppercase tracking-wider text-muted">
+              {{ i18n.locale === 'es' ? 'Multiplicador monedas' : 'Coin multiplier' }}
+            </p>
             <p class="text-lg font-black tracking-tight text-emerald-500">x{{ exercise.coin_multiplier || 1 }}</p>
           </div>
         </div>
@@ -63,11 +73,13 @@
         <div class="flex flex-col flex-1 gap-2 mt-2">
           <h4 class="text-xs font-black uppercase tracking-wider text-muted/80 flex items-center gap-2">
             <TrendingUp class="w-3.5 h-3.5 text-primary-500" />
-            Progreso este mes
+            {{ i18n.locale === 'es' ? 'Progreso este mes' : 'Progress this month' }}
           </h4>
 
           <div v-if="!exercise.progress?.length" class="flex flex-col items-center justify-center py-6 border border-dashed border-white/10 rounded-xl bg-white/[0.01]">
-            <p class="text-xs font-bold text-muted/50">Aún no hay registros este mes</p>
+            <p class="text-xs font-bold text-muted/50">
+              {{ i18n.locale === 'es' ? 'Aun no hay registros este mes' : 'No logs yet this month' }}
+            </p>
           </div>
 
           <div v-else class="space-y-1.5 overflow-y-auto max-h-[160px] pr-1">
@@ -93,7 +105,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { X, Activity, TrendingUp, Loader2 } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
@@ -110,6 +122,19 @@ const i18n = useI18nStore();
 
 const exercise = ref(null);
 const loading = ref(false);
+
+const unitText = computed(() => {
+  if (exercise.value?.unit === 'seconds') {
+    return i18n.locale === 'es' ? 'Segundos (s)' : 'Seconds (s)';
+  }
+  return i18n.locale === 'es' ? 'Repeticiones' : 'Repetitions';
+});
+
+const fallbackTechnique = computed(() =>
+  i18n.locale === 'es'
+    ? 'Manten una tecnica correcta en todo el rango de movimiento. Para la serie si aparece dolor o pierdes control.'
+    : 'Keep correct technique through the full range of motion. Stop the set if pain appears or control breaks.'
+);
 
 const close = () => {
   emit('close');

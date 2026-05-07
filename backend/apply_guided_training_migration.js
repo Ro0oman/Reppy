@@ -4,6 +4,236 @@ dotenv.config({ path: './backend/.env' });
 
 const { default: pool } = await import('./db.js');
 
+const day = (dayNumber, titleKey, focus, minutes, xp, coins, blocks) => ({
+  dayNumber,
+  titleKey,
+  focus,
+  minutes,
+  xp,
+  coins,
+  blocks,
+});
+
+const pickPhase = (dayNumber, totalDays) => {
+  if (dayNumber <= Math.ceil(totalDays / 3)) return 1;
+  if (dayNumber <= Math.ceil((totalDays / 3) * 2)) return 2;
+  return 3;
+};
+
+const progress = (dayNumber, totalDays, start, end) => {
+  if (totalDays <= 1) return end;
+  const ratio = (dayNumber - 1) / (totalDays - 1);
+  return Math.round(start + (end - start) * ratio);
+};
+
+const fighterLadder = (topReps, floorReps = 1) =>
+  Array.from({ length: 5 }, (_, index) => Math.max(floorReps, topReps - index));
+
+const fighterLadderBlocks = (reps, restSeconds = 90) =>
+  reps.map((rep, index) => [
+    'strength',
+    `Escalera fighter ${index + 1}: ${rep} reps`,
+    'Haz este peldano estricto y lejos del fallo. Descansa, repite el mismo patron y no sacrifiques rango.',
+    'pullups',
+    1,
+    rep,
+    restSeconds,
+  ]);
+
+const buildFirstPullupDays = () => Array.from({ length: 21 }, (_, index) => {
+  const n = index + 1;
+  const phase = pickPhase(n, 21);
+  const cycle = (n - 1) % 4;
+
+  if (n === 21) {
+    return day(n, 'guided_day_final_test', 'test_final', 16, 180, 80, [
+      ['warmup', 'Activacion escapular', 'Cuelgate activo: hombros abajo, costillas cerradas y codos largos.', 'scapular_pulls', 2, 8, 45],
+      ['test', 'Intentos de dominada estricta', 'Empieza desde brazos estirados, tira con dorsales y busca barbilla sobre la barra sin patada.', 'pullups', 5, 1, 120],
+      ['backoff', 'Negativas limpias', 'Sube con salto o apoyo y baja en 4-5 segundos manteniendo hombros activos.', 'negative_pullups', 3, 2, 90],
+      ['control', 'Dead hang activo', 'Agarre firme, cuello largo y escapulas ligeramente deprimidas. Para si hay dolor.', 'dead_hang', 2, 25, 60],
+    ]);
+  }
+
+  if (cycle === 0) {
+    const assistedReps = phase === 1 ? 2 : phase === 2 ? 3 : 4;
+    return day(n, 'guided_day_tech_base', 'base_tecnica', 13 + phase, 90 + n * 4, 35 + phase * 5, [
+      ['warmup', 'Scapular pulls', 'Desde colgado, sube y baja las escapulas sin doblar los codos.', 'scapular_pulls', 2 + phase, 6 + phase, 45],
+      ['strength', 'Dominada asistida', 'Usa banda, salto suave o apoyo de pies. Manten cuerpo firme y baja controlado.', 'assisted_pullups', 4, assistedReps, 75],
+      ['control', 'Dead hang activo', 'Cuelgate con hombros lejos de las orejas y abdomen activo.', 'dead_hang', 2, 10 + phase * 5, 60],
+    ]);
+  }
+
+  if (cycle === 1) {
+    return day(n, 'guided_day_soft_volume', 'volumen_suave', 14 + phase, 100 + n * 4, 40 + phase * 5, [
+      ['warmup', 'Dead hang suave', 'Acumula tiempo sin perder agarre ni bloquear la respiracion.', 'dead_hang', 2, 10 + phase * 5, 45],
+      ['volume', 'Remos invertidos', 'Pecho hacia la barra, cuerpo recto y codos atras. Ajusta la inclinacion para no llegar al fallo.', 'inverted_rows', Math.min(4, 2 + phase), 6 + phase, 60],
+      ['strength', 'Dominadas asistidas', 'Reps limpias con la minima ayuda que permita llegar arriba.', 'assisted_pullups', 3, 2 + phase, 75],
+    ]);
+  }
+
+  if (cycle === 2) {
+    return day(n, 'guided_day_eccentric_control', 'control_excentrico', 15 + phase, 110 + n * 4, 45 + phase * 5, [
+      ['warmup', 'Scapular pulls', 'Despierta dorsales antes de las negativas.', 'scapular_pulls', 3, 6 + phase, 45],
+      ['strength', 'Negativas controladas', 'Empieza arriba y baja lento. Si caes rapido, usa mas apoyo.', 'negative_pullups', phase === 1 ? 3 : 4, phase === 3 ? 3 : 2, 90],
+      ['backoff', 'Remos faciles', 'Termina con traccion horizontal sin quemar el agarre.', 'inverted_rows', 3, 6 + phase, 60],
+    ]);
+  }
+
+  return day(n, 'guided_day_recovery_skill', 'tecnica_suave', 12, 90 + n * 3, 35 + phase * 5, [
+    ['warmup', 'Movilidad de hombros', 'Haz reps lentas, sin dolor y con control total.', 'scapular_pulls', 2, 6 + phase, 45],
+    ['skill', 'Dominada asistida facil', 'Practica el camino correcto: pecho hacia barra, piernas quietas, bajada tranquila.', 'assisted_pullups', 3, 2 + phase, 75],
+    ['control', 'Plancha abdominal', 'Aprieta gluteos y abdomen para aprender a no balancearte en la barra.', 'plank', 2, 20 + phase * 5, 45],
+  ]);
+});
+
+const buildFivePullupDays = () => Array.from({ length: 21 }, (_, index) => {
+  const n = index + 1;
+  const phase = pickPhase(n, 21);
+  const cycle = (n - 1) % 4;
+
+  if (n === 21) {
+    return day(n, 'guided_day_final_test', 'test_final', 16, 190, 85, [
+      ['warmup', 'Activacion pull', 'Hangs activos y escapulas controladas antes del intento.', 'scapular_pulls', 2, 8, 45],
+      ['test', 'Set de 5 dominadas', 'Haz 5 reps estrictas: brazos largos abajo, barbilla arriba, sin balanceo.', 'pullups', 1, 5, 150],
+      ['backoff', 'Series faciles', 'Consolida volumen con reps lejos del fallo.', 'pullups', 3, 2, 90],
+      ['finisher', 'Remo invertido', 'Cierra con traccion horizontal limpia.', 'inverted_rows', 3, 8, 60],
+    ]);
+  }
+
+  if (cycle === 0) {
+    return day(n, 'guided_day_strength_build', 'fuerza_submaxima', 14 + phase, 105 + n * 4, 40 + phase * 5, [
+      ['warmup', 'Scapular pulls', 'Activa hombros y dorsales antes de tirar fuerte.', 'scapular_pulls', 3, 6 + phase, 45],
+      ['strength', 'Dominadas submaximas', 'Deja 1-2 reps en reserva. Si la tecnica cae, usa asistencia.', 'pullups', 5, phase + 1, 90],
+      ['backoff', 'Dominadas asistidas', 'Suma reps de calidad manteniendo el mismo recorrido.', 'assisted_pullups', 3, phase + 2, 75],
+    ]);
+  }
+
+  if (cycle === 1) {
+    const emomReps = phase === 1 ? 1 : 2;
+    const emomSets = phase === 3 ? 12 : 10;
+    return day(n, 'guided_day_density', 'emom_submaximo', 15 + phase, 115 + n * 4, 45 + phase * 5, [
+      ['warmup', 'Dead hang activo', 'Agarre firme y hombros estables.', 'dead_hang', 2, 15 + phase * 5, 45],
+      ['density', `EMOM ${emomSets}x${emomReps}`, 'Haz cada serie al inicio del minuto. Debe sentirse facil: si pierdes tecnica, usa asistencia o baja 1 rep.', 'pullups', emomSets, emomReps, 60],
+      ['finisher', 'Remos invertidos', 'Manten pecho abierto y cuerpo firme.', 'inverted_rows', 3, 8 + phase, 60],
+    ]);
+  }
+
+  if (cycle === 2) {
+    return day(n, 'guided_day_eccentric_control', 'pausas_y_negativas', 15 + phase, 125 + n * 4, 50 + phase * 5, [
+      ['warmup', 'Activacion pull', 'Calienta agarre, hombros y dorsal sin fatigar.', 'scapular_pulls', 2, 8, 45],
+      ['strength', 'Dominadas con pausa arriba', 'Pausa 1 segundo con barbilla sobre la barra y baja controlado.', 'pullups', 4, phase + 1, 100],
+      ['control', 'Negativas lentas', 'Bajada de 4 segundos para reforzar el tramo donde fallas.', 'negative_pullups', 3, 2, 90],
+    ]);
+  }
+
+  const ladderTop = Math.min(5, phase + 2);
+  return day(n, 'guided_day_fighter_ladder', 'escalera_fighter', 15 + phase, 125 + n * 3, 50 + phase * 5, [
+    ['warmup', 'Hangs y escapulas', 'Prepara el patron sin cansarte.', 'scapular_pulls', 2, 7 + phase, 45],
+    ...fighterLadderBlocks(fighterLadder(ladderTop, 1), phase === 3 ? 75 : 90),
+    ['control', 'Dead hang activo', 'Cierra con agarre activo y respiracion tranquila.', 'dead_hang', 1, 20 + phase * 5, 60],
+  ]);
+});
+
+const buildTenPullupDays = () => Array.from({ length: 28 }, (_, index) => {
+  const n = index + 1;
+  const phase = pickPhase(n, 28);
+  const cycle = (n - 1) % 4;
+  const workingReps = progress(n, 28, 3, 5);
+  const topSet = progress(n, 28, 6, 10);
+
+  if (n === 28) {
+    return day(n, 'guided_day_final_test', 'test_final', 18, 220, 100, [
+      ['warmup', 'Activacion pull', 'Calienta hombros, agarre y dorsal con reps faciles.', 'scapular_pulls', 2, 10, 45],
+      ['test', 'Set de 10 dominadas', 'Un solo set limpio. No sacrifiques rango por perseguir el numero.', 'pullups', 1, 10, 180],
+      ['backoff', 'Backoff tecnico', 'Reps suaves para cerrar sin reventar codos.', 'pullups', 3, 4, 120],
+      ['finisher', 'Remos invertidos', 'Pecho hacia barra y escapulas atras.', 'inverted_rows', 3, 10, 75],
+    ]);
+  }
+
+  if (cycle === 0) {
+    const strengthReps = progress(n, 28, 4, 6);
+    return day(n, 'guided_day_strength_build', 'fuerza_submaxima', 16 + phase, 120 + n * 4, 50 + phase * 5, [
+      ['warmup', 'Scapular pulls', 'Activa hombros antes de acumular volumen.', 'scapular_pulls', 3, 8 + phase, 45],
+      ['strength', 'Dominadas fuerza 4-6', 'Si ya puedes 6+ limpias, usa lastre ligero. Si no, usa tempo: 3 segundos de bajada. Nunca al fallo.', 'pullups', 4, strengthReps, 150],
+      ['backoff', 'Backoff tecnico', 'Reps faciles, mismo rango y hombros activos para sumar volumen sin castigar codos.', 'pullups', 3, Math.max(3, workingReps - 1), 120],
+    ]);
+  }
+
+  if (cycle === 1) {
+    const ladderTop = progress(n, 28, 5, 8);
+    return day(n, 'guided_day_fighter_ladder', 'escalera_fighter', 18 + phase, 135 + n * 4, 55 + phase * 5, [
+      ['warmup', 'Dead hang activo', 'Estabiliza agarre y hombros.', 'dead_hang', 2, 20 + phase * 5, 45],
+      ...fighterLadderBlocks(fighterLadder(ladderTop, 2), 90),
+      ['finisher', 'Remos invertidos', 'Compensa con traccion horizontal y pecho abierto.', 'inverted_rows', 3, 10 + phase, 60],
+    ]);
+  }
+
+  if (cycle === 2) {
+    const densityReps = phase === 1 ? 2 : 3;
+    const densitySets = phase === 1 ? 10 : phase === 2 ? 10 : 10;
+    const densityRest = phase === 3 ? Math.max(20, progress(n, 28, 30, 20)) : 60;
+    const densityTitle = phase === 3 ? '10x3 rest reduction' : `EMOM ${densitySets}x${densityReps}`;
+    return day(n, 'guided_day_density', 'densidad', 16 + phase, 140 + n * 4, 60 + phase * 5, [
+      ['warmup', 'Activacion pull', 'Entra en calor sin llegar a fatiga.', 'scapular_pulls', 2, 10, 45],
+      ['density', densityTitle, 'Acumula muchas series pequenas. En EMOM empieza cada set al inicio del minuto; en 10x3 reduce descanso solo si todas las reps son limpias.', 'pullups', densitySets, densityReps, densityRest],
+      ['control', 'Dead hang final', 'Cierra con agarre activo y respiracion controlada.', 'dead_hang', 2, 20 + phase * 5, 60],
+    ]);
+  }
+
+  return day(n, 'guided_day_control_test', 'test_controlado', 14 + phase, 135 + n * 3, 55 + phase * 5, [
+    ['warmup', 'Hangs y movilidad', 'Prepara hombros y codos antes del set fuerte.', 'dead_hang', 2, 20, 45],
+    ['test', 'Set controlado', 'Busca tu mejor set limpio del dia, sin balanceo ni media repeticion.', 'pullups', 1, topSet, 180],
+    ['backoff', 'Backoff tecnico', 'Dos o tres reps menos que el test, pero perfectas.', 'pullups', 3, Math.max(3, workingReps), 120],
+  ]);
+});
+
+const buildTwentyPushupDays = () => Array.from({ length: 14 }, (_, index) => {
+  const n = index + 1;
+  const phase = pickPhase(n, 14);
+  const cycle = (n - 1) % 4;
+  const workingReps = progress(n, 14, 5, 10);
+  const topSet = progress(n, 14, 8, 20);
+
+  if (n === 14) {
+    return day(n, 'guided_day_final_test', 'test_final', 15, 160, 70, [
+      ['warmup', 'Push-up escapular', 'Empuja el suelo, separa escapulas y manten codos estirados.', 'scapular_pushups', 2, 10, 30],
+      ['test', 'Set de 20 flexiones', 'Cuerpo en linea, codos a unos 45 grados y pecho cerca del suelo.', 'pushups', 1, 20, 150],
+      ['backoff', 'Flexiones inclinadas', 'Termina con rango completo usando una inclinacion que mantenga buena forma.', 'incline_pushups', 3, 8, 60],
+      ['control', 'Plancha', 'Cierra con abdomen y gluteos activos.', 'plank', 2, 30, 45],
+    ]);
+  }
+
+  if (cycle === 0) {
+    return day(n, 'guided_day_tech_base', 'base_tecnica', 11 + phase, 80 + n * 4, 30 + phase * 5, [
+      ['warmup', 'Push-up escapular', 'Mueve solo escapulas: no dobles codos ni hundas pecho.', 'scapular_pushups', 2, 8 + phase, 30],
+      ['strength', 'Flexiones tecnicas', 'Manos bajo hombros, abdomen duro, codos en diagonal y pecho baja con control.', 'pushups', 4, workingReps, 60],
+      ['control', 'Plancha alta', 'Bloquea abdomen y gluteos como si fueras una tabla.', 'plank', 2, 20 + phase * 5, 45],
+    ]);
+  }
+
+  if (cycle === 1) {
+    return day(n, 'guided_day_soft_volume', 'volumen_suave', 12 + phase, 90 + n * 4, 35 + phase * 5, [
+      ['warmup', 'Movilidad de munecas', 'Carga peso poco a poco y manten dedos abiertos.', 'scapular_pushups', 2, 8, 30],
+      ['volume', 'Flexiones inclinadas', 'Usa mesa, banco o pared baja. Baja el apoyo con el tiempo para hacerlo mas dificil.', 'incline_pushups', 4 + phase, workingReps + 2, 60],
+      ['strength', 'Flexiones limpias', 'Pocas reps perfectas, sin hundir cadera.', 'pushups', 3, Math.max(4, workingReps - 2), 75],
+    ]);
+  }
+
+  if (cycle === 2) {
+    return day(n, 'guided_day_eccentric_control', 'tempo_y_core', 12 + phase, 100 + n * 4, 40 + phase * 5, [
+      ['warmup', 'Plancha alta', 'Empuja el suelo y aleja hombros de las orejas.', 'plank', 2, 20 + phase * 5, 45],
+      ['strength', 'Flexion lenta', 'Baja en 3 segundos, pausa breve abajo y sube sin perder linea corporal.', 'pushups', 4, Math.max(4, workingReps - 1), 75],
+      ['backoff', 'Flexiones inclinadas', 'Acumula reps con rango completo y respiracion constante.', 'incline_pushups', 3, workingReps + 1, 60],
+    ]);
+  }
+
+  return day(n, 'guided_day_control_test', 'test_controlado', 11 + phase, 100 + n * 3, 40 + phase * 5, [
+    ['warmup', 'Push-up escapular', 'Activa serrato y hombros antes del set fuerte.', 'scapular_pushups', 2, 10, 30],
+    ['test', 'Set tecnico del dia', 'Haz un set limpio y para antes de arquear la espalda.', 'pushups', 1, topSet, 120],
+    ['backoff', 'Series faciles', 'Reps solidas para consolidar volumen.', 'pushups', 3, Math.max(5, workingReps - 1), 75],
+  ]);
+});
+
 const plans = [
   {
     slug: 'first_pullup_21d',
@@ -12,47 +242,7 @@ const plans = [
     goalType: 'first_pullup',
     durationDays: 21,
     difficulty: 'beginner',
-    days: [
-      {
-        dayNumber: 1,
-        titleKey: 'guided_day_tech_base',
-        focus: 'base_tecnica',
-        minutes: 12,
-        xp: 90,
-        coins: 35,
-        blocks: [
-          ['warmup', 'Activacion escapular', 'Respira, cuelgate suave y prepara hombros.', 'pullups', 2, 5, 45],
-          ['strength', 'Dominada asistida', 'Usa banda, salto o apoyo. Baja controlado.', 'pullups', 4, 2, 75],
-          ['control', 'Dead hang', 'Cuelgate con hombros activos.', 'pullups', 2, 1, 60],
-        ],
-      },
-      {
-        dayNumber: 2,
-        titleKey: 'guided_day_soft_volume',
-        focus: 'volumen_suave',
-        minutes: 14,
-        xp: 105,
-        coins: 45,
-        blocks: [
-          ['warmup', 'Scapular pulls', 'Sube y baja escapulas sin flexionar codos.', 'pullups', 3, 5, 45],
-          ['strength', 'Negativas controladas', 'Salta arriba y baja en 3 segundos.', 'pullups', 5, 2, 90],
-          ['finisher', 'Remo invertido o asistido', 'Busca reps limpias, lejos del fallo.', 'pullups', 3, 6, 60],
-        ],
-      },
-      {
-        dayNumber: 3,
-        titleKey: 'guided_day_control_test',
-        focus: 'test_control',
-        minutes: 10,
-        xp: 120,
-        coins: 50,
-        blocks: [
-          ['warmup', 'Calentamiento pull', 'Movilidad de hombro y 2 hangs suaves.', 'pullups', 2, 4, 45],
-          ['test', 'Intentos de dominada', 'Prueba reps limpias sin romper tecnica.', 'pullups', 4, 1, 90],
-          ['control', 'Dead hang final', 'Aguanta con buena posicion.', 'pullups', 2, 1, 60],
-        ],
-      },
-    ],
+    days: buildFirstPullupDays(),
   },
   {
     slug: 'five_pullups_21d',
@@ -61,47 +251,7 @@ const plans = [
     goalType: 'five_pullups',
     durationDays: 21,
     difficulty: 'beginner',
-    days: [
-      {
-        dayNumber: 1,
-        titleKey: 'guided_day_tech_base',
-        focus: 'base_tecnica',
-        minutes: 13,
-        xp: 100,
-        coins: 40,
-        blocks: [
-          ['warmup', 'Scapular pulls', 'Activa hombros antes de tirar.', 'pullups', 3, 5, 45],
-          ['strength', 'Dominadas submaximas', 'Para con 1 o 2 reps en reserva.', 'pullups', 5, 2, 90],
-          ['control', 'Dead hang', 'Controla respiracion y agarre.', 'pullups', 2, 1, 60],
-        ],
-      },
-      {
-        dayNumber: 2,
-        titleKey: 'guided_day_soft_volume',
-        focus: 'volumen_suave',
-        minutes: 15,
-        xp: 115,
-        coins: 50,
-        blocks: [
-          ['warmup', 'Hangs activos', 'Mantente estable y sin dolor.', 'pullups', 2, 3, 45],
-          ['strength', 'Series cortas de dominadas', 'Repite calidad, no busques fallo.', 'pullups', 6, 2, 75],
-          ['finisher', 'Negativas lentas', 'Bajada controlada de 3 a 4 segundos.', 'pullups', 3, 2, 90],
-        ],
-      },
-      {
-        dayNumber: 3,
-        titleKey: 'guided_day_control_test',
-        focus: 'test_control',
-        minutes: 11,
-        xp: 125,
-        coins: 55,
-        blocks: [
-          ['warmup', 'Activacion pull', 'Calienta agarre, hombros y dorsal.', 'pullups', 2, 5, 45],
-          ['test', 'Set tecnico maximo', 'Haz un set limpio, para antes de romper forma.', 'pullups', 1, 5, 120],
-          ['backoff', 'Series faciles', 'Completa volumen con reps seguras.', 'pullups', 3, 2, 75],
-        ],
-      },
-    ],
+    days: buildFivePullupDays(),
   },
   {
     slug: 'ten_pullups_28d',
@@ -110,47 +260,7 @@ const plans = [
     goalType: 'ten_pullups',
     durationDays: 28,
     difficulty: 'intermediate',
-    days: [
-      {
-        dayNumber: 1,
-        titleKey: 'guided_day_tech_base',
-        focus: 'base_tecnica',
-        minutes: 15,
-        xp: 120,
-        coins: 50,
-        blocks: [
-          ['warmup', 'Scapular pulls', 'Prepara hombros y dorsales.', 'pullups', 3, 6, 45],
-          ['strength', 'Dominadas tecnicas', 'Series lejos del fallo para acumular calidad.', 'pullups', 5, 3, 90],
-          ['control', 'Pausa arriba', 'Mantente un segundo arriba en cada rep.', 'pullups', 3, 2, 90],
-        ],
-      },
-      {
-        dayNumber: 2,
-        titleKey: 'guided_day_soft_volume',
-        focus: 'volumen_suave',
-        minutes: 17,
-        xp: 135,
-        coins: 60,
-        blocks: [
-          ['warmup', 'Hangs y movilidad', 'Suaviza hombros y agarre.', 'pullups', 2, 5, 45],
-          ['volume', 'Escalera 2-3-4', 'Acumula reps sin llegar al fallo.', 'pullups', 3, 9, 120],
-          ['finisher', 'Negativas', 'Baja controlado y deja reps buenas.', 'pullups', 2, 3, 90],
-        ],
-      },
-      {
-        dayNumber: 3,
-        titleKey: 'guided_day_control_test',
-        focus: 'test_control',
-        minutes: 12,
-        xp: 150,
-        coins: 65,
-        blocks: [
-          ['warmup', 'Activacion pull', 'Entra en calor sin fatigar.', 'pullups', 2, 6, 45],
-          ['test', 'Set controlado', 'Busca tu mejor set limpio.', 'pullups', 1, 8, 150],
-          ['backoff', 'Backoff tecnico', 'Dos series suaves para consolidar.', 'pullups', 2, 3, 90],
-        ],
-      },
-    ],
+    days: buildTenPullupDays(),
   },
   {
     slug: 'twenty_pushups_14d',
@@ -159,47 +269,7 @@ const plans = [
     goalType: 'twenty_pushups',
     durationDays: 14,
     difficulty: 'beginner',
-    days: [
-      {
-        dayNumber: 1,
-        titleKey: 'guided_day_tech_base',
-        focus: 'base_tecnica',
-        minutes: 10,
-        xp: 80,
-        coins: 30,
-        blocks: [
-          ['warmup', 'Plancha alta', 'Bloquea abdomen y hombros.', 'pushups', 2, 1, 45],
-          ['strength', 'Flexiones tecnicas', 'Pecho abajo, cuerpo firme.', 'pushups', 4, 6, 60],
-          ['control', 'Flexion lenta', 'Baja en 3 segundos.', 'pushups', 2, 4, 60],
-        ],
-      },
-      {
-        dayNumber: 2,
-        titleKey: 'guided_day_soft_volume',
-        focus: 'volumen_suave',
-        minutes: 12,
-        xp: 95,
-        coins: 40,
-        blocks: [
-          ['warmup', 'Movilidad de munecas', 'Prepara apoyo y hombros.', 'pushups', 2, 5, 30],
-          ['volume', 'Series faciles', 'Suma reps con forma estable.', 'pushups', 5, 8, 60],
-          ['finisher', 'Plancha', 'Cierra con abdomen firme.', 'pushups', 2, 1, 45],
-        ],
-      },
-      {
-        dayNumber: 3,
-        titleKey: 'guided_day_control_test',
-        focus: 'test_control',
-        minutes: 10,
-        xp: 110,
-        coins: 45,
-        blocks: [
-          ['warmup', 'Activacion push', 'Hombros, munecas y core.', 'pushups', 2, 5, 30],
-          ['test', 'Set maximo tecnico', 'Busca reps limpias sin hundir cadera.', 'pushups', 1, 20, 120],
-          ['backoff', 'Serie facil', 'Termina con control.', 'pushups', 2, 6, 60],
-        ],
-      },
-    ],
+    days: buildTwentyPushupDays(),
   },
 ];
 

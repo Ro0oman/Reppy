@@ -83,7 +83,7 @@
                     {{ i18n.t(plan.descriptionKey) }}
                   </p>
                   <div class="mt-3 flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary-500">
-                    <span>{{ plan.durationDays }} {{ i18n.locale === 'es' ? 'dias' : 'days' }}</span>
+                    <span>{{ plan.durationDays }} {{ i18n.locale === 'es' ? 'misiones' : 'missions' }}</span>
                     <span>{{ plan.difficulty }}</span>
                   </div>
                 </button>

@@ -112,17 +112,28 @@
           >
             <div>
               <p class="text-xs font-black uppercase tracking-widest text-muted">
-                Set {{ set.setIndex }} · {{ set.targetReps }} {{ i18n.t('ui_reps') }}
+                Set {{ set.setIndex }} · {{ set.targetReps }} {{ unitLabel(set.unit) }}
               </p>
-              <p class="mt-1 text-lg font-black text-foreground">{{ set.actualReps }}</p>
+              <p class="mt-1 text-lg font-black text-foreground">{{ formatSetValue(set.actualReps, set.unit) }}</p>
             </div>
 
             <div class="flex items-center gap-2">
-              <button type="button" class="icon-btn" @click="decrement(set)" aria-label="Restar rep">
+              <button type="button" class="icon-btn" @click="decrement(set)" :aria-label="isTimedSet(set) ? 'Restar tiempo' : 'Restar rep'">
                 <Minus class="h-4 w-4" />
               </button>
-              <button type="button" class="icon-btn" @click="increment(set)" aria-label="Sumar rep">
+              <button type="button" class="icon-btn" @click="increment(set)" :aria-label="isTimedSet(set) ? 'Sumar tiempo' : 'Sumar rep'">
                 <Plus class="h-4 w-4" />
+              </button>
+              <button
+                v-if="isTimedSet(set)"
+                type="button"
+                class="inline-flex h-10 min-w-[5rem] items-center justify-center gap-1 rounded-xl border border-primary-500/30 bg-primary-500/10 px-3 text-[10px] font-black uppercase tracking-widest text-primary-400 transition hover:bg-primary-500/20 active:scale-95"
+                @click="toggleWorkTimer(set)"
+                :aria-label="set.workTimerActive ? 'Parar contador' : 'Iniciar contador'"
+              >
+                <Square v-if="set.workTimerActive" class="h-3.5 w-3.5" />
+                <Play v-else class="h-3.5 w-3.5" />
+                {{ set.workTimerActive ? 'Stop' : 'Start' }}
               </button>
                <button
                 type="button"
@@ -140,15 +151,27 @@
                 {{ set.restTimer }}s
               </div>
             </div>
+            <div v-if="isTimedSet(set)" class="col-span-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+              <div
+                class="h-full rounded-full bg-primary-500 transition-all"
+                :style="{ width: `${timedProgress(set)}%` }"
+              ></div>
+            </div>
           </div>
         </div>
       </article>
 
       <div class="sticky bottom-3 z-10 rounded-2xl border border-white/10 bg-deep-abyss/95 p-3 backdrop-blur-xl sm:static sm:bg-transparent sm:p-0 sm:backdrop-blur-0">
         <div class="mb-3 flex items-center justify-between text-xs font-black uppercase tracking-widest text-muted sm:hidden">
-          <span>{{ totalActualReps }} reps</span>
+          <span>{{ totalProgressLabel }}</span>
           <span>{{ completionRate }}%</span>
         </div>
+        <p
+          v-if="incompleteSets.length"
+          class="mb-3 rounded-xl border border-amber-400/25 bg-amber-400/10 px-3 py-2 text-center text-[10px] font-black uppercase tracking-widest text-amber-300"
+        >
+          {{ incompleteSetsLabel }}
+        </p>
         <button
           type="button"
           class="btn-reppy w-full !py-4 disabled:opacity-40"
@@ -174,7 +197,7 @@
 
 <script setup>
 import { computed, onUnmounted, ref, watch } from 'vue';
-import { Check, Clock, Coins, Loader2, Minus, Plus, Sparkles, TimerReset, Info } from 'lucide-vue-next';
+import { Check, Clock, Coins, Loader2, Minus, Play, Plus, Sparkles, Square, TimerReset, Info } from 'lucide-vue-next';
 import ExerciseDetailModal from './ExerciseDetailModal.vue';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
@@ -258,17 +281,22 @@ const createSetLogs = () => {
   }
   setLogs.value = props.workout.blocks.flatMap((block) => {
     const count = Math.max(1, Number(block.targetSets || 1));
+    const unit = block.unit || 'reps';
+    const target = Number(block.targetReps || 0);
     return Array.from({ length: count }, (_, index) => ({
       blockId: block.id,
       setIndex: index + 1,
       exerciseType: block.exerciseType || 'pullups',
-      targetReps: Number(block.targetReps || 0),
-      actualReps: Number(block.targetReps || 0),
+      targetReps: target,
+      actualReps: unit === 'seconds' ? 0 : target,
       completed: false,
+      unit,
       restSeconds: Number(block.restSeconds || 60),
       restTimer: 0,
       timerActive: false,
-      intervalId: null
+      intervalId: null,
+      workTimerActive: false,
+      workIntervalId: null
     }));
   });
 };
@@ -282,24 +310,87 @@ const setsForBlock = (blockId) => setLogs.value.filter(set => set.blockId === bl
 
 const totalActualReps = computed(() => setLogs.value.reduce((sum, set) => sum + Number(set.actualReps || 0), 0));
 const totalTargetReps = computed(() => setLogs.value.reduce((sum, set) => sum + Number(set.targetReps || 0), 0));
+const unitLabel = (unit) => {
+  if (unit === 'seconds') return i18n.locale === 'es' ? 'seg' : 'sec';
+  return i18n.t('ui_reps');
+};
+const isTimedSet = (set) => (set?.unit || 'reps') === 'seconds';
+const formatSetValue = (value, unit) => unit === 'seconds' ? `${Number(value || 0)}s` : Number(value || 0);
+const timedProgress = (set) => {
+  const target = Number(set?.targetReps || 0);
+  if (!target) return 0;
+  return Math.max(0, Math.min(100, Math.round((Number(set.actualReps || 0) / target) * 100)));
+};
+const totalProgressLabel = computed(() => {
+  const totals = setLogs.value.reduce((acc, set) => {
+    const unit = set.unit || 'reps';
+    acc[unit] = (acc[unit] || 0) + Number(set.actualReps || 0);
+    return acc;
+  }, {});
+  const parts = [];
+  if (totals.reps) parts.push(`${totals.reps} ${unitLabel('reps')}`);
+  if (totals.seconds) parts.push(`${totals.seconds} ${unitLabel('seconds')}`);
+  return parts.join(' | ') || `0 ${unitLabel('reps')}`;
+});
 const completionRate = computed(() => {
   if (!totalTargetReps.value) return 0;
   return Math.max(0, Math.min(100, Math.round((totalActualReps.value / totalTargetReps.value) * 100)));
 });
+const setTargetValue = (set) => Number(set.targetReps || 0);
+const setActualValue = (set) => Number(set.actualReps || 0);
+const setIsComplete = (set) => !!set.completed && setActualValue(set) >= setTargetValue(set);
+const incompleteSets = computed(() => setLogs.value.filter(set => !setIsComplete(set)));
+const incompleteSetsLabel = computed(() => {
+  const count = incompleteSets.value.length;
+  if (!count) return '';
+  if (i18n.locale === 'es') {
+    return count === 1
+      ? 'Te falta 1 set para completar la mision'
+      : `Te faltan ${count} sets para completar la mision`;
+  }
+  return count === 1
+    ? '1 set left to complete the mission'
+    : `${count} sets left to complete the mission`;
+});
 
 const increment = (set) => {
-  set.actualReps += 1;
+  set.actualReps += isTimedSet(set) ? 5 : 1;
 };
 
 const decrement = (set) => {
-  set.actualReps = Math.max(0, set.actualReps - 1);
-  if (set.actualReps === 0) set.completed = false;
+  set.actualReps = Math.max(0, set.actualReps - (isTimedSet(set) ? 5 : 1));
+  if (setActualValue(set) < setTargetValue(set)) set.completed = false;
 };
 
 import { useAudio } from '../composables/useAudio';
 
+const stopWorkTimer = (set) => {
+  if (set?.workIntervalId) {
+    clearInterval(set.workIntervalId);
+    set.workIntervalId = null;
+  }
+  if (set) set.workTimerActive = false;
+};
+
+const toggleWorkTimer = (set) => {
+  if (!isTimedSet(set)) return;
+
+  if (set.workTimerActive) {
+    stopWorkTimer(set);
+    if (setActualValue(set) >= setTargetValue(set)) set.completed = true;
+    return;
+  }
+
+  set.completed = false;
+  set.workTimerActive = true;
+  set.workIntervalId = setInterval(() => {
+    set.actualReps += 1;
+  }, 1000);
+};
+
 const clearAllTimers = () => {
   setLogs.value.forEach(s => {
+    stopWorkTimer(s);
     s.restTimer = 0;
     s.timerActive = false;
     if (s.intervalId) {
@@ -310,8 +401,21 @@ const clearAllTimers = () => {
 };
 
 const markDone = (set) => {
-  set.completed = true;
+  stopWorkTimer(set);
   if (set.actualReps === 0) set.actualReps = set.targetReps;
+
+  if (setActualValue(set) < setTargetValue(set)) {
+    set.completed = false;
+    notificationStore.notify(
+      i18n.locale === 'es'
+        ? `Completa el objetivo del set: ${setTargetValue(set)} ${unitLabel(set.unit)}`
+        : `Hit the set target first: ${setTargetValue(set)} ${unitLabel(set.unit)}`,
+      'error'
+    );
+    return;
+  }
+
+  set.completed = true;
 
   clearAllTimers();
 
@@ -351,14 +455,29 @@ const startWorkout = async () => {
 const finishWorkout = async () => {
   if (!session.value?.id) return;
 
+  setLogs.value.forEach((set) => {
+    if (set.workTimerActive) {
+      stopWorkTimer(set);
+      if (setActualValue(set) >= setTargetValue(set)) set.completed = true;
+    }
+  });
+
+  if (incompleteSets.value.length > 0) {
+    notificationStore.notify(incompleteSetsLabel.value, 'error');
+    return;
+  }
+
   clearAllTimers();
 
   loading.value = true;
   try {
+    const finishedLabel = totalProgressLabel.value;
     const result = await trainingStore.completeSession(session.value.id, setLogs.value);
 
     notificationStore.notify(
-      `Mision completada: +${result.total_reps || result.totalReps || 0} reps registradas`,
+      i18n.locale === 'es'
+        ? `Mision completada: ${finishedLabel} registrados`
+        : `Mission completed: ${finishedLabel} logged`,
       'success'
     );
 
@@ -366,6 +485,17 @@ const finishWorkout = async () => {
     session.value = null;
     emit('completed', result);
   } catch (error) {
+    const errorCode = error?.response?.data?.code;
+    const missingSets = Number(error?.response?.data?.missingSets || 0);
+    if (errorCode === 'WORKOUT_INCOMPLETE') {
+      notificationStore.notify(
+        i18n.locale === 'es'
+          ? `Completa todos los sets antes de terminar${missingSets ? ` (${missingSets} pendientes)` : ''}`
+          : `Complete every set before finishing${missingSets ? ` (${missingSets} left)` : ''}`,
+        'error'
+      );
+      return;
+    }
     notificationStore.notify(i18n.locale === 'es' ? 'No se pudo completar la rutina' : 'Workout could not be completed', 'error');
   } finally {
     loading.value = false;

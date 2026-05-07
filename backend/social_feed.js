@@ -92,12 +92,13 @@ router.get('/feed', authenticate, async (req, res) => {
     const feedRes = await query(`
       WITH daily_stats AS (
         SELECT 
-          user_id, 
-          date, 
-          SUM(count)::int as day_reps,
-          SUM(boss_damage_dealt)::int as day_damage
-        FROM reps
-        GROUP BY user_id, date
+          r.user_id,
+          r.date,
+          SUM(CASE WHEN COALESCE(e.unit, 'reps') = 'seconds' THEN 0 ELSE r.count END)::int as day_reps,
+          SUM(r.boss_damage_dealt)::int as day_damage
+        FROM reps r
+        LEFT JOIN exercises e ON e.slug = r.exercise_type
+        GROUP BY r.user_id, r.date
       ),
       reps_feed AS (
         SELECT 
@@ -241,7 +242,14 @@ router.get('/feed', authenticate, async (req, res) => {
       SELECT 
         f.*,
         COALESCE(EXISTS (SELECT 1 FROM reps rc WHERE rc.user_id = f.user_id AND rc.date = f.date::date AND rc.is_crit = true), false) as has_crit,
-        COALESCE((SELECT SUM(count) FROM reps WHERE user_id = f.user_id AND date = f.date::date), 0) as total_reps_today,
+        COALESCE((
+          SELECT SUM(r2.count)
+          FROM reps r2
+          LEFT JOIN exercises e2 ON e2.slug = r2.exercise_type
+          WHERE r2.user_id = f.user_id
+            AND r2.date = f.date::date
+            AND COALESCE(e2.unit, 'reps') != 'seconds'
+        ), 0) as total_reps_today,
         COALESCE((SELECT SUM(boss_damage_dealt) FROM reps WHERE user_id = f.user_id AND date = f.date::date), 0) as total_damage_today,
         -- Dominant stat calculation
         (SELECT 
@@ -261,7 +269,14 @@ router.get('/feed', authenticate, async (req, res) => {
         ) as next_rank_rival,
         COALESCE(EXISTS (
           SELECT 1 FROM daily_stats ds_pb WHERE ds_pb.user_id = f.user_id AND ds_pb.date < f.date::date
-          HAVING (SELECT SUM(count) FROM reps WHERE user_id = f.user_id AND date = f.date::date) > COALESCE(MAX(ds_pb.day_reps), 0)
+          HAVING (
+            SELECT SUM(r3.count)
+            FROM reps r3
+            LEFT JOIN exercises e3 ON e3.slug = r3.exercise_type
+            WHERE r3.user_id = f.user_id
+              AND r3.date = f.date::date
+              AND COALESCE(e3.unit, 'reps') != 'seconds'
+          ) > COALESCE(MAX(ds_pb.day_reps), 0)
         ), false) as is_personal_best,
         COALESCE((
           WITH RECURSIVE streak_calc AS (

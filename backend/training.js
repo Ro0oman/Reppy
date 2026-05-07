@@ -9,6 +9,7 @@ import { calculateDamage } from './utils/damage.js';
 import { updateMissionProgress } from './utils/missions.js';
 import { broadcastDamage } from './socketManager.js';
 import { grantLastHitBonus } from './utils/bossRewards.js';
+import { getEffectiveExerciseCount, getRewardExerciseCount, isTimedExerciseUnit } from './utils/exerciseUnits.js';
 
 const router = express.Router();
 
@@ -40,6 +41,9 @@ const SOCIAL_EXERCISE_NAME_MAP = {
   dead_hang: 'Dead Hang',
   negative_pullups: 'Negativas de dominada',
   inverted_rows: 'Remos invertidos',
+  assisted_pullups: 'Dominadas asistidas',
+  incline_pushups: 'Flexiones inclinadas',
+  scapular_pushups: 'Push-up escapular',
   plank: 'Plancha',
 };
 
@@ -84,6 +88,8 @@ const shapeWorkout = (row, blocks = []) => ({
     title: block.title,
     instructions: block.instructions,
     exerciseType: block.exercise_type,
+    unit: block.exercise_unit || 'reps',
+    exerciseTitleKey: block.exercise_title_key || block.exercise_type,
     targetSets: Number(block.target_sets || 1),
     targetReps: Number(block.target_reps || 1),
     restSeconds: Number(block.rest_seconds || 60),
@@ -126,10 +132,13 @@ async function getActivePlanBundle(userId) {
 
   const row = activeResult.rows[0];
   const blocksResult = await query(
-    `SELECT *
-     FROM training_plan_blocks
-     WHERE plan_day_id = $1
-     ORDER BY order_index ASC`,
+    `SELECT tpb.*,
+            e.unit AS exercise_unit,
+            e.title_key AS exercise_title_key
+     FROM training_plan_blocks tpb
+     LEFT JOIN exercises e ON e.slug = tpb.exercise_type
+     WHERE tpb.plan_day_id = $1
+     ORDER BY tpb.order_index ASC`,
     [row.plan_day_id]
   );
 
@@ -156,13 +165,17 @@ async function getActivePlanBundle(userId) {
 async function applyGuidedRepLog(client, userId, exerciseType, count) {
   if (!count || count <= 0) return { damage: 0, coins: 0 };
 
-  const exRes = await client.query('SELECT difficulty_multiplier, coin_multiplier FROM exercises WHERE slug = $1', [exerciseType]);
+  const exRes = await client.query('SELECT difficulty_multiplier, coin_multiplier, unit FROM exercises WHERE slug = $1', [exerciseType]);
   let diffMult = null;
   let coinMult = null;
+  let unit = 'reps';
   if (exRes.rows.length > 0) {
     diffMult = Number(exRes.rows[0].difficulty_multiplier);
     coinMult = Number(exRes.rows[0].coin_multiplier);
+    unit = exRes.rows[0].unit || 'reps';
   }
+  const effectiveCount = getEffectiveExerciseCount(count, unit);
+  const rewardCount = getRewardExerciseCount(count, unit);
 
   const userResult = await client.query(`
     SELECT u.*,
@@ -179,7 +192,7 @@ async function applyGuidedRepLog(client, userId, exerciseType, count) {
   if (userResult.rows.length === 0) throw new Error('User not found');
 
   const augmentedUser = augmentUserWithLevels(userResult.rows[0]);
-  const dmgResult = calculateDamage(augmentedUser, count, exerciseType, null, false, false, diffMult);
+  const dmgResult = calculateDamage(augmentedUser, effectiveCount, exerciseType, null, false, false, diffMult);
   const date = getLocalDateString();
 
   const repResult = await client.query(
@@ -195,9 +208,9 @@ async function applyGuidedRepLog(client, userId, exerciseType, count) {
 
   let earnedCoins = 0;
   if (coinMult != null) {
-    earnedCoins = Math.round(count * coinMult);
+    earnedCoins = Math.round(rewardCount * coinMult);
   } else {
-    earnedCoins = getExerciseRewards(exerciseType, count).coins;
+    earnedCoins = getExerciseRewards(exerciseType, rewardCount).coins;
   }
 
   await client.query(
@@ -219,7 +232,7 @@ async function applyGuidedRepLog(client, userId, exerciseType, count) {
   if (bossRes.rows.length > 0) {
     const boss = bossRes.rows[0];
     bossId = boss.id;
-    const bossDmgResult = calculateDamage(augmentedUser, count, exerciseType, boss, false, false, diffMult);
+    const bossDmgResult = calculateDamage(augmentedUser, effectiveCount, exerciseType, boss, false, false, diffMult);
     actualDamageDealt = bossDmgResult.totalDamage;
 
     const updateBossRes = await client.query(
@@ -278,7 +291,9 @@ async function applyGuidedRepLog(client, userId, exerciseType, count) {
     [actualDamageDealt, dmgResult.activeMultiplier, dmgResult.baseDamage, dmgResult.gearBonus, dmgResult.buffBonus, bossId, repResult.rows[0].id]
   );
 
-  await updateMissionProgress(userId, 'reps', count);
+  if (!isTimedExerciseUnit(unit)) {
+    await updateMissionProgress(userId, 'reps', count);
+  }
   if (actualDamageDealt > 0) {
     await updateMissionProgress(userId, 'damage', actualDamageDealt);
   }
@@ -290,16 +305,18 @@ async function applyGuidedRepLog(client, userId, exerciseType, count) {
 
   const prRes = await client.query(`
     SELECT 1 FROM (
-      SELECT SUM(count) as day_total
-      FROM reps
-      WHERE user_id = $1 AND date = $2
+      SELECT SUM(r.count) as day_total
+      FROM reps r
+      LEFT JOIN exercises e ON e.slug = r.exercise_type
+      WHERE r.user_id = $1 AND r.date = $2 AND COALESCE(e.unit, 'reps') != 'seconds'
     ) t
     WHERE t.day_total > COALESCE((
       SELECT MAX(day_sum) FROM (
-        SELECT SUM(count) as day_sum
-        FROM reps
-        WHERE user_id = $1 AND date < $2
-        GROUP BY date
+        SELECT SUM(r.count) as day_sum
+        FROM reps r
+        LEFT JOIN exercises e ON e.slug = r.exercise_type
+        WHERE r.user_id = $1 AND r.date < $2 AND COALESCE(e.unit, 'reps') != 'seconds'
+        GROUP BY r.date
       ) history
     ), 0)
   `, [userId, date]);
@@ -621,54 +638,74 @@ router.post('/sessions/:id/complete', authenticate, async (req, res) => {
 
     const session = sessionResult.rows[0];
     const blocksResult = await client.query(
-      `SELECT *
-       FROM training_plan_blocks
-       WHERE plan_day_id = $1
-       ORDER BY order_index ASC`,
+      `SELECT tpb.*,
+              COALESCE(e.unit, 'reps') AS exercise_unit
+       FROM training_plan_blocks tpb
+       LEFT JOIN exercises e ON e.slug = tpb.exercise_type
+       WHERE tpb.plan_day_id = $1
+       ORDER BY tpb.order_index ASC`,
       [session.plan_day_id]
     );
 
-    const blocksById = new Map(blocksResult.rows.map(block => [Number(block.id), block]));
-    const logs = [];
-
+    const incomingBySet = new Map();
     for (const rawSet of incomingSets) {
       const blockId = clampInt(rawSet.blockId ?? rawSet.block_id);
-      const block = blocksById.get(blockId);
-      if (!block) continue;
+      const setIndex = Math.max(1, clampInt(rawSet.setIndex ?? rawSet.set_index, 1));
+      if (!blockId || !setIndex) continue;
+      incomingBySet.set(`${blockId}:${setIndex}`, rawSet);
+    }
 
-      logs.push({
-        blockId,
-        setIndex: Math.max(1, clampInt(rawSet.setIndex ?? rawSet.set_index, 1)),
-        exerciseType: rawSet.exerciseType || rawSet.exercise_type || block.exercise_type || 'pullups',
-        targetReps: clampInt(rawSet.targetReps ?? rawSet.target_reps, block.target_reps || 0),
-        actualReps: clampInt(rawSet.actualReps ?? rawSet.actual_reps, 0),
-        completed: !!rawSet.completed,
-      });
+    const logs = [];
+    for (const block of blocksResult.rows) {
+      const targetSets = Math.max(1, Number(block.target_sets || 1));
+      const targetReps = Number(block.target_reps || 0);
+
+      for (let i = 1; i <= targetSets; i += 1) {
+        const rawSet = incomingBySet.get(`${block.id}:${i}`) || {};
+
+        logs.push({
+          blockId: block.id,
+          setIndex: i,
+          // Trust the plan block, not the client, so social summaries cannot collapse into pullups.
+          exerciseType: block.exercise_type || rawSet.exerciseType || rawSet.exercise_type || 'pullups',
+          unit: block.exercise_unit || 'reps',
+          targetReps,
+          actualReps: clampInt(rawSet.actualReps ?? rawSet.actual_reps, 0),
+          completed: !!rawSet.completed,
+        });
+      }
     }
 
     if (logs.length === 0) {
-      for (const block of blocksResult.rows) {
-        for (let i = 1; i <= Number(block.target_sets || 1); i += 1) {
-          logs.push({
-            blockId: block.id,
-            setIndex: i,
-            exerciseType: block.exercise_type || 'pullups',
-            targetReps: Number(block.target_reps || 0),
-            actualReps: 0,
-            completed: false,
-          });
-        }
-      }
+      await client.query('ROLLBACK');
+      return res.status(409).json({
+        message: 'Workout has no sets to complete',
+        code: 'WORKOUT_EMPTY',
+      });
+    }
+
+    const incompleteSets = logs.filter(log => !log.completed || log.actualReps < log.targetReps);
+    if (incompleteSets.length > 0) {
+      await client.query('ROLLBACK');
+      return res.status(409).json({
+        message: 'Complete every set before finishing the workout',
+        code: 'WORKOUT_INCOMPLETE',
+        missingSets: incompleteSets.length,
+      });
     }
 
     await client.query('DELETE FROM workout_set_logs WHERE session_id = $1', [sessionId]);
 
     let totalReps = 0;
+    let totalCompletedUnits = 0;
     let targetRepsTotal = 0;
     const repsByExercise = new Map();
 
     for (const log of logs) {
-      totalReps += log.actualReps;
+      totalCompletedUnits += log.actualReps;
+      if (!isTimedExerciseUnit(log.unit)) {
+        totalReps += log.actualReps;
+      }
       targetRepsTotal += log.targetReps;
       repsByExercise.set(log.exerciseType, (repsByExercise.get(log.exerciseType) || 0) + log.actualReps);
 
@@ -682,7 +719,7 @@ router.post('/sessions/:id/complete', authenticate, async (req, res) => {
     }
 
     const completionRate = targetRepsTotal > 0
-      ? Math.max(0, Math.min(100, Math.round((totalReps / targetRepsTotal) * 100)))
+      ? Math.max(0, Math.min(100, Math.round((totalCompletedUnits / targetRepsTotal) * 100)))
       : 0;
 
     let totalDamage = 0;
@@ -744,19 +781,21 @@ router.post('/sessions/:id/complete', authenticate, async (req, res) => {
 
     const exerciseSummaryParts = Array.from(performedByExercise.entries()).map(([slug, agg]) => {
       const meta = metaBySlug.get(slug);
-      const unit = meta?.unit === 'seconds' ? 's' : '';
+      const unitSuffix = meta?.unit === 'seconds' ? 's' : ' reps';
+      const setLabel = agg.sets === 1 ? 'set' : 'sets';
       const exerciseName =
         SOCIAL_EXERCISE_NAME_MAP[slug] ||
         (meta?.title_key?.startsWith('ex_') ? SOCIAL_EXERCISE_NAME_MAP[slug] : meta?.title_key) ||
         toReadableSlug(slug);
 
-      return `${agg.sets}x${agg.total}${unit} ${exerciseName}`;
+      return `${agg.total}${unitSuffix} ${exerciseName} (${agg.sets} ${setLabel})`;
     });
 
-    const exerciseSummary = exerciseSummaryParts.join(' · ');
     const remainingDays = Math.max(0, Number(session.duration_days || 0) - Number(session.current_day || 1));
-    const postTitle = `Día ${session.current_day}/${session.duration_days} completado · ${planName}`;
-    const postDesc = `Quedan ${remainingDays} días · ${exerciseSummary}`;
+
+    const socialExerciseSummary = exerciseSummaryParts.join(' | ');
+    const socialPostTitle = `Dia ${session.current_day}/${session.duration_days} completado - ${planName}`;
+    const socialPostDesc = `Quedan ${remainingDays} dias - ${socialExerciseSummary}`;
 
     const todayStr = getLocalDateString();
     await client.query(
@@ -764,13 +803,13 @@ router.post('/sessions/:id/complete', authenticate, async (req, res) => {
        VALUES ($1, $2, $3, $4)
        ON CONFLICT (user_id, date) 
        DO UPDATE SET
-         title = COALESCE(daily_summaries.title, EXCLUDED.title),
+         title = EXCLUDED.title,
          description = CASE
            WHEN daily_summaries.description IS NULL OR daily_summaries.description = ''
            THEN EXCLUDED.description
            ELSE daily_summaries.description || E'\n\n' || EXCLUDED.description
          END`,
-      [req.user.id, todayStr, postTitle, postDesc]
+      [req.user.id, todayStr, socialPostTitle, socialPostDesc]
     );
 
     // Save daily lock

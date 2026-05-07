@@ -29,51 +29,107 @@
 
           <div class="mt-5 flex items-center gap-2">
             <div
-              v-for="n in 3"
+              v-for="n in 4"
               :key="n"
               class="h-1.5 rounded-full transition-all duration-300"
-              :class="step >= n - 1 ? 'bg-primary-500 w-16' : 'bg-white/10 w-10'"
+              :class="step >= n - 1 ? 'bg-primary-500 w-14 sm:w-16' : 'bg-white/10 w-8 sm:w-10'"
             />
           </div>
 
-          <section class="mt-5 min-h-[196px] sm:min-h-[220px] relative z-10">
+          <section class="mt-5 min-h-[300px] sm:min-h-[320px] relative z-10">
             <div v-if="step === 0" class="space-y-3">
               <p class="text-base font-black text-foreground">
-                {{ isEs ? '1) Tu objetivo hoy' : '1) Your goal today' }}
+                {{ isEs ? '1) Que puedes hacer en Reppy' : '1) What you can do in Reppy' }}
               </p>
               <p class="text-sm text-muted leading-relaxed">
-                {{ isEs ? 'Haz tu primer registro para empezar progreso, recompensa y status.' : 'Log your first set to unlock progress, reward and status.' }}
+                {{ isEs ? 'Reppy convierte tus entrenos en progreso visible: reps, XP, ranking, amigos, bosses y recompensas.' : 'Reppy turns workouts into visible progress: reps, XP, rankings, friends, bosses and rewards.' }}
               </p>
-              <div class="grid grid-cols-1 gap-2 pt-1">
-                <div class="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-[11px] font-black uppercase tracking-wide text-foreground">
-                  {{ isEs ? 'Progreso instantaneo' : 'Instant progress' }}
-                </div>
-                <div class="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-[11px] font-black uppercase tracking-wide text-foreground">
-                  {{ isEs ? 'Recompensa diaria' : 'Daily reward' }}
-                </div>
-                <div class="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-[11px] font-black uppercase tracking-wide text-foreground">
-                  {{ isEs ? 'Sube tu status' : 'Level up your status' }}
+              <div class="grid grid-cols-2 gap-2 pt-1">
+                <div
+                  v-for="feature in possibilityCards"
+                  :key="feature.title"
+                  class="rounded-xl border border-white/10 bg-white/[0.03] p-3"
+                >
+                  <component :is="feature.icon" class="h-4 w-4 text-primary-500" />
+                  <p class="mt-2 text-[10px] font-black uppercase tracking-wide text-foreground">
+                    {{ feature.title }}
+                  </p>
+                  <p class="mt-1 text-[10px] font-semibold leading-snug text-muted/70">
+                    {{ feature.desc }}
+                  </p>
                 </div>
               </div>
             </div>
 
             <div v-else-if="step === 1" class="space-y-3">
               <p class="text-base font-black text-foreground">
-                {{ isEs ? '2) Como registrar reps' : '2) How to log reps' }}
+                {{ isEs ? '2) Tu objetivo hoy' : '2) Your goal today' }}
               </p>
               <p class="text-sm text-muted leading-relaxed">
-                {{ isEs ? 'Selecciona ejercicio, reps y confirma. Sin pasos extra.' : 'Pick an exercise, reps and confirm. No extra steps.' }}
+                {{ isEs ? 'Haz tu primer registro para activar tu racha, ganar XP y entrar en el circuito global.' : 'Log your first set to activate your streak, earn XP and enter the global circuit.' }}
               </p>
+              <div class="grid grid-cols-1 gap-2 pt-1">
+                <div class="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2">
+                  <p class="text-[11px] font-black uppercase tracking-wide text-foreground">
+                    {{ isEs ? 'Progreso instantaneo' : 'Instant progress' }}
+                  </p>
+                  <p class="mt-1 text-[10px] font-semibold text-muted/70">
+                    {{ isEs ? 'Cada serie suma a tus stats y actividad diaria.' : 'Every set feeds your stats and daily activity.' }}
+                  </p>
+                </div>
+                <div class="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2">
+                  <p class="text-[11px] font-black uppercase tracking-wide text-foreground">
+                    {{ isEs ? 'Recompensa diaria' : 'Daily reward' }}
+                  </p>
+                  <p class="mt-1 text-[10px] font-semibold text-muted/70">
+                    {{ isEs ? 'Gana Reppy Coins, cofres y avances de mision.' : 'Earn Reppy Coins, chests and mission progress.' }}
+                  </p>
+                </div>
+                <div class="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2">
+                  <p class="text-[11px] font-black uppercase tracking-wide text-foreground">
+                    {{ isEs ? 'Sube tu status' : 'Level up your status' }}
+                  </p>
+                  <p class="mt-1 text-[10px] font-semibold text-muted/70">
+                    {{ isEs ? 'Tu perfil muestra lo que entrenas y hasta donde llegas.' : 'Your profile shows what you train and how far you go.' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div v-else-if="step === 2" class="space-y-3">
+              <p class="text-base font-black text-foreground">
+                {{ isEs ? '3) Ranking, amigos y comunidad' : '3) Rankings, friends and community' }}
+              </p>
+              <p class="text-sm text-muted leading-relaxed">
+                {{ isEs ? 'La parte social empieza cuando tienes a alguien cerca en el ranking: puedes compararte, picarte y celebrar logros en el feed.' : 'The social loop starts when someone is close to you in the ranking: compare, compete and celebrate wins in the feed.' }}
+              </p>
+              <div class="space-y-2 pt-1">
+                <div
+                  v-for="loop in socialLoops"
+                  :key="loop.title"
+                  class="flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3"
+                >
+                  <component :is="loop.icon" class="mt-0.5 h-4 w-4 shrink-0 text-primary-500" />
+                  <div>
+                    <p class="text-[11px] font-black uppercase tracking-wide text-foreground">
+                      {{ loop.title }}
+                    </p>
+                    <p class="mt-1 text-[10px] font-semibold leading-snug text-muted/70">
+                      {{ loop.desc }}
+                    </p>
+                  </div>
+                </div>
+              </div>
               <div class="grid grid-cols-3 gap-2 pt-2">
-                <div class="h-10 rounded-xl border border-primary-500/30 bg-primary-500/10 flex items-center justify-center text-xs font-black text-primary-500">+1</div>
                 <div class="h-10 rounded-xl border border-primary-500/30 bg-primary-500/10 flex items-center justify-center text-xs font-black text-primary-500">+5</div>
                 <div class="h-10 rounded-xl border border-primary-500/30 bg-primary-500/10 flex items-center justify-center text-xs font-black text-primary-500">+10</div>
+                <div class="h-10 rounded-xl border border-primary-500/30 bg-primary-500/10 flex items-center justify-center text-xs font-black text-primary-500">+20</div>
               </div>
             </div>
 
             <div v-else class="space-y-4">
               <p class="text-base font-black text-foreground">
-                {{ isEs ? '3) Registra tus primeras reps' : '3) Log your first reps' }}
+                {{ isEs ? '4) Registra tus primeras reps' : '4) Log your first reps' }}
               </p>
 
               <div class="space-y-2">
@@ -141,7 +197,7 @@
                 <div v-if="submitting" class="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin"></div>
                 <span>
                   {{
-                    step < 2
+                    step < 3
                       ? (isEs ? 'Continuar' : 'Continue')
                       : (isEs ? 'Registrar primeras reps' : 'Log first reps')
                   }}
@@ -158,7 +214,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
 import axios from 'axios';
-import { X } from 'lucide-vue-next';
+import { Dumbbell, Flame, MessageCircle, Sword, Trophy, Users, X } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { getLocalDateString } from '../utils/dateUtils.js';
@@ -185,6 +241,38 @@ const selectedReps = ref(10);
 const repOptions = [5, 10, 20];
 
 const isEs = computed(() => props.locale !== 'en');
+
+const possibilityCards = computed(() => {
+  if (isEs.value) {
+    return [
+      { icon: Dumbbell, title: 'Registra reps', desc: 'Flexiones, dominadas, fondos o sentadillas.' },
+      { icon: Trophy, title: 'Ranking mundial', desc: 'Compite por posicion diaria, semanal y total.' },
+      { icon: Users, title: 'Amigos y feed', desc: 'Mira entrenos, da likes y comenta logros.' },
+      { icon: Sword, title: 'Bosses y botin', desc: 'Tus reps ayudan a derrotar bosses y ganar cofres.' },
+    ];
+  }
+  return [
+    { icon: Dumbbell, title: 'Log reps', desc: 'Pushups, pullups, dips or squats.' },
+    { icon: Trophy, title: 'Global ranking', desc: 'Compete by day, week and all-time.' },
+    { icon: Users, title: 'Friends and feed', desc: 'See workouts, give likes and comment wins.' },
+    { icon: Sword, title: 'Bosses and loot', desc: 'Your reps help defeat bosses and earn chests.' },
+  ];
+});
+
+const socialLoops = computed(() => {
+  if (isEs.value) {
+    return [
+      { icon: Trophy, title: 'Comparate en rankings', desc: 'Mira tu puesto mundial o mide tu progreso contra amigos.' },
+      { icon: MessageCircle, title: 'Publica y reacciona', desc: 'Cada entreno puede aparecer en el feed para que la comunidad lo vea.' },
+      { icon: Flame, title: 'Vuelve por la racha', desc: 'Un registro pequeno tambien cuenta si mantiene tu constancia viva.' },
+    ];
+  }
+  return [
+    { icon: Trophy, title: 'Compare in rankings', desc: 'Check your global spot or measure progress against friends.' },
+    { icon: MessageCircle, title: 'Post and react', desc: 'Every workout can appear in the feed for the community to see.' },
+    { icon: Flame, title: 'Return for streaks', desc: 'Even a small log counts when it keeps your consistency alive.' },
+  ];
+});
 
 const exerciseOptions = computed(() => {
   if (isEs.value) {
@@ -249,7 +337,7 @@ const submitFirstReps = async () => {
 };
 
 const handlePrimaryAction = async () => {
-  if (step.value < 2) {
+  if (step.value < 3) {
     step.value += 1;
     return;
   }

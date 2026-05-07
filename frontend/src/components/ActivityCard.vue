@@ -164,7 +164,7 @@
                          {{ ex.title_key ? (ex.title_key.startsWith('ex_') ? i18n.t(ex.title_key) : ex.title_key) : (i18n.t(ex.exercise_type) || ex.exercise_type) }}
                        </span>
                        <span class="text-[9px] font-bold" :class="dominantStatColor(getAttributeName(ex.exercise_type).toLowerCase())">
-                          +{{ Math.ceil(ex.count / 5) }} {{ getAttributeName(ex.exercise_type) }} {{ i18n.t('ui_xp') || 'XP' }}
+                          +{{ Math.ceil(exerciseEffectiveCount(ex) / 5) }} {{ getAttributeName(ex.exercise_type) }} {{ i18n.t('ui_xp') || 'XP' }}
                        </span>
                        <div v-if="ex.active_multiplier > 1" class="text-[8px] font-black text-amber-500 flex items-center gap-1">
                           <Zap class="w-2.5 h-2.5" /> {{ i18n.t('ui_mult') || 'Multiplicador' }} x{{ ex.active_multiplier }}
@@ -558,6 +558,11 @@ const getAttributeName = (type) => {
         dips: 'AGI', handstand: 'AGI', legraises: 'AGI'
     };
     return types[type] || 'STR';
+};
+
+const exerciseEffectiveCount = (exercise) => {
+    const count = Number(exercise?.count || 0);
+    return exercise?.unit === 'seconds' ? Math.max(0, Math.round(count / 10)) : count;
 };
 
 const getExerciseIcon = (type) => {

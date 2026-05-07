@@ -11,6 +11,7 @@ import { getUserWithGear } from './utils/user.js';
 import { updateMissionProgress } from './utils/missions.js';
 import { broadcastDamage } from './socketManager.js';
 import { grantLastHitBonus } from './utils/bossRewards.js';
+import { getEffectiveExerciseCount, getRewardExerciseCount, isTimedExerciseUnit } from './utils/exerciseUnits.js';
 
 
 const router = express.Router();
@@ -46,6 +47,17 @@ router.post('/', authenticate, async (req, res) => {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+    const rawCount = Math.max(0, Number(count) || 0);
+    const exerciseMetaRes = await client.query(
+      'SELECT difficulty_multiplier, coin_multiplier, unit FROM exercises WHERE slug = $1',
+      [exercise_type]
+    );
+    const exerciseMeta = exerciseMetaRes.rows[0] || {};
+    const exerciseUnit = exerciseMeta.unit || 'reps';
+    const diffMult = exerciseMeta.difficulty_multiplier != null ? Number(exerciseMeta.difficulty_multiplier) : null;
+    const coinMult = exerciseMeta.coin_multiplier != null ? Number(exerciseMeta.coin_multiplier) : null;
+    const effectiveCount = getEffectiveExerciseCount(rawCount, exerciseUnit);
+    const rewardCount = getRewardExerciseCount(rawCount, exerciseUnit);
 
     // 0. Get user and calculate damage first
     const userResult = await client.query(`
@@ -62,7 +74,7 @@ router.post('/', authenticate, async (req, res) => {
     
     if (userResult.rows.length === 0) throw new Error('User not found');
     const augmentedUser = augmentUserWithLevels(userResult.rows[0]);
-    const dmgResult = calculateDamage(augmentedUser, count, exercise_type);
+    const dmgResult = calculateDamage(augmentedUser, effectiveCount, exercise_type, null, false, false, diffMult);
 
     // 1. Insert or update reps
     const repResult = await client.query(
@@ -73,11 +85,13 @@ router.post('/', authenticate, async (req, res) => {
                      added_weight = EXCLUDED.added_weight,
                      is_crit = EXCLUDED.is_crit
        RETURNING *`,
-      [userId, count, date || getLocalDateString(), exercise_type, parseFloat(added_weight) || 0, dmgResult.isCrit]
+      [userId, rawCount, date || getLocalDateString(), exercise_type, parseFloat(added_weight) || 0, dmgResult.isCrit]
     );
 
     // 2. Rewards (Coins only, XP handled by recalculateUserStats)
-    const { coins: earnedCoins } = getExerciseRewards(exercise_type, count);
+    const earnedCoins = coinMult != null
+      ? Math.round(rewardCount * coinMult)
+      : getExerciseRewards(exercise_type, rewardCount).coins;
     await client.query(`UPDATE users SET reppy_coins = GREATEST(0, reppy_coins + $1) WHERE id = $2`, [earnedCoins, userId]);
 
     // 3. Boss Interaction
@@ -93,7 +107,7 @@ router.post('/', authenticate, async (req, res) => {
     if (bossRes.rows.length > 0) {
       const boss = bossRes.rows[0];
       bossId = boss.id;
-      const bossDmgResult = calculateDamage(augmentedUser, count, exercise_type, boss);
+      const bossDmgResult = calculateDamage(augmentedUser, effectiveCount, exercise_type, boss, false, false, diffMult);
       actualDamageDealt = bossDmgResult.totalDamage;
       
       // Atomic health deduction
@@ -163,7 +177,9 @@ router.post('/', authenticate, async (req, res) => {
     );
 
     // 4. Update Missions
-    await updateMissionProgress(userId, 'reps', count);
+    if (!isTimedExerciseUnit(exerciseUnit)) {
+      await updateMissionProgress(userId, 'reps', rawCount);
+    }
     if (actualDamageDealt > 0) {
       await updateMissionProgress(userId, 'damage', actualDamageDealt);
     }
@@ -177,16 +193,18 @@ router.post('/', authenticate, async (req, res) => {
     // Mission: Personal Record
     const prRes = await client.query(`
       SELECT 1 FROM (
-        SELECT SUM(count) as day_total 
-        FROM reps 
-        WHERE user_id = $1 AND date = $2
+        SELECT SUM(r.count) as day_total
+        FROM reps r
+        LEFT JOIN exercises e ON e.slug = r.exercise_type
+        WHERE r.user_id = $1 AND r.date = $2 AND COALESCE(e.unit, 'reps') != 'seconds'
       ) t
       WHERE t.day_total > COALESCE((
         SELECT MAX(day_sum) FROM (
-          SELECT SUM(count) as day_sum 
-          FROM reps 
-          WHERE user_id = $1 AND date < $2
-          GROUP BY date
+          SELECT SUM(r.count) as day_sum
+          FROM reps r
+          LEFT JOIN exercises e ON e.slug = r.exercise_type
+          WHERE r.user_id = $1 AND r.date < $2 AND COALESCE(e.unit, 'reps') != 'seconds'
+          GROUP BY r.date
         ) history
       ), 0)
     `, [userId, date || getLocalDateString()]);
@@ -383,7 +401,13 @@ router.put('/:id', authenticate, async (req, res) => {
 
     // 1. Get old values
     const oldRes = await client.query(
-      'SELECT count, exercise_type, boss_damage_dealt, date, boss_fight_id FROM reps WHERE id = $1 AND user_id = $2',
+      `SELECT r.count, r.exercise_type, r.boss_damage_dealt, r.date, r.boss_fight_id,
+              COALESCE(e.unit, 'reps') AS exercise_unit,
+              e.difficulty_multiplier,
+              e.coin_multiplier
+       FROM reps r
+       LEFT JOIN exercises e ON e.slug = r.exercise_type
+       WHERE r.id = $1 AND r.user_id = $2`,
       [id, userId]
     );
 
@@ -393,7 +417,14 @@ router.put('/:id', authenticate, async (req, res) => {
     }
 
     const oldRep = oldRes.rows[0];
-    const diffCount = count - oldRep.count;
+    const rawCount = Math.max(0, Number(count) || 0);
+    const exerciseUnit = oldRep.exercise_unit || 'reps';
+    const diffMult = oldRep.difficulty_multiplier != null ? Number(oldRep.difficulty_multiplier) : null;
+    const coinMult = oldRep.coin_multiplier != null ? Number(oldRep.coin_multiplier) : null;
+    const effectiveCount = getEffectiveExerciseCount(rawCount, exerciseUnit);
+    const oldRewardCount = getRewardExerciseCount(oldRep.count, exerciseUnit);
+    const newRewardCount = getRewardExerciseCount(rawCount, exerciseUnit);
+    const diffCount = rawCount - Number(oldRep.count || 0);
 
     if (diffCount === 0) {
       await client.query('ROLLBACK');
@@ -401,9 +432,13 @@ router.put('/:id', authenticate, async (req, res) => {
     }
 
     // 2. Rewards difference
-    const oldRewards = getExerciseRewards(oldRep.exercise_type, oldRep.count);
-    const newRewards = getExerciseRewards(oldRep.exercise_type, count);
-    const diffCoins = newRewards.coins - oldRewards.coins;
+    const oldCoins = coinMult != null
+      ? Math.round(oldRewardCount * coinMult)
+      : getExerciseRewards(oldRep.exercise_type, oldRewardCount).coins;
+    const newCoins = coinMult != null
+      ? Math.round(newRewardCount * coinMult)
+      : getExerciseRewards(oldRep.exercise_type, newRewardCount).coins;
+    const diffCoins = newCoins - oldCoins;
 
     // 3. User with gear & Damage
     const userResult = await client.query(`
@@ -420,7 +455,7 @@ router.put('/:id', authenticate, async (req, res) => {
     
     if (userResult.rows.length === 0) throw new Error('User not found');
     const augmentedUser = augmentUserWithLevels(userResult.rows[0]);
-    const dmgResult = calculateDamage(augmentedUser, count, oldRep.exercise_type);
+    const dmgResult = calculateDamage(augmentedUser, effectiveCount, oldRep.exercise_type, null, false, false, diffMult);
 
     // 4. Boss Health Adjustment
     let newBossDamageDealt = 0;
@@ -435,7 +470,7 @@ router.put('/:id', authenticate, async (req, res) => {
 
     if (bossRes.rows.length > 0) {
       const boss = bossRes.rows[0];
-      const bossDmgResult = calculateDamage(augmentedUser, count, oldRep.exercise_type, boss);
+      const bossDmgResult = calculateDamage(augmentedUser, effectiveCount, oldRep.exercise_type, boss, false, false, diffMult);
       newBossDamageDealt = bossDmgResult.totalDamage;
 
       const bossHpChange = newBossDamageDealt - oldRep.boss_damage_dealt;
@@ -470,7 +505,7 @@ router.put('/:id', authenticate, async (req, res) => {
        SET count = $1, boss_damage_dealt = $2, active_multiplier = $3,
            base_damage = $4, gear_bonus = $5, buff_bonus = $6, is_crit = $7
        WHERE id = $8 RETURNING *`,
-      [count, newBossDamageDealt, dmgResult.activeMultiplier, dmgResult.baseDamage, dmgResult.gearBonus, dmgResult.buffBonus, dmgResult.isCrit, id]
+      [rawCount, newBossDamageDealt, dmgResult.activeMultiplier, dmgResult.baseDamage, dmgResult.gearBonus, dmgResult.buffBonus, dmgResult.isCrit, id]
     );
 
     // 6. Update user coins
@@ -516,7 +551,12 @@ router.delete('/:id', authenticate, async (req, res) => {
 
     // 1. Get old values for deduction
     const oldRes = await client.query(
-      'SELECT count, exercise_type, boss_damage_dealt, date, boss_fight_id FROM reps WHERE id = $1 AND user_id = $2',
+      `SELECT r.count, r.exercise_type, r.boss_damage_dealt, r.date, r.boss_fight_id,
+              COALESCE(e.unit, 'reps') AS exercise_unit,
+              e.coin_multiplier
+       FROM reps r
+       LEFT JOIN exercises e ON e.slug = r.exercise_type
+       WHERE r.id = $1 AND r.user_id = $2`,
       [id, userId]
     );
 
@@ -526,7 +566,10 @@ router.delete('/:id', authenticate, async (req, res) => {
     }
 
     const oldRep = oldRes.rows[0];
-    const rewards = getExerciseRewards(oldRep.exercise_type, oldRep.count);
+    const rewardCount = getRewardExerciseCount(oldRep.count, oldRep.exercise_unit || 'reps');
+    const oldCoins = oldRep.coin_multiplier != null
+      ? Math.round(rewardCount * Number(oldRep.coin_multiplier))
+      : getExerciseRewards(oldRep.exercise_type, rewardCount).coins;
 
     // 2. Restore Boss HP and adjust daily tracker
     if (oldRep.boss_damage_dealt > 0) {
@@ -571,7 +614,7 @@ router.delete('/:id', authenticate, async (req, res) => {
     await client.query('DELETE FROM reps WHERE id = $1 AND user_id = $2', [id, userId]);
 
     // 4. Deduct coins (reps/xp handled by recalculateUserStats)
-    await client.query(`UPDATE users SET reppy_coins = GREATEST(0, reppy_coins - $1) WHERE id = $2`, [rewards.coins, userId]);
+    await client.query(`UPDATE users SET reppy_coins = GREATEST(0, reppy_coins - $1) WHERE id = $2`, [oldCoins, userId]);
 
     await client.query('COMMIT');
 
