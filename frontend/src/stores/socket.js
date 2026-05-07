@@ -21,8 +21,9 @@ export const useSocketStore = defineStore('socket', {
       
       console.log(`[PUSHER v6] Initializing with User: ${authStore.user?.name} (ID: ${authStore.user?.id})`);
 
-      this.pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
-        cluster: import.meta.env.VITE_PUSHER_CLUSTER,
+      const pusherKey = import.meta.env.VITE_PUSHER_KEY || 'dummy_key';
+      this.pusher = new Pusher(pusherKey, {
+        cluster: import.meta.env.VITE_PUSHER_CLUSTER || 'mt1',
         forceTLS: true,
         authEndpoint: `${apiURL}/api/pusher/auth`,
         auth: {
@@ -32,9 +33,7 @@ export const useSocketStore = defineStore('socket', {
             avatar_url: authStore.user?.avatar_url,
             level: authStore.user?.current_level || 1
           }
-
         }
-
       });
 
 

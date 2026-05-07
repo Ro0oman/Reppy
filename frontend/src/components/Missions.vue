@@ -32,8 +32,12 @@
         <div 
           v-for="mission in missions" 
           :key="mission.id"
+          :id="`mission-${mission.id}`"
           class="mission-card group relative overflow-hidden bg-foreground/[0.02] border border-border rounded-[2rem] p-6 transition-all hover:border-primary-500/30 hover:bg-foreground/[0.04] backdrop-blur-sm"
-          :class="{ 'opacity-60': mission.is_claimed }"
+          :class="{
+            'opacity-60': mission.is_claimed,
+            'ring-2 ring-primary-500/50 shadow-2xl shadow-primary-500/20': highlightedMissionId === mission.id
+          }"
         >
           <!-- Background Glow -->
           <div v-if="mission.is_completed && !mission.is_claimed" class="absolute -inset-2 bg-primary-500/5 blur-2xl rounded-full"></div>
@@ -59,6 +63,9 @@
                   <h3 class="text-sm font-black text-foreground uppercase italic tracking-tight">{{ i18n.t(mission.title_key) }}</h3>
                 </div>
                 <p class="text-xs text-muted leading-relaxed max-w-md">{{ i18n.t(mission.description_key) }}</p>
+                <p class="text-[10px] font-semibold text-primary-400/80 leading-relaxed max-w-md">
+                  {{ i18n.locale === 'es' ? 'Como completarla: ' : 'How to complete: ' }}{{ getHowToComplete(mission.goal_type) }}
+                </p>
                 
                 <!-- Progress Bar -->
                 <div class="space-y-2">
@@ -136,22 +143,25 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import axios from 'axios';
 import { Target, Loader2, Coins, Gem, Star, Trophy, Zap, Swords, CheckCircle2, BicepsFlexed, Clock } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
+import { useRoute } from 'vue-router';
 
 const i18n = useI18nStore();
 const authStore = useAuthStore();
 const notificationStore = useNotificationStore();
+const route = useRoute();
 
 const missions = ref([]);
 const loading = ref(true);
 const claimingId = ref(null);
 const nextReset = ref(null);
 const countdown = ref('--:--:--');
+const highlightedMissionId = ref(null);
 let timerInterval = null;
 
 const fetchMissions = async () => {
@@ -160,11 +170,31 @@ const fetchMissions = async () => {
     missions.value = res.data.missions;
     nextReset.value = new Date(res.data.next_reset);
     updateCountdown();
+    await focusMissionFromRoute();
   } catch (err) {
     console.error('Error fetching missions:', err);
   } finally {
     loading.value = false;
   }
+};
+
+const focusMissionFromRoute = async () => {
+  const missionIdParam = route.query?.missionId;
+  const missionId = Number.parseInt(missionIdParam, 10);
+  if (!Number.isFinite(missionId)) return;
+
+  const target = missions.value.find(m => Number(m.id) === missionId);
+  if (!target) return;
+
+  await nextTick();
+  highlightedMissionId.value = missionId;
+  const el = document.getElementById(`mission-${missionId}`);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  setTimeout(() => {
+    if (highlightedMissionId.value === missionId) highlightedMissionId.value = null;
+  }, 2500);
 };
 
 const updateCountdown = () => {
@@ -213,6 +243,42 @@ const getIcon = (type) => {
     case 'xp_agi': return Swords;
     default: return Target;
   }
+};
+
+const getHowToComplete = (type) => {
+  const es = {
+    reps: 'haz repeticiones en Registrar.',
+    damage: 'registra reps para hacer dano al boss.',
+    streak: 'entrena hoy para mantener la racha.',
+    xp_str: 'acumula volumen/reps con carga para subir XP de Fuerza.',
+    xp_pwr: 'haz muscle-ups o dominadas lastradas para subir XP de Potencia.',
+    xp_end: 'acumula reps totales para subir XP de Resistencia.',
+    xp_agi: 'trabaja ejercicios tecnicos/explosivos para subir XP de Agilidad.',
+    social_likes: 've a Social y da likes.',
+    buy_any: 'compra un item en Tienda.',
+    use_consumable: 'usa una pocion/consumible desde Inventario.',
+    night_owl: 'registra reps despues de las 22:00.',
+    personal_record: 'supera tu mejor marca diaria de reps.'
+  };
+
+  const en = {
+    reps: 'do reps in Register.',
+    damage: 'log reps to deal boss damage.',
+    streak: 'train today to keep your streak.',
+    xp_str: 'build volume/weighted work to raise Strength XP.',
+    xp_pwr: 'do muscle-ups or weighted pull-ups to raise Power XP.',
+    xp_end: 'accumulate total reps to raise Endurance XP.',
+    xp_agi: 'do technical/explosive work to raise Agility XP.',
+    social_likes: 'go to Social and like posts.',
+    buy_any: 'buy an item in Shop.',
+    use_consumable: 'use a potion/consumable from Inventory.',
+    night_owl: 'log reps after 22:00.',
+    personal_record: 'beat your daily reps record.'
+  };
+
+  return i18n.locale === 'es'
+    ? (es[type] || 'completa la accion indicada.')
+    : (en[type] || 'complete the required action.');
 };
 
 const claimReward = async (mission) => {

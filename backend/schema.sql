@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255),
     avatar_url TEXT,
+    theme VARCHAR(20) DEFAULT 'dark',
     total_reps INTEGER DEFAULT 0,
     -- RPG and Currency fields
     reppy_coins INTEGER DEFAULT 0,
@@ -31,6 +32,8 @@ CREATE TABLE IF NOT EXISTS users (
     cha_xp INTEGER DEFAULT 0,
     last_streak_reward_date DATE,
     reppy_gems INTEGER DEFAULT 0,
+    onboarding_mode VARCHAR(30),
+    goal_onboarding_completed BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -45,6 +48,100 @@ CREATE TABLE IF NOT EXISTS reps (
     active_multiplier DECIMAL DEFAULT 1.0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(user_id, date, exercise_type)
+);
+
+CREATE TABLE IF NOT EXISTS training_plans (
+    id SERIAL PRIMARY KEY,
+    slug VARCHAR(80) UNIQUE NOT NULL,
+    title_key VARCHAR(120) NOT NULL,
+    description_key VARCHAR(120) NOT NULL,
+    goal_type VARCHAR(80) NOT NULL,
+    duration_days INTEGER NOT NULL,
+    difficulty VARCHAR(40) DEFAULT 'beginner',
+    is_active BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE IF NOT EXISTS training_plan_days (
+    id SERIAL PRIMARY KEY,
+    plan_id INTEGER REFERENCES training_plans(id) ON DELETE CASCADE,
+    day_number INTEGER NOT NULL,
+    title_key VARCHAR(120) NOT NULL,
+    focus VARCHAR(80) NOT NULL,
+    estimated_minutes INTEGER DEFAULT 12,
+    reward_xp INTEGER DEFAULT 100,
+    reward_coins INTEGER DEFAULT 50,
+    UNIQUE(plan_id, day_number)
+);
+
+CREATE TABLE IF NOT EXISTS training_plan_blocks (
+    id SERIAL PRIMARY KEY,
+    plan_day_id INTEGER REFERENCES training_plan_days(id) ON DELETE CASCADE,
+    order_index INTEGER NOT NULL,
+    block_type VARCHAR(40) NOT NULL,
+    title VARCHAR(120) NOT NULL,
+    instructions TEXT,
+    exercise_type VARCHAR(50),
+    target_sets INTEGER DEFAULT 1,
+    target_reps INTEGER DEFAULT 1,
+    rest_seconds INTEGER DEFAULT 60
+);
+
+CREATE TABLE IF NOT EXISTS user_active_plans (
+    user_id VARCHAR(255) PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    plan_id INTEGER REFERENCES training_plans(id) ON DELETE CASCADE,
+    started_at DATE DEFAULT CURRENT_DATE,
+    current_day INTEGER DEFAULT 1,
+    days_per_week INTEGER DEFAULT 3,
+    baseline JSONB DEFAULT '{}'::jsonb,
+    equipment JSONB DEFAULT '{}'::jsonb,
+    last_completed_date DATE,
+    last_completed_day INTEGER,
+    status VARCHAR(30) DEFAULT 'active'
+);
+
+CREATE TABLE IF NOT EXISTS workout_sessions (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    plan_id INTEGER REFERENCES training_plans(id),
+    plan_day_id INTEGER REFERENCES training_plan_days(id),
+    status VARCHAR(30) DEFAULT 'started',
+    total_reps INTEGER DEFAULT 0,
+    total_damage INTEGER DEFAULT 0,
+    reward_xp INTEGER DEFAULT 0,
+    reward_coins INTEGER DEFAULT 0,
+    completion_rate INTEGER DEFAULT 0,
+    started_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    completed_at TIMESTAMP WITH TIME ZONE
+);
+
+CREATE TABLE IF NOT EXISTS workout_set_logs (
+    id SERIAL PRIMARY KEY,
+    session_id INTEGER REFERENCES workout_sessions(id) ON DELETE CASCADE,
+    block_id INTEGER REFERENCES training_plan_blocks(id),
+    set_index INTEGER NOT NULL,
+    exercise_type VARCHAR(50),
+    target_reps INTEGER DEFAULT 0,
+    actual_reps INTEGER DEFAULT 0,
+    completed BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE IF NOT EXISTS exercises (
+    slug VARCHAR(80) PRIMARY KEY,
+    title_key VARCHAR(120) NOT NULL,
+    description_key TEXT NOT NULL,
+    technique_key TEXT,
+    unit VARCHAR(20) DEFAULT 'reps',
+    difficulty_multiplier DECIMAL(5,2) DEFAULT 1.0,
+    coin_multiplier DECIMAL(5,2) DEFAULT 1.0,
+    is_active BOOLEAN DEFAULT TRUE,
+    image_url TEXT
+);
+
+CREATE TABLE IF NOT EXISTS user_favorite_exercises (
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    exercise_slug VARCHAR(80) REFERENCES exercises(slug) ON DELETE CASCADE,
+    position INTEGER NOT NULL,
+    PRIMARY KEY (user_id, exercise_slug)
 );
 
 CREATE TABLE IF NOT EXISTS friendships (
@@ -170,14 +267,15 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS cha_xp INTEGER DEFAULT 0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS last_spin_at TIMESTAMP WITH TIME ZONE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_avatar_overhaul BOOLEAN DEFAULT FALSE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS last_streak_reward_date DATE;
+ALTER TABLE user_active_plans ADD COLUMN IF NOT EXISTS last_completed_date DATE;
+ALTER TABLE user_active_plans ADD COLUMN IF NOT EXISTS last_completed_day INTEGER;
  
-+-- Push Notifications
-+CREATE TABLE IF NOT EXISTS push_subscriptions (
-+    id SERIAL PRIMARY KEY,
-+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-+    subscription_json JSONB NOT NULL,
-+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-+    UNIQUE(user_id, subscription_json)
-+);
-+CREATE INDEX IF NOT EXISTS idx_push_subs_user ON push_subscriptions(user_id);
-
+-- Push Notifications
+CREATE TABLE IF NOT EXISTS push_subscriptions (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    subscription_json JSONB NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, subscription_json)
+);
+CREATE INDEX IF NOT EXISTS idx_push_subs_user ON push_subscriptions(user_id);

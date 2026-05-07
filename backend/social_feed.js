@@ -122,6 +122,8 @@ router.get('/feed', authenticate, async (req, res) => {
                 'exercise_type', r.exercise_type,
                 'count', r.count,
                 'is_crit', COALESCE(r.is_crit, false),
+                'unit', (SELECT unit FROM exercises WHERE slug = r.exercise_type),
+                'title_key', (SELECT title_key FROM exercises WHERE slug = r.exercise_type),
                 'boss_damage', r.boss_damage_dealt,
                 'base_damage', r.base_damage,
                 'gear_bonus', r.gear_bonus,

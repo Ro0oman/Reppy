@@ -1,9 +1,16 @@
 <template>
+<div>
   <div v-if="compact" class="space-y-2">
     <div class="flex items-center justify-between px-1">
-      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted/50">
-        {{ isEs ? 'Ejercicio' : 'Exercise' }}
-      </p>
+      <div class="flex items-center gap-2">
+        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted/50">
+          {{ isEs ? 'Ejercicio' : 'Exercise' }}
+        </p>
+        <button type="button" @click="isModalOpen = true" class="text-[9px] font-black uppercase tracking-widest text-primary-500 hover:text-primary-400 transition flex items-center gap-1 select-none">
+          <Star class="w-3 h-3 fill-primary-500" />
+          {{ isEs ? 'Editar favoritos' : 'Edit favorites' }}
+        </button>
+      </div>
       <p class="text-[10px] font-black uppercase tracking-tight text-primary-500">
         {{ currentExerciseLabel }}
       </p>
@@ -28,9 +35,15 @@
 
   <div v-else class="space-y-3">
     <div class="flex items-center justify-between px-1">
-      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted/50">
-        {{ isEs ? 'Ejercicio activo' : 'Active exercise' }}
-      </p>
+      <div class="flex items-center gap-3">
+        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted/50">
+          {{ isEs ? 'Ejercicio activo' : 'Active exercise' }}
+        </p>
+        <button type="button" @click="isModalOpen = true" class="text-[9px] font-black uppercase tracking-widest text-primary-500 hover:text-primary-400 transition flex items-center gap-1">
+          <Star class="w-3 h-3 fill-primary-500" />
+          {{ isEs ? 'Editar favoritos' : 'Edit favorites' }}
+        </button>
+      </div>
       <p class="text-[11px] font-black uppercase tracking-tight text-primary-500">
         {{ currentExerciseLabel }}
       </p>
@@ -75,14 +88,25 @@
       </button>
     </div>
   </div>
+
+  <!-- Favorites Modal -->
+  <FavoritesModal
+    :is-open="isModalOpen"
+    @close="isModalOpen = false"
+    @saved="fetchFavorites"
+  />
+</div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { Dumbbell, Zap, Flame, Target, Trophy, Globe } from 'lucide-vue-next';
+import { computed, onMounted, ref } from 'vue';
+import { Dumbbell, Zap, Flame, Target, Trophy, Globe, Star } from 'lucide-vue-next';
+import FavoritesModal from './FavoritesModal.vue';
 import { useI18nStore } from '../stores/i18n';
+import { useAuthStore } from '../stores/auth';
 
 const i18n = useI18nStore();
+const authStore = useAuthStore();
 
 const props = defineProps({
   modelValue: {
@@ -99,7 +123,32 @@ defineEmits(['update:modelValue']);
 
 const isEs = computed(() => i18n.locale !== 'en');
 
-const exercises = [
+const customFavorites = ref([]);
+const isModalOpen = ref(false);
+
+const fetchFavorites = async () => {
+  try {
+    const res = await fetch('/api/exercises/favorites', {
+      headers: {
+        'Authorization': `Bearer ${authStore.token}`
+      }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        customFavorites.value = data;
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching favorites:', error);
+  }
+};
+
+onMounted(() => {
+  fetchFavorites();
+});
+
+const defaultExercises = [
   {
     id: 'all',
     icon: Globe,
@@ -158,6 +207,30 @@ const exercises = [
   },
 ];
 
+const exercises = computed(() => {
+  if (customFavorites.value && customFavorites.value.length > 0) {
+    return [
+      {
+        id: 'all',
+        icon: Globe,
+        fallbackEs: 'Resumen',
+        fallbackEn: 'Overview',
+        hintEs: 'Vista global del progreso',
+        hintEn: 'Global progress view',
+      },
+      ...customFavorites.value.map(f => ({
+        id: f.slug,
+        icon: f.slug === 'muscleups' ? Zap : f.slug === 'weighted_pullups' ? Trophy : f.slug === 'pushups' ? Flame : f.slug === 'legs' ? '🦵' : Dumbbell,
+        fallbackEs: f.title_key.startsWith('ex_') ? i18n.t(f.title_key) : f.title_key,
+        fallbackEn: f.title_key.startsWith('ex_') ? i18n.t(f.title_key) : f.title_key,
+        hintEs: f.description_key,
+        hintEn: f.description_key,
+      }))
+    ];
+  }
+  return defaultExercises;
+});
+
 const safeTranslate = (key) => {
   const translated = i18n.t(key);
   return translated === key ? null : translated;
@@ -168,7 +241,7 @@ const labelFor = (id, fallbackEs, fallbackEn) => {
 };
 
 const currentExerciseLabel = computed(() => {
-  const active = exercises.find((e) => e.id === props.modelValue);
+  const active = exercises.value.find((e) => e.id === props.modelValue);
   if (!active) return '';
   return labelFor(active.id, active.fallbackEs, active.fallbackEn);
 });
