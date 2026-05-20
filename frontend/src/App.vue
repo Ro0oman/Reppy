@@ -120,6 +120,58 @@
       </div>
     </nav>
 
+    <!-- Public Navigation Bar -->
+    <nav v-else-if="$route.name !== 'pvp' && $route.name !== 'login'"
+      class="border-b border-border bg-surface/40 backdrop-blur-3xl sticky top-0 z-50 transition-all">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 md:h-20 flex items-center justify-between gap-4">
+        <router-link :to="{ name: 'landing', params: { lang: i18n.locale } }"
+          class="flex items-center gap-3 group cursor-pointer outline-none shrink-0"
+          :title="'Reppy'">
+          <div
+            class="w-9 h-9 md:w-10 md:h-10 bg-primary-500 rounded-2xl flex items-center justify-center font-bold text-white shadow-xl shadow-primary-500/20 transition-transform group-hover:scale-110 group-focus:scale-110 group-focus:ring-2 group-focus:ring-primary-500/50">
+            R</div>
+          <span class="text-xl md:text-2xl font-bold tracking-tight text-foreground font-industrial">Reppy<span
+              class="text-primary-500">.</span></span>
+        </router-link>
+
+        <div class="flex items-center justify-end gap-1 md:gap-2 min-w-0">
+          <router-link v-for="nav in publicNavLinks" :key="nav.id"
+            :to="{ name: nav.id, params: { lang: i18n.locale } }"
+            class="hidden sm:flex px-3 md:px-4 py-2 rounded-2xl text-[12px] md:text-[13px] font-semibold transition-all relative group items-center gap-2"
+            :class="$route.name === nav.id ? 'text-foreground bg-primary-500/5' : 'text-muted hover:text-foreground hover:bg-surface/10'">
+            <component :is="nav.icon" class="w-4 h-4" :class="$route.name === nav.id ? 'text-primary-500' : ''" />
+            {{ i18n.t(nav.label) || nav.fallback }}
+          </router-link>
+
+          <button @click="switchLocale"
+            class="px-3 py-2 rounded-2xl text-[11px] font-black uppercase tracking-widest text-muted hover:text-foreground hover:bg-surface/10 border border-border/40 transition-all">
+            {{ i18n.locale === 'es' ? 'EN' : 'ES' }}
+          </button>
+
+          <router-link :to="{ name: 'login', params: { lang: i18n.locale } }"
+            class="hidden xs:flex items-center gap-2 px-3 md:px-4 py-2 rounded-2xl border border-border bg-surface/5 text-[11px] md:text-[12px] font-black uppercase tracking-widest text-foreground hover:border-primary-500/40 transition-all">
+            <LogIn class="w-4 h-4 text-primary-500" />
+            {{ i18n.t('login_btn') }}
+          </router-link>
+
+          <router-link :to="{ name: 'login', params: { lang: i18n.locale }, query: { mode: 'signup' } }"
+            class="px-3 md:px-5 py-2.5 rounded-2xl bg-primary-500 text-white text-[10px] md:text-[11px] font-black uppercase tracking-widest shadow-lg shadow-primary-500/20 hover:bg-primary-600 transition-all whitespace-nowrap">
+            {{ i18n.t('signup_btn') }}
+          </router-link>
+        </div>
+      </div>
+
+      <div class="sm:hidden px-4 pb-3 flex items-center gap-2 overflow-x-auto no-scrollbar">
+        <router-link v-for="nav in publicNavLinks" :key="`mobile-${nav.id}`"
+          :to="{ name: nav.id, params: { lang: i18n.locale } }"
+          class="flex items-center gap-2 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shrink-0"
+          :class="$route.name === nav.id ? 'text-primary-500 bg-primary-500/10' : 'text-muted bg-surface/5'">
+          <component :is="nav.icon" class="w-3.5 h-3.5" />
+          {{ i18n.t(nav.label) || nav.fallback }}
+        </router-link>
+      </div>
+    </nav>
+
     <!-- Main Operational View -->
     <main :class="['flex-1 flex flex-col', $route.name === 'pvp' ? 'p-0' : 'pt-4 pb-20']">
       <router-view v-slot="{ Component }">
@@ -290,7 +342,7 @@
 import { ref, onMounted, watch, computed } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
-import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Gem, Bell, User, Dices, Volume2, VolumeX, Book, ShoppingBag, Target } from 'lucide-vue-next';
+import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Gem, Bell, User, Dices, Volume2, VolumeX, Book, ShoppingBag, Target, LogIn } from 'lucide-vue-next';
 import { useAuthStore } from './stores/auth';
 import { useI18nStore } from './stores/i18n';
 import { useNotificationsStore } from './stores/notifications';
@@ -351,6 +403,11 @@ const navLinks = computed(() => [
   { id: 'profile', label: 'nav_profile', fallback: 'PROFILE', icon: User },
 ]);
 
+const publicNavLinks = computed(() => [
+  { id: 'social', label: 'nav_social', fallback: 'Social', icon: Users },
+  { id: 'blog-list', label: 'nav_blog', fallback: 'Blog', icon: Book },
+]);
+
 const mobileNavLinks = computed(() => [
   { id: 'social', icon: Users, label: 'nav_social', short: i18n.locale === 'es' ? 'Social' : 'Social' },
   { id: 'inventory', icon: Package, label: 'nav_inventory', short: i18n.locale === 'es' ? 'Inventario' : 'Inventory' },
@@ -382,6 +439,17 @@ const onSpun = () => { rouletteStore.setSpun(); };
 
 const openLiveModal = () => {
   router.push({ name: 'social', params: { lang: i18n.locale } });
+};
+
+const switchLocale = () => {
+  const nextLang = i18n.locale === 'es' ? 'en' : 'es';
+  const params = { ...route.params, lang: nextLang };
+
+  if (route.name) {
+    router.push({ name: route.name, params, query: route.query, hash: route.hash });
+  } else {
+    router.push(`/${nextLang}`);
+  }
 };
 
 const openProfile = (id) => {

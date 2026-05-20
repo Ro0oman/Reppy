@@ -143,10 +143,14 @@ const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
 
 onMounted(() => {
+  if (route.query.mode === 'signup') {
+    mode.value = 'signup';
+  }
+
   if (route.query.expired === '1') {
     notificationStore.notify(i18n.t('session_expired'), 'info');
     // Clear the query parameter without reloading
-    router.replace({ query: {} });
+    router.replace({ query: route.query.mode === 'signup' ? { mode: 'signup' } : {} });
   }
 });
 const emit = defineEmits(['back', 'start', 'viewProfile']);
@@ -161,6 +165,10 @@ const form = reactive({
 });
 
 watch(mode, () => { errorMessage.value = ''; });
+watch(() => route.query.mode, (nextMode) => {
+  if (nextMode === 'signup') mode.value = 'signup';
+  else if (nextMode === 'login') mode.value = 'login';
+});
 
 const handleSubmit = async () => {
   loading.value = true;
