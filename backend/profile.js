@@ -1,10 +1,11 @@
 import express from 'express';
 import { query } from './db.js';
 import { recalculateUserStats, augmentUserWithLevels, getStatLevel, getGlobalLevel, getXPForLevel } from './utils/stats.js';
+import { optionalAuthenticate } from './middleware.js';
 
 const router = express.Router();
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', optionalAuthenticate, async (req, res) => {
   const rawId = req.params.id;
   const { type = 'pullups' } = req.query;
   console.log(`[PROFILE_API] INCOMING - ID: ${rawId}, TYPE: ${type}`);
@@ -12,7 +13,7 @@ router.get('/:id', async (req, res) => {
   try {
     // Try to find the user. If they have a 'user_' prefix or not, we want to be robust.
     let userResult = await query(`
-        SELECT u.id, u.name, u.email, u.avatar_url, u.reppy_coins, u.reppy_gems, u.daily_goal,
+        SELECT u.id, u.name, u.avatar_url, u.reppy_coins, u.reppy_gems, u.daily_goal,
                u.str_xp, u.dex_xp, u.end_xp, u.vig_xp, u.int_xp, u.fth_xp, u.total_xp, u.body_weight, u.is_private,
                u.current_level, u.level_chests_claimed, u.level_chests,
                u.damage_multiplier, u.damage_multiplier_expiry,
@@ -43,7 +44,7 @@ router.get('/:id', async (req, res) => {
       const altId = rawId.startsWith('user_') ? rawId.replace('user_', '') : `user_${rawId}`;
       console.log(`[PROFILE_API] Not found with ${rawId}, trying ${altId}`);
       userResult = await query(`
-        SELECT u.id, u.name, u.email, u.avatar_url, u.reppy_coins, u.reppy_gems, u.daily_goal,
+        SELECT u.id, u.name, u.avatar_url, u.reppy_coins, u.reppy_gems, u.daily_goal,
                u.str_xp, u.dex_xp, u.end_xp, u.vig_xp, u.int_xp, u.fth_xp, u.total_xp, u.body_weight, u.is_private,
                u.current_level, u.level_chests_claimed, u.level_chests,
                u.damage_multiplier, u.damage_multiplier_expiry,
@@ -77,6 +78,11 @@ router.get('/:id', async (req, res) => {
     
     const userRaw = userResult.rows[0];
     const userId = userRaw.id; // Use the actual ID found in DB
+    const isOwnProfile = req.user?.id === userId;
+
+    if (userRaw.is_private && !isOwnProfile) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
     const isGlobal = type === 'all';
     const typeFilter = isGlobal ? '' : 'AND exercise_type = $2';

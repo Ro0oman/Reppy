@@ -58,7 +58,9 @@ export default defineConfig({
         '/es/contador-flexiones',
         '/en/contador-flexiones',
         '/es/app-calistenia',
-        '/en/app-calistenia'
+        '/en/app-calistenia',
+        '/es/social',
+        '/en/social'
       ];
 
       // Add dynamic blog routes for each language

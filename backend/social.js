@@ -1,25 +1,30 @@
 import express from 'express';
 import { query } from './db.js';
-import { authenticate } from './middleware.js';
+import { authenticate, optionalAuthenticate } from './middleware.js';
 import { updateMissionProgress } from './utils/missions.js';
 
 const router = express.Router();
 
-// Search users by name or email
-router.get('/search', authenticate, async (req, res) => {
+// Search public users by name.
+router.get('/search', optionalAuthenticate, async (req, res) => {
   const { q } = req.query;
   if (!q) return res.json([]);
 
   try {
+    const viewerId = req.user?.id || null;
     const result = await query(
-      `SELECT u.id, u.name, u.avatar_url, u.total_reps,
+      `SELECT u.id, u.name, u.avatar_url, u.total_reps, u.current_level,
               b.css_value as border_css,
               a.css_value as avatar_css
        FROM users u
        LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
        LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
-       WHERE (u.name ILIKE $1 OR u.email ILIKE $1) AND u.id != $2 LIMIT 10`,
-      [`%${q}%`, req.user.id]
+       WHERE u.name ILIKE $1
+         AND u.is_private = false
+         AND ($2::varchar IS NULL OR u.id != $2)
+       ORDER BY u.total_reps DESC
+       LIMIT 10`,
+      [`%${q}%`, viewerId]
     );
     res.json(result.rows);
   } catch (error) {

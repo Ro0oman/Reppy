@@ -385,7 +385,7 @@ const openLiveModal = () => {
 };
 
 const openProfile = (id) => {
-  router.push({ name: 'profile', params: { userId: id } });
+  router.push({ name: 'profile', params: { lang: i18n.locale, userId: id } });
 };
 
 const onStartAction = () => {

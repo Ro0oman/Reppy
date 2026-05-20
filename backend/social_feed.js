@@ -1,7 +1,7 @@
 import express from 'express';
 import { query } from './db.js';
 import pool from './db.js';
-import { authenticate } from './middleware.js';
+import { authenticate, optionalAuthenticate } from './middleware.js';
 import { createNotification } from './utils/notifications.js';
 import { recalculateUserStats } from './utils/stats.js';
 import { updateMissionProgress } from './utils/missions.js';
@@ -37,7 +37,7 @@ pool.query(`
  * GET /api/social-feed/stats
  * Returns general stats for the social hub header.
  */
-router.get('/stats', authenticate, async (req, res) => {
+router.get('/stats', optionalAuthenticate, async (req, res) => {
   try {
     const userCountRes = await query('SELECT COUNT(*) as count FROM users');
     const activeBossRes = await query(`
@@ -65,27 +65,31 @@ router.get('/stats', authenticate, async (req, res) => {
  * Supports filters: 'global' (all) or 'following' (friends only).
  * Supports pagination via 'page'.
  */
-router.get('/feed', authenticate, async (req, res) => {
+router.get('/feed', optionalAuthenticate, async (req, res) => {
   const { filter = 'global', page = 1 } = req.query;
   const limit = 10;
   const offset = (page - 1) * limit;
-  const userId = req.user.id;
+  const userId = req.user?.id || null;
   
   // Clean up expired fights before fetching feed
   await autoFinishExpiredFights();
 
 
   try {
-    let whereClause = '';
+    let whereClause = 'WHERE u.is_private = false';
     let params = [userId, offset];
 
-    if (filter === 'following') {
+    if (filter === 'following' && userId) {
       whereClause = `
-        WHERE u.id IN (
-          SELECT user_id_1 FROM friendships WHERE user_id_2 = $1 AND status = 'accepted'
-          UNION
-          SELECT user_id_2 FROM friendships WHERE user_id_1 = $1 AND status = 'accepted'
-        ) OR u.id = $1
+        WHERE u.is_private = false
+          AND (
+            u.id IN (
+              SELECT user_id_1 FROM friendships WHERE user_id_2 = $1 AND status = 'accepted'
+              UNION
+              SELECT user_id_2 FROM friendships WHERE user_id_1 = $1 AND status = 'accepted'
+            )
+            OR u.id = $1
+          )
       `;
     }
 
@@ -233,6 +237,8 @@ router.get('/feed', authenticate, async (req, res) => {
         LEFT JOIN cosmetics b ON u1.equipped_border_id = b.id
         LEFT JOIN cosmetics t ON u1.equipped_title_id = t.id
         WHERE f.status != 'pending'
+          AND u1.is_private = false
+          AND u2.is_private = false
       ),
       feed_base AS (
         SELECT * FROM reps_feed
@@ -570,14 +576,18 @@ router.post('/comment', authenticate, async (req, res) => {
 /**
  * GET /api/social/comments/:summaryId
  */
-router.get('/comments/:summaryId', authenticate, async (req, res) => {
+router.get('/comments/:summaryId', optionalAuthenticate, async (req, res) => {
   try {
     const result = await query(
       `SELECT c.*, u.name as user_name, u.avatar_url, b.css_value as border_css
        FROM summary_interactions c
+       JOIN daily_summaries ds ON c.summary_id = ds.id
+       JOIN users owner ON ds.user_id = owner.id
        JOIN users u ON c.user_id = u.id
        LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
-       WHERE c.summary_id = $1 AND c.type = 'COMMENT'
+       WHERE c.summary_id = $1
+         AND c.type = 'COMMENT'
+         AND owner.is_private = false
        ORDER BY c.created_at ASC`,
       [req.params.summaryId]
     );

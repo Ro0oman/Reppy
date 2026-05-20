@@ -4,14 +4,14 @@ Allow: /blog
 Allow: /contador-dominadas
 Allow: /contador-flexiones
 Allow: /app-calistenia
+Allow: /social
+Allow: /profile
 
 # Disallow Private & Auth Routes
 Disallow: /login
 Disallow: /dashboard
-Disallow: /social
 Disallow: /inventory
 Disallow: /shop
-Disallow: /profile
 Disallow: /admin
 Disallow: /notifications
 Disallow: /api

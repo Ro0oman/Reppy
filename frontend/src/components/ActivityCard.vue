@@ -211,7 +211,7 @@
                 <MessageSquare class="w-4 h-4" />
                 <span class="text-[10px] font-black tabular-nums">{{ activity.comment_count }}</span>
               </button>
-              <button @click="$emit('challenge', activity)" class="flex-shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl transition-all hover:bg-foreground/5 text-muted/60 hover:text-amber-500">
+              <button @click="challengeUser" class="flex-shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl transition-all hover:bg-foreground/5 text-muted/60 hover:text-amber-500">
                 <Swords class="w-4 h-4" />
                 <span class="text-[10px] font-black uppercase tracking-tighter">{{ i18n.t('ui_challenge') || 'Retar' }}</span>
               </button>
@@ -238,7 +238,7 @@
 
         <!-- FULL COMMENTS (Collapsible) -->
         <div v-if="showComments" class="mt-1 space-y-4 animate-in slide-in-from-top-2">
-          <div class="flex gap-2">
+          <div v-if="authStore.isAuthenticated" class="flex gap-2">
             <input 
               v-model="commentText" @keyup.enter="submitComment" :placeholder="i18n.t('ui_comment_placeholder') || 'Comentar...'" 
               class="flex-1 bg-foreground/5 border-none rounded-xl px-3 py-2 text-xs outline-none focus:ring-1 ring-primary-500/20"
@@ -248,6 +248,9 @@
               {{ i18n.t('ui_submit') || 'Ok' }}
             </button>
           </div>
+          <button v-else @click="promptLogin" class="w-full py-3 rounded-xl bg-primary-500/10 border border-primary-500/20 text-primary-500 text-[10px] font-black uppercase tracking-widest">
+            {{ i18n.t('login') || 'Login' }}
+          </button>
           <div class="space-y-3 max-h-40 overflow-y-auto custom-scrollbar">
               <div v-for="comment in comments" :key="comment.id" class="flex gap-2 items-start">
                   <AvatarFrame :src="comment.avatar_url" :size="24" class="shrink-0" />
@@ -384,6 +387,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale/es';
 import { enUS } from 'date-fns/locale/en-US';
 import { useNotificationStore } from '../stores/notification';
+import { useRouter } from 'vue-router';
 import ItemIcon from './ItemIcon.vue';
 import BackgroundEffect from './BackgroundEffect.vue';
 import ChestIcon from './ChestIcon.vue';
@@ -398,6 +402,7 @@ const emit = defineEmits(['toggleLike', 'viewProfile', 'commentAdded', 'compare'
 const authStore = useAuthStore();
 const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
+const router = useRouter();
 
 const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1200);
 const handleResize = () => { windowWidth.value = window.innerWidth; };
@@ -479,7 +484,7 @@ const timeAgo = computed(() => {
 
 const sharePost = async () => {
   const text = `Check out this training by ${props.activity.user_name} on Reppy!`;
-  const url = `${window.location.origin}/social?user=${props.activity.user_id}&date=${props.activity.date}`;
+  const url = `${window.location.origin}/${i18n.locale}/social?user=${props.activity.user_id}&date=${props.activity.date}`;
   
   if (navigator.share) {
     try {
@@ -617,12 +622,32 @@ const addFeedback = (text, type = 'xp') => {
 };
 
 const toggleLike = () => {
+  if (!authStore.isAuthenticated) {
+    promptLogin();
+    return;
+  }
   if (navigator.vibrate) navigator.vibrate(8);
   if (!props.activity.user_has_liked) addFeedback('+5 CRÉDITOS', 'coins');
   emit('toggleLike');
 };
 
+const promptLogin = () => {
+  router.push({ name: 'login', params: { lang: i18n.locale } });
+};
+
+const challengeUser = () => {
+  if (!authStore.isAuthenticated) {
+    promptLogin();
+    return;
+  }
+  emit('challenge', props.activity);
+};
+
 const submitComment = async () => {
+    if (!authStore.isAuthenticated) {
+        promptLogin();
+        return;
+    }
     if (!commentText.value.trim() || submittingComment.value) return;
     submittingComment.value = true;
     try {

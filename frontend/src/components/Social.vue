@@ -46,6 +46,7 @@
         <div class="h-4 w-px bg-foreground/10 hidden sm:block"></div>
 
         <button 
+          v-if="authStore.isAuthenticated"
           @click="activeTab = 'battles'"
           class="flex-none px-4 sm:px-6 py-3 rounded-xl text-[9px] sm:text-[11px] font-black uppercase tracking-[0.15em] transition-all flex items-center justify-center gap-2.5 relative group overflow-hidden whitespace-nowrap"
           :class="activeTab === 'battles' ? 'text-primary-400' : 'text-muted hover:text-foreground hover:bg-white/5'"
@@ -126,10 +127,16 @@
                   </div>
                 </div>
                 <button @click.stop="addFriend(user.id)"
+                  v-if="authStore.isAuthenticated"
                   class="flex items-center gap-3 px-5 py-2.5 bg-primary-500 hover:bg-primary-600 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-primary-500/20 text-foreground-inverse">
                   <UserPlus class="w-3.5 h-3.5" />
                   {{ i18n.t('btn_add_friend') }}
                 </button>
+                <router-link v-else @click.stop :to="{ name: 'login', params: { lang: i18n.locale } }"
+                  class="flex items-center gap-3 px-5 py-2.5 bg-foreground/5 hover:bg-foreground/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-muted">
+                  <UserPlus class="w-3.5 h-3.5" />
+                  {{ i18n.t('login') || 'Login' }}
+                </router-link>
               </div>
             </TransitionGroup>
 
@@ -142,7 +149,7 @@
         </section>
 
         <!-- Friends List -->
-        <section class="space-y-6">
+        <section v-if="authStore.isAuthenticated" class="space-y-6">
           <div class="flex items-center gap-2">
             <Heart class="w-4 h-4 text-primary-500 fill-primary-500/20" />
             <h3 class="text-xs font-black uppercase tracking-[0.4em] text-muted">{{ i18n.t('inner_circle') }}</h3>
@@ -191,6 +198,13 @@
             </div>
           </div>
         </section>
+        <section v-else class="space-y-6">
+          <div class="p-10 text-center bg-surface/10 border border-dashed border-border rounded-2xl">
+            <Users2 class="w-10 h-10 text-muted/30 mx-auto mb-3" />
+            <p class="text-sm font-black text-foreground uppercase tracking-tight">{{ i18n.t('nav_social') }}</p>
+            <p class="text-xs text-muted/60 mt-1">{{ i18n.t('community_subtitle') }}</p>
+          </div>
+        </section>
       </div>
     </div>
   </div>
@@ -205,6 +219,7 @@ import {
 } from 'lucide-vue-next';
 import { Swords } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
+import { useAuthStore } from '../stores/auth';
 import { useBossStore } from '../stores/boss';
 import { useNotificationStore } from '../stores/notification';
 import AvatarFrame from './AvatarFrame.vue';
@@ -218,6 +233,7 @@ import { computed } from 'vue';
 const emit = defineEmits(['viewProfile', 'start']);
 
 const i18n = useI18nStore();
+const authStore = useAuthStore();
 const bossStore = useBossStore();
 const notificationStore = useNotificationStore();
 const searchQuery = ref('');
@@ -256,6 +272,7 @@ const searchUsers = async () => {
 };
 
 const addFriend = async (friendId) => {
+  if (!authStore.isAuthenticated) return;
   try {
     await axios.post('/api/social/add', { friendId });
     fetchFriends();
@@ -268,6 +285,7 @@ const addFriend = async (friendId) => {
 };
 
 const fetchFriends = async () => {
+  if (!authStore.isAuthenticated) return;
   try {
     const response = await axios.get('/api/social/list');
     friends.value = response.data;
@@ -288,7 +306,7 @@ const fetchSocialStats = async () => {
 };
 
 onMounted(() => {
-  fetchFriends();
+  if (authStore.isAuthenticated) fetchFriends();
   fetchSocialStats();
   fetchActiveBoss();
 });

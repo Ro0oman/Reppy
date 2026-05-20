@@ -26,12 +26,37 @@ const replaceAttribute = (html, selector, value) => {
   return html.replace(pattern, `$1"${value}"`);
 };
 
+const metaForRoute = (route, lang) => {
+  const isEnglish = lang === 'en';
+
+  if (route.endsWith('/social')) {
+    return {
+      title: isEnglish ? 'Social Fitness Feed | Reppy' : 'Feed social fitness | Reppy',
+      description: isEnglish
+        ? 'Explore public Reppy routines, workout posts, athlete profiles, and community rankings before creating an account.'
+        : 'Explora rutinas publicas, entrenamientos, perfiles de atletas y rankings de la comunidad Reppy antes de crear una cuenta.'
+    };
+  }
+
+  if (route === '/en' || route === '/es') {
+    return {
+      title: isEnglish ? 'Reppy | Gamify Your Calisthenics' : 'Reppy | Gamifica tu Calistenia',
+      description: isEnglish
+        ? 'Turn bodyweight training into RPG progress. Track pull-ups, push-ups and dips, earn Reppy Coins, level up, and join community boss fights.'
+        : 'Convierte tu esfuerzo fisico en progreso RPG. Registra dominadas, flexiones y fondos para subir niveles, ganar Reppy Coins y derrotar bosses epicos con la comunidad.'
+    };
+  }
+
+  return null;
+};
+
 const patchHtml = (filePath) => {
   const route = routeForHtml(filePath);
   const lang = route.startsWith('/en') ? 'en' : 'es';
   const canonicalUrl = `${BASE_URL}${route}`;
   const esUrl = `${BASE_URL}${localizedSibling(route, 'es')}`;
   const enUrl = `${BASE_URL}${localizedSibling(route, 'en')}`;
+  const routeMeta = metaForRoute(route, lang);
 
   let html = fs.readFileSync(filePath, 'utf8');
 
@@ -43,6 +68,16 @@ const patchHtml = (filePath) => {
   html = replaceAttribute(html, 'property="og:url"', canonicalUrl);
   html = replaceAttribute(html, 'name="twitter:url"', canonicalUrl);
   html = replaceAttribute(html, 'property="og:locale"', lang === 'en' ? 'en_US' : 'es_ES');
+
+  if (routeMeta) {
+    html = html.replace(/<title>.*?<\/title>/i, `<title>${routeMeta.title}</title>`);
+    html = replaceAttribute(html, 'name="title"', routeMeta.title);
+    html = replaceAttribute(html, 'name="description"', routeMeta.description);
+    html = replaceAttribute(html, 'property="og:title"', routeMeta.title);
+    html = replaceAttribute(html, 'property="og:description"', routeMeta.description);
+    html = replaceAttribute(html, 'name="twitter:title"', routeMeta.title);
+    html = replaceAttribute(html, 'name="twitter:description"', routeMeta.description);
+  }
 
   fs.writeFileSync(filePath, html);
 };

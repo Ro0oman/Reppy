@@ -56,7 +56,10 @@ export const routes = [
         path: 'social', 
         component: Social, 
         name: 'social',
-        meta: { requiresAuth: true, titleKey: 'nav_social' }
+        meta: {
+          titleKey: 'nav_social',
+          description: 'Explore public Reppy routines, workout posts, athlete profiles, and community rankings.'
+        }
       },
       { 
         path: 'shop', 
@@ -81,7 +84,7 @@ export const routes = [
         component: Profile, 
         name: 'profile', 
         props: true,
-        meta: { requiresAuth: true, titleKey: 'nav_profile' }
+        meta: { titleKey: 'nav_profile' }
       },
       { 
         path: 'admin', 
@@ -236,7 +239,7 @@ export function setupRouterGuards(router) {
     const title = to.meta.titleKey ? `${i18n.t(to.meta.titleKey)} | Reppy` : (to.meta.title || 'Reppy');
     const description = to.meta.descriptionKey
       ? i18n.t(to.meta.descriptionKey)
-      : (defaultDescriptions[currentLang] || defaultDescriptions.es);
+      : (to.meta.description || defaultDescriptions[currentLang] || defaultDescriptions.es);
     
     // Meta tags dinámicos para descripción y redes sociales
     const metas = {
@@ -260,7 +263,9 @@ export function setupRouterGuards(router) {
 
     const isAuthenticated = authStore.isAuthenticated
 
-    if (to.meta.requiresAuth && !isAuthenticated) {
+    if (to.name === 'profile' && !to.params.userId && !isAuthenticated) {
+      next({ name: 'login', params: { lang: currentLang } })
+    } else if (to.meta.requiresAuth && !isAuthenticated) {
       next({ name: 'login', params: { lang: currentLang } })
     } else if (to.name === 'landing' && isAuthenticated) {
       next({ name: 'dashboard', params: { lang: currentLang } })

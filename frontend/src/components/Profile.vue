@@ -85,19 +85,19 @@
               </div>
             </div>
             <div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
-            <router-link :to="{ name: 'codex' }" 
+            <router-link v-if="authStore.isAuthenticated" :to="{ name: 'codex', params: { lang: i18nStore.locale } }"
                    class="flex items-center gap-3 bg-surface/5 px-4 md:px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[9px] font-black tracking-widest h-fit">
               <BookOpen class="w-4 h-4 text-primary-500" />
               {{ i18nStore.t('nav_codex') }}
             </router-link>
-            <router-link v-if="isOwnProfile" to="/inventory"
+            <router-link v-if="isOwnProfile" :to="{ name: 'inventory', params: { lang: i18nStore.locale } }"
                    class="flex items-center gap-3 bg-primary-500/10 px-4 md:px-6 py-4 rounded-xl border border-primary-500/30 hover:border-primary-500/60 transition-all text-primary-500 hover:text-primary-400 uppercase text-[9px] font-black tracking-widest h-fit">
               <Zap class="w-4 h-4" />
               VER ATRIBUTOS
             </router-link>
             
             <!-- Other User Actions -->
-            <template v-else>
+            <template v-else-if="authStore.isAuthenticated">
               <button @click="challengingUser = user"
                       class="flex items-center gap-3 bg-primary-500 hover:bg-primary-600 text-white px-4 md:px-6 py-4 rounded-xl border border-primary-500/30 transition-all uppercase text-[9px] font-black tracking-widest h-fit shadow-lg shadow-primary-500/20 active:scale-95">
                 <Swords class="w-4 h-4" />
@@ -375,6 +375,7 @@ import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { useI18nStore } from '../stores/i18n';
 import { useThemeStore } from '../stores/theme';
+import { useRouter } from 'vue-router';
 import Heatmap from './Heatmap.vue';
 import AvatarFrame from './AvatarFrame.vue';
 import ExerciseSelector from './ExerciseSelector.vue';
@@ -394,6 +395,7 @@ const i18nStore = useI18nStore();
 const emit = defineEmits(['start', 'viewProfile']);
 const notificationStore = useNotificationStore();
 const themeStore = useThemeStore();
+const router = useRouter();
 
 const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1200);
 const handleResize = () => { windowWidth.value = window.innerWidth; };
@@ -520,7 +522,7 @@ const getAttrColor = (lvl) => {
   return 'border-white/5';
 };
 
-const isOwnProfile = computed(() => !props.userId || props.userId === authStore.user?.id);
+const isOwnProfile = computed(() => !!authStore.user?.id && (!props.userId || props.userId === authStore.user.id));
 
 const settingsForm = ref({ name: '', daily_goal: 0, body_weight: 0 });
 
@@ -567,6 +569,10 @@ const fetchProfile = async () => {
   hasMoreTransactions.value = true;
   try {
     const targetId = props.userId || authStore.user?.id;
+    if (!targetId) {
+      router.push({ name: 'login', params: { lang: i18nStore.locale } });
+      return;
+    }
     const res = await axios.get(`/api/profile/${targetId}`, {
       params: { type: activeExercise.value }
     });
