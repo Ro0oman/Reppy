@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="min-w-0 max-w-full">
   <div v-if="compact" class="space-y-2">
     <div class="flex items-center justify-between px-1">
       <div class="flex items-center gap-2">
@@ -15,20 +15,21 @@
         {{ currentExerciseLabel }}
       </p>
     </div>
-    <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+    <div ref="compactScroller" class="flex max-w-full items-center gap-2 overflow-x-auto overscroll-x-contain no-scrollbar scroll-smooth scroll-px-1 pb-1">
       <button
         v-for="ex in exercises"
         :key="`compact-${ex.id}`"
+        :data-exercise-id="ex.id"
         @click="$emit('update:modelValue', ex.id)"
         :aria-pressed="modelValue === ex.id"
-        class="touch-action-manipulation shrink-0 h-10 px-3.5 rounded-xl border flex items-center gap-2 text-[10px] font-black uppercase tracking-wide transition-all active:scale-[0.98]"
+        class="touch-action-manipulation shrink-0 h-10 max-w-[11rem] px-3.5 rounded-xl border flex items-center gap-2 text-[10px] font-black uppercase tracking-wide transition-all active:scale-[0.98]"
         :class="modelValue === ex.id
           ? 'bg-primary-500/15 border-primary-500/40 text-foreground'
           : 'bg-surface/10 border-white/10 text-muted/80'"
       >
         <span v-if="typeof ex.icon === 'string'" class="text-sm">{{ ex.icon }}</span>
         <component v-else :is="ex.icon" class="w-3.5 h-3.5" :class="modelValue === ex.id ? 'text-primary-500' : ''" />
-        <span>{{ labelFor(ex.id, ex.fallbackEs, ex.fallbackEn) }}</span>
+        <span class="truncate">{{ labelFor(ex.id, ex.fallbackEs, ex.fallbackEn) }}</span>
       </button>
     </div>
   </div>
@@ -99,7 +100,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { Dumbbell, Zap, Flame, Target, Trophy, Globe, Star } from 'lucide-vue-next';
 import FavoritesModal from './FavoritesModal.vue';
 import { useI18nStore } from '../stores/i18n';
@@ -125,6 +126,14 @@ const isEs = computed(() => i18n.locale !== 'en');
 
 const customFavorites = ref([]);
 const isModalOpen = ref(false);
+const compactScroller = ref(null);
+
+const scrollActiveCompactExerciseIntoView = async () => {
+  if (!props.compact || !compactScroller.value || !props.modelValue) return;
+  await nextTick();
+  const activeButton = compactScroller.value.querySelector(`[data-exercise-id="${props.modelValue}"]`);
+  activeButton?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+};
 
 const fetchFavorites = async () => {
   try {
@@ -146,6 +155,7 @@ const fetchFavorites = async () => {
 
 onMounted(() => {
   fetchFavorites();
+  scrollActiveCompactExerciseIntoView();
 });
 
 const defaultExercises = [
@@ -245,6 +255,14 @@ const currentExerciseLabel = computed(() => {
   if (!active) return '';
   return labelFor(active.id, active.fallbackEs, active.fallbackEn);
 });
+
+watch(
+  [() => props.modelValue, () => exercises.value.map((exercise) => exercise.id).join('|')],
+  () => {
+    scrollActiveCompactExerciseIntoView();
+  },
+  { flush: 'post' }
+);
 </script>
 
 <style scoped>
