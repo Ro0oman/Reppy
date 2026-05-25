@@ -9,7 +9,7 @@
       </div>
       <div class="w-full flex items-center gap-2">
         <button
-          v-if="!trainingStore.activePlan"
+          v-if="guidedTrainingStateLoaded && !trainingStore.activePlan"
           type="button"
           class="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-muted transition hover:border-primary-500/30 hover:text-foreground active:scale-95"
           @click="openPlanPicker"
@@ -21,7 +21,7 @@
     </header>
 
     <TodayWorkout
-      v-if="trainingStore.todayWorkout || trainingStore.completedToday"
+      v-if="shouldShowTodayWorkout"
       :workout="trainingStore.todayWorkout"
       :completed-today="trainingStore.completedToday"
       :next-workout-preview="trainingStore.nextWorkoutPreview"
@@ -30,7 +30,7 @@
     />
 
     <section
-      v-if="trainingStore.activePlan"
+      v-if="shouldShowActivePlanCard"
       class="rounded-2xl border border-white/10 bg-white/[0.03] p-3 sm:p-4"
     >
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -71,7 +71,7 @@
     </section>
 
     <section
-      v-else-if="!planPromoDismissed"
+      v-else-if="shouldShowPlanPromo"
       class="rounded-[1.5rem] border border-primary-500/35 bg-primary-500/10 p-4 shadow-[0_0_35px_rgba(255,69,0,0.08)] sm:p-5"
     >
       <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -102,7 +102,7 @@
       </div>
     </section>
 
-    <div v-if="trainingStore.todayWorkout" class="flex justify-center">
+    <div v-if="shouldShowFreeLogToggle" class="flex justify-center">
       <button
         type="button"
         class="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-[10px] font-black uppercase tracking-[0.15em] text-muted transition hover:border-primary-500/30 hover:text-foreground active:scale-95"
@@ -113,7 +113,7 @@
     </div>
 
     <section
-      v-if="!trainingStore.todayWorkout && !trainingStore.completedToday && !isDailyObjectiveDone"
+      v-if="shouldShowTodayMissionCard"
       class="w-full rounded-[2rem] border backdrop-blur-xl p-4 sm:p-6 transition-all duration-500"
       :class="missionCompletionPulse ? 'border-emerald-500/40 bg-emerald-500/10 shadow-[0_0_35px_rgba(16,185,129,0.2)]' : 'border-primary-500/25 bg-primary-500/10'"
     >
@@ -464,8 +464,10 @@ const repsInputSection = ref(null);
 const quickStartEvaluated = ref(false);
 const suppressRPGModal = ref(false);
 const todayMission = ref(null);
+const todayMissionStateLoaded = ref(false);
 const missionCompletionPulse = ref(false);
 const missionCompletionStateReady = ref(false);
+const guidedTrainingStateLoaded = ref(false);
 const planPromoDismissed = ref(false);
 const QUICKSTART_SEEN_PREFIX = 'reppy_quickstart_seen_v1';
 const GOAL_ONBOARDING_DISMISSED_PREFIX = 'reppy_goal_onboarding_dismissed_v1';
@@ -652,6 +654,35 @@ const todayMissionActionLabel = computed(() => {
   return i18n.locale === 'es' ? 'Registrar reps ahora' : 'Log reps now';
 });
 
+const shouldShowTodayMissionCard = computed(() => {
+  if (!todayMissionStateLoaded.value) return false;
+  if (!guidedTrainingStateLoaded.value) return false;
+  if (trainingStore.todayWorkout || trainingStore.completedToday) return false;
+  if (isDailyObjectiveDone.value) return false;
+  return !['Objetivo completado', 'Objective completed'].includes(todayMissionActionLabel.value);
+});
+
+const shouldShowTodayWorkout = computed(() => {
+  if (!guidedTrainingStateLoaded.value) return false;
+  return !!trainingStore.todayWorkout || !!trainingStore.completedToday;
+});
+
+const shouldShowActivePlanCard = computed(() => {
+  if (!guidedTrainingStateLoaded.value) return false;
+  return !!trainingStore.activePlan;
+});
+
+const shouldShowPlanPromo = computed(() => {
+  if (!guidedTrainingStateLoaded.value) return false;
+  if (trainingStore.activePlan) return false;
+  return !planPromoDismissed.value;
+});
+
+const shouldShowFreeLogToggle = computed(() => {
+  if (!guidedTrainingStateLoaded.value) return false;
+  return !!trainingStore.todayWorkout;
+});
+
 const getGoalTypeLabel = (goalType) => {
   const labels = {
     reps: i18n.locale === 'es' ? 'REPS' : 'REPS',
@@ -761,6 +792,7 @@ watch(() => activePotions.value.length, (newLen, oldLen) => {
 });
 
 const fetchGlobalData = async () => {
+  todayMissionStateLoaded.value = false;
   try {
     const t = Date.now();
     const [missionsRes] = await Promise.all([
@@ -772,13 +804,16 @@ const fetchGlobalData = async () => {
     const dailyMissions = missionList.filter(m => m.is_daily);
     const completedUnclaimedDaily = dailyMissions.find(m => m.is_completed && !m.is_claimed);
     todayMission.value = completedUnclaimedDaily || dailyMissions.find(m => !m.is_completed) || dailyMissions[0] || null;
+    todayMissionStateLoaded.value = true;
   } catch (err) {
     console.error('Error fetching global dashboard data:', err);
+    todayMission.value = null;
   }
 };
 
 const fetchData = async () => {
   isLoading.value = true;
+  guidedTrainingStateLoaded.value = false;
   try {
     const params = { 
       type: activeExercise.value,
@@ -805,6 +840,7 @@ const fetchData = async () => {
       fetchGlobalData(),
       trainingStore.fetchMine()
     ]);
+    guidedTrainingStateLoaded.value = true;
 
     if (bossHealthRef.value) bossHealthRef.value.refresh();
 
@@ -825,6 +861,7 @@ const fetchData = async () => {
     }
   } catch (error) {
     console.error('Error fetching data:', error);
+    guidedTrainingStateLoaded.value = true;
   } finally {
     isLoading.value = false;
   }
@@ -995,7 +1032,9 @@ onMounted(async () => {
   }
 
   await trainingStore.fetchPlans();
+  guidedTrainingStateLoaded.value = false;
   await trainingStore.fetchMine();
+  guidedTrainingStateLoaded.value = true;
   planPromoDismissed.value = typeof window !== 'undefined' && localStorage.getItem(getPlanPromoDismissedKey()) === '1';
   showGoalOnboarding.value = trainingStore.canShowOnboarding && !hasDismissedGoalOnboarding();
   if (showGoalOnboarding.value) {
