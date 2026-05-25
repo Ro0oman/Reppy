@@ -3,6 +3,10 @@
     <div v-if="show" class="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-4 bg-black/95 backdrop-blur-3xl animate-in overflow-y-auto" @click="handleGlobalClick">
       <!-- Main Container (Clash Royale Style) -->
       <div v-if="clashMode" class="relative w-full max-w-4xl flex flex-col items-center justify-center min-h-[100dvh]">
+        <button v-if="finished" @click.stop="close"
+          class="absolute top-4 right-4 md:top-8 md:right-8 z-50 p-3 md:p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all hover:rotate-90 border border-white/10">
+          <X class="w-5 h-5 md:w-6 md:h-6 text-white" />
+        </button>
         
         <!-- 1. Closed Chest View -->
         <div v-if="currentRevealIndex === -1" class="flex flex-col items-center gap-8 animate-bounce-slow cursor-pointer group"

@@ -93,8 +93,8 @@ export const calculateDamage = (user, reps, type, boss = null, skipBuffs = false
   let effectiveCritMult = 1.0;
 
   if (deterministic) {
-    // For UI: Use average contribution
-    effectiveCritMult = 1 + (Math.min(80, critChance) / 100 * (critMult - 1));
+    // For UI estimates, show the minimum expected damage without critical hits.
+    effectiveCritMult = 1.0;
   } else {
     isCrit = (Math.random() * 100) < Math.min(80, critChance);
     effectiveCritMult = isCrit ? critMult : 1.0;
@@ -122,8 +122,8 @@ export const calculateDamage = (user, reps, type, boss = null, skipBuffs = false
   return {
     totalDamage: Math.round(finalDamage),
     isCrit,
-    minDamage: Math.round(totalWithGear),
-    maxDamage: Math.round(totalWithGear * critMult),
+    minDamage: deterministic ? Math.round(finalDamage) : Math.round(totalWithGear),
+    maxDamage: deterministic ? Math.round(finalDamage) : Math.round(totalWithGear * critMult),
     baseDamage: Math.round(totalBase),
     gearBonus: Math.round(gearBonus),
     buffBonus: Math.round(buffBonus),

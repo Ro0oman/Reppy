@@ -328,7 +328,11 @@ router.post('/open-legendary-chest', authenticate, async (req, res) => {
     if (legItemRes.rows.length > 0) {
         const rewardItem = legItemRes.rows[0];
         rewards.push({ type: 'item', data: rewardItem, message: 'LEGENDARIO GARANTIZADO' });
-        await query(`INSERT INTO user_items (user_id, item_id, is_new) VALUES ($1, $2, TRUE)`, [userId, rewardItem.id]);
+        await query(`
+          INSERT INTO user_items (user_id, item_id, is_new)
+          VALUES ($1, $2, TRUE)
+          ON CONFLICT (user_id, item_id) DO UPDATE SET is_new = TRUE
+        `, [userId, rewardItem.id]);
     } else {
         // User has all legendaries? Give huge gold compensation
         totalCoins += 2500;
@@ -356,7 +360,11 @@ router.post('/open-legendary-chest', authenticate, async (req, res) => {
         if (itemRes.rows.length > 0) {
             const rewardItem = itemRes.rows[0];
             rewards.push({ type: 'item', data: rewardItem });
-            await query(`INSERT INTO user_items (user_id, item_id, is_new) VALUES ($1, $2, TRUE)`, [userId, rewardItem.id]);
+            await query(`
+              INSERT INTO user_items (user_id, item_id, is_new)
+              VALUES ($1, $2, TRUE)
+              ON CONFLICT (user_id, item_id) DO UPDATE SET is_new = TRUE
+            `, [userId, rewardItem.id]);
         } else {
              // Fallback gold
              totalCoins += 500;
@@ -421,7 +429,11 @@ router.post('/open-epic-chest', authenticate, async (req, res) => {
     if (epicItemRes.rows.length > 0) {
         const rewardItem = epicItemRes.rows[0];
         rewards.push({ type: 'item', data: rewardItem, message: 'EPICO GARANTIZADO' });
-        await query(`INSERT INTO user_items (user_id, item_id, is_new) VALUES ($1, $2, TRUE)`, [userId, rewardItem.id]);
+        await query(`
+          INSERT INTO user_items (user_id, item_id, is_new)
+          VALUES ($1, $2, TRUE)
+          ON CONFLICT (user_id, item_id) DO UPDATE SET is_new = TRUE
+        `, [userId, rewardItem.id]);
     } else {
         // Fallback gold
         totalCoins += 1200;
@@ -448,7 +460,11 @@ router.post('/open-epic-chest', authenticate, async (req, res) => {
         if (itemRes.rows.length > 0) {
             const rewardItem = itemRes.rows[0];
             rewards.push({ type: 'item', data: rewardItem });
-            await query(`INSERT INTO user_items (user_id, item_id, is_new) VALUES ($1, $2, TRUE)`, [userId, rewardItem.id]);
+            await query(`
+              INSERT INTO user_items (user_id, item_id, is_new)
+              VALUES ($1, $2, TRUE)
+              ON CONFLICT (user_id, item_id) DO UPDATE SET is_new = TRUE
+            `, [userId, rewardItem.id]);
         } else {
              totalCoins += 400;
              rewards.push({ type: 'coins', amount: 400, message: 'Botín extra en oro' });

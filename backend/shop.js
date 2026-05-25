@@ -356,10 +356,36 @@ router.post('/buy/:id', authenticate, async (req, res) => {
     }
 
     let finalDeduction = price;
+    let bundleItemIds = [];
+
+    if (item.type === 'bundle') {
+      bundleItemIds = String(item.bundle_items || '')
+        .split(',')
+        .map(id => parseInt(id.trim(), 10))
+        .filter(Number.isFinite);
+
+      if (bundleItemIds.length === 0) {
+        return res.status(400).json({ message: 'BUNDLE EMPTY: NO ITEMS CONFIGURED' });
+      }
+
+      const requestedBundleIds = [...new Set(bundleItemIds)];
+      const existingBundleItems = await query(
+        'SELECT id FROM items WHERE id = ANY($1::int[])',
+        [requestedBundleIds]
+      );
+      const existingIds = new Set(existingBundleItems.rows.map(row => row.id));
+
+      if (existingIds.size === 0) {
+        return res.status(400).json({ message: 'BUNDLE INVALID: ITEMS NOT FOUND' });
+      }
+
+      if (existingIds.size !== requestedBundleIds.length) {
+        return res.status(400).json({ message: 'BUNDLE INVALID: SOME ITEMS NOT FOUND' });
+      }
+    }
 
     // Bundle Refund Logic (Only for Coins for now to keep it simple, or we could skip gems refund)
     if (item.type === 'bundle' && item.bundle_items) {
-      const bundleItemIds = item.bundle_items.split(',').map(id => parseInt(id.trim()));
       let refundAmount = 0;
       
       for (const id of bundleItemIds) {
@@ -388,8 +414,7 @@ router.post('/buy/:id', authenticate, async (req, res) => {
     // Process Purchase
     await query('BEGIN');
     
-    if (item.type === 'bundle' && item.bundle_items) {
-      const bundleItemIds = item.bundle_items.split(',').map(id => parseInt(id.trim()));
+    if (item.type === 'bundle') {
       for (const id of bundleItemIds) {
         await query(`
           INSERT INTO user_items (user_id, item_id, quantity) 

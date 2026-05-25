@@ -113,7 +113,7 @@
     </div>
 
     <section
-      v-if="!trainingStore.todayWorkout && !trainingStore.completedToday"
+      v-if="!trainingStore.todayWorkout && !trainingStore.completedToday && !isDailyObjectiveDone"
       class="w-full rounded-[2rem] border backdrop-blur-xl p-4 sm:p-6 transition-all duration-500"
       :class="missionCompletionPulse ? 'border-emerald-500/40 bg-emerald-500/10 shadow-[0_0_35px_rgba(16,185,129,0.2)]' : 'border-primary-500/25 bg-primary-500/10'"
     >
@@ -230,7 +230,7 @@
             <div class="mt-4 relative z-10">
               <div class="flex items-baseline gap-2">
                 <span class="text-4xl font-black text-foreground italic tracking-tighter">
-                  {{ stats.combatPower.minDamage }} - {{ stats.combatPower.maxDamage }}
+                  {{ stats.combatPower.minDamage }}
                 </span>
                 <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18n.t('ui_dmg_range') }}</span>
               </div>
@@ -251,18 +251,6 @@
                 <div class="flex justify-between items-center" v-if="stats.combatPower.buff > 0">
                   <span class="text-[9px] font-bold text-neon-lime uppercase">🧪 {{ i18n.t('dash_active_buffs') }}</span>
                   <span class="text-xs font-black text-neon-lime italic">+{{ stats.combatPower.buff }}</span>
-                </div>
-
-                <!-- Crit Stats -->
-                <div class="flex justify-between items-center mt-2 pt-2 border-t border-white/5 opacity-60">
-                   <div class="flex items-center gap-1.5">
-                      <Zap class="w-2.5 h-2.5 text-amber-400" />
-                      <span class="text-[8px] font-bold text-foreground uppercase">{{ stats.combatPower.critChance }}% {{ i18n.t('ui_crit') }}</span>
-                   </div>
-                   <div class="flex items-center gap-1.5">
-                      <Target class="w-2.5 h-2.5 text-amber-400" />
-                      <span class="text-[8px] font-bold text-foreground uppercase">x{{ stats.combatPower.critMultiplier }} {{ i18n.t('ui_mult') }}</span>
-                   </div>
                 </div>
 
                 <!-- Contribution Bar -->

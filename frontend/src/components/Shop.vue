@@ -192,8 +192,9 @@
                   <Gift class="w-4 h-4" />
                 </button>
                 <button v-else @click.stop="tryOpenItemDetails(item)"
-                  class="w-full min-h-[64px] p-2 bg-primary-500 text-white rounded-xl flex flex-col items-center justify-center gap-1 active:scale-95 transition-all shadow-lg shadow-primary-500/20 hover:bg-primary-400 group/buy"
-                  :disabled="false">
+                  class="w-full min-h-[64px] p-2 text-white rounded-xl flex flex-col items-center justify-center gap-1 active:scale-95 transition-all group/buy disabled:cursor-not-allowed"
+                  :class="canAfford(item) ? 'bg-primary-500 shadow-lg shadow-primary-500/20 hover:bg-primary-400' : 'bg-zinc-700 text-zinc-300 grayscale opacity-60 shadow-none'"
+                  :disabled="buying || !canAfford(item)">
                   <span
                     class="text-[10px] font-black uppercase tracking-[0.2em] text-center leading-tight break-words group-hover/buy:translate-x-[-2px] transition-transform">{{
                       i18n.t('btn_buy') || 'COMPRAR' }}</span>
@@ -251,8 +252,9 @@
                   {{ chest.description }}</p>
 
                 <button @click="purchaseChest(chest)"
-                  :disabled="buying"
-                  class="w-full py-4 rounded-[22px] bg-emerald-500 text-white text-xs font-black uppercase tracking-[0.2em] hover:bg-emerald-400 shadow-xl shadow-emerald-500/30 transition-all active:scale-95 disabled:grayscale disabled:opacity-50 flex items-center justify-center gap-3">
+                  :disabled="buying || !canAffordChest(chest)"
+                  class="w-full py-4 rounded-[22px] text-white text-xs font-black uppercase tracking-[0.2em] transition-all active:scale-95 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                  :class="canAffordChest(chest) ? 'bg-emerald-500 hover:bg-emerald-400 shadow-xl shadow-emerald-500/30' : 'bg-zinc-700 text-zinc-300 grayscale opacity-60 shadow-none'">
                   <span class="tabular-nums text-xl">{{ chest.price ?? chest.price_gems }}</span>
                   <Coins v-if="chest.currency === 'coins'" class="w-5 h-5 fill-white/20" />
                   <Gem v-else class="w-5 h-5 fill-white/20" />
@@ -278,8 +280,9 @@
 
                 <div class="mt-auto w-full">
                   <button @click="buyItem(rouletteTicketItem)"
-                    :disabled="buying"
-                    class="w-full py-4 rounded-[22px] bg-emerald-500 text-white text-xs font-black uppercase tracking-[0.2em] hover:bg-emerald-400 shadow-xl shadow-emerald-500/30 transition-all active:scale-95 disabled:grayscale disabled:opacity-50 flex items-center justify-center gap-3">
+                    :disabled="buying || !canAfford(rouletteTicketItem)"
+                    class="w-full py-4 rounded-[22px] text-white text-xs font-black uppercase tracking-[0.2em] transition-all active:scale-95 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                    :class="canAfford(rouletteTicketItem) ? 'bg-emerald-500 hover:bg-emerald-400 shadow-xl shadow-emerald-500/30' : 'bg-zinc-700 text-zinc-300 grayscale opacity-60 shadow-none'">
                     <span class="tabular-nums text-xl">{{ rouletteTicketItem.price_gems }}</span>
                     <Gem class="w-5 h-5 fill-white/20" />
                   </button>
@@ -495,7 +498,8 @@
                     <span class="text-[9px] font-black uppercase tracking-widest">{{ i18n.t('btn_acquired') }}</span>
                   </div>
                   <button v-else @click.stop="openItemDetails(item)"
-                    class="w-full flex items-center justify-center gap-4 p-3 bg-primary-500/10 hover:bg-primary-500 text-white transition-all group/catbuy"
+                    class="w-full flex items-center justify-center gap-4 p-3 text-white transition-all group/catbuy disabled:cursor-not-allowed"
+                    :class="canAfford(item) ? 'bg-primary-500/10 hover:bg-primary-500' : 'bg-zinc-700/70 text-zinc-300 grayscale opacity-60'"
                     :disabled="!canAfford(item)">
                     <span
                       class="text-[9px] font-black uppercase tracking-widest group-hover/catbuy:scale-110 transition-transform">{{
@@ -616,9 +620,10 @@
                 </div>
               </div>
 
-              <button v-if="!selectedBundle.owned" @click="buyItem(selectedBundle); showBundleModal = false"
-                :disabled="buying"
-                class="flex-1 sm:flex-initial px-10 py-5 bg-yellow-500 hover:bg-yellow-400 text-black rounded-[22px] font-black text-sm uppercase tracking-[0.2em] transition-all shadow-xl shadow-yellow-500/20 active:scale-95 disabled:grayscale">
+              <button v-if="!selectedBundle.owned" @click="buySelectedBundle"
+                :disabled="buying || !canAfford(selectedBundle)"
+                class="flex-1 sm:flex-initial px-10 py-5 rounded-[22px] font-black text-sm uppercase tracking-[0.2em] transition-all active:scale-95 disabled:cursor-not-allowed"
+                :class="canAfford(selectedBundle) ? 'bg-yellow-500 hover:bg-yellow-400 text-black shadow-xl shadow-yellow-500/20' : 'bg-zinc-700 text-zinc-300 grayscale opacity-60 shadow-none'">
                 {{ i18n.t('shop_initiate_acquisition') }}
               </button>
             </div>
@@ -752,9 +757,10 @@
                 </div>
               </div>
 
-              <button @click="buyItem(selectedItem); showItemModal = false"
-                :disabled="buying"
-                class="w-full sm:w-auto px-12 py-5 rounded-[22px] bg-primary-500 hover:bg-primary-400 text-white font-black text-sm uppercase tracking-[0.2em] transition-all shadow-2xl shadow-primary-500/30 active:scale-95 disabled:grayscale">
+              <button @click="buySelectedItem"
+                :disabled="buying || !canAfford(selectedItem)"
+                class="w-full sm:w-auto px-12 py-5 rounded-[22px] text-white font-black text-sm uppercase tracking-[0.2em] transition-all active:scale-95 disabled:cursor-not-allowed"
+                :class="canAfford(selectedItem) ? 'bg-primary-500 hover:bg-primary-400 shadow-2xl shadow-primary-500/30' : 'bg-zinc-700 text-zinc-300 grayscale opacity-60 shadow-none'">
                 {{ i18n.t('btn_get') }}
               </button>
             </div>
@@ -1019,6 +1025,14 @@ const canAfford = (item) => {
   return (authStore.user?.reppy_coins || 0) >= price && (authStore.user?.reppy_gems || 0) >= gems;
 };
 
+const canAffordChest = (chest) => {
+  if (!chest) return false;
+  const required = chest.price ?? chest.price_gems ?? 0;
+  return chest.currency === 'coins'
+    ? (authStore.user?.reppy_coins || 0) >= required
+    : (authStore.user?.reppy_gems || 0) >= required;
+};
+
 const tryOpenItemDetails = (item) => {
   if (!canAfford(item)) {
     notificationStore.notify(i18n.locale === 'es' ? 'No tienes suficiente dinero' : 'Not enough funds', 'error');
@@ -1108,7 +1122,7 @@ function isUpgrade(item, stat = null) {
 const buyItem = async (item) => {
   if (!canAfford(item)) {
     notificationStore.notify(i18n.locale === 'es' ? 'No tienes suficiente dinero' : 'Not enough funds', 'error');
-    return;
+    return false;
   }
   buying.value = true;
   try {
@@ -1127,11 +1141,23 @@ const buyItem = async (item) => {
       rouletteStore.checkStatus(true);
       rouletteStore.openModal();
     }
+    return true;
   } catch (error) {
     notificationStore.notify(error.response?.data?.message || 'Exchange failed', 'error');
+    return false;
   } finally {
     buying.value = false;
   }
+};
+
+const buySelectedBundle = async () => {
+  const success = await buyItem(selectedBundle.value);
+  if (success) showBundleModal.value = false;
+};
+
+const buySelectedItem = async () => {
+  const success = await buyItem(selectedItem.value);
+  if (success) showItemModal.value = false;
 };
 
 const equipItem = async (item) => {

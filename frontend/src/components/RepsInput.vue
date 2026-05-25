@@ -152,7 +152,7 @@ const uiText = computed(() => {
     return {
       title: 'Registra tus reps',
       subtitle: 'Rapido, claro y pensado para movil',
-      impact: 'Impacto estimado',
+      impact: 'Daño mínimo',
       quickPresets: 'Presets rapidos',
       repsLabel: 'Repeticiones',
       extraWeight: 'Lastre adicional',
@@ -162,7 +162,7 @@ const uiText = computed(() => {
   return {
     title: 'Log your reps',
     subtitle: 'Fast, clear and mobile-first',
-    impact: 'Estimated impact',
+    impact: 'Minimum damage',
     quickPresets: 'Quick presets',
     repsLabel: 'Repetitions',
     extraWeight: 'Extra weight',

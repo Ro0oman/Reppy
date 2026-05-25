@@ -219,14 +219,27 @@ const goToToday = () => {
   displayYear.value = today.getFullYear();
 };
 
+const normalizeDateKey = (value) => {
+  if (!value) return '';
+  if (typeof value === 'string') {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+    const dateOnly = value.match(/^(\d{4}-\d{2}-\d{2})/);
+    if (dateOnly) return dateOnly[1];
+  }
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? '' : getLocalDateString(d);
+};
+
 const dataMap = computed(() => {
   return props.data.reduce((acc, curr) => {
-    const dStr = curr.date.split('T')[0];
+    const dStr = normalizeDateKey(curr.date);
+    if (!dStr) return acc;
     if (!acc[dStr]) {
       acc[dStr] = { total: 0, breakdown: [] };
     }
-    acc[dStr].total += Number(curr.count);
-    acc[dStr].breakdown.push({ type: curr.exercise_type, count: Number(curr.count) });
+    const count = Number(curr.count) || 0;
+    acc[dStr].total += count;
+    acc[dStr].breakdown.push({ type: curr.exercise_type, count });
     return acc;
   }, {});
 });
@@ -300,9 +313,14 @@ const getLevelClass = (level) => {
 
 const getColorClass = (day) => {
   if (day.count === 0) return 'bg-white/[0.03] border border-white/[0.05]';
-  if (day.count < 10) return getLevelClass(1);
-  if (day.count < 30) return getLevelClass(2);
-  if (day.count < 50) return getLevelClass(3);
+  const activeCounts = calendarDays.value
+    .filter(d => d.isCurrentMonth && d.count > 0)
+    .map(d => d.count);
+  const maxCount = Math.max(...activeCounts, 1);
+  const intensity = day.count / maxCount;
+  if (intensity <= 0.25) return getLevelClass(1);
+  if (intensity <= 0.5) return getLevelClass(2);
+  if (intensity <= 0.75) return getLevelClass(3);
   return getLevelClass(4);
 };
 
