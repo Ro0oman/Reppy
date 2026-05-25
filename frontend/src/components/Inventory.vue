@@ -379,7 +379,7 @@
     <button
       v-if="hasAnyChest && !showChestModal"
       @click="openBestChest"
-      class="lg:hidden fixed bottom-20 left-4 right-4 z-50 px-4 py-3 rounded-2xl bg-primary-500 text-white text-[10px] font-black uppercase tracking-[0.25em] border border-primary-400 shadow-2xl shadow-primary-500/30">
+      class="lg:hidden fixed bottom-[calc(6.75rem+env(safe-area-inset-bottom))] left-4 right-4 z-[45] px-4 py-3 rounded-2xl bg-primary-500 text-white text-[10px] font-black uppercase tracking-[0.25em] border border-primary-400 shadow-2xl shadow-primary-500/30">
       {{ i18n.t('inv_vault_ready') }} x{{ totalChestCount }}
     </button>
 
