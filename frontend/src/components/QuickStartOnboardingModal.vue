@@ -27,7 +27,7 @@
             </button>
           </div>
 
-          <div class="mt-5 flex items-center gap-2">
+          <div v-if="step < 3" class="mt-5 flex items-center gap-2">
             <div
               v-for="n in 4"
               :key="n"
@@ -128,9 +128,17 @@
             </div>
 
             <div v-else class="space-y-4">
-              <p class="text-base font-black text-foreground">
-                {{ isEs ? '4) Registra tus primeras reps' : '4) Log your first reps' }}
-              </p>
+              <div class="flex items-center justify-between gap-2">
+                <p class="text-base font-black text-foreground">
+                  {{ isEs ? 'Registra tu primera serie' : 'Log your first set' }}
+                </p>
+                <button
+                  @click="step = 0"
+                  class="text-[10px] font-black uppercase tracking-wider text-primary-500 hover:underline"
+                >
+                  {{ isEs ? '¿Qué es Reppy?' : "What's Reppy?" }}
+                </button>
+              </div>
 
               <div class="space-y-2">
                 <p class="text-[10px] font-black uppercase tracking-widest text-muted/70">
@@ -218,6 +226,7 @@ import { Dumbbell, Flame, MessageCircle, Sword, Trophy, Users, X } from 'lucide-
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { getLocalDateString } from '../utils/dateUtils.js';
+import { markPushPromptEligible } from '../utils/pushEligibility.js';
 
 const props = defineProps({
   show: {
@@ -295,7 +304,9 @@ watch(
   () => props.show,
   (isVisible) => {
     if (isVisible) {
-      step.value = 0;
+      // "Al grano": land directly on the log step. The 3 context steps
+      // remain reachable via "Back" for users who want the full tour.
+      step.value = 3;
       selectedExercise.value = 'pullups';
       selectedReps.value = 10;
       submitting.value = false;
@@ -316,6 +327,7 @@ const submitFirstReps = async () => {
       added_weight: 0,
     });
     await authStore.fetchProfile();
+    markPushPromptEligible();
     notificationStore.notify(
       isEs.value
         ? `+${selectedReps.value} reps registradas`

@@ -21,13 +21,13 @@
   font-weight: 900;
   text-transform: uppercase;
   font-style: italic;
-  filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.6));
+  filter: drop-shadow(0 0 5px hsl(var(--primary) / 0.6));
   animation: title-lava-burn 1.5s ease-in-out infinite alternate;
 }
 
 @keyframes title-lava-burn {
-  from { filter: brightness(1) drop-shadow(0 0 5px rgba(255, 69, 0, 0.6)); }
-  to { filter: brightness(1.5) drop-shadow(0 0 15px rgba(255, 69, 0, 0.8)); }
+  from { filter: brightness(1) drop-shadow(0 0 5px hsl(var(--primary) / 0.6)); }
+  to { filter: brightness(1.5) drop-shadow(0 0 15px hsl(var(--primary) / 0.8)); }
 }
 
 .title-glitch {

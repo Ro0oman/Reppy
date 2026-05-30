@@ -77,12 +77,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { Bell, Zap, ShieldCheck } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
 import { getPushStatus, subscribeToPush, getPushPreferences, updatePushPreferences } from '../utils/pushService';
+import { isPushPromptEligible } from '../utils/pushEligibility.js';
 
 const authStore = useAuthStore();
 const notificationStore = useNotificationStore();
@@ -93,6 +94,7 @@ const isVisible = ref(false);
 const NOTIF_VERSION = 'v2'; // Bump this to force re-subscription/re-prompt
 
 const checkPermission = async () => {
+  if (!isPushPromptEligible()) return;
   const status = await getPushStatus();
   
   // Show if user has never been asked (prompt)
@@ -161,7 +163,7 @@ const handleNever = () => {
   });
 };
 
-onMounted(async () => {
+const evaluatePrompt = async () => {
   if (!authStore.isAuthenticated) return;
 
   try {
@@ -201,6 +203,15 @@ onMounted(async () => {
   if (shouldAsk) {
     checkPermission();
   }
+};
+
+onMounted(async () => {
+  await evaluatePrompt();
+  window.addEventListener('reppy-push-eligible', evaluatePrompt);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('reppy-push-eligible', evaluatePrompt);
 });
 </script>
 

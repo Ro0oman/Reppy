@@ -22,7 +22,7 @@
         stroke-linecap="round"
         :stroke-dasharray="circumference"
         :stroke-dashoffset="dashoffset"
-        class="transition-all duration-1000 ease-out filter drop-shadow-[0_0_8px_rgba(255,69,0,0.3)]"
+        class="transition-all duration-1000 ease-out filter drop-shadow-[0_0_8px_hsl(var(--primary) / 0.3)]"
       />
       <!-- Gradient Definition -->
       <defs>

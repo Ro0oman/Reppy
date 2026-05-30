@@ -57,7 +57,7 @@
                     }}
                   </p>
                 </div>
-                <button @click="router.push(`/${i18n.locale}/login`)" class="btn-reppy !px-16 !py-5 !text-lg shadow-[0_20px_60px_rgba(255,69,0,0.3)] transform hover:scale-110 active:scale-95 transition-all">
+                <button @click="router.push(`/${i18n.locale}/login`)" class="btn-reppy !px-16 !py-5 !text-lg shadow-[0_20px_60px_hsl(var(--primary) / 0.3)] transform hover:scale-110 active:scale-95 transition-all">
                   {{ i18n.locale === 'es' ? 'JUGAR GRATIS' : 'PLAY FREE' }}
                 </button>
               </div>
@@ -146,7 +146,7 @@
     <!-- Sticky Bottom CTA (Mobile Only for Guests) -->
     <div v-if="!authStore.isAuthenticated" 
          class="md:hidden fixed bottom-6 left-4 right-4 z-[100] animate-in slide-in-from-bottom-20 duration-1000 delay-1000">
-       <button @click="router.push(`/${i18n.locale}/login`)" class="w-full btn-reppy !py-5 shadow-[0_20px_50px_rgba(255,69,0,0.4)]">
+       <button @click="router.push(`/${i18n.locale}/login`)" class="w-full btn-reppy !py-5 shadow-[0_20px_50px_hsl(var(--primary) / 0.4)]">
          🚀 {{ i18n.locale === 'es' ? 'EMPIEZA GRATIS' : 'START FREE' }}
        </button>
     </div>

@@ -22,7 +22,7 @@
     <div class="h-2 w-full bg-surface/40 border border-white/5 rounded-full overflow-hidden relative shadow-inner group-hover:border-primary-500/30 transition-colors duration-500">
       <!-- Glow Layer -->
       <div 
-        class="absolute inset-y-0 left-0 bg-primary-500 shadow-[0_0_20px_rgba(255,69,0,0.5)] transition-all duration-1000 ease-out"
+        class="absolute inset-y-0 left-0 bg-primary-500 shadow-[0_0_20px_hsl(var(--primary) / 0.5)] transition-all duration-1000 ease-out"
         :style="{ width: `${progress}%` }"
       >
         <!-- Animated Shimmer -->

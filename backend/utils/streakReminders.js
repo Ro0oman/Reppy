@@ -1,40 +1,38 @@
 import { query } from '../db.js';
 import { sendPushNotification } from './pushNotifications.js';
+import { getStreakStatus } from './streak.js';
 
 /**
- * Checks for users who haven't trained today and sends a reminder
+ * Checks for users whose active streak is at risk and sends a focused reminder.
  */
 export async function runStreakReminders() {
-  const today = new Date().toISOString().split('T')[0];
-  
   try {
-    // Find users who have a push subscription but HAVEN'T trained today
     const result = await query(`
-      SELECT DISTINCT ps.user_id, u.name 
+      SELECT DISTINCT ps.user_id, u.name
       FROM push_subscriptions ps
       JOIN users u ON ps.user_id = u.id
-      WHERE ps.user_id NOT IN (
-        SELECT user_id FROM reps WHERE date = $1
-      )
-    `, [today]);
+      WHERE COALESCE(u.push_disabled, false) = false
+    `);
 
-    console.log(`[STREAK_REMINDER] Encontrados ${result.rows.length} usuarios para recordar.`);
+    console.log(`[STREAK_REMINDER] Revisando ${result.rows.length} usuarios con push activo.`);
+    let sentCount = 0;
 
     for (const row of result.rows) {
-      // Logic: Only notify if they have a streak > 0 (to avoid spamming inactive users)
-      // or just notify everyone with a sub. Let's stick to everyone with a sub for now.
-      
+      const status = await getStreakStatus(row.user_id);
+      if (!status.showRisk) continue;
+
       await sendPushNotification(row.user_id, {
-        title: '🔥 ¡MANTÉN LA RACHA!',
-        body: `${row.name}, aún no has registrado tus repeticiones de hoy. ¡No te rindas!`,
+        title: 'Racha en riesgo',
+        body: `${row.name}, te quedan ${status.hoursLeftToday} h para salvar tu racha de ${status.streak} dias.`,
         data: {
-          url: '/dashboard',
+          url: '/dashboard?log=1',
           type: 'STREAK_REMINDER'
         }
       });
+      sentCount += 1;
     }
 
-    return result.rows.length;
+    return sentCount;
   } catch (error) {
     console.error('[STREAK_REMINDER] Error:', error);
     throw error;

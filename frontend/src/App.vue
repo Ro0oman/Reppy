@@ -17,7 +17,7 @@
     <!-- Industrial Navigation Bar -->
     <nav v-if="authStore.isAuthenticated && $route.name !== 'pvp'"
       class="border-b border-border bg-surface/40 backdrop-blur-3xl sticky top-0 z-50 transition-all">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
         <!-- Logo Core -->
         <router-link :to="`/${i18n.locale}/dashboard`" class="flex items-center gap-3 group cursor-pointer outline-none"
           :title="i18n.t('nav_dashboard')">
@@ -40,7 +40,7 @@
 
             <!-- Notification Dot -->
             <div v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory)"
-              class="absolute top-1.5 right-2 w-2 h-2 bg-primary-500 rounded-full border-2 border-surface shadow-[0_0_10px_rgba(255,69,0,0.5)]">
+              class="absolute top-1.5 right-2 w-2 h-2 bg-primary-500 rounded-full border-2 border-surface shadow-[0_0_10px_hsl(var(--primary) / 0.5)]">
             </div>
           </router-link>
           <router-link v-if="authStore.user?.role === 'admin'" :to="`/${i18n.locale}/admin`"
@@ -61,7 +61,7 @@
                   authStore.user?.reppy_coins || 0 }}</span>
               </button>
 
-              <button :title="i18n.t('economy_gems')"
+              <button @click="showCoinsInfo = true" :title="i18n.t('economy_gems')"
                 class="flex items-center gap-2 bg-indigo-500/5 px-2.5 sm:px-4 py-2 rounded-2xl border border-indigo-500/20 hover:border-indigo-500/40 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
                 <Gem class="w-3.5 h-3.5 text-indigo-500 transition-transform group-hover:scale-110" />
                 <span class="text-[12px] sm:text-sm font-black text-precision text-foreground">{{
@@ -204,23 +204,40 @@
       </div>
     </footer>
 
-    <!-- Mobile Bottom Operational Dock -->
+    <!-- Mobile Bottom Dock — core-loop first, with elevated "Log" action -->
     <nav v-if="authStore.isAuthenticated && $route.name !== 'pvp'"
-      class="lg:hidden fixed bottom-4 left-4 right-4 z-[60] bg-surface/70 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-2 transition-all duration-500">
-      <div class="flex items-center justify-around h-16 gap-2">
-        <router-link v-for="nav in mobileNavLinks" :key="nav.id"
+      class="lg:hidden fixed bottom-0 left-0 right-0 z-[60] border-t border-border bg-surface/90 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]">
+      <div class="grid grid-cols-5 items-center h-16 max-w-md mx-auto px-1">
+        <!-- Left items -->
+        <router-link v-for="nav in mobileNavLeft" :key="nav.id"
           :to="getMobileNavTo(nav)"
-          class="flex flex-col items-center justify-center min-h-[52px] py-2 flex-1 group relative transition-all rounded-2xl overflow-hidden border"
-          :class="$route.name === nav.id ? 'bg-primary-500/15 border-primary-500/30' : 'opacity-80 hover:opacity-100 hover:bg-white/5 border-transparent'">
-          <div class="relative">
-            <component :is="nav.icon" class="w-5 h-5 transition-transform group-active:scale-90 relative z-10"
-              :class="$route.name === nav.id ? 'text-primary-500 drop-shadow-[0_0_10px_rgba(255,69,0,0.4)]' : ''" />
-          </div>
+          class="flex flex-col items-center justify-center gap-1 h-full group transition-colors"
+          :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted hover:text-foreground'">
+          <component :is="nav.icon" class="w-[22px] h-[22px] transition-transform group-active:scale-90" />
+          <span class="text-[9px] font-bold tracking-tight">{{ nav.short || i18n.t(nav.label) }}</span>
+        </router-link>
 
-          <span class="text-[8px] font-black uppercase tracking-tight mt-1 truncate w-full px-0.5 text-center"
-            :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted'">
-            {{ nav.short || i18n.t(nav.label) }}
-          </span>
+        <!-- Center: elevated primary action (Log reps) -->
+        <div class="flex justify-center">
+          <router-link :to="{ name: 'dashboard', params: { lang: i18n.locale }, query: { log: 1 } }"
+            class="-mt-7 flex flex-col items-center gap-1 group" :title="i18n.locale === 'es' ? 'Registrar reps' : 'Log reps'">
+            <span class="w-14 h-14 rounded-2xl bg-primary-500 flex items-center justify-center text-white shadow-lg shadow-primary-500/30 ring-4 ring-background transition-transform group-active:scale-95">
+              <Plus class="w-7 h-7" stroke-width="2.5" />
+            </span>
+            <span class="text-[9px] font-black uppercase tracking-tight text-primary-500">{{ i18n.locale === 'es' ? 'Registrar' : 'Log' }}</span>
+          </router-link>
+        </div>
+
+        <!-- Right items -->
+        <router-link v-for="nav in mobileNavRight" :key="nav.id"
+          :to="getMobileNavTo(nav)"
+          class="flex flex-col items-center justify-center gap-1 h-full group relative transition-colors"
+          :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted hover:text-foreground'">
+          <component :is="nav.icon" class="w-[22px] h-[22px] transition-transform group-active:scale-90" />
+          <!-- Reward badge on Profile (chests/new inventory now live there) -->
+          <span v-if="nav.id === 'profile' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory)"
+            class="absolute top-2 right-[calc(50%-18px)] w-2 h-2 rounded-full bg-primary-500 ring-2 ring-surface"></span>
+          <span class="text-[9px] font-bold tracking-tight">{{ nav.short || i18n.t(nav.label) }}</span>
         </router-link>
       </div>
     </nav>
@@ -318,17 +335,14 @@
       <button @click="rouletteStore.openModal()"
         class="relative bg-steel-grey/60 backdrop-blur-xl p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-2xl transition-all duration-500 border border-white/10 group overflow-hidden active:scale-95">
 
-        <div class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-transparent"></div>
-        <div
-          class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer pointer-events-none">
-        </div>
+        <div class="absolute inset-0 bg-gradient-to-br from-primary-500/15 to-transparent"></div>
 
         <Dices
-          class="w-6 h-6 md:w-8 md:h-8 text-white relative z-10 transition-transform duration-700 group-hover:rotate-[360deg]" />
+          class="w-6 h-6 md:w-8 md:h-8 text-white relative z-10 transition-transform duration-500 group-hover:rotate-180" />
 
-        <!-- Urgent Alert Dot -->
+        <!-- Available indicator (calm, no infinite ping) -->
         <div
-          class="absolute top-3 right-3 md:top-4 md:right-4 w-2.5 h-2.5 bg-primary-500 rounded-full border-2 border-deep-abyss animate-ping shadow-[0_0_15px_rgba(255,69,0,0.5)]">
+          class="absolute top-3 right-3 md:top-4 md:right-4 w-2.5 h-2.5 bg-primary-500 rounded-full ring-2 ring-background">
         </div>
       </button>
     </div>
@@ -342,7 +356,7 @@
 import { ref, onMounted, watch, computed } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
-import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Gem, Bell, User, Dices, Volume2, VolumeX, Book, ShoppingBag, Target, LogIn } from 'lucide-vue-next';
+import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Gem, Bell, User, Dices, Volume2, VolumeX, Book, ShoppingBag, Target, LogIn, Plus } from 'lucide-vue-next';
 import { useAuthStore } from './stores/auth';
 import { useI18nStore } from './stores/i18n';
 import { useNotificationsStore } from './stores/notifications';
@@ -408,12 +422,15 @@ const publicNavLinks = computed(() => [
   { id: 'blog-list', label: 'nav_blog', fallback: 'Blog', icon: Book },
 ]);
 
-const mobileNavLinks = computed(() => [
-  { id: 'social', icon: Users, label: 'nav_social', short: i18n.locale === 'es' ? 'Social' : 'Social' },
-  { id: 'inventory', icon: Package, label: 'nav_inventory', short: i18n.locale === 'es' ? 'Inventario' : 'Inventory' },
-  { id: 'dashboard', icon: LayoutDashboard, label: 'nav_dashboard', short: i18n.locale === 'es' ? 'Registrar' : 'Log' },
+// Mobile dock: core-loop first. Logging is the elevated center action.
+// Left of center / right of center. Inventory lives in Profile.
+const mobileNavLeft = computed(() => [
   { id: 'shop', icon: ShoppingBag, label: 'nav_shop', short: i18n.locale === 'es' ? 'Tienda' : 'Shop' },
-  { id: 'profile', icon: User, label: 'nav_profile', short: i18n.locale === 'es' ? 'Progreso' : 'Progress' },
+  { id: 'social', icon: Users, label: 'nav_social', short: i18n.locale === 'es' ? 'Comunidad' : 'Community' },
+]);
+const mobileNavRight = computed(() => [
+  { id: 'missions', icon: Target, label: 'nav_missions', short: i18n.locale === 'es' ? 'Misiones' : 'Missions' },
+  { id: 'profile', icon: User, label: 'nav_profile', short: i18n.locale === 'es' ? 'Perfil' : 'Profile' },
 ]);
 
 const getMobileNavTo = (nav) => {

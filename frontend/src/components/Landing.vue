@@ -34,7 +34,7 @@
 
           <div class="space-y-6">
             <h1 class="text-6xl md:text-8xl font-black tracking-tighter text-foreground leading-[0.9] uppercase italic animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
-              {{ i18n.t('landing_hero_title') }} <br/> <span class="bg-gradient-to-r from-primary-500 to-rose-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(255,69,0,0.2)]">{{ i18n.t('landing_hero_span') }}</span>
+              {{ i18n.t('landing_hero_title') }} <br/> <span class="bg-gradient-to-r from-primary-500 to-rose-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_hsl(var(--primary) / 0.2)]">{{ i18n.t('landing_hero_span') }}</span>
             </h1>
             
             <p class="max-w-xl text-xl md:text-2xl text-muted font-medium tracking-tight leading-relaxed animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-400">

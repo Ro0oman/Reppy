@@ -225,10 +225,20 @@ CREATE TABLE IF NOT EXISTS gem_transactions (
 
 CREATE INDEX IF NOT EXISTS idx_gem_trans_user ON gem_transactions(user_id);
 
+CREATE TABLE IF NOT EXISTS streak_freezes (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    freeze_date DATE NOT NULL,
+    spent_coins INTEGER NOT NULL DEFAULT 250,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, freeze_date)
+);
+
 -- Index for better performance
 CREATE INDEX IF NOT EXISTS idx_reps_user_date ON reps(user_id, date);
 CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(user_id_1, user_id_2);
 CREATE INDEX IF NOT EXISTS idx_inventory_user ON user_inventory(user_id);
+CREATE INDEX IF NOT EXISTS idx_streak_freezes_user_date ON streak_freezes(user_id, freeze_date);
 
 -- Migraciones seguras para tablas que ya existan
 ALTER TABLE users ADD COLUMN IF NOT EXISTS reppy_coins INTEGER DEFAULT 0;
@@ -267,6 +277,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS cha_xp INTEGER DEFAULT 0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS last_spin_at TIMESTAMP WITH TIME ZONE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_avatar_overhaul BOOLEAN DEFAULT FALSE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS last_streak_reward_date DATE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS push_disabled BOOLEAN DEFAULT FALSE;
 ALTER TABLE user_active_plans ADD COLUMN IF NOT EXISTS last_completed_date DATE;
 ALTER TABLE user_active_plans ADD COLUMN IF NOT EXISTS last_completed_day INTEGER;
  

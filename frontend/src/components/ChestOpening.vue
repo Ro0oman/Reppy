@@ -22,7 +22,7 @@
                         :class="[
                           isLegendaryChest ? 'text-amber-500 drop-shadow-[0_0_80px_rgba(245,158,11,0.6)]' : 
                           (isEpicChest ? 'text-purple-500 drop-shadow-[0_0_50px_rgba(168,85,247,0.4)]' : 
-                          'text-primary-500 drop-shadow-[0_0_50px_rgba(255,69,0,0.4)]'),
+                          'text-primary-500 drop-shadow-[0_0_50px_hsl(var(--primary) / 0.4)]'),
                           clickedFlash ? 'scale-110' : ''
                         ]" />
                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-white/5 blur-3xl rounded-full scale-150 -z-10"></div>
@@ -125,7 +125,7 @@
            </div>
 
            <button @click.stop="close" 
-             class="btn-reppy !px-20 !py-6 !text-xl shadow-[0_20px_50px_rgba(255,69,0,0.3)] hover:scale-105 transition-transform">
+             class="btn-reppy !px-20 !py-6 !text-xl shadow-[0_20px_50px_hsl(var(--primary) / 0.3)] hover:scale-105 transition-transform">
              COLECTAR BOTÍN
            </button>
         </div>
@@ -133,7 +133,7 @@
       </div>
 
       <!-- Legacy CS:GO Style (for Level Chests or simple rewards) -->
-      <div v-else class="relative w-full max-w-4xl min-h-[100dvh] md:min-h-0 bg-steel-grey/40 border-x md:border border-white/10 rounded-none md:rounded-[2.5rem] shadow-[0_0_100px_rgba(255,69,0,0.1)] flex flex-col group overflow-hidden" @click.stop>
+      <div v-else class="relative w-full max-w-4xl min-h-[100dvh] md:min-h-0 bg-steel-grey/40 border-x md:border border-white/10 rounded-none md:rounded-[2.5rem] shadow-[0_0_100px_hsl(var(--primary) / 0.1)] flex flex-col group overflow-hidden" @click.stop>
         <!-- Close Button (Post-Animation) -->
         <button v-if="finished" @click="close" 
           class="absolute top-6 right-6 md:top-8 md:right-8 z-50 p-3 md:p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all hover:rotate-90">
@@ -154,7 +154,7 @@
 
         <!-- High-Stakes Rolling Reel (CS style) -->
         <div class="relative py-10 md:py-16 bg-black/60 border-y border-white/5 overflow-hidden">
-          <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-primary-500 z-20 shadow-[0_0_30px_rgba(255,69,0,0.4)]">
+          <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-primary-500 z-20 shadow-[0_0_30px_hsl(var(--primary) / 0.4)]">
              <div class="absolute -top-1 -left-1.5 w-3.5 h-3.5 bg-primary-500 rotate-45 border border-white/20"></div>
              <div class="absolute -bottom-1 -left-1.5 w-3.5 h-3.5 bg-primary-500 rotate-45 border border-white/20"></div>
           </div>
@@ -163,7 +163,7 @@
               class="flex-shrink-0 w-32 h-32 md:w-44 md:h-44 mx-1.5 rounded-2xl md:rounded-3xl border flex flex-col items-center justify-center p-3 md:p-4 transition-all duration-700"
               :class="[
                 item.is_seasonal ? 'bg-primary-500/10 border-primary-500/30' : 'bg-white/[0.04] border-white/10',
-                finished && index === winningIndex ? 'scale-110 border-primary-500 bg-primary-500/20 shadow-[0_0_50px_rgba(255,69,0,0.2)] grayscale-0 opacity-100' : 
+                finished && index === winningIndex ? 'scale-110 border-primary-500 bg-primary-500/20 shadow-[0_0_50px_hsl(var(--primary) / 0.2)] grayscale-0 opacity-100' : 
                 (finished ? 'opacity-10 grayscale scale-90' : 'opacity-70 grayscale-[0.4]')
               ]">
               <div class="w-16 h-16 md:w-24 md:h-24 mb-3 md:mb-4 relative flex items-center justify-center overflow-hidden rounded-2xl">

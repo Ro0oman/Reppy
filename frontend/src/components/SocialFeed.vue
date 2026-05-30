@@ -32,14 +32,14 @@
       <!-- End of Feed -->
       <div v-if="finished && activities.length > 0" class="py-20 text-center space-y-4">
           <div class="w-1 h-20 bg-gradient-to-b from-primary-500/50 to-transparent mx-auto rounded-full"></div>
-          <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em] opacity-40 italic">You've reached the bottom of the registry</p>
+          <p class="text-xs font-medium text-muted/50">Ya estas al dia. Vuelve luego para ver nuevos entrenamientos.</p>
       </div>
 
       <!-- Empty State -->
-      <div v-if="!loading && activities.length === 0" class="py-32 text-center bg-surface/5 rounded-[3rem] border-2 border-dashed border-border/20">
-          <ZapOff class="w-16 h-16 text-muted/20 mx-auto mb-6" />
-          <h3 class="text-2xl font-black text-foreground uppercase tracking-tight mb-2">Registry Silent</h3>
-          <p class="text-sm text-muted max-w-xs mx-auto font-medium opacity-60">No activity detected in this sector. Follow more athletes to populate your inner circle.</p>
+      <div v-if="!loading && activities.length === 0" class="py-24 px-6 text-center bg-surface/5 rounded-3xl border border-dashed border-border/20">
+          <ZapOff class="w-12 h-12 text-muted/20 mx-auto mb-5" />
+          <h3 class="text-xl font-semibold text-foreground tracking-tight mb-2">Todavia no hay entrenamientos</h3>
+          <p class="text-sm text-muted max-w-xs mx-auto font-medium opacity-70">Sigue a mas atletas o registra tu primera serie para empezar a llenar la comunidad.</p>
       </div>
 
       <!-- Sentinel for Infinite Scroll -->

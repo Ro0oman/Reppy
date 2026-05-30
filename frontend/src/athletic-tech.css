@@ -4,50 +4,55 @@
 
 @layer base {
   :root {
-    /* Core Brand - Refined Electric */
-    --primary: 215 100% 55%; /* Electric Blue #1A73E8 style (Premium Athletic) */
-    --accent: 142 100% 50%;  /* Emerald Neon #00FF88 */
-    
+    /* ────────────────────────────────────────────────────────────
+       Reppy Design System — Clean Athletic (v3)
+       Single source of brand truth: Electric Blue + Emerald accent.
+       Hardcoded orange glows were unified to hsl(var(--primary)) so
+       solid fills and glows finally match the brand.
+       ──────────────────────────────────────────────────────────── */
+    --primary: 215 92% 56%;        /* Reppy Electric Blue */
+    --accent: 152 62% 43%;         /* Emerald — success / positive */
+
     /* Light Theme (Clean Studio) - Default */
-    --background: 210 40% 98%;     /* Soft Paper #F8FAFC */
+    --background: 30 20% 98%;      /* Warm paper */
     --surface: 0 0% 100%;          /* Pure White */
     --card: 0 0% 100%;
-    --card-alpha: 0.7;
-    --foreground: 224 45% 12%;     /* Deep Navy #1E293B */
-    --muted: 215 16% 40%;          /* Slate Gray (Accessible) */
-    --border: 215 32% 91%;         /* Light Slate #E2E8F0 */
-    --ring: 215 100% 55% / 0.2;
+    --card-alpha: 0.85;
+    --foreground: 240 10% 12%;     /* Near-black ink */
+    --muted: 240 5% 42%;           /* Accessible slate */
+    --border: 240 8% 90%;          /* Hairline */
+    --ring: 215 92% 56% / 0.25;
 
-    --white-to-gray: 224 45% 25%;  /* Deep Slate */
+    --white-to-gray: 240 10% 20%;
 
-    /* Heatmap Levels (Light - Azure/Blue) */
+    /* Heatmap Levels (Light - Azure) */
     --heatmap-bg: 0 0% 100%;
-    --heatmap-l0: 210 40% 96%;
-    --heatmap-l1: 210 96% 90%;
-    --heatmap-l2: 210 96% 80%;
-    --heatmap-l3: 215 100% 55%;
+    --heatmap-l0: 240 8% 95%;
+    --heatmap-l1: 213 96% 90%;
+    --heatmap-l2: 214 95% 78%;
+    --heatmap-l3: 215 92% 56%;
     --heatmap-l4: 221 83% 45%;
   }
 
   .dark {
-    /* Dark Theme (Clean Obsidian - Precision Redesign) */
-    --background: 240 10% 4%;      /* #09090B */
-    --surface: 240 10% 8%;         /* #121215 */
-    --card: 240 10% 8.5%;          /* Slightly lighter card #151518 */
+    /* Dark Theme (Obsidian) — default for most users */
+    --background: 240 8% 5%;       /* #0C0C0E */
+    --surface: 240 7% 8%;          /* #131315 */
+    --card: 240 7% 10%;            /* #18181B */
     --card-alpha: 0.8;
-    --foreground: 210 20% 98%;     /* Crisp white-blue */
-    --muted: 215 15% 65%;          /* Soft metal gray */
-    --border: 240 5% 15%;          /* #27272A */
-    --border-alpha: 0.6;
-    --ring: 221 83% 53% / 0.4;     /* Blue-500 shadow */
+    --foreground: 0 0% 98%;        /* Crisp white */
+    --muted: 240 5% 64%;           /* Soft metal gray */
+    --border: 240 6% 16%;          /* #28282C */
+    --border-alpha: 1;
+    --ring: 215 92% 56% / 0.4;
 
-    /* Heatmap Levels (Dark - Blue/Emerald) */
-    --heatmap-bg: 224 25% 4%;
-    --heatmap-l0: 224 15% 10%;
-    --heatmap-l1: 199 89% 24%;
-    --heatmap-l2: 201 96% 32%;
-    --heatmap-l3: 209 100% 45%;
-    --heatmap-l4: 215 100% 55%;
+    /* Heatmap Levels (Dark - Azure) */
+    --heatmap-bg: 240 8% 5%;
+    --heatmap-l0: 240 6% 12%;
+    --heatmap-l1: 213 70% 24%;
+    --heatmap-l2: 214 85% 36%;
+    --heatmap-l3: 215 92% 50%;
+    --heatmap-l4: 213 95% 60%;
 
     --white-to-gray: 0 0% 100%;
   }
@@ -68,16 +73,12 @@
     max-width: 100dvw;
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    
-    /* Premium Clean Background (Glass Studio) */
-    background-image: 
-      radial-gradient(circle at 0% 0%, hsla(var(--primary) / 0.08) 0%, transparent 40%),
-      radial-gradient(circle at 100% 0%, hsla(var(--accent) / 0.05) 0%, transparent 35%),
-      radial-gradient(circle at 50% 100%, hsla(var(--primary) / 0.03) 0%, transparent 45%),
-      linear-gradient(to bottom, transparent, hsla(var(--background) / 0.3)),
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+
+    /* Clean Athletic background: one calm warm glow from the top. */
+    background-image:
+      radial-gradient(120% 75% at 50% -10%, hsla(var(--primary) / 0.06) 0%, transparent 60%);
     background-attachment: fixed;
-    background-blend-mode: overlay, screen, screen, normal, soft-light;
+    background-repeat: no-repeat;
   }
 
   #app {
@@ -102,26 +103,25 @@
 
 @layer components {
   .btn-reppy {
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%);
-    border-radius: 16px;
-    padding: 0.9rem 1.8rem;
+    background: hsl(var(--primary));
+    border-radius: 14px;
+    padding: 0.8rem 1.6rem;
     color: white;
     font-weight: 700;
     letter-spacing: -0.01em;
     font-family: 'Inter Tight', sans-serif;
-    box-shadow: 0 8px 24px -6px hsla(var(--primary) / 0.4);
-    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 6px 16px -8px hsla(var(--primary) / 0.5);
+    transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
-    border: 1px solid hsla(255, 255%, 255%, 0.1);
+    gap: 0.65rem;
+    border: 1px solid hsla(0, 0%, 100%, 0.08);
   }
 
   .btn-reppy:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px -8px hsla(var(--primary) / 0.6);
-    filter: brightness(1.1);
+    background: hsl(var(--primary) / 0.92);
+    box-shadow: 0 10px 22px -10px hsla(var(--primary) / 0.55);
   }
 
   .btn-reppy:active {
@@ -130,39 +130,31 @@
 
   .card-stats {
     background: hsla(var(--card), var(--card-alpha));
-    backdrop-filter: blur(16px) saturate(160%);
-    border: 1px solid hsla(var(--foreground) / 0.05);
-    border-radius: 32px;
-    padding: 28px;
-    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    backdrop-filter: blur(8px);
+    border: 1px solid hsla(var(--foreground) / 0.06);
+    border-radius: 20px;
+    padding: 24px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
     overflow: hidden;
     position: relative;
-    box-shadow: 
-      0 10px 30px -15px rgba(0, 0, 0, 0.1),
-      inset 0 0 0 1px hsla(var(--foreground) / 0.02);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   }
 
   .dark .card-stats {
     border: 1px solid hsla(var(--border), var(--border-alpha, 1));
-    box-shadow: 
-      0 10px 30px -15px rgba(0, 0, 0, 0.3),
-      inset 0 0 0 1px hsla(var(--foreground) / 0.02);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
   }
 
   @media (max-width: 640px) {
     .card-stats {
       padding: 16px;
-      border-radius: 24px;
+      border-radius: 16px;
     }
   }
 
   .card-stats:hover {
-    transform: translateY(-4px);
-    border-color: hsla(var(--primary) / 0.2);
-    background: hsla(var(--card), calc(var(--card-alpha) + 0.1));
-    box-shadow: 
-      0 25px 50px -12px rgba(0, 0, 0, 0.3),
-      0 0 20px hsla(var(--primary) / 0.05);
+    border-color: hsla(var(--primary) / 0.25);
+    box-shadow: 0 8px 24px -16px rgba(0, 0, 0, 0.4);
   }
 
   /* Tactical Elements */
@@ -342,7 +334,7 @@
   position: absolute;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(255, 69, 0, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, hsl(var(--primary) / 0.1) 0%, transparent 70%);
   border-radius: 50%;
   filter: blur(100px);
   animation: float 25s infinite alternate ease-in-out;

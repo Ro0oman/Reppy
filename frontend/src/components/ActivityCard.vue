@@ -62,10 +62,10 @@
             </div>
             <div class="flex flex-col min-w-0">
               <div class="flex items-center gap-1.5">
-                <h4 class="text-xs font-bold text-foreground tracking-tight truncate">{{ activity.user_name }}</h4>
-                <span v-if="activity.global_rank === 1">👑</span>
+                <h4 class="text-sm font-semibold text-foreground tracking-tight truncate">{{ activity.user_name }}</h4>
+                <Crown v-if="activity.global_rank === 1" class="w-3.5 h-3.5 text-amber-500" />
               </div>
-              <div class="flex items-center gap-1 text-[9px] font-medium text-muted/60 uppercase tracking-widest">
+              <div class="flex items-center gap-1 text-[10px] font-medium text-muted/60">
                 {{ timeAgo }}
               </div>
             </div>
@@ -86,7 +86,7 @@
         </div>
 
         <div v-if="activity.title || activity.description" class="mt-1 space-y-1">
-          <h3 v-if="activity.title" class="text-base md:text-xl font-black text-foreground uppercase italic tracking-tight leading-tight break-words">
+          <h3 v-if="activity.title" class="text-base md:text-lg font-bold text-foreground tracking-tight leading-snug break-words">
             {{ activity.title }}
           </h3>
           <p v-if="activity.description" class="text-xs text-foreground/80 leading-relaxed font-medium">
@@ -95,36 +95,44 @@
         </div>
 
         <!-- HIGHLIGHT ROW: Reps & DMG -->
-        <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1 py-1">
+        <div class="flex flex-wrap items-baseline gap-x-5 gap-y-1 py-1">
           <div class="flex items-baseline gap-1.5">
-            <span class="text-3xl font-black text-foreground italic tracking-tighter">🔥 {{ activity.total_reps_today }}</span>
-            <span class="text-[9px] font-black text-muted/40 uppercase tracking-widest">{{ i18n.t('ui_reps') }}</span>
+            <Flame class="w-5 h-5 self-center text-primary-500" />
+            <span class="text-3xl font-black text-foreground tracking-tight tabular-nums">{{ activity.total_reps_today }}</span>
+            <span class="text-[10px] font-bold text-muted uppercase tracking-wide">{{ i18n.t('ui_reps') }}</span>
           </div>
-          <div v-if="activity.total_damage_today" class="flex items-baseline gap-1">
-            <span class="text-xl font-black text-primary-500 italic tracking-tighter">⚡ {{ animatedDamage }}</span>
-            <span class="text-[8px] font-black text-primary-500/40 uppercase tracking-widest">{{ i18n.t('ui_dmg') }}</span>
+          <div v-if="activity.total_damage_today" class="flex items-baseline gap-1.5">
+            <Zap class="w-4 h-4 self-center text-primary-500" />
+            <span class="text-lg font-black text-primary-500 tracking-tight tabular-nums">{{ animatedDamage }}</span>
+            <span class="text-[9px] font-bold text-primary-500/60 uppercase tracking-wide">{{ i18n.t('ui_dmg') }}</span>
           </div>
         </div>
 
         <!-- BADGES & PROGRESS -->
         <div class="flex flex-wrap items-center gap-2">
-          <div v-if="activity.is_personal_best" class="flex items-center gap-1 px-2 py-0.5 bg-amber-500/10 text-amber-500 rounded border border-amber-500/20 text-[8px] font-black uppercase tracking-widest">
+          <div v-if="activity.is_personal_best" class="flex items-center gap-1 px-2 py-1 bg-amber-500/10 text-amber-500 rounded-lg border border-amber-500/20 text-[10px] font-semibold">
             <Trophy class="w-2.5 h-2.5" /> {{ i18n.t('ui_pb') }}
           </div>
-          <div v-if="activity.real_streak > 1" class="flex items-center gap-1 px-2 py-0.5 bg-emerald-500/10 text-emerald-500 rounded border border-emerald-500/20 text-[8px] font-black uppercase tracking-widest">
-            <Flame class="w-2.5 h-2.5" /> {{ activity.real_streak }}{{ i18n.t('ui_streak_days') ? ' ' + i18n.t('ui_streak_days') : 'D STREAK' }}
+          <div v-if="activity.real_streak > 1" class="flex items-center gap-1 px-2 py-1 bg-emerald-500/10 text-emerald-500 rounded-lg border border-emerald-500/20 text-[10px] font-semibold">
+            <Flame class="w-2.5 h-2.5" /> {{ streakLabel }}
           </div>
           
           <!-- RANKING BADGES -->
-          <div v-for="badge in rankingBadges" :key="badge.text" 
-               class="flex items-center gap-1 px-2 py-0.5 rounded border text-[8px] font-black uppercase tracking-widest transition-all hover:scale-105"
+          <div v-for="badge in visibleRankingBadges" :key="badge.text" 
+               class="flex items-center gap-1 px-2 py-1 rounded-lg border text-[10px] font-semibold transition-all hover:scale-105"
                :class="badge.class">
             <component :is="badge.icon" class="w-2.5 h-2.5" />
             {{ badge.text }}
           </div>
+          <button v-if="hiddenRankingBadges.length"
+                  @click="showExtraBadges = !showExtraBadges"
+                  class="flex items-center gap-1 px-2 py-1 rounded-lg border border-border/20 bg-foreground/[0.03] text-[10px] font-semibold text-muted/70 hover:text-foreground hover:bg-foreground/[0.06] transition-all">
+            {{ showExtraBadges ? 'Ver menos' : '+' + hiddenRankingBadges.length }}
+            <ChevronRight class="w-2.5 h-2.5 transition-transform" :class="showExtraBadges ? '-rotate-90' : 'rotate-90'" />
+          </button>
           <!-- XP GAINS -->
           <div v-for="xp in xpGains" :key="xp.stat" 
-               class="flex items-center gap-1 px-2 py-0.5 bg-primary-500/5 text-primary-500/80 rounded border border-primary-500/10 text-[8px] font-black uppercase tracking-widest">
+               class="flex items-center gap-1 px-2 py-1 bg-primary-500/5 text-primary-500/80 rounded-lg border border-primary-500/10 text-[10px] font-semibold">
             +{{ xp.amount }} {{ i18n.t('ui_xp') || 'XP' }} {{ xp.stat }}
           </div>
         </div>
@@ -213,11 +221,11 @@
               </button>
               <button @click="challengeUser" class="flex-shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl transition-all hover:bg-foreground/5 text-muted/60 hover:text-amber-500">
                 <Swords class="w-4 h-4" />
-                <span class="text-[10px] font-black uppercase tracking-tighter">{{ i18n.t('ui_challenge') || 'Retar' }}</span>
+                <span class="text-[10px] font-semibold">{{ i18n.t('ui_challenge') || 'Retar' }}</span>
               </button>
               <button @click="sharePost" class="flex-shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl transition-all hover:bg-foreground/5 text-muted/60 hover:text-blue-500">
                 <Share2 class="w-4 h-4" />
-                <span class="text-[10px] font-black uppercase tracking-tighter">{{ i18n.t('ui_share') || 'Compartir' }}</span>
+                <span class="text-[10px] font-semibold">{{ i18n.t('ui_share') || 'Compartir' }}</span>
               </button>
             </div>
 
@@ -383,9 +391,6 @@ import {
     Package
 } from 'lucide-vue-next';
 import axios from 'axios';
-import { formatDistanceToNow } from 'date-fns';
-import { es } from 'date-fns/locale/es';
-import { enUS } from 'date-fns/locale/en-US';
 import { useNotificationStore } from '../stores/notification';
 import { useRouter } from 'vue-router';
 import ItemIcon from './ItemIcon.vue';
@@ -416,6 +421,7 @@ const loadingComments = ref(false);
 const animatedDamage = ref(0);
 const feedbacks = ref([]);
 const showDetails = ref(false);
+const showExtraBadges = ref(false);
 const showItemModal = ref(false);
 const selectedItem = ref(null);
 const loadingItem = ref(false);
@@ -478,9 +484,27 @@ const getRarityLabel = (rarity) => {
 const timeAgo = computed(() => {
     try {
         const date = props.activity.created_at ? new Date(props.activity.created_at) : new Date(props.activity.date);
-        return formatDistanceToNow(date, { addSuffix: true, locale: i18n.locale === 'es' ? es : enUS });
+        return compactTimeAgo(date);
     } catch (e) { return ''; }
 });
+
+const compactTimeAgo = (date) => {
+    const diffMs = Date.now() - date.getTime();
+    const seconds = Math.max(0, Math.floor(diffMs / 1000));
+    const units = [
+        { limit: 60, value: 1, es: 's', en: 's' },
+        { limit: 3600, value: 60, es: 'min', en: 'm' },
+        { limit: 86400, value: 3600, es: 'h', en: 'h' },
+        { limit: 604800, value: 86400, es: 'd', en: 'd' },
+        { limit: 2629800, value: 604800, es: 'sem', en: 'w' },
+        { limit: 31557600, value: 2629800, es: 'mes', en: 'mo' },
+        { limit: Infinity, value: 31557600, es: 'a', en: 'y' }
+    ];
+    const unit = units.find(u => seconds < u.limit);
+    const amount = Math.max(1, Math.floor(seconds / unit.value));
+    const suffix = i18n.locale === 'es' ? unit.es : unit.en;
+    return i18n.locale === 'es' ? `hace ${amount} ${suffix}` : `${amount}${suffix} ago`;
+};
 
 const sharePost = async () => {
   const text = `Check out this training by ${props.activity.user_name} on Reppy!`;
@@ -539,7 +563,22 @@ const rankingBadges = computed(() => {
             }
         });
     }
-    return badges.slice(0, 3);
+    return badges;
+});
+
+const visibleRankingBadges = computed(() => {
+    if (showExtraBadges.value) return rankingBadges.value;
+    return rankingBadges.value.slice(0, 1);
+});
+
+const hiddenRankingBadges = computed(() => {
+    return rankingBadges.value.slice(1);
+});
+
+const streakLabel = computed(() => {
+    const days = Number(props.activity.real_streak) || 0;
+    const label = i18n.locale === 'es' ? 'dias de racha' : 'day streak';
+    return `${days} ${label}`;
 });
 
 const latestComment = computed(() => {

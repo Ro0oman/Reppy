@@ -59,7 +59,7 @@
         :aria-pressed="modelValue === ex.id"
         class="touch-action-manipulation rounded-2xl border p-3 text-left transition-all active:scale-[0.98]"
         :class="modelValue === ex.id
-          ? 'bg-primary-500/15 border-primary-500/40 shadow-[0_0_20px_rgba(255,69,0,0.2)]'
+          ? 'bg-primary-500/15 border-primary-500/40 shadow-[0_0_20px_hsl(var(--primary) / 0.2)]'
           : 'bg-surface/10 border-white/10 hover:border-primary-500/25 hover:bg-white/[0.03]'"
       >
         <div class="flex items-start justify-between gap-2">

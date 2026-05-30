@@ -59,7 +59,7 @@
         class="flex flex-col items-center group cursor-pointer transition-all active:scale-95 outline-none rounded-xl p-1 scale-110">
         <div class="relative mb-2">
           <div class="absolute -top-4 left-1/2 -translate-x-1/2 text-xl drop-shadow-lg">👑</div>
-          <div class="p-1 rounded-full bg-primary-500/20 ring-2 ring-primary-500/40 shadow-[0_0_20px_rgba(255,69,0,0.15)]">
+          <div class="p-1 rounded-full bg-primary-500/20 ring-2 ring-primary-500/40 shadow-[0_0_20px_hsl(var(--primary) / 0.15)]">
             <AvatarFrame :src="podiumUsers[0].avatar_url" :border-css="podiumUsers[0].border_css" :avatar-css="podiumUsers[0].avatar_css" :size="60" />
           </div>
           <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center border-2 border-background shadow-xl">

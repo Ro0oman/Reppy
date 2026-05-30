@@ -268,8 +268,11 @@ export function setupRouterGuards(router) {
     } else if (to.meta.requiresAuth && !isAuthenticated) {
       next({ name: 'login', params: { lang: currentLang } })
     } else if (to.name === 'landing' && isAuthenticated) {
-      next({ name: 'dashboard', params: { lang: currentLang } })
+      // Daily open (existing session hitting root/landing) → Community feed first.
+      // This is the returning-user "lobby": see what others did, then go log.
+      next({ name: 'social', params: { lang: currentLang } })
     } else if (to.name === 'login' && isAuthenticated) {
+      // Fresh login / signup → Dashboard, where logging + onboarding live (activation).
       next({ name: 'dashboard', params: { lang: currentLang } })
     } else if (to.name === 'dashboard' && !isAuthenticated) {
       next()

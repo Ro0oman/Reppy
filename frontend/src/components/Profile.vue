@@ -17,7 +17,7 @@
           <button v-if="isOwnProfile" 
                   @click="showAvatarSelector = true" 
                   :title="i18nStore.locale === 'es' ? 'Cambiar Clase/Icono' : 'Change Class/Icon'"
-                  class="absolute -bottom-2 -right-2 p-4 bg-primary-500 rounded-2xl cursor-pointer hover:bg-primary-600 shadow-[0_0_20px_rgba(255,69,0,0.3)] text-white z-10 transition-all active:scale-90 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-4 focus:ring-offset-background">
+                  class="absolute -bottom-2 -right-2 p-4 bg-primary-500 rounded-2xl cursor-pointer hover:bg-primary-600 shadow-[0_0_20px_hsl(var(--primary) / 0.3)] text-white z-10 transition-all active:scale-90 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-4 focus:ring-offset-background">
             <UserIcon class="w-5 h-5" />
           </button>
         </div>
@@ -91,9 +91,16 @@
               {{ i18nStore.t('nav_codex') }}
             </router-link>
             <router-link v-if="isOwnProfile" :to="{ name: 'inventory', params: { lang: i18nStore.locale } }"
-                   class="flex items-center gap-3 bg-primary-500/10 px-4 md:px-6 py-4 rounded-xl border border-primary-500/30 hover:border-primary-500/60 transition-all text-primary-500 hover:text-primary-400 uppercase text-[9px] font-black tracking-widest h-fit">
+                   class="relative flex items-center gap-3 bg-primary-500/10 px-4 md:px-6 py-4 rounded-xl border border-primary-500/30 hover:border-primary-500/60 transition-all text-primary-500 hover:text-primary-400 uppercase text-[9px] font-black tracking-widest h-fit">
               <Zap class="w-4 h-4" />
               VER ATRIBUTOS
+              <span v-if="authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory"
+                    class="absolute -top-1.5 -right-1.5 w-2.5 h-2.5 rounded-full bg-primary-500 ring-2 ring-card"></span>
+            </router-link>
+            <router-link v-if="isOwnProfile" :to="{ name: 'shop', params: { lang: i18nStore.locale } }"
+                   class="flex items-center gap-3 bg-surface/5 px-4 md:px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[9px] font-black tracking-widest h-fit">
+              <Coins class="w-4 h-4 text-primary-500" />
+              {{ i18nStore.t('nav_shop') }}
             </router-link>
             
             <!-- Other User Actions -->
@@ -325,7 +332,7 @@
                 <div v-for="i in [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 14, 16, 17, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]" :key="i" 
                      @click="selectAvatar(`/img/avatars/avatar_${i}.webp`)"
                      class="group relative cursor-pointer aspect-square rounded-2xl overflow-hidden border-2 transition-all hover:scale-110 active:scale-95"
-                     :class="user.avatar_url === `/img/avatars/avatar_${i}.webp` ? 'border-primary-500 shadow-[0_0_15px_rgba(255,69,0,0.3)]' : 'border-white/5 hover:border-white/20'">
+                     :class="user.avatar_url === `/img/avatars/avatar_${i}.webp` ? 'border-primary-500 shadow-[0_0_15px_hsl(var(--primary) / 0.3)]' : 'border-white/5 hover:border-white/20'">
                   <img :src="`/img/avatars/avatar_${i}.webp`" class="w-full h-full object-cover" />
                   <div class="absolute inset-0 bg-primary-500/0 group-hover:bg-primary-500/10 transition-colors"></div>
                   <!-- Label for Class Type -->

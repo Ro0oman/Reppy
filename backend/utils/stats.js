@@ -1,6 +1,7 @@
 import { query } from '../db.js';
 import { createNotification } from './notifications.js';
 import { getLocalDateString } from './date.js';
+import { getStreakStatus } from './streak.js';
 
 /**
  * Shared utility to recalculate and sync user stats (total_reps and XP levels)
@@ -166,28 +167,9 @@ export const recalculateUserStats = async (userId, force = false) => {
     const pwrXP = parseInt(stats.calculated_pwr_xp || 0);
     const varietyCount = parseInt(stats.variety_count || 0);
 
-    // 2. Calculate Streak (PULLUPS ONLY as currently implemented in profile.js)
-    const streakResult = await query(
-      'SELECT DISTINCT date FROM reps WHERE user_id = $1 AND exercise_type = \'pullups\' ORDER BY date DESC',
-      [userId]
-    );
-    
-    let streak = 0;
-    if (streakResult && streakResult.rowCount > 0) {
-      const dates = streakResult.rows.map(r => getLocalDateString(r.date));
-      const today = getLocalDateString();
-      const yesterday = getLocalDateString(new Date(Date.now() - 86400000));
-      
-      let checkDate = dates.includes(today) ? today : (dates.includes(yesterday) ? yesterday : null);
-      
-      if (checkDate) {
-        let current = new Date(checkDate);
-        while (dates.includes(getLocalDateString(current))) {
-          streak++;
-          current.setDate(current.getDate() - 1);
-        }
-      }
-    }
+    // 2. Calculate Streak. Freezes count as protected active days.
+    const streakStatus = await getStreakStatus(userId);
+    const streak = streakStatus.streak;
 
     // 3. New Stat Logic (6-Stat System)
     

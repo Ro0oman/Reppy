@@ -4,7 +4,7 @@
     <header class="flex flex-col gap-3 items-center sm:items-start">
       <div class="flex items-center justify-center sm:justify-start gap-3 sm:gap-6">
           <div class="min-w-0">
-            <h2 class="text-2xl sm:text-4xl font-black tracking-tighter text-foreground italic uppercase leading-none drop-shadow-md">{{ i18n.t('dashboard_title') }}</h2>
+            <h2 class="text-2xl sm:text-4xl font-bold tracking-tight text-foreground leading-none drop-shadow-md">{{ i18n.t('dashboard_title') }}</h2>
           </div>
       </div>
       <div class="w-full flex items-center gap-2">
@@ -19,6 +19,73 @@
         <ExerciseSelector v-model="activeExercise" compact class="w-full md:hidden" />
       </div>
     </header>
+
+    <!-- 2. The Hero: Active Session -->
+    <section
+      v-if="!trainingStore.todayWorkout || showFreeLog"
+      ref="repsInputSection"
+      class="max-w-4xl mx-auto w-full transition-all duration-500 rounded-[2rem]"
+      :class="highlightRepsInput ? 'ring-2 ring-primary-500/60 shadow-[0_0_30px_hsl(var(--primary) / 0.25)]' : ''"
+    >
+      <div v-if="activeExercise === 'all'" class="bg-surface/10 backdrop-blur-2xl border border-dashed border-white/10 rounded-3xl flex flex-col items-center justify-center text-center p-8 sm:p-12">
+        <Globe class="w-12 h-12 text-muted mb-4" />
+        <h3 class="text-xl font-bold tracking-tight">
+          {{ i18n.locale === 'es' ? 'Modo resumen activo' : 'Overview mode active' }}
+        </h3>
+        <p class="text-xs text-muted/60 max-w-[340px] mx-auto mt-2">
+          {{ i18n.locale === 'es' ? 'Elige un ejercicio para registrar reps ahora.' : 'Pick an exercise below to log reps now.' }}
+        </p>
+        <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-xl">
+          <button
+            v-for="option in quickLogOptions"
+            :key="option.id"
+            @click="activeExercise = option.id"
+            class="h-10 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-primary-500/10 hover:border-primary-500/30 text-[10px] font-bold tracking-wide text-foreground/90 transition-all active:scale-[0.98]"
+          >
+            {{ option.label }}
+          </button>
+        </div>
+      </div>
+      <RepsInput v-else :exercise-type="activeExercise" @updated="fetchData" class="w-full" />
+    </section>
+
+    <section
+      v-if="streakStatus"
+      class="rounded-2xl border p-4 sm:p-5 transition-all duration-300"
+      :class="streakStatus.showRisk ? 'border-amber-500/35 bg-amber-500/10 shadow-[0_0_35px_rgba(245,158,11,0.12)]' : 'border-primary-500/25 bg-primary-500/10'"
+    >
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex items-center gap-4 min-w-0">
+          <div
+            class="grid h-12 w-12 shrink-0 place-items-center rounded-xl border"
+            :class="streakStatus.showRisk ? 'border-amber-500/30 bg-amber-500/10 text-amber-400' : 'border-primary-500/30 bg-primary-500/10 text-primary-500'"
+          >
+            <Flame class="h-5 w-5" />
+          </div>
+          <div class="min-w-0">
+            <p class="text-[10px] font-semibold text-muted/70">{{ i18n.locale === 'es' ? 'Racha diaria' : 'Daily streak' }}</p>
+            <div class="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+              <span class="text-3xl font-black leading-none tabular-nums text-foreground">{{ streakStatus.streak }}</span>
+              <span class="text-sm font-semibold text-muted">{{ streakDaysLabel }}</span>
+            </div>
+            <p class="mt-1 text-xs font-semibold" :class="streakStatus.showRisk ? 'text-amber-300' : 'text-muted/75'">
+              {{ streakStateLabel }}
+            </p>
+          </div>
+        </div>
+        <button
+          v-if="streakStatus.isAtRisk && !streakStatus.frozenToday"
+          type="button"
+          class="inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-bold transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-45"
+          :class="streakStatus.canFreeze ? 'border-amber-500/35 bg-amber-500/15 text-amber-200 hover:bg-amber-500/20' : 'border-white/10 bg-white/[0.04] text-muted'"
+          :disabled="!streakStatus.canFreeze || freezingStreak"
+          @click="freezeStreak"
+        >
+          <Snowflake class="h-4 w-4" />
+          <span>{{ freezeButtonLabel }}</span>
+        </button>
+      </div>
+    </section>
 
     <TodayWorkout
       v-if="shouldShowTodayWorkout"
@@ -72,7 +139,7 @@
 
     <section
       v-else-if="shouldShowPlanPromo"
-      class="rounded-[1.5rem] border border-primary-500/35 bg-primary-500/10 p-4 shadow-[0_0_35px_rgba(255,69,0,0.08)] sm:p-5"
+      class="rounded-[1.5rem] border border-primary-500/35 bg-primary-500/10 p-4 shadow-[0_0_35px_hsl(var(--primary) / 0.08)] sm:p-5"
     >
       <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div class="min-w-0">
@@ -166,35 +233,6 @@
           </button>
         </div>
       </div>
-    </section>
-
-    <!-- 2. The Hero: Active Session -->
-    <section
-      v-if="!trainingStore.todayWorkout || showFreeLog"
-      ref="repsInputSection"
-      class="max-w-4xl mx-auto w-full transition-all duration-500 rounded-[2.5rem]"
-      :class="highlightRepsInput ? 'ring-2 ring-primary-500/60 shadow-[0_0_30px_rgba(255,69,0,0.25)]' : ''"
-    >
-      <div v-if="activeExercise === 'all'" class="bg-surface/10 backdrop-blur-2xl border border-dashed border-white/10 rounded-[3rem] flex flex-col items-center justify-center text-center p-8 sm:p-12">
-        <Globe class="w-12 h-12 text-muted mb-4" />
-        <h3 class="text-xl font-black uppercase tracking-tighter">
-          {{ i18n.locale === 'es' ? 'Modo resumen activo' : 'Overview mode active' }}
-        </h3>
-        <p class="text-xs text-muted/60 max-w-[340px] mx-auto mt-2 italic">
-          {{ i18n.locale === 'es' ? 'Elige un ejercicio para registrar reps ahora.' : 'Pick an exercise below to log reps now.' }}
-        </p>
-        <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-xl">
-          <button
-            v-for="option in quickLogOptions"
-            :key="option.id"
-            @click="activeExercise = option.id"
-            class="h-10 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-primary-500/10 hover:border-primary-500/30 text-[10px] font-black uppercase tracking-wide text-foreground/90 transition-all active:scale-[0.98]"
-          >
-            {{ option.label }}
-          </button>
-        </div>
-      </div>
-      <RepsInput v-else :exercise-type="activeExercise" @updated="fetchData" class="w-full" />
     </section>
 
     <ExerciseSelector v-model="activeExercise" class="w-full hidden md:block" />
@@ -414,11 +452,11 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed, reactive, watch, nextTick } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import {
   Trophy, Target, Flame, Zap, Activity, History, Inbox,
-  BarChart3, Check, X, Trash2, Globe, Sword, Swords, FlaskConical, Coins
+  BarChart3, Check, X, Trash2, Globe, Sword, Swords, FlaskConical, Coins, Snowflake
 } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
@@ -442,6 +480,7 @@ const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
 const trainingStore = useTrainingStore();
 const router = useRouter();
+const route = useRoute();
 
 const reps = ref([]);
 const heatmapData = ref([]);
@@ -469,9 +508,12 @@ const missionCompletionPulse = ref(false);
 const missionCompletionStateReady = ref(false);
 const guidedTrainingStateLoaded = ref(false);
 const planPromoDismissed = ref(false);
+const streakStatus = ref(null);
+const freezingStreak = ref(false);
 const QUICKSTART_SEEN_PREFIX = 'reppy_quickstart_seen_v1';
 const GOAL_ONBOARDING_DISMISSED_PREFIX = 'reppy_goal_onboarding_dismissed_v1';
 const PLAN_PROMO_DISMISSED_PREFIX = 'reppy_plan_promo_dismissed_v1';
+const STREAK_CELEBRATED_PREFIX = 'reppy_streak_celebrated_v1';
 
 // Scroll lock when modals are active
 watch([showRPGModal, showQuickStartModal, showGoalOnboarding], ([rpgModal, quickStartModal, goalOnboarding]) => {
@@ -485,6 +527,7 @@ watch([showRPGModal, showQuickStartModal, showGoalOnboarding], ([rpgModal, quick
 const getQuickStartStorageKey = () => `${QUICKSTART_SEEN_PREFIX}:${authStore.user?.id || 'guest'}`;
 const getGoalOnboardingDismissedKey = () => `${GOAL_ONBOARDING_DISMISSED_PREFIX}:${authStore.user?.id || 'guest'}`;
 const getPlanPromoDismissedKey = () => `${PLAN_PROMO_DISMISSED_PREFIX}:${authStore.user?.id || 'guest'}`;
+const getStreakCelebratedKey = () => `${STREAK_CELEBRATED_PREFIX}:${authStore.user?.id || 'guest'}`;
 
 const hasSeenQuickStart = () => {
   if (typeof window === 'undefined') return true;
@@ -498,7 +541,9 @@ const markQuickStartSeen = () => {
 
 const shouldShowQuickStart = (totalRepsCount) => {
   if (!authStore.user) return false;
-  if (trainingStore.canShowOnboarding || trainingStore.onboardingCompleted) return false;
+  // "Al grano": brand-new users (incl. the guided-onboarding cohort) log FIRST.
+  // The guided-plan choice is offered later, not as the first gate.
+  if (trainingStore.onboardingCompleted) return false;
   if (hasSeenQuickStart()) return false;
   return Number(totalRepsCount || 0) <= 20;
 };
@@ -530,6 +575,78 @@ const clearPlanPromoDismissed = () => {
   planPromoDismissed.value = false;
 };
 
+const streakDaysLabel = computed(() => {
+  const days = Number(streakStatus.value?.streak || 0);
+  if (i18n.locale === 'es') return days === 1 ? 'dia activo' : 'dias activos';
+  return days === 1 ? 'active day' : 'active days';
+});
+
+const streakStateLabel = computed(() => {
+  const status = streakStatus.value;
+  if (!status) return '';
+  if (status.trainedToday) return i18n.locale === 'es' ? 'Protegida: ya entrenaste hoy.' : 'Protected: you trained today.';
+  if (status.frozenToday) return i18n.locale === 'es' ? 'Protegida con congelacion hasta manana.' : 'Protected with a freeze until tomorrow.';
+  if (status.isAtRisk) {
+    return i18n.locale === 'es'
+      ? `En riesgo: quedan ${status.hoursLeftToday} h para salvarla.`
+      : `At risk: ${status.hoursLeftToday} h left to save it.`;
+  }
+  return i18n.locale === 'es' ? 'Entrena hoy para empezar o subir tu racha.' : 'Train today to start or grow your streak.';
+});
+
+const freezeButtonLabel = computed(() => {
+  const cost = Number(streakStatus.value?.freezeCost || 0);
+  if (freezingStreak.value) return i18n.locale === 'es' ? 'Congelando...' : 'Freezing...';
+  return i18n.locale === 'es' ? `Congelar por ${cost} monedas` : `Freeze for ${cost} coins`;
+});
+
+const maybeCelebrateStreak = async (status) => {
+  if (typeof window === 'undefined' || !status?.trainedToday) return;
+  const today = getLocalDateString();
+  const key = getStreakCelebratedKey();
+  if (localStorage.getItem(key) === today) return;
+  localStorage.setItem(key, today);
+  if (status.streak <= 0) return;
+
+  const { default: confetti } = await import('canvas-confetti');
+  confetti({
+    particleCount: 34,
+    spread: 44,
+    startVelocity: 24,
+    scalar: 0.75,
+    origin: { y: 0.18 },
+    colors: ['#3b82f6', '#60a5fa', '#ffffff']
+  });
+};
+
+const fetchStreakStatus = async () => {
+  try {
+    const res = await axios.get('/api/streak/status', { params: { t: Date.now() } });
+    streakStatus.value = res.data;
+    await maybeCelebrateStreak(res.data);
+  } catch (error) {
+    console.error('Error fetching streak status:', error);
+  }
+};
+
+const freezeStreak = async () => {
+  if (!streakStatus.value?.canFreeze || freezingStreak.value) return;
+  freezingStreak.value = true;
+  try {
+    const res = await axios.post('/api/streak/freeze');
+    streakStatus.value = res.data;
+    await authStore.fetchProfile(true);
+    notificationStore.notify(
+      i18n.locale === 'es' ? 'Racha congelada hasta manana' : 'Streak frozen until tomorrow',
+      'success'
+    );
+  } catch (error) {
+    notificationStore.notify(error.response?.data?.message || (i18n.locale === 'es' ? 'No se pudo congelar la racha' : 'Could not freeze streak'), 'error');
+  } finally {
+    freezingStreak.value = false;
+  }
+};
+
 const scrollToRepsInput = async () => {
   if (activeExercise.value === 'all') {
     activeExercise.value = 'pullups';
@@ -558,6 +675,12 @@ const handleStartQuickStart = async (payload = null) => {
     activeExercise.value = payload.exerciseType;
   }
   await fetchData();
+  await scrollToRepsInput();
+};
+
+const handleLogQueryIntent = async () => {
+  if (route.query.log !== '1') return;
+  await nextTick();
   await scrollToRepsInput();
 };
 
@@ -823,7 +946,8 @@ const fetchData = async () => {
     const [repsRes, heatmapRes, statsRes] = await Promise.all([
       axios.get('/api/reps', { params: { ...params, t } }),
       axios.get('/api/reps/heatmap', { params: { ...params, t } }),
-      axios.get('/api/reps/stats', { params: { ...params, t } })
+      axios.get('/api/reps/stats', { params: { ...params, t } }),
+      fetchStreakStatus()
     ]);
 
     reps.value = repsRes.data;
@@ -846,11 +970,13 @@ const fetchData = async () => {
 
     if (!quickStartEvaluated.value) {
       quickStartEvaluated.value = true;
-      if (trainingStore.canShowOnboarding && !hasDismissedGoalOnboarding()) {
-        showGoalOnboarding.value = true;
-        suppressRPGModal.value = true;
-      } else if (shouldShowQuickStart(statsRes.data.totalReps)) {
+      if (shouldShowQuickStart(statsRes.data.totalReps)) {
+        // Log-first activation: pick exercise → log first set, immediate reward.
         showQuickStartModal.value = true;
+        suppressRPGModal.value = true;
+      } else if (trainingStore.canShowOnboarding && !hasDismissedGoalOnboarding()) {
+        // Returning new user who already logged → now offer a guided plan.
+        showGoalOnboarding.value = true;
         suppressRPGModal.value = true;
       }
     }
@@ -895,6 +1021,13 @@ const saveEdit = async (id) => {
 watch(activeExercise, () => {
   fetchData();
 });
+
+watch(
+  () => route.query.log,
+  () => {
+    handleLogQueryIntent();
+  }
+);
 
 const confirmDelete = (id) => {
   if (deletingRepIds.value.has(id)) return;
@@ -1036,12 +1169,16 @@ onMounted(async () => {
   await trainingStore.fetchMine();
   guidedTrainingStateLoaded.value = true;
   planPromoDismissed.value = typeof window !== 'undefined' && localStorage.getItem(getPlanPromoDismissedKey()) === '1';
-  showGoalOnboarding.value = trainingStore.canShowOnboarding && !hasDismissedGoalOnboarding();
+  // "Al grano": don't gate brand-new users behind the guided-plan question.
+  // If they still qualify for the log-first QuickStart, let that run instead;
+  // the plan question returns on a later visit (once QuickStart has been seen).
+  showGoalOnboarding.value = trainingStore.canShowOnboarding && !hasDismissedGoalOnboarding() && !shouldShowQuickStart(totalReps.value);
   if (showGoalOnboarding.value) {
     suppressRPGModal.value = true;
   }
 
   fetchData();
+  handleLogQueryIntent();
   // Auto-refresh removed to save Supabase/Vercel resources. 
   // Real-time events via Socket.io handle the live feel.
   // refreshInterval = setInterval(fetchData, 60000);

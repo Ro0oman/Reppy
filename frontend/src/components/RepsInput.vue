@@ -39,7 +39,7 @@
               @click="setReps(preset)"
               :disabled="loading"
               class="touch-action-manipulation h-12 rounded-xl border text-base font-black transition-all active:scale-95"
-              :class="selectedReps === preset ? 'bg-primary-500 text-white border-primary-400 shadow-[0_0_18px_rgba(255,69,0,0.35)]' : 'bg-white/[0.02] border-white/10 text-foreground hover:border-primary-500/40'"
+              :class="selectedReps === preset ? 'bg-primary-500 text-white border-primary-400 shadow-[0_0_18px_hsl(var(--primary) / 0.35)]' : 'bg-white/[0.02] border-white/10 text-foreground hover:border-primary-500/40'"
             >
               {{ preset }}
             </button>
@@ -126,6 +126,7 @@ import { useI18nStore } from '../stores/i18n';
 import { useNotificationStore } from '../stores/notification';
 import { useDamageStore } from '../stores/damage';
 import { getLocalDateString } from '../utils/dateUtils.js';
+import { markPushPromptEligible } from '../utils/pushEligibility.js';
 import { useAudio } from '../composables/useAudio';
 import { estimateDamage } from '../utils/damageCalculator';
 
@@ -230,6 +231,7 @@ const addReps = async (count) => {
     // Refresh global user state to sync header level/XP
     const authStore = useAuthStore();
     await authStore.fetchProfile();
+    markPushPromptEligible();
     
     emit('updated');
   } catch (error) {

@@ -32,6 +32,7 @@ import missionsRoutes from './missions.js';
 import pushRoutes from './push.js';
 import trainingRoutes from './training.js';
 import exercisesRoutes from './exercises.js';
+import streakRoutes from './streak.js';
 import http from 'http';
 import getPusher from './pusher.js';
 import { updatePresence } from './socketManager.js';
@@ -99,6 +100,7 @@ apiRouter.use('/missions', missionsRoutes);
 apiRouter.use('/push', pushRoutes);
 apiRouter.use('/training', trainingRoutes);
 apiRouter.use('/exercises', exercisesRoutes);
+apiRouter.use('/streak', streakRoutes);
 
 // Pusher Auth Endpoint (Directly on app for Vercel compatibility)
 app.post('/api/pusher/auth', async (req, res) => {
@@ -339,6 +341,7 @@ apiRouter.get('/db/init', async (req, res) => {
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_spin_at TIMESTAMP WITH TIME ZONE`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_avatar_overhaul BOOLEAN DEFAULT FALSE`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_streak_reward_date DATE`,
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS push_disabled BOOLEAN DEFAULT FALSE`,
       // Mark old bosses as inactive to avoid overlapping
       `UPDATE boss_fights SET status = 'defeated' WHERE order_index = 0 AND status = 'active'`,
       
@@ -437,6 +440,15 @@ apiRouter.get('/db/init', async (req, res) => {
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
           UNIQUE(user_id, date)
       )`,
+      `CREATE TABLE IF NOT EXISTS streak_freezes (
+          id SERIAL PRIMARY KEY,
+          user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+          freeze_date DATE NOT NULL,
+          spent_coins INTEGER NOT NULL DEFAULT 250,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE(user_id, freeze_date)
+      )`,
+      `CREATE INDEX IF NOT EXISTS idx_streak_freezes_user_date ON streak_freezes(user_id, freeze_date)`,
       `CREATE TABLE IF NOT EXISTS summary_interactions (
           id SERIAL PRIMARY KEY,
           summary_id INTEGER REFERENCES daily_summaries(id) ON DELETE CASCADE,

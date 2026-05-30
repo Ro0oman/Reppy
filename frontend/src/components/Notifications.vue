@@ -38,7 +38,7 @@
           :class="!notif.is_read ? 'bg-primary-500/[0.02]' : 'opacity-70 grayscale-[0.5] hover:grayscale-0 hover:opacity-100'"
           @click="handleNotifClick(notif)"
         >
-          <div v-if="!notif.is_read" class="absolute left-0 top-0 bottom-0 w-1 bg-primary-500 shadow-[0_0_20px_rgba(255,69,0,0.6)] z-10"></div>
+          <div v-if="!notif.is_read" class="absolute left-0 top-0 bottom-0 w-1 bg-primary-500 shadow-[0_0_20px_hsl(var(--primary) / 0.6)] z-10"></div>
 
           <div class="relative shrink-0">
             <template v-if="notif.actor_avatar">

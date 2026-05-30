@@ -207,7 +207,7 @@ const frameVars = computed(() => ({
 }
 
 .frame-furia .avatar-frame__glow {
-  background: radial-gradient(circle, rgba(255,69,0,0.5) 40%, transparent 70%);
+  background: radial-gradient(circle, hsl(var(--primary) / 0.5) 40%, transparent 70%);
   animation: frame-glow-pulse 1.5s ease-in-out infinite alternate;
 }
 

@@ -7,11 +7,51 @@
     </div>
     
     <div class="space-y-4 relative z-10">
-      <!-- Community Hub simplified title -->
-      <div class="flex flex-col gap-1 pt-2 relative">
-          <h1 class="text-xl font-black text-foreground uppercase italic tracking-tighter">{{ i18n.t('community') }}</h1>
-          <p class="text-[10px] text-muted uppercase tracking-widest opacity-60">{{ i18n.t('community_subtitle') }}</p>
-          <LivePresence class="mt-4" />
+      <!-- Community header: the daily "lobby" — see who trained, then go log -->
+      <div class="flex flex-col gap-3 pt-2 relative">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">{{ i18n.t('community') }}</h1>
+              <p class="text-sm text-muted mt-0.5">{{ i18n.t('community_subtitle') }}</p>
+            </div>
+            <router-link
+              v-if="authStore.isAuthenticated"
+              :to="{ name: 'dashboard', params: { lang: i18n.locale }, query: { log: 1 } }"
+              class="shrink-0 inline-flex items-center gap-2 rounded-xl bg-primary-500 hover:bg-primary-600 text-white px-4 py-2.5 text-xs font-bold tracking-tight transition-all active:scale-95 shadow-lg shadow-primary-500/20"
+            >
+              <Plus class="w-4 h-4" />
+              <span class="hidden xs:inline">{{ i18n.locale === 'es' ? 'Registrar' : 'Log' }}</span>
+            </router-link>
+          </div>
+          <LivePresence class="mt-1" />
+          <div
+            v-if="authStore.isAuthenticated && streakStatus"
+            class="flex flex-col gap-2 rounded-2xl border p-3 sm:flex-row sm:items-center sm:justify-between"
+            :class="streakStatus.showRisk ? 'border-amber-500/30 bg-amber-500/10' : 'border-primary-500/20 bg-primary-500/10'"
+          >
+            <div class="flex items-center gap-3 min-w-0">
+              <Flame
+                class="h-4 w-4 shrink-0"
+                :class="streakStatus.showRisk ? 'text-amber-400' : 'text-primary-500'"
+              />
+              <div class="min-w-0">
+                <p class="text-xs font-bold text-foreground">
+                  {{ streakStatus.streak }} {{ i18n.locale === 'es' ? 'dias de racha' : 'day streak' }}
+                </p>
+                <p class="text-[11px] font-medium" :class="streakStatus.showRisk ? 'text-amber-300' : 'text-muted/70'">
+                  {{ socialStreakLabel }}
+                </p>
+              </div>
+            </div>
+            <router-link
+              v-if="streakStatus.isAtRisk"
+              :to="{ name: 'dashboard', params: { lang: i18n.locale }, query: { log: 1 } }"
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-500 px-3 py-2 text-xs font-bold text-white transition hover:bg-primary-600 active:scale-95"
+            >
+              <Plus class="h-3.5 w-3.5" />
+              {{ i18n.locale === 'es' ? 'Salvar hoy' : 'Save today' }}
+            </router-link>
+          </div>
       </div>
 
 
@@ -178,7 +218,7 @@
                       </div>
                     </div>
                     <div class="flex items-center gap-3 mt-1.5">
-                      <Trophy class="w-3 h-3 text-primary-500 drop-shadow-[0_0_5px_rgba(255,69,0,0.5)]" />
+                      <Trophy class="w-3 h-3 text-primary-500 drop-shadow-[0_0_5px_hsl(var(--primary) / 0.5)]" />
                       <p class="text-[10px] font-black uppercase text-muted tracking-[0.2em] opacity-80">{{ friend.total_reps }} {{ i18n.t('reps_scaled') }}</p>
                     </div>
                   </div>
@@ -215,7 +255,7 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import {
   Users, Search, SearchX, UserPlus, Heart, Check,
-  Trophy, ChevronRight, Users2, BarChart3, Activity
+  Trophy, ChevronRight, Users2, BarChart3, Activity, Plus, Flame
 } from 'lucide-vue-next';
 import { Swords } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
@@ -242,6 +282,7 @@ const friends = ref([]);
 const loadingSearch = ref(false);
 const activeExercise = ref('all');
 const activeTab = ref('feed');
+const streakStatus = ref(null);
 
 const activeExerciseLabel = computed(() => {
   return i18n.t(activeExercise.value);
@@ -305,8 +346,32 @@ const fetchSocialStats = async () => {
   }
 };
 
+const fetchStreakStatus = async () => {
+  if (!authStore.isAuthenticated) return;
+  try {
+    const res = await axios.get('/api/streak/status', { params: { t: Date.now() } });
+    streakStatus.value = res.data;
+  } catch (error) {
+    console.error('Error fetching streak status:', error);
+  }
+};
+
+const socialStreakLabel = computed(() => {
+  const status = streakStatus.value;
+  if (!status) return '';
+  if (status.trainedToday) return i18n.locale === 'es' ? 'Ya esta protegida hoy.' : 'Already protected today.';
+  if (status.frozenToday) return i18n.locale === 'es' ? 'Congelada hasta manana.' : 'Frozen until tomorrow.';
+  if (status.isAtRisk) {
+    return i18n.locale === 'es'
+      ? `En riesgo: quedan ${status.hoursLeftToday} h.`
+      : `At risk: ${status.hoursLeftToday} h left.`;
+  }
+  return i18n.locale === 'es' ? 'Entrena hoy para subirla.' : 'Train today to grow it.';
+});
+
 onMounted(() => {
   if (authStore.isAuthenticated) fetchFriends();
+  fetchStreakStatus();
   fetchSocialStats();
   fetchActiveBoss();
 });

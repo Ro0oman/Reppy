@@ -1,5 +1,5 @@
 <template>
-  <section class="w-full rounded-[1.5rem] border border-primary-500/30 bg-primary-500/10 p-4 shadow-[0_0_35px_rgba(255,69,0,0.08)] sm:p-6">
+  <section class="w-full rounded-[1.5rem] border border-primary-500/30 bg-primary-500/10 p-4 shadow-[0_0_35px_hsl(var(--primary) / 0.08)] sm:p-6">
     <div v-if="completedToday" class="space-y-4">
       <div>
         <p class="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-400">
@@ -203,6 +203,7 @@ import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
 import { useNotificationStore } from '../stores/notification';
 import { useTrainingStore } from '../stores/training';
+import { markPushPromptEligible } from '../utils/pushEligibility.js';
 
 const props = defineProps({
   workout: { type: Object, default: null },
@@ -482,6 +483,7 @@ const finishWorkout = async () => {
     );
 
     await authStore.fetchProfile(true);
+    markPushPromptEligible();
     session.value = null;
     emit('completed', result);
   } catch (error) {

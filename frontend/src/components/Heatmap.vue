@@ -75,7 +75,7 @@
                   <div
                     class="w-full flex flex-col items-center gap-3 bg-white/[0.03] p-10 rounded-[2rem] border border-white/5 shadow-inner">
                     <span
-                      class="text-6xl font-black text-primary leading-none tabular-nums italic drop-shadow-[0_0_20px_rgba(255,69,0,0.3)]">
+                      class="text-6xl font-black text-primary leading-none tabular-nums italic drop-shadow-[0_0_20px_hsl(var(--primary) / 0.3)]">
                       {{ selectedDay.count }}
                     </span>
                     <span class="text-[9px] font-black uppercase tracking-[0.4em] text-zinc-500">

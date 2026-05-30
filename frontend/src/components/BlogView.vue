@@ -139,7 +139,7 @@
           </div>
 
           <div class="flex flex-col items-center gap-6">
-            <button @click="router.push(ctaTarget)" class="btn-reppy !px-16 !py-5 !text-lg shadow-[0_20px_50px_rgba(255,69,0,0.3)] hover:shadow-primary/50 transition-all transform hover:scale-105 active:scale-95">
+            <button @click="router.push(ctaTarget)" class="btn-reppy !px-16 !py-5 !text-lg shadow-[0_20px_50px_hsl(var(--primary) / 0.3)] hover:shadow-primary/50 transition-all transform hover:scale-105 active:scale-95">
               {{ ctaLabel }}
             </button>
             
@@ -190,7 +190,7 @@
     <!-- Sticky Bottom CTA (Mobile Only for Guests) -->
     <div v-if="!authStore.isAuthenticated" 
          class="md:hidden fixed bottom-6 left-4 right-4 z-[100] animate-in slide-in-from-bottom-20 duration-1000 delay-1000">
-       <button @click="router.push('/login')" class="w-full btn-reppy !py-5 shadow-[0_20px_50px_rgba(255,69,0,0.4)]">
+       <button @click="router.push('/login')" class="w-full btn-reppy !py-5 shadow-[0_20px_50px_hsl(var(--primary) / 0.4)]">
          🚀 {{ i18n.locale === 'es' ? 'JUGAR Y GANAR XP' : 'PLAY & EARN XP' }}
        </button>
     </div>

@@ -75,7 +75,7 @@
           <!-- Character Diagram (Sidebar Compact) -->
           <div class="hidden lg:flex relative w-full aspect-[4/5] max-w-[320px] mx-auto items-center justify-center bg-surface/5 rounded-[3rem] border border-white/5 backdrop-blur-3xl overflow-hidden">
              <!-- Background FX -->
-             <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,69,0,0.05)_0%,transparent_70%)] animate-pulse"></div>
+             <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--primary) / 0.05)_0%,transparent_70%)] animate-pulse"></div>
              
              <!-- Center Silhouette -->
              <div class="relative z-10 opacity-20 transform scale-125">
@@ -748,7 +748,7 @@ const getRarityBadge = (item) => {
   const rarity = item.rarity?.toLowerCase() || 'common';
   switch (rarity) {
     case 'calistenico': return { label: i18n.t('rarity_calisthenic'), classes: 'text-[#ccff00] bg-[#ccff00]/10 border-[#ccff00]/30 shadow-[0_0_10px_rgba(204,255,0,0.2)]' };
-    case 'legendary': return { label: i18n.t('rarity_legendary'), classes: 'text-primary-500 bg-primary-500/10 border-primary-500/30 shadow-[0_0_10px_rgba(255,69,0,0.2)]' };
+    case 'legendary': return { label: i18n.t('rarity_legendary'), classes: 'text-primary-500 bg-primary-500/10 border-primary-500/30 shadow-[0_0_10px_hsl(var(--primary) / 0.2)]' };
     case 'epic':
     case 'especial': return { label: i18n.t('rarity_special'), classes: 'text-purple-400 bg-purple-500/10 border-purple-500/30' };
     case 'rare': return { label: i18n.t('rarity_rare'), classes: 'text-blue-400 bg-blue-500/10 border-blue-500/30' };
@@ -1334,7 +1334,7 @@ onUnmounted(() => {
 
 @keyframes pulse-fast {
   0%, 100% { transform: scale(1); box-shadow: 0 0 0 transparent; }
-  50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(255,69,0,0.8); }
+  50% { transform: scale(1.05); box-shadow: 0 0 30px hsl(var(--primary) / 0.8); }
 }
 .animate-pulse-fast {
   animation: pulse-fast 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);

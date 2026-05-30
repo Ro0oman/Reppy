@@ -1,6 +1,6 @@
 <template>
   <div v-if="isOpen" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in-0 duration-200">
-    <div class="relative w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-deep-abyss/95 p-6 shadow-[0_0_50px_rgba(255,69,0,0.2)] backdrop-blur-xl flex flex-col max-h-[85vh] z-10">
+    <div class="relative w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-deep-abyss/95 p-6 shadow-[0_0_50px_hsl(var(--primary) / 0.2)] backdrop-blur-xl flex flex-col max-h-[85vh] z-10">
       
       <!-- Close Button -->
       <button @click="close" class="absolute top-4 right-4 text-muted hover:text-foreground transition active:scale-95 z-30">
