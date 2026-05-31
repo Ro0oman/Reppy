@@ -3,13 +3,13 @@
     <transition name="fade">
       <div
         v-if="show"
-        class="fixed inset-0 z-[120] flex items-center justify-center bg-black/70 backdrop-blur-md px-3 py-4"
+        class="cursor-pointer fixed inset-0 z-[120] flex items-center justify-center bg-black/70 backdrop-blur-md px-3 py-4"
         @click.self="dismissOnboarding"
       >
         <div class="w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-[1.5rem] border border-white/10 bg-deep-abyss shadow-2xl">
           <div class="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-white/10 bg-deep-abyss/95 px-4 py-4 backdrop-blur-xl sm:px-6">
             <div class="min-w-0">
-              <p class="text-[9px] font-black uppercase tracking-[0.24em] text-primary-500">Guided Training</p>
+              <p class="text-xs font-black uppercase tracking-[0.24em] text-primary-500">Guided Training</p>
               <h2 class="mt-1 text-xl font-black uppercase leading-tight tracking-tight text-foreground sm:text-2xl">
                 {{ i18n.t('onboarding_goal_title') }}
               </h2>

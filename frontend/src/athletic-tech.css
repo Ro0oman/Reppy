@@ -102,6 +102,63 @@
 }
 
 @layer components {
+
+  /* ─── Affordance system ─────────────────────────────────────────────────
+     Every interactive element must pass this checklist:
+       1. cursor-pointer (desktop hint)
+       2. :active feedback (mobile press feedback — the most important one)
+       3. :hover background/border shift (desktop hover)
+     ─────────────────────────────────────────────────────────────────────── */
+
+  /* ─── Base interactive rules ──────────────────────────────────────────── */
+  button, a, [role="button"] {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Every button gets a subtle active press — the universal "I'm tappable" signal on mobile */
+  button:not(:disabled):active,
+  a:active,
+  [role="button"]:active {
+    opacity: 0.82;
+  }
+
+  /* Tappable card (div/section that acts as a button) */
+  .tap-card {
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.12s ease, opacity 0.1s ease;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .tap-card:hover {
+    border-color: hsla(var(--primary) / 0.3) !important;
+    background-color: hsla(var(--foreground) / 0.05);
+  }
+  .tap-card:active {
+    transform: scale(0.975);
+    opacity: 0.85;
+  }
+
+  /* Pressable row (list items, search results, leaderboard rows) */
+  .tap-row {
+    cursor: pointer;
+    transition: background-color 0.12s ease, opacity 0.1s ease;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .tap-row:hover  { background-color: hsla(var(--foreground) / 0.04); }
+  .tap-row:active { opacity: 0.8; background-color: hsla(var(--foreground) / 0.08); }
+
+  /* Pressable pill (badge, tag, chip that is tappable) */
+  .tap-pill {
+    cursor: pointer;
+    transition: opacity 0.1s ease, transform 0.1s ease;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .tap-pill:hover  { opacity: 0.85; }
+  .tap-pill:active { transform: scale(0.92); opacity: 0.7; }
+
   .btn-reppy {
     background: hsl(var(--primary));
     border-radius: 14px;

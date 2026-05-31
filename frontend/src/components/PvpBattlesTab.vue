@@ -25,9 +25,9 @@
               <p class="text-sm font-black text-white uppercase italic tracking-tighter">{{ fight.challenger_name }}</p>
               <p class="text-[9px] text-muted uppercase tracking-widest font-bold">{{ i18n.t('pvp_challenge_received') }}</p>
               <div class="flex items-center gap-2 mt-1.5">
-                <span class="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[7px] text-muted font-black uppercase">{{ fight.battlefield }}</span>
-                <span class="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[7px] text-muted font-black uppercase">{{ fight.max_hp }} HP</span>
-                <span class="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[7px] text-muted font-black uppercase">{{ fight.time_limit }}s</span>
+                <span class="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[10px] text-muted font-black uppercase">{{ fight.battlefield }}</span>
+                <span class="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[10px] text-muted font-black uppercase">{{ fight.max_hp }} HP</span>
+                <span class="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[10px] text-muted font-black uppercase">{{ fight.time_limit }}s</span>
               </div>
             </div>
           </div>
@@ -59,13 +59,13 @@
               <p class="text-[9px] text-muted uppercase tracking-widest font-bold mt-0.5">{{ fight.battlefield }}</p>
               <div class="flex items-center gap-3 mt-2">
                 <div class="space-y-0.5">
-                  <p class="text-[7px] text-muted uppercase tracking-widest">{{ fight.challenger_name }}</p>
+                  <p class="text-[10px] text-muted uppercase tracking-widest">{{ fight.challenger_name }}</p>
                   <div class="w-24 h-2 bg-black/40 rounded-full overflow-hidden">
                     <div class="h-full bg-emerald-500 rounded-full transition-all" :style="{ width: (fight.hp1 / fight.max_hp * 100) + '%' }"></div>
                   </div>
                 </div>
                 <div class="space-y-0.5">
-                  <p class="text-[7px] text-muted uppercase tracking-widest">{{ fight.challenged_name }}</p>
+                  <p class="text-[10px] text-muted uppercase tracking-widest">{{ fight.challenged_name }}</p>
                   <div class="w-24 h-2 bg-black/40 rounded-full overflow-hidden">
                     <div class="h-full bg-emerald-500 rounded-full transition-all" :style="{ width: (fight.hp2 / fight.max_hp * 100) + '%' }"></div>
                   </div>
@@ -143,7 +143,7 @@
               :class="fight.winner_id === authStore.user?.id ? 'text-amber-500' : (fight.winner_id === null ? 'text-muted' : 'text-red-400')">
               {{ fight.winner_id === authStore.user?.id ? i18n.t('pvp_victory') : (fight.winner_id === null ? i18n.t('pvp_draw') : i18n.t('pvp_defeat')) }}
             </p>
-            <p class="text-[7px] text-muted/40 uppercase tracking-widest mt-1">{{ fight.damage1 }} / {{ fight.damage2 }} DMG</p>
+            <p class="text-[10px] text-muted/40 uppercase tracking-widest mt-1">{{ fight.damage1 }} / {{ fight.damage2 }} DMG</p>
           </div>
         </div>
       </section>

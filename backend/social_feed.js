@@ -39,23 +39,250 @@ pool.query(`
  */
 router.get('/stats', optionalAuthenticate, async (req, res) => {
   try {
-    const userCountRes = await query('SELECT COUNT(*) as count FROM users');
-    const activeBossRes = await query(`
-      SELECT name, status 
-      FROM boss_fights 
-      WHERE status = 'active' 
-      ORDER BY order_index ASC 
-      LIMIT 1
-    `);
+    const [userCountRes, activeBossRes] = await Promise.all([
+      query('SELECT COUNT(*) as count FROM users'),
+      query(`SELECT name, status FROM boss_fights WHERE status = 'active' ORDER BY order_index ASC LIMIT 1`)
+    ]);
+
+    let rivalry = null;
+
+    // If authenticated, find the user just above them in the weekly ranking (FOMO trigger)
+    if (req.user) {
+      try {
+        const weekStart = new Date();
+        weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+        const weekStartStr = weekStart.toISOString().slice(0, 10);
+
+        // Get current user's weekly reps
+        const myWeekRes = await query(
+          `SELECT COALESCE(SUM(r.count), 0)::int AS weekly_reps
+           FROM reps r WHERE r.user_id = $1 AND r.date >= $2`,
+          [req.user.id, weekStartStr]
+        );
+        const myWeeklyReps = parseInt(myWeekRes.rows[0]?.weekly_reps || 0);
+
+        // Get global rank + the person just above (the "rival")
+        const rivalRes = await query(
+          `WITH weekly AS (
+             SELECT u.id, u.name, u.avatar_url,
+                    COALESCE(SUM(r.count), 0)::int AS weekly_reps,
+                    RANK() OVER (ORDER BY COALESCE(SUM(r.count), 0) DESC) AS rank
+             FROM users u
+             LEFT JOIN reps r ON r.user_id = u.id AND r.date >= $2
+             WHERE u.is_private = false
+             GROUP BY u.id, u.name, u.avatar_url
+           )
+           SELECT w.rank AS my_rank,
+                  r.name AS rival_name,
+                  r.rank AS rival_rank,
+                  (r.weekly_reps - $3)::int AS reps_diff
+           FROM weekly w
+           LEFT JOIN weekly r ON r.rank = w.rank - 1
+           WHERE w.id = $1`,
+          [req.user.id, weekStartStr, myWeeklyReps]
+        );
+
+        if (rivalRes.rows.length > 0) {
+          const row = rivalRes.rows[0];
+          rivalry = {
+            myRank: parseInt(row.my_rank),
+            myWeeklyReps,
+            rivalName: row.rival_name || null,
+            rivalRank: row.rival_rank ? parseInt(row.rival_rank) : null,
+            repsDiff: row.reps_diff ? parseInt(row.reps_diff) : null,
+          };
+        }
+      } catch (rivalErr) {
+        // Non-critical — don't fail the whole stats call
+        console.error('[social stats] rivalry calc error:', rivalErr.message);
+      }
+    }
 
     res.json({
       activeUsers: parseInt(userCountRes.rows[0].count),
       raidStatus: activeBossRes.rows.length > 0 ? 'ACTIVE' : 'IDLE',
-      bossName: activeBossRes.rows.length > 0 ? activeBossRes.rows[0].name : null
+      bossName: activeBossRes.rows.length > 0 ? activeBossRes.rows[0].name : null,
+      rivalry,
     });
   } catch (error) {
     console.error('Error fetching social stats:', error);
     res.status(500).json({ message: 'Error fetching social stats' });
+  }
+});
+
+/**
+ * GET /api/social-feed/personal-insight
+ * Returns a private, user-only motivation card based on the latest logged exercise.
+ * This is never part of the public feed payload.
+ */
+router.get('/personal-insight', authenticate, async (req, res) => {
+  try {
+    const insightRes = await query(`
+      WITH last_rep AS (
+        SELECT
+          r.id,
+          r.exercise_type,
+          r.count,
+          r.date AS rep_date,
+          r.created_at,
+          COALESCE(r.boss_damage_dealt, 0)::int AS boss_damage,
+          COALESCE(r.added_weight, 0)::float AS added_weight,
+          COALESCE(e.title_key, r.exercise_type) AS title_key,
+          COALESCE(e.unit, 'reps') AS unit
+        FROM reps r
+        LEFT JOIN exercises e ON e.slug = r.exercise_type
+        WHERE r.user_id = $1
+          AND COALESCE(e.unit, 'reps') != 'seconds'
+          AND r.count > 0
+        ORDER BY r.date DESC, r.created_at DESC, r.id DESC
+        LIMIT 1
+      ),
+      same_exercise_history AS (
+        SELECT
+          r.id,
+          r.count,
+          r.date,
+          r.created_at,
+          COALESCE(r.boss_damage_dealt, 0)::int AS boss_damage
+        FROM reps r
+        JOIN last_rep lr ON lr.exercise_type = r.exercise_type
+        LEFT JOIN exercises e ON e.slug = r.exercise_type
+        WHERE r.user_id = $1
+          AND r.id <> lr.id
+          AND r.count > 0
+          AND COALESCE(e.unit, 'reps') != 'seconds'
+      ),
+      previous_rep AS (
+        SELECT count AS previous_count, date AS previous_date
+        FROM same_exercise_history
+        ORDER BY date DESC, created_at DESC, id DESC
+        LIMIT 1
+      ),
+      history_stats AS (
+        SELECT
+          COUNT(h.count)::int AS history_count,
+          COALESCE(ROUND(AVG(h.count))::int, 0) AS average_count,
+          COALESCE(ROUND((percentile_cont(0.5) WITHIN GROUP (ORDER BY h.count))::numeric)::int, 0) AS median_count,
+          COALESCE(MAX(h.count)::int, 0) AS previous_best,
+          COALESCE(MIN(h.count)::int, 0) AS previous_low,
+          COALESCE(SUM(h.count)::int, 0) AS historical_total,
+          COALESCE(SUM(CASE WHEN h.count < lr.count THEN 1 ELSE 0 END)::int, 0) AS lower_count,
+          COALESCE(SUM(CASE WHEN h.count <= lr.count THEN 1 ELSE 0 END)::int, 0) AS lower_or_equal_count,
+          COALESCE(SUM(CASE WHEN h.count > lr.count THEN 1 ELSE 0 END)::int, 0) AS higher_count
+        FROM last_rep lr
+        LEFT JOIN same_exercise_history h ON true
+      ),
+      recent_stats AS (
+        SELECT
+          COUNT(*)::int AS recent_sample,
+          COALESCE(ROUND(AVG(count))::int, 0) AS recent_average
+        FROM (
+          SELECT count
+          FROM same_exercise_history
+          ORDER BY date DESC, created_at DESC, id DESC
+          LIMIT 5
+        ) recent
+      ),
+      day_stats AS (
+        SELECT
+          COALESCE(SUM(CASE WHEN COALESCE(e.unit, 'reps') = 'seconds' THEN 0 ELSE r.count END), 0)::int AS day_total_reps,
+          COALESCE(SUM(r.boss_damage_dealt), 0)::int AS day_damage
+        FROM reps r
+        JOIN last_rep lr ON r.date = lr.rep_date
+        LEFT JOIN exercises e ON e.slug = r.exercise_type
+        WHERE r.user_id = $1
+      )
+      SELECT
+        lr.*,
+        TO_CHAR(lr.rep_date, 'YYYY-MM-DD') AS date,
+        hs.*,
+        rs.recent_sample,
+        rs.recent_average,
+        pr.previous_count,
+        TO_CHAR(pr.previous_date, 'YYYY-MM-DD') AS previous_date,
+        ds.day_total_reps,
+        ds.day_damage
+      FROM last_rep lr
+      CROSS JOIN history_stats hs
+      CROSS JOIN recent_stats rs
+      CROSS JOIN day_stats ds
+      LEFT JOIN previous_rep pr ON true
+    `, [req.user.id]);
+
+    if (insightRes.rows.length === 0) {
+      return res.json(null);
+    }
+
+    const row = insightRes.rows[0];
+    const count = Number(row.count || 0);
+    const historyCount = Number(row.history_count || 0);
+    const average = Number(row.average_count || 0);
+    const recentAverage = Number(row.recent_average || 0);
+    const previousCount = Number(row.previous_count || 0);
+    const previousBest = Number(row.previous_best || 0);
+    const delta = average > 0 ? count - average : 0;
+    const recentDelta = recentAverage > 0 ? count - recentAverage : null;
+    const previousDelta = previousCount > 0 ? count - previousCount : null;
+    const percentOverAverage = average > 0 ? Math.round((delta / average) * 100) : null;
+    const sampleSize = historyCount + 1;
+    const percentile = historyCount > 0
+      ? Math.min(100, Math.max(1, Math.round(((Number(row.lower_or_equal_count || 0) + 1) / sampleSize) * 100)))
+      : null;
+    const topPercent = historyCount > 0
+      ? Math.min(100, Math.max(1, Math.round(((Number(row.higher_count || 0) + 1) / sampleSize) * 100)))
+      : null;
+
+    const daysSincePrevious = row.previous_date
+      ? Math.max(0, Math.round((new Date(row.date) - new Date(row.previous_date)) / 86400000))
+      : null;
+
+    let insightType = 'baseline';
+    if (previousBest > 0 && count > previousBest) {
+      insightType = 'record';
+    } else if (average > 0 && delta > 0) {
+      insightType = 'above_average';
+    } else if (previousDelta !== null && previousDelta > 0) {
+      insightType = 'beat_previous';
+    } else if (recentDelta !== null && recentDelta > 0) {
+      insightType = 'trend_up';
+    } else if (historyCount > 0) {
+      insightType = 'steady';
+    }
+
+    res.json({
+      id: row.id,
+      exerciseType: row.exercise_type,
+      titleKey: row.title_key,
+      unit: row.unit,
+      count,
+      date: row.date,
+      bossDamage: Number(row.boss_damage || 0),
+      addedWeight: Number(row.added_weight || 0),
+      averageCount: average,
+      medianCount: Number(row.median_count || 0),
+      previousBest,
+      previousLow: Number(row.previous_low || 0),
+      previousCount,
+      previousDate: row.previous_date || null,
+      historyCount,
+      historicalTotal: Number(row.historical_total || 0),
+      recentAverage,
+      recentSample: Number(row.recent_sample || 0),
+      dayTotalReps: Number(row.day_total_reps || 0),
+      dayDamage: Number(row.day_damage || 0),
+      delta,
+      recentDelta,
+      previousDelta,
+      percentOverAverage,
+      percentile,
+      topPercent,
+      daysSincePrevious,
+      insightType,
+      isPersonalRecord: previousBest > 0 ? count > previousBest : false,
+    });
+  } catch (error) {
+    console.error('Error fetching personal insight:', error);
+    res.status(500).json({ message: 'Error fetching personal insight' });
   }
 });
 

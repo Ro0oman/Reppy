@@ -1,5 +1,5 @@
 <template>
-  <div v-if="show" class="fixed inset-0 z-[100] flex justify-center items-start overflow-y-auto p-4 md:p-8 bg-background/80 backdrop-blur-xl animate-in fade-in duration-300" @click.self="$emit('close')">
+  <div v-if="show" class="cursor-pointer fixed inset-0 z-[100] flex justify-center items-start overflow-y-auto p-4 md:p-8 bg-background/80 backdrop-blur-xl animate-in fade-in duration-300" @click.self="$emit('close')">
     <div class="glass max-w-2xl w-full p-8 rounded-[2.5rem] border border-border shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden flex flex-col max-h-[90vh] my-auto">
       <!-- Background Glow -->
       <div class="absolute -top-32 -right-32 w-64 h-64 bg-primary-500/10 rounded-full blur-[100px] pointer-events-none"></div>
@@ -34,7 +34,7 @@
       <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar min-h-[300px]">
         <div v-if="loading" class="h-64 flex flex-col items-center justify-center gap-6">
             <div class="animate-spin rounded-full h-12 w-12 border-2 border-primary-500 border-t-transparent"></div>
-            <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em] animate-pulse">DECRYPTING BATTLE LOGS...</p>
+            <p class="text-xs font-medium text-muted">Cargando historial...</p>
         </div>
         <div v-else-if="contributors.length === 0" class="h-64 flex flex-col items-center justify-center text-muted">
             <Inbox class="w-12 h-12 mb-4 opacity-20" />
@@ -60,7 +60,7 @@
                   <div>
                     <p class="text-sm font-bold text-foreground group-hover:text-primary-500 transition-colors">
                       {{ user.name }}
-                      <span v-if="user.id === boss?.last_hit_user_id" class="ml-2 text-[7px] px-2 py-0.5 bg-primary-500 text-white rounded-full italic font-black tracking-tighter">LAST HIT</span>
+                      <span v-if="user.id === boss?.last_hit_user_id" class="ml-2 text-[10px] px-2 py-0.5 bg-primary-500 text-white rounded-full italic font-black tracking-tighter">LAST HIT</span>
                     </p>
                     <p class="text-[9px] font-black text-muted uppercase tracking-widest">{{ getPercentage(user.damage_dealt) }}% DEL TOTAL</p>
                   </div>

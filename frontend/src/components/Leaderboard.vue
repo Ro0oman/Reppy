@@ -7,14 +7,14 @@
       <div v-if="authStore.isAuthenticated" class="flex p-0.5 bg-foreground/5 rounded-lg border border-border/40 w-full sm:w-auto">
         <button 
           @click="type = 'friends'"
-          class="flex-1 sm:px-4 py-1.5 text-[9px] font-black uppercase tracking-widest transition-all rounded-md relative z-10"
+          class="flex-1 sm:px-4 py-1.5 text-xs font-black uppercase tracking-widest transition-all rounded-md relative z-10"
           :class="type === 'friends' ? 'text-primary-400 bg-foreground/5 shadow-sm' : 'text-muted/60 hover:text-foreground'"
         >
           {{ i18n.t('lb_friends') }}
         </button>
         <button 
           @click="type = 'global'"
-          class="flex-1 sm:px-4 py-1.5 text-[9px] font-black uppercase tracking-widest transition-all rounded-md relative z-10"
+          class="flex-1 sm:px-4 py-1.5 text-xs font-black uppercase tracking-widest transition-all rounded-md relative z-10"
           :class="type === 'global' ? 'text-primary-400 bg-foreground/5 shadow-sm' : 'text-muted/60 hover:text-foreground'"
         >
           {{ i18n.t('lb_global') }}
@@ -27,7 +27,7 @@
           v-for="tf in ['today', 'week', 'month', 'year', 'all']" 
           :key="tf"
           @click="timeframe = tf"
-          class="flex-1 min-w-[50px] py-1.5 text-[8px] font-black uppercase tracking-widest transition-all rounded-md relative z-10"
+          class="flex-1 min-w-[50px] py-1.5 text-[10px] font-black uppercase tracking-widest transition-all rounded-md relative z-10"
           :class="timeframe === tf ? 'text-primary-400 bg-foreground/5 shadow-sm' : 'text-muted/60 hover:text-foreground'"
         >
           {{ i18n.t('tf_' + tf) }}
@@ -46,10 +46,10 @@
             <AvatarFrame :src="podiumUsers[1].avatar_url" :border-css="podiumUsers[1].border_css" :avatar-css="podiumUsers[1].avatar_css" :size="48" />
           </div>
           <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-zinc-600 rounded-full flex items-center justify-center border border-background shadow-lg">
-             <span class="text-[8px] font-black text-white">2</span>
+             <span class="text-[10px] font-black text-white">2</span>
           </div>
         </div>
-        <p class="text-[9px] font-black text-muted uppercase tracking-tighter truncate w-16 text-center leading-none">{{ podiumUsers[1].name }}</p>
+        <p class="text-xs font-black text-muted uppercase tracking-tighter truncate w-16 text-center leading-none">{{ podiumUsers[1].name }}</p>
         <span class="text-xs font-black text-foreground italic mt-1">{{ podiumUsers[1].total_reps }}</span>
       </button>
 
@@ -79,10 +79,10 @@
             <AvatarFrame :src="podiumUsers[2].avatar_url" :border-css="podiumUsers[2].border_css" :avatar-css="podiumUsers[2].avatar_css" :size="48" />
           </div>
           <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-orange-800 rounded-full flex items-center justify-center border border-background shadow-lg">
-             <span class="text-[8px] font-black text-white">3</span>
+             <span class="text-[10px] font-black text-white">3</span>
           </div>
         </div>
-        <p class="text-[9px] font-black text-muted uppercase tracking-tighter truncate w-16 text-center leading-none">{{ podiumUsers[2].name }}</p>
+        <p class="text-xs font-black text-muted uppercase tracking-tighter truncate w-16 text-center leading-none">{{ podiumUsers[2].name }}</p>
         <span class="text-xs font-black text-foreground italic mt-1">{{ podiumUsers[2].total_reps }}</span>
       </button>
     </div>
@@ -116,13 +116,13 @@
               </div>
               <div class="flex items-center gap-1 bg-foreground/5 px-1.5 py-0.5 rounded border border-border/30 shrink-0">
                 <span class="text-[6px] font-black text-primary-500/80 tracking-widest">LVL</span>
-                <span class="text-[8px] font-black text-foreground italic">{{ user.current_level }}</span>
+                <span class="text-[10px] font-black text-foreground italic">{{ user.current_level }}</span>
               </div>
-              <span v-if="user.title_name" class="hidden xs:inline-block text-[7px] uppercase tracking-widest px-2 py-0.5 rounded-md bg-foreground/5 border border-border font-black shrink-0" :class="user.title_css">
+              <span v-if="user.title_name" class="hidden xs:inline-block text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-md bg-foreground/5 border border-border font-black shrink-0" :class="user.title_css">
                 {{ user.title_name }}
               </span>
             </div>
-            <p class="text-[8px] text-muted font-bold uppercase tracking-widest mt-1 text-left">
+            <p class="text-[10px] text-muted font-bold uppercase tracking-widest mt-1 text-left">
               {{ i18n.t('lb_pro_athlete') }}
             </p>
           </div>
@@ -133,7 +133,7 @@
           <span class="text-xl font-black text-foreground group-hover:text-primary-500 transition-colors italic text-precision leading-none">
             {{ user.total_reps }}
           </span>
-          <p class="text-[7px] font-black text-muted uppercase tracking-widest mt-1 opacity-60 leading-none">{{ i18n.t('stats_reps') }}</p>
+          <p class="text-[10px] font-black text-muted uppercase tracking-widest mt-1 opacity-60 leading-none">{{ i18n.t('stats_reps') }}</p>
         </div>
       </button>
       

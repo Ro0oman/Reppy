@@ -16,7 +16,7 @@
 
     <!-- Industrial Navigation Bar -->
     <nav v-if="authStore.isAuthenticated && $route.name !== 'pvp'"
-      class="border-b border-border bg-surface/40 backdrop-blur-3xl sticky top-0 z-50 transition-all">
+      class="border-b border-border bg-surface/40 backdrop-blur-lg sticky top-0 z-50 transition-all">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
         <!-- Logo Core -->
         <router-link :to="`/${i18n.locale}/dashboard`" class="flex items-center gap-3 group cursor-pointer outline-none"
@@ -52,66 +52,57 @@
         <!-- System Status & User Profile -->
         <div class="flex items-center gap-2 sm:gap-6">
           <div class="flex items-center gap-1.5 sm:gap-4">
-            <!-- Currency Module -->
-            <div class="flex items-center gap-1.5 sm:gap-2">
-              <button @click="showCoinsInfo = true" :title="i18n.t('economy_history_title')"
-                class="flex items-center gap-2 bg-surface/5 px-2.5 sm:px-4 py-2 rounded-2xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-primary-500/50">
-                <Coins class="w-3.5 h-3.5 text-primary-500 transition-transform group-hover:scale-110" />
-                <span class="text-[12px] sm:text-sm font-black text-precision text-foreground">{{
-                  authStore.user?.reppy_coins || 0 }}</span>
-              </button>
+            <!-- Coins: desktop only (on mobile accessible via Profile) -->
+            <button @click="showCoinsInfo = true" :title="i18n.t('economy_history_title')"
+              class="hidden sm:flex items-center gap-2 bg-surface/5 px-3 py-2 rounded-xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-primary-500/50">
+              <Coins class="w-3.5 h-3.5 text-primary-500" />
+              <span class="text-sm font-bold text-foreground tabular-nums">{{ authStore.user?.reppy_coins || 0 }}</span>
+            </button>
 
-              <button @click="showCoinsInfo = true" :title="i18n.t('economy_gems')"
-                class="flex items-center gap-2 bg-indigo-500/5 px-2.5 sm:px-4 py-2 rounded-2xl border border-indigo-500/20 hover:border-indigo-500/40 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
-                <Gem class="w-3.5 h-3.5 text-indigo-500 transition-transform group-hover:scale-110" />
-                <span class="text-[12px] sm:text-sm font-black text-precision text-foreground">{{
-                  authStore.user?.reppy_gems || 0 }}</span>
-              </button>
-            </div>
+            <!-- Gems: desktop only -->
+            <button @click="showCoinsInfo = true" :title="i18n.t('economy_gems')"
+              class="hidden sm:flex items-center gap-2 bg-indigo-500/5 px-3 py-2 rounded-xl border border-indigo-500/20 hover:border-indigo-500/40 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
+              <Gem class="w-3.5 h-3.5 text-indigo-500" />
+              <span class="text-sm font-bold text-foreground tabular-nums">{{ authStore.user?.reppy_gems || 0 }}</span>
+            </button>
 
-            <!-- Notification Bell -->
+            <!-- Notification Bell (always) -->
             <div class="relative flex items-center">
               <button @click="handleBellClick"
-                class="p-2 sm:p-2.5 rounded-2xl transition-all group relative border flex items-center justify-center"
+                class="p-2 rounded-xl transition-all group relative border flex items-center justify-center min-w-[40px] min-h-[40px]"
                 :class="showNotifications ? 'bg-primary-500/10 border-primary-500/30 text-primary-500' : 'bg-surface/5 border-border hover:bg-surface/10'">
-                <Bell class="w-4.5 h-4.5 sm:w-5 sm:h-5 transition-colors"
+                <Bell class="w-5 h-5 transition-colors"
                   :class="showNotifications ? 'text-primary-500' : 'text-muted group-hover:text-primary-500'" />
                 <div v-if="notifStore.unreadCount > 0"
                   class="absolute -top-1 -right-1 w-4 h-4 bg-primary-500 rounded-full border-2 border-surface flex items-center justify-center">
-                  <span class="text-[8px] font-black text-white">{{ notifStore.unreadCount }}</span>
+                  <span class="text-[10px] font-bold text-white">{{ notifStore.unreadCount }}</span>
                 </div>
               </button>
-
               <div v-if="showNotifications"
-                class="absolute right-0 top-full mt-4 z-[150] animate-in slide-in-from-top-2 duration-300">
+                class="absolute right-0 top-full mt-3 z-[150] animate-in slide-in-from-top-2 duration-200">
                 <NotificationsDropdown @close="showNotifications = false" />
               </div>
             </div>
 
-            <!-- Mute Toggle -->
+            <!-- Mute: desktop only (rarely needed on mobile) -->
             <button @click="toggleMute(); playClickBlip();"
               :title="isMuted() ? i18n.t('audio_unmute') : i18n.t('audio_mute')"
-              class="p-2 sm:p-2.5 rounded-2xl transition-all group bg-surface/5 border border-border hover:bg-surface/10 flex items-center justify-center">
+              class="hidden sm:flex p-2 rounded-xl transition-all group bg-surface/5 border border-border hover:bg-surface/10 items-center justify-center min-w-[40px] min-h-[40px]">
               <component :is="isMuted() ? VolumeX : Volume2"
-                class="w-4.5 h-4.5 sm:w-5 sm:h-5 text-muted group-hover:text-primary-500 transition-colors" />
+                class="w-5 h-5 text-muted group-hover:text-primary-500 transition-colors" />
             </button>
 
-          
+            <!-- Level chip (always, tappable → Perfil) -->
+            <router-link :to="{ name: 'profile', params: { lang: i18n.locale, userId: authStore.user?.id } }"
+              class="flex items-center gap-1.5 bg-primary-500/10 px-2.5 py-1.5 rounded-xl border border-primary-500/20 hover:border-primary-500/40 transition-all">
+              <span class="text-[10px] font-bold text-primary-500 uppercase tracking-wide">Lv</span>
+              <span class="text-sm font-bold text-foreground tabular-nums leading-none">{{ authStore.user?.current_level || 1 }}</span>
+            </router-link>
 
-
-            <!-- Level Module (Responsive) -->
-            <div class="flex items-center">
-              <!-- Compact for mobile, full for desktop -->
-              <div
-                class="sm:hidden flex items-center gap-1.5 bg-primary-500/10 px-2 py-1.5 rounded-xl border border-primary-500/20">
-                <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest">LVL</span>
-                <span class="text-sm font-black text-foreground italic leading-none">{{ authStore.user?.current_level ||
-                  1 }}</span>
-              </div>
-              <div class="hidden sm:block">
-                <LevelBar :level="authStore.user?.current_level || 1" :current-xp="authStore.user?.xp_into_level || 0"
-                  :next-level-xp="authStore.user?.xp_for_next_level || 1000" />
-              </div>
+            <!-- XP bar: desktop only -->
+            <div class="hidden sm:block">
+              <LevelBar :level="authStore.user?.current_level || 1" :current-xp="authStore.user?.xp_into_level || 0"
+                :next-level-xp="authStore.user?.xp_for_next_level || 1000" />
             </div>
 
           </div>
@@ -122,7 +113,7 @@
 
     <!-- Public Navigation Bar -->
     <nav v-else-if="$route.name !== 'pvp' && $route.name !== 'login'"
-      class="border-b border-border bg-surface/40 backdrop-blur-3xl sticky top-0 z-50 transition-all">
+      class="border-b border-border bg-surface/40 backdrop-blur-lg sticky top-0 z-50 transition-all">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 md:h-20 flex items-center justify-between gap-4">
         <router-link :to="{ name: 'landing', params: { lang: i18n.locale } }"
           class="flex items-center gap-3 group cursor-pointer outline-none shrink-0"
@@ -181,7 +172,7 @@
       </router-view>
     </main>
 
-    <footer class="mt-auto py-12 pb-32 md:pb-12 border-t border-border/5">
+    <footer class="mt-auto py-12 pb-24 md:pb-12 border-t border-border/5">
       <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 text-muted/40">
         <span class="text-[10px] font-medium tracking-wider">{{ i18n.t('economy_reppy_core') }}</span>
         <div class="flex items-center gap-6">
@@ -196,7 +187,7 @@
             <Github class="w-4 h-4 text-muted group-hover:text-foreground" />
             <div class="flex items-center gap-2">
               <Star class="w-3 h-3 text-primary-500 fill-primary-500 animate-pulse" />
-              <span class="text-[8px] font-black text-muted uppercase tracking-widest">{{ i18n.t('economy_star_github')
+              <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18n.t('economy_star_github')
                 }}</span>
             </div>
           </a>
@@ -214,7 +205,7 @@
           class="flex flex-col items-center justify-center gap-1 h-full group transition-colors"
           :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted hover:text-foreground'">
           <component :is="nav.icon" class="w-[22px] h-[22px] transition-transform group-active:scale-90" />
-          <span class="text-[9px] font-bold tracking-tight">{{ nav.short || i18n.t(nav.label) }}</span>
+          <span class="text-xs font-bold tracking-tight">{{ nav.short || i18n.t(nav.label) }}</span>
         </router-link>
 
         <!-- Center: elevated primary action (Log reps) -->
@@ -224,7 +215,7 @@
             <span class="w-14 h-14 rounded-2xl bg-primary-500 flex items-center justify-center text-white shadow-lg shadow-primary-500/30 ring-4 ring-background transition-transform group-active:scale-95">
               <Plus class="w-7 h-7" stroke-width="2.5" />
             </span>
-            <span class="text-[9px] font-black uppercase tracking-tight text-primary-500">{{ i18n.locale === 'es' ? 'Registrar' : 'Log' }}</span>
+            <span class="text-xs font-black uppercase tracking-tight text-primary-500">{{ i18n.locale === 'es' ? 'Registrar' : 'Log' }}</span>
           </router-link>
         </div>
 
@@ -237,7 +228,7 @@
           <!-- Reward badge on Profile (chests/new inventory now live there) -->
           <span v-if="nav.id === 'profile' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory)"
             class="absolute top-2 right-[calc(50%-18px)] w-2 h-2 rounded-full bg-primary-500 ring-2 ring-surface"></span>
-          <span class="text-[9px] font-bold tracking-tight">{{ nav.short || i18n.t(nav.label) }}</span>
+          <span class="text-xs font-bold tracking-tight">{{ nav.short || i18n.t(nav.label) }}</span>
         </router-link>
       </div>
     </nav>
@@ -250,17 +241,17 @@
 
     <Teleport to="body">
       <div v-if="showCoinsInfo"
-        class="fixed inset-0 z-[100] flex justify-center items-center p-4 md:p-8 bg-background/90 backdrop-blur-md"
+        class="cursor-pointer fixed inset-0 z-[100] flex justify-center items-center p-4 md:p-8 bg-background/90 backdrop-blur-md"
         @click.self="showCoinsInfo = false">
         <div
-          class="bg-surface/90 border border-white/10 w-full max-w-4xl rounded-[3rem] shadow-2xl overflow-y-auto relative flex flex-col max-h-[90vh] no-scrollbar">
+          class="bg-surface/90 border border-white/10 w-full max-w-4xl rounded-2xl shadow-2xl overflow-y-auto relative flex flex-col max-h-[90vh] no-scrollbar">
           <div
             class="absolute -top-24 -right-24 w-64 h-64 bg-primary-500/10 rounded-full blur-[100px] pointer-events-none">
           </div>
 
           <div class="flex items-center justify-between p-8 md:p-12 pb-0">
             <div class="space-y-1">
-              <h2 class="text-3xl font-black text-industrial text-foreground uppercase italic tracking-tighter">{{
+              <h2 class="text-3xl font-bold text-industrial text-foreground   tracking-tighter">{{
                 i18n.t('economy_title') }}</h2>
               <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em]">{{ i18n.t('economy_subtitle') }}
               </p>
@@ -281,7 +272,7 @@
                 <span class="text-xs font-black text-muted uppercase tracking-widest">{{ i18n.t(earn.key) }}</span>
                 <div class="flex items-baseline gap-2">
                   <span class="text-lg font-black text-precision text-foreground">{{ earn.amount }}</span>
-                  <span class="text-[8px] font-black text-muted uppercase tracking-widest">{{ i18n.t('economy_rep')
+                  <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18n.t('economy_rep')
                     }}</span>
                 </div>
               </div>
@@ -294,13 +285,13 @@
               }}</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="p-5 bg-neon-lime/5 border border-neon-lime/10 rounded-2xl space-y-2 text-left">
-                <p class="text-[9px] font-black text-neon-lime uppercase tracking-widest">{{
+                <p class="text-xs font-black text-neon-lime uppercase tracking-widest">{{
                   i18n.t('roulette_exe_available').split(' ')[0] }} {{ i18n.t('roulette_exe_available').split(' ')[1] }}
                 </p>
                 <p class="text-sm font-black text-foreground text-precision">10 – 100 RC</p>
               </div>
               <div class="p-5 bg-primary-500/5 border border-primary-500/10 rounded-2xl space-y-2 text-left">
-                <p class="text-[9px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('boss_anomaly') }}
+                <p class="text-xs font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('boss_anomaly') }}
                 </p>
                 <p class="text-sm font-black text-foreground text-precision">{{ i18n.t('economy_legendary') }}</p>
               </div>
@@ -323,27 +314,29 @@
       </div>
     </Teleport>
 
-    <!-- Floating Roulette Module (Issue 86/142) -->
+    <!-- Floating Roulette — only on desktop; on mobile it lives in the dock area -->
     <div v-if="rouletteStore.canSpin"
-      class="fixed bottom-24 right-4 md:bottom-12 md:right-12 z-[70] flex flex-col items-end gap-5 group">
-      <!-- Logic Tooltip -->
+      class="hidden md:flex fixed bottom-12 right-12 z-[70] flex-col items-end gap-5 group">
       <div
-        class="bg-primary-500 text-white text-[9px] font-black uppercase tracking-[0.3em] px-5 py-2.5 rounded-full shadow-2xl opacity-0 group-hover:opacity-100 transition-all border border-white/20 whitespace-nowrap hidden md:block">
+        class="bg-primary-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap">
         {{ i18n.t('roulette_exe_available') }}
       </div>
-
       <button @click="rouletteStore.openModal()"
-        class="relative bg-steel-grey/60 backdrop-blur-xl p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-2xl transition-all duration-500 border border-white/10 group overflow-hidden active:scale-95">
+        class="rgb-roulette-button relative bg-surface/80 backdrop-blur-md p-5 rounded-2xl shadow-xl transition-all border border-border hover:border-primary-500/40 active:scale-95 group overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-transparent pointer-events-none"></div>
+        <Dices class="w-7 h-7 text-foreground relative z-10 transition-transform duration-300 group-hover:rotate-180" />
+        <div class="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-primary-500 rounded-full ring-2 ring-background"></div>
+      </button>
+    </div>
 
-        <div class="absolute inset-0 bg-gradient-to-br from-primary-500/15 to-transparent"></div>
-
-        <Dices
-          class="w-6 h-6 md:w-8 md:h-8 text-white relative z-10 transition-transform duration-500 group-hover:rotate-180" />
-
-        <!-- Available indicator (calm, no infinite ping) -->
-        <div
-          class="absolute top-3 right-3 md:top-4 md:right-4 w-2.5 h-2.5 bg-primary-500 rounded-full ring-2 ring-background">
-        </div>
+    <!-- Mobile roulette: compact chip above dock instead of floating -->
+    <div v-if="rouletteStore.canSpin && authStore.isAuthenticated"
+      class="md:hidden fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom)+0.5rem)] right-3 z-[65]">
+      <button @click="rouletteStore.openModal()"
+        class="rgb-roulette-button rgb-roulette-button-mobile flex items-center gap-2 bg-surface/90 backdrop-blur-md border border-primary-500/30 rounded-xl px-3 py-2 shadow-lg active:scale-95 transition-all overflow-hidden">
+        <Dices class="w-4 h-4 text-primary-500" />
+        <span class="text-xs font-bold text-primary-500">{{ i18n.locale === 'es' ? 'Ruleta' : 'Spin' }}</span>
+        <div class="w-2 h-2 bg-primary-500 rounded-full"></div>
       </button>
     </div>
 
@@ -425,7 +418,7 @@ const publicNavLinks = computed(() => [
 // Mobile dock: core-loop first. Logging is the elevated center action.
 // Left of center / right of center. Inventory lives in Profile.
 const mobileNavLeft = computed(() => [
-  { id: 'shop', icon: ShoppingBag, label: 'nav_shop', short: i18n.locale === 'es' ? 'Tienda' : 'Shop' },
+  { id: 'dashboard', icon: LayoutDashboard, label: 'nav_dashboard', short: i18n.locale === 'es' ? 'Inicio' : 'Home' },
   { id: 'social', icon: Users, label: 'nav_social', short: i18n.locale === 'es' ? 'Comunidad' : 'Community' },
 ]);
 const mobileNavRight = computed(() => [
@@ -540,6 +533,41 @@ onMounted(async () => {
 
 .animate-spin-slow {
   animation: spin 8s linear infinite;
+}
+
+.rgb-roulette-button::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  z-index: 0;
+  border-radius: inherit;
+  background: conic-gradient(from 0deg, #ff004c, #ffb300, #44ff00, #00e5ff, #7c3cff, #ff004c);
+  animation: roulette-rgb-spin 2.6s linear infinite;
+}
+
+.rgb-roulette-button::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  z-index: 0;
+  border-radius: calc(1rem - 2px);
+  background: hsl(var(--surface) / 0.9);
+  backdrop-filter: blur(12px);
+}
+
+.rgb-roulette-button > * {
+  position: relative;
+  z-index: 1;
+}
+
+.rgb-roulette-button-mobile::after {
+  border-radius: calc(0.75rem - 2px);
+}
+
+@keyframes roulette-rgb-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes spin {

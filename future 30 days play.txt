@@ -1,0 +1,137 @@
+Plan 30 Días: Retención Evolutiva de Reppy
+Resumen
+Objetivo principal: aumentar retención diaria sin reescribir la app. Mantener Reppy como calistenia + RPG + social, pero hacer que cada visita responda mejor a: “qué hice, qué mejoré, qué toca ahora y por qué vuelvo mañana”.
+
+Prioridad de ejecución:
+
+Motivación personal y progreso visible.
+Feed social más útil y menos genérico.
+Instrumentación para medir activación/retención.
+Estabilidad, seguridad y rendimiento móvil.
+Pulido visual consistente.
+Cambios Clave
+1. Capa Producto/Retención
+Convertir Dashboard y Social en un bucle diario claro: registrar -> ver mejora -> recompensa -> comparación personal/social -> próximo objetivo.
+Añadir más posts privados automáticos tipo “coach”:
+récord personal,
+mejora vs media,
+mejora vs último intento,
+vuelta tras varios días,
+constancia semanal,
+ejercicio favorito progresando.
+Crear un bloque “Siguiente objetivo” en Dashboard:
+ejemplo: “Te faltan 2 reps para superar tu mejor marca en Dominadas”.
+CTA directo a registrar ese ejercicio.
+Mantener Social como pantalla de retorno, pero insertar señales personales arriba: “tu reto pendiente”, “alguien te superó”, “hoy puedes mantener racha”.
+2. Capa Social y Motivacional
+Evolucionar el feed con 3 tipos de posts:
+públicos: entrenos, PRs, bosses, PvP;
+privados: insights personales solo para el usuario;
+contextuales: “amigo te superó”, “rank cambió”, “boss casi cae”.
+Añadir reacciones rápidas más expresivas que solo like: fuego, respeto, boss down, +1.
+Añadir banda superior en Comunidad:
+si hay racha en riesgo: CTA registrar;
+si alguien te supera: CTA contraatacar;
+si hay boss activo bajo de vida: CTA atacar;
+si no hay evento fuerte: mostrar “N entrenando hoy”.
+Mantener el post privado compacto por defecto y expandible, como el ajuste recién hecho.
+3. Capa Entrenamiento
+No convertir Reppy en Heavy. Mejorar el “modo libre” actual con objetivos inteligentes.
+En cada ejercicio favorito, mostrar:
+última marca,
+media personal,
+mejor marca,
+objetivo sugerido de hoy.
+Añadir micro-retos generados por datos:
+“haz +1 sobre tu media”,
+“iguala tu mejor serie”,
+“vuelve al ejercicio que abandonaste hace X días”.
+Dejar planes guiados como segunda prioridad dentro de estos 30 días: solo pulir visibilidad y CTA, no rediseñar todo el sistema.
+4. Capa Técnica/API/Datos
+Crear un endpoint de métricas de retención/eventos:
+POST /api/events
+eventos mínimos: activation.first_rep_logged, activation.quickstart_seen, activation.quickstart_completed, retention.return_24h, retention.return_7d, retention.return_30d.
+Añadir tabla app_events con dedupe por usuario/evento/día cuando aplique.
+Mejorar /api/social-feed/personal-insight para devolver varios insights candidatos y que frontend elija 1-2 según prioridad.
+Añadir endpoint de “daily context”:
+racha,
+reto recomendado,
+boss urgency,
+social threat,
+próximo objetivo.
+Corregir deuda crítica:
+desactivar /api/test/* en producción con env explícita;
+añadir endpoint faltante de transacciones de perfil o quitar la paginación rota;
+centralizar logging para no depender de console.log disperso;
+documentar migraciones en un único flujo.
+5. Capa Frontend/Rendimiento/UX
+Dividir progresivamente componentes grandes sin cambiar diseño:
+Dashboard: extraer bloques de racha, objetivo, histórico, boss, registro.
+SocialFeed: separar post privado, feed list, composer/edit.
+Inventory/Shop: separar filtros, cards, modales y acciones.
+Crear un cliente API único para evitar mezcla de axios, fetch, URLs absolutas y headers manuales.
+Reducir coste móvil:
+revisar backdrop-blur,
+limitar animaciones infinitas,
+lazy-load modales pesados,
+no montar componentes ocultos si no se usan.
+Pasada visual evolutiva:
+reducir uppercase/italic/font-black excesivo,
+unificar radios,
+evitar textos cortados,
+limpiar mezcla ES/EN en botones y estados.
+Roadmap 30 Días
+Semana 1: Base de Medición y Bugs Críticos
+Implementar app_events y POST /api/events.
+Disparar activation.first_rep_logged desde backend al registrar primera serie.
+Desactivar endpoints test en producción.
+Corregir transacciones de perfil.
+Crear checklist manual de regresión: login, registrar, feed, tienda, inventario, boss, PvP, misiones.
+Semana 2: Motivación Personal
+Expandir insights privados con 6 tipos motivacionales.
+Añadir “Siguiente objetivo” en Dashboard.
+Añadir reto recomendado por ejercicio favorito.
+Hacer que Social muestre el insight privado entre posición 1 y 2, compacto y expandible.
+Semana 3: Social Retentivo
+Añadir banda contextual en Comunidad.
+Añadir eventos sociales “te superaron”, “amigo entrenó”, “boss casi cae”.
+Preparar push para 2 casos: racha en riesgo y alguien te supera.
+Añadir reacciones rápidas al feed.
+Semana 4: Pulido, Rendimiento y Calidad
+Extraer subcomponentes principales de Dashboard/SocialFeed sin cambiar comportamiento.
+Crear cliente API único.
+Añadir tests e2e para los flujos de retención.
+Pasada móvil 375x812: textos, overflow, botones, navegación inferior.
+Revisar consola sin errores en Dashboard, Social, Profile, Shop, Inventory.
+Tests y Escenarios
+Usuario nuevo:
+signup/login,
+primera serie,
+recibe XP/coins/daño,
+aparece evento activation.first_rep_logged,
+ve siguiente objetivo.
+Usuario recurrente:
+entra en Social,
+ve insight privado,
+amplía stats,
+registra desde CTA.
+Usuario con historial:
+se detecta récord,
+mejora vs media,
+mejora vs último intento,
+vuelta tras ausencia.
+Seguridad:
+/api/test/* bloqueado en producción;
+usuario privado no aparece en perfiles/feed ajenos;
+endpoints privados requieren JWT.
+Rendimiento:
+build OK;
+no errores de consola;
+feed y dashboard usables en móvil pequeño;
+componentes pesados no degradan navegación.
+Supuestos
+Prioridad elegida: retención.
+Horizonte elegido: 30 días.
+Nivel de cambio: evolutivo, sin reescritura ni rediseño radical.
+Se conserva la identidad RPG/social actual.
+Planes guiados se mejoran solo en visibilidad y conexión con el bucle diario; no se rehacen en esta fase.
