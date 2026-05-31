@@ -111,17 +111,26 @@
       <!-- Rankings Section -->
       <div class="space-y-4">
         <div class="card-stats !p-0 overflow-hidden border-border bg-surface/20 backdrop-blur-sm">
-          <div class="p-4 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4 bg-foreground/[0.02]">
-            <div class="flex items-center gap-3">
-               <BarChart3 class="w-4 h-4 text-primary-500" />
-               <div>
-                 <h3 class="text-sm font-black text-industrial uppercase text-foreground tracking-tight leading-none">
-                   {{ activeExerciseLabel }} <span class="text-muted/60 text-[10px]">{{ i18n.t('protocol_label') }}</span>
-                 </h3>
-                 <p class="text-[8px] font-black text-muted uppercase tracking-[0.2em] mt-1 opacity-50">{{ i18n.t('live_sync') }}</p>
-               </div>
+          <div class="p-4 border-b border-border bg-foreground/[0.02]">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <BarChart3 class="w-4 h-4 text-primary-500" />
+                <div>
+                  <h3 class="text-sm font-black text-industrial uppercase text-foreground tracking-tight leading-none">
+                    {{ activeExerciseLabel }} <span class="text-muted/60 text-[10px]">{{ i18n.t('protocol_label') }}</span>
+                  </h3>
+                  <p class="text-[8px] font-black text-muted uppercase tracking-[0.2em] mt-1 opacity-50">{{ i18n.t('live_sync') }}</p>
+                </div>
+              </div>
+              <button @click="showFilter = !showFilter" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border/60 bg-foreground/[0.03] hover:bg-foreground/[0.07] transition-all active:scale-95">
+                <SlidersHorizontal class="w-3 h-3 text-muted" />
+                <span class="text-[9px] font-black uppercase tracking-widest text-muted">Filtro</span>
+                <ChevronDown class="w-3 h-3 text-muted transition-transform duration-200" :class="showFilter ? 'rotate-180' : ''" />
+              </button>
             </div>
-            <ExerciseSelector v-model="activeExercise" class="!bg-transparent !p-0 w-full md:w-auto scale-90 md:origin-right" />
+            <div v-if="showFilter" class="mt-3 pt-3 border-t border-border/40">
+              <ExerciseSelector v-model="activeExercise" class="!bg-transparent !p-0 w-full md:w-auto scale-90 md:origin-left" />
+            </div>
           </div>
           <Leaderboard 
             :exercise-type="activeExercise"
@@ -255,7 +264,7 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import {
   Users, Search, SearchX, UserPlus, Heart, Check,
-  Trophy, ChevronRight, Users2, BarChart3, Activity, Plus, Flame
+  Trophy, ChevronRight, Users2, BarChart3, Activity, Plus, Flame, ChevronDown, SlidersHorizontal
 } from 'lucide-vue-next';
 import { Swords } from 'lucide-vue-next';
 import { useI18nStore } from '../stores/i18n';
@@ -282,6 +291,7 @@ const friends = ref([]);
 const loadingSearch = ref(false);
 const activeExercise = ref('all');
 const activeTab = ref('feed');
+const showFilter = ref(false);
 const streakStatus = ref(null);
 
 const activeExerciseLabel = computed(() => {

@@ -14,7 +14,7 @@
         <div>
           <h3 class="text-xl font-black text-foreground uppercase tracking-tight">Editar Favoritos</h3>
           <p class="text-[10px] font-bold text-muted/80 tracking-wide mt-0.5">
-            Elige hasta 6 ejercicios para tu acceso rápido. {{ selectedCount }}/6 seleccionados.
+            Elige hasta 7 ejercicios para tu acceso rápido. {{ selectedCount }}/7 seleccionados.
           </p>
         </div>
       </div>
@@ -198,7 +198,7 @@ const toggleFavorite = (slug) => {
   if (favorites.value.includes(slug)) {
     favorites.value = favorites.value.filter(s => s !== slug);
   } else {
-    if (favorites.value.length >= 6) return;
+    if (favorites.value.length >= 7) return;
     favorites.value.push(slug);
   }
 };
