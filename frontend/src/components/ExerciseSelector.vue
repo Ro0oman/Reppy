@@ -1,34 +1,32 @@
 <template>
 <div class="min-w-0 max-w-full">
+  <!-- Compact mode (mobile Dashboard) -->
   <div v-if="compact" class="space-y-2">
-    <div class="flex items-center justify-between px-1">
-      <div class="flex items-center gap-2">
-        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted/50">
-          {{ isEs ? 'Ejercicio' : 'Exercise' }}
-        </p>
-        <button type="button" @click="isModalOpen = true" class="text-[9px] font-black uppercase tracking-widest text-primary-500 hover:text-primary-400 transition flex items-center gap-1 select-none">
-          <Star class="w-3 h-3 fill-primary-500" />
-          {{ isEs ? 'Editar favoritos' : 'Edit favorites' }}
-        </button>
-      </div>
-      <p class="text-[10px] font-black uppercase tracking-tight text-primary-500">
-        {{ currentExerciseLabel }}
-      </p>
+    <!-- Header: just the label + edit link, minimal -->
+    <div class="flex items-center justify-between px-0.5">
+      <p class="text-xs font-semibold text-muted">{{ isEs ? 'Ejercicio' : 'Exercise' }}</p>
+      <button type="button" @click="isModalOpen = true"
+        class="favorites-chip favorites-chip-compact">
+        <Star class="w-3.5 h-3.5 fill-amber-300 text-amber-300" />
+        <span>{{ isEs ? 'Favoritos' : 'Favorites' }}</span>
+      </button>
     </div>
-    <div ref="compactScroller" class="flex max-w-full items-center gap-2 overflow-x-auto overscroll-x-contain no-scrollbar scroll-smooth scroll-px-1 pb-1">
+    <!-- Scrollable pill row -->
+    <div ref="compactScroller"
+      class="flex max-w-full items-center gap-1.5 overflow-x-auto overscroll-x-contain no-scrollbar scroll-smooth scroll-px-1 pb-0.5">
       <button
         v-for="ex in exercises"
         :key="`compact-${ex.id}`"
         :data-exercise-id="ex.id"
         @click="$emit('update:modelValue', ex.id)"
         :aria-pressed="modelValue === ex.id"
-        class="touch-action-manipulation shrink-0 h-10 max-w-[11rem] px-3.5 rounded-xl border flex items-center gap-2 text-[10px] font-black uppercase tracking-wide transition-all active:scale-[0.98]"
+        class="touch-action-manipulation shrink-0 h-9 px-3 rounded-xl border flex items-center gap-1.5 text-xs font-semibold transition-all active:scale-[0.97]"
         :class="modelValue === ex.id
-          ? 'bg-primary-500/15 border-primary-500/40 text-foreground'
-          : 'bg-surface/10 border-white/10 text-muted/80'"
+          ? 'bg-primary-500 border-primary-500 text-white shadow-md shadow-primary-500/20'
+          : 'bg-foreground/[0.04] border-border text-muted hover:text-foreground hover:border-primary-500/30'"
       >
-        <span v-if="typeof ex.icon === 'string'" class="text-sm">{{ ex.icon }}</span>
-        <component v-else :is="ex.icon" class="w-3.5 h-3.5" :class="modelValue === ex.id ? 'text-primary-500' : ''" />
+        <span v-if="typeof ex.icon === 'string'" class="text-sm leading-none">{{ ex.icon }}</span>
+        <component v-else :is="ex.icon" class="w-3.5 h-3.5 shrink-0" />
         <span class="truncate">{{ labelFor(ex.id, ex.fallbackEs, ex.fallbackEn) }}</span>
       </button>
     </div>
@@ -40,8 +38,8 @@
         <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted/50">
           {{ isEs ? 'Ejercicio activo' : 'Active exercise' }}
         </p>
-        <button type="button" @click="isModalOpen = true" class="text-[9px] font-black uppercase tracking-widest text-primary-500 hover:text-primary-400 transition flex items-center gap-1">
-          <Star class="w-3 h-3 fill-primary-500" />
+        <button type="button" @click="isModalOpen = true" class="favorites-chip">
+          <Star class="w-3.5 h-3.5 fill-amber-300 text-amber-300" />
           {{ isEs ? 'Editar favoritos' : 'Edit favorites' }}
         </button>
       </div>
@@ -72,7 +70,7 @@
           />
           <span
             v-if="modelValue === ex.id"
-            class="text-[8px] font-black uppercase tracking-wider text-primary-500"
+            class="text-[10px] font-black uppercase tracking-wider text-primary-500"
           >
             {{ isEs ? 'Activo' : 'Active' }}
           </span>
@@ -83,7 +81,7 @@
         >
           {{ labelFor(ex.id, ex.fallbackEs, ex.fallbackEn) }}
         </p>
-        <p class="mt-1 text-[9px] font-bold tracking-tight text-muted/60">
+        <p class="mt-1 text-xs font-bold tracking-tight text-muted/60">
           {{ isEs ? ex.hintEs : ex.hintEn }}
         </p>
       </button>
@@ -277,5 +275,43 @@ watch(
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+.favorites-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgb(245 158 11 / 0.38);
+  background:
+    linear-gradient(135deg, rgb(245 158 11 / 0.16), rgb(99 102 241 / 0.12)),
+    rgb(255 255 255 / 0.04);
+  padding: 0.35rem 0.6rem;
+  color: rgb(253 230 138);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow: 0 0 18px rgb(245 158 11 / 0.14);
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease, color 160ms ease;
+}
+
+.favorites-chip:hover {
+  border-color: rgb(251 191 36 / 0.7);
+  color: rgb(254 243 199);
+  box-shadow: 0 0 26px rgb(245 158 11 / 0.24);
+  transform: translateY(-1px);
+}
+
+.favorites-chip:active {
+  transform: scale(0.96);
+}
+
+.favorites-chip-compact {
+  min-height: 1.8rem;
+  padding: 0.28rem 0.5rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.02em;
 }
 </style>
