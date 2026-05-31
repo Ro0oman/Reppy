@@ -4,7 +4,7 @@
     <nav class="w-full max-w-7xl px-6 py-8 flex items-center justify-between z-50 animate-in">
       <router-link :to="`/${i18n.locale}`" class="flex items-center gap-3 group">
         <div class="w-8 h-8 bg-primary rounded-xl flex items-center justify-center font-bold text-white shadow-lg shadow-primary/20 transition-transform group-hover:scale-110">R</div>
-        <span class="text-xl font-black tracking-tight text-foreground uppercase italic">Reppy</span>
+        <span class="text-xl font-black tracking-tight text-foreground  ">Reppy</span>
       </router-link>
     </nav>
 
@@ -15,7 +15,7 @@
       <div v-if="featuredPost" class="animate-in">
         <router-link 
           :to="`/${i18n.locale}/blog/${featuredPost.slug}`"
-          class="relative group block w-full aspect-[21/9] md:aspect-[3/1] rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl bg-surface-dark/10"
+          class="relative group block w-full aspect-[21/9] md:aspect-[3/1] rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-surface-dark/10"
         >
           <img 
             :src="featuredPost.image" 
@@ -25,10 +25,10 @@
           <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
           <div class="absolute bottom-0 left-0 p-8 md:p-16 space-y-4 max-w-3xl">
             <div class="flex items-center gap-4">
-              <span class="px-3 py-1 bg-primary text-[9px] font-black uppercase tracking-widest rounded-full">{{ featuredPost.category }}</span>
+              <span class="px-3 py-1 bg-primary text-xs font-black uppercase tracking-widest rounded-full">{{ featuredPost.category }}</span>
               <span class="text-[10px] font-bold text-white/60 uppercase tracking-widest">{{ i18n.locale === 'es' ? 'APRENDER' : 'LEARN' }}</span>
             </div>
-            <h2 class="text-3xl md:text-6xl font-black text-white tracking-tighter uppercase italic leading-none group-hover:text-primary transition-colors">
+            <h2 class="text-3xl md:text-6xl font-bold text-white tracking-tighter   leading-none group-hover:text-primary transition-colors">
               {{ featuredPost.locales[i18n.locale]?.title || featuredPost.locales.en.title }}
             </h2>
             <p class="text-lg text-white/70 font-medium line-clamp-2 max-w-xl">
@@ -43,11 +43,11 @@
         <template v-for="(post, index) in gridPosts" :key="post.slug">
           <!-- Inject Conversion Card in the middle of the first page -->
           <div v-if="currentPage === 1 && index === 2" class="col-span-full md:col-span-2 py-12">
-            <div class="relative p-12 md:p-20 rounded-[3rem] overflow-hidden border border-white/10 bg-surface-dark/40 group">
+            <div class="relative p-12 md:p-20 rounded-2xl overflow-hidden border border-white/10 bg-surface-dark/40 group">
               <div class="absolute inset-0 bg-primary/5 blur-[100px] -translate-x-1/2"></div>
               <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
                 <div class="space-y-6 text-center md:text-left">
-                  <h3 class="text-4xl md:text-6xl font-black italic tracking-tighter uppercase leading-none">
+                  <h3 class="text-4xl md:text-6xl font-bold  tracking-tighter  leading-none">
                     {{ i18n.locale === 'es' ? '¿QUIERES MÁS FUERZA?' : 'WANT MORE STRENGTH?' }}
                   </h3>
                   <p class="text-xl text-muted font-medium max-w-md">
@@ -68,7 +68,7 @@
             :to="`/${i18n.locale}/blog/${post.slug}`" 
             class="group space-y-8 animate-in"
           >
-            <div class="relative aspect-video rounded-[2.5rem] overflow-hidden border border-white/5 bg-surface-dark/10 shadow-2xl">
+            <div class="relative aspect-video rounded-2xl overflow-hidden border border-white/5 bg-surface-dark/10 shadow-2xl">
               <img 
                 :src="post.image" 
                 class="w-full h-full object-cover transition-all duration-1000 group-hover:scale-105" 
@@ -84,7 +84,7 @@
                 <span class="opacity-20">•</span>
                 <span class="text-muted">{{ post.date }}</span>
               </div>
-              <h3 class="text-3xl font-black text-foreground group-hover:text-primary transition-colors leading-tight tracking-tight uppercase italic">
+              <h3 class="text-3xl font-bold text-foreground group-hover:text-primary transition-colors leading-tight tracking-tight  ">
                 {{ post.locales[i18n.locale]?.title || post.locales.en.title }}
               </h3>
               <p class="text-lg text-muted/60 leading-relaxed font-medium line-clamp-2">
@@ -120,9 +120,9 @@
 
     <!-- Final conversion section -->
     <section class="w-full py-32 border-t border-white/5 bg-surface-dark/5 text-center">
-      <div class="max-w-4xl mx-auto px-6 space-y-12">
+      <div class="max-w-4xl mx-auto px-6 space-y-6">
         <div class="space-y-6">
-          <h2 class="text-5xl md:text-7xl font-black italic tracking-tighter uppercase leading-none">
+          <h2 class="text-5xl md:text-7xl font-bold  tracking-tighter  leading-none">
             {{ i18n.locale === 'es' ? 'EL PRÓXIMO HIT ES EL TUYO' : 'THE NEXT HIT IS YOURS' }}
           </h2>
           <p class="text-xl text-muted font-medium max-w-xl mx-auto">

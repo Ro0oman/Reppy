@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://reppy-weld.vercel.app/es</loc>
-    <lastmod>2026-05-20T15:00:46.912Z</lastmod>
+    <lastmod>2026-05-31T15:48:21.093Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es" />
@@ -11,7 +11,7 @@
   </url>
   <url>
     <loc>https://reppy-weld.vercel.app/en</loc>
-    <lastmod>2026-05-20T15:00:46.912Z</lastmod>
+    <lastmod>2026-05-31T15:48:21.093Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es" />
@@ -20,7 +20,7 @@
   </url>
   <url>
     <loc>https://reppy-weld.vercel.app/es/contador-dominadas</loc>
-    <lastmod>2026-05-20T15:00:46.912Z</lastmod>
+    <lastmod>2026-05-31T15:48:21.093Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/contador-dominadas" />
@@ -29,7 +29,7 @@
   </url>
   <url>
     <loc>https://reppy-weld.vercel.app/en/contador-dominadas</loc>
-    <lastmod>2026-05-20T15:00:46.912Z</lastmod>
+    <lastmod>2026-05-31T15:48:21.093Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/contador-dominadas" />
@@ -38,7 +38,7 @@
   </url>
   <url>
     <loc>https://reppy-weld.vercel.app/es/contador-flexiones</loc>
-    <lastmod>2026-05-20T15:00:46.912Z</lastmod>
+    <lastmod>2026-05-31T15:48:21.093Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/contador-flexiones" />
@@ -47,7 +47,7 @@
   </url>
   <url>
     <loc>https://reppy-weld.vercel.app/en/contador-flexiones</loc>
-    <lastmod>2026-05-20T15:00:46.912Z</lastmod>
+    <lastmod>2026-05-31T15:48:21.093Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/contador-flexiones" />
@@ -56,7 +56,7 @@
   </url>
   <url>
     <loc>https://reppy-weld.vercel.app/es/app-calistenia</loc>
-    <lastmod>2026-05-20T15:00:46.912Z</lastmod>
+    <lastmod>2026-05-31T15:48:21.093Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/app-calistenia" />
@@ -65,7 +65,7 @@
   </url>
   <url>
     <loc>https://reppy-weld.vercel.app/en/app-calistenia</loc>
-    <lastmod>2026-05-20T15:00:46.912Z</lastmod>
+    <lastmod>2026-05-31T15:48:21.093Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/app-calistenia" />
@@ -74,7 +74,7 @@
   </url>
   <url>
     <loc>https://reppy-weld.vercel.app/es/social</loc>
-    <lastmod>2026-05-20T15:00:46.912Z</lastmod>
+    <lastmod>2026-05-31T15:48:21.093Z</lastmod>
     <changefreq>hourly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/social" />
@@ -83,7 +83,7 @@
   </url>
   <url>
     <loc>https://reppy-weld.vercel.app/en/social</loc>
-    <lastmod>2026-05-20T15:00:46.912Z</lastmod>
+    <lastmod>2026-05-31T15:48:21.093Z</lastmod>
     <changefreq>hourly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/social" />
@@ -92,7 +92,7 @@
   </url>
   <url>
     <loc>https://reppy-weld.vercel.app/es/blog</loc>
-    <lastmod>2026-05-20T15:00:46.912Z</lastmod>
+    <lastmod>2026-05-31T15:48:21.093Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/blog" />
@@ -101,12 +101,102 @@
   </url>
   <url>
     <loc>https://reppy-weld.vercel.app/en/blog</loc>
-    <lastmod>2026-05-20T15:00:46.912Z</lastmod>
+    <lastmod>2026-05-31T15:48:21.093Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/blog" />
     <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/blog" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/blog" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/blog/hollow-body-core-maestro</loc>
+    <lastmod>2026-05-30T00:00:00.000Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/blog/hollow-body-core-maestro" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/blog/hollow-body-core-maestro" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/blog/hollow-body-core-maestro" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/blog/hollow-body-core-maestro</loc>
+    <lastmod>2026-05-30T00:00:00.000Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/blog/hollow-body-core-maestro" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/blog/hollow-body-core-maestro" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/blog/hollow-body-core-maestro" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/blog/calistenia-despues-de-los-40</loc>
+    <lastmod>2026-05-28T00:00:00.000Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/blog/calistenia-despues-de-los-40" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/blog/calistenia-despues-de-los-40" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/blog/calistenia-despues-de-los-40" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/blog/calistenia-despues-de-los-40</loc>
+    <lastmod>2026-05-28T00:00:00.000Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/blog/calistenia-despues-de-los-40" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/blog/calistenia-despues-de-los-40" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/blog/calistenia-despues-de-los-40" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/blog/beneficios-de-colgarse</loc>
+    <lastmod>2026-05-26T00:00:00.000Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/blog/beneficios-de-colgarse" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/blog/beneficios-de-colgarse" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/blog/beneficios-de-colgarse" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/blog/beneficios-de-colgarse</loc>
+    <lastmod>2026-05-26T00:00:00.000Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/blog/beneficios-de-colgarse" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/blog/beneficios-de-colgarse" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/blog/beneficios-de-colgarse" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/blog/como-dormir-para-progresar</loc>
+    <lastmod>2026-05-24T00:00:00.000Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/blog/como-dormir-para-progresar" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/blog/como-dormir-para-progresar" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/blog/como-dormir-para-progresar" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/blog/como-dormir-para-progresar</loc>
+    <lastmod>2026-05-24T00:00:00.000Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/blog/como-dormir-para-progresar" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/blog/como-dormir-para-progresar" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/blog/como-dormir-para-progresar" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/blog/plancha-abdominal-errores</loc>
+    <lastmod>2026-05-22T00:00:00.000Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/blog/plancha-abdominal-errores" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/blog/plancha-abdominal-errores" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/blog/plancha-abdominal-errores" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/blog/plancha-abdominal-errores</loc>
+    <lastmod>2026-05-22T00:00:00.000Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/blog/plancha-abdominal-errores" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/blog/plancha-abdominal-errores" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/blog/plancha-abdominal-errores" />
   </url>
   <url>
     <loc>https://reppy-weld.vercel.app/es/blog/rutina-pike-pushups</loc>

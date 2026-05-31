@@ -85,7 +85,7 @@
         <div class="flex flex-col items-center">
            <span class="text-[8px] font-black text-muted uppercase tracking-[0.4em]">{{ fight.battlefield }}</span>
            <div class="flex items-center gap-2 mt-2">
-              <div v-for="ex in allowedExercises" :key="ex" class="px-2 py-0.5 bg-foreground/[0.06] border border-border rounded text-[7px] font-bold text-muted uppercase">
+              <div v-for="ex in allowedExercises" :key="ex" class="px-2 py-0.5 bg-foreground/[0.06] border border-border rounded text-[10px] font-bold text-muted uppercase">
                  {{ i18n.t(ex) }}
               </div>
            </div>

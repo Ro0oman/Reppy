@@ -1,13 +1,13 @@
 <template>
   <div v-if="show" class="fixed inset-0 z-[100] flex justify-center items-start overflow-y-auto p-4 md:p-8">
-    <div class="fixed inset-0 bg-zinc-950/80 backdrop-blur-md" @click="!spinning && $emit('close')"></div>
+    <div class="cursor-pointer fixed inset-0 bg-zinc-950/80 backdrop-blur-md" @click="!spinning && $emit('close')"></div>
     
-    <div class="relative bg-white dark:bg-zinc-900 w-full max-w-sm rounded-[2.5rem] shadow-2xl border border-white/10 overflow-hidden transform transition-all animate-in fade-in duration-300 my-auto">
+    <div class="relative bg-white dark:bg-zinc-900 w-full max-w-sm rounded-2xl shadow-2xl border border-white/10 overflow-hidden transform transition-all animate-in fade-in duration-300 my-auto">
       <div class="px-8 pt-8 text-center">
         <div class="inline-flex p-3 bg-primary-500/10 rounded-2xl mb-4">
           <Sparkles class="w-6 h-6 text-primary-600" />
         </div>
-        <h2 class="text-3xl font-black text-zinc-900 dark:text-white uppercase tracking-tighter italic leading-none">
+        <h2 class="text-3xl font-bold text-zinc-900 dark:text-white  tracking-tighter  leading-none">
           {{ i18n.t('wheel_title_start') }} <span class="text-primary-600">{{ i18n.t('wheel_title_end') }}</span>
         </h2>
         <p class="text-zinc-500 dark:text-zinc-400 font-medium text-sm mt-2">{{ i18n.t('wheel_subtitle') }}</p>
@@ -57,11 +57,11 @@
             class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white dark:bg-zinc-800 shadow-2xl border-4 border-primary-500 flex items-center justify-center z-30 transition-all disabled:opacity-50 disabled:grayscale overflow-hidden"
           >
             <div v-if="spinning" class="flex flex-col items-center">
-               <span class="text-[8px] font-black text-primary-600 uppercase tracking-tighter">{{ i18n.t('wheel_btn_spinning') }}</span>
+               <span class="text-[10px] font-black text-primary-600 uppercase tracking-tighter">{{ i18n.t('wheel_btn_spinning') }}</span>
             </div>
             <div v-else-if="rouletteStore.hasTicket" class="flex flex-col items-center">
                <ItemIcon name="ticket" type="consumable" class-name="w-6 h-6 mb-0.5" />
-               <span class="text-[8px] font-bold text-primary-500/60 leading-none">{{ rouletteStore.ticketCount }}</span>
+               <span class="text-[10px] font-bold text-primary-500/60 leading-none">{{ rouletteStore.ticketCount }}</span>
             </div>
             <span v-else class="text-[10px] font-black text-primary-600 uppercase tracking-tighter">{{ i18n.t('wheel_btn_spin') }}</span>
           </button>
@@ -104,7 +104,7 @@
       <div v-if="showResultModal" class="fixed inset-0 z-[110] flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/95 backdrop-blur-xl"></div>
         
-        <div class="relative w-full max-w-sm bg-zinc-900 border border-white/10 rounded-[3rem] p-8 text-center shadow-[0_0_100px_rgba(79,70,229,0.3)] animate-scale-in">
+        <div class="relative w-full max-w-sm bg-zinc-900 border border-white/10 rounded-2xl p-8 text-center shadow-[0_0_100px_rgba(79,70,229,0.3)] animate-scale-in">
           <div class="absolute -top-12 left-1/2 -translate-x-1/2">
             <div class="w-24 h-24 bg-primary-600 rounded-3xl rotate-12 flex items-center justify-center shadow-2xl border-4 border-zinc-900">
                <Sparkles class="w-12 h-12 text-white animate-pulse" />
@@ -113,10 +113,10 @@
 
           <div class="mt-12 space-y-2">
             <h3 class="text-[10px] font-black text-primary-500 uppercase tracking-[0.5em]">{{ i18n.t('wheel_congrats') }}</h3>
-            <h2 class="text-4xl font-black text-white italic uppercase tracking-tighter">{{ i18n.t('ui_reward_unlocked') }}</h2>
+            <h2 class="text-4xl font-bold text-white   tracking-tighter">{{ i18n.t('ui_reward_unlocked') }}</h2>
           </div>
 
-          <div class="my-10 p-8 bg-white/5 rounded-[2rem] border border-white/5 relative group">
+          <div class="my-10 p-8 bg-white/5 rounded-xl border border-white/5 relative group">
             <div class="absolute inset-0 bg-primary-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
             
             <!-- Prize Icon/Visual -->
@@ -128,7 +128,7 @@
               <span v-else>✨</span>
             </div>
 
-            <div class="text-2xl font-black text-white tracking-tight leading-none">
+            <div class="text-2xl font-bold text-white tracking-tight leading-none">
               {{ getPrizeText(prizeResult) }}
             </div>
             <p v-if="prizeResult.item" class="text-[10px] font-bold text-muted uppercase tracking-widest mt-2">
@@ -158,7 +158,7 @@
             </button>
           </div>
           
-          <p class="mt-6 text-[8px] font-bold text-white/20 uppercase tracking-[0.3em]">
+          <p class="mt-6 text-[10px] font-bold text-white/20 uppercase tracking-[0.3em]">
             REPPY VAULT SYSTEM v2.0
           </p>
         </div>

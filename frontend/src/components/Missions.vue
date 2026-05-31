@@ -5,7 +5,7 @@
       <!-- Header -->
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div class="space-y-2">
-          <h1 class="text-2xl font-black text-foreground tracking-tight flex items-center gap-3">
+          <h1 class="text-2xl font-bold text-foreground tracking-tight flex items-center gap-3">
             <Target class="w-6 h-6 text-primary-500" />
             {{ i18n.t('missions_title') }}
           </h1>
@@ -15,7 +15,7 @@
         <!-- Global Reset Timer -->
         <div v-if="nextReset" class="bg-foreground/[0.04] border border-border px-6 py-3 rounded-2xl flex items-center gap-4">
           <div class="flex flex-col items-end">
-            <span class="text-[8px] font-black text-muted uppercase tracking-widest">{{ i18n.t('missions_next_reset') || 'NEXT_RESET' }}</span>
+            <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18n.t('missions_next_reset') || 'NEXT_RESET' }}</span>
             <span class="text-lg font-black text-primary-500 font-mono tracking-tighter">{{ countdown }}</span>
           </div>
           <Clock class="w-5 h-5 text-primary-500 animate-pulse" />
@@ -58,8 +58,8 @@
               <!-- Content -->
               <div class="space-y-1.5 flex-1">
                 <div class="flex items-center gap-3">
-                  <span v-if="mission.is_daily" class="px-2 py-0.5 bg-indigo-500/10 border border-indigo-500/20 rounded text-[8px] font-black text-indigo-400 uppercase tracking-widest">DAILY</span>
-                  <span v-else class="px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded text-[8px] font-black text-amber-400 uppercase tracking-widest">SPECIAL</span>
+                  <span v-if="mission.is_daily" class="px-2 py-0.5 bg-indigo-500/10 border border-indigo-500/20 rounded text-[10px] font-black text-indigo-400 uppercase tracking-widest">DAILY</span>
+                  <span v-else class="px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded text-[10px] font-black text-amber-400 uppercase tracking-widest">SPECIAL</span>
                   <h3 class="text-sm font-black text-foreground uppercase italic tracking-tight">{{ i18n.t(mission.title_key) }}</h3>
                 </div>
                 <p class="text-xs text-muted leading-relaxed max-w-md">{{ i18n.t(mission.description_key) }}</p>
@@ -69,7 +69,7 @@
                 
                 <!-- Progress Bar -->
                 <div class="space-y-2">
-                  <div class="flex justify-between text-[9px] font-bold uppercase tracking-widest">
+                  <div class="flex justify-between text-xs font-bold uppercase tracking-widest">
                     <span class="text-muted">{{ mission.current_value }} / {{ mission.goal_value }} {{ getGoalLabel(mission.goal_type) }}</span>
                     <span :class="mission.is_completed ? 'text-emerald-500' : 'text-primary-500'">{{ Math.round((mission.current_value / mission.goal_value) * 100) }}%</span>
                   </div>
@@ -124,7 +124,7 @@
         </div>
 
         <!-- Empty Daily State -->
-        <div v-if="!missions.some(m => m.is_daily)" class="bg-indigo-500/5 border border-indigo-500/10 rounded-[2rem] p-10 text-center space-y-4">
+        <div v-if="!missions.some(m => m.is_daily)" class="bg-indigo-500/5 border border-indigo-500/10 rounded-xl p-10 text-center space-y-4">
           <div class="w-16 h-16 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-2">
             <CheckCircle2 class="w-8 h-8 text-indigo-400" />
           </div>

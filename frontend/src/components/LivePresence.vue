@@ -22,7 +22,7 @@
       <div 
         v-for="user in displayOperatives.slice(0, 8)" 
         :key="user.id"
-        class="relative group"
+        class="cursor-pointer relative group"
         @click="showModal = true"
       >
         <div class="w-9 h-9 rounded-full border-2 border-background bg-surface/50 backdrop-blur-sm overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:scale-110 hover:z-10 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] cursor-pointer">
@@ -49,7 +49,7 @@
       <Teleport to="body">
         <div v-if="showModal" class="fixed inset-0 z-[99999] flex items-center justify-center p-4">
           <!-- Backdrop -->
-          <div class="absolute inset-0 bg-black/90 backdrop-blur-md" @click="showModal = false"></div>
+          <div class="cursor-pointer absolute inset-0 bg-black/90 backdrop-blur-md" @click="showModal = false"></div>
           
           <!-- Modal Content -->
           <div class="relative w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden animate-scale-in">

@@ -6,10 +6,10 @@
          aria-modal="true"
     >
       <!-- Backdrop -->
-      <div class="fixed inset-0 bg-black/90 backdrop-blur-md" @click="close"></div>
+      <div class="cursor-pointer fixed inset-0 bg-black/90 backdrop-blur-md" @click="close"></div>
 
       <!-- Content Card -->
-      <div class="relative max-w-2xl w-full bg-zinc-900 border border-white/10 rounded-[3rem] shadow-[0_0_100px_hsl(var(--primary) / 0.3)] p-8 md:p-12 overflow-y-auto max-h-[90vh] animate-in my-auto no-scrollbar">
+      <div class="relative max-w-2xl w-full bg-zinc-900 border border-white/10 rounded-2xl shadow-[0_0_100px_hsl(var(--primary) / 0.3)] p-8 md:p-12 overflow-y-auto max-h-[90vh] animate-in my-auto no-scrollbar">
         
         <!-- Close Button -->
         <button @click="close" class="absolute top-8 right-8 z-20 p-2 text-muted hover:text-white transition-colors">
@@ -24,9 +24,9 @@
         <div class="relative z-10 text-center mb-10">
           <div class="inline-flex items-center gap-2 px-3 py-1 bg-primary-500/20 border border-primary-500/30 rounded-full mb-4">
             <Sparkles class="w-3.5 h-3.5 text-primary-500" />
-            <span class="text-[9px] font-black text-primary-500 uppercase tracking-[0.3em]">VERSION 1.0.0 — RPG UPDATE</span>
+            <span class="text-xs font-black text-primary-500 uppercase tracking-[0.3em]">VERSION 1.0.0 — RPG UPDATE</span>
           </div>
-          <h2 class="text-4xl md:text-6xl font-black text-white italic uppercase tracking-tighter leading-none mb-4">
+          <h2 class="text-4xl md:text-6xl font-bold text-white   tracking-tighter leading-none mb-4">
             REPPY RPG<span class="text-primary-500">.</span>AWAKENING
           </h2>
           <p class="text-sm text-zinc-400 font-medium max-w-lg mx-auto">
@@ -96,7 +96,7 @@
              {{ i18n.locale === 'es' ? 'INICIAR PROTOCOLO RPG' : 'BEGIN RPG PROTOCOL' }}
            </button>
            
-           <button @click="viewFullPost" class="text-[9px] font-black text-zinc-500 hover:text-white uppercase tracking-widest transition-colors">
+           <button @click="viewFullPost" class="text-xs font-black text-zinc-500 hover:text-white uppercase tracking-widest transition-colors">
              {{ i18n.locale === 'es' ? 'LEER NOTAS DEL PARCHE COMPLETAS' : 'READ FULL PATCH NOTES' }}
            </button>
         </div>

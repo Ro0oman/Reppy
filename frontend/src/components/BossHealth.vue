@@ -1,12 +1,12 @@
 <template>
   <div
     v-if="loading"
-    class="animate-pulse bg-surface/30 h-72 rounded-[2.5rem] mb-8 border border-white/5"
+    class="animate-pulse bg-surface/30 h-72 rounded-2xl mb-8 border border-white/5"
   ></div>
 
   <div v-else-if="boss" class="space-y-5">
     <section
-      class="relative overflow-hidden rounded-[2.2rem] border bg-surface/10 backdrop-blur-2xl p-4 sm:p-6 max-h-[78dvh] sm:max-h-none overflow-y-auto sm:overflow-visible no-scrollbar"
+      class="relative overflow-hidden rounded-[2.2rem] border bg-surface/10 backdrop-blur-md p-4 sm:p-6 max-h-[78dvh] sm:max-h-none overflow-y-auto sm:overflow-visible no-scrollbar"
       :class="theme.border"
     >
       <div class="absolute inset-0 pointer-events-none opacity-30" :class="theme.aura"></div>
@@ -15,7 +15,7 @@
         <div class="space-y-2">
           <div class="flex items-center gap-2 overflow-x-auto no-scrollbar whitespace-nowrap">
             <span
-              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border"
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-[0.2em] border"
               :class="theme.badge"
             >
               <Sparkles class="w-3 h-3" />
@@ -23,13 +23,13 @@
             </span>
             <span
               v-if="boss.weakness_stat"
-              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border border-amber-500/30 bg-amber-500/10 text-amber-400"
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-[0.2em] border border-amber-500/30 bg-amber-500/10 text-amber-400"
             >
               <Shield class="w-3 h-3" />
               {{ weaknessLabel }} {{ weaknessDisplay }}
             </span>
           </div>
-          <h3 class="text-2xl sm:text-4xl font-black italic tracking-tight text-foreground uppercase leading-none">
+          <h3 class="text-2xl sm:text-4xl font-bold  tracking-tight text-foreground  leading-none">
             {{ boss.name }}
           </h3>
           <p v-if="boss.active_phrase && !isDefeated" class="text-xs sm:text-sm italic text-muted/90">
@@ -77,7 +77,7 @@
               class="w-full h-full object-cover transition-all duration-500"
               :class="isDefeated ? 'grayscale opacity-40' : ''"
             />
-            <div v-else class="w-full h-full flex items-center justify-center text-4xl font-black text-white/20">?</div>
+            <div v-else class="w-full h-full flex items-center justify-center text-4xl font-bold text-white/20">?</div>
           </div>
         </div>
 
@@ -87,14 +87,14 @@
               <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted/60">
                 {{ i18nStore.t('boss_target_integrity') }}
               </p>
-              <p class="text-xl sm:text-3xl font-black italic tracking-tight text-foreground">
+              <p class="text-xl sm:text-3xl font-bold italic tracking-tight text-foreground">
                 {{ formatNumber(boss.current_hp) }}
                 <span class="text-xs font-black text-muted/60">/ {{ formatNumber(boss.total_hp) }} HP</span>
               </p>
             </div>
             <div class="text-right">
               <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted/60">HP</p>
-              <p class="text-xl sm:text-2xl font-black text-foreground">{{ hpPercentageLabel }}</p>
+              <p class="text-xl sm:text-2xl font-bold text-foreground">{{ hpPercentageLabel }}</p>
             </div>
           </div>
 
@@ -110,15 +110,15 @@
 
           <div class="grid grid-cols-3 gap-2" v-if="authStore.isAuthenticated">
             <div class="rounded-xl border border-white/10 bg-white/[0.02] p-2.5">
-              <p class="text-[8px] font-black uppercase tracking-[0.2em] text-muted/50">{{ statLabelPersonal }}</p>
+              <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted/50">{{ statLabelPersonal }}</p>
               <p class="text-sm sm:text-lg font-black italic text-foreground">{{ formatNumber(personalDamage) }}</p>
             </div>
             <div class="rounded-xl border border-white/10 bg-white/[0.02] p-2.5">
-              <p class="text-[8px] font-black uppercase tracking-[0.2em] text-muted/50">{{ statLabelToday }}</p>
+              <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted/50">{{ statLabelToday }}</p>
               <p class="text-sm sm:text-lg font-black italic text-emerald-400">{{ formatNumber(dailyDamage) }}</p>
             </div>
             <div class="rounded-xl border border-white/10 bg-white/[0.02] p-2.5">
-              <p class="text-[8px] font-black uppercase tracking-[0.2em] text-muted/50">{{ statLabelTop }}</p>
+              <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted/50">{{ statLabelTop }}</p>
               <p class="text-[11px] sm:text-sm font-black italic text-amber-400 truncate" :title="topDealerName">{{ topDealerName }}</p>
             </div>
           </div>
@@ -189,11 +189,11 @@
           <img v-if="nextBoss.image_url" :src="nextBoss.image_url" :alt="nextBoss.name" class="w-full h-full object-cover opacity-70" />
         </div>
         <div class="min-w-0">
-          <p class="text-[9px] font-black uppercase tracking-[0.2em] text-muted/60">{{ i18nStore.t('boss_next_protocol') }}</p>
+          <p class="text-xs font-black uppercase tracking-[0.2em] text-muted/60">{{ i18nStore.t('boss_next_protocol') }}</p>
           <p class="text-sm font-black uppercase tracking-tight text-foreground truncate">{{ nextBoss.name }}</p>
         </div>
       </div>
-      <div class="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-muted/70">
+      <div class="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-[0.2em] text-muted/70">
         <LockIcon class="w-3.5 h-3.5" />
         {{ i18nStore.t('boss_locked') }}
       </div>
@@ -201,14 +201,14 @@
 
     <div
       v-if="showHelp"
-      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl"
+      class="cursor-pointer fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl"
       @click.self="showHelp = false"
     >
-      <div class="w-full max-w-2xl rounded-[2rem] border border-white/10 bg-surface/30 p-6 sm:p-8">
+      <div class="w-full max-w-2xl rounded-xl border border-white/10 bg-surface/30 p-6 sm:p-8">
         <div class="flex items-start justify-between gap-4">
           <div>
             <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary-500">{{ i18nStore.t('boss_op_manual') }}</p>
-            <h4 class="mt-2 text-2xl font-black italic tracking-tight text-foreground">{{ i18nStore.t('boss_community_event') }}</h4>
+            <h4 class="mt-2 text-2xl font-bold italic tracking-tight text-foreground">{{ i18nStore.t('boss_community_event') }}</h4>
           </div>
           <button
             @click="showHelp = false"

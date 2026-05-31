@@ -5,7 +5,7 @@
         <p class="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-400">
           {{ i18n.locale === 'es' ? 'Dia completado' : 'Day completed' }}
         </p>
-        <h3 class="mt-2 text-2xl font-black uppercase leading-tight tracking-tight text-foreground sm:text-3xl">
+        <h3 class="mt-2 text-2xl font-bold uppercase leading-tight tracking-tight text-foreground sm:text-3xl">
           {{ completedTitle }}
         </h3>
         <p class="mt-2 text-sm font-bold text-muted/70">
@@ -14,22 +14,22 @@
       </div>
       <div class="grid grid-cols-2 gap-2 sm:max-w-sm">
         <div class="rounded-2xl border border-white/10 bg-deep-abyss/75 p-4 text-center">
-          <p class="text-[9px] font-black uppercase tracking-widest text-muted">
+          <p class="text-xs font-black uppercase tracking-widest text-muted">
             {{ i18n.locale === 'es' ? 'Vuelves en' : 'Come back in' }}
           </p>
-          <p class="mt-1 text-2xl font-black text-primary-500">{{ unlockHours }}</p>
+          <p class="mt-1 text-2xl font-bold text-primary-500">{{ unlockHours }}</p>
           <p class="text-[10px] font-black uppercase tracking-widest text-muted">h</p>
         </div>
         <div class="rounded-2xl border border-white/10 bg-deep-abyss/75 p-4 text-center">
-          <p class="text-[9px] font-black uppercase tracking-widest text-muted">
+          <p class="text-xs font-black uppercase tracking-widest text-muted">
             {{ i18n.locale === 'es' ? 'Minutos' : 'Minutes' }}
           </p>
-          <p class="mt-1 text-2xl font-black text-primary-500">{{ unlockMinutes }}</p>
+          <p class="mt-1 text-2xl font-bold text-primary-500">{{ unlockMinutes }}</p>
           <p class="text-[10px] font-black uppercase tracking-widest text-muted">min</p>
         </div>
       </div>
       <div v-if="nextWorkoutPreview" class="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-        <p class="text-[9px] font-black uppercase tracking-widest text-muted">
+        <p class="text-xs font-black uppercase tracking-widest text-muted">
           {{ i18n.locale === 'es' ? 'Proxima mision' : 'Next mission' }}
         </p>
         <p class="mt-1 text-lg font-black text-foreground">
@@ -47,7 +47,7 @@
         <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary-500">
           {{ i18n.t('today_workout_title') }}
         </p>
-        <h3 class="mt-2 text-2xl font-black uppercase leading-tight tracking-tight text-foreground sm:text-3xl">
+        <h3 class="mt-2 text-2xl font-bold uppercase leading-tight tracking-tight text-foreground sm:text-3xl">
           {{ i18n.t(workout.day.titleKey) }}
         </h3>
         <p class="mt-1 text-sm font-bold text-muted/70">
@@ -91,7 +91,7 @@
       >
         <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div class="min-w-0">
-            <p class="text-[9px] font-black uppercase tracking-widest text-primary-500">{{ block.blockType }}</p>
+            <p class="text-xs font-black uppercase tracking-widest text-primary-500">{{ block.blockType }}</p>
             <h4 class="mt-1 text-lg font-black text-foreground cursor-pointer hover:text-primary-500 transition flex items-center gap-2 select-none" @click="openExerciseDetail(block.exerciseType || 'pullups')">
               {{ block.title }}
               <Info class="h-3.5 w-3.5 opacity-40 hover:opacity-100 transition" />

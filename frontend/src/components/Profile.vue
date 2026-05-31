@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 pt-24 pb-32 space-y-12 animate-in relative z-10">
+  <div class="max-w-7xl mx-auto px-4 pt-24 pb-24 space-y-6 animate-in relative z-10">
     <div v-if="loading" class="flex flex-col items-center justify-center py-32">
       <div class="w-12 h-12 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
       <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em] mt-8">{{ i18nStore.t('profile_decrypting') }}</p>
@@ -25,7 +25,7 @@
         <!-- Identity & Status -->
         <div class="flex-1 space-y-6">
           <div class="space-y-1">
-            <h1 class="text-4xl md:text-7xl font-black text-foreground italic uppercase tracking-tighter leading-none mb-2 drop-shadow-2xl break-words">
+            <h1 class="text-4xl md:text-7xl font-bold text-foreground   tracking-tighter leading-none mb-2 drop-shadow-2xl break-words">
               {{ user.name }}
             </h1>
             <div class="flex items-center justify-center md:justify-start gap-3">
@@ -38,8 +38,8 @@
             <div class="w-full sm:w-auto flex items-center justify-center sm:justify-start gap-3 bg-surface/5 px-5 py-3 rounded-xl border border-border group/coins">
               <Coins class="w-4 h-4 text-primary-500 transition-transform" />
               <div class="flex items-baseline gap-1.5">
-                <span class="text-2xl font-black text-precision text-foreground leading-none">{{ user.reppy_coins || 0 }}</span>
-                <span class="text-[8px] font-black text-muted uppercase tracking-widest">{{ i18nStore.t('stats_reps') }}</span>
+                <span class="text-2xl font-bold text-precision text-foreground leading-none">{{ user.reppy_coins || 0 }}</span>
+                <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18nStore.t('stats_reps') }}</span>
               </div>
             </div>
 
@@ -47,15 +47,15 @@
             <div class="w-full sm:w-auto flex items-center gap-4 bg-primary-500/5 px-6 py-3 rounded-2xl border border-primary-500/20 group/level shadow-lg shadow-primary-500/5">
               <div class="flex flex-col w-full sm:w-auto">
                 <div class="flex items-baseline justify-center sm:justify-start gap-2">
-                  <span class="text-[9px] font-black text-primary-500 uppercase tracking-[0.2em]">{{ i18nStore.t('codex_lv_up').toUpperCase() }}</span>
-                  <span class="text-3xl font-black text-foreground italic leading-none font-industrial">{{ user.current_level || 1 }}</span>
+                  <span class="text-xs font-black text-primary-500 uppercase tracking-[0.2em]">{{ i18nStore.t('codex_lv_up').toUpperCase() }}</span>
+                  <span class="text-3xl font-bold text-foreground italic leading-none font-industrial">{{ user.current_level || 1 }}</span>
                 </div>
                 <!-- XP Needed Info -->
                 <div class="flex items-center justify-center sm:justify-start gap-2 mt-1">
                   <div class="h-1.5 w-full sm:w-32 bg-foreground/10 rounded-full overflow-hidden border border-border/40">
                     <div class="h-full bg-primary-500 transition-all duration-1000" :style="{ width: `${((user.xp_into_level || 0) / (user.xp_for_next_level || 1000)) * 100}%` }"></div>
                   </div>
-                  <span class="text-[8px] font-black text-muted uppercase tracking-tighter shrink-0">
+                  <span class="text-[10px] font-black text-muted uppercase tracking-tighter shrink-0">
                     {{ (user.xp_for_next_level || 1000) - (user.xp_into_level || 0) }} {{ i18nStore.t('profile_xp_to_next') }}
                   </span>
                 </div>
@@ -63,8 +63,8 @@
             </div>
             
             <div class="flex flex-col items-center md:items-start md:border-l md:border-border md:pl-6 p-2 md:p-0">
-              <p class="text-[9px] font-black text-neon-lime uppercase tracking-[0.2em] mb-1 italic animate-pulse">{{ i18nStore.t('profile_reward_protocol') }}</p>
-              <p class="text-[8px] font-bold text-muted uppercase tracking-widest leading-relaxed max-w-[240px] text-center md:text-left">{{ i18nStore.t('profile_reward_desc') }}</p>
+              <p class="text-xs font-black text-neon-lime uppercase tracking-[0.2em] mb-1 italic animate-pulse">{{ i18nStore.t('profile_reward_protocol') }}</p>
+              <p class="text-[10px] font-bold text-muted uppercase tracking-widest leading-relaxed max-w-[240px] text-center md:text-left">{{ i18nStore.t('profile_reward_desc') }}</p>
             </div>
           </div>
           
@@ -74,31 +74,31 @@
               <div v-for="attr in attributes" :key="attr.key" 
                   class="p-4 rounded-xl border border-border bg-surface/20 group/attr transition-all"
                   :class="getAttrColor(attr.lvl)">
-                <p class="text-[9px] font-black uppercase tracking-[0.2em] mb-2 font-tight" :class="attr.labelColor">{{ attr.key }}</p>
+                <p class="text-xs font-black uppercase tracking-[0.2em] mb-2 font-tight" :class="attr.labelColor">{{ attr.key }}</p>
                 <div class="flex flex-col leading-none">
                   <div class="flex items-center gap-1.5">
-                    <span class="text-2xl font-black text-precision text-foreground">LVL {{ attr.lvl }}</span>
+                    <span class="text-2xl font-bold text-precision text-foreground">LVL {{ attr.lvl }}</span>
                     <span v-if="attr.bonus > 0" class="text-[10px] font-black text-neon-lime animate-pulse">(+{{ attr.bonus }})</span>
                   </div>
-                  <span class="text-[8px] font-bold text-muted mt-1 tabular-nums">{{ attr.xp }} XP</span>
+                  <span class="text-[10px] font-bold text-muted mt-1 tabular-nums">{{ attr.xp }} XP</span>
                 </div>
               </div>
             </div>
             <div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
             <router-link v-if="authStore.isAuthenticated" :to="{ name: 'codex', params: { lang: i18nStore.locale } }"
-                   class="flex items-center gap-3 bg-surface/5 px-4 md:px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[9px] font-black tracking-widest h-fit">
+                   class="flex items-center gap-3 bg-surface/5 px-4 md:px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-xs font-black tracking-widest h-fit">
               <BookOpen class="w-4 h-4 text-primary-500" />
               {{ i18nStore.t('nav_codex') }}
             </router-link>
             <router-link v-if="isOwnProfile" :to="{ name: 'inventory', params: { lang: i18nStore.locale } }"
-                   class="relative flex items-center gap-3 bg-primary-500/10 px-4 md:px-6 py-4 rounded-xl border border-primary-500/30 hover:border-primary-500/60 transition-all text-primary-500 hover:text-primary-400 uppercase text-[9px] font-black tracking-widest h-fit">
+                   class="relative flex items-center gap-3 bg-primary-500/10 px-4 md:px-6 py-4 rounded-xl border border-primary-500/30 hover:border-primary-500/60 transition-all text-primary-500 hover:text-primary-400 uppercase text-xs font-black tracking-widest h-fit">
               <Zap class="w-4 h-4" />
               VER ATRIBUTOS
               <span v-if="authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory"
                     class="absolute -top-1.5 -right-1.5 w-2.5 h-2.5 rounded-full bg-primary-500 ring-2 ring-card"></span>
             </router-link>
             <router-link v-if="isOwnProfile" :to="{ name: 'shop', params: { lang: i18nStore.locale } }"
-                   class="flex items-center gap-3 bg-surface/5 px-4 md:px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[9px] font-black tracking-widest h-fit">
+                   class="flex items-center gap-3 bg-surface/5 px-4 md:px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-xs font-black tracking-widest h-fit">
               <Coins class="w-4 h-4 text-primary-500" />
               {{ i18nStore.t('nav_shop') }}
             </router-link>
@@ -106,12 +106,12 @@
             <!-- Other User Actions -->
             <template v-else-if="authStore.isAuthenticated">
               <button @click="challengingUser = user"
-                      class="flex items-center gap-3 bg-primary-500 hover:bg-primary-600 text-white px-4 md:px-6 py-4 rounded-xl border border-primary-500/30 transition-all uppercase text-[9px] font-black tracking-widest h-fit shadow-lg shadow-primary-500/20 active:scale-95">
+                      class="flex items-center gap-3 bg-primary-500 hover:bg-primary-600 text-white px-4 md:px-6 py-4 rounded-xl border border-primary-500/30 transition-all uppercase text-xs font-black tracking-widest h-fit shadow-lg shadow-primary-500/20 active:scale-95">
                 <Swords class="w-4 h-4" />
                 {{ i18nStore.t('pvp_challenge_btn') || 'RETAR A DUELO' }}
               </button>
               <button @click="comparingUser = user"
-                      class="flex items-center gap-3 bg-surface/5 px-4 md:px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-[9px] font-black tracking-widest h-fit active:scale-95">
+                      class="flex items-center gap-3 bg-surface/5 px-4 md:px-6 py-4 rounded-xl border border-border hover:border-primary-500/30 transition-all text-muted hover:text-foreground uppercase text-xs font-black tracking-widest h-fit active:scale-95">
                 <BarChart3 class="w-4 h-4" />
                 {{ i18nStore.t('ui_compare') || 'COMPARAR' }}
               </button>
@@ -149,36 +149,36 @@
               <div class="grid grid-cols-2 lg:grid-cols-1 gap-2 md:gap-6">
                 <!-- Total Reps Pill -->
                  <div class="group/stat">
-                    <p class="text-[9px] font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t('stats_effort') }}</p>
+                    <p class="text-xs font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t('stats_effort') }}</p>
                     <div class="flex items-baseline gap-2">
-                       <span class="text-3xl md:text-4xl font-black text-precision text-foreground tracking-tighter">{{ stats.totalReps || 0 }}</span>
+                       <span class="text-3xl md:text-4xl font-bold text-precision text-foreground tracking-tighter">{{ stats.totalReps || 0 }}</span>
                        <span class="text-[10px] font-black text-primary-500 uppercase tracking-widest">{{ i18nStore.t('stats_reps') }}</span>
                     </div>
                  </div>
 
                 <!-- Total Volume Pill -->
                  <div class="group/stat">
-                    <p class="text-[9px] font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t('stats_tonnage') }}</p>
+                    <p class="text-xs font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t('stats_tonnage') }}</p>
                     <div class="flex items-baseline gap-2">
-                       <span class="text-3xl md:text-4xl font-black text-precision text-red-500 tracking-tighter">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</span>
+                       <span class="text-3xl md:text-4xl font-bold text-precision text-red-500 tracking-tighter">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</span>
                        <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18nStore.t('stats_tonnage').split(' ')[0] }}</span>
                     </div>
                  </div>
  
                 <!-- Streak Pill -->
                  <div class="group/stat">
-                    <p class="text-[9px] font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t('stats_consistency') }}</p>
+                    <p class="text-xs font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t('stats_consistency') }}</p>
                     <div class="flex items-center gap-3">
-                       <span class="text-3xl md:text-4xl font-black text-precision text-orange-500 tracking-tighter">{{ stats.streak || 0 }}</span>
+                       <span class="text-3xl md:text-4xl font-bold text-precision text-orange-500 tracking-tighter">{{ stats.streak || 0 }}</span>
                        <Flame class="w-6 h-6 text-orange-500 animate-pulse" />
                     </div>
                  </div>
  
                 <!-- Goal Pill -->
                  <div class="group/stat">
-                    <p class="text-[9px] font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t('stats_protocol_goal') }}</p>
+                    <p class="text-xs font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t('stats_protocol_goal') }}</p>
                     <div class="flex items-baseline gap-2">
-                       <span class="text-3xl md:text-4xl font-black text-precision text-neon-lime tracking-tighter">{{ user.daily_goal || 0 }}</span>
+                       <span class="text-3xl md:text-4xl font-bold text-precision text-neon-lime tracking-tighter">{{ user.daily_goal || 0 }}</span>
                        <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18nStore.t('stats_per_day') }}</span>
                     </div>
                  </div>
@@ -199,10 +199,10 @@
                          <component :is="getIconForType(item.type)" class="w-4 h-4 text-primary-500/60" />
                        </div>
                        <div>
-                         <p class="text-[9px] font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t(item.type) }}</p>
+                         <p class="text-xs font-black text-muted uppercase tracking-wider mb-1">{{ i18nStore.t(item.type) }}</p>
                          <div class="flex items-baseline gap-2">
                            <span class="text-xs font-black text-foreground tabular-nums">{{ item.count }}</span>
-                           <span class="text-[7px] font-bold text-zinc-600 uppercase">{{ i18nStore.t('ui_reps') }}</span>
+                           <span class="text-[10px] font-bold text-zinc-600 uppercase">{{ i18nStore.t('ui_reps') }}</span>
                          </div>
                        </div>
                      </div>
@@ -241,7 +241,7 @@
                   </div>
                   <div>
                     <h4 class="text-m font-black text-industrial text-foreground tracking-tight uppercase">{{ i18nStore.t('profile_activity_audit') }}</h4>
-                    <p class="text-[9px] font-black text-muted uppercase tracking-[0.3em] font-tight">{{ i18nStore.t('profile_rc_history') }}</p>
+                    <p class="text-xs font-black text-muted uppercase tracking-[0.3em] font-tight">{{ i18nStore.t('profile_rc_history') }}</p>
                   </div>
                 </div>
                 <span class="text-[10px] font-black bg-white/5 border border-white/5 px-3 py-1 rounded-full text-zinc-500 tracking-tighter uppercase font-precision opacity-40">{{ i18nStore.t('ui_enc_chain') }}</span>
@@ -268,14 +268,14 @@
                 <div v-if="hasMoreTransactions" class="pt-4 border-t border-white/5">
                   <button @click="fetchMoreTransactions" 
                           :disabled="loadingMore"
-                          class="w-full py-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500 hover:text-white transition-all flex items-center justify-center gap-3">
+                          class="w-full py-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 text-xs font-black uppercase tracking-[0.3em] text-zinc-500 hover:text-white transition-all flex items-center justify-center gap-3">
                     <span v-if="loadingMore" class="animate-spin border-2 border-primary-500 border-t-transparent rounded-full w-3 h-3"></span>
                     {{ loadingMore ? i18nStore.t('profile_loading') : i18nStore.t('profile_load_more') }}
                   </button>
                 </div>
               </div>
               
-              <div v-else class="text-center py-20 opacity-20 border-2 border-dashed border-white/5 rounded-[2.5rem]">
+              <div v-else class="text-center py-20 opacity-20 border-2 border-dashed border-white/5 rounded-2xl">
                 <p class="text-[10px] font-black text-zinc-600 uppercase tracking-[0.5em]">{{ i18nStore.t('profile_no_transactions') }}</p>
               </div>
            </div>
@@ -305,11 +305,11 @@
 
     <!-- NEW: Avatar Selector Modal -->
     <Teleport to="body">
-      <div v-if="showAvatarSelector" class="fixed inset-0 z-[1001] flex justify-center items-start overflow-y-auto p-4 md:p-8 bg-background/90 backdrop-blur-md" @click.self="showAvatarSelector = false">
+      <div v-if="showAvatarSelector" class="cursor-pointer fixed inset-0 z-[1001] flex justify-center items-start overflow-y-auto p-4 md:p-8 bg-background/90 backdrop-blur-md" @click.self="showAvatarSelector = false">
         <div class="card-stats max-w-2xl w-full p-6 md:p-12 border-border space-y-8 md:space-y-10 relative overflow-visible my-auto animate-in">
              <div class="flex items-center justify-between">
                 <div class="space-y-1">
-                    <h2 class="text-2xl font-black text-industrial text-foreground uppercase italic tracking-tighter">{{ i18nStore.t('ui_select_class') }}<span class="text-primary-500">.</span></h2>
+                    <h2 class="text-2xl font-bold text-industrial text-foreground   tracking-tighter">{{ i18nStore.t('ui_select_class') }}<span class="text-primary-500">.</span></h2>
                     <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em]">{{ i18nStore.t('ui_choose_protocol') }}</p>
                 </div>
                 <button @click="showAvatarSelector = false" class="p-2 bg-surface/10 rounded-xl hover:bg-surface/20 transition-all">
@@ -317,13 +317,13 @@
                 </button>
              </div>
 
-             <div class="flex flex-col items-center gap-6 p-8 border-2 border-dashed border-white/10 rounded-[2.5rem] bg-surface/5 hover:bg-surface/10 hover:border-primary-500/30 transition-all cursor-pointer group/upload" @click="$refs.fileInput.click()">
+             <div class="flex flex-col items-center gap-6 p-8 border-2 border-dashed border-white/10 rounded-2xl bg-surface/5 hover:bg-surface/10 hover:border-primary-500/30 transition-all cursor-pointer group/upload" @click="$refs.fileInput.click()">
                 <div class="w-16 h-16 bg-primary-500/20 rounded-2xl flex items-center justify-center group-hover/upload:scale-110 transition-transform">
                    <Camera class="w-8 h-8 text-primary-500" />
                 </div>
                 <div class="text-center">
                    <p class="text-xs font-black text-foreground uppercase tracking-widest">{{ i18nStore.t('ui_upload_custom') || 'SUBIR AVATAR PERSONALIZADO' }}</p>
-                   <p class="text-[9px] font-bold text-muted uppercase tracking-widest mt-1 opacity-60">{{ i18nStore.t('ui_compressed_info') || 'Se comprimirá automáticamente para optimizar carga' }}</p>
+                   <p class="text-xs font-bold text-muted uppercase tracking-widest mt-1 opacity-60">{{ i18nStore.t('ui_compressed_info') || 'Se comprimirá automáticamente para optimizar carga' }}</p>
                 </div>
                 <input type="file" ref="fileInput" hidden accept="image/*" @change="handleCustomAvatar" />
              </div>
@@ -342,7 +342,7 @@
                 </div>
              </div>
 
-             <p class="text-[9px] font-bold text-muted text-center uppercase tracking-widest opacity-40">{{ i18nStore.t('ui_lock_selection') }}</p>
+             <p class="text-xs font-bold text-muted text-center uppercase tracking-widest opacity-40">{{ i18nStore.t('ui_lock_selection') }}</p>
         </div>
       </div>
     </Teleport>
@@ -362,7 +362,7 @@
             
             <div class="relative group/zoom-image h-full w-full flex items-center justify-center">
               <!-- Frame Decoration -->
-              <div class="absolute inset-0 border-2 border-primary-500/30 rounded-[2.5rem] -m-4 md:-m-8 animate-pulse pointer-events-none"></div>
+              <div class="absolute inset-0 border-2 border-primary-500/30 rounded-2xl -m-4 md:-m-8 animate-pulse pointer-events-none"></div>
               
               <img :src="user.avatar_url" 
                    class="w-full h-full max-w-[512px] max-h-[512px] object-cover rounded-3xl shadow-[0_0_80px_rgba(0,0,0,0.8)] border border-white/10"

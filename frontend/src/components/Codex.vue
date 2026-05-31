@@ -13,13 +13,13 @@
         <!-- Badge -->
         <div class="animate-in fade-in slide-in-from-bottom-4 duration-700">
           <div class="inline-flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-full backdrop-blur-md">
-            <span class="text-[9px] sm:text-[10px] font-black text-muted uppercase tracking-[0.3em]">BLOG CÓDICE BY <span class="text-primary-500">REPPY</span></span>
+            <span class="text-xs sm:text-[10px] font-black text-muted uppercase tracking-[0.3em]">BLOG CÓDICE BY <span class="text-primary-500">REPPY</span></span>
           </div>
         </div>
 
         <!-- Headline -->
         <div class="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
-          <h1 class="text-5xl md:text-8xl font-black italic tracking-tighter text-foreground uppercase leading-[0.85] drop-shadow-2xl">
+          <h1 class="text-5xl md:text-8xl font-bold  tracking-tighter text-foreground  leading-[0.85] drop-shadow-2xl">
             {{ i18n.locale === 'es' ? 'DOMINA CADA' : 'MASTER EVERY' }} <br/>
             <span class="bg-gradient-to-r from-primary-500 via-blue-400 to-emerald-500 bg-clip-text text-transparent">
               {{ i18n.locale === 'es' ? 'REPETICIÓN' : 'REPETITION' }}
@@ -37,7 +37,7 @@
           <button @click="onStartAction" class="w-full sm:w-auto btn-reppy !py-5 !px-12 !text-lg shadow-2xl shadow-primary-500/20">
             {{ i18n.t('btn_join_now').toUpperCase() }}
           </button>
-          <router-link :to="`/${i18n.locale}/social`" class="w-full sm:w-auto px-10 py-5 bg-surface/30 hover:bg-surface/50 border border-white/10 rounded-[2rem] font-black uppercase tracking-widest transition-all">
+          <router-link :to="`/${i18n.locale}/social`" class="w-full sm:w-auto px-10 py-5 bg-surface/30 hover:bg-surface/50 border border-white/10 rounded-xl font-black uppercase tracking-widest transition-all">
             {{ i18n.t('rankings').toUpperCase() }}
           </router-link>
         </div>
@@ -45,16 +45,16 @@
         <!-- Social Proof -->
         <div class="pt-8 flex flex-wrap justify-center gap-8 md:gap-16 opacity-40 animate-in fade-in duration-1000 delay-600">
            <div class="flex flex-col items-center gap-1">
-             <span class="text-2xl font-black italic text-foreground tracking-tighter">1.2M+</span>
-             <span class="text-[8px] font-black uppercase tracking-widest text-muted">REPETICIONES</span>
+             <span class="text-2xl font-bold italic text-foreground tracking-tighter">1.2M+</span>
+             <span class="text-[10px] font-black uppercase tracking-widest text-muted">REPETICIONES</span>
            </div>
            <div class="flex flex-col items-center gap-1">
-             <span class="text-2xl font-black italic text-foreground tracking-tighter">450+</span>
-             <span class="text-[8px] font-black uppercase tracking-widest text-muted">BOSSES DERROTADOS</span>
+             <span class="text-2xl font-bold italic text-foreground tracking-tighter">450+</span>
+             <span class="text-[10px] font-black uppercase tracking-widest text-muted">BOSSES DERROTADOS</span>
            </div>
            <div class="flex flex-col items-center gap-1">
-             <span class="text-2xl font-black italic text-foreground tracking-tighter">100%</span>
-             <span class="text-[8px] font-black uppercase tracking-widest text-muted">GRATIS</span>
+             <span class="text-2xl font-bold italic text-foreground tracking-tighter">100%</span>
+             <span class="text-[10px] font-black uppercase tracking-widest text-muted">GRATIS</span>
            </div>
         </div>
       </div>
@@ -67,7 +67,7 @@
       <div class="flex items-center gap-4 animate-in fade-in slide-in-from-left-4 duration-700">
         <div class="w-1.5 h-8 bg-primary-500 rounded-full"></div>
         <div class="space-y-1">
-          <h2 class="text-4xl font-black italic tracking-tighter text-foreground uppercase leading-none">{{ i18n.t('CODEX_DASHBOARD') }}<span class="text-primary-500"></span></h2>
+          <h2 class="text-4xl font-bold  tracking-tighter text-foreground  leading-none">{{ i18n.t('CODEX_DASHBOARD') }}<span class="text-primary-500"></span></h2>
           <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em]">{{ i18n.locale === 'es' ? 'ATRIBUTOS ACTIVOS' : 'ATTRIBUTE PROTOCOL ACTIVE' }}</p>
         </div>
       </div>
@@ -88,19 +88,19 @@
             </div>
             <div class="text-right">
               <span class="text-[10px] font-black text-muted uppercase tracking-widest block">{{ i18n.t('ui_level') || 'NIVEL' }}</span>
-              <span class="text-2xl font-black italic tracking-tighter text-foreground">{{ getStatLevel(stat.key) }}</span>
+              <span class="text-2xl font-bold italic tracking-tighter text-foreground">{{ getStatLevel(stat.key) }}</span>
             </div>
           </div>
 
           <div class="space-y-1 sm:space-y-2">
-            <h3 class="text-xl sm:text-2xl font-black tracking-tighter uppercase italic text-foreground leading-none">{{ i18n.t(`codex_${stat.key.toLowerCase()}_name`) }}</h3>
+            <h3 class="text-xl sm:text-2xl font-bold tracking-tighter   text-foreground leading-none">{{ i18n.t(`codex_${stat.key.toLowerCase()}_name`) }}</h3>
             <p class="text-[10px] font-black text-primary-500/80 uppercase tracking-widest italic line-clamp-1 opacity-60">{{ i18n.t(`codex_${stat.key.toLowerCase()}_quote`) || stat.key }}</p>
           </div>
 
           <!-- Progress Bar -->
           <div class="space-y-3">
              <div class="flex justify-between items-end">
-                <span class="text-[9px] font-black text-muted uppercase tracking-widest">{{ i18n.t('nav_progress') }}</span>
+                <span class="text-xs font-black text-muted uppercase tracking-widest">{{ i18n.t('nav_progress') }}</span>
                 <span class="text-[10px] font-black text-foreground text-precision">{{ Math.floor((getStatXP(stat.key) / Math.max(getStatXPMax(stat.key), 1)) * 100) }}%</span>
              </div>
              <div class="h-2 bg-white/5 rounded-full overflow-hidden border border-white/5 p-0.5">
@@ -115,10 +115,10 @@
           <div class="flex pt-4 items-center justify-between border-t border-white/5">
             <div class="flex items-center gap-2">
               <div class="w-1.5 h-1.5 rounded-full animate-pulse" :style="{ backgroundColor: stat.hex }"></div>
-              <span class="text-[8px] font-black text-muted uppercase tracking-widest">{{ i18n.t('ui_protocol_active') || 'ACTIVE' }}</span>
+              <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18n.t('ui_protocol_active') || 'ACTIVE' }}</span>
             </div>
             <div class="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-              <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('ui_more_details') || 'DETAILS' }}</span>
+              <span class="text-[10px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('ui_more_details') || 'DETAILS' }}</span>
               <ChevronRight class="w-2.5 h-2.5 text-primary-500" />
             </div>
           </div>
@@ -132,18 +132,18 @@
         <div class="space-y-2">
           <div class="flex items-center gap-3">
             <div class="p-2 bg-primary-500/10 rounded-lg"><Book class="w-4 h-4 text-primary-500" /></div>
-            <h2 class="text-3xl font-black tracking-tighter text-foreground italic uppercase leading-none">{{ i18n.t('ui_knowledge_vault') }}</h2>
+            <h2 class="text-3xl font-bold tracking-tighter text-foreground   leading-none">{{ i18n.t('ui_knowledge_vault') }}</h2>
           </div>
           <p class="text-muted/60 text-sm max-w-sm">{{ i18n.t('codex_int_vault_desc') || 'Unlock Intelligence XP by studying calisthenics guides. Knowledge is the ultimate force multiplier.' }}</p>
         </div>
         
         <div class="bg-surface/10 border border-white/5 px-6 py-4 rounded-2xl flex items-center gap-6">
            <div class="text-center border-r border-border pr-6">
-             <span class="text-[9px] font-black text-muted uppercase tracking-widest block mb-1">{{ i18n.t('ui_protocols') || 'Guías' }}</span>
+             <span class="text-xs font-black text-muted uppercase tracking-widest block mb-1">{{ i18n.t('ui_protocols') || 'Guías' }}</span>
              <span class="text-xl font-black text-foreground">{{ blogPosts.length }}</span>
            </div>
            <div class="text-center">
-             <span class="text-[9px] font-black text-muted uppercase tracking-widest block mb-1">{{ i18n.t('ui_unlocked') || 'Desbloqueados' }}</span>
+             <span class="text-xs font-black text-muted uppercase tracking-widest block mb-1">{{ i18n.t('ui_unlocked') || 'Desbloqueados' }}</span>
              <span class="text-xl font-black text-neon-lime">{{ readPostsCount}}</span>
            </div>
         </div>
@@ -154,7 +154,7 @@
           v-for="post in localizedPosts" 
           :key="post.slug"
           :to="`/${i18n.locale}/blog/${post.slug}`"
-          class="group flex flex-col bg-surface/10 border border-white/5 rounded-[2.5rem] overflow-hidden hover:bg-surface/20 hover:border-primary-500/30 transition-all shadow-xl hover:shadow-primary-500/5"
+          class="group flex flex-col bg-surface/10 border border-white/5 rounded-2xl overflow-hidden hover:bg-surface/20 hover:border-primary-500/30 transition-all shadow-xl hover:shadow-primary-500/5"
         >
           <div class="aspect-video relative overflow-hidden bg-background">
             <img 
@@ -167,17 +167,17 @@
             
             <div v-if="isRead(post.slug)" class="absolute top-4 right-4 bg-neon-lime/20 backdrop-blur-md border border-neon-lime/40 px-3 py-1 rounded-full flex items-center gap-1.5">
                <CheckCircle2 class="w-3.5 h-3.5 text-neon-lime" />
-               <span class="text-[8px] font-black text-neon-lime uppercase tracking-widest italic">{{ i18n.t('ui_acquired') || 'ACQUIRED' }}</span>
+               <span class="text-[10px] font-black text-neon-lime uppercase tracking-widest italic">{{ i18n.t('ui_acquired') || 'ACQUIRED' }}</span>
             </div>
             <div v-else class="absolute top-4 right-4 bg-primary-500/20 backdrop-blur-md border border-primary-500/40 px-3 py-1 rounded-full flex items-center gap-1.5">
                <ShieldAlert class="w-3.5 h-3.5 text-primary-500" />
-               <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest italic">{{ i18n.t('ui_locked') || 'LOCKED' }}</span>
+               <span class="text-[10px] font-black text-primary-500 uppercase tracking-widest italic">{{ i18n.t('ui_locked') || 'LOCKED' }}</span>
             </div>
-            <span class="absolute bottom-4 left-6 px-3 py-1 bg-primary-500 text-[9px] font-black text-white uppercase tracking-widest rounded-lg">{{ post.category }}</span>
+            <span class="absolute bottom-4 left-6 px-3 py-1 bg-primary-500 text-xs font-black text-white uppercase tracking-widest rounded-lg">{{ post.category }}</span>
           </div>
 
           <div class="p-8 flex-1 flex flex-col justify-between space-y-6">
-            <h3 class="text-xl font-black text-foreground group-hover:text-primary-500 transition-colors uppercase italic tracking-tighter leading-tight">{{ post.title }}</h3>
+            <h3 class="text-xl font-black text-foreground group-hover:text-primary-500 transition-colors   tracking-tighter leading-tight">{{ post.title }}</h3>
             
             <div class="flex items-center justify-between pt-6 border-t border-white/5">
               <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ post.date }}</span>
@@ -194,14 +194,14 @@
       <div v-if="upcomingPosts.length > 0" class="pt-20 space-y-8">
         <div class="flex items-center gap-3">
           <div class="p-2 bg-muted/10 rounded-lg"><Timer class="w-4 h-4 text-muted" /></div>
-          <h2 class="text-xl font-black tracking-tighter text-muted italic uppercase leading-none">{{ i18n.t('ui_upcoming_chronicles') || 'Próximas Crónicas' }}</h2>
+          <h2 class="text-xl font-black tracking-tighter text-muted   leading-none">{{ i18n.t('ui_upcoming_chronicles') || 'Próximas Crónicas' }}</h2>
         </div>
 
         <div class="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
           <div 
             v-for="post in upcomingPosts" 
             :key="post.slug"
-            class="group bg-surface/5 border border-white/5 rounded-[2rem] overflow-hidden pointer-events-none flex flex-col relative aspect-[4/5] sm:aspect-auto"
+            class="group bg-surface/5 border border-white/5 rounded-xl overflow-hidden pointer-events-none flex flex-col relative aspect-[4/5] sm:aspect-auto"
           >
             <!-- 1. Technical Overlay (Scanlines & Matrix effect) -->
             <div class="absolute inset-0 z-10 pointer-events-none opacity-30 px-4 py-6">
@@ -239,7 +239,7 @@
               <!-- Countdown Badge -->
               <div class="bg-primary-500/10 backdrop-blur-md border border-primary-500/20 px-3 py-1.5 rounded-xl flex items-center gap-2 shadow-[0_0_20px_rgba(var(--primary-500-rgb),0.1)]">
                  <Timer class="w-3 h-3 text-primary-500 animate-pulse" />
-                 <span class="text-[8px] sm:text-[10px] font-black text-primary-500 uppercase tracking-[0.2em] whitespace-nowrap">
+                 <span class="text-[10px] sm:text-[10px] font-black text-primary-500 uppercase tracking-[0.2em] whitespace-nowrap">
                    {{ i18n.locale === 'es' ? `T-MINUS ${post.daysLeft}D` : `T-MINUS ${post.daysLeft}D` }}
                  </span>
               </div>
@@ -247,7 +247,7 @@
 
             <!-- 4. Footer Info -->
             <div class="p-4 sm:p-6 mt-auto bg-background/40 backdrop-blur-sm border-t border-white/5 space-y-1 sm:space-y-2">
-              <span class="text-[7px] sm:text-[9px] font-black text-muted/30 uppercase tracking-[0.3em] block">{{ post.category }}</span>
+              <span class="text-[10px] sm:text-xs font-black text-muted/30 uppercase tracking-[0.3em] block">{{ post.category }}</span>
               <h3 class="text-[10px] sm:text-sm font-black text-muted/50 line-clamp-1 sm:line-clamp-2 uppercase italic tracking-tighter leading-tight">{{ post.title }}</h3>
               
               <div class="flex items-center gap-1.5 pt-2">
@@ -258,7 +258,7 @@
               </div>
             </div>
           </div>
-          <div class="hidden md:block relative h-full bg-surface/10 overflow-hidden rounded-[2rem] border border-white/5">
+          <div class="hidden md:block relative h-full bg-surface/10 overflow-hidden rounded-xl border border-white/5">
              <img src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&w=800&q=80" alt="Reppy App" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-auto rotate-12 scale-110 opacity-20 group-hover:rotate-0 transition-all duration-1000" />
              <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
           </div>
@@ -269,8 +269,8 @@
     <!-- ═══════════════════════════════════════════════════════════
          FINAL CTA (Only for Guests)
     ═══════════════════════════════════════════════════════════ -->
-    <section v-if="!authStore.isAuthenticated" class="max-w-4xl mx-auto px-4 py-32 text-center space-y-12">
-      <h2 class="text-4xl md:text-7xl font-black italic tracking-tighter text-foreground uppercase leading-none">
+    <section v-if="!authStore.isAuthenticated" class="max-w-4xl mx-auto px-4 py-32 text-center space-y-6">
+      <h2 class="text-4xl md:text-7xl font-bold  tracking-tighter text-foreground  leading-none">
         {{ i18n.locale === 'es' ? 'TU LEYENDA EMPIEZA HOY' : 'YOUR LEGEND STARTS TODAY' }}
       </h2>
       <p class="text-xl md:text-2xl text-muted font-medium max-w-2xl mx-auto leading-relaxed">

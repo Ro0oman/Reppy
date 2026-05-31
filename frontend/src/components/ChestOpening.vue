@@ -1,6 +1,6 @@
 <template>
   <Teleport to="body">
-    <div v-if="show" class="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-4 bg-black/95 backdrop-blur-3xl animate-in overflow-y-auto" @click="handleGlobalClick">
+    <div v-if="show" class="cursor-pointer fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-4 bg-black/95 backdrop-blur-lg animate-in overflow-y-auto" @click="handleGlobalClick">
       <!-- Main Container (Clash Royale Style) -->
       <div v-if="clashMode" class="relative w-full max-w-4xl flex flex-col items-center justify-center min-h-[100dvh]">
         
@@ -28,7 +28,7 @@
                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-white/5 blur-3xl rounded-full scale-150 -z-10"></div>
             </div>
             <div class="text-center z-10">
-               <h3 class="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter italic mb-4"
+               <h3 class="text-3xl md:text-5xl font-bold text-white  tracking-tighter  mb-4"
                    :class="isLegendaryChest ? 'text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-amber-500 to-amber-700 drop-shadow-[0_0_20px_rgba(245,158,11,0.3)]' : ''">
                  {{ isLegendaryChest ? 'VAULT LEGENDARIO' : (isEpicChest ? 'BÓVEDA ÉPICA' : 'COFRE DEL BOSS') }}
                </h3>
@@ -44,12 +44,12 @@
              class="flex flex-col items-center gap-12 w-full px-8 cursor-pointer" 
              :class="isLegendaryReward ? 'animate-legendary-reveal' : 'animate-reveal'"
              :key="currentRevealIndex">
-           <div class="relative p-8 md:p-16 rounded-[3rem] bg-white/[0.02] border border-white/10 shadow-2xl flex flex-col items-center w-full max-w-lg backdrop-blur-2xl"
+           <div class="relative p-8 md:p-16 rounded-2xl bg-white/[0.02] border border-white/10 shadow-2xl flex flex-col items-center w-full max-w-lg backdrop-blur-md"
                 :class="isLegendaryReward ? 'border-amber-500/30 shadow-[0_0_100px_rgba(245,158,11,0.1)]' : ''">
               
               <!-- Legendary Special Effect Background -->
               <template v-if="isLegendaryReward">
-                 <div class="absolute inset-0 overflow-hidden rounded-[3rem] pointer-events-none">
+                 <div class="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
                     <div class="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-amber-500/5"></div>
                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-40 bg-amber-400/5 blur-[80px] -rotate-45 animate-pulse"></div>
                  </div>
@@ -82,7 +82,7 @@
 
               <!-- Reward Details -->
               <div class="text-center z-10 w-full">
-                 <h2 class="text-4xl md:text-6xl font-black text-white uppercase italic tracking-tighter leading-none mb-6 drop-shadow-2xl">
+                 <h2 class="text-4xl md:text-6xl font-bold text-white   tracking-tighter leading-none mb-6 drop-shadow-2xl">
                     {{ activeReward.type === 'coins' ? `+${activeReward.amount}` : activeReward.data.name }}
                  </h2>
                  <p class="text-zinc-500 text-[11px] md:text-sm font-bold uppercase tracking-widest max-w-xs mx-auto leading-relaxed">
@@ -119,7 +119,7 @@
                     <p class="text-sm font-black text-white uppercase italic leading-none mb-2">
                        {{ r.type === 'coins' ? '+' + r.amount : r.data.name }}
                     </p>
-                    <p class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">{{ r.type === 'coins' ? r.message : getRarityLabel(r.data.rarity) }}</p>
+                    <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest">{{ r.type === 'coins' ? r.message : getRarityLabel(r.data.rarity) }}</p>
                  </div>
               </div>
            </div>
@@ -133,7 +133,7 @@
       </div>
 
       <!-- Legacy CS:GO Style (for Level Chests or simple rewards) -->
-      <div v-else class="relative w-full max-w-4xl min-h-[100dvh] md:min-h-0 bg-steel-grey/40 border-x md:border border-white/10 rounded-none md:rounded-[2.5rem] shadow-[0_0_100px_hsl(var(--primary) / 0.1)] flex flex-col group overflow-hidden" @click.stop>
+      <div v-else class="relative w-full max-w-4xl min-h-[100dvh] md:min-h-0 bg-steel-grey/40 border-x md:border border-white/10 rounded-none md:rounded-2xl shadow-[0_0_100px_hsl(var(--primary) / 0.1)] flex flex-col group overflow-hidden" @click.stop>
         <!-- Close Button (Post-Animation) -->
         <button v-if="finished" @click="close" 
           class="absolute top-6 right-6 md:top-8 md:right-8 z-50 p-3 md:p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all hover:rotate-90">
@@ -144,12 +144,12 @@
         <div class="pt-10 md:pt-16 pb-6 text-center px-6 md:px-8 z-10">
           <div class="inline-flex items-center gap-3 px-4 py-1.5 bg-primary-500/10 border border-primary-500/20 rounded-full mb-6">
              <Zap class="w-3.5 h-3.5 text-primary-500 animate-pulse" />
-             <span class="text-[9px] md:text-[10px] font-black text-primary-500 uppercase tracking-[0.3em] font-tight">DECRYPTION SYSTEM ACTIVE</span>
+             <span class="text-xs md:text-[10px] font-black text-primary-500 uppercase tracking-[0.3em] font-tight">DECRYPTION SYSTEM ACTIVE</span>
           </div>
-          <h2 class="text-3xl md:text-5xl font-black text-industrial text-white uppercase italic tracking-tighter leading-none mb-3">
+          <h2 class="text-3xl md:text-5xl font-bold text-industrial text-white   tracking-tighter leading-none mb-3">
             ARTIFACT<span class="text-primary-500">.</span>RECOVERY
           </h2>
-          <p class="text-[9px] md:text-[10px] font-black text-zinc-600 uppercase tracking-[0.4em] font-tight">Extracting high-fidelity assets from encrypted drive...</p>
+          <p class="text-xs md:text-[10px] font-black text-zinc-600 uppercase tracking-[0.4em] font-tight">Extracting high-fidelity assets from encrypted drive...</p>
         </div>
 
         <!-- High-Stakes Rolling Reel (CS style) -->
@@ -167,7 +167,7 @@
                 (finished ? 'opacity-10 grayscale scale-90' : 'opacity-70 grayscale-[0.4]')
               ]">
               <div class="w-16 h-16 md:w-24 md:h-24 mb-3 md:mb-4 relative flex items-center justify-center overflow-hidden rounded-2xl">
-                 <div v-if="item.type === 'title'" class="text-xl md:text-3xl font-black text-white/10 italic font-industrial select-none">CODE</div>
+                 <div v-if="item.type === 'title'" class="text-xl md:text-3xl font-bold text-white/10 italic font-industrial select-none">CODE</div>
                  <div v-else-if="item.type === 'border'" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-[4px] md:border-[6px] border-white/10"></div>
                  <BackgroundEffect v-else-if="item.type === 'background' || item.type === 'post_background' || item.type === 'avatar'" 
                                   :background-css="item.css_value" is-preview class="scale-50 rounded-xl" />
@@ -177,20 +177,20 @@
                  <ItemIcon v-else :name="item.svg_key" :type="item.type" className="w-12 h-12 md:w-16 md:h-16 text-white" />
                  <div v-if="item.is_seasonal" class="absolute inset-0 bg-primary-500/5 animate-pulse"></div>
               </div>
-              <span class="text-[8px] md:text-[10px] font-black text-center text-white/50 truncate w-full px-2 uppercase tracking-widest font-tight">{{ item.name }}</span>
-              <span v-if="item.is_seasonal" class="text-[7px] md:text-[8px] font-black text-primary-500 mt-2 tracking-[0.2em]">LEGENDARY</span>
+              <span class="text-[10px] md:text-[10px] font-black text-center text-white/50 truncate w-full px-2 uppercase tracking-widest font-tight">{{ item.name }}</span>
+              <span v-if="item.is_seasonal" class="text-[10px] md:text-[10px] font-black text-primary-500 mt-2 tracking-[0.2em]">LEGENDARY</span>
             </div>
           </div>
         </div>
 
         <!-- Result View -->
-        <div v-if="finished" class="p-8 md:p-12 text-center animate-in-up flex flex-col items-center pb-32 md:pb-12 overflow-y-auto max-h-[60vh] scrollbar-hide">
+        <div v-if="finished" class="p-8 md:p-12 text-center animate-in-up flex flex-col items-center pb-24 md:pb-12 overflow-y-auto max-h-[60vh] scrollbar-hide">
           <div class="mb-6 md:mb-8 inline-flex items-center gap-4 px-6 py-2 rounded-xl bg-neon-lime/10 border border-neon-lime/20">
             <Trophy class="w-4 h-4 md:w-5 md:h-5 text-neon-lime" />
-            <span class="text-[9px] md:text-[10px] font-black text-neon-lime uppercase tracking-[0.4em] font-tight">RECOVERY SUCCESSFUL</span>
+            <span class="text-xs md:text-[10px] font-black text-neon-lime uppercase tracking-[0.4em] font-tight">RECOVERY SUCCESSFUL</span>
           </div>
           <div class="space-y-3 md:space-y-4 mb-8 md:mb-10 max-w-lg">
-             <h3 class="text-3xl md:text-5xl font-black text-industrial text-white italic tracking-tighter uppercase leading-none px-4">
+             <h3 class="text-3xl md:text-5xl font-bold text-industrial text-white  tracking-tighter  leading-none px-4">
                {{ reward.item ? reward.item.name : '+' + reward.coins + ' REPPY COINS' }}
              </h3>
              <p class="text-zinc-500 text-[10px] md:text-sm font-bold uppercase tracking-widest leading-relaxed px-6 md:px-8">

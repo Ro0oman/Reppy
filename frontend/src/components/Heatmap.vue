@@ -43,11 +43,11 @@
           <transition name="modal">
             <div v-if="selectedDay" class="fixed inset-0 z-[150] flex items-center justify-center p-6">
               <!-- Backdrop -->
-              <div class="absolute inset-0 bg-black/40 backdrop-blur-xl" @click="selectedDay = null"></div>
+              <div class="cursor-pointer absolute inset-0 bg-black/40 backdrop-blur-xl" @click="selectedDay = null"></div>
 
               <!-- Modal Card -->
               <div
-                class="relative w-full max-w-[320px] bg-zinc-950/90 border border-white/10 rounded-[2.5rem] shadow-[0_0_60px_rgba(0,0,0,0.4)] p-10 overflow-hidden animate-in zoom-in duration-300 backdrop-blur-md">
+                class="relative w-full max-w-[320px] bg-zinc-950/90 border border-white/10 rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.4)] p-10 overflow-hidden animate-in zoom-in duration-300 backdrop-blur-md">
                 <!-- Premium Glow Effects -->
                 <div
                   class="absolute -top-20 -right-20 w-48 h-48 bg-primary/10 blur-[80px] rounded-full pointer-events-none">
@@ -73,7 +73,7 @@
                   </div>
 
                   <div
-                    class="w-full flex flex-col items-center gap-3 bg-white/[0.03] p-10 rounded-[2rem] border border-white/5 shadow-inner">
+                    class="w-full flex flex-col items-center gap-3 bg-white/[0.03] p-10 rounded-xl border border-white/5 shadow-inner">
                     <span
                       class="text-6xl font-black text-primary leading-none tabular-nums italic drop-shadow-[0_0_20px_hsl(var(--primary) / 0.3)]">
                       {{ selectedDay.count }}

@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 py-4 md:py-8 space-y-6 md:space-y-12 animate-in relative z-10 pb-32">
+  <div class="max-w-7xl mx-auto px-4 py-4 md:py-8 space-y-6 md:space-y-6 animate-in relative z-10 pb-24">
     <!-- Premium Armory Header -->
     <div class="relative py-2 md:py-8">
       <div class="absolute inset-0 hidden md:flex items-center justify-center opacity-5 pointer-events-none">
@@ -8,7 +8,7 @@
       <div class="space-y-3 md:space-y-4 relative z-10">
         <div class="flex items-start justify-between gap-3">
           <div>
-            <h1 class="text-3xl md:text-6xl font-black text-foreground tracking-tighter uppercase italic leading-none">
+            <h1 class="text-3xl md:text-6xl font-bold text-foreground tracking-tighter   leading-none">
               {{ i18n.t('inv_title') }}
             </h1>
             <p class="mt-2 text-[10px] font-black text-muted uppercase tracking-[0.25em]">
@@ -18,7 +18,7 @@
           <button
             v-if="hasAnyChest"
             @click="openBestChest"
-            class="lg:hidden shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl bg-primary-500/15 border border-primary-500/30 text-[9px] font-black uppercase tracking-widest text-primary-400">
+            class="lg:hidden shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl bg-primary-500/15 border border-primary-500/30 text-xs font-black uppercase tracking-widest text-primary-400">
             <Sparkles class="w-3.5 h-3.5" />
             x{{ totalChestCount }}
           </button>
@@ -53,19 +53,19 @@
         <div v-if="activeTab === 'combat'" class="space-y-4 md:space-y-6">
           <!-- Compact Stats Dashboard -->
           <div class="grid grid-cols-2 gap-4">
-            <div class="p-4 md:p-6 rounded-[2rem] bg-surface/20 border border-white/5 relative overflow-hidden group hover:border-primary-500/40 transition-all duration-500 backdrop-blur-xl shadow-2xl">
+            <div class="p-4 md:p-6 rounded-xl bg-surface/20 border border-white/5 relative overflow-hidden group hover:border-primary-500/40 transition-all duration-500 backdrop-blur-xl shadow-2xl">
               <div class="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-transparent"></div>
-              <p class="text-[9px] font-black text-primary-500 uppercase tracking-[0.3em] leading-none mb-2">{{ i18n.t('inv_total_power') }}</p>
+              <p class="text-xs font-black text-primary-500 uppercase tracking-[0.3em] leading-none mb-2">{{ i18n.t('inv_total_power') }}</p>
               <div class="flex items-baseline gap-1">
-                <span class="text-xl md:text-2xl font-black text-foreground italic tracking-tighter" :class="{ 'animate-bump': recentlyEquipped }">{{ combatStats.minDamage }}-{{ combatStats.maxDamage }}</span>
+                <span class="text-xl md:text-2xl font-bold text-foreground italic tracking-tighter" :class="{ 'animate-bump': recentlyEquipped }">{{ combatStats.minDamage }}-{{ combatStats.maxDamage }}</span>
               </div>
               <Sword class="absolute -bottom-2 -right-2 w-12 h-12 text-white/5 rotate-12 group-hover:scale-110 transition-transform" />
             </div>
 
-            <div class="p-4 md:p-6 rounded-[2rem] bg-surface/20 border border-white/5 relative overflow-hidden group hover:border-emerald-500/40 transition-all duration-500 backdrop-blur-xl shadow-2xl">
+            <div class="p-4 md:p-6 rounded-xl bg-surface/20 border border-white/5 relative overflow-hidden group hover:border-emerald-500/40 transition-all duration-500 backdrop-blur-xl shadow-2xl">
               <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent"></div>
-              <p class="text-[9px] font-black text-emerald-500 uppercase tracking-[0.3em] leading-none mb-2">{{ i18n.t('inv_crit_prob') }}</p>
-              <span class="text-xl md:text-2xl font-black text-emerald-400 italic tracking-tighter" :class="{ 'animate-bump': recentlyEquipped }">{{ combatStats.critChance }}%</span>
+              <p class="text-xs font-black text-emerald-500 uppercase tracking-[0.3em] leading-none mb-2">{{ i18n.t('inv_crit_prob') }}</p>
+              <span class="text-xl md:text-2xl font-bold text-emerald-400 italic tracking-tighter" :class="{ 'animate-bump': recentlyEquipped }">{{ combatStats.critChance }}%</span>
               <Activity class="absolute -bottom-2 -right-2 w-12 h-12 text-white/5 group-hover:scale-110 transition-transform" />
             </div>
           </div>
@@ -73,7 +73,7 @@
           <ActiveEffects />
 
           <!-- Character Diagram (Sidebar Compact) -->
-          <div class="hidden lg:flex relative w-full aspect-[4/5] max-w-[320px] mx-auto items-center justify-center bg-surface/5 rounded-[3rem] border border-white/5 backdrop-blur-3xl overflow-hidden">
+          <div class="hidden lg:flex relative w-full aspect-[4/5] max-w-[320px] mx-auto items-center justify-center bg-surface/5 rounded-2xl border border-white/5 backdrop-blur-lg overflow-hidden">
              <!-- Background FX -->
              <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--primary) / 0.05)_0%,transparent_70%)] animate-pulse"></div>
              
@@ -140,15 +140,15 @@
           </div>
 
           <!-- Base Stats Grid (Sidebar) -->
-          <div class="hidden lg:block p-6 rounded-[2rem] bg-surface/10 border border-white/5 backdrop-blur-xl">
-             <p class="text-[9px] font-black text-muted uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
+          <div class="hidden lg:block p-6 rounded-xl bg-surface/10 border border-white/5 backdrop-blur-xl">
+             <p class="text-xs font-black text-muted uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
                <span class="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
                {{ i18n.t('ui_base_attrs') }}
              </p>
              <div class="grid grid-cols-2 gap-2">
                <div v-for="(val, stat) in equippedStats" :key="stat" v-show="val > 0 && stat !== 'multiplier' && stat !== 'crit_chance' && stat !== 'crit_damage'" 
                     class="flex items-center justify-between p-2.5 bg-white/[0.02] rounded-xl border border-white/5 transition-all hover:bg-white/[0.05]">
-                 <span class="text-[8px] font-black text-muted/60 uppercase tracking-widest">{{ statLabels[stat] || stat }}</span>
+                 <span class="text-[10px] font-black text-muted/60 uppercase tracking-widest">{{ statLabels[stat] || stat }}</span>
                  <span class="text-xs font-black text-primary-500 tabular-nums" :class="{ 'animate-bump': recentlyEquipped }">+{{ val }}</span>
                </div>
              </div>
@@ -193,7 +193,7 @@
 
         <!-- CUSTOMIZATION SIDEBAR -->
         <div v-if="activeTab === 'customization'" class="space-y-4 md:space-y-6">
-           <div class="p-5 md:p-8 rounded-[2rem] md:rounded-[3rem] bg-surface/10 border border-white/5 backdrop-blur-xl text-center space-y-5 md:space-y-6">
+           <div class="p-5 md:p-8 rounded-xl md:rounded-2xl bg-surface/10 border border-white/5 backdrop-blur-xl text-center space-y-5 md:space-y-6">
                <div class="relative inline-block isolate z-[1]">
                 <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :size="120" />
                 <div class="absolute -bottom-2 inset-x-0 rounded-full bg-sky-100/95 ">
@@ -203,8 +203,8 @@
                 </div>
               </div>
               <div class="space-y-1">
-                <h3 class="text-xl md:text-2xl font-black text-white italic tracking-tighter uppercase">{{ authStore.user?.username }}</h3>
-                <p class="text-[9px] font-black text-muted uppercase tracking-[0.4em]">{{ i18n.t('inv_loadout_identity') }}</p>
+                <h3 class="text-xl md:text-2xl font-bold text-white  tracking-tighter ">{{ authStore.user?.username }}</h3>
+                <p class="text-xs font-black text-muted uppercase tracking-[0.4em]">{{ i18n.t('inv_loadout_identity') }}</p>
               </div>
            </div>
 
@@ -213,7 +213,7 @@
                   @click="getEquippedItem(slot.type) && openItemDetails(getEquippedItem(slot.type))"
                   class="p-4 rounded-2xl bg-surface/10 border border-white/5 flex flex-col items-center justify-center gap-2 group cursor-pointer hover:bg-white/5 transition-all">
                 <component :is="slot.icon" class="w-5 h-5 text-muted/40 group-hover:text-purple-400 transition-colors" />
-                <span class="text-[7px] font-black text-muted uppercase tracking-widest">{{ slot.label }}</span>
+                <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ slot.label }}</span>
                 <div v-if="getEquippedItem(slot.type)" class="w-full h-1 bg-purple-500/40 rounded-full mt-1"></div>
              </div>
            </div>
@@ -222,7 +222,7 @@
 
       <!-- RIGHT PANEL: Item Stash (lg:col-span-7) -->
       <div class="lg:col-span-7 space-y-4 md:space-y-8">
-        <div class="bg-surface/10 rounded-[2rem] border border-white/5 backdrop-blur-xl p-4 md:p-5">
+        <div class="bg-surface/10 rounded-xl border border-white/5 backdrop-blur-xl p-4 md:p-5">
           <div class="flex items-center justify-between mb-3">
             <p class="text-[10px] font-black text-muted uppercase tracking-[0.25em]">{{ equippedSummaryTitle }}</p>
             <p class="text-[10px] font-black text-primary-500 uppercase tracking-widest">{{ equippedSummaryCount }}/{{ equippedSummaryItems.length }}</p>
@@ -236,9 +236,9 @@
               :class="slot.item ? 'bg-white/[0.04] border-white/10 hover:border-primary-500/30' : 'bg-white/[0.02] border-white/5 opacity-70'">
               <div class="flex items-center gap-2 mb-1.5">
                 <component :is="slot.icon" class="w-3.5 h-3.5 text-primary-500" />
-                <span class="text-[8px] font-black uppercase tracking-widest text-muted">{{ slot.label }}</span>
+                <span class="text-[10px] font-black uppercase tracking-widest text-muted">{{ slot.label }}</span>
               </div>
-              <p class="text-[9px] font-black uppercase tracking-wide truncate" :class="slot.item ? 'text-foreground' : 'text-muted/60'">
+              <p class="text-xs font-black uppercase tracking-wide truncate" :class="slot.item ? 'text-foreground' : 'text-muted/60'">
                 {{ slot.item?.name || equippedEmptyLabel }}
               </p>
             </button>
@@ -246,12 +246,12 @@
         </div>
         
         <!-- Nexus Item Stash Header & Filters -->
-        <div class="bg-surface/10 rounded-[2rem] md:rounded-[2.5rem] border border-white/5 backdrop-blur-xl p-4 md:p-8">
+        <div class="bg-surface/10 rounded-xl md:rounded-2xl border border-white/5 backdrop-blur-xl p-4 md:p-8">
           <div class="sticky top-36 md:top-24 z-30 mb-6 md:mb-8 p-3 rounded-2xl border border-white/10 bg-background/80 backdrop-blur-xl">
             <div class="md:hidden mb-3">
               <div class="grid grid-cols-2 gap-2">
                 <button v-for="cat in categories" :key="cat.id" @click="activeStashTab = cat.id; showDropdown = false"
-                        class="flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] border transition-all"
+                        class="flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-black uppercase tracking-[0.2em] border transition-all"
                         :class="activeStashTab === cat.id ? 'bg-primary-500 text-white border-primary-500' : 'bg-surface/20 border-white/10 text-muted'">
                   <component :is="cat.icon" class="w-3.5 h-3.5" />
                   {{ i18n.t(cat.label) }}
@@ -271,7 +271,7 @@
               </button>
 
               <Transition enter-active-class="transition duration-200 ease-out" enter-from-class="transform scale-95 opacity-0 -translate-y-2" enter-to-class="transform scale-100 opacity-100 translate-y-0" leave-active-class="transition duration-150 ease-in" leave-from-class="transform scale-100 opacity-100 translate-y-0" leave-to-class="transform scale-95 opacity-0 -translate-y-2">
-                <div v-if="showDropdown" class="absolute top-full left-0 mt-2 w-full bg-surface/90 backdrop-blur-3xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden py-2 z-[60]">
+                <div v-if="showDropdown" class="absolute top-full left-0 mt-2 w-full bg-surface/90 backdrop-blur-lg border border-white/10 rounded-2xl shadow-2xl overflow-hidden py-2 z-[60]">
                   <button v-for="cat in categories" :key="cat.id" @click="activeStashTab = cat.id; showDropdown = false"
                           class="w-full flex items-center gap-3 px-6 py-3 text-[10px] font-black uppercase tracking-widest transition-all text-left"
                           :class="activeStashTab === cat.id ? 'bg-primary-500 text-white' : 'text-muted hover:bg-white/5 hover:text-foreground'">
@@ -285,7 +285,7 @@
             <!-- Rarity Selector -->
             <div class="w-full flex-1 flex flex-wrap items-center md:justify-end gap-2">
               <button v-for="rarity in rarities" :key="rarity.id" @click="selectedRarity = rarity.id"
-                      class="px-3 md:px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all active:scale-95"
+                      class="px-3 md:px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest border transition-all active:scale-95"
                       :class="selectedRarity === rarity.id ? rarity.activeClass : 'bg-surface/20 border-white/5 text-muted hover:border-white/20'">
                 {{ i18n.t(rarity.label) }}
               </button>
@@ -301,10 +301,10 @@
 
           <div v-else-if="inventory.length === 0" class="py-24 text-center space-y-6">
             <Package class="w-16 h-16 mx-auto text-muted/20" />
-            <h3 class="text-xl font-black uppercase italic text-muted/40 tracking-tighter">{{ i18n.t('inv_empty_title') }}</h3>
+            <h3 class="text-xl font-black   text-muted/40 tracking-tighter">{{ i18n.t('inv_empty_title') }}</h3>
           </div>
 
-          <div v-else class="space-y-12">
+          <div v-else class="space-y-6">
             <div v-for="(items, type) in groupedItems" :key="type" class="space-y-6">
               <!-- Category Separator -->
               <div class="flex items-center gap-4">
@@ -342,18 +342,18 @@
                      <div class="p-2.5 sm:p-3 bg-surface/60 border-t border-white/5 flex-1 flex flex-col justify-between">
                         <div>
                           <div class="flex items-center justify-between mb-1.5">
-                             <span class="text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border" :class="getRarityClass(item.rarity)">{{ getRarityLabel(item.rarity) }}</span>
+                             <span class="text-[10px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border" :class="getRarityClass(item.rarity)">{{ getRarityLabel(item.rarity) }}</span>
                              <Check v-if="isEquipped(item)" class="w-3 h-3 text-blue-500" />
                           </div>
-                          <h4 class="text-[9px] sm:text-[10px] font-black text-foreground truncate uppercase tracking-wide mb-1">{{ item.name }}</h4>
+                          <h4 class="text-xs sm:text-[10px] font-black text-foreground truncate uppercase tracking-wide mb-1">{{ item.name }}</h4>
                           <div v-if="item.stats" class="hidden sm:flex flex-wrap gap-1">
-                             <span v-for="(val, stat) in item.stats" :key="stat" v-show="val > 0 && stat !== 'duration' && stat !== 'multiplier'" class="text-[7px] font-black text-primary-500/80 uppercase">+{{ val }} {{ statLabels[stat] || stat }}</span>
+                             <span v-for="(val, stat) in item.stats" :key="stat" v-show="val > 0 && stat !== 'duration' && stat !== 'multiplier'" class="text-[10px] font-black text-primary-500/80 uppercase">+{{ val }} {{ statLabels[stat] || stat }}</span>
                           </div>
                         </div>
 
                         <button @click.stop="handlePrimaryItemAction(item)"
                                 :disabled="isPrimaryActionDisabled(item)"
-                                class="mt-2 sm:mt-3 w-full py-2 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all active:scale-95 disabled:opacity-40 disabled:grayscale"
+                                class="mt-2 sm:mt-3 w-full py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 disabled:opacity-40 disabled:grayscale"
                                 :class="isConsumableItem(item) ? 'bg-primary-500 text-white' : isEquipped(item) ? 'bg-blue-500 text-white' : 'bg-white/5 text-muted hover:bg-white/10 hover:text-primary-500 border border-white/10'">
                            {{ getPrimaryActionLabel(item) }}
                         </button>
@@ -389,7 +389,7 @@
       <Transition name="modal-fade">
         <div v-if="showItemModal && selectedItem" class="fixed inset-0 z-[1000] flex items-end sm:items-center justify-center p-0 sm:p-4">
           <!-- Backdrop -->
-          <div class="absolute inset-0 bg-black/90 backdrop-blur-2xl" @click="showItemModal = false"></div>
+          <div class="cursor-pointer absolute inset-0 bg-black/90 backdrop-blur-md" @click="showItemModal = false"></div>
           
           <!-- Modal Content -->
           <div class="relative w-full max-w-none sm:max-w-xl h-[88vh] sm:h-auto bg-[#0a0a0a] border border-white/10 rounded-t-[28px] sm:rounded-[32px] overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.9)] animate-modal-in flex flex-col sm:max-h-[90vh]">
@@ -401,8 +401,8 @@
                   <Package class="w-5 h-5 text-primary-500" />
                 </div>
                 <div>
-                  <p class="text-[9px] font-black text-primary-500 uppercase tracking-[0.3em] leading-none mb-1.5">{{ i18n.t('inv_artifact_detail') }}</p>
-                  <h3 class="text-2xl sm:text-3xl font-black text-white italic uppercase tracking-tighter leading-none">{{ selectedItem.name }}</h3>
+                  <p class="text-xs font-black text-primary-500 uppercase tracking-[0.3em] leading-none mb-1.5">{{ i18n.t('inv_artifact_detail') }}</p>
+                  <h3 class="text-2xl sm:text-3xl font-bold text-white   tracking-tighter leading-none">{{ selectedItem.name }}</h3>
                 </div>
               </div>
               <button @click="showItemModal = false" class="p-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all">
@@ -420,7 +420,7 @@
                  <div class="transform group-hover:scale-110 transition-transform duration-1000">
                     <ItemIcon v-if="['head', 'weapon', 'armor', 'boots'].includes(selectedItem.type)" :name="selectedItem.svg_key" :type="selectedItem.type" class-name="w-24 h-24 sm:w-32 sm:h-32 text-primary-500 drop-shadow-2xl" />
                     <FlaskConical v-else-if="selectedItem.type === 'consumable'" class="w-24 h-24 sm:w-32 sm:h-32 text-primary-500 animate-pulse drop-shadow-2xl" />
-                    <div v-else-if="selectedItem.type === 'title'" class="text-xl sm:text-4xl font-black uppercase italic tracking-tighter text-center px-6 leading-tight" :class="selectedItem.css_value">{{ selectedItem.name }}</div>
+                    <div v-else-if="selectedItem.type === 'title'" class="text-xl sm:text-4xl font-bold   tracking-tighter text-center px-6 leading-tight" :class="selectedItem.css_value">{{ selectedItem.name }}</div>
                     <AvatarFrame v-else-if="selectedItem.type === 'border'" :src="authStore.user?.avatar_url" :border-css="selectedItem.css_value" :size="windowWidth < 640 ? 120 : 180" />
                     <div v-else-if="selectedItem.type === 'background' || selectedItem.type === 'post_background'" class="w-40 h-40 sm:w-56 sm:h-56 rounded-[22px] overflow-hidden border border-white/10 relative shadow-2xl">
                        <BackgroundEffect v-if="selectedItem.type === 'background'" :background-css="selectedItem.css_value" is-preview class="!absolute !inset-0 !w-full !h-full" />
@@ -433,18 +433,18 @@
               <!-- Info & Stats -->
               <div class="space-y-6">
                 <div v-if="selectedItem.description" class="p-6 bg-white/5 rounded-[22px] border border-white/5">
-                  <p class="text-[9px] font-black text-muted uppercase tracking-[0.2em] mb-2 opacity-60">{{ i18n.t('inv_artifact_description') }}</p>
+                  <p class="text-xs font-black text-muted uppercase tracking-[0.2em] mb-2 opacity-60">{{ i18n.t('inv_artifact_description') }}</p>
                   <p class="text-sm font-bold text-zinc-300 leading-relaxed">{{ selectedItem.description }}</p>
                 </div>
 
                 <div v-if="selectedItem.stats && Object.keys(selectedItem.stats).length > 0" class="space-y-4">
-                   <h4 class="text-[9px] font-black text-muted uppercase tracking-[0.3em] flex items-center gap-3">
+                   <h4 class="text-xs font-black text-muted uppercase tracking-[0.3em] flex items-center gap-3">
                      {{ i18n.t('shop_combat_analysis') }}
                      <div class="h-px flex-1 bg-white/5"></div>
                    </h4>
                    <div class="grid grid-cols-2 gap-4">
                     <div v-for="(val, key) in selectedItem.stats" :key="key" class="p-4 bg-white/5 rounded-2xl border border-white/5 flex flex-col gap-1">
-                      <p class="text-[8px] font-black text-primary-500/60 uppercase tracking-widest">{{ statLabels[key] || key.replace('_', ' ') }}</p>
+                      <p class="text-[10px] font-black text-primary-500/60 uppercase tracking-widest">{{ statLabels[key] || key.replace('_', ' ') }}</p>
                       <p class="text-xl font-black text-white italic tabular-nums">
                         {{ key === 'multiplier' ? 'x' : '+' }}{{ val }}{{ key.includes('percent') || key.includes('chance') ? '%' : '' }}
                       </p>
