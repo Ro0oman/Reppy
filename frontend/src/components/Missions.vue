@@ -5,15 +5,15 @@
       <!-- Header -->
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div class="space-y-2">
-          <h1 class="text-4xl font-black text-foreground italic uppercase tracking-tighter flex items-center gap-4">
-            <Target class="w-10 h-10 text-primary-500" />
+          <h1 class="text-2xl font-black text-foreground tracking-tight flex items-center gap-3">
+            <Target class="w-6 h-6 text-primary-500" />
             {{ i18n.t('missions_title') }}
           </h1>
-          <p class="text-xs font-bold text-muted uppercase tracking-[0.3em]">{{ i18n.t('missions_subtitle') }}</p>
+          <p class="text-xs font-medium text-muted/60">{{ i18n.t('missions_subtitle') }}</p>
         </div>
 
         <!-- Global Reset Timer -->
-        <div v-if="nextReset" class="bg-foreground/[0.04] border border-border px-6 py-3 rounded-2xl flex items-center gap-4 backdrop-blur-xl">
+        <div v-if="nextReset" class="bg-foreground/[0.04] border border-border px-6 py-3 rounded-2xl flex items-center gap-4">
           <div class="flex flex-col items-end">
             <span class="text-[8px] font-black text-muted uppercase tracking-widest">{{ i18n.t('missions_next_reset') || 'NEXT_RESET' }}</span>
             <span class="text-lg font-black text-primary-500 font-mono tracking-tighter">{{ countdown }}</span>
@@ -33,14 +33,14 @@
           v-for="mission in missions" 
           :key="mission.id"
           :id="`mission-${mission.id}`"
-          class="mission-card group relative overflow-hidden bg-foreground/[0.02] border border-border rounded-[2rem] p-6 transition-all hover:border-primary-500/30 hover:bg-foreground/[0.04] backdrop-blur-sm"
+          class="mission-card group relative overflow-hidden bg-foreground/[0.02] border border-border rounded-2xl p-5 transition-all hover:border-primary-500/30 hover:bg-foreground/[0.04]"
           :class="{
             'opacity-60': mission.is_claimed,
             'ring-2 ring-primary-500/50 shadow-2xl shadow-primary-500/20': highlightedMissionId === mission.id
           }"
         >
-          <!-- Background Glow -->
-          <div v-if="mission.is_completed && !mission.is_claimed" class="absolute -inset-2 bg-primary-500/5 blur-2xl rounded-full"></div>
+          <!-- Completion highlight -->
+          <div v-if="mission.is_completed && !mission.is_claimed" class="absolute inset-0 bg-primary-500/5 rounded-2xl pointer-events-none"></div>
 
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
             <div class="flex items-start gap-5 flex-1">

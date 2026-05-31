@@ -4,7 +4,7 @@
       :id="'activity-' + activity.user_id + '-' + activity.date"
       class="social-card group relative flex flex-col transition-all duration-300"
       :class="[
-        activity.post_background_css ? 'has-custom-bg' : 'bg-surface/40 dark:bg-card/30 backdrop-blur-md',
+        activity.post_background_css ? 'has-custom-bg' : 'bg-surface/40 dark:bg-card/30',
         highlighted ? 'ring-2 ring-primary-500/50 shadow-2xl shadow-primary-500/10' : 'border border-border/10',
         activity.has_crit ? 'is-critical' : ''
       ]"
@@ -277,7 +277,7 @@
       <Transition name="modal-fade">
         <div v-if="showItemModal && selectedItem" class="fixed inset-0 z-[1000] flex items-center justify-center p-4">
           <!-- Backdrop -->
-          <div class="absolute inset-0 bg-black/90 backdrop-blur-2xl" @click="showItemModal = false"></div>
+          <div class="absolute inset-0 bg-black/90" @click="showItemModal = false"></div>
           
           <!-- Modal Content -->
           <div class="relative w-full max-w-xl bg-[#0a0a0a] border border-white/10 rounded-[32px] overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.9)] animate-modal-in flex flex-col max-h-[90vh]">
@@ -311,7 +311,7 @@
                 <!-- Visual Preview Area -->
                 <div class="aspect-video bg-black/40 rounded-[22px] border border-white/5 flex items-center justify-center relative overflow-hidden group shadow-inner">
                    <!-- Background Glow -->
-                   <div class="absolute inset-0 blur-3xl opacity-20 pointer-events-none" :class="getRarityClass(selectedItem.rarity).split(' ')[0].replace('text-', 'bg-')"></div>
+                   <div class="absolute inset-0 opacity-10 pointer-events-none" :class="getRarityClass(selectedItem.rarity).split(' ')[0].replace('text-', 'bg-')"></div>
                    
                    <div class="transform group-hover:scale-110 transition-transform duration-1000">
                       <ItemIcon v-if="['head', 'weapon', 'armor', 'boots'].includes(selectedItem.type)" :name="selectedItem.svg_key" :type="selectedItem.type" class-name="w-24 h-24 sm:w-32 sm:h-32 text-primary-500 drop-shadow-2xl" />
