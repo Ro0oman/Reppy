@@ -1,23 +1,26 @@
 <template>
-  <div class="max-w-7xl mx-auto w-full px-4 space-y-4 sm:space-y-12 pb-32 pt-2 sm:pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-    <!-- 1. Mission Control Header -->
-    <header class="flex flex-col gap-3 items-center sm:items-start">
-      <div class="flex items-center justify-center sm:justify-start gap-3 sm:gap-6">
-          <div class="min-w-0">
-            <h2 class="text-2xl sm:text-4xl font-bold tracking-tight text-foreground leading-none drop-shadow-md">{{ i18n.t('dashboard_title') }}</h2>
-          </div>
-      </div>
-      <div class="w-full flex items-center gap-2">
+  <div class="max-w-7xl mx-auto w-full px-4 space-y-4 sm:space-y-6 pb-24 pt-2 sm:pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <!-- Header: greeting + exercise selector inline -->
+    <header class="flex flex-col gap-3">
+      <!-- Top row: greeting left, plans button right -->
+      <div class="flex items-center justify-between gap-3">
+        <div class="min-w-0 flex-1">
+          <p class="dashboard-daily-quote text-[11px] font-black uppercase tracking-[0.08em] text-primary-500/90">{{ dailyQuote }}</p>
+          <h2 class="text-xl font-bold tracking-tight text-foreground leading-tight mt-0.5">
+            {{ authStore.user?.name?.split(' ')[0] || (i18n.locale === 'es' ? 'Atleta' : 'Athlete') }}
+          </h2>
+        </div>
         <button
           v-if="guidedTrainingStateLoaded && !trainingStore.activePlan"
           type="button"
-          class="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-muted transition hover:border-primary-500/30 hover:text-foreground active:scale-95"
+          class="shrink-0 rounded-xl border border-border bg-foreground/[0.03] px-3 py-2 text-xs font-semibold text-muted transition hover:border-primary-500/30 hover:text-foreground active:scale-95"
           @click="openPlanPicker"
         >
-          {{ i18n.locale === 'es' ? 'Planes guiados' : 'Guided plans' }}
+          {{ i18n.locale === 'es' ? 'Plan guiado' : 'Guided plan' }}
         </button>
-        <ExerciseSelector v-model="activeExercise" compact class="w-full md:hidden" />
       </div>
+      <!-- Exercise selector: compact pills -->
+      <ExerciseSelector v-model="activeExercise" compact class="w-full md:hidden" />
     </header>
 
     <!-- 2. The Hero: Active Session -->
@@ -49,43 +52,47 @@
       <RepsInput v-else :exercise-type="activeExercise" @updated="fetchData" class="w-full" />
     </section>
 
-    <section
+    <!-- Streak card: compact horizontal layout -->
+    <div
       v-if="streakStatus"
-      class="rounded-2xl border p-4 sm:p-5 transition-all duration-300"
-      :class="streakStatus.showRisk ? 'border-amber-500/35 bg-amber-500/10 shadow-[0_0_35px_rgba(245,158,11,0.12)]' : 'border-primary-500/25 bg-primary-500/10'"
+      class="flex items-center gap-3 rounded-2xl border px-4 py-3 transition-all duration-300"
+      :class="streakStatus.showRisk
+        ? 'border-amber-500/30 bg-amber-500/10'
+        : 'border-primary-500/20 bg-primary-500/10'"
     >
-      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div class="flex items-center gap-4 min-w-0">
-          <div
-            class="grid h-12 w-12 shrink-0 place-items-center rounded-xl border"
-            :class="streakStatus.showRisk ? 'border-amber-500/30 bg-amber-500/10 text-amber-400' : 'border-primary-500/30 bg-primary-500/10 text-primary-500'"
-          >
-            <Flame class="h-5 w-5" />
-          </div>
-          <div class="min-w-0">
-            <p class="text-[10px] font-semibold text-muted/70">{{ i18n.locale === 'es' ? 'Racha diaria' : 'Daily streak' }}</p>
-            <div class="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-              <span class="text-3xl font-black leading-none tabular-nums text-foreground">{{ streakStatus.streak }}</span>
-              <span class="text-sm font-semibold text-muted">{{ streakDaysLabel }}</span>
-            </div>
-            <p class="mt-1 text-xs font-semibold" :class="streakStatus.showRisk ? 'text-amber-300' : 'text-muted/75'">
-              {{ streakStateLabel }}
-            </p>
-          </div>
-        </div>
-        <button
-          v-if="streakStatus.isAtRisk && !streakStatus.frozenToday"
-          type="button"
-          class="inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-bold transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-45"
-          :class="streakStatus.canFreeze ? 'border-amber-500/35 bg-amber-500/15 text-amber-200 hover:bg-amber-500/20' : 'border-white/10 bg-white/[0.04] text-muted'"
-          :disabled="!streakStatus.canFreeze || freezingStreak"
-          @click="freezeStreak"
-        >
-          <Snowflake class="h-4 w-4" />
-          <span>{{ freezeButtonLabel }}</span>
-        </button>
+      <!-- Icon -->
+      <div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl border"
+        :class="streakStatus.showRisk ? 'border-amber-500/25 bg-amber-500/10 text-amber-400' : 'border-primary-500/20 bg-primary-500/10 text-primary-500'">
+        <Flame class="h-5 w-5" />
       </div>
-    </section>
+
+      <!-- Data -->
+      <div class="flex-1 min-w-0">
+        <div class="flex items-baseline gap-1.5">
+          <span class="text-2xl font-bold tabular-nums text-foreground leading-none">{{ streakStatus.streak }}</span>
+          <span class="text-sm font-semibold text-muted">{{ streakDaysLabel }}</span>
+        </div>
+        <p class="text-xs mt-0.5 truncate"
+          :class="streakStatus.showRisk ? 'text-amber-300 font-semibold' : 'text-muted/70'">
+          {{ streakStateLabel }}
+        </p>
+      </div>
+
+      <!-- Freeze CTA (only when at risk) -->
+      <button
+        v-if="streakStatus.isAtRisk && !streakStatus.frozenToday"
+        type="button"
+        class="shrink-0 flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition-all active:scale-95 disabled:opacity-40"
+        :class="streakStatus.canFreeze
+          ? 'border-amber-500/35 bg-amber-500/15 text-amber-200 hover:bg-amber-500/25'
+          : 'border-border bg-foreground/[0.04] text-muted'"
+        :disabled="!streakStatus.canFreeze || freezingStreak"
+        @click="freezeStreak"
+      >
+        <Snowflake class="h-3.5 w-3.5" />
+        <span>{{ freezeButtonLabel }}</span>
+      </button>
+    </div>
 
     <TodayWorkout
       v-if="shouldShowTodayWorkout"
@@ -102,7 +109,7 @@
     >
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div class="min-w-0">
-          <p class="text-[9px] font-black uppercase tracking-[0.2em] text-muted">
+          <p class="text-xs font-black uppercase tracking-[0.2em] text-muted">
             {{ i18n.locale === 'es' ? 'Plan activo' : 'Active plan' }}
           </p>
           <p class="mt-1 text-sm font-black text-foreground">
@@ -156,7 +163,7 @@
               <X class="h-4 w-4" />
             </button>
           </div>
-          <h3 class="mt-2 text-2xl font-black uppercase leading-tight text-foreground">
+          <h3 class="mt-2 text-2xl font-bold uppercase leading-tight text-foreground">
             {{ i18n.locale === 'es' ? 'Elige un plan guiado' : 'Choose a guided plan' }}
           </h3>
           <p class="mt-2 max-w-2xl text-sm font-semibold leading-relaxed text-muted/75">
@@ -186,10 +193,10 @@
     >
       <div class="flex flex-col lg:flex-row lg:items-center gap-4">
         <div class="flex-1 min-w-0 space-y-2">
-          <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary-500">
-            {{ i18n.locale === 'es' ? 'QUE HAGO HOY' : 'WHAT TO DO TODAY' }}
+          <p class="text-xs font-semibold text-primary-500">
+            {{ i18n.locale === 'es' ? 'Misión de hoy' : "Today's mission" }}
           </p>
-          <h3 class="text-lg sm:text-2xl font-black tracking-tight text-foreground leading-tight">
+          <h3 class="text-lg sm:text-2xl font-bold tracking-tight text-foreground leading-tight">
             {{ todayMissionTitle }}
           </h3>
           <p class="text-[11px] font-semibold text-muted/75 leading-relaxed">
@@ -210,23 +217,15 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2 lg:min-w-[160px]">
-          <div class="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2">
-            <p class="text-[8px] font-black uppercase tracking-widest text-muted/70">{{ i18n.locale === 'es' ? 'Racha' : 'Streak' }}</p>
-            <p class="mt-1 text-xs font-black" :class="isDailyObjectiveDone ? 'text-emerald-400' : 'text-amber-400'">
-              {{ isDailyObjectiveDone ? (i18n.locale === 'es' ? 'Hoy completado' : 'Today completed') : (i18n.locale === 'es' ? 'Pendiente hoy' : 'Pending today') }}
-            </p>
-          </div>
-          <div class="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2">
-            <p class="text-[8px] font-black uppercase tracking-widest text-muted/70">{{ i18n.locale === 'es' ? 'Recompensa' : 'Reward' }}</p>
-            <div class="mt-1 flex items-center gap-2 text-xs font-black text-foreground">
-              <Coins class="w-3.5 h-3.5 text-primary-500" />
-              <span>{{ todayMissionRewardLabel }}</span>
-            </div>
+        <!-- Compact reward + CTA row (streak shown above separately) -->
+        <div class="flex flex-wrap items-center gap-2 mt-2">
+          <div class="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+            <Coins class="w-3.5 h-3.5 text-primary-500 shrink-0" />
+            <span>{{ todayMissionRewardLabel }}</span>
           </div>
           <button
             @click="handleTodayMissionAction"
-            class="col-span-2 sm:col-span-1 lg:col-span-1 rounded-xl px-4 py-2.5 text-[10px] font-black uppercase tracking-[0.15em] transition-all active:scale-95"
+            class="ml-auto rounded-xl px-4 py-2 text-xs font-bold transition-all active:scale-95"
             :class="isDailyObjectiveDone ? 'bg-emerald-500 hover:bg-emerald-400 text-white' : 'bg-primary-500 hover:bg-primary-400 text-white'"
           >
             {{ todayMissionActionLabel }}
@@ -237,8 +236,20 @@
 
     <ExerciseSelector v-model="activeExercise" class="w-full hidden md:block" />
 
-    <!-- 3. Global Intel & Metrics -->
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+    <!-- Mobile toggle: show advanced stats on demand -->
+    <div class="lg:hidden">
+      <button
+        @click="showAdvancedStats = !showAdvancedStats"
+        class="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-border/60 bg-foreground/[0.02] hover:bg-foreground/[0.05] text-sm font-semibold text-muted hover:text-foreground transition-all active:scale-[0.98]"
+      >
+        <BarChart3 class="w-4 h-4" />
+        {{ showAdvancedStats ? (i18n.locale === 'es' ? 'Ocultar estadísticas' : 'Hide stats') : (i18n.locale === 'es' ? 'Ver estadísticas y boss' : 'Stats & boss') }}
+        <ChevronDown class="w-4 h-4 transition-transform duration-200" :class="showAdvancedStats ? 'rotate-180' : ''" />
+      </button>
+    </div>
+
+    <!-- 3. Global Intel & Metrics (hidden on mobile until toggled) -->
+    <section v-show="showAdvancedStats || isDesktop" class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
       <!-- Boss Intel -->
       <div class="lg:col-span-2 space-y-4">
         <div class="flex items-center gap-3 px-2">
@@ -262,32 +273,32 @@
             
             <div class="flex items-center justify-between relative z-10">
               <span class="text-[10px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('ui_combat_power') }}</span>
-              <Sword class="w-4 h-4 text-primary-500 animate-pulse" />
+              <Sword class="w-4 h-4 text-primary-500" />
             </div>
 
             <div class="mt-4 relative z-10">
               <div class="flex items-baseline gap-2">
-                <span class="text-4xl font-black text-foreground italic tracking-tighter">
+                <span class="text-4xl font-bold text-foreground italic tracking-tighter">
                   {{ stats.combatPower.minDamage }}
                 </span>
                 <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18n.t('ui_dmg_range') }}</span>
               </div>
-              <div class="text-[9px] font-bold text-primary-500/60 uppercase tracking-[0.2em] mt-1 italic">
+              <div class="text-xs font-bold text-primary-500/60 uppercase tracking-[0.2em] mt-1 italic">
                  {{ i18n.t('ui_avg_estimated') }}: {{ stats.combatPower.total }}
               </div>
               
               <!-- Detailed Breakdown -->
               <div class="grid grid-cols-1 gap-2 mt-6 pt-6 border-t border-white/5">
                 <div class="flex justify-between items-center">
-                  <span class="text-[9px] font-bold text-muted/60 uppercase">{{ i18n.t('dash_base_skill') }}</span>
+                  <span class="text-xs font-bold text-muted/60 uppercase">{{ i18n.t('dash_base_skill') }}</span>
                   <span class="text-xs font-black text-foreground italic">{{ stats.combatPower.base }}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                  <span class="text-[9px] font-bold text-primary-400 uppercase">⚔️ {{ i18n.t('dash_gear_bonus') }}</span>
+                  <span class="text-xs font-bold text-primary-400 uppercase">⚔️ {{ i18n.t('dash_gear_bonus') }}</span>
                   <span class="text-xs font-black text-primary-400 italic">+{{ stats.combatPower.gear }}</span>
                 </div>
                 <div class="flex justify-between items-center" v-if="stats.combatPower.buff > 0">
-                  <span class="text-[9px] font-bold text-neon-lime uppercase">🧪 {{ i18n.t('dash_active_buffs') }}</span>
+                  <span class="text-xs font-bold text-neon-lime uppercase">🧪 {{ i18n.t('dash_active_buffs') }}</span>
                   <span class="text-xs font-black text-neon-lime italic">+{{ stats.combatPower.buff }}</span>
                 </div>
 
@@ -297,7 +308,7 @@
                     <div class="h-full bg-neon-lime shadow-[0_0_10px_rgba(183,255,0,0.4)] transition-all duration-1000" 
                          :style="{ width: Math.min(100, (stats.combatPower.buff / stats.combatPower.total) * 100) + '%' }"></div>
                   </div>
-                  <div class="flex justify-between text-[7px] font-black uppercase tracking-widest text-muted/40">
+                  <div class="flex justify-between text-[10px] font-black uppercase tracking-widest text-muted/40">
                     <span>{{ i18n.t('dash_potion_impact') }}</span>
                     <span class="text-neon-lime">{{ Math.round((stats.combatPower.buff / stats.combatPower.total) * 100) }}% {{ i18n.t('dash_of_total') }}</span>
                   </div>
@@ -307,7 +318,7 @@
                 <div v-for="boost in activePotions" :key="boost.type" class="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-between">
                   <div class="flex items-center gap-2">
                     <FlaskConical class="w-3.5 h-3.5 text-emerald-500 animate-bounce" />
-                    <span class="text-[9px] font-black text-emerald-500 uppercase tracking-widest">{{ boost.label }} {{ boost.value }}</span>
+                    <span class="text-xs font-black text-emerald-500 uppercase tracking-widest">{{ boost.label }} {{ boost.value }}</span>
                   </div>
                   <span class="text-[10px] font-black text-foreground font-mono">{{ boost.timeLeft }}</span>
                 </div>
@@ -316,20 +327,20 @@
          </div>
 
          <div class="grid grid-cols-2 gap-4">
-            <!-- Streak -->
-            <div class="bg-surface/10 border border-white/5 rounded-2xl p-5 flex flex-col justify-between group">
-              <Flame class="w-3.5 h-3.5 text-primary-500 mb-4" />
+            <!-- Total reps -->
+            <div class="bg-surface/10 border border-white/5 rounded-2xl p-5 flex flex-col justify-between">
+              <Activity class="w-3.5 h-3.5 text-primary-500 mb-4" />
               <div>
-                <span class="text-3xl font-black text-foreground italic tracking-tighter">{{ stats.streak }}</span>
-                <p class="text-[9px] font-black text-muted/40 uppercase tracking-widest mt-1">{{ i18n.t('dash_streak') }}</p>
+                <span class="text-3xl font-bold text-foreground tabular-nums">{{ totalReps }}</span>
+                <p class="text-xs font-semibold text-muted/60 mt-1">{{ i18n.locale === 'es' ? 'Reps totales' : 'Total reps' }}</p>
               </div>
             </div>
             <!-- Tonnage -->
-            <div class="bg-surface/10 border border-white/5 rounded-2xl p-5 flex flex-col justify-between group">
+            <div class="bg-surface/10 border border-white/5 rounded-2xl p-5 flex flex-col justify-between">
               <Trophy class="w-3.5 h-3.5 text-primary-500 mb-4" />
               <div>
-                <span class="text-3xl font-black text-foreground italic tracking-tighter">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</span>
-                <p class="text-[9px] font-black text-muted/40 uppercase tracking-widest mt-1">{{ i18n.t('dash_tons_moved') }}</p>
+                <span class="text-3xl font-bold text-foreground tabular-nums">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</span>
+                <p class="text-xs font-semibold text-muted/60 mt-1">{{ i18n.t('dash_tons_moved') }}</p>
               </div>
             </div>
          </div>
@@ -341,20 +352,20 @@
          >
             <div class="flex items-center justify-between">
               <Target class="w-4 h-4 text-indigo-400" />
-              <div v-if="unclaimedMissions > 0" class="flex items-center gap-1.5 px-2 py-0.5 bg-indigo-500 text-[8px] font-black text-foreground uppercase rounded-full animate-pulse">
+              <div v-if="unclaimedMissions > 0" class="flex items-center gap-1.5 px-2 py-0.5 bg-indigo-500 text-[10px] font-black text-foreground uppercase rounded-full animate-pulse">
                 {{ unclaimedMissions }} {{ i18n.t('missions_available') || 'READY' }}
               </div>
             </div>
             <div class="mt-4">
-              <span class="text-xl font-black text-foreground italic tracking-tighter uppercase">{{ i18n.t('nav_missions') }}</span>
-              <p class="text-[9px] font-black text-indigo-400/60 uppercase tracking-widest mt-1">{{ i18n.t('missions_subtitle') }}</p>
+              <span class="text-xl font-black text-foreground  tracking-tighter ">{{ i18n.t('nav_missions') }}</span>
+              <p class="text-xs font-black text-indigo-400/60 uppercase tracking-widest mt-1">{{ i18n.t('missions_subtitle') }}</p>
             </div>
          </div>
       </div>
     </section>
 
-    <!-- 4. Combat Analytics (Tabbed) -->
-    <section class="space-y-6">
+    <!-- 4. Combat Analytics (Tabbed, also follows mobile toggle) -->
+    <section v-show="showAdvancedStats || isDesktop" class="space-y-6">
       <div class="flex items-center justify-center p-1 bg-surface/20 border border-white/5 rounded-2xl w-fit mx-auto">
         <button 
           @click="activeTab = 'heatmap'"
@@ -389,7 +400,7 @@
           <div class="overflow-x-auto">
             <table class="w-full text-left">
               <thead>
-                <tr class="text-muted/40 text-[9px] uppercase font-black tracking-[0.3em] border-b border-white/5">
+                <tr class="text-muted/40 text-xs uppercase font-black tracking-[0.3em] border-b border-white/5">
                   <th class="px-10 py-6">{{ i18n.t('ui_timestamp') }}</th>
                   <th class="px-10 py-6 text-right">{{ i18n.t('ui_magnitude') }}</th>
                 </tr>
@@ -409,7 +420,7 @@
                       <button @click="saveEdit(rep.id)" class="text-primary-500"><Check class="w-4 h-4" /></button>
                     </div>
                     <div v-else class="flex items-center justify-end gap-6">
-                      <span @click="startEdit(rep)" class="text-2xl font-black italic tracking-tighter text-foreground cursor-pointer hover:text-primary-500 transition-colors">
+                      <span @click="startEdit(rep)" class="text-2xl font-bold italic tracking-tighter text-foreground cursor-pointer hover:text-primary-500 transition-colors">
                         {{ rep.count }}
                       </span>
                       <button @click="confirmDelete(rep.id)" class="opacity-0 group-hover:opacity-100 text-muted/20 hover:text-red-500 transition-all">
@@ -456,7 +467,7 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import {
   Trophy, Target, Flame, Zap, Activity, History, Inbox,
-  BarChart3, Check, X, Trash2, Globe, Sword, Swords, FlaskConical, Coins, Snowflake
+  BarChart3, Check, X, Trash2, Globe, Sword, Swords, FlaskConical, Coins, Snowflake, ChevronDown
 } from 'lucide-vue-next';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
@@ -497,6 +508,8 @@ const showQuickStartModal = ref(false);
 const showGoalOnboarding = ref(false);
 const showFreeLog = ref(false);
 const activeTab = ref('heatmap');
+const showAdvancedStats = ref(false);
+const isDesktop = computed(() => typeof window !== 'undefined' && window.innerWidth >= 1024);
 const unclaimedMissions = ref(0);
 const highlightRepsInput = ref(false);
 const repsInputSection = ref(null);
@@ -514,6 +527,40 @@ const QUICKSTART_SEEN_PREFIX = 'reppy_quickstart_seen_v1';
 const GOAL_ONBOARDING_DISMISSED_PREFIX = 'reppy_goal_onboarding_dismissed_v1';
 const PLAN_PROMO_DISMISSED_PREFIX = 'reppy_plan_promo_dismissed_v1';
 const STREAK_CELEBRATED_PREFIX = 'reppy_streak_celebrated_v1';
+
+const bossMotivationQuotes = {
+  es: [
+    '"Has sobrevivido al tutorial. Ahora sube de nivel."',
+    '"Ese boss no te espera: te esta guardando sitio."',
+    '"Tus limites tienen barra de vida. Bajala hoy."',
+    '"El respawn es entrar otra vez y registrar reps."',
+    '"No eres el minion del mapa. Eres la raid entera."',
+    '"Hoy farmeas fuerza. Manana desbloqueas leyenda."',
+    '"El jefe final tambien empezo con una repeticion."',
+    '"Que tiemble el boss: vienes con buff de disciplina."',
+  ],
+  en: [
+    '"You survived the tutorial. Now level up."',
+    '"That boss is not waiting. It is saving your slot."',
+    '"Your limits have a health bar. Drain it today."',
+    '"Respawn means showing up and logging reps."',
+    '"You are not a map minion. You are the whole raid."',
+    '"Farm strength today. Unlock legend tomorrow."',
+    '"The final boss also started with one rep."',
+    '"Make the boss shake: discipline buff active."',
+  ],
+};
+
+const pickRandomQuote = (locale) => {
+  const quotes = locale === 'en' ? bossMotivationQuotes.en : bossMotivationQuotes.es;
+  return quotes[Math.floor(Math.random() * quotes.length)];
+};
+
+const dailyQuote = ref(pickRandomQuote(i18n.locale));
+
+watch(() => i18n.locale, (locale) => {
+  dailyQuote.value = pickRandomQuote(locale);
+});
 
 // Scroll lock when modals are active
 watch([showRPGModal, showQuickStartModal, showGoalOnboarding], ([rpgModal, quickStartModal, goalOnboarding]) => {
@@ -1241,6 +1288,12 @@ watch(
 
 .plan-action:active {
   transform: scale(0.97);
+}
+
+.dashboard-daily-quote {
+  line-height: 1.2;
+  max-width: min(100%, 22rem);
+  overflow-wrap: anywhere;
 }
 
 .fade-enter-active,
