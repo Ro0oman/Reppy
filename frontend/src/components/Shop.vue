@@ -29,7 +29,7 @@
           <div class="flex items-center gap-2 sm:gap-4">
             <!-- Coins -->
             <div
-              class="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-2 rounded-[22px] backdrop-blur-md shadow-inner group">
+              class="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-2 rounded-[22px] shadow-inner group">
               <div class="p-1.5 bg-primary-500/10 rounded-lg group-hover:scale-110 transition-transform">
                 <Coins class="w-4 h-4 text-primary-500" />
               </div>
@@ -37,7 +37,7 @@
             </div>
             <!-- Gems -->
             <div
-              class="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-2 rounded-[22px] backdrop-blur-md shadow-inner group">
+              class="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-2 rounded-[22px] shadow-inner group">
               <div class="p-1.5 bg-emerald-500/10 rounded-lg group-hover:scale-110 transition-transform">
                 <Diamond class="w-4 h-4 text-emerald-500" />
               </div>
@@ -132,8 +132,8 @@
                     {{ i18n.t('shop_upgrade_badge') || 'MEJORA' }}
                   </div>
 
-                  <!-- Animated Glow -->
-                  <div class="absolute inset-0 blur-3xl opacity-20 group-hover:opacity-40 transition-opacity" :class="[
+                  <!-- Rarity tint -->
+                  <div class="absolute inset-0 opacity-10 pointer-events-none" :class="[
                     item.rarity === 'common' ? 'bg-slate-500' :
                       item.rarity === 'rare' ? 'bg-blue-500' :
                         item.rarity === 'epic' || item.rarity === 'especial' ? 'bg-purple-500' :
@@ -239,7 +239,7 @@
                   class="relative w-32 h-32 sm:w-40 sm:h-40 mb-6 group-hover/chest:scale-110 transition-transform duration-700 flex items-center justify-center">
                   <ChestIcon :variant="chest.id" class-name="w-full h-full relative z-10 object-contain" />
                   <div
-                    class="absolute inset-0 bg-emerald-500/20 blur-[50px] -z-10 opacity-0 group-hover/chest:opacity-100 transition-opacity">
+                    class="absolute inset-0 bg-emerald-500/15 -z-10 opacity-0 group-hover/chest:opacity-100 transition-opacity rounded-full">
                   </div>
                 </div>
 
@@ -268,7 +268,7 @@
               <div class="p-8 flex flex-col items-center">
                 <div class="relative w-32 h-32 sm:w-40 sm:h-40 mb-6 group-hover/ticket:scale-110 transition-transform duration-700 flex items-center justify-center">
                   <ItemIcon name="ticket" type="consumable" class-name="w-full h-full relative z-10 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] opacity-90 group-hover/ticket:opacity-100" />
-                  <div class="absolute inset-0 bg-emerald-500/20 blur-[50px] -z-10 opacity-0 group-hover/ticket:opacity-100 transition-opacity"></div>
+                  <div class="absolute inset-0 bg-emerald-500/15 -z-10 opacity-0 group-hover/ticket:opacity-100 transition-opacity rounded-full"></div>
                 </div>
 
                 <h3 class="font-black text-xl sm:text-2xl uppercase italic mb-2 text-center tracking-tighter">{{ rouletteTicketItem.name }}</h3>
@@ -313,10 +313,8 @@
                 <div
                   class="absolute -bottom-2 -right-2 bg-yellow-500 text-black text-[12px] font-black px-4 py-2 rounded-tl-[22px] shadow-xl animate-bounce-subtle">
                   -30%</div>
-                <!-- Scanning Effect -->
-                <div
-                  class="absolute inset-0 bg-gradient-to-b from-transparent via-white/10 to-transparent h-1/2 w-full animate-[scan_3s_infinite] pointer-events-none">
-                </div>
+                <!-- Shimmer overlay -->
+                <div class="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none"></div>
               </div>
 
               <div class="flex-1 flex flex-col h-full">
@@ -437,7 +435,7 @@
               <!-- Rarity Badge -->
               <div class="absolute top-3 left-3 z-20">
                 <div
-                  class="px-2.5 py-1 rounded-lg border font-black text-[7px] sm:text-[9px] tracking-widest uppercase backdrop-blur-md shadow-xl"
+                  class="px-2.5 py-1 rounded-lg border font-black text-[7px] sm:text-[9px] tracking-widest uppercase shadow-xl"
                   :class="getRarityBadge(item).classes">
                   {{ getRarityBadge(item).label }}
                 </div>
@@ -543,7 +541,7 @@
     <!-- Bundle Details Modal -->
     <Transition name="modal-fade">
       <div v-if="showBundleModal && selectedBundle" class="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-2xl" @click="showBundleModal = false"></div>
+        <div class="absolute inset-0 bg-black/85" @click="showBundleModal = false"></div>
         <div
           class="relative w-full max-w-2xl bg-[#0a0a0a] border border-white/10 rounded-[32px] overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.8)] animate-modal-in max-h-[90vh] flex flex-col">
 
@@ -630,7 +628,7 @@
     <!-- Item Details Modal -->
     <Transition name="modal-fade">
       <div v-if="showItemModal && selectedItem" class="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/90 backdrop-blur-2xl" @click="showItemModal = false"></div>
+        <div class="absolute inset-0 bg-black/90" @click="showItemModal = false"></div>
         <div
           class="relative w-full max-w-xl bg-[#0a0a0a] border border-white/10 rounded-[32px] overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.9)] animate-modal-in flex flex-col max-h-[90vh]">
 
@@ -641,7 +639,7 @@
 
           <div class="p-8 flex-1 overflow-y-auto no-scrollbar">
             <!-- Rarity Aura -->
-            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 blur-[100px] opacity-20 pointer-events-none"
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 opacity-10 pointer-events-none"
               :class="[
                 selectedItem.rarity === 'common' ? 'bg-slate-500' :
                   selectedItem.rarity === 'rare' ? 'bg-blue-500' :
@@ -1214,15 +1212,14 @@ onBeforeUnmount(() => {
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(15px);
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .premium-card:hover {
   background: rgba(255, 255, 255, 0.06);
   border-color: rgba(255, 255, 255, 0.15);
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
 /* Rarity specific border glows */
