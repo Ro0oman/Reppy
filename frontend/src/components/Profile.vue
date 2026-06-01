@@ -91,30 +91,46 @@
       </div>
 
       <!-- ── ATRIBUTOS RPG ── -->
-      <div v-if="attributes?.length" class="rounded-2xl border border-border bg-foreground/[0.02] p-4 space-y-1.5">
-        <p class="text-xs font-semibold text-muted mb-3">{{ i18nStore.locale === 'es' ? 'Atributos RPG' : 'RPG Attributes' }}</p>
-        <div v-for="attr in attributes" :key="attr.key"
-             class="flex items-center gap-3 py-2 px-1 rounded-xl transition-all hover:bg-foreground/[0.03]">
-          <!-- Stat label -->
-          <span class="w-9 text-[11px] font-bold tabular-nums shrink-0 text-right"
-                :class="attr.labelColor">{{ attr.key }}</span>
-          <!-- Level number -->
-          <span class="w-7 text-lg font-bold text-foreground tabular-nums leading-none shrink-0">{{ attr.lvl }}</span>
-          <!-- Progress bar -->
-          <div class="flex-1 h-2 rounded-full bg-foreground/10 overflow-hidden">
-            <div class="h-full rounded-full transition-all duration-700"
-                 :class="attr.barColor"
-                 :style="{ width: `${Math.min(100, (attr.xpIntoLevel / attr.xpForNext) * 100)}%` }" />
+      <div v-if="attributes?.length" class="rounded-2xl border border-border bg-foreground/[0.02] p-4">
+        <p class="text-[10px] font-black text-muted uppercase tracking-[0.3em] mb-4">
+          {{ i18nStore.locale === 'es' ? 'Atributos RPG' : 'RPG Attributes' }}
+        </p>
+        <div class="space-y-3">
+          <div v-for="attr in attributes" :key="attr.key"
+               class="group flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform"
+               @click="codexTab = attr.key; showInfoModal = true">
+            <!-- Icon + key -->
+            <div class="shrink-0 w-10 h-10 rounded-xl flex flex-col items-center justify-center border transition-all"
+                 :class="attr.tileBg">
+              <span class="text-base leading-none">{{ attr.icon }}</span>
+              <span class="text-[8px] font-black tracking-wider leading-none mt-0.5"
+                    :class="attr.labelColor">{{ attr.key }}</span>
+            </div>
+            <!-- Level + bar -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-baseline justify-between mb-1.5">
+                <span class="text-sm font-bold text-foreground tabular-nums leading-none">
+                  Lv <span class="text-base" :class="attr.labelColor">{{ attr.lvl }}</span>
+                </span>
+                <span class="text-[10px] text-muted/60 tabular-nums">
+                  {{ attr.xpIntoLevel }}<span class="opacity-50">/{{ attr.xpForNext }}</span>
+                </span>
+              </div>
+              <div class="h-2 rounded-full bg-foreground/8 overflow-hidden">
+                <div class="h-full rounded-full transition-all duration-700 relative"
+                     :class="attr.barColor"
+                     :style="{ width: `${Math.min(100, (attr.xpIntoLevel / attr.xpForNext) * 100)}%` }">
+                  <!-- Shine -->
+                  <div class="absolute inset-0 rounded-full bg-gradient-to-r from-white/0 via-white/20 to-white/0"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Gear bonus -->
+            <span v-if="attr.bonus > 0"
+                  class="shrink-0 text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded-lg tabular-nums">
+              +{{ attr.bonus }}
+            </span>
           </div>
-          <!-- XP label -->
-          <span class="text-[10px] text-muted tabular-nums shrink-0 w-14 text-right">
-            {{ attr.xpIntoLevel }}<span class="text-muted/50">/{{ attr.xpForNext }}</span>
-          </span>
-          <!-- Gear bonus -->
-          <span v-if="attr.bonus > 0"
-                class="shrink-0 text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-lg">
-            +{{ attr.bonus }}
-          </span>
         </div>
       </div>
 
@@ -151,7 +167,7 @@
     </template>
 
     <!-- RPG Info Modal (The Codex) -->
-    <CodexModal :show="showInfoModal" @close="showInfoModal = false" />
+    <CodexModal :show="showInfoModal" :initial-tab="codexTab" @close="showInfoModal = false" />
     <!-- Issue 88: Settings Modal -->
     <SettingsModal :show="showSettingsModal" :initial-data="settingsForm" @close="showSettingsModal = false" @updated="onProfileUpdated" />
 
@@ -290,6 +306,7 @@ const transactions = ref([]);
 const loading = ref(true);
 const activeExercise = ref('all');
 const showInfoModal = ref(false);
+const codexTab = ref('STR');
 const showSettingsModal = ref(false);
 const showAvatarSelector = ref(false);
 const showZoom = ref(false);
@@ -381,13 +398,13 @@ const itemBonuses = computed(() => {
 });
 
 const attributes = computed(() => [
-  { key: 'STR', xp: user.value.str_xp || 0, lvl: user.value.str_lvl || 1, labelColor: 'text-orange-500', barColor: 'bg-orange-500', bonus: itemBonuses.value.STR, xpIntoLevel: user.value.str_xp_into_level || 0, xpForNext: user.value.str_xp_for_next_level || 100 },
-  { key: 'DEX', xp: user.value.dex_xp || 0, lvl: user.value.dex_lvl || 1, labelColor: 'text-cyan-400', barColor: 'bg-cyan-400', bonus: itemBonuses.value.DEX, xpIntoLevel: user.value.dex_xp_into_level || 0, xpForNext: user.value.dex_xp_for_next_level || 100 },
-  { key: 'END', xp: user.value.end_xp || 0, lvl: user.value.end_lvl || 1, labelColor: 'text-emerald-500', barColor: 'bg-emerald-500', bonus: itemBonuses.value.END, xpIntoLevel: user.value.end_xp_into_level || 0, xpForNext: user.value.end_xp_for_next_level || 100 },
-  { key: 'VIG', xp: user.value.vig_xp || 0, lvl: user.value.vig_lvl || 1, labelColor: 'text-red-500', barColor: 'bg-red-500', bonus: itemBonuses.value.VIG, xpIntoLevel: user.value.vig_xp_into_level || 0, xpForNext: user.value.vig_xp_for_next_level || 100 },
-  { key: 'INT', xp: user.value.int_xp || 0, lvl: user.value.int_lvl || 1, labelColor: 'text-blue-400', barColor: 'bg-blue-400', bonus: itemBonuses.value.INT, xpIntoLevel: user.value.int_xp_into_level || 0, xpForNext: user.value.int_xp_for_next_level || 100 },
-  { key: 'FTH', xp: user.value.fth_xp || 0, lvl: user.value.fth_lvl || 1, labelColor: 'text-yellow-400', barColor: 'bg-yellow-400', bonus: itemBonuses.value.FTH, xpIntoLevel: user.value.fth_xp_into_level || 0, xpForNext: user.value.fth_xp_for_next_level || 100 },
-  { key: 'CHA', xp: user.value.cha_xp || 0, lvl: user.value.cha_lvl || 1, labelColor: 'text-pink-400', barColor: 'bg-pink-400', bonus: itemBonuses.value.CHA, xpIntoLevel: user.value.cha_xp_into_level || 0, xpForNext: user.value.cha_xp_for_next_level || 100 },
+  { key: 'STR', icon: '⚔️', lvl: user.value.str_lvl || 1, labelColor: 'text-orange-500', barColor: 'bg-orange-500', tileBg: 'bg-orange-500/8 border-orange-500/20', bonus: itemBonuses.value.STR, xpIntoLevel: user.value.str_xp_into_level || 0, xpForNext: user.value.str_xp_for_next_level || 100 },
+  { key: 'DEX', icon: '🎯', lvl: user.value.dex_lvl || 1, labelColor: 'text-cyan-400',   barColor: 'bg-cyan-400',   tileBg: 'bg-cyan-500/8 border-cyan-500/20',   bonus: itemBonuses.value.DEX, xpIntoLevel: user.value.dex_xp_into_level || 0, xpForNext: user.value.dex_xp_for_next_level || 100 },
+  { key: 'END', icon: '🛡️', lvl: user.value.end_lvl || 1, labelColor: 'text-emerald-500', barColor: 'bg-emerald-500', tileBg: 'bg-emerald-500/8 border-emerald-500/20', bonus: itemBonuses.value.END, xpIntoLevel: user.value.end_xp_into_level || 0, xpForNext: user.value.end_xp_for_next_level || 100 },
+  { key: 'VIG',  icon: '❤️', lvl: user.value.vig_lvl || 1, labelColor: 'text-red-500',    barColor: 'bg-red-500',    tileBg: 'bg-red-500/8 border-red-500/20',    bonus: itemBonuses.value.VIG, xpIntoLevel: user.value.vig_xp_into_level || 0, xpForNext: user.value.vig_xp_for_next_level || 100 },
+  { key: 'INT',  icon: '🧠', lvl: user.value.int_lvl || 1, labelColor: 'text-blue-400',   barColor: 'bg-blue-400',   tileBg: 'bg-blue-500/8 border-blue-500/20',   bonus: itemBonuses.value.INT, xpIntoLevel: user.value.int_xp_into_level || 0, xpForNext: user.value.int_xp_for_next_level || 100 },
+  { key: 'FTH',  icon: '✨', lvl: user.value.fth_lvl || 1, labelColor: 'text-yellow-400', barColor: 'bg-yellow-400', tileBg: 'bg-yellow-500/8 border-yellow-500/20', bonus: itemBonuses.value.FTH, xpIntoLevel: user.value.fth_xp_into_level || 0, xpForNext: user.value.fth_xp_for_next_level || 100 },
+  { key: 'CHA',  icon: '👑', lvl: user.value.cha_lvl || 1, labelColor: 'text-pink-400',   barColor: 'bg-pink-400',   tileBg: 'bg-pink-500/8 border-pink-500/20',   bonus: itemBonuses.value.CHA, xpIntoLevel: user.value.cha_xp_into_level || 0, xpForNext: user.value.cha_xp_for_next_level || 100 },
 ]);
 
 const getAttrColor = (lvl) => {
