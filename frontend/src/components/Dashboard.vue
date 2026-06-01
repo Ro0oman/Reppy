@@ -142,7 +142,6 @@
         </p>
       </div>
     </div>
-    </div>
 
     <TodayWorkout
       v-if="shouldShowTodayWorkout"
