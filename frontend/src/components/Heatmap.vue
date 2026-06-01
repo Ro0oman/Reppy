@@ -221,7 +221,13 @@ const goToToday = () => {
 
 const dataMap = computed(() => {
   return props.data.reduce((acc, curr) => {
-    const dStr = curr.date.split('T')[0];
+    // Always normalise to local-time date string so it matches calendarDays keys.
+    // Backend now returns TO_CHAR 'YYYY-MM-DD' strings, but guard against ISO
+    // timestamps that some environments return for DATE columns.
+    const raw = curr.date ?? '';
+    const dStr = raw.length === 10
+      ? raw                                           // already "YYYY-MM-DD"
+      : getLocalDateString(new Date(raw));            // ISO → local date string
     if (!acc[dStr]) {
       acc[dStr] = { total: 0, breakdown: [] };
     }

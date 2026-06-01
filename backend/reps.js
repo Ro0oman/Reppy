@@ -296,7 +296,7 @@ router.get('/heatmap', authenticate, async (req, res) => {
   try {
     const isGlobal = !type || type === 'all' || type === 'undefined';
     
-    let q = 'SELECT date, exercise_type, SUM(count)::int as count FROM reps WHERE user_id = $1';
+    let q = `SELECT TO_CHAR(date, 'YYYY-MM-DD') AS date, exercise_type, SUM(count)::int as count FROM reps WHERE user_id = $1`;
     let params = [userId];
 
     if (!isGlobal) {
@@ -307,14 +307,13 @@ router.get('/heatmap', authenticate, async (req, res) => {
     if (year) {
       const yearInt = parseInt(year);
       q += ` AND date >= '${yearInt}-01-01' AND date <= '${yearInt}-12-31'`;
-    } else {
-      q += " AND date > CURRENT_DATE - INTERVAL '1 year'";
     }
+    // No date limit when no year specified — show full history
 
     q += ' GROUP BY date, exercise_type ORDER BY date ASC';
 
     const result = await query(q, params);
-    
+
     const formattedRows = result.rows.map(row => ({
       ...row,
       count: Number(row.count)
