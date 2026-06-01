@@ -84,19 +84,12 @@
               </div>
             </div>
 
-            <!-- Mute: desktop only (rarely needed on mobile) -->
-            <button @click="toggleMute(); playClickBlip();"
-              :title="isMuted() ? i18n.t('audio_unmute') : i18n.t('audio_mute')"
-              class="hidden sm:flex p-2 rounded-xl transition-all group bg-surface/5 border border-border hover:bg-surface/10 items-center justify-center min-w-[40px] min-h-[40px]">
-              <component :is="isMuted() ? VolumeX : Volume2"
-                class="w-5 h-5 text-muted group-hover:text-primary-500 transition-colors" />
-            </button>
-
+            
             <!-- Level chip (always, tappable → Perfil) -->
             <router-link :to="{ name: 'profile', params: { lang: i18n.locale, userId: authStore.user?.id } }"
-              class="flex items-center gap-1.5 bg-primary-500/10 px-2.5 py-1.5 rounded-xl border border-primary-500/20 hover:border-primary-500/40 transition-all">
-              <span class="text-[10px] font-bold text-primary-500 uppercase tracking-wide">Lv</span>
-              <span class="text-sm font-bold text-foreground tabular-nums leading-none">{{ authStore.user?.current_level || 1 }}</span>
+              class="flex items-center gap-1.5 bg-primary-500/10 px-2.5 py-1.5 rounded-xl border border-primary-500/20 hover:border-primary-500/40 transition-all min-h-[40px]">
+              <!-- <span class="text-[10px] font-bold text-primary-500 uppercase tracking-wide">{{ authStore.user?.name || 1 }}</span> -->
+              <AvatarFrame :src="authStore.user?.avatar_url"  :size="30" />
             </router-link>
 
             <!-- XP bar: desktop only -->
@@ -262,6 +255,7 @@
             </button>
           </div>
 
+
           <!-- Generation Protocol -->
           <div class="space-y-6">
             <h3 class="text-[10px] font-black uppercase text-primary-500 tracking-[0.3em]">{{ i18n.t('economy_revenue')
@@ -304,7 +298,7 @@
               <Coins class="w-6 h-6 text-primary-500" />
             </div>
             <div>
-              <p class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18n.t('monthly_projection') }}
+          <p class="text-[10px] font-black text-muted uppercase tracking-widest">          
               </p>
               <p class="text-sm font-black text-foreground font-tight uppercase tracking-tight">{{
                 i18n.t('active_yield_desc') }} <span class="text-primary-500 text-precision">~1200 RC</span></p>

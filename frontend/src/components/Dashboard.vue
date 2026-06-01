@@ -55,7 +55,7 @@
     <!-- Streak card: racha + progreso semanal + jackpot -->
     <div
       v-if="streakStatus"
-      class="rounded-2xl border px-4 py-3 transition-all duration-300 space-y-2.5"
+      class="rounded-2xl border px-4 py-3 transition-all duration-300 space-y-4"
       :class="streakStatus.showRisk
         ? 'border-amber-500/30 bg-amber-500/10'
         : streakStatus.jackpotAlreadyAwarded
@@ -73,7 +73,7 @@
 
         <div class="flex-1 min-w-0">
           <div class="flex items-baseline gap-1.5">
-            <span class="text-2xl font-bold tabular-nums text-foreground leading-none">{{ streakStatus.streak }}</span>
+            <!-- <span class="text-s font-bold tabular-nums text-foreground leading-none">{{ streakStatus.streak }}</span> -->
             <span class="text-sm font-semibold text-muted">{{ streakDaysLabel }}</span>
           </div>
           <p class="text-xs mt-0.5 truncate"
@@ -88,7 +88,7 @@
         <button
           v-if="streakStatus.isAtRisk && !streakStatus.frozenToday"
           type="button"
-          class="shrink-0 flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition-all active:scale-95 disabled:opacity-40"
+          class="shrink-0 flex items-center gap-1 rounded-xl border px-3 py-2 text-xs transition-all active:scale-95 disabled:opacity-40"
           :class="streakStatus.canFreeze
             ? 'border-amber-500/35 bg-amber-500/15 text-amber-200 hover:bg-amber-500/25'
             : 'border-border bg-foreground/[0.04] text-muted'"
@@ -673,7 +673,7 @@ const clearPlanPromoDismissed = () => {
 
 const streakDaysLabel = computed(() => {
   const days = Number(streakStatus.value?.streak || 0);
-  if (i18n.locale === 'es') return days === 1 ? 'dia activo' : 'dias activos';
+  if (i18n.locale === 'es') return days === 1 ? 'dia activo' : `Racha de ${days} dias `;
   return days === 1 ? 'active day' : 'active days';
 });
 
@@ -684,7 +684,7 @@ const streakStateLabel = computed(() => {
   if (status.frozenToday) return i18n.locale === 'es' ? 'Protegida con congelacion hasta manana.' : 'Protected with a freeze until tomorrow.';
   if (status.isAtRisk) {
     return i18n.locale === 'es'
-      ? `En riesgo: quedan ${status.hoursLeftToday} h para salvarla.`
+      ? `En riesgo`
       : `At risk: ${status.hoursLeftToday} h left to save it.`;
   }
   return i18n.locale === 'es' ? 'Entrena hoy para empezar o subir tu racha.' : 'Train today to start or grow your streak.';
@@ -693,7 +693,7 @@ const streakStateLabel = computed(() => {
 const freezeButtonLabel = computed(() => {
   const cost = Number(streakStatus.value?.freezeCost || 0);
   if (freezingStreak.value) return i18n.locale === 'es' ? 'Congelando...' : 'Freezing...';
-  return i18n.locale === 'es' ? `Congelar por ${cost} monedas` : `Freeze for ${cost} coins`;
+  return i18n.locale === 'es' ? `Congelar por ${cost}` : `Freeze for ${cost} coins`;
 });
 
 const maybeCelebrateStreak = async (status) => {
@@ -719,6 +719,7 @@ const fetchStreakStatus = async () => {
   try {
     const res = await axios.get('/api/streak/status', { params: { t: Date.now() } });
     streakStatus.value = res.data;
+    console.log('Fetched streak status:', res.data);
     await maybeCelebrateStreak(res.data);
   } catch (error) {
     console.error('Error fetching streak status:', error);
