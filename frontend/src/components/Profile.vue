@@ -128,7 +128,7 @@
 
       <!-- ── DESGLOSE POR EJERCICIO ── -->
       <div v-if="stats.breakdown?.length > 0" class="rounded-2xl border border-border bg-foreground/[0.02] p-4 space-y-3">
-        <p class="text-xs font-semibold text-muted">{{ i18nStore.t('protocol_mastery') }}</p>
+        <p class="text-xs font-semibold text-muted">Ejercicios</p>
         <div class="space-y-2">
           <div v-for="item in stats.breakdown" :key="item.type"
                class="tap-row flex items-center justify-between py-2 px-1 rounded-xl">
@@ -137,7 +137,7 @@
                 <component :is="getIconForType(item.type)" class="w-4 h-4 text-primary-500/70" />
               </div>
               <div>
-                <p class="text-sm font-semibold text-foreground">{{ i18nStore.t(item.type) }}</p>
+                <p class="text-sm font-semibold text-foreground">{{ i18nStore.t(item.type)||item }}</p>
                 <p class="text-xs text-muted tabular-nums">{{ item.count }} {{ i18nStore.t('ui_reps') }}</p>
               </div>
             </div>
@@ -146,36 +146,7 @@
         </div>
       </div>
 
-      <!-- ── HISTORIAL DE MONEDAS ── -->
-      <div class="rounded-2xl border border-border bg-foreground/[0.02] p-4 space-y-3">
-        <div class="flex items-center gap-2">
-          <Coins class="w-4 h-4 text-primary-500" />
-          <p class="text-xs font-semibold text-muted">{{ i18nStore.t('profile_rc_history') }}</p>
-        </div>
-        <div v-if="transactions?.length > 0" class="space-y-1">
-          <div v-for="(tx, idx) in transactions" :key="idx"
-               class="flex items-center justify-between py-2.5 px-1 border-b border-border/40 last:border-0">
-            <div class="flex items-center gap-3 min-w-0">
-              <span class="text-[10px] text-muted shrink-0 tabular-nums w-16">{{ new Date(tx.created_at).toLocaleDateString() }}</span>
-              <span class="text-xs text-foreground/80 truncate">{{ tx.description }}</span>
-            </div>
-            <span class="shrink-0 text-sm font-bold tabular-nums ml-3"
-                  :class="tx.amount > 0 ? 'text-emerald-400' : 'text-primary-500'">
-              {{ tx.amount > 0 ? '+' : '' }}{{ tx.amount }}
-            </span>
-          </div>
-          <div v-if="hasMoreTransactions" class="pt-2">
-            <button @click="fetchMoreTransactions" :disabled="loadingMore"
-                    class="w-full py-3 rounded-xl bg-foreground/[0.04] border border-border text-xs font-semibold text-muted hover:text-foreground transition-all active:scale-[0.98] flex items-center justify-center gap-2">
-              <span v-if="loadingMore" class="w-3 h-3 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
-              {{ loadingMore ? i18nStore.t('profile_loading') : i18nStore.t('profile_load_more') }}
-            </button>
-          </div>
-        </div>
-        <div v-else class="py-8 text-center">
-          <p class="text-xs text-muted/50">{{ i18nStore.t('profile_no_transactions') }}</p>
-        </div>
-      </div>
+     
 
     </template>
 
