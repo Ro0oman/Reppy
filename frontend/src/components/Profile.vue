@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 pt-24 pb-24 space-y-6 animate-in relative z-10">
+  <div class="max-w-7xl mx-auto px-4 pt-4 pb-24 space-y-6 animate-in relative z-10">
     <div v-if="loading" class="flex flex-col items-center justify-center py-32">
       <div class="w-12 h-12 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
       <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em] mt-8">{{ i18nStore.t('profile_decrypting') }}</p>
@@ -74,30 +74,9 @@
         </div>
       </div>
 
-      <!-- ── ACCIONES RÁPIDAS ── -->
-      <div class="flex flex-wrap gap-2">
-        <!-- Own profile -->
-        <template v-if="isOwnProfile">
-          <router-link :to="{ name: 'inventory', params: { lang: i18nStore.locale } }"
-            class="relative tap-card inline-flex items-center gap-2 rounded-xl border border-primary-500/30 bg-primary-500/10 px-4 py-2.5 text-sm font-semibold text-primary-500 transition-all">
-            <Zap class="w-4 h-4" />
-            {{ i18nStore.locale === 'es' ? 'Inventario' : 'Inventory' }}
-            <span v-if="authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory"
-                  class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-primary-500 ring-2 ring-background" />
-          </router-link>
-          <router-link :to="{ name: 'shop', params: { lang: i18nStore.locale } }"
-            class="tap-card inline-flex items-center gap-2 rounded-xl border border-border bg-foreground/[0.03] px-4 py-2.5 text-sm font-semibold text-muted hover:text-foreground transition-all">
-            <Coins class="w-4 h-4 text-primary-500" />
-            {{ i18nStore.t('nav_shop') }}
-          </router-link>
-          <router-link :to="{ name: 'codex', params: { lang: i18nStore.locale } }"
-            class="tap-card inline-flex items-center gap-2 rounded-xl border border-border bg-foreground/[0.03] px-4 py-2.5 text-sm font-semibold text-muted hover:text-foreground transition-all">
-            <BookOpen class="w-4 h-4 text-primary-500" />
-            {{ i18nStore.t('nav_codex') }}
-          </router-link>
-        </template>
-        <!-- Other user actions -->
-        <template v-else-if="authStore.isAuthenticated">
+      <!-- ── ACCIONES RÁPIDAS (solo otros perfiles) ── -->
+      <div v-if="!isOwnProfile && authStore.isAuthenticated" class="flex flex-wrap gap-2">
+        <template v-if="authStore.isAuthenticated">
           <button @click="challengingUser = user"
             class="inline-flex items-center gap-2 rounded-xl bg-primary-500 hover:bg-primary-600 px-4 py-2.5 text-sm font-bold text-white active:scale-95 transition-all shadow-lg shadow-primary-500/20">
             <Swords class="w-4 h-4" />

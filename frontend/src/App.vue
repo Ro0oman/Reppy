@@ -225,8 +225,8 @@
           class="flex flex-col items-center justify-center gap-1 h-full group relative transition-colors"
           :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted hover:text-foreground'">
           <component :is="nav.icon" class="w-[22px] h-[22px] transition-transform group-active:scale-90" />
-          <!-- Reward badge on Profile (chests/new inventory now live there) -->
-          <span v-if="nav.id === 'profile' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory)"
+          <!-- Badge on Inventory when chests/new items available -->
+          <span v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory)"
             class="absolute top-2 right-[calc(50%-18px)] w-2 h-2 rounded-full bg-primary-500 ring-2 ring-surface"></span>
           <span class="text-xs font-bold tracking-tight">{{ nav.short || i18n.t(nav.label) }}</span>
         </router-link>
@@ -423,7 +423,7 @@ const mobileNavLeft = computed(() => [
 ]);
 const mobileNavRight = computed(() => [
   { id: 'missions', icon: Target, label: 'nav_missions', short: i18n.locale === 'es' ? 'Misiones' : 'Missions' },
-  { id: 'profile', icon: User, label: 'nav_profile', short: i18n.locale === 'es' ? 'Perfil' : 'Profile' },
+  { id: 'inventory', icon: Package, label: 'nav_inventory', short: i18n.locale === 'es' ? 'Inventario' : 'Inventory' },
 ]);
 
 const getMobileNavTo = (nav) => {
