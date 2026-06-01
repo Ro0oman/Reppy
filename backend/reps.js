@@ -12,6 +12,7 @@ import { updateMissionProgress } from './utils/missions.js';
 import { broadcastDamage } from './socketManager.js';
 import { grantLastHitBonus } from './utils/bossRewards.js';
 import { getEffectiveExerciseCount, getRewardExerciseCount, isTimedExerciseUnit } from './utils/exerciseUnits.js';
+import { getStreakStatus, JACKPOT_REWARD_COINS, JACKPOT_DAYS_REQUIRED } from './utils/streak.js';
 
 
 const router = express.Router();
@@ -224,11 +225,48 @@ router.post('/', authenticate, async (req, res) => {
       [repResult.rows[0].id]
     );
 
-    res.json({ 
-      ...finalRecord.rows[0], 
-      earnedCoins, 
+    // ── 5/7 WEEKLY JACKPOT ──────────────────────────────────────────────
+    // Check AFTER commit so streak status sees today's reps.
+    // Only fires the first time the user hits JACKPOT_DAYS_REQUIRED unique
+    // training days in the calendar week (Mon–Sun).
+    let jackpotAwarded = false;
+    try {
+      const streakStatus = await getStreakStatus(userId);
+      if (streakStatus.jackpotEligible) {
+        const isoWeek = (() => {
+          const d = new Date();
+          const startOfYear = new Date(d.getFullYear(), 0, 1);
+          const week = Math.ceil(((d - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);
+          return `${d.getFullYear()}-W${String(week).padStart(2, '0')}`;
+        })();
+        // Atomic: only award if last_jackpot_week still doesn't match (race-safe)
+        const jackpotRes = await query(
+          `UPDATE users
+             SET reppy_coins    = GREATEST(0, reppy_coins + $1),
+                 last_jackpot_week = $2
+           WHERE id = $3
+             AND (last_jackpot_week IS NULL OR last_jackpot_week != $2)
+           RETURNING id`,
+          [JACKPOT_REWARD_COINS, isoWeek, userId]
+        );
+        if (jackpotRes.rowCount > 0) {
+          jackpotAwarded = true;
+          // Recalc so new coins show up immediately
+          await recalculateUserStats(userId);
+        }
+      }
+    } catch (jackpotErr) {
+      console.error('[jackpot] non-critical error:', jackpotErr.message);
+    }
+    // ────────────────────────────────────────────────────────────────────
+
+    res.json({
+      ...finalRecord.rows[0],
+      earnedCoins,
       is_crit: dmgResult.isCrit,
-      damage_dealt_this_set: actualDamageDealt
+      damage_dealt_this_set: actualDamageDealt,
+      jackpot_awarded: jackpotAwarded,
+      jackpot_coins: jackpotAwarded ? JACKPOT_REWARD_COINS : 0,
     });
 
     // Broadcast damage event for real-time visualization

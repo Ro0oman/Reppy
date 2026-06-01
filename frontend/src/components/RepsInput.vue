@@ -192,21 +192,35 @@ const addReps = async (count) => {
       added_weight: addedWeight.value || 0
     });
     
-    let msg = `+${count} logged`;
-    notificationStore.notify(msg, 'success');
-    
-    // Trigger JRPG damage animation if boss damage was dealt
+    // Damage animation
     const damageToAnimate = res.data.damage_dealt_this_set ?? res.data.boss_damage_dealt;
     if (damageToAnimate > 0) {
       const damageStore = useDamageStore();
       damageStore.addDamage(damageToAnimate, props.exerciseType, undefined, undefined, res.data.is_crit);
     }
-    
+
+    // ── 5/7 JACKPOT feedback ──────────────────────────────────────────
+    if (res.data.jackpot_awarded) {
+      const jackpotMsg = i18n.locale === 'es'
+        ? `🎉 ¡Bonus semanal! +${res.data.jackpot_coins} RC por entrenar ${5} días esta semana`
+        : `🎉 Weekly bonus! +${res.data.jackpot_coins} RC for training ${5} days this week`;
+      notificationStore.notify(jackpotMsg, 'success');
+      // Big confetti burst
+      try {
+        const { default: confetti } = await import('canvas-confetti');
+        confetti({ particleCount: 120, spread: 90, origin: { y: 0.6 }, colors: ['#3b82f6','#60a5fa','#34d399','#fbbf24'] });
+      } catch (_) {}
+    } else {
+      const msg = i18n.locale === 'es' ? `+${count} reps registradas` : `+${count} reps logged`;
+      notificationStore.notify(msg, 'success');
+    }
+    // ─────────────────────────────────────────────────────────────────
+
     // Refresh global user state to sync header level/XP
     const authStore = useAuthStore();
     await authStore.fetchProfile();
     markPushPromptEligible();
-    
+
     emit('updated');
   } catch (error) {
     console.error('Error logging reps:', error);

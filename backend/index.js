@@ -342,6 +342,7 @@ apiRouter.get('/db/init', async (req, res) => {
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_avatar_overhaul BOOLEAN DEFAULT FALSE`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_streak_reward_date DATE`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS push_disabled BOOLEAN DEFAULT FALSE`,
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_jackpot_week TEXT`,
       // Mark old bosses as inactive to avoid overlapping
       `UPDATE boss_fights SET status = 'defeated' WHERE order_index = 0 AND status = 'active'`,
       

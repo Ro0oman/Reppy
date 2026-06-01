@@ -52,46 +52,96 @@
       <RepsInput v-else :exercise-type="activeExercise" @updated="fetchData" class="w-full" />
     </section>
 
-    <!-- Streak card: compact horizontal layout -->
+    <!-- Streak card: racha + progreso semanal + jackpot -->
     <div
       v-if="streakStatus"
-      class="flex items-center gap-3 rounded-2xl border px-4 py-3 transition-all duration-300"
+      class="rounded-2xl border px-4 py-3 transition-all duration-300 space-y-2.5"
       :class="streakStatus.showRisk
         ? 'border-amber-500/30 bg-amber-500/10'
-        : 'border-primary-500/20 bg-primary-500/10'"
+        : streakStatus.jackpotAlreadyAwarded
+          ? 'border-emerald-500/30 bg-emerald-500/10'
+          : 'border-primary-500/20 bg-primary-500/10'"
     >
-      <!-- Icon -->
-      <div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl border"
-        :class="streakStatus.showRisk ? 'border-amber-500/25 bg-amber-500/10 text-amber-400' : 'border-primary-500/20 bg-primary-500/10 text-primary-500'">
-        <Flame class="h-5 w-5" />
+      <!-- Top row: icon + streak number + freeze button -->
+      <div class="flex items-center gap-3">
+        <div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl border"
+          :class="streakStatus.showRisk ? 'border-amber-500/25 bg-amber-500/10 text-amber-400'
+            : streakStatus.jackpotAlreadyAwarded ? 'border-emerald-500/25 bg-emerald-500/10 text-emerald-400'
+            : 'border-primary-500/20 bg-primary-500/10 text-primary-500'">
+          <Flame class="h-5 w-5" />
+        </div>
+
+        <div class="flex-1 min-w-0">
+          <div class="flex items-baseline gap-1.5">
+            <span class="text-2xl font-bold tabular-nums text-foreground leading-none">{{ streakStatus.streak }}</span>
+            <span class="text-sm font-semibold text-muted">{{ streakDaysLabel }}</span>
+          </div>
+          <p class="text-xs mt-0.5 truncate"
+            :class="streakStatus.showRisk ? 'text-amber-300 font-semibold'
+              : streakStatus.jackpotAlreadyAwarded ? 'text-emerald-400 font-semibold'
+              : 'text-muted/70'">
+            {{ streakStateLabel }}
+          </p>
+        </div>
+
+        <!-- Freeze CTA -->
+        <button
+          v-if="streakStatus.isAtRisk && !streakStatus.frozenToday"
+          type="button"
+          class="shrink-0 flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition-all active:scale-95 disabled:opacity-40"
+          :class="streakStatus.canFreeze
+            ? 'border-amber-500/35 bg-amber-500/15 text-amber-200 hover:bg-amber-500/25'
+            : 'border-border bg-foreground/[0.04] text-muted'"
+          :disabled="!streakStatus.canFreeze || freezingStreak"
+          @click="freezeStreak"
+        >
+          <Snowflake class="h-3.5 w-3.5" />
+          <span>{{ freezeButtonLabel }}</span>
+        </button>
       </div>
 
-      <!-- Data -->
-      <div class="flex-1 min-w-0">
-        <div class="flex items-baseline gap-1.5">
-          <span class="text-2xl font-bold tabular-nums text-foreground leading-none">{{ streakStatus.streak }}</span>
-          <span class="text-sm font-semibold text-muted">{{ streakDaysLabel }}</span>
+      <!-- Weekly progress bar: ●●●●○○○ -->
+      <div v-if="streakStatus.weeklyProgress !== undefined" class="space-y-1">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-semibold text-muted/70">
+            {{ i18n.locale === 'es' ? 'Esta semana' : 'This week' }}
+          </span>
+          <span class="text-[10px] font-bold"
+            :class="streakStatus.jackpotAlreadyAwarded ? 'text-emerald-400'
+              : streakStatus.weeklyProgress >= streakStatus.jackpotDaysRequired ? 'text-emerald-400'
+              : 'text-muted/60'">
+            {{ streakStatus.weeklyProgress }}/7
+            <span v-if="streakStatus.jackpotAlreadyAwarded"> 🎉</span>
+            <span v-else-if="streakStatus.weeklyProgress >= streakStatus.jackpotDaysRequired"> ✓</span>
+          </span>
         </div>
-        <p class="text-xs mt-0.5 truncate"
-          :class="streakStatus.showRisk ? 'text-amber-300 font-semibold' : 'text-muted/70'">
-          {{ streakStateLabel }}
+        <div class="flex items-center gap-1">
+          <div
+            v-for="day in 7"
+            :key="day"
+            class="h-2 flex-1 rounded-full transition-all duration-500"
+            :class="day <= streakStatus.weeklyProgress
+              ? streakStatus.jackpotAlreadyAwarded
+                ? 'bg-emerald-500'
+                : day <= streakStatus.jackpotDaysRequired
+                  ? 'bg-primary-500'
+                  : 'bg-primary-400/70'
+              : day === streakStatus.weeklyProgress + 1 && !streakStatus.activeToday
+                ? 'bg-foreground/20 ring-1 ring-primary-500/40'
+                : 'bg-foreground/10'"
+          />
+        </div>
+        <!-- Jackpot reward hint -->
+        <p v-if="!streakStatus.jackpotAlreadyAwarded" class="text-[10px] text-muted/50">
+          {{ i18n.locale === 'es'
+            ? `${streakStatus.jackpotDaysRequired} días = +${streakStatus.jackpotReward} RC bonus`
+            : `${streakStatus.jackpotDaysRequired} days = +${streakStatus.jackpotReward} RC bonus` }}
+        </p>
+        <p v-else class="text-[10px] text-emerald-400 font-semibold">
+          {{ i18n.locale === 'es' ? '¡Bonus semanal reclamado! +75 RC' : 'Weekly bonus claimed! +75 RC' }}
         </p>
       </div>
-
-      <!-- Freeze CTA (only when at risk) -->
-      <button
-        v-if="streakStatus.isAtRisk && !streakStatus.frozenToday"
-        type="button"
-        class="shrink-0 flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition-all active:scale-95 disabled:opacity-40"
-        :class="streakStatus.canFreeze
-          ? 'border-amber-500/35 bg-amber-500/15 text-amber-200 hover:bg-amber-500/25'
-          : 'border-border bg-foreground/[0.04] text-muted'"
-        :disabled="!streakStatus.canFreeze || freezingStreak"
-        @click="freezeStreak"
-      >
-        <Snowflake class="h-3.5 w-3.5" />
-        <span>{{ freezeButtonLabel }}</span>
-      </button>
+    </div>
     </div>
 
     <TodayWorkout

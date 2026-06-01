@@ -4,6 +4,8 @@ import { getLocalDateString } from './date.js';
 export const STREAK_FREEZE_COST = 250;
 export const STREAK_FREEZE_WEEKLY_LIMIT = 1;
 export const STREAK_RISK_HOUR_THRESHOLD = 6;
+export const JACKPOT_DAYS_REQUIRED = 5;   // days/7 needed to trigger jackpot
+export const JACKPOT_REWARD_COINS = 75;   // RC bonus
 
 export const ensureStreakFreezeTable = async (q = defaultQuery) => {
   await q(`
@@ -63,11 +65,19 @@ export const getStreakStatus = async (userId, q = defaultQuery) => {
   const yesterday = getLocalDateString(addDays(new Date(), -1));
   const weekStart = getLocalDateString(getStartOfWeek());
 
-  const [activityRes, freezeRes, weekFreezeRes, userRes] = await Promise.all([
+  const [activityRes, freezeRes, weekFreezeRes, userRes, weeklyProgressRes] = await Promise.all([
     q('SELECT DISTINCT date FROM reps WHERE user_id = $1 AND count > 0', [userId]),
     q('SELECT freeze_date FROM streak_freezes WHERE user_id = $1', [userId]),
     q('SELECT COUNT(*)::int AS count FROM streak_freezes WHERE user_id = $1 AND freeze_date >= $2', [userId, weekStart]),
-    q('SELECT reppy_coins FROM users WHERE id = $1', [userId])
+    q('SELECT reppy_coins, last_jackpot_week FROM users WHERE id = $1', [userId]),
+    // Count unique active days this week (reps OR freezes)
+    q(`SELECT COUNT(DISTINCT active_date)::int AS count FROM (
+         SELECT date::text AS active_date FROM reps
+           WHERE user_id = $1 AND date >= $2 AND date <= CURRENT_DATE AND count > 0
+         UNION
+         SELECT freeze_date::text AS active_date FROM streak_freezes
+           WHERE user_id = $1 AND freeze_date >= $2 AND freeze_date <= CURRENT_DATE
+       ) t`, [userId, weekStart])
   ]);
 
   const trainedDates = new Set(activityRes.rows.map(row => getLocalDateString(row.date)));
@@ -83,6 +93,18 @@ export const getStreakStatus = async (userId, q = defaultQuery) => {
   const coins = Number(userRes.rows[0]?.reppy_coins || 0);
   const isAtRisk = !activeToday && activeDates.has(yesterday);
 
+  const weeklyProgress = Number(weeklyProgressRes.rows[0]?.count || 0);
+  // ISO week string e.g. "2026-W22"
+  const currentISOWeek = (() => {
+    const d = new Date();
+    const startOfYear = new Date(d.getFullYear(), 0, 1);
+    const week = Math.ceil(((d - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);
+    return `${d.getFullYear()}-W${String(week).padStart(2, '0')}`;
+  })();
+  const lastJackpotWeek = userRes.rows[0]?.last_jackpot_week || null;
+  const jackpotAlreadyAwarded = lastJackpotWeek === currentISOWeek;
+  const jackpotEligible = weeklyProgress >= JACKPOT_DAYS_REQUIRED && !jackpotAlreadyAwarded;
+
   return {
     streak,
     trainedToday,
@@ -95,7 +117,12 @@ export const getStreakStatus = async (userId, q = defaultQuery) => {
     freezesThisWeek,
     weeklyFreezeLimit: STREAK_FREEZE_WEEKLY_LIMIT,
     canFreeze: isAtRisk && freezesThisWeek < STREAK_FREEZE_WEEKLY_LIMIT && coins >= STREAK_FREEZE_COST,
-    coins
+    coins,
+    weeklyProgress,
+    jackpotDaysRequired: JACKPOT_DAYS_REQUIRED,
+    jackpotEligible,
+    jackpotAlreadyAwarded,
+    jackpotReward: JACKPOT_REWARD_COINS,
   };
 };
 
