@@ -60,6 +60,8 @@ const countCurrentStreak = (activeDates) => {
 
 export const getStreakStatus = async (userId, q = defaultQuery) => {
   await ensureStreakFreezeTable(q);
+  // Ensure jackpot tracking column exists (idempotent)
+  await defaultQuery('ALTER TABLE users ADD COLUMN IF NOT EXISTS last_jackpot_week TEXT').catch(() => {});
 
   const today = getLocalDateString();
   const yesterday = getLocalDateString(addDays(new Date(), -1));
