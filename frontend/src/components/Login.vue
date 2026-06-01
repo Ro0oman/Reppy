@@ -6,7 +6,7 @@
       <span class="text-[11px] font-bold tracking-tight">{{ i18n.t('login_btn_back') }}</span>
     </button>
 
-    <div class="w-full max-w-md mt-10 space-y-12 animate-in">
+    <div class="w-full max-w-md mt-10 space-y-6 animate-in">
       <!-- Logo & Title -->
       <div class="text-center space-y-4">
         <div class="inline-flex items-center justify-center w-20 h-20 bg-surface border border-border/40 rounded-[1.5rem] mb-4 shadow-xl relative overflow-hidden group">
@@ -111,14 +111,14 @@
           />
         </div>
         
-        <p class="mt-10 text-[9px] text-center text-zinc-700 font-black uppercase tracking-[0.2em] leading-relaxed italic">
+        <p class="mt-10 text-xs text-center text-zinc-700 font-black uppercase tracking-[0.2em] leading-relaxed italic">
           BY PROCEEDING, YOU AGREE TO OUR <br/>
           <span class="text-zinc-500">TACTICAL TERMS</span> & <span class="text-zinc-500">DATA CRYPT CODES</span>
         </p>
       </div>
 
       <div class="text-center opacity-20">
-        <p class="text-[9px] font-black text-white uppercase tracking-[0.6em] font-tight">
+        <p class="text-xs font-black text-white uppercase tracking-[0.6em] font-tight">
           REPPY CORE SECURITY SYSTEM ONLINE
         </p>
       </div>

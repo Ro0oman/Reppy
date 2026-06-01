@@ -25,7 +25,7 @@
         </span>
       </div>
       
-      <h1 class="text-4xl md:text-6xl font-black text-foreground tracking-tight leading-[1.15] max-w-2xl">
+      <h1 class="text-4xl md:text-6xl font-bold text-foreground tracking-tight leading-[1.15] max-w-2xl">
         {{ post.title }}
       </h1>
 
@@ -48,11 +48,11 @@
     </header>
 
     <!-- Main Content Layout (Single Column) -->
-    <main class="w-full max-w-3xl px-6 pb-32 space-y-12">
+    <main class="w-full max-w-3xl px-6 pb-24 space-y-6">
       <!-- Feature Image (Cinematic) -->
       <div class="relative group animate-in-delay">
         <div class="absolute inset-0 bg-primary/10 blur-[80px] opacity-30 group-hover:opacity-50 transition-opacity duration-1000"></div>
-        <div class="relative rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl bg-surface-dark/20 aspect-video flex items-center justify-center">
+        <div class="relative rounded-2xl overflow-hidden border border-white/5 shadow-2xl bg-surface-dark/20 aspect-video flex items-center justify-center">
           <div v-if="!imageLoaded" class="absolute inset-0 flex items-center justify-center">
             <Loader2 class="w-12 h-12 text-primary animate-spin opacity-50" />
           </div>
@@ -94,7 +94,7 @@
           prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-a:font-black
           prose-strong:text-foreground prose-strong:font-black
           prose-blockquote:border-l-primary prose-blockquote:bg-primary/5 prose-blockquote:py-4 prose-blockquote:px-8 prose-blockquote:rounded-r-3xl prose-blockquote:not-italic
-          prose-img:rounded-[2rem] prose-img:shadow-xl prose-img:border prose-img:border-white/5" 
+          prose-img:rounded-xl prose-img:shadow-xl prose-img:border prose-img:border-white/5" 
           v-html="renderedContent"
         ></div>
 
@@ -110,7 +110,7 @@
           </div>
 
           <div v-if="tags.length > 0" class="flex flex-wrap gap-2 justify-center">
-            <span v-for="tag in tags" :key="tag" class="px-3 py-1 bg-surface-dark/10 border border-border/40 text-[9px] font-black uppercase tracking-widest text-muted/60 rounded-lg">
+            <span v-for="tag in tags" :key="tag" class="px-3 py-1 bg-surface-dark/10 border border-border/40 text-xs font-black uppercase tracking-widest text-muted/60 rounded-lg">
               #{{ tag }}
             </span>
           </div>
@@ -118,7 +118,7 @@
       </article>
 
       <!-- Dynamic CTA Section (Conversion Engine) -->
-      <div v-if="ctaTarget" class="relative group p-8 md:p-16 rounded-[3rem] overflow-hidden border border-white/10 animate-in">
+      <div v-if="ctaTarget" class="relative group p-8 md:p-16 rounded-2xl overflow-hidden border border-white/10 animate-in">
         <!-- Background accents -->
         <div class="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/5 to-transparent opacity-50"></div>
         <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/20 blur-[80px] rounded-full"></div>
@@ -130,7 +130,7 @@
           </div>
           
           <div class="space-y-4">
-            <h3 class="text-3xl md:text-5xl font-black text-foreground tracking-tighter uppercase italic leading-none">
+            <h3 class="text-3xl md:text-5xl font-bold text-foreground tracking-tighter   leading-none">
               {{ ctaHeader }}
             </h3>
             <p class="text-muted text-lg max-w-md mx-auto font-medium leading-relaxed">
@@ -156,7 +156,7 @@
       </div>
 
       <!-- Related Pillar (Master Guide) -->
-      <div v-if="!currentPost.isPillar && relatedPillar" class="p-8 bg-surface/40 hover:bg-surface/60 border border-border/40 rounded-[2.5rem] flex flex-col md:flex-row items-center gap-8 transition-colors group animate-in">
+      <div v-if="!currentPost.isPillar && relatedPillar" class="p-8 bg-surface/40 hover:bg-surface/60 border border-border/40 rounded-2xl flex flex-col md:flex-row items-center gap-8 transition-colors group animate-in">
         <div class="w-24 h-24 rounded-2xl overflow-hidden shrink-0 shadow-lg bg-surface-dark/10 relative flex items-center justify-center">
           <img :src="relatedPillar.image" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
         </div>
@@ -173,7 +173,7 @@
 
     <!-- Footer Mobile Navigation -->
     <footer class="py-20 border-t border-border/10 w-full flex flex-col items-center gap-8 bg-surface-dark/5 mt-auto text-center">
-      <router-link :to="`/${i18n.locale}`" class="text-2xl font-black text-foreground flex items-center gap-2 group">
+      <router-link :to="`/${i18n.locale}`" class="text-2xl font-bold text-foreground flex items-center gap-2 group">
         <div class="w-6 h-6 bg-primary rounded-lg flex items-center justify-center text-[12px] text-white">R</div>
         Reppy<span class="text-primary group-hover:translate-x-1 transition-transform">.</span>
       </router-link>
@@ -181,7 +181,7 @@
         <router-link :to="`/${i18n.locale}/codex`" class="text-[10px] font-black uppercase tracking-widest text-muted hover:text-primary transition-colors">{{ i18n.t('nav_codex') }}</router-link>
         <router-link :to="`/${i18n.locale}/login`" class="text-[10px] font-black uppercase tracking-widest text-muted hover:text-primary transition-colors text-primary">{{ i18n.t('start_free') }}</router-link>
       </div>
-      <p class="text-[9px] font-black text-muted/30 uppercase tracking-[0.4em]">&copy; 2026 Reppy Ecosystem</p>
+      <p class="text-xs font-black text-muted/30 uppercase tracking-[0.4em]">&copy; 2026 Reppy Ecosystem</p>
     </footer>
 
     <!-- JSON-LD Injection (Hidden) -->
@@ -436,10 +436,10 @@ onUnmounted(() => {
 }
 
 /* Typography Enhancements */
-:deep(.prose) h2 { @apply text-4xl font-black mt-16 mb-8 text-foreground tracking-tight; }
+:deep(.prose) h2 { @apply text-4xl font-bold mt-16 mb-8 text-foreground tracking-tight; }
 :deep(.prose) h3 { @apply text-2xl font-bold mt-10 mb-6 text-foreground/90; }
 :deep(.prose) p { @apply text-lg text-muted/90 leading-[1.8] mb-8 font-medium; }
-:deep(.prose) a { @apply text-primary font-black transition-all border-b-2 border-primary/20 hover:border-primary; }
+:deep(.prose) a { @apply text-primary font-bold transition-all border-b-2 border-primary/20 hover:border-primary; }
 :deep(.prose) strong { @apply text-foreground font-black; }
 :deep(.prose) ul { @apply list-none space-y-4 mb-8; }
 :deep(.prose) li { @apply relative pl-8 text-lg text-muted/90 leading-relaxed font-medium; }

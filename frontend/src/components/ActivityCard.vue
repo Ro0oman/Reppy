@@ -78,7 +78,7 @@
               <Pencil class="w-3.5 h-3.5" />
               <span>{{ i18n.t('ui_edit') || 'EDITAR' }}</span>
             </button>
-            <button @click="showDetails = !showDetails" class="text-[9px] font-black uppercase tracking-widest text-muted/40 hover:text-primary-500 transition-colors flex items-center gap-1">
+            <button @click="showDetails = !showDetails" class="text-xs font-black uppercase tracking-widest text-muted/40 hover:text-primary-500 transition-colors flex items-center gap-1">
               {{ showDetails ? i18n.t('ui_hide_build') || 'Ocultar build' : i18n.t('ui_show_build') || 'Ver build' }}
               <ChevronRight class="w-3 h-3 transition-transform" :class="showDetails ? 'rotate-90' : ''" />
             </button>
@@ -98,13 +98,13 @@
         <div class="flex flex-wrap items-baseline gap-x-5 gap-y-1 py-1">
           <div class="flex items-baseline gap-1.5">
             <Flame class="w-5 h-5 self-center text-primary-500" />
-            <span class="text-3xl font-black text-foreground tracking-tight tabular-nums">{{ activity.total_reps_today }}</span>
+            <span class="text-3xl font-bold text-foreground tracking-tight tabular-nums">{{ activity.total_reps_today }}</span>
             <span class="text-[10px] font-bold text-muted uppercase tracking-wide">{{ i18n.t('ui_reps') }}</span>
           </div>
           <div v-if="activity.total_damage_today" class="flex items-baseline gap-1.5">
             <Zap class="w-4 h-4 self-center text-primary-500" />
             <span class="text-lg font-black text-primary-500 tracking-tight tabular-nums">{{ animatedDamage }}</span>
-            <span class="text-[9px] font-bold text-primary-500/60 uppercase tracking-wide">{{ i18n.t('ui_dmg') }}</span>
+            <span class="text-xs font-bold text-primary-500/60 uppercase tracking-wide">{{ i18n.t('ui_dmg') }}</span>
           </div>
         </div>
 
@@ -161,7 +161,7 @@
                   {{ i18n.t('ui_surpassing_rival', { name: props.activity.surpassing_rival_name, reps: props.activity.surpassing_rival_reps }) }}
                 </p>
               </div>
-              <div class="text-[9px] font-black tracking-[0.2em] uppercase opacity-50">{{ i18n.t('ui_objective') }}</div>
+              <div class="text-xs font-black tracking-[0.2em] uppercase opacity-50">{{ i18n.t('ui_objective') }}</div>
             </div>
 
              <div class="space-y-4">
@@ -171,17 +171,17 @@
                        <span class="text-[10px] font-black uppercase tracking-wider text-foreground">
                          {{ ex.title_key ? (ex.title_key.startsWith('ex_') ? i18n.t(ex.title_key) : ex.title_key) : (i18n.t(ex.exercise_type) || ex.exercise_type) }}
                        </span>
-                       <span class="text-[9px] font-bold" :class="dominantStatColor(getAttributeName(ex.exercise_type).toLowerCase())">
+                       <span class="text-xs font-bold" :class="dominantStatColor(getAttributeName(ex.exercise_type).toLowerCase())">
                           +{{ Math.ceil(exerciseEffectiveCount(ex) / 5) }} {{ getAttributeName(ex.exercise_type) }} {{ i18n.t('ui_xp') || 'XP' }}
                        </span>
-                       <div v-if="ex.active_multiplier > 1" class="text-[8px] font-black text-amber-500 flex items-center gap-1">
+                       <div v-if="ex.active_multiplier > 1" class="text-[10px] font-black text-amber-500 flex items-center gap-1">
                           <Zap class="w-2.5 h-2.5" /> {{ i18n.t('ui_mult') || 'Multiplicador' }} x{{ ex.active_multiplier }}
                        </div>
                     </div>
                     <div class="flex flex-col items-end justify-center">
                        <span class="text-xl font-black italic text-foreground tracking-tighter">
                          {{ ex.count }}{{ ex.unit === 'seconds' ? 's' : '' }}
-                         <span v-if="ex.unit !== 'seconds'" class="text-[8px] text-muted not-italic uppercase tracking-widest ml-1">{{ i18n.t('ui_reps') }}</span>
+                         <span v-if="ex.unit !== 'seconds'" class="text-[10px] text-muted not-italic uppercase tracking-widest ml-1">{{ i18n.t('ui_reps') }}</span>
                        </span>
                        <span class="text-[10px] font-black text-primary-500 tracking-tight">{{ ex.boss_damage }} {{ i18n.t('ui_dmg') }}</span>
                     </div>
@@ -191,7 +191,7 @@
 
           <!-- LOADOUT -->
           <div class="space-y-2">
-             <p class="text-[8px] font-black text-muted/40 uppercase tracking-[0.3em]">{{ i18n.t('ui_loadout_active') }}</p>
+             <p class="text-[10px] font-black text-muted/40 uppercase tracking-[0.3em]">{{ i18n.t('ui_loadout_active') }}</p>
              <div class="flex flex-wrap gap-2">
                 <div v-for="(item, slot) in activity.equipment" :key="slot" 
                      @click="item?.name ? openItemDetails(item) : null"
@@ -277,7 +277,7 @@
       <Transition name="modal-fade">
         <div v-if="showItemModal && selectedItem" class="fixed inset-0 z-[1000] flex items-center justify-center p-4">
           <!-- Backdrop -->
-          <div class="absolute inset-0 bg-black/90" @click="showItemModal = false"></div>
+          <div class="cursor-pointer absolute inset-0 bg-black/90" @click="showItemModal = false"></div>
           
           <!-- Modal Content -->
           <div class="relative w-full max-w-xl bg-[#0a0a0a] border border-white/10 rounded-[32px] overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.9)] animate-modal-in flex flex-col max-h-[90vh]">
@@ -289,8 +289,8 @@
                   <Package class="w-5 h-5 text-primary-500" />
                 </div>
                 <div>
-                  <p class="text-[9px] font-black text-primary-500 uppercase tracking-[0.3em] leading-none mb-1.5">{{ i18n.t('inv_artifact_detail') }}</p>
-                  <h3 class="text-2xl sm:text-3xl font-black text-white italic uppercase tracking-tighter leading-none">{{ selectedItem.name }}</h3>
+                  <p class="text-xs font-black text-primary-500 uppercase tracking-[0.3em] leading-none mb-1.5">{{ i18n.t('inv_artifact_detail') }}</p>
+                  <h3 class="text-2xl sm:text-3xl font-bold text-white   tracking-tighter leading-none">{{ selectedItem.name }}</h3>
                 </div>
               </div>
               <button @click="showItemModal = false" class="p-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all">
@@ -304,7 +304,7 @@
               <!-- Loading State -->
               <div v-if="loadingItem" class="py-20 flex flex-col items-center justify-center gap-4">
                 <div class="w-10 h-10 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin"></div>
-                <p class="text-[10px] font-black text-muted uppercase tracking-widest animate-pulse">Syncing Nexus Data...</p>
+                <p class="text-xs font-medium text-muted">{{ i18n.locale === 'es' ? 'Cargando...' : 'Loading...' }}</p>
               </div>
 
               <template v-else>
@@ -316,7 +316,7 @@
                    <div class="transform group-hover:scale-110 transition-transform duration-1000">
                       <ItemIcon v-if="['head', 'weapon', 'armor', 'boots'].includes(selectedItem.type)" :name="selectedItem.svg_key" :type="selectedItem.type" class-name="w-24 h-24 sm:w-32 sm:h-32 text-primary-500 drop-shadow-2xl" />
                       <FlaskConical v-else-if="selectedItem.type === 'consumable'" class="w-24 h-24 sm:w-32 sm:h-32 text-primary-500 animate-pulse drop-shadow-2xl" />
-                      <div v-else-if="selectedItem.type === 'title'" class="text-xl sm:text-4xl font-black uppercase italic tracking-tighter text-center px-6 leading-tight" :class="selectedItem.css_value">{{ selectedItem.name }}</div>
+                      <div v-else-if="selectedItem.type === 'title'" class="text-xl sm:text-4xl font-bold   tracking-tighter text-center px-6 leading-tight" :class="selectedItem.css_value">{{ selectedItem.name }}</div>
                       <AvatarFrame v-else-if="selectedItem.type === 'border'" :src="activity.avatar_url" :border-css="selectedItem.css_value" :size="windowWidth < 640 ? 120 : 180" />
                       <div v-else-if="selectedItem.type === 'background' || selectedItem.type === 'post_background'" class="w-40 h-40 sm:w-56 sm:h-56 rounded-[22px] overflow-hidden border border-white/10 relative shadow-2xl">
                          <BackgroundEffect v-if="selectedItem.type === 'background'" :background-css="selectedItem.css_value" is-preview class="!absolute !inset-0 !w-full !h-full" />
@@ -329,18 +329,18 @@
                 <!-- Info & Stats -->
                 <div class="space-y-6">
                   <div v-if="selectedItem.description" class="p-6 bg-white/5 rounded-[22px] border border-white/5">
-                    <p class="text-[9px] font-black text-muted uppercase tracking-[0.2em] mb-2 opacity-60">{{ i18n.t('inv_artifact_description') }}</p>
+                    <p class="text-xs font-black text-muted uppercase tracking-[0.2em] mb-2 opacity-60">{{ i18n.t('inv_artifact_description') }}</p>
                     <p class="text-sm font-bold text-zinc-300 leading-relaxed">{{ selectedItem.description }}</p>
                   </div>
 
                   <div v-if="selectedItem.stats && Object.keys(selectedItem.stats).length > 0" class="space-y-4">
-                     <h4 class="text-[9px] font-black text-muted uppercase tracking-[0.3em] flex items-center gap-3">
+                     <h4 class="text-xs font-black text-muted uppercase tracking-[0.3em] flex items-center gap-3">
                        {{ i18n.t('shop_combat_analysis') }}
                        <div class="h-px flex-1 bg-white/5"></div>
                      </h4>
                      <div class="grid grid-cols-2 gap-4">
                       <div v-for="(val, key) in selectedItem.stats" :key="key" class="p-4 bg-white/5 rounded-2xl border border-white/5 flex flex-col gap-1">
-                        <p class="text-[8px] font-black text-primary-500/60 uppercase tracking-widest">{{ statLabels[key] || key.replace('_', ' ') }}</p>
+                        <p class="text-[10px] font-black text-primary-500/60 uppercase tracking-widest">{{ statLabels[key] || key.replace('_', ' ') }}</p>
                         <p class="text-xl font-black text-white italic tabular-nums">
                           {{ key === 'multiplier' ? 'x' : '+' }}{{ val }}{{ key.includes('percent') || key.includes('chance') ? '%' : '' }}
                         </p>

@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-5xl mx-auto w-full px-4 pt-6 pb-32 space-y-8 relative">
+  <div class="max-w-5xl mx-auto w-full px-4 pt-6 pb-24 space-y-8 relative">
     <!-- Animated Environment Blobs -->
     <div class="bg-glow">
       <div class="blob" style="top: 10%; left: -5%;"></div>
@@ -55,14 +55,40 @@
       </div>
 
 
-      <!-- Tab Navigation Premium (Tactical Redesign) -->
+      <!-- FOMO rivalry banner -->
+      <transition name="fade">
+        <div
+          v-if="fomoMessage"
+          class="flex items-center justify-between gap-3 rounded-2xl border px-4 py-3"
+          :class="fomoMessage.type === 'leading'
+            ? 'border-primary-500/20 bg-primary-500/10'
+            : 'border-amber-500/25 bg-amber-500/10'"
+        >
+          <div class="flex items-center gap-2.5 min-w-0">
+            <Trophy
+              class="w-4 h-4 shrink-0"
+              :class="fomoMessage.type === 'leading' ? 'text-primary-500' : 'text-amber-400'"
+            />
+            <p class="text-sm font-semibold text-foreground truncate">{{ fomoMessage.text }}</p>
+          </div>
+          <router-link
+            v-if="fomoMessage.cta"
+            :to="{ name: 'dashboard', params: { lang: i18n.locale }, query: { log: 1 } }"
+            class="shrink-0 rounded-xl bg-amber-500 hover:bg-amber-400 text-white px-3 py-1.5 text-xs font-bold transition-all active:scale-95"
+          >
+            {{ fomoMessage.cta }}
+          </router-link>
+        </div>
+      </transition>
+
+      <!-- Tab Navigation -->
       <div class="flex items-center gap-1 p-1 bg-foreground/[0.04] border border-border rounded-2xl w-full sm:w-fit backdrop-blur-xl relative overflow-x-auto whitespace-nowrap no-scrollbar">
         <button 
           @click="activeTab = 'feed'"
-          class="flex-none px-4 sm:px-6 py-3 rounded-xl text-[9px] sm:text-[11px] font-black uppercase tracking-[0.15em] transition-all flex items-center justify-center gap-2.5 relative group overflow-hidden whitespace-nowrap"
+          class="flex-none px-4 sm:px-6 py-3 rounded-xl text-xs sm:text-[11px] font-black uppercase tracking-[0.15em] transition-all flex items-center justify-center gap-2.5 relative group overflow-hidden whitespace-nowrap"
           :class="activeTab === 'feed' ? 'text-primary-400' : 'text-muted hover:text-foreground hover:bg-white/5'"
         >
-          <Activity class="w-3.5 h-3.5" :class="activeTab === 'feed' ? 'animate-pulse' : ''" />
+          <Activity class="w-3.5 h-3.5" />
           <span>{{ i18n.t('social_wall') }}</span>
           
           <!-- Tactical Highlight Bar (Neon Precision) -->
@@ -73,10 +99,10 @@
 
         <button 
           @click="activeTab = 'rankings'"
-          class="flex-none px-4 sm:px-6 py-3 rounded-xl text-[9px] sm:text-[11px] font-black uppercase tracking-[0.15em] transition-all flex items-center justify-center gap-2.5 relative group overflow-hidden whitespace-nowrap"
+          class="flex-none px-4 sm:px-6 py-3 rounded-xl text-xs sm:text-[11px] font-black uppercase tracking-[0.15em] transition-all flex items-center justify-center gap-2.5 relative group overflow-hidden whitespace-nowrap"
           :class="activeTab === 'rankings' ? 'text-primary-400' : 'text-muted hover:text-foreground hover:bg-white/5'"
         >
-          <Trophy class="w-3.5 h-3.5" :class="activeTab === 'rankings' ? 'animate-pulse' : ''" />
+          <Trophy class="w-3.5 h-3.5" />
           <span>{{ i18n.t('rankings') }}</span>
           
           <!-- Tactical Highlight Bar (Neon Precision) -->
@@ -88,10 +114,10 @@
         <button 
           v-if="authStore.isAuthenticated"
           @click="activeTab = 'battles'"
-          class="flex-none px-4 sm:px-6 py-3 rounded-xl text-[9px] sm:text-[11px] font-black uppercase tracking-[0.15em] transition-all flex items-center justify-center gap-2.5 relative group overflow-hidden whitespace-nowrap"
+          class="flex-none px-4 sm:px-6 py-3 rounded-xl text-xs sm:text-[11px] font-black uppercase tracking-[0.15em] transition-all flex items-center justify-center gap-2.5 relative group overflow-hidden whitespace-nowrap"
           :class="activeTab === 'battles' ? 'text-primary-400' : 'text-muted hover:text-foreground hover:bg-white/5'"
         >
-          <Swords class="w-3.5 h-3.5" :class="activeTab === 'battles' ? 'animate-pulse' : ''" />
+          <Swords class="w-3.5 h-3.5" />
           <span>{{ i18n.t('pvp_tab') }}</span>
           
           <!-- Tactical Highlight Bar (Neon Precision) -->
@@ -119,12 +145,12 @@
                   <h3 class="text-sm font-black text-industrial uppercase text-foreground tracking-tight leading-none">
                     {{ activeExerciseLabel }} <span class="text-muted/60 text-[10px]">{{ i18n.t('protocol_label') }}</span>
                   </h3>
-                  <p class="text-[8px] font-black text-muted uppercase tracking-[0.2em] mt-1 opacity-50">{{ i18n.t('live_sync') }}</p>
+                  <p class="text-[10px] font-black text-muted uppercase tracking-[0.2em] mt-1 opacity-50">{{ i18n.t('live_sync') }}</p>
                 </div>
               </div>
               <button @click="showFilter = !showFilter" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border/60 bg-foreground/[0.03] hover:bg-foreground/[0.07] transition-all active:scale-95">
                 <SlidersHorizontal class="w-3 h-3 text-muted" />
-                <span class="text-[9px] font-black uppercase tracking-widest text-muted">Filtro</span>
+                <span class="text-xs font-black uppercase tracking-widest text-muted">Filtro</span>
                 <ChevronDown class="w-3 h-3 text-muted transition-transform duration-200" :class="showFilter ? 'rotate-180' : ''" />
               </button>
             </div>
@@ -161,7 +187,7 @@
               <div v-for="user in searchResults" :key="user.id"
                 @click="$emit('viewProfile', user.id)"
                 :title="i18n.locale === 'es' ? `Ver perfil de ${user.name}` : `View ${user.name}'s profile`"
-                class="w-full text-left bg-foreground/[0.02] border border-border p-5 rounded-3xl flex items-center justify-between hover:bg-foreground/[0.04] transition-all group cursor-pointer active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-primary-500/50 outline-none">
+                class="tap-card w-full text-left bg-foreground/[0.02] border border-border p-4 rounded-2xl flex items-center justify-between group outline-none">
                 <div class="flex items-center gap-4">
                   <AvatarFrame :src="user.avatar_url" :border-css="user.border_css" :avatar-css="user.avatar_css" :size="48" />
                   <div>
@@ -169,10 +195,10 @@
                       <p class="font-black text-foreground uppercase tracking-tight group-hover:text-primary-500 transition-colors text-sm">{{ user.name }}</p>
                       <div class="flex items-center gap-1 bg-foreground/5 px-1.5 py-0.5 rounded border border-border/30">
                         <span class="text-[6px] font-black text-primary-500/80 tracking-widest uppercase">{{ i18n.t('ui_lvl') }}</span>
-                        <span class="text-[8px] font-black text-foreground italic">{{ user.current_level }}</span>
+                        <span class="text-[10px] font-black text-foreground italic">{{ user.current_level }}</span>
                       </div>
                     </div>
-                    <p class="text-[9px] text-muted font-black uppercase tracking-[0.2em] mt-1.5 opacity-70">{{ user.total_reps }} {{ i18n.t('reps_collected') }}</p>
+                    <p class="text-xs text-muted font-black uppercase tracking-[0.2em] mt-1.5 opacity-70">{{ user.total_reps }} {{ i18n.t('reps_collected') }}</p>
                   </div>
                 </div>
                 <button @click.stop="addFriend(user.id)"
@@ -209,7 +235,7 @@
               <div v-for="friend in friends" :key="friend.id"
                 @click="$emit('viewProfile', friend.id)"
                 :title="i18n.t('ui_view_profile', { name: friend.name })"
-                class="w-full text-left bg-foreground/[0.02] border border-border hover:border-primary-500/30 group p-6 rounded-[2rem] flex items-center justify-between transition-all cursor-pointer active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-primary-500/50 outline-none">
+                class="tap-card w-full text-left bg-foreground/[0.02] border border-border group p-4 rounded-2xl flex items-center justify-between outline-none">
                 <div class="flex items-center gap-5">
                   <div class="relative">
                     <AvatarFrame :src="friend.avatar_url" :border-css="friend.border_css" :avatar-css="friend.avatar_css" :size="64" class="transition-transform" />
@@ -220,9 +246,9 @@
                   </div>
                   <div class="min-w-0 flex-1">
                     <div class="flex items-center gap-2 min-w-0 flex-1">
-                      <p class="text-lg sm:text-xl font-black text-foreground tracking-tight group-hover:text-primary-500 transition-colors uppercase italic font-industrial truncate">{{ friend.name }}</p>
+                      <p class="text-lg sm:text-xl font-black text-foreground tracking-tight group-hover:text-primary-500 transition-colors   font-industrial truncate">{{ friend.name }}</p>
                       <div class="flex items-center gap-1.5 bg-primary-500/10 px-2 py-0.5 rounded-lg border border-primary-500/30 shrink-0">
-                        <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('ui_lvl') }}</span>
+                        <span class="text-[10px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('ui_lvl') }}</span>
                         <span class="text-[10px] font-black text-foreground italic">{{ friend.current_level }}</span>
                       </div>
                     </div>
@@ -345,7 +371,7 @@ const fetchFriends = async () => {
   }
 };
 
-const socialStats = ref({ activeUsers: 0, raidStatus: 'IDLE' });
+const socialStats = ref({ activeUsers: 0, raidStatus: 'IDLE', rivalry: null });
 
 const fetchSocialStats = async () => {
   try {
@@ -355,6 +381,33 @@ const fetchSocialStats = async () => {
     console.error('Error fetching social stats:', e);
   }
 };
+
+// FOMO banner: show when someone is just ahead in the weekly ranking
+const fomoMessage = computed(() => {
+  const r = socialStats.value?.rivalry;
+  if (!r || !authStore.isAuthenticated) return null;
+  const isEs = i18n.locale === 'es';
+
+  // "#1 this week — keep it up!"
+  if (r.myRank === 1) {
+    return {
+      type: 'leading',
+      text: isEs ? `Vas #1 esta semana 🔥 Nadie te alcanza… por ahora.` : `You're #1 this week 🔥 Nobody's caught you… yet.`,
+      cta: null,
+    };
+  }
+  // "X is just N reps ahead — log now"
+  if (r.rivalName && r.repsDiff !== null && r.repsDiff <= 150) {
+    return {
+      type: 'rival',
+      text: isEs
+        ? `${r.rivalName} te lleva solo ${r.repsDiff} reps esta semana`
+        : `${r.rivalName} is just ${r.repsDiff} reps ahead this week`,
+      cta: isEs ? 'Alcánzale' : 'Catch up',
+    };
+  }
+  return null;
+});
 
 const fetchStreakStatus = async () => {
   if (!authStore.isAuthenticated) return;

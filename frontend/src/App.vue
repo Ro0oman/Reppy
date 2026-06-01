@@ -418,7 +418,7 @@ const publicNavLinks = computed(() => [
 // Mobile dock: core-loop first. Logging is the elevated center action.
 // Left of center / right of center. Inventory lives in Profile.
 const mobileNavLeft = computed(() => [
-  { id: 'shop', icon: ShoppingBag, label: 'nav_shop', short: i18n.locale === 'es' ? 'Tienda' : 'Shop' },
+  { id: 'dashboard', icon: LayoutDashboard, label: 'nav_dashboard', short: i18n.locale === 'es' ? 'Inicio' : 'Home' },
   { id: 'social', icon: Users, label: 'nav_social', short: i18n.locale === 'es' ? 'Comunidad' : 'Community' },
 ]);
 const mobileNavRight = computed(() => [

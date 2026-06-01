@@ -63,7 +63,7 @@
                 <Trophy class="w-4 h-4 text-black" />
              </div>
              <div v-if="isWinner(activity.pvp_data?.challenger_id)" class="absolute -bottom-2 inset-x-0 flex justify-center z-20">
-                <span class="px-2 py-0.5 bg-amber-500 text-[7px] font-black text-black uppercase rounded-full shadow-lg">WINNER</span>
+                <span class="px-2 py-0.5 bg-amber-500 text-[10px] font-black text-black uppercase rounded-full shadow-lg">WINNER</span>
              </div>
           </div>
           <span class="text-[10px] font-black text-white uppercase italic truncate max-w-[80px] mt-2">{{ activity.pvp_data?.challenger_name }}</span>
@@ -86,7 +86,7 @@
                 <Trophy class="w-4 h-4 text-black" />
              </div>
              <div v-if="isWinner(activity.pvp_data?.challenged_id)" class="absolute -bottom-2 inset-x-0 flex justify-center z-20">
-                <span class="px-2 py-0.5 bg-amber-500 text-[7px] font-black text-black uppercase rounded-full shadow-lg">WINNER</span>
+                <span class="px-2 py-0.5 bg-amber-500 text-[10px] font-black text-black uppercase rounded-full shadow-lg">WINNER</span>
              </div>
           </div>
           <span class="text-[10px] font-black text-white uppercase italic truncate max-w-[80px] mt-2">{{ activity.pvp_data?.challenged_name }}</span>

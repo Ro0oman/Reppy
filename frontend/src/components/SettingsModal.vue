@@ -8,8 +8,8 @@
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-    <div v-if="show" class="fixed inset-0 z-[2000] flex justify-center items-start overflow-y-auto overscroll-contain p-4 md:p-8 bg-background/90 backdrop-blur-xl" @click.self="$emit('close')">
-        <div class="glass max-w-xl w-full p-8 md:p-12 rounded-[2.5rem] border border-border shadow-2xl relative overflow-hidden flex flex-col max-h-none md:max-h-[85vh] animate-in slide-in-from-bottom-4 zoom-in-95 duration-300 mt-4 md:my-auto">
+    <div v-if="show" class="cursor-pointer fixed inset-0 z-[2000] flex justify-center items-start overflow-y-auto overscroll-contain p-4 md:p-8 bg-background/90 backdrop-blur-xl" @click.self="$emit('close')">
+        <div class="glass max-w-xl w-full p-8 md:p-12 rounded-2xl border border-border shadow-2xl relative overflow-hidden flex flex-col max-h-none md:max-h-[85vh] animate-in slide-in-from-bottom-4 zoom-in-95 duration-300 mt-4 md:my-auto">
           <!-- Background Detail -->
           <div class="absolute -top-32 -right-32 w-64 h-64 bg-primary-500/5 rounded-full blur-[100px] pointer-events-none"></div>
 
@@ -20,10 +20,10 @@
 
           <!-- Header -->
           <div class="mb-10 pr-12">
-            <h2 class="text-2xl md:text-3xl font-black italic tracking-tighter text-foreground uppercase leading-tight">
+            <h2 class="text-2xl md:text-3xl font-bold  tracking-tighter text-foreground  leading-tight">
               {{ i18n.t('settings_title') }}<span class="text-primary-500">.</span>MOD
             </h2>
-            <p class="text-[9px] md:text-[10px] font-black text-muted uppercase tracking-[0.4em] mt-3">Interface & System Override</p>
+            <p class="text-xs md:text-[10px] font-black text-muted uppercase tracking-[0.4em] mt-3">Interface & System Override</p>
           </div>
 
           <div class="flex-1 space-y-8 overflow-y-auto pr-2 custom-scrollbar pb-24 md:pb-4">
@@ -32,11 +32,11 @@
               <h3 class="text-[10px] font-black uppercase text-primary-500 tracking-[0.3em]">CORE IDENTITY</h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-2">
-                  <label class="text-[8px] font-black uppercase text-muted tracking-widest px-1">{{ i18n.t('profile_name') }}</label>
+                  <label class="text-[10px] font-black uppercase text-muted tracking-widest px-1">{{ i18n.t('profile_name') }}</label>
                   <input v-model="form.name" type="text" class="input-tactical w-full h-12" :placeholder="i18n.t('name_placeholder')" />
                 </div>
                 <div class="space-y-2">
-                  <label class="text-[8px] font-black uppercase text-muted tracking-widest px-1">{{ i18n.t('daily_goal') }}</label>
+                  <label class="text-[10px] font-black uppercase text-muted tracking-widest px-1">{{ i18n.t('daily_goal') }}</label>
                   <input v-model.number="form.daily_goal" type="number" class="input-tactical w-full h-12" />
                 </div>
               </div>
@@ -47,7 +47,7 @@
               <h3 class="text-[10px] font-black uppercase text-primary-500 tracking-[0.3em]">VISUAL INTERFACE</h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
                 <div class="space-y-3">
-                  <label class="text-[8px] font-black uppercase text-muted tracking-widest px-1">THEME_ENGINE</label>
+                  <label class="text-[10px] font-black uppercase text-muted tracking-widest px-1">THEME_ENGINE</label>
                   <div class="flex items-center bg-surface/40 border border-border rounded-xl p-1 h-12">
                     <button v-for="m in ['light', 'dark', 'system']" :key="m" @click="themeStore.setTheme(m)"
                       class="flex-1 flex items-center justify-center h-full rounded-lg transition-all"
@@ -57,7 +57,7 @@
                   </div>
                 </div>
                 <div class="space-y-3">
-                  <label class="text-[8px] font-black uppercase text-muted tracking-widest px-1">LANGUAGE_PACK</label>
+                  <label class="text-[10px] font-black uppercase text-muted tracking-widest px-1">LANGUAGE_PACK</label>
                   <div class="flex items-center bg-surface/40 border border-border rounded-xl p-1 h-12">
                      <button @click="i18n.setLocale('en')" 
                              class="flex-1 h-full rounded-lg text-[10px] font-black transition-all"
@@ -84,10 +84,10 @@
 
           <!-- Footer Actions -->
           <div class="mt-auto pt-8 border-t border-border flex gap-4">
-            <button @click="$emit('close')" class="flex-1 px-4 py-4 bg-surface/20 border border-border rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-surface/30 transition-all">
+            <button @click="$emit('close')" class="flex-1 px-4 py-4 bg-surface/20 border border-border rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-surface/30 transition-all">
               {{ i18n.t('btn_cancel') }}
             </button>
-            <button @click="save" :disabled="saving" class="btn-reppy flex-[2] !py-4 !text-[9px]">
+            <button @click="save" :disabled="saving" class="btn-reppy flex-[2] !py-4 !text-xs">
               {{ saving ? i18n.t('profile_loading') : i18n.t('btn_save') }}
             </button>
           </div>

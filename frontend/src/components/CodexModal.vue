@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <div v-if="show" 
-         class="fixed inset-0 z-[100] flex justify-center items-center overflow-hidden p-0 sm:p-6 md:p-8 bg-black/95 backdrop-blur-2xl animate-in fade-in duration-500"
+         class="cursor-pointer fixed inset-0 z-[100] flex justify-center items-center overflow-hidden p-0 sm:p-6 md:p-8 bg-black/95 backdrop-blur-2xl animate-in fade-in duration-500"
          @click.self="emit('close')">
       
       <!-- Main Container -->

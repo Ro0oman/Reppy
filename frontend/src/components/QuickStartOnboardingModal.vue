@@ -2,10 +2,10 @@
   <Teleport to="body">
     <div
       v-if="show"
-      class="fixed inset-0 z-[140] flex items-end sm:items-center justify-center p-2 sm:p-6 bg-background/90 backdrop-blur-md"
+      class="cursor-pointer fixed inset-0 z-[140] flex items-end sm:items-center justify-center p-2 sm:p-6 bg-background/90 backdrop-blur-md"
       @click.self="closeModal"
     >
-      <div class="w-full max-w-lg rounded-[2rem] border border-white/10 bg-surface/95 shadow-2xl overflow-hidden">
+      <div class="w-full max-w-lg rounded-xl border border-white/10 bg-surface/95 shadow-2xl overflow-hidden">
         <div class="relative p-5 sm:p-7">
           <div class="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-primary-500/10 blur-[100px] pointer-events-none"></div>
 
@@ -14,7 +14,7 @@
               <p class="text-[10px] font-black uppercase tracking-[0.24em] text-primary-500">
                 {{ isEs ? 'Onboarding 60s' : '60s Onboarding' }}
               </p>
-              <h3 class="mt-2 text-2xl sm:text-3xl font-black italic tracking-tight text-foreground leading-none">
+              <h3 class="mt-2 text-2xl sm:text-3xl font-bold italic tracking-tight text-foreground leading-none">
                 {{ isEs ? 'Empieza en menos de 1 minuto' : 'Start in under 1 minute' }}
               </h3>
             </div>

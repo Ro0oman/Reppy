@@ -27,7 +27,7 @@
         
         <div class="ml-4 flex flex-col items-end shrink-0">
            <span class="text-xl font-black text-foreground italic tabular-nums leading-none">{{ currentStreak }}</span>
-           <span class="text-[7px] font-bold text-muted uppercase tracking-tighter">{{ i18n.t('stats_streak') }}</span>
+           <span class="text-[10px] font-bold text-muted uppercase tracking-tighter">{{ i18n.t('stats_streak') }}</span>
         </div>
       </div>
     </div>
