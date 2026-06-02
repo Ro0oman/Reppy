@@ -252,7 +252,7 @@ const renderedContent = computed(() => {
     }
   });
 
-  return marked.parse(cleanContent);
+  return marked.parse(cleanContent, { breaks: false });
 });
 
 // TOC Generation
