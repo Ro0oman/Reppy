@@ -350,7 +350,31 @@ const jsonLdScript = computed(() => {
 // Dynamic SEO Tags
 const updateSEOMeta = () => {
   if (!post.value) return;
-  document.title = `${post.value.title} | Reppy`;
+  const title = `${post.value.title} | Reppy`;
+  const description = post.value.excerpt || post.value.title;
+  const image = currentPost.value.image
+    ? (currentPost.value.image.startsWith('http') ? currentPost.value.image : `https://reppy-weld.vercel.app${currentPost.value.image}`)
+    : 'https://reppy-weld.vercel.app/og-image.png';
+  const url = `https://reppy-weld.vercel.app${route.path}`;
+
+  document.title = title;
+
+  const setMeta = (selector, attr, value) => {
+    const el = document.querySelector(selector);
+    if (el) el.setAttribute(attr, value);
+  };
+
+  setMeta('meta[name="description"]', 'content', description);
+  setMeta('meta[property="og:title"]', 'content', title);
+  setMeta('meta[property="og:description"]', 'content', description);
+  setMeta('meta[property="og:image"]', 'content', image);
+  setMeta('meta[property="og:url"]', 'content', url);
+  setMeta('meta[name="twitter:title"]', 'content', title);
+  setMeta('meta[name="twitter:description"]', 'content', description);
+  setMeta('meta[name="twitter:image"]', 'content', image);
+
+  const canonical = document.querySelector('link[rel="canonical"]');
+  if (canonical) canonical.setAttribute('href', url);
 };
 
 watch(() => i18n.locale, updateSEOMeta);
@@ -417,6 +441,7 @@ onMounted(() => {
 
 watch(() => route.params.slug, () => {
   recordBlogRead();
+  updateSEOMeta();
   window.scrollTo(0, 0);
 });
 

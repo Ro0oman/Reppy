@@ -112,8 +112,8 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, onMounted, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { useI18nStore } from '../stores/i18n';
 import { ArrowUp, ArrowDown } from 'lucide-vue-next';
@@ -126,8 +126,34 @@ const props = defineProps({
 });
 
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 const i18n = useI18nStore();
+
+const updateMeta = () => {
+  const isDominadas = props.type === 'dominadas';
+  const isEn = i18n.locale === 'en';
+  const title = isDominadas
+    ? (isEn ? 'Online Pull-up Counter | Reppy' : 'Contador de Dominadas Online | Reppy')
+    : (isEn ? 'Free Push-up Counter | Reppy' : 'Contador de Flexiones Gratis | Reppy');
+  const description = isDominadas
+    ? (isEn ? 'Log your pull-ups and compete in the global ranking. Free pull-up tracker with RPG progression, streak tracking, and community boss fights.' : 'Registra tus pull-ups y compite en el ranking mundial. Contador de dominadas gratis con progresion RPG, racha de entrenamiento y boss fights comunitarios.')
+    : (isEn ? 'Keep track of your push-ups and level up your attributes. Free push-up counter with RPG progression, leaderboard, and community events.' : 'Lleva la cuenta de tus push-ups y sube de nivel tus atributos. Contador de flexiones gratis con progresion RPG, ranking global y eventos comunitarios.');
+  const url = `https://reppy-weld.vercel.app${route.path}`;
+
+  document.title = title;
+  const setMeta = (sel, attr, val) => { const el = document.querySelector(sel); if (el) el.setAttribute(attr, val); };
+  setMeta('meta[name="description"]', 'content', description);
+  setMeta('meta[property="og:title"]', 'content', title);
+  setMeta('meta[property="og:description"]', 'content', description);
+  setMeta('meta[property="og:url"]', 'content', url);
+  setMeta('meta[name="twitter:title"]', 'content', title);
+  setMeta('meta[name="twitter:description"]', 'content', description);
+  setMeta('link[rel="canonical"]', 'href', url);
+};
+
+onMounted(updateMeta);
+watch(() => i18n.locale, updateMeta);
 
 const start = () => {
   if (authStore.isAuthenticated) {
