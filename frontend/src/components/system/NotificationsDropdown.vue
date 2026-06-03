@@ -92,6 +92,8 @@ const getIcon = (type) => {
     case 'NEW_CHEST': return Package;
     case 'BOSS_DEFEATED': return Swords;
     case 'PVP_CHALLENGE': return Swords;
+    case 'CHALLENGE_RECEIVED': return Swords;
+    case 'CHALLENGE_ACCEPTED': return Swords;
     case 'MISSION_COMPLETED': return Target;
     default: return Bell;
   }
@@ -104,6 +106,8 @@ const getIconColor = (type) => {
     case 'LEVEL_UP': return 'text-yellow-500';
     case 'NEW_CHEST': return 'text-primary-500';
     case 'PVP_CHALLENGE': return 'text-primary-500';
+    case 'CHALLENGE_RECEIVED': return 'text-amber-500';
+    case 'CHALLENGE_ACCEPTED': return 'text-emerald-500';
     case 'MISSION_COMPLETED': return 'text-emerald-500';
     default: return 'text-muted';
   }
@@ -138,6 +142,8 @@ const handleNotifClick = (notif) => {
     router.push({ name: 'dashboard', params: { lang: i18n.locale } });
   } else if (notif.type === 'PVP_CHALLENGE') {
     router.push({ name: 'pvp', params: { id: notif.target_id, lang: i18n.locale } });
+  } else if (notif.type === 'CHALLENGE_RECEIVED' || notif.type === 'CHALLENGE_ACCEPTED') {
+    router.push({ name: 'social', params: { lang: i18n.locale }, query: { tab: 'challenges' } });
   } else if (notif.type === 'MISSION_COMPLETED') {
     router.push({ name: 'missions', params: { lang: i18n.locale } });
   }

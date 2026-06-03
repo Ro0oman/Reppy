@@ -301,6 +301,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import axios from 'axios';
 import {
   Users, Search, SearchX, UserPlus, Heart, Check,
@@ -331,7 +332,9 @@ const searchResults = ref([]);
 const friends = ref([]);
 const loadingSearch = ref(false);
 const activeExercise = ref('all');
-const activeTab = ref('feed');
+const route = useRoute();
+const VALID_TABS = ['feed', 'rankings', 'battles', 'challenges'];
+const activeTab = ref(VALID_TABS.includes(route.query.tab) ? route.query.tab : 'feed');
 const showFilter = ref(false);
 const streakStatus = ref(null);
 
