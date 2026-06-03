@@ -330,7 +330,7 @@ const searchUsers = () => {
   if (search.value.length < 2) { searchResults.value = []; return; }
   searchTimer = setTimeout(async () => {
     try {
-      const { data } = await axios.get(`/api/users/search?q=${encodeURIComponent(search.value)}`);
+      const { data } = await axios.get(`/api/social/search?q=${encodeURIComponent(search.value)}`);
       searchResults.value = data.filter(u => u.id !== userId.value).slice(0, 5);
     } catch {}
   }, 300);
