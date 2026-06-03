@@ -7,9 +7,9 @@
     <!-- Animated GIF background -->
     <div class="absolute inset-0 z-0">
       <img :src="bgGif" class="w-full h-full object-cover" />
-      <!-- Dark overlay so content is readable -->
-      <div class="absolute inset-0"
-        :class="c.status === 'active' ? 'bg-black/72' : 'bg-black/82'"></div>
+      <div class="absolute inset-0 bg-black/80"></div>
+      <!-- Extra gradient at edges for depth -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/40"></div>
     </div>
 
     <div class="relative z-10 p-6 space-y-5">
@@ -45,8 +45,8 @@
               <Trophy class="w-2.5 h-2.5 text-black" />
             </div>
           </div>
-          <span class="text-xs font-black text-white uppercase italic truncate max-w-[80px] drop-shadow">{{ c.challenger_name }}</span>
-          <span class="text-3xl font-black tabular-nums drop-shadow"
+          <span class="text-xs font-black text-white uppercase italic truncate max-w-[80px]" style="text-shadow:0 1px 8px rgba(0,0,0,0.9)">{{ c.challenger_name }}</span>
+          <span class="text-3xl font-black tabular-nums" style="text-shadow:0 2px 12px rgba(0,0,0,0.9)"
             :class="c.challenger_score > c.challenged_score ? 'text-primary-400' : 'text-white'">
             {{ c.challenger_score.toLocaleString() }}
           </span>
@@ -78,29 +78,37 @@
               <Trophy class="w-2.5 h-2.5 text-black" />
             </div>
           </div>
-          <span class="text-xs font-black text-white uppercase italic truncate max-w-[80px] drop-shadow">{{ c.challenged_name }}</span>
-          <span class="text-3xl font-black tabular-nums drop-shadow"
+          <span class="text-xs font-black text-white uppercase italic truncate max-w-[80px]" style="text-shadow:0 1px 8px rgba(0,0,0,0.9)">{{ c.challenged_name }}</span>
+          <span class="text-3xl font-black tabular-nums" style="text-shadow:0 2px 12px rgba(0,0,0,0.9)"
             :class="c.challenged_score > c.challenger_score ? 'text-amber-400' : 'text-white'">
             {{ c.challenged_score.toLocaleString() }}
           </span>
         </div>
       </div>
 
-      <!-- Tug-of-war bar -->
-      <div class="space-y-1">
-        <div class="relative h-2 w-full rounded-full overflow-hidden bg-white/10">
-          <!-- Challenger fills from left (blue) -->
-          <div class="absolute left-0 top-0 h-full bg-primary-500 rounded-l-full transition-all duration-700"
-            :style="{ width: challengerPct + '%' }"></div>
-          <!-- Challenged fills from right (amber) -->
-          <div class="absolute right-0 top-0 h-full bg-amber-500 rounded-r-full transition-all duration-700"
-            :style="{ width: challengedPct + '%' }"></div>
-          <!-- Center divider -->
-          <div class="absolute left-1/2 -translate-x-1/2 top-0 h-full w-px bg-white/20"></div>
+      <!-- Progress bars toward goal -->
+      <div class="space-y-2 bg-black/30 rounded-2xl px-4 py-3 backdrop-blur-sm">
+        <!-- Challenger -->
+        <div class="space-y-1">
+          <div class="flex justify-between text-[9px] font-black uppercase tracking-widest">
+            <span class="text-white/60">{{ c.challenger_name.split(' ')[0] }}</span>
+            <span class="text-primary-400">{{ c.challenger_score }} / {{ c.goal_value }}</span>
+          </div>
+          <div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+            <div class="h-full bg-primary-500 rounded-full transition-all duration-700"
+              :style="{ width: Math.min(100, Math.round((c.challenger_score / c.goal_value) * 100)) + '%' }"></div>
+          </div>
         </div>
-        <div class="flex justify-between text-[9px] font-black text-white/40 uppercase tracking-widest">
-          <span>{{ c.challenger_name.split(' ')[0] }}</span>
-          <span>{{ c.challenged_name.split(' ')[0] }}</span>
+        <!-- Challenged -->
+        <div class="space-y-1">
+          <div class="flex justify-between text-[9px] font-black uppercase tracking-widest">
+            <span class="text-white/60">{{ c.challenged_name.split(' ')[0] }}</span>
+            <span class="text-amber-400">{{ c.challenged_score }} / {{ c.goal_value }}</span>
+          </div>
+          <div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+            <div class="h-full bg-amber-500 rounded-full transition-all duration-700"
+              :style="{ width: Math.min(100, Math.round((c.challenged_score / c.goal_value) * 100)) + '%' }"></div>
+          </div>
         </div>
       </div>
 
@@ -136,14 +144,6 @@ const bgGif = GIFS[Math.floor(Math.random() * GIFS.length)];
 
 const goalLabels = { reps: 'Reps', damage: 'Daño al boss' };
 const goalLabel = computed(() => goalLabels[c.value.goal_type] || c.value.goal_type);
-
-// Tug-of-war percentages: each side fills from its edge toward center
-const challengerPct = computed(() => {
-  const total = c.value.challenger_score + c.value.challenged_score;
-  if (total === 0) return 50;
-  return Math.round((c.value.challenger_score / total) * 100);
-});
-const challengedPct = computed(() => 100 - challengerPct.value);
 
 const countdown = ref('--:--:--');
 let timer = null;
