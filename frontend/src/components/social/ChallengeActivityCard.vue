@@ -56,6 +56,9 @@
         <div class="flex flex-col items-center gap-1.5 shrink-0">
           <Swords class="w-6 h-6 text-white/30" />
           <span class="text-[9px] font-black text-white/50 uppercase tracking-widest">{{ goalLabel }}</span>
+          <span class="text-[9px] text-white/40 font-semibold whitespace-nowrap">
+            Objetivo: <span class="text-white/70 font-black">{{ c.goal_value.toLocaleString() }}</span>
+          </span>
           <span v-if="c.status === 'finished' && !c.winner_id"
             class="text-[10px] font-black text-amber-400 uppercase tracking-widest">Empate</span>
         </div>
