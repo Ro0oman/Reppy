@@ -105,6 +105,118 @@
       </div>
     </div>
 
+    <!-- Tab: Analytics -->
+    <div v-if="activeTab === 'analytics'" class="space-y-8">
+
+      <div v-if="analyticsLoading" class="py-20 flex items-center justify-center">
+        <div class="w-10 h-10 border-4 border-primary-500/20 border-t-primary-500 animate-spin rounded-full"></div>
+      </div>
+
+      <template v-else-if="analytics">
+
+        <!-- Funnel -->
+        <div class="glass p-8 rounded-[2.5rem] border-white/10 space-y-6">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <BarChart2 class="w-5 h-5 text-primary-500" />
+            Embudo de activación
+          </h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div v-for="step in funnelSteps" :key="step.label" class="bg-white/5 rounded-2xl p-5 space-y-2 border border-white/5">
+              <p class="text-[10px] font-black text-muted uppercase tracking-widest">{{ step.label }}</p>
+              <p class="text-3xl font-black text-white tabular-nums">{{ step.value.toLocaleString() }}</p>
+              <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                <div class="h-full rounded-full transition-all duration-700" :class="step.color" :style="{ width: step.pct + '%' }"></div>
+              </div>
+              <p class="text-[10px] font-semibold" :class="step.pct >= 50 ? 'text-emerald-400' : step.pct >= 20 ? 'text-amber-400' : 'text-red-400'">
+                {{ step.pct }}% del total
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Retention D1 / D7 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="glass p-8 rounded-[2.5rem] border-white/10 space-y-4">
+            <h3 class="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+              <TrendingUp class="w-4 h-4 text-primary-500" />
+              Retención D1
+            </h3>
+            <p class="text-5xl font-black tabular-nums" :class="analytics.retention.d1_rate >= 40 ? 'text-emerald-400' : analytics.retention.d1_rate >= 20 ? 'text-amber-400' : 'text-red-400'">
+              {{ analytics.retention.d1_rate }}%
+            </p>
+            <p class="text-xs text-muted">{{ analytics.retention.d1_retained }} / {{ analytics.retention.d1_cohort }} usuarios volvieron el día siguiente</p>
+            <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+              <div class="h-full bg-primary-500 rounded-full" :style="{ width: analytics.retention.d1_rate + '%' }"></div>
+            </div>
+          </div>
+          <div class="glass p-8 rounded-[2.5rem] border-white/10 space-y-4">
+            <h3 class="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+              <TrendingUp class="w-4 h-4 text-indigo-400" />
+              Retención D7
+            </h3>
+            <p class="text-5xl font-black tabular-nums" :class="analytics.retention.d7_rate >= 20 ? 'text-emerald-400' : analytics.retention.d7_rate >= 10 ? 'text-amber-400' : 'text-red-400'">
+              {{ analytics.retention.d7_rate }}%
+            </p>
+            <p class="text-xs text-muted">{{ analytics.retention.d7_retained }} / {{ analytics.retention.d7_cohort }} usuarios activos en primeros 7 días</p>
+            <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+              <div class="h-full bg-indigo-500 rounded-full" :style="{ width: analytics.retention.d7_rate + '%' }"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weekly comparison -->
+        <div class="glass p-8 rounded-[2.5rem] border-white/10 space-y-6">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <Calendar class="w-5 h-5 text-primary-500" />
+            Resumen semanal
+          </h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div v-for="metric in weeklyMetrics" :key="metric.label" class="bg-white/5 rounded-2xl p-5 space-y-2 border border-white/5">
+              <p class="text-[10px] font-black text-muted uppercase tracking-widest">{{ metric.label }}</p>
+              <p class="text-3xl font-black text-white tabular-nums">{{ metric.this.toLocaleString() }}</p>
+              <div class="flex items-center gap-1.5" v-if="metric.delta !== null">
+                <span class="text-xs font-black" :class="metric.delta >= 0 ? 'text-emerald-400' : 'text-red-400'">
+                  {{ metric.delta >= 0 ? '▲' : '▼' }} {{ Math.abs(metric.delta) }}%
+                </span>
+                <span class="text-[10px] text-muted">vs sem. ant. ({{ metric.last.toLocaleString() }})</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sparklines — últimos 14 días -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="glass p-8 rounded-[2.5rem] border-white/10 space-y-4">
+            <h3 class="text-sm font-black text-white uppercase tracking-widest">Signups últimos 14 días</h3>
+            <div class="flex items-end gap-1 h-20">
+              <div
+                v-for="d in normalizedChart(analytics.charts.daily_signups)"
+                :key="d.day"
+                class="flex-1 bg-primary-500/70 rounded-t hover:bg-primary-500 transition-colors group relative"
+                :style="{ height: d.height + '%', minHeight: '4px' }"
+              >
+                <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] text-white bg-zinc-800 px-1 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap">{{ d.day.slice(5) }}: {{ d.count }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="glass p-8 rounded-[2.5rem] border-white/10 space-y-4">
+            <h3 class="text-sm font-black text-white uppercase tracking-widest">Usuarios activos últimos 14 días</h3>
+            <div class="flex items-end gap-1 h-20">
+              <div
+                v-for="d in normalizedChart(analytics.charts.daily_active)"
+                :key="d.day"
+                class="flex-1 bg-indigo-500/70 rounded-t hover:bg-indigo-500 transition-colors group relative"
+                :style="{ height: d.height + '%', minHeight: '4px' }"
+              >
+                <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] text-white bg-zinc-800 px-1 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap">{{ d.day.slice(5) }}: {{ d.count }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </template>
+    </div>
+
     <!-- Tab: Bosses -->
     <div v-if="activeTab === 'bosses'" class="space-y-8">
       <div class="glass p-8 rounded-[2.5rem] border-white/10">
@@ -175,9 +287,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
-import { Sparkles, Target, Trash2, Edit2, Calendar } from 'lucide-vue-next';
+import { Sparkles, Target, Trash2, Edit2, Calendar, BarChart2, TrendingUp } from 'lucide-vue-next';
 import { useNotificationStore } from '@/stores/notification';
 import { useI18nStore } from '@/stores/i18n';
 
@@ -187,8 +299,53 @@ const notificationStore = useNotificationStore();
 const activeTab = ref('cosmetics');
 const tabs = [
   { id: 'cosmetics', name: 'Tienda Goggins' },
-  { id: 'bosses', name: 'Eventos Globales' }
+  { id: 'bosses', name: 'Eventos Globales' },
+  { id: 'analytics', name: 'Analytics' },
 ];
+
+// Analytics State
+const analytics = ref(null);
+const analyticsLoading = ref(false);
+
+const fetchAnalytics = async () => {
+  analyticsLoading.value = true;
+  try {
+    const { data } = await axios.get('/api/admin/analytics');
+    analytics.value = data;
+  } catch (e) {
+    console.error('Analytics error:', e);
+  } finally {
+    analyticsLoading.value = false;
+  }
+};
+
+const funnelSteps = computed(() => {
+  if (!analytics.value) return [];
+  const f = analytics.value.funnel;
+  return [
+    { label: 'Signups totales', value: f.signups, pct: 100, color: 'bg-primary-500' },
+    { label: 'Primera rep', value: f.activated, pct: f.activated_pct, color: 'bg-indigo-500' },
+    { label: 'Misión reclamada', value: f.mission_claimed, pct: f.mission_pct, color: 'bg-amber-500' },
+    { label: 'Vuelta D1', value: f.d1_returned, pct: f.d1_pct, color: 'bg-emerald-500' },
+  ];
+});
+
+const weeklyMetrics = computed(() => {
+  if (!analytics.value) return [];
+  const { this_week: tw, last_week: lw, delta: d } = analytics.value.weekly;
+  return [
+    { label: 'Nuevos usuarios', this: tw.new_signups, last: lw.new_signups, delta: d.signups },
+    { label: 'Usuarios activos', this: tw.active_users, last: lw.active_users, delta: d.active_users },
+    { label: 'Reps totales', this: tw.total_reps, last: lw.total_reps, delta: d.total_reps },
+    { label: 'Misiones reclamadas', this: tw.missions_claimed, last: lw.missions_claimed, delta: d.missions_claimed },
+  ];
+});
+
+const normalizedChart = (rows) => {
+  if (!rows?.length) return [];
+  const max = Math.max(...rows.map(r => r.count), 1);
+  return rows.map(r => ({ ...r, height: Math.round((r.count / max) * 100) }));
+};
 
 // Cosmetics State
 const cosmetics = ref([]);
@@ -329,5 +486,6 @@ const formatDate = (dateStr) => {
 onMounted(() => {
   fetchCosmetics();
   fetchBosses();
+  fetchAnalytics();
 });
 </script>

@@ -128,4 +128,142 @@ router.delete('/bosses/:id', authenticate, isAdmin, async (req, res) => {
 });
 
 
+// --- Analytics ---
+
+router.get('/analytics', authenticate, isAdmin, async (req, res) => {
+  try {
+    const [
+      funnelRes,
+      retentionRes,
+      weeklyRes,
+      prevWeeklyRes,
+      dailySignupsRes,
+      dailyActiveRes,
+    ] = await Promise.all([
+
+      // Funnel: signup → first rep → mission claimed → D1 return
+      query(`
+        SELECT
+          COUNT(*)::int AS total_signups,
+          COUNT(DISTINCT r.user_id)::int AS users_with_reps,
+          (SELECT COUNT(DISTINCT user_id)::int FROM user_missions WHERE is_claimed = true) AS users_mission_claimed,
+          (SELECT COUNT(DISTINCT u2.id)::int
+           FROM users u2
+           WHERE u2.created_at <= NOW() - INTERVAL '2 days'
+             AND EXISTS (
+               SELECT 1 FROM reps r2
+               WHERE r2.user_id = u2.id
+                 AND r2.date = DATE(u2.created_at AT TIME ZONE 'UTC') + 1
+             )
+          ) AS d1_returned
+        FROM users u
+        LEFT JOIN reps r ON r.user_id = u.id
+      `),
+
+      // D1 / D7 retention rates
+      query(`
+        SELECT
+          (SELECT COUNT(*)::int FROM users WHERE created_at <= NOW() - INTERVAL '2 days') AS d1_cohort,
+          (SELECT COUNT(DISTINCT u.id)::int
+           FROM users u
+           WHERE u.created_at <= NOW() - INTERVAL '2 days'
+             AND EXISTS (
+               SELECT 1 FROM reps r WHERE r.user_id = u.id
+                 AND r.date = DATE(u.created_at AT TIME ZONE 'UTC') + 1
+             )
+          ) AS d1_retained,
+          (SELECT COUNT(*)::int FROM users WHERE created_at <= NOW() - INTERVAL '8 days') AS d7_cohort,
+          (SELECT COUNT(DISTINCT u.id)::int
+           FROM users u
+           WHERE u.created_at <= NOW() - INTERVAL '8 days'
+             AND EXISTS (
+               SELECT 1 FROM reps r WHERE r.user_id = u.id
+                 AND r.date BETWEEN DATE(u.created_at AT TIME ZONE 'UTC')
+                               AND DATE(u.created_at AT TIME ZONE 'UTC') + 7
+             )
+          ) AS d7_retained
+      `),
+
+      // This week
+      query(`
+        SELECT
+          (SELECT COUNT(*)::int FROM users WHERE created_at >= DATE_TRUNC('week', NOW())) AS new_signups,
+          (SELECT COUNT(DISTINCT user_id)::int FROM reps WHERE date >= DATE_TRUNC('week', NOW())) AS active_users,
+          (SELECT COALESCE(SUM(count),0)::int FROM reps WHERE date >= DATE_TRUNC('week', NOW())) AS total_reps,
+          (SELECT COUNT(*)::int FROM user_missions WHERE is_claimed = true AND last_updated >= DATE_TRUNC('week', NOW())) AS missions_claimed
+      `),
+
+      // Last week
+      query(`
+        SELECT
+          (SELECT COUNT(*)::int FROM users WHERE created_at >= DATE_TRUNC('week', NOW()) - INTERVAL '7 days' AND created_at < DATE_TRUNC('week', NOW())) AS new_signups,
+          (SELECT COUNT(DISTINCT user_id)::int FROM reps WHERE date >= DATE_TRUNC('week', NOW()) - INTERVAL '7 days' AND date < DATE_TRUNC('week', NOW())) AS active_users,
+          (SELECT COALESCE(SUM(count),0)::int FROM reps WHERE date >= DATE_TRUNC('week', NOW()) - INTERVAL '7 days' AND date < DATE_TRUNC('week', NOW())) AS total_reps,
+          (SELECT COUNT(*)::int FROM user_missions WHERE is_claimed = true AND last_updated >= DATE_TRUNC('week', NOW()) - INTERVAL '7 days' AND last_updated < DATE_TRUNC('week', NOW())) AS missions_claimed
+      `),
+
+      // Daily signups last 14 days
+      query(`
+        SELECT DATE(created_at AT TIME ZONE 'UTC') AS day, COUNT(*)::int AS count
+        FROM users
+        WHERE created_at >= NOW() - INTERVAL '14 days'
+        GROUP BY day ORDER BY day
+      `),
+
+      // Daily active users last 14 days
+      query(`
+        SELECT date AS day, COUNT(DISTINCT user_id)::int AS count
+        FROM reps
+        WHERE date >= NOW() - INTERVAL '14 days'
+        GROUP BY date ORDER BY date
+      `),
+    ]);
+
+    const funnel = funnelRes.rows[0];
+    const retention = retentionRes.rows[0];
+    const week = weeklyRes.rows[0];
+    const prevWeek = prevWeeklyRes.rows[0];
+
+    const pct = (a, b) => b > 0 ? Math.round((a / b) * 100) : 0;
+    const delta = (a, b) => b > 0 ? Math.round(((a - b) / b) * 100) : null;
+
+    res.json({
+      funnel: {
+        signups: funnel.total_signups,
+        activated: funnel.users_with_reps,
+        activated_pct: pct(funnel.users_with_reps, funnel.total_signups),
+        mission_claimed: funnel.users_mission_claimed,
+        mission_pct: pct(funnel.users_mission_claimed, funnel.users_with_reps),
+        d1_returned: funnel.d1_returned,
+        d1_pct: pct(funnel.d1_returned, funnel.total_signups),
+      },
+      retention: {
+        d1_rate: pct(retention.d1_retained, retention.d1_cohort),
+        d1_cohort: retention.d1_cohort,
+        d1_retained: retention.d1_retained,
+        d7_rate: pct(retention.d7_retained, retention.d7_cohort),
+        d7_cohort: retention.d7_cohort,
+        d7_retained: retention.d7_retained,
+      },
+      weekly: {
+        this_week: week,
+        last_week: prevWeek,
+        delta: {
+          signups: delta(week.new_signups, prevWeek.new_signups),
+          active_users: delta(week.active_users, prevWeek.active_users),
+          total_reps: delta(week.total_reps, prevWeek.total_reps),
+          missions_claimed: delta(week.missions_claimed, prevWeek.missions_claimed),
+        },
+      },
+      charts: {
+        daily_signups: dailySignupsRes.rows,
+        daily_active: dailyActiveRes.rows,
+      },
+    });
+  } catch (err) {
+    console.error('[ANALYTICS]', err);
+    res.status(500).json({ message: 'Error fetching analytics' });
+  }
+});
+
 export default router;
