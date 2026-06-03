@@ -467,10 +467,67 @@ router.get('/feed', optionalAuthenticate, async (req, res) => {
           AND u1.is_private = false
           AND u2.is_private = false
       ),
+      challenge_feed AS (
+        SELECT
+          u1.id as user_id,
+          u1.name as user_name,
+          u1.avatar_url,
+          u1.current_level,
+          u1.total_reps,
+          u1.str_xp, u1.end_xp, u1.agi_xp, u1.dex_xp, u1.vig_xp, u1.int_xp, u1.fth_xp,
+          b.css_value as border_css,
+          NULL as avatar_css,
+          NULL as post_background_css,
+          TO_CHAR(COALESCE(ac.resolved_at, ac.expires_at, ac.created_at), 'YYYY-MM-DD') as date,
+          NULL::int as summary_id,
+          CASE ac.status
+            WHEN 'active'   THEN 'RETO 24H EN CURSO ⚔️'
+            WHEN 'finished' THEN 'RETO 24H FINALIZADO 🏆'
+          END as title,
+          u1.name || ' vs ' || u2.name as description,
+          u1.cha_xp,
+          ti.name as title_name,
+          NULL as boss_name,
+          NULL as boss_image,
+          '[]'::json as exercises,
+          '{}'::json as equipment,
+          0::bigint as like_count,
+          0::bigint as comment_count,
+          false as user_has_liked,
+          COALESCE(ac.resolved_at, ac.expires_at, ac.created_at) as created_at,
+          'challenge' as post_type,
+          JSON_BUILD_OBJECT(
+            'id', ac.id,
+            'challenger_id', ac.challenger_id,
+            'challenged_id', ac.challenged_id,
+            'challenger_name', u1.name,
+            'challenged_name', u2.name,
+            'challenger_avatar', u1.avatar_url,
+            'challenged_avatar', u2.avatar_url,
+            'challenger_score', ac.challenger_score,
+            'challenged_score', ac.challenged_score,
+            'goal_type', ac.goal_type,
+            'goal_value', ac.goal_value,
+            'status', ac.status,
+            'winner_id', ac.winner_id,
+            'expires_at', ac.expires_at,
+            'reward_coins', ac.reward_coins
+          ) as pvp_data
+        FROM async_challenges ac
+        JOIN users u1 ON u1.id = ac.challenger_id
+        JOIN users u2 ON u2.id = ac.challenged_id
+        LEFT JOIN cosmetics b  ON u1.equipped_border_id = b.id
+        LEFT JOIN cosmetics ti ON u1.equipped_title_id  = ti.id
+        WHERE ac.status IN ('active', 'finished')
+          AND u1.is_private = false
+          AND u2.is_private = false
+      ),
       feed_base AS (
         SELECT * FROM reps_feed
         UNION ALL
         SELECT * FROM pvp_feed
+        UNION ALL
+        SELECT * FROM challenge_feed
       )
       SELECT 
         f.*,
