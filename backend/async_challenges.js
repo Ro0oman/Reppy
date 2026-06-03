@@ -7,7 +7,12 @@ import { resolveExpiredChallenges } from './utils/challenges.js';
 const router = express.Router();
 
 const VALID_GOAL_TYPES = ['reps', 'damage'];
-const REWARD_COINS = 75;
+
+const calcReward = (goalType, goalValue) => {
+  if (goalType === 'reps')   return Math.min(300, Math.max(25, Math.round(goalValue * 0.25)));
+  if (goalType === 'damage') return Math.min(300, Math.max(25, Math.round(goalValue / 100)));
+  return 75;
+};
 
 // GET /api/challenges — list my challenges (all statuses)
 router.get('/', authenticate, async (req, res) => {
@@ -67,7 +72,7 @@ router.post('/', authenticate, async (req, res) => {
       INSERT INTO async_challenges (challenger_id, challenged_id, goal_type, goal_value, reward_coins)
       VALUES ($1, $2, $3, $4, $5)
       RETURNING *
-    `, [challengerId, challengedId, goalType, goalValue, REWARD_COINS]);
+    `, [challengerId, challengedId, goalType, goalValue, calcReward(goalType, goalValue)]);
 
     const challenge = result.rows[0];
 

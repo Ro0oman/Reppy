@@ -185,9 +185,10 @@
 
           <!-- Goal value -->
           <div class="space-y-2">
-            <label class="text-[10px] font-black text-muted uppercase tracking-widest">
-              {{ i18n.locale === 'es' ? 'Meta' : 'Target' }}
-              <span class="text-primary-500 ml-1">{{ form.goalValue }} {{ goalUnitLabel }}</span>
+            <label class="text-[10px] font-black text-muted uppercase tracking-widest flex items-center justify-between">
+              <span>{{ i18n.locale === 'es' ? 'Meta' : 'Target' }}
+              <span class="text-primary-500 ml-1">{{ form.goalValue }} {{ goalUnitLabel }}</span></span>
+              <span class="text-amber-400">🏆 {{ previewReward }} RC al ganador</span>
             </label>
             <input
               v-model.number="form.goalValue"
@@ -247,6 +248,13 @@ const goalTypes = computed(() => [
 const goalUnitLabel = computed(() => form.value.goalType === 'damage'
   ? (i18n.locale === 'es' ? 'daño' : 'dmg')
   : 'reps');
+
+const calcReward = (goalType, goalValue) => {
+  if (goalType === 'reps')   return Math.min(300, Math.max(25, Math.round(goalValue * 0.25)));
+  if (goalType === 'damage') return Math.min(300, Math.max(25, Math.round(goalValue / 100)));
+  return 75;
+};
+const previewReward = computed(() => calcReward(form.value.goalType, form.value.goalValue));
 const goalMin = computed(() => form.value.goalType === 'damage' ? 500 : 50);
 const goalMax = computed(() => form.value.goalType === 'damage' ? 50000 : 1000);
 const goalStep = computed(() => form.value.goalType === 'damage' ? 500 : 50);
