@@ -40,13 +40,28 @@ router.get('/', authenticate, async (req, res) => {
 
     // 3. Refill Daily IF needed AND it's a new day
     if (lastRefill < today) {
+      // Rotate out uncompleted daily missions so they don't get stuck
+      await query(`
+        UPDATE user_missions um
+        SET is_active = false, last_updated = CURRENT_TIMESTAMP
+        FROM missions m
+        WHERE um.mission_id = m.id
+          AND um.user_id = $1
+          AND um.is_active = true
+          AND m.is_daily = true
+          AND um.is_completed = false
+      `, [userId]);
+
+      // Only keep completed-but-unclaimed dailies as still active
+      dailyActive = dailyActive.filter(m => m.is_completed && !m.is_claimed);
+
       if (dailyActive.length < 2) {
         const needed = 2 - dailyActive.length;
         const newDailies = await query(`
-          SELECT id FROM missions 
-          WHERE is_daily = true 
+          SELECT id FROM missions
+          WHERE is_daily = true
           AND id NOT IN (
-            SELECT mission_id FROM user_missions 
+            SELECT mission_id FROM user_missions
             WHERE user_id = $1 AND is_active = true
           )
           ORDER BY RANDOM()

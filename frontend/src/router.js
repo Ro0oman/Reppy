@@ -3,21 +3,21 @@ import { useAuthStore } from './stores/auth'
 import { useI18nStore } from './stores/i18n'
 
 // Lazy load components to optimize the landing performance
-const Landing = () => import('./components/Landing.vue')
-const Dashboard = () => import('./components/Dashboard.vue')
-const Social = () => import('./components/Social.vue')
-const Shop = () => import('./components/Shop.vue')
-const Inventory = () => import('./components/Inventory.vue')
-const Profile = () => import('./components/Profile.vue')
-const Login = () => import('./components/Login.vue')
-const AdminPanel = () => import('./components/AdminPanel.vue')
-const ExerciseLanding = () => import('./components/ExerciseLanding.vue')
-const Notifications = () => import('./components/Notifications.vue')
-const BlogList = () => import('./components/BlogList.vue')
-const Codex = () => import('./components/Codex.vue')
-const PvpBattleView = () => import('./components/PvpBattleView.vue')
-const Missions = () => import('./components/Missions.vue')
-const NotFound = () => import('./components/NotFound.vue')
+const Landing = () => import('./components/pages/Landing.vue')
+const Dashboard = () => import('./components/pages/Dashboard.vue')
+const Social = () => import('./components/pages/Social.vue')
+const Shop = () => import('./components/pages/Shop.vue')
+const Inventory = () => import('./components/pages/Inventory.vue')
+const Profile = () => import('./components/pages/Profile.vue')
+const Login = () => import('./components/pages/Login.vue')
+const AdminPanel = () => import('./components/pages/AdminPanel.vue')
+const ExerciseLanding = () => import('./components/pages/ExerciseLanding.vue')
+const Notifications = () => import('./components/pages/Notifications.vue')
+const BlogList = () => import('./components/pages/BlogList.vue')
+const Codex = () => import('./components/pages/Codex.vue')
+const PvpBattleView = () => import('./components/pages/PvpBattleView.vue')
+const Missions = () => import('./components/pages/Missions.vue')
+const NotFound = () => import('./components/pages/NotFound.vue')
 
 export const routes = [
   // Redirección adaptativa de la raíz basada en detección de idioma
@@ -151,7 +151,7 @@ export const routes = [
       },
       { 
         path: 'blog/:slug', 
-        component: () => import('./components/BlogView.vue'), 
+        component: () => import('./components/pages/BlogView.vue'), 
         name: 'blog-post',
         meta: { title: 'Blog | Reppy' }
       }

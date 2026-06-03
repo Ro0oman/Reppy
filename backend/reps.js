@@ -9,6 +9,7 @@ import { getLocalDateString } from './utils/date.js';
 import { calculateDamage } from './utils/damage.js';
 import { getUserWithGear } from './utils/user.js';
 import { updateMissionProgress } from './utils/missions.js';
+import { updateChallengeScores } from './utils/challenges.js';
 import { broadcastDamage } from './socketManager.js';
 import { grantLastHitBonus } from './utils/bossRewards.js';
 import { getEffectiveExerciseCount, getRewardExerciseCount, isTimedExerciseUnit } from './utils/exerciseUnits.js';
@@ -184,6 +185,9 @@ router.post('/', authenticate, async (req, res) => {
     if (actualDamageDealt > 0) {
       await updateMissionProgress(userId, 'damage', actualDamageDealt);
     }
+
+    // Async challenge scores
+    updateChallengeScores(userId, { reps: rawCount, damage: actualDamageDealt }).catch(() => {});
 
     // Mission: Night Owl (Reps after 22:00)
     const currentHour = new Date().getHours();
