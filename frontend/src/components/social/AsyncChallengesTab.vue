@@ -188,7 +188,7 @@
             <label class="text-[10px] font-black text-muted uppercase tracking-widest flex items-center justify-between">
               <span>{{ i18n.locale === 'es' ? 'Meta' : 'Target' }}
               <span class="text-primary-500 ml-1">{{ form.goalValue }} {{ goalUnitLabel }}</span></span>
-              <span class="text-amber-400">🏆 {{ previewReward }} RC al ganador</span>
+              <span class="text-amber-400">🏆 {{ previewReward.coins }} RC + {{ previewReward.gems }} 💎</span>
             </label>
             <input
               v-model.number="form.goalValue"
@@ -250,9 +250,15 @@ const goalUnitLabel = computed(() => form.value.goalType === 'damage'
   : 'reps');
 
 const calcReward = (goalType, goalValue) => {
-  if (goalType === 'reps')   return Math.min(300, Math.max(25, Math.round(goalValue * 0.25)));
-  if (goalType === 'damage') return Math.min(300, Math.max(25, Math.round(goalValue / 100)));
-  return 75;
+  if (goalType === 'reps') return {
+    coins: Math.min(2000, Math.max(50, Math.round(goalValue * 2))),
+    gems:  Math.min(10,   Math.max(1,  Math.floor(goalValue / 100))),
+  };
+  if (goalType === 'damage') return {
+    coins: Math.min(2000, Math.max(50, Math.round(goalValue * 0.04))),
+    gems:  Math.min(10,   Math.max(1,  Math.floor(goalValue / 5000))),
+  };
+  return { coins: 75, gems: 1 };
 };
 const previewReward = computed(() => calcReward(form.value.goalType, form.value.goalValue));
 const goalMin = computed(() => form.value.goalType === 'damage' ? 500 : 50);

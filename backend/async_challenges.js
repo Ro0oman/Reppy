@@ -9,9 +9,15 @@ const router = express.Router();
 const VALID_GOAL_TYPES = ['reps', 'damage'];
 
 const calcReward = (goalType, goalValue) => {
-  if (goalType === 'reps')   return Math.min(300, Math.max(25, Math.round(goalValue * 0.25)));
-  if (goalType === 'damage') return Math.min(300, Math.max(25, Math.round(goalValue / 100)));
-  return 75;
+  if (goalType === 'reps') return {
+    coins: Math.min(2000, Math.max(50,  Math.round(goalValue * 2))),
+    gems:  Math.min(10,   Math.max(1,   Math.floor(goalValue / 100))),
+  };
+  if (goalType === 'damage') return {
+    coins: Math.min(2000, Math.max(50,  Math.round(goalValue * 0.04))),
+    gems:  Math.min(10,   Math.max(1,   Math.floor(goalValue / 5000))),
+  };
+  return { coins: 75, gems: 1 };
 };
 
 // GET /api/challenges — list my challenges (all statuses)
@@ -68,11 +74,12 @@ router.post('/', authenticate, async (req, res) => {
       return res.status(409).json({ message: 'Ya existe un reto activo con ese jugador' });
     }
 
+    const { coins, gems } = calcReward(goalType, goalValue);
     const result = await query(`
-      INSERT INTO async_challenges (challenger_id, challenged_id, goal_type, goal_value, reward_coins)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO async_challenges (challenger_id, challenged_id, goal_type, goal_value, reward_coins, reward_gems)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *
-    `, [challengerId, challengedId, goalType, goalValue, calcReward(goalType, goalValue)]);
+    `, [challengerId, challengedId, goalType, goalValue, coins, gems]);
 
     const challenge = result.rows[0];
 

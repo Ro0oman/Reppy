@@ -114,9 +114,9 @@
 
       <!-- Footer -->
       <div class="flex items-center justify-between text-[10px] text-white/40 pt-1 border-t border-white/10">
-        <span v-if="c.status === 'active'">+{{ c.reward_coins }} RC al ganador</span>
+        <span v-if="c.status === 'active'">🏆 {{ c.reward_coins }} RC + {{ c.reward_gems }} 💎 al ganador</span>
         <span v-else-if="c.winner_id">
-          +{{ c.reward_coins }} RC → {{ c.winner_id === c.challenger_id ? c.challenger_name : c.challenged_name }}
+          🏆 {{ c.reward_coins }} RC + {{ c.reward_gems }} 💎 → {{ c.winner_id === c.challenger_id ? c.challenger_name : c.challenged_name }}
         </span>
         <span v-else>Sin ganador — empate</span>
         <span class="font-mono">{{ formattedDate }}</span>

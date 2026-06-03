@@ -1,6 +1,6 @@
 import { query } from '../db.js';
 
-const resolveChallenge = async (id, winnerId, rewardCoins) => {
+const resolveChallenge = async (id, winnerId, rewardCoins, rewardGems = 0) => {
   await query('BEGIN');
   await query(`
     UPDATE async_challenges
@@ -8,7 +8,15 @@ const resolveChallenge = async (id, winnerId, rewardCoins) => {
     WHERE id = $2 AND status = 'active'
   `, [winnerId, id]);
   if (winnerId) {
-    await query(`UPDATE users SET reppy_coins = reppy_coins + $1 WHERE id = $2`, [rewardCoins, winnerId]);
+    await query(`
+      UPDATE users SET reppy_coins = reppy_coins + $1, reppy_gems = reppy_gems + $2 WHERE id = $3
+    `, [rewardCoins, rewardGems, winnerId]);
+    if (rewardGems > 0) {
+      await query(`
+        INSERT INTO gem_transactions (user_id, amount, source, description)
+        VALUES ($1, $2, 'challenge', 'Reto 24h ganado')
+      `, [winnerId, rewardGems]);
+    }
   }
   await query('COMMIT');
 };
@@ -48,7 +56,7 @@ export const updateChallengeScores = async (userId, { reps = 0, damage = 0 }) =>
         } else {
           winnerId = challengerDone ? c.challenger_id : c.challenged_id;
         }
-        await resolveChallenge(c.id, winnerId, c.reward_coins).catch(console.error);
+        await resolveChallenge(c.id, winnerId, c.reward_coins, c.reward_gems || 0).catch(console.error);
       }
     }
   } catch (err) {
@@ -60,7 +68,7 @@ export const resolveExpiredChallenges = async () => {
   try {
     // Resolve time-expired challenges
     const expired = await query(`
-      SELECT id, challenger_id, challenged_id, challenger_score, challenged_score, reward_coins
+      SELECT id, challenger_id, challenged_id, challenger_score, challenged_score, reward_coins, reward_gems
       FROM async_challenges
       WHERE status = 'active' AND expires_at <= NOW()
     `);
@@ -70,13 +78,13 @@ export const resolveExpiredChallenges = async () => {
         c.challenger_score > c.challenged_score ? c.challenger_id :
         c.challenged_score > c.challenger_score ? c.challenged_id :
         null;
-      await resolveChallenge(c.id, winnerId, c.reward_coins).catch(console.error);
+      await resolveChallenge(c.id, winnerId, c.reward_coins, c.reward_gems || 0).catch(console.error);
     }
 
     // Also resolve any active challenges where someone already hit the goal
     // (catches cases where the reps hook didn't fire, e.g. historical data)
     const goalReached = await query(`
-      SELECT id, challenger_id, challenged_id, challenger_score, challenged_score, reward_coins, goal_value
+      SELECT id, challenger_id, challenged_id, challenger_score, challenged_score, reward_coins, reward_gems, goal_value
       FROM async_challenges
       WHERE status = 'active'
         AND (challenger_score >= goal_value OR challenged_score >= goal_value)
@@ -91,7 +99,7 @@ export const resolveExpiredChallenges = async () => {
       } else {
         winnerId = challengerDone ? c.challenger_id : c.challenged_id;
       }
-      await resolveChallenge(c.id, winnerId, c.reward_coins).catch(console.error);
+      await resolveChallenge(c.id, winnerId, c.reward_coins, c.reward_gems || 0).catch(console.error);
     }
   } catch (err) {
     console.error('[CHALLENGES] Error resolving:', err);

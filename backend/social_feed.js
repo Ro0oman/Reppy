@@ -511,7 +511,8 @@ router.get('/feed', optionalAuthenticate, async (req, res) => {
             'status', ac.status,
             'winner_id', ac.winner_id,
             'expires_at', ac.expires_at,
-            'reward_coins', ac.reward_coins
+            'reward_coins', ac.reward_coins,
+            'reward_gems', ac.reward_gems
           ) as pvp_data
         FROM async_challenges ac
         JOIN users u1 ON u1.id = ac.challenger_id
