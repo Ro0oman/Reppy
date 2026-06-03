@@ -5,14 +5,14 @@ const run = async () => {
     await query(`
       CREATE TABLE IF NOT EXISTS async_challenges (
         id SERIAL PRIMARY KEY,
-        challenger_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-        challenged_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        challenger_id VARCHAR NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        challenged_id VARCHAR NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         goal_type VARCHAR(20) NOT NULL DEFAULT 'reps',
         goal_value INT NOT NULL DEFAULT 100,
         challenger_score INT NOT NULL DEFAULT 0,
         challenged_score INT NOT NULL DEFAULT 0,
         status VARCHAR(20) NOT NULL DEFAULT 'pending',
-        winner_id INT REFERENCES users(id),
+        winner_id VARCHAR REFERENCES users(id),
         reward_coins INT NOT NULL DEFAULT 75,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         expires_at TIMESTAMPTZ,
