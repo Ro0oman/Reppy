@@ -121,17 +121,54 @@
         <span v-else>Sin ganador — empate</span>
         <span class="font-mono">{{ formattedDate }}</span>
       </div>
+
+      <!-- Share (finished challenges → viral image) -->
+      <div v-if="c.status === 'finished'" class="relative">
+        <button @click="showShareMenu = !showShareMenu" :disabled="generating"
+          class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50 backdrop-blur-sm">
+          <Loader2 v-if="generating" class="w-4 h-4 animate-spin" />
+          <Share2 v-else class="w-4 h-4" />
+          {{ generating ? (i18n.locale === 'es' ? 'Generando…' : 'Generating…') : (i18n.locale === 'es' ? 'Compartir' : 'Share') }}
+        </button>
+        <Transition
+          enter-active-class="transition duration-150 ease-out" enter-from-class="opacity-0 translate-y-2"
+          leave-active-class="transition duration-100 ease-in" leave-to-class="opacity-0 translate-y-2">
+          <div v-if="showShareMenu"
+            class="absolute bottom-full mb-2 inset-x-0 bg-surface/95 backdrop-blur-xl border border-white/15 rounded-xl p-1.5 z-30 shadow-2xl space-y-1">
+            <button @click="doShare('story')"
+              class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-white text-[11px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">
+              <span class="flex items-center gap-2"><Smartphone class="w-3.5 h-3.5 text-primary-400" /> Stories</span>
+              <span class="text-white/40 font-mono normal-case">9:16</span>
+            </button>
+            <button @click="doShare('square')"
+              class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-white text-[11px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">
+              <span class="flex items-center gap-2"><Square class="w-3.5 h-3.5 text-primary-400" /> Post</span>
+              <span class="text-white/40 font-mono normal-case">1:1</span>
+            </button>
+          </div>
+        </Transition>
+      </div>
     </div>
   </article>
 </template>
 
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from 'vue';
-import { Swords, Trophy } from 'lucide-vue-next';
+import { Swords, Trophy, Share2, Loader2, Smartphone, Square } from 'lucide-vue-next';
+import { useI18nStore } from '@/stores/i18n';
+import { useChallengeShare } from '@/composables/useChallengeShare';
 
 const props = defineProps({ activity: { type: Object, required: true } });
 
 const c = computed(() => props.activity.pvp_data);
+
+const i18n = useI18nStore();
+const { share, generating } = useChallengeShare();
+const showShareMenu = ref(false);
+const doShare = (format) => {
+  showShareMenu.value = false;
+  share(c.value, format, bgGif);
+};
 
 const GIFS = [
   '/images/pvp/default.gif',
