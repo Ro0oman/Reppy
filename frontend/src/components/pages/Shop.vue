@@ -3,56 +3,31 @@
     <div class="max-w-7xl mx-auto px-4 py-8 sm:py-12 animate-in relative z-10">
 
       <!-- DYNAMIC HEADER -->
-      <div class="mb-8 space-y-4">
-        <!-- Legendary Alert Banner -->
-        <Transition name="fade-down">
-          <div v-if="hasLegendaryDaily"
-            class="bg-gradient-to-r from-yellow-600 to-yellow-400 p-2.5 rounded-[22px] flex items-center justify-center gap-3 shadow-lg shadow-yellow-500/20 border border-yellow-300/50 cursor-pointer mb-6 animate-pulse-glow"
-            @click="activeTab = 'combat'; selectedCategory = 'all'">
-            <Trophy class="w-4 h-4 text-white" />
-            <span class="text-[10px] font-black text-white uppercase tracking-widest">{{
-              i18n.t('shop_legendary_appeared') }}</span>
-            <ArrowRight class="w-3 h-3 text-white" />
-          </div>
-        </Transition>
+      <div class="mb-4 space-y-3">
+        <div class="flex items-center justify-between gap-3">
+          <h1 class="text-2xl md:text-4xl font-bold tracking-tighter text-foreground leading-none flex items-center">
+            {{ i18n.t('shop_armory_title') }}<span class="text-primary-500">.</span>
+          </h1>
 
-        <div class="flex items-center justify-between">
-          <div>
-            <h1
-              class="text-3xl sm:text-4xl font-bold text-industrial tracking-tighter text-foreground italic flex items-center gap-2">
-              {{ i18n.t('shop_armory_title') }}<span class="text-primary-500">.</span>
-            </h1>
-            <p class="text-muted font-bold uppercase tracking-widest text-[10px] opacity-60">{{
-              i18n.t('shop_armory_subtitle') }}</p>
-          </div>
-
-          <div class="flex items-center gap-2 sm:gap-4">
-            <!-- Coins -->
-            <div
-              class="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-2 rounded-[22px] shadow-inner group">
-              <div class="p-1.5 bg-primary-500/10 rounded-lg group-hover:scale-110 transition-transform">
-                <Coins class="w-4 h-4 text-primary-500" />
-              </div>
-              <span class="text-lg font-black tabular-nums">{{ authStore.user?.reppy_coins || 0 }}</span>
+          <!-- Legendary info chip (informational only) -->
+          <Transition name="fade-down">
+            <div v-if="hasLegendaryDaily"
+              class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/30">
+              <Trophy class="w-3.5 h-3.5 text-yellow-500" />
+              <span class="text-[9px] font-black text-yellow-500 uppercase tracking-widest">{{ i18n.t('shop_legendary_appeared') }}</span>
             </div>
-            <!-- Gems -->
-            <div
-              class="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-2 rounded-[22px] shadow-inner group">
-              <div class="p-1.5 bg-emerald-500/10 rounded-lg group-hover:scale-110 transition-transform">
-                <Diamond class="w-4 h-4 text-emerald-500" />
-              </div>
-              <span class="text-lg font-black tabular-nums">{{ authStore.user?.reppy_gems || 0 }}</span>
-            </div>
-          </div>
+          </Transition>
         </div>
 
         <!-- Navigation Tabs -->
-        <div class="flex items-center gap-2 pt-4 overflow-x-auto no-scrollbar pb-2">
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
           <button
             v-for="tab in [{ id: 'combat', label: 'inv_tab_combat' }, { id: 'customization', label: 'inv_tab_customization' }]"
             :key="tab.id" @click="activeTab = tab.id; selectedCategory = 'all'; currentPage = 1"
-            class="px-8 py-3 rounded-[22px] text-[10px] font-black uppercase tracking-[0.2em] transition-all border whitespace-nowrap active:scale-95"
-            :class="activeTab === tab.id ? 'bg-foreground text-background border-foreground shadow-2xl' : 'bg-white/5 text-muted border-white/5 hover:border-white/10'">
+            class="flex-1 sm:flex-none px-6 sm:px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all border whitespace-nowrap active:scale-95"
+            :class="activeTab === tab.id
+              ? (tab.id === 'combat' ? 'bg-primary-500 text-white border-primary-400 shadow-lg shadow-primary-500/20' : 'bg-purple-600 text-white border-purple-500 shadow-lg shadow-purple-500/20')
+              : 'bg-white/5 text-muted/60 border-white/5 hover:border-white/10 hover:text-foreground'">
             {{ i18n.t(tab.label) }}
           </button>
         </div>
@@ -71,46 +46,35 @@
       </div>
 
       <!-- MAIN CONTENT -->
-      <div v-else class="space-y-6 sm:space-y-16">
+      <div v-else class="space-y-8">
 
         <!-- SECTION 1: MERCADER DEL DÍA -->
         <section v-if="shopStore.dailyItems.length > 0 && selectedCategory === 'all' && activeTab === 'combat'"
           class="animate-in">
-          <div class="flex items-center justify-between mb-8">
-            <div class="flex items-center gap-4">
-              <div class="p-3 bg-primary-500/10 rounded-2xl border border-primary-500/20">
-                <Flame class="w-6 h-6 text-primary-500 animate-pulse" />
-              </div>
-              <div>
-                <h2
-                  class="text-2xl sm:text-3xl font-bold text-industrial text-foreground tracking-tighter   leading-none">
-                  {{ i18n.t('shop_daily_merchant') }}
-                </h2>
-                <div class="flex items-center gap-2 mt-1.5">
-                  <Clock class="w-3.5 h-3.5 text-primary-500/60" />
-                  <span class="text-xs font-black text-muted uppercase tracking-[0.3em]">{{
-                    countdownText }}</span>
-                </div>
-              </div>
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2 min-w-0">
+              <Flame class="w-4 h-4 text-primary-500 animate-pulse shrink-0" />
+              <h2 class="text-sm font-black text-foreground uppercase tracking-widest truncate">
+                {{ i18n.t('shop_daily_merchant') }}
+              </h2>
+              <span class="flex items-center gap-1 text-[10px] font-black text-muted/70 tabular-nums shrink-0">
+                <Clock class="w-3 h-3 text-primary-500/60" />{{ countdownText }}
+              </span>
             </div>
 
             <button @click="refreshDailyShop"
               :disabled="buying || (authStore.user?.reppy_gems || 0) < shopStore.refreshCostGems"
-              class="flex flex-col items-center gap-1 group px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-[22px] transition-all active:scale-95 disabled:opacity-30">
-              <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18n.t('shop_refresh_market')
-                }}</span>
-              <div class="flex items-center gap-2">
-                <RefreshCcw class="w-4 h-4 text-primary-500 group-hover:rotate-180 transition-transform duration-700"
-                  :class="{ 'animate-spin': buying }" />
-                <span class="text-sm font-black tabular-nums">{{ shopStore.refreshCostGems || 1 }}</span>
-                <Gem class="w-4 h-4 text-emerald-500" />
-              </div>
+              class="flex items-center gap-1.5 group px-2.5 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all active:scale-95 disabled:opacity-30 shrink-0">
+              <RefreshCcw class="w-3.5 h-3.5 text-primary-500 group-hover:rotate-180 transition-transform duration-700"
+                :class="{ 'animate-spin': buying }" />
+              <span class="text-xs font-black tabular-nums">{{ shopStore.refreshCostGems || 1 }}</span>
+              <Gem class="w-3.5 h-3.5 text-emerald-500" />
             </button>
           </div>
 
-          <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
             <div v-for="item in shopStore.dailyItems" :key="'daily-' + item.id"
-              class="cursor-pointer premium-card group/item relative h-full flex flex-col" 
+              class="cursor-pointer premium-card group/item relative h-full flex flex-col"
               :class="[getCardClass(item), item.reward_type ? 'border-emerald-500/50 bg-emerald-500/10 shadow-[0_0_30px_rgba(16,185,129,0.2)]' : '']"
               @click="item.reward_type ? claimReward(item) : openItemDetails(item)">
               <!-- Rarity Aura Overlay -->
@@ -122,13 +86,19 @@
                         item.rarity === 'calistenico' ? 'bg-red-600' : 'bg-primary-500'
               ]"></div>
 
-              <div class="p-4 sm:p-8 flex-1 flex flex-col items-center relative z-10">
+              <div class="p-2 flex-1 flex flex-col items-center relative z-10">
                 <!-- Visual Area -->
                 <div
-                  class="w-full aspect-square bg-black/40 rounded-[22px] border border-white/5 relative overflow-hidden flex items-center justify-center mb-6 shadow-inner group-hover/item:border-white/10 transition-colors">
+                  class="w-full aspect-[4/3] bg-black/40 rounded-xl border border-white/5 relative overflow-hidden flex items-center justify-center mb-1.5 shadow-inner group-hover/item:border-white/10 transition-colors">
+                  <!-- Rarity / Reward chip -->
+                  <div
+                    class="absolute top-1.5 left-1.5 z-20 px-1.5 py-0.5 rounded-md border font-black text-[8px] tracking-widest uppercase"
+                    :class="[item.reward_type ? 'text-emerald-400 border-emerald-500/50 bg-emerald-500/20' : getRarityBadge(item).classes]">
+                    {{ item.reward_type ? i18n.t('shop_free_reward') : getRarityBadge(item).label }}
+                  </div>
                   <!-- Global Upgrade Badge -->
                   <div v-if="isUpgrade(item)"
-                    class="absolute top-2 right-2 z-20 px-2 py-1 bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest rounded-lg shadow-lg animate-bounce-subtle">
+                    class="absolute top-1.5 right-1.5 z-20 px-1.5 py-0.5 bg-emerald-500 text-white text-[8px] font-black uppercase tracking-widest rounded-md shadow-lg animate-bounce-subtle">
                     {{ i18n.t('shop_upgrade_badge') || 'MEJORA' }}
                   </div>
 
@@ -144,68 +114,45 @@
                   <div v-if="item.reward_type"
                     class="flex flex-col items-center transform group-hover/item:scale-110 transition-transform duration-700">
                     <component :is="item.reward_type === 'coins' ? Coins : Diamond"
-                      class="w-16 h-16 sm:w-24 sm:h-24 drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+                      class="w-10 h-10 sm:w-14 sm:h-14 drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]"
                       :class="item.reward_type === 'coins' ? 'text-primary-500' : 'text-emerald-500'" />
-                    <span class="mt-2 text-xl font-black italic tracking-tighter" :class="item.reward_type === 'coins' ? 'text-primary-500' : 'text-emerald-500'">
+                    <span class="mt-1 text-sm font-black italic tracking-tighter" :class="item.reward_type === 'coins' ? 'text-primary-500' : 'text-emerald-500'">
                       +{{ item.reward_amount }}
                     </span>
                   </div>
                   <ItemIcon v-else :name="item.svg_key" :type="item.type"
-                    class-name="w-1/2 h-1/2 transform group-hover/item:scale-110 transition-transform duration-700"
+                    class-name="w-2/5 h-2/5 transform group-hover/item:scale-110 transition-transform duration-700"
                     :class="getRarityBadge(item).classes?.split(' ')[0]" />
                 </div>
 
                 <!-- Info Area -->
                 <h3
-                  class="font-black text-xs sm:text-xl   tracking-tighter text-center line-clamp-1 mb-1">
+                  class="font-black text-[10px] sm:text-xs tracking-tight text-center line-clamp-1 w-full">
                   {{ item.reward_type ? `${item.reward_amount} ${item.reward_type === 'coins' ? 'Reppy Coins' : 'Reppy Gems'}` : item.name }}
                 </h3>
-                <div
-                  class="px-3 py-1 rounded-xl border font-black text-[10px] sm:text-[10px] tracking-[0.2em] uppercase mb-4"
-                  :class="[item.reward_type ? 'text-emerald-400 border-emerald-500/50 bg-emerald-500/20' : getRarityBadge(item).classes]">
-                  {{ item.reward_type ? i18n.t('shop_free_reward') : getRarityBadge(item).label }}
-                </div>
-
-                <!-- Stats Preview -->
-                <div v-if="item.stats && Object.keys(item.stats).length > 0"
-                  class="flex flex-wrap justify-center gap-2 mb-2">
-                  <div v-for="(val, stat) in item.stats" :key="stat"
-                    class="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-lg border border-white/5">
-                    <span class="text-[10px] font-black text-muted uppercase">{{ statLabels[stat]?.substring(0, 3) || stat
-                      }}</span>
-                    <span class="text-xs font-black" :class="val >= 0 ? 'text-neon-lime' : 'text-red-500'">+{{ val
-                      }}</span>
-                  </div>
-                </div>
               </div>
 
-              <!-- Purchase Footer -->
-              <div
-                class="mt-auto p-3 sm:p-5 border-t border-white/5 bg-black/60 rounded-b-[22px] flex items-center justify-center relative z-10">
-                <div v-if="item.owned" class="flex items-center gap-2 text-neon-lime py-1.5">
-                  <CheckCircle2 class="w-5 h-5" />
-                  <span class="text-[10px] font-black uppercase tracking-widest">{{ i18n.t('btn_acquired') }}</span>
+              <!-- Purchase Footer (price pill, Clash-Royale style) -->
+              <div class="mt-auto p-2 pt-0 relative z-10">
+                <div v-if="item.owned" class="flex items-center justify-center gap-1.5 text-neon-lime py-2 rounded-lg bg-neon-lime/10 border border-neon-lime/20">
+                  <CheckCircle2 class="w-3.5 h-3.5" />
+                  <span class="text-[9px] font-black uppercase tracking-widest">{{ i18n.t('btn_acquired') }}</span>
                 </div>
                 <button v-else-if="item.reward_type" @click.stop="claimReward(item)"
-                  class="w-full py-3 bg-emerald-500 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-emerald-500/20">
+                  class="w-full py-2 bg-emerald-500 text-white rounded-lg text-[9px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-1.5 active:scale-95 transition-all shadow-lg shadow-emerald-500/30">
                   {{ i18n.t('boss_claim_loot') }}
-                  <Gift class="w-4 h-4" />
+                  <Gift class="w-3.5 h-3.5" />
                 </button>
                 <button v-else @click.stop="tryOpenItemDetails(item)"
-                  class="w-full min-h-[64px] p-2 bg-primary-500 text-white rounded-xl flex flex-col items-center justify-center gap-1 active:scale-95 transition-all shadow-lg shadow-primary-500/20 hover:bg-primary-400 group/buy"
-                  :disabled="false">
-                  <span
-                    class="text-[10px] font-black uppercase tracking-[0.2em] text-center leading-tight break-words group-hover/buy:translate-x-[-2px] transition-transform">{{
-                      i18n.t('btn_buy') || 'COMPRAR' }}</span>
-                  <div class="flex flex-wrap items-center justify-center gap-2 bg-black/20 px-2 py-1 rounded-lg max-w-full">
-                    <template v-if="item.price > 0">
-                      <span class="text-xs font-black tabular-nums">{{ item.price }}</span>
-                      <Coins class="w-3.5 h-3.5 text-primary-300" />
-                    </template>
-                    <template v-if="item.price_gems > 0">
-                      <span class="text-xs font-black tabular-nums text-emerald-300">{{ item.price_gems }}</span>
-                      <Gem class="w-3.5 h-3.5 text-emerald-300" />
-                    </template>
+                  class="w-full py-2 rounded-lg text-white flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg"
+                  :class="item.price_gems > 0 && !(item.price > 0) ? 'bg-emerald-500 hover:bg-emerald-400 shadow-emerald-500/30' : 'bg-primary-500 hover:bg-primary-400 shadow-primary-500/30'">
+                  <div v-if="item.price > 0" class="flex items-center gap-1">
+                    <Coins class="w-4 h-4" />
+                    <span class="text-sm font-black tabular-nums">{{ item.price }}</span>
+                  </div>
+                  <div v-if="item.price_gems > 0" class="flex items-center gap-1">
+                    <Gem class="w-4 h-4" />
+                    <span class="text-sm font-black tabular-nums">{{ item.price_gems }}</span>
                   </div>
                 </button>
               </div>
@@ -216,46 +163,40 @@
         <!-- SECTION 2: COFRES PREMIUM -->
         <section v-if="shopStore.chests.length > 0 && activeTab === 'combat' && selectedCategory === 'all'"
           class="animate-in">
-          <div class="flex items-center gap-4 mb-8 ">
-            <div class="p-3 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 shadow-lg shadow-emerald-500/10">
-              <ChestIcon variant="normal" class-name=" w-6 h-6" />
-            </div>
-            <h2
-              class="text-2xl sm:text-3xl font-bold text-industrial text-foreground tracking-tighter   leading-none">
+          <div class="flex items-center gap-2 mb-3">
+            <ChestIcon variant="normal" class-name="w-4 h-4" />
+            <h2 class="text-sm font-black text-foreground uppercase tracking-widest">
               {{ i18n.t('shop_premium_chests') }}
             </h2>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 sm:gap-8">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
             <!-- Premium Chests -->
             <div v-for="chest in shopStore.chests" :key="chest.type"
               class="premium-card w-full p-0 flex flex-col group/chest relative overflow-hidden transition-all duration-500 hover:scale-[1.05] shadow-2xl border-emerald-500/10 hover:border-emerald-500/40">
               <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent -z-10">
               </div>
 
-              <div class="p-8 flex flex-col items-center">
+              <div class="p-3 flex flex-col items-center">
                 <!-- Animated Chest Visual -->
                 <div
-                  class="relative w-32 h-32 sm:w-40 sm:h-40 mb-6 group-hover/chest:scale-110 transition-transform duration-700 flex items-center justify-center">
+                  class="relative w-20 h-20 sm:w-24 sm:h-24 mb-2 group-hover/chest:scale-110 transition-transform duration-700 flex items-center justify-center">
                   <ChestIcon :variant="chest.id" class-name="w-full h-full relative z-10 object-contain" />
                   <div
                     class="absolute inset-0 bg-emerald-500/15 -z-10 opacity-0 group-hover/chest:opacity-100 transition-opacity rounded-full">
                   </div>
                 </div>
 
-                <h3 class="font-black text-xl sm:text-2xl   mb-2 text-center tracking-tighter">{{
+                <h3 class="font-black text-xs sm:text-sm mb-2.5 text-center tracking-tight line-clamp-1">{{
                   chest.name }}
                 </h3>
-                <p
-                  class="text-[10px] text-muted font-bold uppercase tracking-tight opacity-60 text-center mb-8 px-6 leading-relaxed">
-                  {{ chest.description }}</p>
 
                 <button @click="purchaseChest(chest)"
                   :disabled="buying"
-                  class="w-full py-4 rounded-[22px] bg-emerald-500 text-white text-xs font-black uppercase tracking-[0.2em] hover:bg-emerald-400 shadow-xl shadow-emerald-500/30 transition-all active:scale-95 disabled:grayscale disabled:opacity-50 flex items-center justify-center gap-3">
-                  <span class="tabular-nums text-xl">{{ chest.price ?? chest.price_gems }}</span>
-                  <Coins v-if="chest.currency === 'coins'" class="w-5 h-5 fill-white/20" />
-                  <Gem v-else class="w-5 h-5 fill-white/20" />
+                  class="w-full py-2.5 rounded-xl bg-emerald-500 text-white font-black hover:bg-emerald-400 shadow-lg shadow-emerald-500/30 transition-all active:scale-95 disabled:grayscale disabled:opacity-50 flex items-center justify-center gap-1.5">
+                  <Coins v-if="chest.currency === 'coins'" class="w-4 h-4" />
+                  <Gem v-else class="w-4 h-4" />
+                  <span class="tabular-nums text-sm">{{ chest.price ?? chest.price_gems }}</span>
                 </button>
               </div>
             </div>
@@ -265,23 +206,20 @@
               class="premium-card w-full p-0 flex flex-col group/ticket relative overflow-hidden transition-all duration-500 hover:scale-[1.05] shadow-2xl border-emerald-500/10 hover:border-emerald-500/40">
               <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent -z-10"></div>
               
-              <div class="p-8 flex flex-col items-center">
-                <div class="relative w-32 h-32 sm:w-40 sm:h-40 mb-6 group-hover/ticket:scale-110 transition-transform duration-700 flex items-center justify-center">
+              <div class="p-3 flex flex-col items-center">
+                <div class="relative w-20 h-20 sm:w-24 sm:h-24 mb-2 group-hover/ticket:scale-110 transition-transform duration-700 flex items-center justify-center">
                   <ItemIcon name="ticket" type="consumable" class-name="w-full h-full relative z-10 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] opacity-90 group-hover/ticket:opacity-100" />
                   <div class="absolute inset-0 bg-emerald-500/15 -z-10 opacity-0 group-hover/ticket:opacity-100 transition-opacity rounded-full"></div>
                 </div>
 
-                <h3 class="font-black text-xl sm:text-2xl   mb-2 text-center tracking-tighter">{{ rouletteTicketItem.name }}</h3>
-                <p class="text-[10px] text-muted font-bold uppercase tracking-tight opacity-60 text-center mb-8 px-6 leading-relaxed">
-                  {{ rouletteTicketItem.description }}
-                </p>
+                <h3 class="font-black text-xs sm:text-sm mb-2.5 text-center tracking-tight line-clamp-1">{{ rouletteTicketItem.name }}</h3>
 
                 <div class="mt-auto w-full">
                   <button @click="buyItem(rouletteTicketItem)"
                     :disabled="buying"
-                    class="w-full py-4 rounded-[22px] bg-emerald-500 text-white text-xs font-black uppercase tracking-[0.2em] hover:bg-emerald-400 shadow-xl shadow-emerald-500/30 transition-all active:scale-95 disabled:grayscale disabled:opacity-50 flex items-center justify-center gap-3">
-                    <span class="tabular-nums text-xl">{{ rouletteTicketItem.price_gems }}</span>
-                    <Gem class="w-5 h-5 fill-white/20" />
+                    class="w-full py-2.5 rounded-xl bg-emerald-500 text-white font-black hover:bg-emerald-400 shadow-lg shadow-emerald-500/30 transition-all active:scale-95 disabled:grayscale disabled:opacity-50 flex items-center justify-center gap-1.5">
+                    <Gem class="w-4 h-4" />
+                    <span class="tabular-nums text-sm">{{ rouletteTicketItem.price_gems }}</span>
                   </button>
                 </div>
               </div>
@@ -292,24 +230,21 @@
         <!-- SECTION 3: OFERTAS LIMITADAS (PACKS) -->
         <section v-if="bundleItems.length > 0 && selectedCategory === 'all' && activeTab === 'combat'"
           class="animate-in">
-          <div class="flex items-center gap-4 mb-8">
-            <div class="p-3 bg-yellow-500/10 rounded-2xl border border-yellow-500/20 shadow-lg shadow-yellow-500/10">
-              <Trophy class="w-6 h-6 text-yellow-500" />
-            </div>
-            <h2
-              class="text-2xl sm:text-3xl font-bold text-industrial text-foreground tracking-tighter   leading-none">
+          <div class="flex items-center gap-2 mb-3">
+            <Trophy class="w-4 h-4 text-yellow-500" />
+            <h2 class="text-sm font-black text-foreground uppercase tracking-widest">
               {{ i18n.t('shop_limited_offers') }}
             </h2>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
             <div v-for="item in bundleItems" :key="item.id" @click="openBundleModal(item)"
-              class="premium-card p-6 sm:p-8 flex items-center gap-8 relative overflow-hidden group/bundle cursor-pointer hover:border-yellow-500/40 shadow-2xl">
+              class="premium-card p-3 sm:p-4 flex items-center gap-4 relative overflow-hidden group/bundle cursor-pointer hover:border-yellow-500/40 shadow-xl">
               <!-- Bundle Visual -->
               <div
-                class="relative w-28 h-28 sm:w-40 sm:h-40 flex-shrink-0 bg-black/40 rounded-[22px] border border-white/10 overflow-hidden flex items-center justify-center shadow-inner group-hover/bundle:border-yellow-500/20 transition-colors">
+                class="relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 bg-black/40 rounded-2xl border border-white/10 overflow-hidden flex items-center justify-center shadow-inner group-hover/bundle:border-yellow-500/20 transition-colors">
                 <LayoutGrid
-                  class="w-12 h-12 sm:w-16 sm:h-16 text-yellow-500 group-hover/bundle:scale-110 transition-transform duration-1000 animate-pulse" />
+                  class="w-10 h-10 sm:w-12 sm:h-12 text-yellow-500 group-hover/bundle:scale-110 transition-transform duration-1000 animate-pulse" />
                 <div
                   class="absolute -bottom-2 -right-2 bg-yellow-500 text-black text-[12px] font-black px-4 py-2 rounded-tl-[22px] shadow-xl animate-bounce-subtle">
                   -30%</div>
@@ -317,32 +252,23 @@
                 <div class="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none"></div>
               </div>
 
-              <div class="flex-1 flex flex-col h-full">
-                <div class="flex items-center gap-3 mb-2">
-                </div>
-                <h3 class="text-xl sm:text-3xl font-bold tracking-tighter   mb-2 leading-tight">{{
+              <div class="flex-1 min-w-0 flex flex-col h-full">
+                <h3 class="text-base sm:text-lg font-bold tracking-tight mb-0.5 leading-tight line-clamp-1">{{
                   item.name }}
                 </h3>
-                <p class="text-[10px] text-muted font-bold uppercase tracking-widest opacity-60 line-clamp-1 mb-6">{{
+                <p class="text-[10px] text-muted font-bold uppercase tracking-widest opacity-60 line-clamp-1 mb-3">{{
                   item.description }}</p>
 
-                <div class="mt-auto flex items-center justify-between">
-                  <div class="flex flex-col">
-                    <span v-if="item.original_price"
-                      class="text-xs text-muted line-through opacity-40 font-black mb-1">VALOR: {{
-                        item.original_price
-                      }}</span>
-                    <div class="flex items-center gap-4">
-                      <span v-if="item.price > 0" class="text-2xl font-bold tabular-nums">{{ item.price }} <span
-                          class="text-[10px] text-muted font-black">RC</span></span>
-                      <span v-if="item.price_gems > 0" class="text-2xl font-bold tabular-nums text-emerald-400">{{
-                        item.price_gems }}
-                        <Gem class="w-5 h-5 inline fill-emerald-400/10" />
-                      </span>
-                    </div>
+                <div class="mt-auto flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-3">
+                    <span v-if="item.price > 0" class="text-lg font-bold tabular-nums">{{ item.price }} <span
+                        class="text-[10px] text-muted font-black">RC</span></span>
+                    <span v-if="item.price_gems > 0" class="flex items-center gap-1 text-lg font-bold tabular-nums text-emerald-400">{{
+                      item.price_gems }}<Gem class="w-4 h-4" />
+                    </span>
                   </div>
                   <div
-                    class="px-6 py-3 bg-yellow-500 text-black text-xs font-black rounded-[18px] uppercase tracking-[0.2em] group-hover/bundle:bg-yellow-400 transition-all shadow-lg shadow-yellow-500/20 active:scale-95">
+                    class="px-4 py-2 bg-yellow-500 text-black text-[10px] font-black rounded-xl uppercase tracking-[0.2em] group-hover/bundle:bg-yellow-400 transition-all shadow-lg shadow-yellow-500/20 active:scale-95 shrink-0">
                     {{ i18n.t('btn_get') }}
                   </div>
                 </div>
@@ -355,22 +281,19 @@
         <section
           v-if="consumableItems.length > 0 && activeTab === 'combat' && (selectedCategory === 'all' || selectedCategory === 'consumable')"
           class="animate-in">
-          <div class="flex items-center gap-4 mb-8">
-            <div class="p-3 bg-purple-500/10 rounded-2xl border border-purple-500/20 shadow-lg shadow-purple-500/10">
-              <Zap class="w-6 h-6 text-purple-500" />
-            </div>
-            <h2
-              class="text-2xl sm:text-3xl font-bold text-industrial text-foreground tracking-tighter   leading-none">
+          <div class="flex items-center gap-2 mb-3">
+            <Zap class="w-4 h-4 text-purple-500" />
+            <h2 class="text-sm font-black text-foreground uppercase tracking-widest">
               {{ i18n.t('shop_consumables') }}
             </h2>
           </div>
 
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-4">
             <div v-for="item in consumableItems" :key="item.id"
-              class="premium-card p-4 sm:p-6 flex flex-col items-center group/cons cursor-pointer hover:border-purple-500/40 shadow-xl"
+              class="premium-card p-2.5 flex flex-col items-center group/cons cursor-pointer hover:border-purple-500/40 shadow-lg"
               @click="openItemDetails(item)">
               <div
-                class="w-full aspect-square bg-black/40 rounded-[22px] border border-white/5 flex items-center justify-center mb-5 relative overflow-hidden shadow-inner group-hover/cons:border-white/10 transition-colors">
+                class="w-full aspect-square bg-black/40 rounded-xl border border-white/5 flex items-center justify-center mb-2 relative overflow-hidden shadow-inner group-hover/cons:border-white/10 transition-colors">
                 <ItemIcon :name="item.svg_key" :type="item.type"
                   class-name="w-1/2 h-1/2 text-purple-400 group-hover/cons:scale-110 transition-transform duration-700" />
                 <div
@@ -379,18 +302,17 @@
               </div>
 
               <h3
-                class="text-[10px] sm:text-xs font-black uppercase italic tracking-tighter text-center mb-2 line-clamp-1">
-                {{
-                item.name }}</h3>
+                class="text-[10px] font-black uppercase tracking-tight text-center mb-1.5 line-clamp-1 w-full">
+                {{ item.name }}</h3>
 
-              <div class="mt-auto pt-4 flex flex-col items-center gap-2">
-                <div v-if="item.price > 0" class="flex items-center gap-2">
-                  <span class="text-sm font-black tabular-nums">{{ item.price }}</span>
-                  <Coins class="w-4 h-4 text-primary-500" />
+              <div class="mt-auto flex items-center justify-center gap-2">
+                <div v-if="item.price > 0" class="flex items-center gap-1">
+                  <Coins class="w-3.5 h-3.5 text-primary-500" />
+                  <span class="text-xs font-black tabular-nums">{{ item.price }}</span>
                 </div>
-                <div v-if="item.price_gems > 0" class="flex items-center gap-2">
-                  <span class="text-sm font-black tabular-nums text-emerald-400">{{ item.price_gems }}</span>
-                  <Gem class="w-4 h-4 text-emerald-500" />
+                <div v-if="item.price_gems > 0" class="flex items-center gap-1">
+                  <Gem class="w-3.5 h-3.5 text-emerald-500" />
+                  <span class="text-xs font-black tabular-nums text-emerald-400">{{ item.price_gems }}</span>
                 </div>
               </div>
             </div>
@@ -399,36 +321,28 @@
 
         <!-- REGULAR CATALOG -->
         <section v-if="paginatedItems.length > 0 && (activeTab === 'customization' || selectedCategory !== 'all')"
-          class="space-y-6 relative pt-16 border-t border-white/5 animate-in">
-          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-            <div class="flex items-center gap-4">
-              <div class="p-3 bg-white/5 rounded-2xl border border-white/10 shadow-inner">
-                <component :is="activeTab === 'combat' ? Swords : Sparkles" class="w-6 h-6 text-foreground/60" />
-              </div>
-              <div>
-                <h2
-                  class="text-2xl sm:text-3xl font-bold text-industrial text-foreground tracking-tighter   leading-none">
-                  {{ activeTab === 'combat' ? i18n.t('shop_gear_title') : i18n.t('shop_custom_title') }}
-                </h2>
-                <p class="text-xs font-black text-muted uppercase tracking-[0.4em] mt-1.5 opacity-60">
-                  {{ activeTab === 'combat' ? 'EQUIPAMIENTO TÁCTICO ESTÁNDAR' : 'MÓDULOS DE IDENTIDAD REPPY' }}
-                </p>
-              </div>
+          class="space-y-4 relative pt-6 border-t border-white/5 animate-in">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <component :is="activeTab === 'combat' ? Swords : Sparkles" class="w-4 h-4 text-foreground/60" />
+              <h2 class="text-sm font-black text-foreground uppercase tracking-widest">
+                {{ activeTab === 'combat' ? i18n.t('shop_gear_title') : i18n.t('shop_custom_title') }}
+              </h2>
             </div>
 
             <!-- Category Filters -->
-            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1">
               <button v-for="cat in categories" :key="cat.id" @click="selectedCategory = cat.id; currentPage = 1"
-                class="px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border shrink-0 flex items-center gap-3 active:scale-95"
-                :class="selectedCategory === cat.id ? 'bg-foreground text-background border-foreground shadow-2xl' : 'bg-white/5 text-muted border-white/5 hover:border-white/10'">
-                <component :is="cat.icon" class="w-4 h-4" />
+                class="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border shrink-0 flex items-center gap-2 active:scale-95"
+                :class="selectedCategory === cat.id ? 'bg-foreground text-background border-foreground shadow-lg' : 'bg-white/5 text-muted border-white/5 hover:border-white/10'">
+                <component :is="cat.icon" class="w-3.5 h-3.5" />
                 {{ i18n.t(cat.label) }}
               </button>
             </div>
           </div>
 
           <!-- Items Grid -->
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-8">
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-4">
             <div v-for="item in paginatedItems" :key="'reg-' + item.id"
               class="premium-card p-0 flex flex-col group/item relative overflow-hidden cursor-pointer"
               :class="getCardClass(item)" @click="openItemDetails(item)">
@@ -486,27 +400,21 @@
                   item.name }}
                 </h3>
 
-                <div
-                  class="flex items-center justify-center mt-auto border-t border-white/5 bg-black/40 rounded-b-[22px] -mx-4 -mb-4 overflow-hidden">
-                  <div v-if="item.owned" class="flex items-center justify-center gap-2 text-neon-lime p-3">
+                <div class="mt-auto">
+                  <div v-if="item.owned" class="flex items-center justify-center gap-2 text-neon-lime py-2.5 rounded-xl bg-neon-lime/10 border border-neon-lime/20">
                     <CheckCircle2 class="w-4 h-4" />
-                    <span class="text-xs font-black uppercase tracking-widest">{{ i18n.t('btn_acquired') }}</span>
+                    <span class="text-[10px] font-black uppercase tracking-widest">{{ i18n.t('btn_acquired') }}</span>
                   </div>
                   <button v-else @click.stop="openItemDetails(item)"
-                    class="w-full flex items-center justify-center gap-4 p-3 bg-primary-500/10 hover:bg-primary-500 text-white transition-all group/catbuy"
-                    :disabled="!canAfford(item)">
-                    <span
-                      class="text-xs font-black uppercase tracking-widest group-hover/catbuy:scale-110 transition-transform">{{
-                        i18n.t('btn_buy') || 'COMPRAR' }}</span>
-                    <div class="flex items-center gap-2">
-                      <div v-if="item.price > 0" class="flex items-center gap-1">
-                        <span class="text-xs font-black tabular-nums">{{ item.price }}</span>
-                        <Coins class="w-3.5 h-3.5 text-primary-400" />
-                      </div>
-                      <div v-if="item.price_gems > 0" class="flex items-center gap-1">
-                        <span class="text-xs font-black tabular-nums text-emerald-400">{{ item.price_gems }}</span>
-                        <Gem class="w-3.5 h-3.5 text-emerald-400" />
-                      </div>
+                    class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-white font-black transition-all active:scale-95 shadow-lg"
+                    :class="item.price_gems > 0 && !(item.price > 0) ? 'bg-emerald-500 hover:bg-emerald-400 shadow-emerald-500/30' : 'bg-primary-500 hover:bg-primary-400 shadow-primary-500/30'">
+                    <div v-if="item.price > 0" class="flex items-center gap-1">
+                      <Coins class="w-4 h-4" />
+                      <span class="text-sm font-black tabular-nums">{{ item.price }}</span>
+                    </div>
+                    <div v-if="item.price_gems > 0" class="flex items-center gap-1">
+                      <Gem class="w-4 h-4" />
+                      <span class="text-sm font-black tabular-nums">{{ item.price_gems }}</span>
                     </div>
                   </button>
                 </div>

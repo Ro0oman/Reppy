@@ -52,18 +52,18 @@
         <!-- System Status & User Profile -->
         <div class="flex items-center gap-2 sm:gap-6">
           <div class="flex items-center gap-1.5 sm:gap-4">
-            <!-- Coins: desktop only (on mobile accessible via Profile) -->
+            <!-- Coins (always visible) -->
             <button @click="showCoinsInfo = true" :title="i18n.t('economy_history_title')"
-              class="hidden sm:flex items-center gap-2 bg-surface/5 px-3 py-2 rounded-xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-primary-500/50">
+              class="flex items-center gap-1.5 bg-surface/5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-full sm:rounded-xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-primary-500/50">
               <Coins class="w-3.5 h-3.5 text-primary-500" />
-              <span class="text-sm font-bold text-foreground tabular-nums">{{ authStore.user?.reppy_coins || 0 }}</span>
+              <span class="text-xs sm:text-sm font-bold text-foreground tabular-nums">{{ authStore.user?.reppy_coins || 0 }}</span>
             </button>
 
-            <!-- Gems: desktop only -->
+            <!-- Gems (always visible) -->
             <button @click="showCoinsInfo = true" :title="i18n.t('economy_gems')"
-              class="hidden sm:flex items-center gap-2 bg-indigo-500/5 px-3 py-2 rounded-xl border border-indigo-500/20 hover:border-indigo-500/40 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
+              class="flex items-center gap-1.5 bg-indigo-500/5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-full sm:rounded-xl border border-indigo-500/20 hover:border-indigo-500/40 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
               <Gem class="w-3.5 h-3.5 text-indigo-500" />
-              <span class="text-sm font-bold text-foreground tabular-nums">{{ authStore.user?.reppy_gems || 0 }}</span>
+              <span class="text-xs sm:text-sm font-bold text-foreground tabular-nums">{{ authStore.user?.reppy_gems || 0 }}</span>
             </button>
 
             <!-- Notification Bell (always) -->
@@ -409,15 +409,16 @@ const publicNavLinks = computed(() => [
   { id: 'blog-list', label: 'nav_blog', fallback: 'Blog', icon: Book },
 ]);
 
-// Mobile dock: core-loop first. Logging is the elevated center action.
-// Left of center / right of center. Inventory lives in Profile.
+// Mobile dock: core-loop centered. Logging is the elevated center action.
+// Game loop (Missions -> Inventory) flanks the center; Community & Shop sit at the edges.
+// Order renders outer->inner on the left, inner->outer on the right.
 const mobileNavLeft = computed(() => [
-  { id: 'shop', icon: ShoppingBag, label: 'nav_shop', short: i18n.locale === 'es' ? 'Tienda' : 'Shop' },
   { id: 'social', icon: Users, label: 'nav_social', short: i18n.locale === 'es' ? 'Comunidad' : 'Community' },
+  { id: 'missions', icon: Target, label: 'nav_missions', short: i18n.locale === 'es' ? 'Misiones' : 'Missions' },
 ]);
 const mobileNavRight = computed(() => [
-  { id: 'missions', icon: Target, label: 'nav_missions', short: i18n.locale === 'es' ? 'Misiones' : 'Missions' },
   { id: 'inventory', icon: Package, label: 'nav_inventory', short: i18n.locale === 'es' ? 'Inventario' : 'Inventory' },
+  { id: 'shop', icon: ShoppingBag, label: 'nav_shop', short: i18n.locale === 'es' ? 'Tienda' : 'Shop' },
 ]);
 
 const getMobileNavTo = (nav) => {
