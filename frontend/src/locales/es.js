@@ -1121,6 +1121,7 @@ export default {
     inv_artifact_description: 'DESCRIPCIÓN',
     inv_artifact_stats: 'ANÁLISIS_COMBATE',
     inv_link_artifact: 'ENLAZAR',
+    inv_drag_hint: 'SUELTA AQUÍ',
     inv_unlink_artifact: 'DESEQUIPAR',
     inv_activate_module: 'ACTIVAR',
     inv_already_active: 'YA_ESTÁ_ACTIVO',

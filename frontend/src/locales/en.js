@@ -1049,6 +1049,7 @@ export default {
     inv_artifact_description: 'DESCRIPTION',
     inv_artifact_stats: 'COMBAT_ANALYSIS',
     inv_link_artifact: 'LINK_ARTIFACT',
+    inv_drag_hint: 'DROP HERE',
     inv_unlink_artifact: 'UNLINK_ARTIFACT',
     inv_activate_module: 'ACTIVATE_MODULE',
     inv_close: 'CLOSE',

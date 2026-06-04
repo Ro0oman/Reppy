@@ -1,20 +1,21 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 py-4 md:py-8 space-y-6 md:space-y-6 animate-in relative z-10 pb-24">
+  <div class="max-w-7xl mx-auto px-4 py-3 md:py-6 space-y-3 md:space-y-5 animate-in relative z-10 pb-24">
     <!-- Premium Armory Header -->
-    <div class="relative py-2 md:py-8">
-      <div class="absolute inset-0 hidden md:flex items-center justify-center opacity-5 pointer-events-none">
-        <h1 class="text-[120px] font-black tracking-tighter uppercase italic select-none">{{ i18n.t('inv_title') }}</h1>
-      </div>
-      <div class="space-y-3 md:space-y-4 relative z-10">
-        <div class="flex items-start justify-between gap-3">
-          <div>
-            <h1 class="text-3xl md:text-6xl font-bold text-foreground tracking-tighter   leading-none">
-              {{ i18n.t('inv_title') }}
-            </h1>
-            <p class="mt-2 text-[10px] font-black text-muted uppercase tracking-[0.25em]">
-              {{ totalInventoryItems }} {{ i18n.t('shop_stock') }}
-            </p>
-          </div>
+    <div class="relative">
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-baseline gap-3">
+          <h1 class="text-2xl md:text-4xl font-bold text-foreground tracking-tighter leading-none">
+            {{ i18n.t('inv_title') }}
+          </h1>
+          <p class="text-[10px] font-black text-muted uppercase tracking-[0.25em]">
+            {{ totalInventoryItems }} {{ i18n.t('shop_stock') }}
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <router-link :to="{ name: 'codex' }" class="flex items-center gap-2 bg-surface/10 hover:bg-surface/20 border border-white/5 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-muted hover:text-foreground">
+            <BookOpen class="w-4 h-4 text-primary-500" />
+            <span class="hidden sm:inline">{{ i18n.t('nav_codex') }}</span>
+          </router-link>
           <button
             v-if="hasAnyChest"
             @click="openBestChest"
@@ -22,12 +23,6 @@
             <Sparkles class="w-3.5 h-3.5" />
             x{{ totalChestCount }}
           </button>
-        </div>
-        <div class="flex items-center gap-3">
-          <router-link :to="{ name: 'codex' }" class="flex items-center gap-2 bg-surface/10 hover:bg-surface/20 border border-white/5 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-muted hover:text-foreground">
-            <BookOpen class="w-4 h-4 text-primary-500" />
-            {{ i18n.t('nav_codex') }}
-          </router-link>
         </div>
       </div>
     </div>
@@ -45,28 +40,61 @@
       </button>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start">
+    <!-- LOADOUT DECK (Clash-Royale style, top priority) -->
+    <div class="bg-surface/10 rounded-2xl border border-white/5 backdrop-blur-xl p-3 md:p-4"
+         :class="{ 'ring-1 ring-primary-500/30': dragState.active }">
+      <div class="flex items-center justify-between mb-2.5">
+        <p class="text-[10px] font-black text-muted uppercase tracking-[0.25em]">{{ equippedSummaryTitle }}</p>
+        <p class="text-[10px] font-black uppercase tracking-widest transition-colors"
+           :class="dragState.active ? 'text-primary-400 animate-pulse' : 'text-primary-500'">
+          {{ dragState.active ? i18n.t('inv_drag_hint') : (equippedSummaryCount + '/' + equippedSummaryItems.length) }}
+        </p>
+      </div>
+      <div class="flex gap-2.5 sm:gap-3 justify-center">
+        <div
+          v-for="slot in equippedSummaryItems"
+          :key="slot.type"
+          :data-slot-type="slot.type"
+          @click="!justDragged && slot.item && openItemDetails(slot.item)"
+          class="relative flex-1 min-w-0 max-w-[120px] aspect-[4/5] rounded-2xl border-2 flex flex-col items-center justify-center gap-1 pt-4 pb-2 px-1.5 transition-all duration-200 select-none cursor-pointer shadow-lg"
+          :class="[
+            dragState.active && dragState.item?.type === slot.type
+              ? 'border-primary-500 bg-primary-500/20 scale-105 shadow-primary-500/30 ' + (dragState.hoverType === slot.type ? 'ring-2 ring-primary-400' : 'animate-pulse')
+              : slot.item ? ('bg-gradient-to-b from-white/[0.07] to-white/[0.02] hover:brightness-125 ' + rarityBorder(slot.item.rarity)) : 'border-dashed border-white/15 bg-white/[0.02] hover:border-primary-500/30'
+          ]">
+          <span class="absolute top-1 inset-x-0 text-center text-[7px] font-black uppercase tracking-widest text-muted/60 truncate px-1">{{ slot.label }}</span>
+          <template v-if="slot.item">
+            <ItemIcon v-if="COMBAT_SLOT_TYPES.includes(slot.item.type)" :name="slot.item.svg_key" :type="slot.item.type" class-name="w-10 h-10 sm:w-12 sm:h-12 text-primary-400" />
+            <component v-else :is="slot.icon" class="w-9 h-9 text-purple-400" />
+            <span class="text-[8px] font-black uppercase leading-tight line-clamp-2 w-full text-center text-foreground/90">{{ slot.item.name }}</span>
+            <Check class="absolute top-1 right-1 w-3 h-3 text-blue-400" />
+          </template>
+          <template v-else>
+            <component :is="slot.icon" class="w-7 h-7 text-muted/25" />
+            <Plus class="w-4 h-4 text-muted/40" />
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-start">
       <!-- LEFT PANEL: Character & Stats (lg:col-span-5) -->
       <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
         
         <!-- COMBAT SIDEBAR -->
         <div v-if="activeTab === 'combat'" class="space-y-4 md:space-y-6">
-          <!-- Compact Stats Dashboard -->
-          <div class="grid grid-cols-2 gap-4">
-            <div class="p-4 md:p-6 rounded-xl bg-surface/20 border border-white/5 relative overflow-hidden group hover:border-primary-500/40 transition-all duration-500 backdrop-blur-xl shadow-2xl">
-              <div class="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-transparent"></div>
-              <p class="text-xs font-black text-primary-500 uppercase tracking-[0.3em] leading-none mb-2">{{ i18n.t('inv_total_power') }}</p>
-              <div class="flex items-baseline gap-1">
-                <span class="text-xl md:text-2xl font-bold text-foreground italic tracking-tighter" :class="{ 'animate-bump': recentlyEquipped }">{{ combatStats.minDamage }}-{{ combatStats.maxDamage }}</span>
-              </div>
-              <Sword class="absolute -bottom-2 -right-2 w-12 h-12 text-white/5 rotate-12 group-hover:scale-110 transition-transform" />
+          <!-- Compact Stats Strip (de-emphasized) -->
+          <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-surface/10 border border-white/5">
+            <div class="flex items-center gap-1.5 flex-1 min-w-0">
+              <Sword class="w-3.5 h-3.5 text-primary-500 shrink-0" />
+              <span class="text-[9px] font-black text-muted uppercase tracking-widest truncate">{{ i18n.t('inv_total_power') }}</span>
+              <span class="text-sm font-bold text-foreground tabular-nums ml-auto" :class="{ 'animate-bump': recentlyEquipped }">{{ combatStats.minDamage }}-{{ combatStats.maxDamage }}</span>
             </div>
-
-            <div class="p-4 md:p-6 rounded-xl bg-surface/20 border border-white/5 relative overflow-hidden group hover:border-emerald-500/40 transition-all duration-500 backdrop-blur-xl shadow-2xl">
-              <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent"></div>
-              <p class="text-xs font-black text-emerald-500 uppercase tracking-[0.3em] leading-none mb-2">{{ i18n.t('inv_crit_prob') }}</p>
-              <span class="text-xl md:text-2xl font-bold text-emerald-400 italic tracking-tighter" :class="{ 'animate-bump': recentlyEquipped }">{{ combatStats.critChance }}%</span>
-              <Activity class="absolute -bottom-2 -right-2 w-12 h-12 text-white/5 group-hover:scale-110 transition-transform" />
+            <div class="w-px h-4 bg-white/10"></div>
+            <div class="flex items-center gap-1.5 flex-1 min-w-0">
+              <Activity class="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+              <span class="text-[9px] font-black text-muted uppercase tracking-widest truncate">{{ i18n.t('inv_crit_prob') }}</span>
+              <span class="text-sm font-bold text-emerald-400 tabular-nums ml-auto" :class="{ 'animate-bump': recentlyEquipped }">{{ combatStats.critChance }}%</span>
             </div>
           </div>
           <!-- Active Effects Display -->
@@ -221,76 +249,53 @@
       </div>
 
       <!-- RIGHT PANEL: Item Stash (lg:col-span-7) -->
-      <div class="lg:col-span-7 space-y-4 md:space-y-8">
-        <div class="bg-surface/10 rounded-xl border border-white/5 backdrop-blur-xl p-4 md:p-5">
-          <div class="flex items-center justify-between mb-3">
-            <p class="text-[10px] font-black text-muted uppercase tracking-[0.25em]">{{ equippedSummaryTitle }}</p>
-            <p class="text-[10px] font-black text-primary-500 uppercase tracking-widest">{{ equippedSummaryCount }}/{{ equippedSummaryItems.length }}</p>
-          </div>
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            <button
-              v-for="slot in equippedSummaryItems"
-              :key="slot.type"
-              @click="slot.item && openItemDetails(slot.item)"
-              class="text-left p-3 rounded-xl border transition-all"
-              :class="slot.item ? 'bg-white/[0.04] border-white/10 hover:border-primary-500/30' : 'bg-white/[0.02] border-white/5 opacity-70'">
-              <div class="flex items-center gap-2 mb-1.5">
-                <component :is="slot.icon" class="w-3.5 h-3.5 text-primary-500" />
-                <span class="text-[10px] font-black uppercase tracking-widest text-muted">{{ slot.label }}</span>
-              </div>
-              <p class="text-xs font-black uppercase tracking-wide truncate" :class="slot.item ? 'text-foreground' : 'text-muted/60'">
-                {{ slot.item?.name || equippedEmptyLabel }}
-              </p>
-            </button>
-          </div>
-        </div>
-        
+      <div class="lg:col-span-7 space-y-4 md:space-y-6">
         <!-- Nexus Item Stash Header & Filters -->
-        <div class="bg-surface/10 rounded-xl md:rounded-2xl border border-white/5 backdrop-blur-xl p-4 md:p-8">
-          <div class="sticky top-36 md:top-24 z-30 mb-6 md:mb-8 p-3 rounded-2xl border border-white/10 bg-background/80 backdrop-blur-xl">
-            <div class="md:hidden mb-3">
-              <div class="grid grid-cols-2 gap-2">
-                <button v-for="cat in categories" :key="cat.id" @click="activeStashTab = cat.id; showDropdown = false"
-                        class="flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-black uppercase tracking-[0.2em] border transition-all"
-                        :class="activeStashTab === cat.id ? 'bg-primary-500 text-white border-primary-500' : 'bg-surface/20 border-white/10 text-muted'">
-                  <component :is="cat.icon" class="w-3.5 h-3.5" />
-                  {{ i18n.t(cat.label) }}
+        <div class="bg-surface/10 rounded-xl md:rounded-2xl border border-white/5 backdrop-blur-xl p-3 md:p-5">
+          <div class="sticky top-32 z-30 mb-4 md:mb-6 p-2.5 rounded-2xl border border-white/10 bg-background/80 backdrop-blur-xl">
+            <div class="flex items-stretch gap-2 md:gap-3">
+              <!-- Category Dropdown -->
+              <div class="flex-1 min-w-0 relative z-50">
+                <button @click="showDropdown = !showDropdown; showRarityDropdown = false"
+                        class="flex items-center gap-2 px-3 md:px-4 py-3 bg-surface/40 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:border-primary-500/30 transition-all w-full justify-between shadow-lg">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <component :is="categories.find(c => c.id === activeStashTab)?.icon || Archive" class="w-4 h-4 text-primary-500 shrink-0" />
+                    <span class="text-foreground truncate">{{ i18n.t(categories.find(c => c.id === activeStashTab)?.label) || categories.find(c => c.id === activeStashTab)?.label }}</span>
+                  </div>
+                  <ChevronDown class="w-4 h-4 text-muted transition-transform shrink-0" :class="{ 'rotate-180': showDropdown }" />
                 </button>
+                <Transition enter-active-class="transition duration-200 ease-out" enter-from-class="transform scale-95 opacity-0 -translate-y-2" enter-to-class="transform scale-100 opacity-100 translate-y-0" leave-active-class="transition duration-150 ease-in" leave-from-class="transform scale-100 opacity-100 translate-y-0" leave-to-class="transform scale-95 opacity-0 -translate-y-2">
+                  <div v-if="showDropdown" class="absolute top-full left-0 mt-2 w-full bg-surface/95 backdrop-blur-lg border border-white/10 rounded-2xl shadow-2xl overflow-hidden py-2 z-[60] max-h-72 overflow-y-auto no-scrollbar">
+                    <button v-for="cat in categories" :key="cat.id" @click="activeStashTab = cat.id; showDropdown = false"
+                            class="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all text-left"
+                            :class="activeStashTab === cat.id ? 'bg-primary-500 text-white' : 'text-muted hover:bg-white/5 hover:text-foreground'">
+                      <component :is="cat.icon" class="w-3.5 h-3.5" />
+                      {{ i18n.t(cat.label) }}
+                    </button>
+                  </div>
+                </Transition>
+              </div>
+
+              <!-- Rarity Dropdown -->
+              <div class="flex-1 min-w-0 relative z-40">
+                <button @click="showRarityDropdown = !showRarityDropdown; showDropdown = false"
+                        class="flex items-center gap-2 px-3 md:px-4 py-3 bg-surface/40 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:border-primary-500/30 transition-all w-full justify-between shadow-lg">
+                  <span class="truncate" :class="selectedRarity === 'all' ? 'text-foreground' : (rarities.find(r => r.id === selectedRarity)?.activeClass.split(' ').find(c => c.startsWith('text-')) || 'text-foreground')">
+                    {{ i18n.t(rarities.find(r => r.id === selectedRarity)?.label) }}
+                  </span>
+                  <ChevronDown class="w-4 h-4 text-muted transition-transform shrink-0" :class="{ 'rotate-180': showRarityDropdown }" />
+                </button>
+                <Transition enter-active-class="transition duration-200 ease-out" enter-from-class="transform scale-95 opacity-0 -translate-y-2" enter-to-class="transform scale-100 opacity-100 translate-y-0" leave-active-class="transition duration-150 ease-in" leave-from-class="transform scale-100 opacity-100 translate-y-0" leave-to-class="transform scale-95 opacity-0 -translate-y-2">
+                  <div v-if="showRarityDropdown" class="absolute top-full right-0 mt-2 w-full bg-surface/95 backdrop-blur-lg border border-white/10 rounded-2xl shadow-2xl overflow-hidden py-2 z-[60]">
+                    <button v-for="rarity in rarities" :key="rarity.id" @click="selectedRarity = rarity.id; showRarityDropdown = false"
+                            class="w-full flex items-center px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all text-left"
+                            :class="selectedRarity === rarity.id ? 'bg-primary-500 text-white' : 'text-muted hover:bg-white/5 hover:text-foreground'">
+                      {{ i18n.t(rarity.label) }}
+                    </button>
+                  </div>
+                </Transition>
               </div>
             </div>
-            <div class="flex flex-col md:flex-row items-center gap-3 md:gap-6">
-            <!-- Categories Dropdown -->
-            <div class="hidden md:block w-full md:w-64 relative z-50">
-              <button @click="showDropdown = !showDropdown"
-                      class="flex items-center gap-3 px-6 py-4 bg-surface/40 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:border-primary-500/30 transition-all w-full justify-between shadow-lg">
-                <div class="flex items-center gap-2">
-                  <component :is="categories.find(c => c.id === activeStashTab)?.icon || Archive" class="w-4 h-4 text-primary-500" />
-                  <span class="text-foreground">{{ i18n.t(categories.find(c => c.id === activeStashTab)?.label) || categories.find(c => c.id === activeStashTab)?.label }}</span>
-                </div>
-                <ChevronDown class="w-4 h-4 text-muted transition-transform" :class="{ 'rotate-180': showDropdown }" />
-              </button>
-
-              <Transition enter-active-class="transition duration-200 ease-out" enter-from-class="transform scale-95 opacity-0 -translate-y-2" enter-to-class="transform scale-100 opacity-100 translate-y-0" leave-active-class="transition duration-150 ease-in" leave-from-class="transform scale-100 opacity-100 translate-y-0" leave-to-class="transform scale-95 opacity-0 -translate-y-2">
-                <div v-if="showDropdown" class="absolute top-full left-0 mt-2 w-full bg-surface/90 backdrop-blur-lg border border-white/10 rounded-2xl shadow-2xl overflow-hidden py-2 z-[60]">
-                  <button v-for="cat in categories" :key="cat.id" @click="activeStashTab = cat.id; showDropdown = false"
-                          class="w-full flex items-center gap-3 px-6 py-3 text-[10px] font-black uppercase tracking-widest transition-all text-left"
-                          :class="activeStashTab === cat.id ? 'bg-primary-500 text-white' : 'text-muted hover:bg-white/5 hover:text-foreground'">
-                    <component :is="cat.icon" class="w-3.5 h-3.5" />
-                    {{ i18n.t(cat.label) }}
-                  </button>
-                </div>
-              </Transition>
-            </div>
-
-            <!-- Rarity Selector -->
-            <div class="w-full flex-1 flex flex-wrap items-center md:justify-end gap-2">
-              <button v-for="rarity in rarities" :key="rarity.id" @click="selectedRarity = rarity.id"
-                      class="px-3 md:px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest border transition-all active:scale-95"
-                      :class="selectedRarity === rarity.id ? rarity.activeClass : 'bg-surface/20 border-white/5 text-muted hover:border-white/20'">
-                {{ i18n.t(rarity.label) }}
-              </button>
-            </div>
-          </div>
           </div>
 
           <!-- Stash Inventory Grid -->
@@ -321,7 +326,11 @@
                     getCardClass(item)
                   ]">
                      <!-- Item Preview -->
-                     <div class="relative h-20 sm:h-28 flex items-center justify-center p-3 sm:p-4 bg-black/40 rounded-t-2xl cursor-pointer overflow-hidden" @click="openItemDetails(item)">
+                     <div class="relative h-20 sm:h-28 flex items-center justify-center p-3 sm:p-4 bg-black/40 rounded-t-2xl cursor-pointer overflow-hidden"
+                          :style="isDraggableItem(item) ? { touchAction: 'none' } : {}"
+                          :class="{ 'opacity-30': dragState.item && dragState.item.id === item.id && dragState.active }"
+                          @pointerdown="onItemPointerDown($event, item)"
+                          @click="!justDragged && openItemDetails(item)">
                         <div class="absolute inset-x-0 h-px bg-primary-500/20 top-0 group-hover:top-full transition-all duration-[1.5s] ease-linear pointer-events-none z-10"></div>
                         
                         <div class="transform group-hover:scale-110 transition-transform duration-500">
@@ -351,12 +360,6 @@
                           </div>
                         </div>
 
-                        <button @click.stop="handlePrimaryItemAction(item)"
-                                :disabled="isPrimaryActionDisabled(item)"
-                                class="mt-2 sm:mt-3 w-full py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 disabled:opacity-40 disabled:grayscale"
-                                :class="isConsumableItem(item) ? 'bg-primary-500 text-white' : isEquipped(item) ? 'bg-blue-500 text-white' : 'bg-white/5 text-muted hover:bg-white/10 hover:text-primary-500 border border-white/10'">
-                           {{ getPrimaryActionLabel(item) }}
-                        </button>
                      </div>
                 </div>
               </div>
@@ -504,6 +507,38 @@
       </Transition>
     </Teleport>
 
+    <!-- Floating Drop Bar (appears only while dragging — keeps slots reachable on mobile) -->
+    <Teleport to="body">
+      <Transition name="modal-fade">
+        <div v-if="dragState.active"
+             class="fixed top-0 inset-x-0 z-[1900] px-3 pt-[calc(0.5rem+env(safe-area-inset-top))] pb-2 bg-background/95 backdrop-blur-xl border-b border-primary-500/20 shadow-2xl shadow-black/50">
+          <p class="text-center text-[9px] font-black uppercase tracking-[0.35em] text-primary-400 mb-2 animate-pulse">{{ i18n.t('inv_drag_hint') }}</p>
+          <div class="flex gap-2 justify-center max-w-md mx-auto">
+            <div v-for="slot in equippedSummaryItems" :key="'drop-' + slot.type"
+                 :data-slot-type="slot.type"
+                 class="flex-1 min-w-0 max-w-[88px] aspect-square rounded-xl border-2 flex flex-col items-center justify-center gap-0.5 transition-all duration-150"
+                 :class="dragState.item?.type === slot.type
+                   ? (dragState.hoverType === slot.type ? 'border-primary-400 bg-primary-500/30 scale-110 ring-2 ring-primary-400 shadow-lg shadow-primary-500/40' : 'border-primary-500 bg-primary-500/15 animate-pulse')
+                   : 'border-white/10 bg-white/[0.03] opacity-40'">
+              <ItemIcon v-if="slot.item && COMBAT_SLOT_TYPES.includes(slot.item.type)" :name="slot.item.svg_key" :type="slot.item.type" class-name="w-6 h-6 text-primary-400" />
+              <component v-else :is="slot.icon" class="w-5 h-5" :class="dragState.item?.type === slot.type ? 'text-primary-400' : 'text-muted/40'" />
+              <span class="text-[7px] font-black uppercase tracking-widest truncate w-full text-center px-0.5" :class="dragState.item?.type === slot.type ? 'text-foreground' : 'text-muted/40'">{{ slot.label }}</span>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- Drag Ghost (Clash-Royale style) -->
+    <Teleport to="body">
+      <div v-if="dragState.active && dragState.item"
+           class="fixed z-[2000] pointer-events-none -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-2xl border-2 border-primary-500 bg-surface/90 backdrop-blur-xl shadow-2xl shadow-primary-500/40 flex items-center justify-center rotate-3 scale-110"
+           :style="{ left: dragState.x + 'px', top: dragState.y + 'px' }">
+        <ItemIcon v-if="COMBAT_SLOT_TYPES.includes(dragState.item.type)" :name="dragState.item.svg_key" :type="dragState.item.type" class-name="w-12 h-12 text-primary-400" />
+        <Package v-else class="w-10 h-10 text-purple-400" />
+      </div>
+    </Teleport>
+
     <!-- Comparison Modal -->
     <CompareModal
       v-if="comparisonState.show"
@@ -523,7 +558,7 @@ import {
   Package, Frame, Type, Check, Sparkles, Archive, TrendingUp, 
   Dumbbell, Sword, Heart, Brain, Church, Trophy, ExternalLink, Activity, X, 
   ChevronDown, Flame, BookOpen, Swords, Info, ChevronRight, Users, Shield, Footprints,
-  FlaskConical, Timer, Construction
+  FlaskConical, Timer, Construction, Plus
 } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useShopStore } from '@/stores/shop';
@@ -665,6 +700,7 @@ const isPotionTypeActive = (item) => {
 const activeTab = ref('combat'); 
 const activeStashTab = ref('all');
 const showDropdown = ref(false);
+const showRarityDropdown = ref(false);
 const selectedRarity = ref('all');
 
 const categories = computed(() => {
@@ -1149,6 +1185,65 @@ const toggleEquip = async (item) => {
     
     notificationStore.notify(alreadyEquipped ? (i18n.locale === 'es' ? 'Desequipado' : 'Unequipped') : (i18n.locale === 'es' ? 'Equipado' : 'Equipped'), 'success');
   } catch (err) { notificationStore.notify(i18n.locale === 'es' ? 'Error al equipar' : 'Equip failed', 'error'); }
+};
+
+// --- Clash-Royale-style drag & drop equip ---
+const COMBAT_SLOT_TYPES = ['head', 'weapon', 'armor', 'boots'];
+const isDraggableItem = (item) => !!item && !isConsumableItem(item) && item.type !== 'bundle';
+
+const rarityBorder = (rarity) => {
+  switch ((rarity || '').toLowerCase()) {
+    case 'legendary': return 'border-yellow-400/70 shadow-yellow-400/20';
+    case 'epic':
+    case 'especial': return 'border-purple-500/70 shadow-purple-500/20';
+    case 'rare': return 'border-blue-500/70 shadow-blue-500/20';
+    case 'calistenico': return 'border-[#ccff00]/70 shadow-[#ccff00]/20';
+    default: return 'border-white/15 shadow-black/30';
+  }
+};
+
+const dragState = ref({ active: false, item: null, x: 0, y: 0, hoverType: null });
+const justDragged = ref(false);
+let dragStartX = 0;
+let dragStartY = 0;
+
+const onItemPointerDown = (e, item) => {
+  if (!isDraggableItem(item)) return;
+  dragStartX = e.clientX;
+  dragStartY = e.clientY;
+  dragState.value = { active: false, item, x: e.clientX, y: e.clientY, hoverType: null };
+  window.addEventListener('pointermove', onDragMove);
+  window.addEventListener('pointerup', onDragEnd);
+};
+
+const onDragMove = (e) => {
+  const st = dragState.value;
+  if (!st.item) return;
+  if (!st.active) {
+    const dist = Math.hypot(e.clientX - dragStartX, e.clientY - dragStartY);
+    if (dist < 8) return;
+    st.active = true;
+    document.body.style.userSelect = 'none';
+  }
+  st.x = e.clientX;
+  st.y = e.clientY;
+  const el = document.elementFromPoint(e.clientX, e.clientY);
+  st.hoverType = el?.closest('[data-slot-type]')?.getAttribute('data-slot-type') || null;
+};
+
+const onDragEnd = async () => {
+  window.removeEventListener('pointermove', onDragMove);
+  window.removeEventListener('pointerup', onDragEnd);
+  document.body.style.userSelect = '';
+  const { active, item, hoverType } = dragState.value;
+  dragState.value = { active: false, item: null, x: 0, y: 0, hoverType: null };
+  if (!item || !active) return;
+  // Suppress the click that fires right after a drag gesture
+  justDragged.value = true;
+  setTimeout(() => { justDragged.value = false; }, 50);
+  if (hoverType === item.type && !isEquipped(item)) {
+    await toggleEquip(item);
+  }
 };
 
 const handleActivate = async (item) => {
