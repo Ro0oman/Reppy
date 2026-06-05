@@ -52,25 +52,24 @@ const server = http.createServer(app);
 initSocket(server);
 
 // --- SCHEDULED TASKS ---
-// Run streak reminders every day at 18:00 (6 PM)
-cron.schedule('0 18 * * *', () => {
-  console.log('[CRON] Iniciando recordatorios de racha diarios...');
-  runStreakReminders()
-    .then(count => console.log(`[CRON] Recordatorios enviados: ${count}`))
-    .catch(err => console.error('[CRON] Error en recordatorios:', err));
-});
-// Referral reminder every 15 days at 12:00 (days 1 and 16 of each month)
-cron.schedule('0 12 1,16 * *', () => {
-  console.log('[CRON] Iniciando recordatorios de referral...');
-  runReferralReminders()
-    .then(count => console.log(`[CRON] Referral reminders enviados: ${count}`))
-    .catch(err => console.error('[CRON] Error en referral reminders:', err));
-});
-
-// Send referral reminder immediately on startup
-runReferralReminders()
-  .then(count => console.log(`[STARTUP] Referral reminders enviados: ${count}`))
-  .catch(err => console.error('[STARTUP] Error enviando referral reminders:', err));
+// Cron jobs are only useful on long-running Node processes. In serverless
+// deployments, module startup can happen on normal visits and must not send push.
+if (process.env.VERCEL !== '1') {
+  // Run streak reminders every day at 18:00 (6 PM)
+  cron.schedule('0 18 * * *', () => {
+    console.log('[CRON] Iniciando recordatorios de racha diarios...');
+    runStreakReminders()
+      .then(count => console.log(`[CRON] Recordatorios enviados: ${count}`))
+      .catch(err => console.error('[CRON] Error en recordatorios:', err));
+  });
+  // Referral reminder every 15 days at 12:00 (days 1 and 16 of each month)
+  cron.schedule('0 12 1,16 * *', () => {
+    console.log('[CRON] Iniciando recordatorios de referral...');
+    runReferralReminders()
+      .then(count => console.log(`[CRON] Referral reminders enviados: ${count}`))
+      .catch(err => console.error('[CRON] Error en referral reminders:', err));
+  });
+}
 // -----------------------
 
 app.use(cors());
