@@ -87,7 +87,10 @@
                       </div>
                     </div>
                     <div>
-                      <h4 class="font-bold text-white group-hover:text-emerald-400 transition-colors">{{ user.name }}</h4>
+                      <h4 class="font-bold text-white group-hover:text-emerald-400 transition-colors flex items-center gap-1.5">
+                        {{ user.name }}
+                        <span v-if="isDeveloper(user.id)" class="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-400 border border-violet-500/30">DEV</span>
+                      </h4>
                       <div class="flex items-center gap-2 mt-1">
                         <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
                         <span class="text-[9px] font-black text-white/40 uppercase tracking-widest">Active Now</span>
@@ -126,6 +129,7 @@ import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';
 import { useRouter } from 'vue-router';
 import { Users, X } from 'lucide-vue-next';
+import { isDeveloper } from '@/utils/developers';
 
 const socketStore = useSocketStore();
 const authStore = useAuthStore();

@@ -1,6 +1,5 @@
-// Hardcoded developer accounts — badge shown next to their name everywhere.
-export const DEVELOPER_EMAILS = new Set(['romainot99@gmail.com']);
+export const DEVELOPER_IDS = new Set(['113903862264612270084']);
 
-export function isDeveloperEmail(email) {
-  return !!email && DEVELOPER_EMAILS.has(email);
+export function isDeveloper(userId) {
+  return !!userId && DEVELOPER_IDS.has(String(userId));
 }

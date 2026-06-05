@@ -114,6 +114,7 @@
               <div class="text-sm font-black text-foreground truncate group-hover:text-primary-400 transition-colors tracking-tight uppercase italic leading-none font-tight text-left">
                 {{ user.id === authStore.user?.id ? i18n.t('lb_you') : user.name }}
               </div>
+              <span v-if="isDeveloper(user.id)" class="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-400 border border-violet-500/30 shrink-0">DEV</span>
               <div class="flex items-center gap-1 bg-foreground/5 px-1.5 py-0.5 rounded border border-border/30 shrink-0">
                 <span class="text-[6px] font-black text-primary-500/80 tracking-widest">LVL</span>
                 <span class="text-[10px] font-black text-foreground italic">{{ user.current_level }}</span>
@@ -168,6 +169,7 @@ import { Users } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';
 import AvatarFrame from '@/components/ui/AvatarFrame.vue';
+import { isDeveloper } from '@/utils/developers';
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();

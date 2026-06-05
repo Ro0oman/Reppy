@@ -64,6 +64,7 @@
               <div class="flex items-center gap-1.5">
                 <h4 class="text-sm font-semibold text-foreground tracking-tight truncate">{{ activity.user_name }}</h4>
                 <Crown v-if="activity.global_rank === 1" class="w-3.5 h-3.5 text-amber-500" />
+                <span v-if="isDeveloper(activity.user_id)" class="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-400 border border-violet-500/30">DEV</span>
               </div>
               <div class="flex items-center gap-1 text-[10px] font-medium text-muted/60">
                 {{ timeAgo }}
@@ -396,6 +397,7 @@ import { useRouter } from 'vue-router';
 import ItemIcon from '@/components/ui/ItemIcon.vue';
 import BackgroundEffect from '@/components/system/BackgroundEffect.vue';
 import ChestIcon from '@/components/ui/ChestIcon.vue';
+import { isDeveloper } from '@/utils/developers';
 
 const props = defineProps({
     activity: { type: Object, required: true },
