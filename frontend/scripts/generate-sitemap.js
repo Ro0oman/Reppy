@@ -6,71 +6,98 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const blogPostsPath = path.resolve(__dirname, '../src/blogPosts.json');
-const sitemapOutputPath = path.resolve(__dirname, '../public/sitemap.xml');
+const publicDir = path.resolve(__dirname, '../public');
 
 const blogPosts = JSON.parse(fs.readFileSync(blogPostsPath, 'utf8'));
 
 const BASE_URL = 'https://reppy-weld.vercel.app';
 const lastmod = new Date().toISOString();
-const languages = ['es', 'en'];
 const today = new Date();
 
+// Per-language slug map: { es, en, priority, changefreq }
+// "en" key absent = English uses the same slug as Spanish
 const staticRoutes = [
-  { path: '', priority: '1.0', changefreq: 'daily' },
-  { path: '/contador-dominadas', priority: '0.9', changefreq: 'weekly' },
-  { path: '/contador-flexiones', priority: '0.9', changefreq: 'weekly' },
-  { path: '/app-calistenia', priority: '0.8', changefreq: 'weekly' },
-  { path: '/app-dominadas', priority: '0.9', changefreq: 'weekly' },
-  { path: '/app-flexiones', priority: '0.9', changefreq: 'weekly' },
-  { path: '/app-fondos', priority: '0.8', changefreq: 'weekly' },
-  { path: '/reto-calistenia-30-dias', priority: '0.9', changefreq: 'weekly' },
-  { path: '/reppy-vs-otras-apps-calistenia', priority: '0.8', changefreq: 'monthly' },
-  { path: '/free-rpg-pull-up-counter', priority: '0.9', changefreq: 'weekly', languages: ['en'] },
-  { path: '/social', priority: '0.8', changefreq: 'hourly' },
-  { path: '/blog', priority: '0.8', changefreq: 'daily' },
+  { es: '',                              en: '',                              priority: '1.0', changefreq: 'daily'   },
+  { es: '/app-dominadas',               en: '/pull-up-app',                  priority: '0.8', changefreq: 'weekly'  },
+  { es: '/app-flexiones',               en: '/push-up-app',                  priority: '0.8', changefreq: 'weekly'  },
+  { es: '/app-calistenia',              en: '/calisthenics-app',             priority: '0.8', changefreq: 'weekly'  },
+  { es: '/contador-dominadas',          en: '/pull-up-counter',              priority: '0.7', changefreq: 'weekly'  },
+  { es: '/contador-flexiones',          en: '/push-up-counter',              priority: '0.7', changefreq: 'weekly'  },
+  { es: '/app-fondos',                  en: '/dips-app',                     priority: '0.7', changefreq: 'weekly'  },
+  { es: '/reto-calistenia-30-dias',     en: '/30-day-calisthenics-challenge',priority: '0.7', changefreq: 'weekly'  },
+  { es: '/reppy-vs-otras-apps-calistenia', en: '/reppy-vs-calisthenics-apps',priority: '0.7', changefreq: 'monthly' },
+  { en: '/free-rpg-pull-up-counter',    priority: '0.8', changefreq: 'weekly',  langs: ['en'] },
+  { es: '/social',                      en: '/social',                       priority: '0.6', changefreq: 'hourly'  },
+  { es: '/blog',                        en: '/blog',                         priority: '0.6', changefreq: 'daily'   },
 ];
 
-const generateSitemap = () => {
-  let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-  xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n`;
+// ── Helpers ──────────────────────────────────────────────────────────────────
 
-  // Helper to add a URL with its alternates
-  const addUrl = (path, priority, changefreq, customLastmod = lastmod, routeLanguages = languages) => {
-    routeLanguages.forEach(lang => {
-      const fullPath = `/${lang}${path}`;
-      xml += `  <url>\n`;
-      xml += `    <loc>${BASE_URL}${fullPath}</loc>\n`;
-      xml += `    <lastmod>${customLastmod}</lastmod>\n`;
-      xml += `    <changefreq>${changefreq}</changefreq>\n`;
-      xml += `    <priority>${priority}</priority>\n`;
-      
-      // Hreflang alternates
-      routeLanguages.forEach(altLang => {
-        xml += `    <xhtml:link rel="alternate" hreflang="${altLang}" href="${BASE_URL}/${altLang}${path}" />\n`;
-      });
-      const defaultLang = routeLanguages.includes('es') ? 'es' : routeLanguages[0];
-      xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE_URL}/${defaultLang}${path}" />\n`;
-      
-      xml += `  </url>\n`;
-    });
-  };
+const urlEntry = ({ loc, lastmod, changefreq, priority, esHref, enHref }) => `  <url>
+    <loc>${loc}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>${changefreq}</changefreq>
+    <priority>${priority}</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="${esHref}" />
+    <xhtml:link rel="alternate" hreflang="en" href="${enHref}" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="${esHref}" />
+  </url>\n`;
 
-  // 1. Static Routes
-  staticRoutes.forEach(route => {
-    addUrl(route.path, route.priority, route.changefreq, lastmod, route.languages || languages);
-  });
+const urlsetOpen = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">\n`;
+const urlsetClose = `</urlset>`;
 
-  // 2. Dynamic Blog Posts
-  // - Exclude future-dated posts (not yet published)
-  // - Deduplicate slugs to avoid duplicate URLs
-  // - Sort for deterministic output (stable diffing and crawlers)
+// ── Build pages sitemap ───────────────────────────────────────────────────────
+
+const buildPagesSitemap = () => {
+  let xml = urlsetOpen;
+
+  for (const route of staticRoutes) {
+    const langs = route.langs || ['es', 'en'];
+
+    if (langs.includes('es') && langs.includes('en')) {
+      const esPath = route.es ?? '';
+      const enPath = route.en ?? route.es ?? '';
+      const esHref = `${BASE_URL}/es${esPath}`;
+      const enHref = `${BASE_URL}/en${enPath}`;
+
+      // ES entry
+      xml += urlEntry({ loc: esHref, lastmod, changefreq: route.changefreq, priority: route.priority, esHref, enHref });
+      // EN entry
+      xml += urlEntry({ loc: enHref, lastmod, changefreq: route.changefreq, priority: route.priority, esHref, enHref });
+
+    } else if (langs.includes('en')) {
+      // English-only (e.g. /free-rpg-pull-up-counter)
+      const enPath = route.en ?? '';
+      const enHref = `${BASE_URL}/en${enPath}`;
+      xml += `  <url>
+    <loc>${enHref}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>${route.changefreq}</changefreq>
+    <priority>${route.priority}</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="${enHref}" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="${enHref}" />
+  </url>\n`;
+    }
+  }
+
+  xml += urlsetClose;
+  return xml;
+};
+
+// ── Build blog sitemap ────────────────────────────────────────────────────────
+
+const buildBlogSitemap = () => {
+  let xml = urlsetOpen;
+
   const seenSlugs = new Set();
   const publishedPosts = blogPosts
-    .filter((post) => post?.slug)
-    .filter((post) => {
-      if (!post.date) return true;
-      const postDate = new Date(post.date);
-      return !Number.isNaN(postDate.getTime()) && postDate <= today;
+    .filter(p => p?.slug)
+    .filter(p => {
+      if (!p.date) return true;
+      const d = new Date(p.date);
+      return !Number.isNaN(d.getTime()) && d <= today;
     })
     .sort((a, b) => {
       const da = a.date ? new Date(a.date).getTime() : 0;
@@ -79,23 +106,42 @@ const generateSitemap = () => {
       return String(a.slug).localeCompare(String(b.slug));
     });
 
-  publishedPosts.forEach((post) => {
-    if (seenSlugs.has(post.slug)) return;
+  for (const post of publishedPosts) {
+    if (seenSlugs.has(post.slug)) continue;
     seenSlugs.add(post.slug);
     const postLastmod = post.date ? new Date(post.date).toISOString() : lastmod;
-    addUrl(`/blog/${post.slug}`, '0.7', 'monthly', postLastmod);
-  });
-
-  xml += `</urlset>`;
-
-  try {
-    fs.writeFileSync(sitemapOutputPath, xml);
-    console.log('🚀 [SEO] Sitemap generated successfully with i18n support in public/sitemap.xml');
-  } catch (err) {
-    console.error('❌ [SEO] Failed to generate sitemap:', err.message);
-    process.exit(1);
+    const esHref = `${BASE_URL}/es/blog/${post.slug}`;
+    const enHref = `${BASE_URL}/en/blog/${post.slug}`;
+    xml += urlEntry({ loc: esHref, lastmod: postLastmod, changefreq: 'monthly', priority: '0.5', esHref, enHref });
+    xml += urlEntry({ loc: enHref, lastmod: postLastmod, changefreq: 'monthly', priority: '0.5', esHref, enHref });
   }
+
+  xml += urlsetClose;
+  return xml;
 };
 
-generateSitemap();
+// ── Build sitemap index ───────────────────────────────────────────────────────
 
+const buildSitemapIndex = () => `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>${BASE_URL}/sitemap-pages.xml</loc>
+    <lastmod>${lastmod}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${BASE_URL}/sitemap-blog.xml</loc>
+    <lastmod>${lastmod}</lastmod>
+  </sitemap>
+</sitemapindex>`;
+
+// ── Write files ───────────────────────────────────────────────────────────────
+
+try {
+  fs.writeFileSync(path.join(publicDir, 'sitemap.xml'),       buildSitemapIndex());
+  fs.writeFileSync(path.join(publicDir, 'sitemap-pages.xml'), buildPagesSitemap());
+  fs.writeFileSync(path.join(publicDir, 'sitemap-blog.xml'),  buildBlogSitemap());
+  console.log('🚀 [SEO] Sitemap index + pages + blog generated in public/');
+} catch (err) {
+  console.error('❌ [SEO] Failed to generate sitemaps:', err.message);
+  process.exit(1);
+}

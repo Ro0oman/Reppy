@@ -18,8 +18,25 @@ const routeForHtml = (filePath) => {
   return `/${relative.replace(/\.html$/, '')}`;
 };
 
+// Maps between ES and EN slugs for pages that use different URL slugs per language
+const SLUG_MAP = {
+  // ES → EN
+  '/es/contador-dominadas':          '/en/pull-up-counter',
+  '/es/contador-flexiones':          '/en/push-up-counter',
+  '/es/app-dominadas':               '/en/pull-up-app',
+  '/es/app-flexiones':               '/en/push-up-app',
+  '/es/app-fondos':                  '/en/dips-app',
+  '/es/app-calistenia':              '/en/calisthenics-app',
+  '/es/reto-calistenia-30-dias':     '/en/30-day-calisthenics-challenge',
+  '/es/reppy-vs-otras-apps-calistenia': '/en/reppy-vs-calisthenics-apps',
+};
+// Build reverse map EN → ES
+const SLUG_MAP_REVERSE = Object.fromEntries(Object.entries(SLUG_MAP).map(([k, v]) => [v, k]));
+
 const localizedSibling = (route, lang) => {
   if (route === '/es' || route === '/en') return `/${lang}`;
+  if (lang === 'en' && SLUG_MAP[route]) return SLUG_MAP[route];
+  if (lang === 'es' && SLUG_MAP_REVERSE[route]) return SLUG_MAP_REVERSE[route];
   return route.replace(/^\/(es|en)/, `/${lang}`);
 };
 
