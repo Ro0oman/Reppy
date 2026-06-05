@@ -34,6 +34,7 @@ import pushRoutes from './push.js';
 import trainingRoutes from './training.js';
 import exercisesRoutes from './exercises.js';
 import streakRoutes from './streak.js';
+import referralRoutes from './referral.js';
 import http from 'http';
 import getPusher from './pusher.js';
 import { updatePresence } from './socketManager.js';
@@ -103,6 +104,7 @@ apiRouter.use('/push', pushRoutes);
 apiRouter.use('/training', trainingRoutes);
 apiRouter.use('/exercises', exercisesRoutes);
 apiRouter.use('/streak', streakRoutes);
+apiRouter.use('/referral', referralRoutes);
 
 // Pusher Auth Endpoint (Directly on app for Vercel compatibility)
 app.post('/api/pusher/auth', async (req, res) => {
@@ -508,9 +510,16 @@ apiRouter.get('/db/init', async (req, res) => {
       `INSERT INTO items (name, description, type, rarity, stats) 
        VALUES ('Espada de Dragón', 'Forjada con fuego eterno.', 'weapon', 'legendary', '{"str": 10, "dex": 5}')
        ON CONFLICT (name) DO UPDATE SET rarity = EXCLUDED.rarity, stats = EXCLUDED.stats`,
-      `INSERT INTO items (name, description, type, rarity, stats) 
+      `INSERT INTO items (name, description, type, rarity, stats)
        VALUES ('Armadura del Dios Calisténico', 'La culminación del entrenamiento físico.', 'armor', 'calistenico', '{"str": 20, "end": 20, "vig": 20}')
-       ON CONFLICT (name) DO UPDATE SET rarity = EXCLUDED.rarity, stats = EXCLUDED.stats`
+       ON CONFLICT (name) DO UPDATE SET rarity = EXCLUDED.rarity, stats = EXCLUDED.stats`,
+
+      // Referral system
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_code VARCHAR(20)`,
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS referred_by VARCHAR(255) REFERENCES users(id)`,
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_reward_given BOOLEAN DEFAULT FALSE`,
+      `CREATE UNIQUE INDEX IF NOT EXISTS idx_users_referral_code ON users(referral_code) WHERE referral_code IS NOT NULL`,
+      `CREATE INDEX IF NOT EXISTS idx_users_referred_by ON users(referred_by)`
     ];
     
     for (const q of queries) {

@@ -149,8 +149,13 @@ onMounted(() => {
 
   if (route.query.expired === '1') {
     notificationStore.notify(i18n.t('session_expired'), 'info');
-    // Clear the query parameter without reloading
     router.replace({ query: route.query.mode === 'signup' ? { mode: 'signup' } : {} });
+  }
+
+  if (route.query.ref) {
+    const expiry = Date.now() + 30 * 24 * 60 * 60 * 1000;
+    localStorage.setItem('referral_pending', JSON.stringify({ code: route.query.ref, expiry }));
+    mode.value = 'signup';
   }
 });
 const emit = defineEmits(['back', 'start', 'viewProfile']);

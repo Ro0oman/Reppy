@@ -290,3 +290,34 @@ CREATE TABLE IF NOT EXISTS push_subscriptions (
     UNIQUE(user_id, subscription_json)
 );
 CREATE INDEX IF NOT EXISTS idx_push_subs_user ON push_subscriptions(user_id);
+
+-- Referral System
+ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_code VARCHAR(20) UNIQUE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS referred_by VARCHAR(255) REFERENCES users(id);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_reward_given BOOLEAN DEFAULT FALSE;
+CREATE INDEX IF NOT EXISTS idx_users_referral_code ON users(referral_code);
+CREATE INDEX IF NOT EXISTS idx_users_referred_by ON users(referred_by);
+
+-- Backfill referral codes for existing users who don't have one yet
+-- (Run once; safe to re-run due to WHERE filter)
+DO $$
+DECLARE
+  rec RECORD;
+  chars TEXT := 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  code TEXT;
+BEGIN
+  FOR rec IN SELECT id FROM users WHERE referral_code IS NULL LOOP
+    LOOP
+      code := '';
+      FOR i IN 1..8 LOOP
+        code := code || substr(chars, (floor(random() * length(chars)) + 1)::int, 1);
+      END LOOP;
+      BEGIN
+        UPDATE users SET referral_code = code WHERE id = rec.id;
+        EXIT;
+      EXCEPTION WHEN unique_violation THEN
+        -- retry with a new code
+      END;
+    END LOOP;
+  END LOOP;
+END $$;

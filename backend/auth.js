@@ -12,6 +12,28 @@ const generateToken = (userId, isAdmin) => {
   return jwt.sign({ id: userId, is_admin: isAdmin }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
+const generateReferralCode = () => {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  return Array.from(crypto.randomBytes(8)).map(b => chars[b % chars.length]).join('');
+};
+
+const applyReferral = async (newUserId, referralCode) => {
+  if (!referralCode) return;
+  const referrerRes = await query(
+    'SELECT id FROM users WHERE referral_code = $1 AND id != $2',
+    [referralCode.toUpperCase(), newUserId]
+  );
+  if (!referrerRes.rows[0]) return;
+  const referrerId = referrerRes.rows[0].id;
+  await query('UPDATE users SET referred_by = $1 WHERE id = $2 AND referred_by IS NULL', [referrerId, newUserId]);
+  // +50 gems welcome bonus for the new user
+  await query('UPDATE users SET reppy_gems = reppy_gems + 50 WHERE id = $1', [newUserId]);
+  await query(
+    "INSERT INTO gem_transactions (user_id, amount, source, description) VALUES ($1, 50, 'referral_welcome', 'Bono de bienvenida por referral')",
+    [newUserId]
+  );
+};
+
 // Google Login
 router.post('/google', async (req, res) => {
   const { token } = req.body;
@@ -33,11 +55,14 @@ router.post('/google', async (req, res) => {
     let user = userResult.rows[0];
 
     if (!user) {
+      const refCode = generateReferralCode();
       userResult = await query(
-        'INSERT INTO users (id, name, email, avatar_url, theme) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-        [sub, name, email, '/img/avatars/avatar_1.png', 'dark']
+        'INSERT INTO users (id, name, email, avatar_url, theme, referral_code) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+        [sub, name, email, '/img/avatars/avatar_1.png', 'dark', refCode]
       );
       user = userResult.rows[0];
+      const { referral_code: incomingRef } = req.body;
+      await applyReferral(user.id, incomingRef);
     }
 
     const sessionToken = generateToken(user.id, user.is_admin);
@@ -73,7 +98,7 @@ router.post('/google', async (req, res) => {
 
 // Manual Signup
 router.post('/signup', async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, referral_code: incomingRef } = req.body;
 
   try {
     const existingUser = await query('SELECT * FROM users WHERE email = $1', [email]);
@@ -87,12 +112,14 @@ router.post('/signup', async (req, res) => {
 
     const id = `user_${crypto.randomUUID()}`;
     const passwordHash = await bcrypt.hash(password, 10);
+    const refCode = generateReferralCode();
     const result = await query(
-      'INSERT INTO users (id, name, email, password_hash, avatar_url, theme) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [id, name, email, passwordHash, '/img/avatars/avatar_1.webp', 'dark']
+      'INSERT INTO users (id, name, email, password_hash, avatar_url, theme, referral_code) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      [id, name, email, passwordHash, '/img/avatars/avatar_1.webp', 'dark', refCode]
     );
 
     const user = result.rows[0];
+    await applyReferral(user.id, incomingRef);
     const token = generateToken(user.id, user.is_admin);
 
     res.json({

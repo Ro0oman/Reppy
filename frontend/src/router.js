@@ -21,11 +21,19 @@ const NotFound = () => import('./components/pages/NotFound.vue')
 
 export const routes = [
   // Redirección adaptativa de la raíz basada en detección de idioma
-  { 
-    path: '/', 
+  {
+    path: '/',
     redirect: () => {
       const i18n = useI18nStore();
       return `/${i18n.locale || 'es'}`;
+    }
+  },
+  // Referral join link — /join?ref=CODE → login in signup mode preserving ref
+  {
+    path: '/join',
+    redirect: (to) => {
+      const i18n = useI18nStore();
+      return { path: `/${i18n.locale || 'es'}/login`, query: { mode: 'signup', ref: to.query.ref } };
     }
   },
   {

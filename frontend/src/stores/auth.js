@@ -15,7 +15,17 @@ export const useAuthStore = defineStore('auth', {
   actions: { 
     async signup(data) {
       try {
-        const response = await axios.post('/api/auth/signup', data);
+        const payload = { ...data };
+        try {
+          const stored = JSON.parse(localStorage.getItem('referral_pending'));
+          if (stored && stored.expiry > Date.now()) {
+            payload.referral_code = stored.code;
+          } else {
+            localStorage.removeItem('referral_pending');
+          }
+        } catch (_) {}
+        const response = await axios.post('/api/auth/signup', payload);
+        localStorage.removeItem('referral_pending');
         this.token = response.data.token;
         this.user = response.data.user;
         localStorage.setItem('token', this.token);
@@ -47,9 +57,14 @@ export const useAuthStore = defineStore('auth', {
     },
     async loginWithGoogle(googleToken) {
       try {
-        const response = await axios.post('/api/auth/google', {
-          token: googleToken,
-        });
+        const payload = { token: googleToken };
+        try {
+          const stored = JSON.parse(localStorage.getItem('referral_pending'));
+          if (stored && stored.expiry > Date.now()) payload.referral_code = stored.code;
+          else localStorage.removeItem('referral_pending');
+        } catch (_) {}
+        const response = await axios.post('/api/auth/google', payload);
+        localStorage.removeItem('referral_pending');
         
         this.token = response.data.token;
         this.user = response.data.user;

@@ -219,9 +219,28 @@ router.post('/', authenticate, async (req, res) => {
     }
 
     await client.query('COMMIT');
-    
+
     // Recalculate stats after commit (Aggregated Truth)
     await recalculateUserStats(userId);
+
+    // Referral reward: give referrer +50 gems on referred user's first reps
+    try {
+      const refRes = await query(
+        'SELECT referred_by FROM users WHERE id = $1 AND referral_reward_given = FALSE AND referred_by IS NOT NULL',
+        [userId]
+      );
+      if (refRes.rows[0]) {
+        const referrerId = refRes.rows[0].referred_by;
+        await query('UPDATE users SET referral_reward_given = TRUE WHERE id = $1', [userId]);
+        await query('UPDATE users SET reppy_gems = reppy_gems + 50 WHERE id = $1', [referrerId]);
+        await query(
+          "INSERT INTO gem_transactions (user_id, amount, source, description) VALUES ($1, 50, 'referral_activated', 'Bonus por referido activado')",
+          [referrerId]
+        );
+      }
+    } catch (refErr) {
+      console.error('Referral reward check failed:', refErr);
+    }
 
     // Return the updated record with final totals
     const finalRecord = await query(

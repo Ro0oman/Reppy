@@ -162,7 +162,34 @@
         </div>
       </div>
 
-     
+      <!-- ── REFERRAL ── -->
+      <div v-if="isOwnProfile" class="rounded-2xl border border-border bg-foreground/[0.02] p-4 space-y-3">
+        <p class="text-xs font-semibold text-muted">Invita amigos</p>
+        <div v-if="referral.loading" class="text-xs text-muted">Cargando...</div>
+        <template v-else>
+          <div class="flex items-center gap-2">
+            <span class="flex-1 font-mono text-sm font-bold text-foreground bg-surface border border-border/40 rounded-xl px-4 py-3 truncate select-all">{{ referralLink }}</span>
+            <button @click="copyReferralLink" class="shrink-0 px-4 py-3 rounded-xl bg-primary-500/10 border border-primary-500/30 text-primary-500 text-xs font-bold hover:bg-primary-500/20 transition-all">
+              {{ referral.copied ? '✓ Copiado' : 'Copiar' }}
+            </button>
+          </div>
+          <div class="flex gap-4">
+            <div class="text-center">
+              <p class="text-xl font-bold text-foreground tabular-nums">{{ referral.total_referred }}</p>
+              <p class="text-[10px] text-muted uppercase tracking-wide">Invitados</p>
+            </div>
+            <div class="text-center">
+              <p class="text-xl font-bold text-emerald-400 tabular-nums">{{ referral.total_activated }}</p>
+              <p class="text-[10px] text-muted uppercase tracking-wide">Activados</p>
+            </div>
+            <div class="text-center">
+              <p class="text-xl font-bold text-primary-500 tabular-nums">{{ referral.total_activated * 50 }}</p>
+              <p class="text-[10px] text-muted uppercase tracking-wide">Gems ganados</p>
+            </div>
+          </div>
+          <p class="text-[10px] text-muted leading-relaxed">Tu amigo recibe <span class="text-primary-500 font-bold">+50 gems</span> al registrarse. Tú recibes <span class="text-primary-500 font-bold">+50 gems</span> cuando loguee sus primeras reps.</p>
+        </template>
+      </div>
 
     </template>
 
@@ -294,6 +321,7 @@ const user = ref({ avatar_url: '', border_css: '', avatar_css: '', name: '', tot
 
 onMounted(() => {
   fetchProfile();
+  fetchReferralStats();
   window.addEventListener('resize', handleResize);
 });
 
@@ -510,6 +538,29 @@ const fetchMoreTransactions = async () => {
 
 watch(activeExercise, fetchProfile);
 watch(() => props.userId, fetchProfile);
+
+// ── REFERRAL ────────────────────────────────────────────────────────────────
+const referral = ref({ loading: true, total_referred: 0, total_activated: 0, referral_code: '', copied: false });
+const referralLink = computed(() => `${window.location.origin}/join?ref=${referral.value.referral_code}`);
+
+const fetchReferralStats = async () => {
+  if (!isOwnProfile.value) return;
+  try {
+    const res = await axios.get('/api/referral/stats');
+    Object.assign(referral.value, res.data, { loading: false });
+  } catch (_) {
+    referral.value.loading = false;
+  }
+};
+
+const copyReferralLink = async () => {
+  try {
+    await navigator.clipboard.writeText(referralLink.value);
+    referral.value.copied = true;
+    setTimeout(() => { referral.value.copied = false; }, 2000);
+  } catch (_) {}
+};
+
 </script>
 
 <style scoped>
