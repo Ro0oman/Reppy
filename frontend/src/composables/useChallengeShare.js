@@ -293,38 +293,30 @@ async function renderAnimatedCard({ c, format, bgGifUrl, av1, av2 }) {
     recorder.onstop = () => resolve(new Blob(chunks, { type: mimeType.split(';')[0] }));
     recorder.onerror = reject;
 
-    const LOOPS = 2; // record 2 full GIF loops
-    const totalFrames = frames.length * LOOPS;
     let frameIdx = 0;
-
     recorder.start();
 
     function drawNextFrame() {
-      if (frameIdx >= totalFrames) {
+      if (frameIdx >= frames.length) {
         recorder.stop();
         stream.getTracks().forEach((t) => t.stop());
         return;
       }
 
-      const f = frames[frameIdx % frames.length];
-      frameIdx++;
+      const f = frames[frameIdx++];
 
-      // Resize gifCanvas to match this frame's dimensions.
       gifCanvas.width = f.dims.width;
       gifCanvas.height = f.dims.height;
       const imgData = gifCtx.createImageData(f.dims.width, f.dims.height);
       imgData.data.set(f.patch);
       gifCtx.putImageData(imgData, 0, 0);
 
-      // Draw: dark base → GIF frame scaled to card → overlay.
       ctx.fillStyle = '#0a0a0a';
       ctx.fillRect(0, 0, W, H);
       drawCover(ctx, gifCanvas, 0, 0, W, H);
       ctx.drawImage(overlay, 0, 0);
 
-      // Advance after this frame's delay (gifuct gives delay in ms).
-      const delay = Math.max((f.delay ?? 4) * 10, 16); // centiseconds → ms; 4cs default, min 16ms
-      setTimeout(drawNextFrame, delay);
+      requestAnimationFrame(drawNextFrame);
     }
 
     drawNextFrame();
