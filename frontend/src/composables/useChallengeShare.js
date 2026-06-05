@@ -2,9 +2,10 @@ import { ref } from 'vue';
 import { useNotificationStore } from '@/stores/notification';
 import { useI18nStore } from '@/stores/i18n';
 
-// Client-side share-image generator for finished challenges (Issue #201).
-// Pure Canvas API — no extra dependencies. Renders a branded VS card and
-// shares it via the Web Share API (mobile) or downloads it (desktop).
+// Client-side share-image/video generator for finished challenges (Issue #201).
+// Pure Canvas API + MediaRecorder — no extra dependencies.
+// Animated export: draws GIF frame-by-frame via MediaRecorder → WebM video.
+// Falls back to static PNG if MediaRecorder is unavailable.
 
 const PRIMARY = 'hsl(215 92% 56%)'; // Reppy Electric Blue
 const AMBER = '#f59e0b';
@@ -69,7 +70,6 @@ function setShadow(ctx, blur = 0) {
 function drawAvatar(ctx, img, cx, cy, r, ringColor, name, dimmed) {
   ctx.save();
   if (dimmed) ctx.globalAlpha = 0.4;
-  // glow for winner
   if (ringColor === AMBER) {
     ctx.save();
     ctx.shadowColor = 'rgba(245,158,11,0.7)';
@@ -78,7 +78,6 @@ function drawAvatar(ctx, img, cx, cy, r, ringColor, name, dimmed) {
     ctx.fillStyle = 'rgba(245,158,11,0.25)'; ctx.fill();
     ctx.restore();
   }
-  // base circle
   ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.fillStyle = 'rgba(255,255,255,0.10)'; ctx.fill();
   if (img) {
@@ -93,28 +92,37 @@ function drawAvatar(ctx, img, cx, cy, r, ringColor, name, dimmed) {
     ctx.textBaseline = 'middle';
     ctx.fillText((name || '?')[0].toUpperCase(), cx, cy + 2);
   }
-  // ring
   ctx.lineWidth = 9;
   ctx.strokeStyle = ringColor;
   ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
   ctx.restore();
 }
 
-function renderCard({ c, format, bgImg, av1, av2 }) {
-  const L = FORMATS[format];
-  const W = L.w, H = L.h;
-  const canvas = document.createElement('canvas');
-  canvas.width = W; canvas.height = H;
-  const ctx = canvas.getContext('2d');
-  const cx = W / 2;
+// Returns the epic result banner text based on goal type and winner score.
+function epicResultText(ctx, c, maxW) {
+  if (!c.winner_id) return { txt: '⚔️ EMPATE', color: '#fff' };
+  const challengerWon = c.winner_id === c.challenger_id;
+  const wn = (challengerWon ? c.challenger_name : c.challenged_name || '').toUpperCase();
+  const score = Number(challengerWon ? c.challenger_score : c.challenged_score || 0).toLocaleString('es');
+  let raw;
+  if (c.goal_type === 'damage') {
+    raw = `🏆 ${wn} INFLIGIÓ ${score} DE DAÑO`;
+  } else if (c.goal_type === 'reps') {
+    raw = `🏆 ${wn} COMPLETÓ ${score} REPS`;
+  } else {
+    raw = `🏆 ${wn} DOMINA EL RETO`;
+  }
+  return { txt: truncate(ctx, raw, maxW), color: AMBER };
+}
 
+// Draws everything except the background onto ctx (used for both static and animated).
+function drawOverlay(ctx, c, L, av1, av2) {
+  const W = L.w, H = L.h;
+  const cx = W / 2;
   const challengerWon = c.winner_id === c.challenger_id;
   const challengedWon = c.winner_id === c.challenged_id;
 
-  // --- Background ---
-  ctx.fillStyle = '#0a0a0a';
-  ctx.fillRect(0, 0, W, H);
-  if (bgImg) drawCover(ctx, bgImg, 0, 0, W, H);
+  // dark + gradient overlay
   ctx.fillStyle = 'rgba(0,0,0,0.74)';
   ctx.fillRect(0, 0, W, H);
   const grad = ctx.createLinearGradient(0, 0, 0, H);
@@ -124,7 +132,7 @@ function renderCard({ c, format, bgImg, av1, av2 }) {
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
 
-  // --- Logo (R tile + REPPY wordmark) ---
+  // logo
   const ls = 74;
   ctx.font = `900 56px ${FONT}`;
   const wordW = ctx.measureText('REPPY').width;
@@ -148,7 +156,7 @@ function renderCard({ c, format, bgImg, av1, av2 }) {
   ctx.fillText('.', lx + ls + 22 + wordW, ly);
   setShadow(ctx, 0);
 
-  // --- Title pill ---
+  // title pill
   ctx.font = `900 30px ${FONT}`;
   const titleTxt = (c.status === 'finished' ? 'RETO FINALIZADO' : 'RETO').toUpperCase();
   const tW = ctx.measureText(titleTxt).width;
@@ -160,7 +168,7 @@ function renderCard({ c, format, bgImg, av1, av2 }) {
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillText(titleTxt, cx, L.pillY + 2);
 
-  // --- VS block ---
+  // VS block
   const colX1 = W * 0.27;
   const colX2 = W * 0.73;
   const midY = L.midY;
@@ -178,13 +186,11 @@ function renderCard({ c, format, bgImg, av1, av2 }) {
     drawAvatar(ctx, p.img, p.x, avCy, avR, p.won ? AMBER : 'rgba(255,255,255,0.25)', p.name, dimmed);
     ctx.save();
     if (dimmed) ctx.globalAlpha = 0.45;
-    // name
     ctx.font = `900 ${L.nameFont}px ${FONT}`;
     ctx.fillStyle = '#fff';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     setShadow(ctx, 10);
     ctx.fillText(truncate(ctx, (p.name || '').toUpperCase(), maxNameW), p.x, avCy + avR + 50);
-    // score
     ctx.font = `900 ${L.scoreFont}px ${FONT}`;
     ctx.fillStyle = p.won ? p.color : '#fff';
     setShadow(ctx, 16);
@@ -206,35 +212,101 @@ function renderCard({ c, format, bgImg, av1, av2 }) {
   ctx.fillStyle = 'rgba(255,255,255,0.4)';
   ctx.fillText('META ' + Number(c.goal_value || 0).toLocaleString(), cx, avCy + 84);
 
-  // --- Result banner ---
-  let resultTxt, resultColor;
-  if (c.winner_id) {
-    const wn = challengerWon ? c.challenger_name : c.challenged_name;
-    ctx.font = `900 44px ${FONT}`;
-    resultTxt = '🏆 ' + truncate(ctx, (wn || '').toUpperCase(), W * 0.6) + ' GANA';
-    resultColor = AMBER;
-  } else {
-    resultTxt = '⚔️ EMPATE';
-    resultColor = '#fff';
-  }
+  // result banner (epic text)
   ctx.font = `900 44px ${FONT}`;
+  const { txt: resultTxt, color: resultColor } = epicResultText(ctx, c, W * 0.82);
   const rW = ctx.measureText(resultTxt).width + 80;
   const rH = 86;
   roundRect(ctx, cx - rW / 2, L.resultY - rH / 2, rW, rH, 22);
-  ctx.fillStyle = 'rgba(245,158,11,0.14)';
+  ctx.fillStyle = c.winner_id ? 'rgba(245,158,11,0.14)' : 'rgba(255,255,255,0.08)';
   ctx.fill();
-  ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(245,158,11,0.4)'; ctx.stroke();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = c.winner_id ? 'rgba(245,158,11,0.4)' : 'rgba(255,255,255,0.2)';
+  ctx.stroke();
   ctx.fillStyle = resultColor;
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillText(resultTxt, cx, L.resultY + 2);
 
-  // --- Footer ---
+  // footer
   ctx.font = `800 26px ${FONT}`;
   ctx.fillStyle = 'rgba(255,255,255,0.55)';
   ctx.textAlign = 'center';
   ctx.fillText('ENTRENA · COMPITE · SUBE DE NIVEL', cx, L.footerY);
+}
 
+// Static PNG render (fallback when MediaRecorder is unavailable).
+function renderStaticCard({ c, format, bgImg, av1, av2 }) {
+  const L = FORMATS[format];
+  const canvas = document.createElement('canvas');
+  canvas.width = L.w; canvas.height = L.h;
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = '#0a0a0a';
+  ctx.fillRect(0, 0, L.w, L.h);
+  if (bgImg) drawCover(ctx, bgImg, 0, 0, L.w, L.h);
+  drawOverlay(ctx, c, L, av1, av2);
   return canvas;
+}
+
+// Animated WebM render: draws GIF live onto canvas and captures via MediaRecorder.
+// The browser advances GIF frames naturally when we drawImage the <img> element each tick.
+function renderAnimatedCard({ c, format, bgGifUrl, av1, av2 }) {
+  return new Promise((resolve, reject) => {
+    const L = FORMATS[format];
+    const W = L.w, H = L.h;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+
+    // Pre-render static overlay to offscreen canvas so we don't re-compute each frame.
+    const overlay = document.createElement('canvas');
+    overlay.width = W; overlay.height = H;
+    drawOverlay(overlay.getContext('2d'), c, L, av1, av2);
+
+    const gifImg = new Image();
+    gifImg.onload = () => {
+      const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+        ? 'video/webm;codecs=vp9'
+        : 'video/webm';
+
+      let stream, recorder;
+      try {
+        stream = canvas.captureStream(30);
+        recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 4_000_000 });
+      } catch (e) {
+        return reject(e);
+      }
+
+      const chunks = [];
+      recorder.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+      recorder.onstop = () => resolve(new Blob(chunks, { type: mimeType.split(';')[0] }));
+
+      const DURATION = 3500; // ms — long enough for most GIF loops
+      const start = performance.now();
+
+      function frame() {
+        ctx.fillStyle = '#0a0a0a';
+        ctx.fillRect(0, 0, W, H);
+        if (gifImg.complete && gifImg.naturalWidth) {
+          drawCover(ctx, gifImg, 0, 0, W, H);
+        }
+        ctx.drawImage(overlay, 0, 0);
+
+        if (performance.now() - start < DURATION) {
+          requestAnimationFrame(frame);
+        } else {
+          recorder.stop();
+          stream.getTracks().forEach((t) => t.stop());
+        }
+      }
+
+      recorder.start();
+      requestAnimationFrame(frame);
+    };
+    gifImg.onerror = () => reject(new Error('gif-load-failed'));
+    gifImg.src = bgGifUrl;
+  });
 }
 
 function canvasToBlob(canvas) {
@@ -250,15 +322,24 @@ function canvasToBlob(canvas) {
 function captionFor(c, i18n) {
   const es = i18n.locale === 'es';
   if (c.winner_id) {
-    const wn = c.winner_id === c.challenger_id ? c.challenger_name : c.challenged_name;
-    return es
-      ? `🏆 ${wn} ganó el reto en Reppy — ${c.challenger_name} ${c.challenger_score} vs ${c.challenged_score} ${c.challenged_name}`
-      : `🏆 ${wn} won the challenge on Reppy — ${c.challenger_name} ${c.challenger_score} vs ${c.challenged_score} ${c.challenged_name}`;
+    const challengerWon = c.winner_id === c.challenger_id;
+    const wn = challengerWon ? c.challenger_name : c.challenged_name;
+    const score = Number(challengerWon ? c.challenger_score : c.challenged_score || 0).toLocaleString('es');
+    if (es) {
+      if (c.goal_type === 'damage') return `🏆 ${wn} infligió ${score} de daño en Reppy — ${c.challenger_name} ${c.challenger_score} vs ${c.challenged_score} ${c.challenged_name}`;
+      if (c.goal_type === 'reps') return `🏆 ${wn} completó ${score} reps en Reppy — ${c.challenger_name} ${c.challenger_score} vs ${c.challenged_score} ${c.challenged_name}`;
+      return `🏆 ${wn} domina el reto en Reppy — ${c.challenger_name} ${c.challenger_score} vs ${c.challenged_score} ${c.challenged_name}`;
+    }
+    if (c.goal_type === 'damage') return `🏆 ${wn} dealt ${score} damage on Reppy — ${c.challenger_name} ${c.challenger_score} vs ${c.challenged_score} ${c.challenged_name}`;
+    if (c.goal_type === 'reps') return `🏆 ${wn} completed ${score} reps on Reppy — ${c.challenger_name} ${c.challenger_score} vs ${c.challenged_score} ${c.challenged_name}`;
+    return `🏆 ${wn} dominated the challenge on Reppy — ${c.challenger_name} ${c.challenger_score} vs ${c.challenged_score} ${c.challenged_name}`;
   }
-  return es
+  return i18n.locale === 'es'
     ? `⚔️ Empate en Reppy — ${c.challenger_name} ${c.challenger_score} - ${c.challenged_score} ${c.challenged_name}`
     : `⚔️ Draw on Reppy — ${c.challenger_name} ${c.challenger_score} - ${c.challenged_score} ${c.challenged_name}`;
 }
+
+const canUseMediaRecorder = typeof MediaRecorder !== 'undefined' && typeof HTMLCanvasElement !== 'undefined';
 
 export function useChallengeShare() {
   const notificationStore = useNotificationStore();
@@ -270,24 +351,47 @@ export function useChallengeShare() {
     generating.value = true;
     try {
       if (document.fonts?.ready) await document.fonts.ready;
-      const [bgImg, av1, av2] = await Promise.all([
-        loadImage(bgGif, false),
+      const [av1, av2] = await Promise.all([
         loadImage(c.challenger_avatar, true),
         loadImage(c.challenged_avatar, true),
       ]);
 
-      const canvas = renderCard({ c, format, bgImg, av1, av2 });
-      const blob = await canvasToBlob(canvas);
-      const file = new File([blob], 'reppy-reto.png', { type: 'image/png' });
       const caption = captionFor(c, i18n);
       const url = (typeof window !== 'undefined' && window.location?.origin) || '';
+
+      let blob;
+      let fileName;
+      let mimeType;
+
+      // Try animated WebM first when a GIF background is available.
+      if (bgGif && canUseMediaRecorder) {
+        try {
+          const videoBlob = await renderAnimatedCard({ c, format, bgGifUrl: bgGif, av1, av2 });
+          blob = videoBlob;
+          mimeType = videoBlob.type;
+          fileName = 'reppy-reto.webm';
+        } catch {
+          // fall through to static PNG
+        }
+      }
+
+      // Static PNG fallback.
+      if (!blob) {
+        const bgImg = await loadImage(bgGif, false);
+        const canvas = renderStaticCard({ c, format, bgImg, av1, av2 });
+        blob = await canvasToBlob(canvas);
+        mimeType = 'image/png';
+        fileName = 'reppy-reto.png';
+      }
+
+      const file = new File([blob], fileName, { type: mimeType });
 
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({ files: [file], title: 'Reppy', text: `${caption}\n${url}` });
       } else {
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = 'reppy-reto.png';
+        a.download = fileName;
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -295,7 +399,7 @@ export function useChallengeShare() {
         notificationStore.notify(i18n.locale === 'es' ? 'Imagen descargada' : 'Image downloaded', 'success');
       }
     } catch (e) {
-      if (e && e.name === 'AbortError') return; // user cancelled the share sheet
+      if (e && e.name === 'AbortError') return;
       notificationStore.notify(
         i18n.locale === 'es' ? 'No se pudo generar la imagen' : 'Could not generate image',
         'error'
