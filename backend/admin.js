@@ -266,18 +266,35 @@ router.get('/analytics', authenticate, isAdmin, async (req, res) => {
   }
 });
 
-// Give an item to a user by item name
+// Give an item to a user by name — creates it if it doesn't exist yet
 router.post('/give-item', authenticate, isAdmin, async (req, res) => {
   const { user_id, item_name } = req.body;
   if (!user_id || !item_name) return res.status(400).json({ message: 'user_id and item_name required' });
   try {
-    const itemRes = await query('SELECT id, name, type FROM items WHERE LOWER(name) = LOWER($1)', [item_name]);
-    if (itemRes.rows.length === 0) return res.status(404).json({ message: `Item "${item_name}" not found` });
+    let itemRes = await query('SELECT id, name, type FROM items WHERE LOWER(name) = LOWER($1)', [item_name]);
+
+    // Seed cosmic items on demand if not in DB yet
+    if (itemRes.rows.length === 0) {
+      const COSMIC = [
+        { name: 'Nebula Prime',   type: 'border',     css_value: 'frame-cosmico',  price: 12500, price_gems: 300, stats: null, description: 'Marco CÓSMICO. Creado en el corazón de una nebulosa a 2.000 años luz.' },
+        { name: 'Void Ascendant', type: 'title',      css_value: 'title-cosmico',  price: 12500, price_gems: 300, stats: null, description: 'Título CÓSMICO. Más allá de la materia, más allá del dolor.' },
+        { name: 'Galaxy Core',    type: 'background', css_value: 'bg-cosmic',      price: 12500, price_gems: 300, stats: null, description: 'Fondo CÓSMICO. Una galaxia en espiral como fondo de tus entrenamientos.' },
+        { name: 'Poción Omega',   type: 'consumable', css_value: null, svg_key: 'potion_omega', price: 12500, price_gems: 300, stats: JSON.stringify({ damage_multiplier: 8.0, duration: 7200 }), description: 'CÓSMICO · Consumible. Multiplicador de daño x8 durante 2 horas.' },
+      ];
+      for (const item of COSMIC) {
+        await query(
+          `INSERT INTO items (name, description, type, rarity, css_value, price, price_gems, svg_key, stats, is_seasonal)
+           VALUES ($1,$2,$3,'cosmico',$4,$5,$6,$7,$8,false)
+           ON CONFLICT (name) DO NOTHING`,
+          [item.name, item.description, item.type, item.css_value, item.price, item.price_gems, item.svg_key || null, item.stats]
+        );
+      }
+      itemRes = await query('SELECT id, name, type FROM items WHERE LOWER(name) = LOWER($1)', [item_name]);
+    }
+
+    if (itemRes.rows.length === 0) return res.status(404).json({ message: `Item "${item_name}" not found even after seeding` });
     const item = itemRes.rows[0];
-    await query(
-      `INSERT INTO user_items (user_id, item_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
-      [user_id, item.id]
-    );
+    await query(`INSERT INTO user_items (user_id, item_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`, [user_id, item.id]);
     res.json({ ok: true, item });
   } catch (err) {
     res.status(500).json({ message: err.message });
