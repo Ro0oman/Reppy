@@ -276,10 +276,17 @@ router.post('/give-item', authenticate, isAdmin, async (req, res) => {
     // Seed cosmic items on demand if not in DB yet
     if (itemRes.rows.length === 0) {
       const COSMIC = [
-        { name: 'Nebula Prime',   type: 'border',     css_value: 'frame-cosmico',  price: 12500, price_gems: 300, stats: null, description: 'Marco CÓSMICO. Creado en el corazón de una nebulosa a 2.000 años luz.' },
-        { name: 'Void Ascendant', type: 'title',      css_value: 'title-cosmico',  price: 12500, price_gems: 300, stats: null, description: 'Título CÓSMICO. Más allá de la materia, más allá del dolor.' },
-        { name: 'Galaxy Core',    type: 'background', css_value: 'bg-cosmic',      price: 12500, price_gems: 300, stats: null, description: 'Fondo CÓSMICO. Una galaxia en espiral como fondo de tus entrenamientos.' },
-        { name: 'Poción Omega',   type: 'consumable', css_value: null, svg_key: 'potion_omega', price: 12500, price_gems: 300, stats: JSON.stringify({ damage_multiplier: 8.0, duration: 7200 }), description: 'CÓSMICO · Consumible. Multiplicador de daño x8 durante 2 horas.' },
+        // Cosméticos
+        { name: 'Nebula Prime',       type: 'border',     css_value: 'frame-cosmico', price: 12500, price_gems: 300, svg_key: null, stats: null, description: 'Marco CÓSMICO. Creado en el corazón de una nebulosa a 2.000 años luz.' },
+        { name: 'Void Ascendant',     type: 'title',      css_value: 'title-cosmico', price: 12500, price_gems: 300, svg_key: null, stats: null, description: 'Título CÓSMICO. Más allá de la materia, más allá del dolor.' },
+        { name: 'Galaxy Core',        type: 'background', css_value: 'bg-cosmic',     price: 12500, price_gems: 300, svg_key: null, stats: null, description: 'Fondo CÓSMICO. Una galaxia en espiral como fondo de tus entrenamientos.' },
+        // Consumible
+        { name: 'Poción Omega',       type: 'consumable', css_value: null, svg_key: 'potion_omega', price: 12500, price_gems: 300, stats: JSON.stringify({ damage_multiplier: 8.0, duration: 7200 }), description: 'CÓSMICO · x8 daño durante 2h. Síntesis de energía estelar condensada.' },
+        // Equipo de combate cósmico — stat budget ~42 por pieza (vs ~16 legendary, ~25 calistenico)
+        { name: 'Yelmo del Vacío',    type: 'head',   css_value: null, svg_key: 'helmet_void',  price: 15000, price_gems: 300, stats: JSON.stringify({ str: 12, pwr: 10, end: 12, agi: 8 }),  description: 'CÓSMICO · El vacío entre galaxias comprimido en acero estelar. No existe resistencia que no doble ante este yelmo.' },
+        { name: 'Filo Estelar',       type: 'weapon', css_value: null, svg_key: 'sword_cosmic', price: 15000, price_gems: 300, stats: JSON.stringify({ str: 15, pwr: 14, crit_chance: 8, crit_damage: 30 }), description: 'CÓSMICO · Forjado en el núcleo de una estrella de neutrones. Cada rep es una explosión de energía cósmica.' },
+        { name: 'Coraza Nebulosa',    type: 'armor',  css_value: null, svg_key: 'armor_cosmic', price: 15000, price_gems: 300, stats: JSON.stringify({ end: 14, pwr: 10, str: 10, agi: 8 }),  description: 'CÓSMICO · Placas forjadas con materia oscura. Absorbe el dolor como un agujero negro absorbe la luz.' },
+        { name: 'Grebas del Cosmos',  type: 'boots',  css_value: null, svg_key: 'boots_cosmic', price: 15000, price_gems: 300, stats: JSON.stringify({ agi: 14, end: 10, str: 8,  pwr: 10 }), description: 'CÓSMICO · La velocidad de la luz hecha calzado. Cada paso resuena en el tejido del espacio-tiempo.' },
       ];
       for (const item of COSMIC) {
         await query(
