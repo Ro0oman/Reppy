@@ -323,7 +323,7 @@ async function renderAnimatedCard({ c, format, bgGifUrl, av1, av2 }) {
       ctx.drawImage(overlay, 0, 0);
 
       // Advance after this frame's delay (gifuct gives delay in ms).
-      const delay = Math.max((f.delay || 10) * 10, 20); // centiseconds → ms, min 20ms
+      const delay = Math.max((f.delay ?? 4) * 10, 16); // centiseconds → ms; 4cs default, min 16ms
       setTimeout(drawNextFrame, delay);
     }
 
