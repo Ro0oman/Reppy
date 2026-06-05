@@ -23,6 +23,21 @@ pool.query(`
   )
 `).catch(err => console.error('Error creating social_xp_rewards table:', err));
 
+// Boss kill community posts
+pool.query(`
+  CREATE TABLE IF NOT EXISTS boss_kill_posts (
+    id SERIAL PRIMARY KEY,
+    boss_fight_id INTEGER REFERENCES boss_fights(id) ON DELETE CASCADE,
+    boss_name VARCHAR(255),
+    boss_image TEXT,
+    killer_user_id VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
+    killer_name VARCHAR(255),
+    top3 JSONB DEFAULT '[]',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(boss_fight_id)
+  )
+`).catch(err => console.error('Error creating boss_kill_posts table:', err));
+
 // Users subscribed to comment updates per summary thread
 pool.query(`
   CREATE TABLE IF NOT EXISTS summary_comment_subscribers (
