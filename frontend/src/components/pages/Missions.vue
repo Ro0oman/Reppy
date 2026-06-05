@@ -164,10 +164,17 @@ const countdown = ref('--:--:--');
 const highlightedMissionId = ref(null);
 let timerInterval = null;
 
+// Persists claimed IDs across tab switches (survives component remount).
+const sessionClaimedIds = new Set();
+
 const fetchMissions = async () => {
   try {
     const res = await axios.get('/api/missions');
-    missions.value = res.data.missions;
+    // Merge server state with locally-claimed IDs so a tab switch doesn't
+    // roll back a claim that the server hasn't reflected yet.
+    missions.value = res.data.missions.map(m =>
+      sessionClaimedIds.has(m.id) ? { ...m, is_claimed: true } : m
+    );
     nextReset.value = new Date(res.data.next_reset);
     updateCountdown();
     await focusMissionFromRoute();
@@ -288,8 +295,9 @@ const claimReward = async (mission) => {
     const res = await axios.post(`/api/missions/claim/${mission.id}`);
     notificationStore.notify(`REWARD CLAIMED: +${res.data.reward_coins} Coins, +${res.data.reward_gems} Gems`, 'success');
     
-    // Update local state
+    // Update local state and persist across tab switches
     mission.is_claimed = true;
+    sessionClaimedIds.add(mission.id);
     
     // Update user state in store
     if (authStore.user) {
