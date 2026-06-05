@@ -133,15 +133,10 @@ const router = useRouter();
 const i18n = useI18nStore();
 const showModal = ref(false);
 
-const AVATAR_IDS = [1,2,3,4,5,7,8,9,10,11,14,16,17,27,28,29,31,32,33,34,35,36,37,38,39,40];
-const anonAvatar = `/img/avatars/avatar_${AVATAR_IDS[Math.floor(Math.random() * AVATAR_IDS.length)]}.webp`;
-
 const displayOperatives = computed(() => {
   const ops = [...socketStore.activeOperatives];
-  if (!authStore.isAuthenticated) {
-    // Show anonymous user as a placeholder representing the current visitor
-    ops.unshift({ id: 'anon', name: 'Atleta Anónimo', avatar_url: anonAvatar, level: 1, anonymous: true });
-  } else if (!ops.find(o => o.id === authStore.user.id)) {
+  // Fallback: if logged in but not yet in the Pusher list, inject self
+  if (authStore.isAuthenticated && !ops.find(o => o.id === authStore.user.id)) {
     ops.unshift({
       id: authStore.user.id,
       name: authStore.user.name,

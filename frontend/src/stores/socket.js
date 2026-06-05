@@ -21,6 +21,9 @@ export const useSocketStore = defineStore('socket', {
       
       console.log(`[PUSHER v6] Initializing with User: ${authStore.user?.name} (ID: ${authStore.user?.id})`);
 
+      const AVATAR_IDS = [1,2,3,4,5,7,8,9,10,11,14,16,17,27,28,29,31,32,33,34,35,36,37,38,39,40];
+      const anonAvatar = `/img/avatars/avatar_${AVATAR_IDS[Math.floor(Math.random() * AVATAR_IDS.length)]}.webp`;
+
       const pusherKey = import.meta.env.VITE_PUSHER_KEY || 'dummy_key';
       this.pusher = new Pusher(pusherKey, {
         cluster: import.meta.env.VITE_PUSHER_CLUSTER || 'mt1',
@@ -29,8 +32,8 @@ export const useSocketStore = defineStore('socket', {
         auth: {
           params: {
             user_id: authStore.user?.id,
-            user_name: authStore.user?.name,
-            avatar_url: authStore.user?.avatar_url,
+            user_name: authStore.user?.name || 'Atleta Anónimo',
+            avatar_url: authStore.user?.avatar_url || anonAvatar,
             level: authStore.user?.current_level || 1
           }
         }

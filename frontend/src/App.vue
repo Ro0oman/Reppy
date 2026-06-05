@@ -470,14 +470,18 @@ const onStartAction = () => {
 };
 
 const initializeApp = async () => {
-  if (!authStore.isAuthenticated || import.meta.env.SSR) return;
+  if (import.meta.env.SSR) return;
+
+  // Always init socket so anonymous users appear in presence-global too
+  socketStore.init();
+
+  if (!authStore.isAuthenticated) return;
 
   // These are throttled at the store level, but calling them here ensures initial load
   authStore.fetchProfile();
   shopStore.fetchInventory();
   rouletteStore.checkStatus();
   notifStore.fetchNotifications();
-  socketStore.init();
 
   // Periodic presence ping for Pusher/Backend tracking
   const pingInterval = setInterval(() => {
@@ -494,6 +498,8 @@ watch(() => authStore.isAuthenticated, (val) => {
     initializeApp();
   } else {
     socketStore.disconnect();
+    // Re-init as anonymous so they still see presence
+    socketStore.init();
   }
 }, { immediate: true });
 
