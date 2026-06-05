@@ -1,12 +1,9 @@
 import { ref } from 'vue';
 import { useNotificationStore } from '@/stores/notification';
 import { useI18nStore } from '@/stores/i18n';
-import { parseGIF, decompressFrames } from 'gifuct-js';
 
-// Client-side share-image/video generator for finished challenges (Issue #201).
-// Pure Canvas API + MediaRecorder — no extra dependencies.
-// Animated export: draws GIF frame-by-frame via MediaRecorder → WebM video.
-// Falls back to static PNG if MediaRecorder is unavailable.
+// Client-side share-image generator for finished challenges (Issue #201).
+// Pure Canvas API — no extra dependencies. Exports static PNG.
 
 const PRIMARY = 'hsl(215 92% 56%)'; // Reppy Electric Blue
 const AMBER = '#f59e0b';
@@ -99,31 +96,33 @@ function drawAvatar(ctx, img, cx, cy, r, ringColor, name, dimmed) {
   ctx.restore();
 }
 
-// Returns the epic result banner text based on goal type and winner score.
 function epicResultText(ctx, c, maxW) {
   if (!c.winner_id) return { txt: '⚔️ EMPATE', color: '#fff' };
   const challengerWon = c.winner_id === c.challenger_id;
   const wn = (challengerWon ? c.challenger_name : c.challenged_name || '').toUpperCase();
   const score = Number(challengerWon ? c.challenger_score : c.challenged_score || 0).toLocaleString('es');
   let raw;
-  if (c.goal_type === 'damage') {
-    raw = `🏆 ${wn} INFLIGIÓ ${score} DE DAÑO`;
-  } else if (c.goal_type === 'reps') {
-    raw = `🏆 ${wn} COMPLETÓ ${score} REPS`;
-  } else {
-    raw = `🏆 ${wn} DOMINA EL RETO`;
-  }
+  if (c.goal_type === 'damage') raw = `🏆 ${wn} INFLIGIÓ ${score} DE DAÑO`;
+  else if (c.goal_type === 'reps') raw = `🏆 ${wn} COMPLETÓ ${score} REPS`;
+  else raw = `🏆 ${wn} DOMINA EL RETO`;
   return { txt: truncate(ctx, raw, maxW), color: AMBER };
 }
 
-// Draws everything except the background onto ctx (used for both static and animated).
-function drawOverlay(ctx, c, L, av1, av2) {
+function renderCard({ c, format, bgImg, av1, av2 }) {
+  const L = FORMATS[format];
   const W = L.w, H = L.h;
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
   const cx = W / 2;
+
   const challengerWon = c.winner_id === c.challenger_id;
   const challengedWon = c.winner_id === c.challenged_id;
 
-  // dark + gradient overlay
+  // Background
+  ctx.fillStyle = '#0a0a0a';
+  ctx.fillRect(0, 0, W, H);
+  if (bgImg) drawCover(ctx, bgImg, 0, 0, W, H);
   ctx.fillStyle = 'rgba(0,0,0,0.74)';
   ctx.fillRect(0, 0, W, H);
   const grad = ctx.createLinearGradient(0, 0, 0, H);
@@ -133,12 +132,11 @@ function drawOverlay(ctx, c, L, av1, av2) {
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
 
-  // logo
+  // Logo
   const ls = 74;
   ctx.font = `900 56px ${FONT}`;
   const wordW = ctx.measureText('REPPY').width;
-  const dotW = 26;
-  const totalW = ls + 22 + wordW + dotW;
+  const totalW = ls + 22 + wordW + 26;
   let lx = cx - totalW / 2;
   const ly = L.logoY;
   setShadow(ctx, 18);
@@ -157,7 +155,7 @@ function drawOverlay(ctx, c, L, av1, av2) {
   ctx.fillText('.', lx + ls + 22 + wordW, ly);
   setShadow(ctx, 0);
 
-  // title pill
+  // Title pill
   ctx.font = `900 30px ${FONT}`;
   const titleTxt = (c.status === 'finished' ? 'RETO FINALIZADO' : 'RETO').toUpperCase();
   const tW = ctx.measureText(titleTxt).width;
@@ -200,7 +198,7 @@ function drawOverlay(ctx, c, L, av1, av2) {
     ctx.restore();
   });
 
-  // center VS + goal
+  // Center VS + goal
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.font = `900 60px ${FONT}`;
   ctx.fillStyle = 'rgba(255,255,255,0.30)';
@@ -213,7 +211,7 @@ function drawOverlay(ctx, c, L, av1, av2) {
   ctx.fillStyle = 'rgba(255,255,255,0.4)';
   ctx.fillText('META ' + Number(c.goal_value || 0).toLocaleString(), cx, avCy + 84);
 
-  // result banner (epic text)
+  // Result banner
   ctx.font = `900 44px ${FONT}`;
   const { txt: resultTxt, color: resultColor } = epicResultText(ctx, c, W * 0.82);
   const rW = ctx.measureText(resultTxt).width + 80;
@@ -228,101 +226,13 @@ function drawOverlay(ctx, c, L, av1, av2) {
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillText(resultTxt, cx, L.resultY + 2);
 
-  // footer
+  // Footer
   ctx.font = `800 26px ${FONT}`;
   ctx.fillStyle = 'rgba(255,255,255,0.55)';
   ctx.textAlign = 'center';
   ctx.fillText('ENTRENA · COMPITE · SUBE DE NIVEL', cx, L.footerY);
-}
 
-// Static PNG render (fallback when MediaRecorder is unavailable).
-function renderStaticCard({ c, format, bgImg, av1, av2 }) {
-  const L = FORMATS[format];
-  const canvas = document.createElement('canvas');
-  canvas.width = L.w; canvas.height = L.h;
-  const ctx = canvas.getContext('2d');
-
-  ctx.fillStyle = '#0a0a0a';
-  ctx.fillRect(0, 0, L.w, L.h);
-  if (bgImg) drawCover(ctx, bgImg, 0, 0, L.w, L.h);
-  drawOverlay(ctx, c, L, av1, av2);
   return canvas;
-}
-
-// Fetch and decode all GIF frames using gifuct-js.
-async function decodeGifFrames(url) {
-  const resp = await fetch(url);
-  const buf = await resp.arrayBuffer();
-  const gif = parseGIF(buf);
-  const frames = decompressFrames(gif, true); // true = patch transparent pixels
-  return frames;
-}
-
-// Animated WebM render: decodes GIF frames with gifuct-js and draws them
-// frame-by-frame at the correct delay onto the canvas, captured by MediaRecorder.
-async function renderAnimatedCard({ c, format, bgGifUrl, av1, av2 }) {
-  const L = FORMATS[format];
-  const W = L.w, H = L.h;
-
-  const frames = await decodeGifFrames(bgGifUrl);
-  if (!frames.length) throw new Error('no-gif-frames');
-
-  const canvas = document.createElement('canvas');
-  canvas.width = W; canvas.height = H;
-  const ctx = canvas.getContext('2d');
-
-  // Pre-render static overlay once.
-  const overlay = document.createElement('canvas');
-  overlay.width = W; overlay.height = H;
-  drawOverlay(overlay.getContext('2d'), c, L, av1, av2);
-
-  // Offscreen canvas for compositing each GIF frame (gifuct gives us raw pixel data).
-  const gifCanvas = document.createElement('canvas');
-  const gifCtx = gifCanvas.getContext('2d');
-
-  const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
-    ? 'video/webm;codecs=vp9'
-    : 'video/webm';
-
-  const stream = canvas.captureStream(30);
-  const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 4_000_000 });
-  const chunks = [];
-  recorder.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
-
-  const videoBlob = await new Promise((resolve, reject) => {
-    recorder.onstop = () => resolve(new Blob(chunks, { type: mimeType.split(';')[0] }));
-    recorder.onerror = reject;
-
-    let frameIdx = 0;
-    recorder.start();
-
-    function drawNextFrame() {
-      if (frameIdx >= frames.length) {
-        recorder.stop();
-        stream.getTracks().forEach((t) => t.stop());
-        return;
-      }
-
-      const f = frames[frameIdx++];
-
-      gifCanvas.width = f.dims.width;
-      gifCanvas.height = f.dims.height;
-      const imgData = gifCtx.createImageData(f.dims.width, f.dims.height);
-      imgData.data.set(f.patch);
-      gifCtx.putImageData(imgData, 0, 0);
-
-      ctx.fillStyle = '#0a0a0a';
-      ctx.fillRect(0, 0, W, H);
-      drawCover(ctx, gifCanvas, 0, 0, W, H);
-      ctx.drawImage(overlay, 0, 0);
-
-      requestAnimationFrame(drawNextFrame);
-    }
-
-    drawNextFrame();
-  });
-
-  return videoBlob;
 }
 
 function canvasToBlob(canvas) {
@@ -355,8 +265,6 @@ function captionFor(c, i18n) {
     : `⚔️ Draw on Reppy — ${c.challenger_name} ${c.challenger_score} - ${c.challenged_score} ${c.challenged_name}`;
 }
 
-const canUseMediaRecorder = typeof MediaRecorder !== 'undefined' && typeof HTMLCanvasElement !== 'undefined';
-
 export function useChallengeShare() {
   const notificationStore = useNotificationStore();
   const i18n = useI18nStore();
@@ -367,47 +275,24 @@ export function useChallengeShare() {
     generating.value = true;
     try {
       if (document.fonts?.ready) await document.fonts.ready;
-      const [av1, av2] = await Promise.all([
+      const [bgImg, av1, av2] = await Promise.all([
+        loadImage(bgGif, false),
         loadImage(c.challenger_avatar, true),
         loadImage(c.challenged_avatar, true),
       ]);
 
+      const canvas = renderCard({ c, format, bgImg, av1, av2 });
+      const blob = await canvasToBlob(canvas);
+      const file = new File([blob], 'reppy-reto.png', { type: 'image/png' });
       const caption = captionFor(c, i18n);
       const url = (typeof window !== 'undefined' && window.location?.origin) || '';
-
-      let blob;
-      let fileName;
-      let mimeType;
-
-      // Try animated WebM first when a GIF background is available.
-      if (bgGif && canUseMediaRecorder) {
-        try {
-          const videoBlob = await renderAnimatedCard({ c, format, bgGifUrl: bgGif, av1, av2 });
-          blob = videoBlob;
-          mimeType = videoBlob.type;
-          fileName = 'reppy-reto.webm';
-        } catch {
-          // fall through to static PNG
-        }
-      }
-
-      // Static PNG fallback.
-      if (!blob) {
-        const bgImg = await loadImage(bgGif, false);
-        const canvas = renderStaticCard({ c, format, bgImg, av1, av2 });
-        blob = await canvasToBlob(canvas);
-        mimeType = 'image/png';
-        fileName = 'reppy-reto.png';
-      }
-
-      const file = new File([blob], fileName, { type: mimeType });
 
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({ files: [file], title: 'Reppy', text: `${caption}\n${url}` });
       } else {
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = fileName;
+        a.download = 'reppy-reto.png';
         document.body.appendChild(a);
         a.click();
         a.remove();
