@@ -122,40 +122,38 @@ function renderCard(data, locale) {
     ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
   }
 
-  // ── Vertical centering ───────────────────────────────────────────────────────
-  const FOOTER_RESERVE = 130; // keep footer anchored at bottom
-  const contentH = measureContentHeight(data);
-  const availableH = H - FOOTER_RESERVE;
-  let curY = Math.max(100, Math.round((availableH - contentH) / 2));
-  const ls = 64;
-  ctx.font = `900 50px ${FONT}`;
+  let curY = 130;
+
+  // ── Logo ────────────────────────────────────────────────────────────────────
+  const ls = 84;
+  ctx.font = `900 66px ${FONT}`;
   const wordW = ctx.measureText('REPPY').width;
-  const totalLogoW = ls + 18 + wordW + 20;
+  const totalLogoW = ls + 22 + wordW + 22;
   let lx = CX - totalLogoW / 2;
 
-  setShadow(ctx, 16);
-  roundRect(ctx, lx, curY - ls / 2, ls, ls, 18);
+  setShadow(ctx, 20);
+  roundRect(ctx, lx, curY - ls / 2, ls, ls, 22);
   ctx.fillStyle = PRIMARY; ctx.fill();
   setShadow(ctx, 0);
   ctx.fillStyle = '#fff';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.font = `900 38px ${FONT}`;
+  ctx.font = `900 50px ${FONT}`;
   ctx.fillText('R', lx + ls / 2, curY + 2);
   ctx.textAlign = 'left';
-  ctx.font = `900 50px ${FONT}`;
-  setShadow(ctx, 10);
+  ctx.font = `900 66px ${FONT}`;
+  setShadow(ctx, 14);
   ctx.fillStyle = '#fff';
-  ctx.fillText('REPPY', lx + ls + 18, curY);
+  ctx.fillText('REPPY', lx + ls + 22, curY);
   ctx.fillStyle = PRIMARY;
-  ctx.fillText('.', lx + ls + 18 + wordW, curY);
+  ctx.fillText('.', lx + ls + 22 + wordW, curY);
   setShadow(ctx, 0);
-  curY += 60;
+  curY += 90;
 
   // ── Week pill ───────────────────────────────────────────────────────────────
   const weekLabel = locale === 'es' ? 'MI SEMANA' : 'MY WEEK';
   const pillTxt = `${weekLabel}  ·  ${formatWeekRange(data.weekStart, data.weekEnd)}`;
-  pill(ctx, pillTxt, CX, curY, 'rgba(255,255,255,0.07)', 'rgba(255,255,255,0.16)', 'rgba(255,255,255,0.80)', 24, 56, 48);
-  curY += 68;
+  pill(ctx, pillTxt, CX, curY, 'rgba(255,255,255,0.07)', 'rgba(255,255,255,0.16)', 'rgba(255,255,255,0.80)', 28, 64, 58);
+  curY += 90;
 
   // ── Global ranking badge ─────────────────────────────────────────────────────
   if (data.ranking?.globalRank) {
@@ -176,59 +174,59 @@ function renderCard(data, locale) {
       : `#${r}`;
 
     const mainTxt = `${rankEmoji}  ${rankLabel}`;
-    ctx.font = `800 30px ${FONT}`;
-    const badgeW = Math.min(ctx.measureText(mainTxt).width + 80, W - 80);
-    const badgeH = 96;
+    ctx.font = `800 36px ${FONT}`;
+    const badgeW = Math.min(ctx.measureText(mainTxt).width + 90, W - 80);
+    const badgeH = 116;
     const badgeX = CX - badgeW / 2;
 
-    roundRect(ctx, badgeX, curY, badgeW, badgeH, 28);
+    roundRect(ctx, badgeX, curY, badgeW, badgeH, 32);
     const rg = ctx.createLinearGradient(badgeX, curY, badgeX + badgeW, curY);
-    rg.addColorStop(0, r <= 3 ? 'rgba(245,158,11,0.20)' : 'rgba(37,99,235,0.17)');
+    rg.addColorStop(0, r <= 3 ? 'rgba(245,158,11,0.22)' : 'rgba(37,99,235,0.19)');
     rg.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = rg; ctx.fill();
     ctx.lineWidth = 2;
     ctx.strokeStyle = r <= 3 ? 'rgba(245,158,11,0.55)' : 'rgba(37,99,235,0.45)';
     ctx.stroke();
 
-    setShadow(ctx, 18, r <= 3 ? 'rgba(245,158,11,0.45)' : 'rgba(37,99,235,0.45)');
+    setShadow(ctx, 22, r <= 3 ? 'rgba(245,158,11,0.5)' : 'rgba(37,99,235,0.5)');
     ctx.fillStyle = rankColor;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(mainTxt, CX, curY + 34);
+    ctx.fillText(mainTxt, CX, curY + 40);
     setShadow(ctx, 0);
 
-    ctx.font = `600 22px ${FONT}`;
+    ctx.font = `600 26px ${FONT}`;
     ctx.fillStyle = 'rgba(255,255,255,0.42)';
-    ctx.fillText(subLabel, CX, curY + 72);
-    curY += badgeH + 40;
+    ctx.fillText(subLabel, CX, curY + 86);
+    curY += badgeH + 55;
   }
 
   // ── Main stat: total reps ────────────────────────────────────────────────────
   const mainLabel = locale === 'es' ? 'REPETICIONES TOTALES' : 'TOTAL REPS';
-  ctx.font = `800 28px ${FONT}`;
-  ctx.fillStyle = 'rgba(255,255,255,0.40)';
+  ctx.font = `800 34px ${FONT}`;
+  ctx.fillStyle = 'rgba(255,255,255,0.42)';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText(mainLabel, CX, curY + 20);
+  ctx.fillText(mainLabel, CX, curY + 24);
 
-  ctx.font = `900 190px ${FONT}`;
-  setShadow(ctx, 38, 'rgba(37,99,235,0.65)');
+  ctx.font = `900 240px ${FONT}`;
+  setShadow(ctx, 45, 'rgba(37,99,235,0.70)');
   ctx.fillStyle = '#fff';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText(fmtNumber(data.totalReps), CX, curY + 145);
+  ctx.fillText(fmtNumber(data.totalReps), CX, curY + 185);
   setShadow(ctx, 0);
-  curY += 265;
+  curY += 330;
 
   // Separator
   ctx.beginPath();
-  ctx.moveTo(CX - 160, curY); ctx.lineTo(CX + 160, curY);
-  ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+  ctx.moveTo(CX - 180, curY); ctx.lineTo(CX + 180, curY);
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
   ctx.lineWidth = 1.5;
   ctx.stroke();
-  curY += 44;
+  curY += 55;
 
   // ── Stat cards row ───────────────────────────────────────────────────────────
-  const cardH = 175;
-  const cardW = 295;
-  const gap = 35;
+  const cardH = 220;
+  const cardW = 300;
+  const gap = 30;
   const totalCardsW = cardW * 3 + gap * 2;
   const cardStartX = CX - totalCardsW / 2;
 
@@ -243,28 +241,28 @@ function renderCard(data, locale) {
     const cg = ctx.createLinearGradient(cx, curY, cx, curY + cardH);
     cg.addColorStop(0, 'rgba(255,255,255,0.07)');
     cg.addColorStop(1, 'rgba(255,255,255,0.02)');
-    roundRect(ctx, cx, curY, cardW, cardH, 26);
+    roundRect(ctx, cx, curY, cardW, cardH, 28);
     ctx.fillStyle = cg; ctx.fill();
     ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(255,255,255,0.09)'; ctx.stroke();
 
-    roundRect(ctx, cx + 18, curY + 14, cardW - 36, 4, 2);
+    roundRect(ctx, cx + 20, curY + 16, cardW - 40, 5, 3);
     ctx.fillStyle = card.color; ctx.fill();
 
-    ctx.font = `46px ${FONT}`;
+    ctx.font = `58px ${FONT}`;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(card.icon, cx + cardW / 2, curY + 60);
+    ctx.fillText(card.icon, cx + cardW / 2, curY + 78);
 
-    ctx.font = `900 46px ${FONT}`;
-    setShadow(ctx, 10, card.glow);
+    ctx.font = `900 56px ${FONT}`;
+    setShadow(ctx, 14, card.glow);
     ctx.fillStyle = card.color;
-    ctx.fillText(card.value, cx + cardW / 2, curY + 112);
+    ctx.fillText(card.value, cx + cardW / 2, curY + 148);
     setShadow(ctx, 0);
 
-    ctx.font = `700 19px ${FONT}`;
+    ctx.font = `700 22px ${FONT}`;
     ctx.fillStyle = 'rgba(255,255,255,0.45)';
-    ctx.fillText(card.label.toUpperCase(), cx + cardW / 2, curY + 152);
+    ctx.fillText(card.label.toUpperCase(), cx + cardW / 2, curY + 196);
   });
-  curY += cardH + 40;
+  curY += cardH + 55;
 
   // ── Gear row ──────────────────────────────────────────────────────────────────
   const gearItems = [
@@ -273,7 +271,7 @@ function renderCard(data, locale) {
   ].filter(Boolean);
 
   if (gearItems.length) {
-    const gearH = 148;
+    const gearH = 180;
     const gearW = gearItems.length === 2 ? (W - 120) / 2 : W - 80;
     const gearGap = 40;
     const gearStartX = CX - (gearItems.length === 2 ? gearW * 2 + gearGap : gearW) / 2;
@@ -286,42 +284,38 @@ function renderCard(data, locale) {
         : (RARITY_LABELS_EN[g.rarity] || g.rarity || '');
 
       const gg = ctx.createLinearGradient(gx, curY, gx + gearW, curY);
-      gg.addColorStop(0, color + '14');
+      gg.addColorStop(0, color + '18');
       gg.addColorStop(1, 'rgba(255,255,255,0.02)');
-      roundRect(ctx, gx, curY, gearW, gearH, 22);
+      roundRect(ctx, gx, curY, gearW, gearH, 26);
       ctx.fillStyle = gg; ctx.fill();
-      ctx.lineWidth = 1.5; ctx.strokeStyle = color + '55'; ctx.stroke();
+      ctx.lineWidth = 1.5; ctx.strokeStyle = color + '60'; ctx.stroke();
 
       // Left accent bar
-      roundRect(ctx, gx, curY + 14, 5, gearH - 28, 3);
+      roundRect(ctx, gx, curY + 16, 6, gearH - 32, 3);
       ctx.fillStyle = color; ctx.fill();
 
-      const iconX = gx + 28, textX = gx + 76;
-      // Icon
-      ctx.font = `44px ${FONT}`;
+      const iconX = gx + 30, textX = gx + 86;
+      ctx.font = `52px ${FONT}`;
       ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-      ctx.fillText(g.icon, iconX, curY + gearH / 2 - 10);
+      ctx.fillText(g.icon, iconX, curY + gearH / 2 - 14);
 
-      // Slot label
-      ctx.font = `700 18px ${FONT}`;
+      ctx.font = `700 20px ${FONT}`;
       ctx.fillStyle = 'rgba(255,255,255,0.38)';
-      ctx.fillText(g.slot, textX, curY + 30);
+      ctx.fillText(g.slot, textX, curY + 38);
 
-      // Name (truncated)
-      ctx.font = `800 26px ${FONT}`;
+      ctx.font = `800 28px ${FONT}`;
       ctx.fillStyle = 'rgba(255,255,255,0.90)';
-      const maxNW = gearW - textX + gx - 20;
+      const maxNW = gearW - textX + gx - 24;
       let name = g.name || '';
       while (name.length > 1 && ctx.measureText(name).width > maxNW) name = name.slice(0, -1);
       if (name !== g.name) name += '…';
-      ctx.fillText(name, textX, curY + 70);
+      ctx.fillText(name, textX, curY + 88);
 
-      // Rarity label (colored)
-      ctx.font = `700 20px ${FONT}`;
+      ctx.font = `700 24px ${FONT}`;
       ctx.fillStyle = color;
-      ctx.fillText(rarityLabel.toUpperCase(), textX, curY + 108);
+      ctx.fillText(rarityLabel.toUpperCase(), textX, curY + 134);
     });
-    curY += gearH + 36;
+    curY += gearH + 48;
   }
 
   // ── Star exercise ────────────────────────────────────────────────────────────
@@ -329,8 +323,8 @@ function renderCard(data, locale) {
     const starTxt = locale === 'es'
       ? `🏅  ${exerciseLabel(data.starExercise, locale).toUpperCase()}  ·  ${fmtNumber(data.starCount)} REPS`
       : `🏅  ${exerciseLabel(data.starExercise, locale).toUpperCase()}  ·  ${fmtNumber(data.starCount)} REPS`;
-    pill(ctx, starTxt, CX, curY, 'rgba(245,158,11,0.11)', 'rgba(245,158,11,0.32)', AMBER, 26, 72, 62);
-    curY += 80;
+    pill(ctx, starTxt, CX, curY, 'rgba(245,158,11,0.11)', 'rgba(245,158,11,0.32)', AMBER, 30, 80, 74);
+    curY += 96;
   }
 
   // ── Active buff ──────────────────────────────────────────────────────────────
@@ -338,14 +332,13 @@ function renderCard(data, locale) {
     const buffTxt = locale === 'es'
       ? `⚗️  BUFF ACTIVO  ·  ×${data.activeBuff.multiplier} DAÑO`
       : `⚗️  ACTIVE BUFF  ·  ×${data.activeBuff.multiplier} DAMAGE`;
-    pill(ctx, buffTxt, CX, curY, 'rgba(139,92,246,0.13)', 'rgba(139,92,246,0.38)', '#a78bfa', 26, 72, 62);
-    curY += 80;
+    pill(ctx, buffTxt, CX, curY, 'rgba(139,92,246,0.13)', 'rgba(139,92,246,0.38)', '#a78bfa', 30, 80, 74);
+    curY += 96;
   }
 
   // ── Footer ───────────────────────────────────────────────────────────────────
-  // Position footer at a fixed distance from bottom so it always looks anchored
   const footerY = H - 110;
-  ctx.font = `700 24px ${FONT}`;
+  ctx.font = `700 26px ${FONT}`;
   ctx.fillStyle = 'rgba(255,255,255,0.35)';
   ctx.textAlign = 'center';
   ctx.fillText('reppy-weld.vercel.app  ·  ENTRENA · SUBE DE NIVEL', CX, footerY);
