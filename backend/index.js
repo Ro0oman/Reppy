@@ -42,6 +42,7 @@ import { authenticate } from './middleware.js';
 import { initSocket } from './socketManager.js';
 import cron from 'node-cron';
 import { runStreakReminders } from './utils/streakReminders.js';
+import { runReferralReminders } from './utils/referralReminders.js';
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -58,6 +59,18 @@ cron.schedule('0 18 * * *', () => {
     .then(count => console.log(`[CRON] Recordatorios enviados: ${count}`))
     .catch(err => console.error('[CRON] Error en recordatorios:', err));
 });
+// Referral reminder every 15 days at 12:00 (days 1 and 16 of each month)
+cron.schedule('0 12 1,16 * *', () => {
+  console.log('[CRON] Iniciando recordatorios de referral...');
+  runReferralReminders()
+    .then(count => console.log(`[CRON] Referral reminders enviados: ${count}`))
+    .catch(err => console.error('[CRON] Error en referral reminders:', err));
+});
+
+// Send referral reminder immediately on startup
+runReferralReminders()
+  .then(count => console.log(`[STARTUP] Referral reminders enviados: ${count}`))
+  .catch(err => console.error('[STARTUP] Error enviando referral reminders:', err));
 // -----------------------
 
 app.use(cors());
