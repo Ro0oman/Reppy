@@ -605,11 +605,11 @@
               </h3>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div v-for="(val, stat) in selectedItem.stats" :key="stat"
+                <div v-for="(val, stat) in selectedItem.stats" v-show="stat !== 'duration'" :key="stat"
                   class="p-4 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between">
                   <div class="flex items-center gap-3">
                     <div class="p-2 bg-white/5 rounded-lg border border-white/10">
-                      <component :is="stat === 'duration' ? Clock : (stat === 'damage_multiplier' || stat === 'multiplier' ? Zap : Activity)"
+                      <component :is="stat === 'damage_multiplier' || stat === 'multiplier' ? Zap : Activity"
                         class="w-4 h-4 text-muted" />
                     </div>
                     <span class="text-[10px] font-black uppercase tracking-widest text-muted">{{ statLabels[stat] || stat }}</span>
@@ -619,6 +619,20 @@
                     <span class="text-xl font-black tabular-nums"
                       :class="val >= 0 ? 'text-neon-lime' : 'text-red-500'">{{ formatStatValue(stat, val) }}</span>
                   </div>
+                </div>
+
+                <!-- Duración siempre visible para consumibles (default 1h si no está en stats) -->
+                <div v-if="selectedItem.type === 'consumable'"
+                  class="p-4 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-white/5 rounded-lg border border-white/10">
+                      <Clock class="w-4 h-4 text-muted" />
+                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-widest text-muted">Duración</span>
+                  </div>
+                  <span class="text-xl font-black tabular-nums text-neon-lime">
+                    {{ formatStatValue('duration', selectedItem.stats?.duration ?? 3600) }}
+                  </span>
                 </div>
               </div>
             </div>
