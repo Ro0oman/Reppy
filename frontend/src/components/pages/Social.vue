@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-5xl mx-auto w-full px-4 pt-6 pb-24 space-y-8 relative">
+  <div class="max-w-5xl mx-auto w-full px-4 pb-24 space-y-2 relative">
     <!-- Animated Environment Blobs -->
     <div class="bg-glow">
       <div class="blob" style="top: 10%; left: -5%;"></div>

@@ -44,12 +44,12 @@
         <div v-if="isOwnProfile" class="flex items-center gap-1.5 shrink-0 pt-0.5">
           <button @click="showSettingsModal = true"
                   :title="i18nStore.t('stats_settings')"
-                  class="p-2 rounded-xl bg-foreground/[0.04] border border-border text-muted hover:text-foreground hover:bg-foreground/[0.08] transition-all active:scale-95">
+                  class=" p-2 rounded-xl bg-foreground/[0.04] border border-border text-muted hover:text-foreground hover:bg-foreground/[0.08] transition-all active:scale-95">
             <Settings class="w-4 h-4" />
           </button>
           <button @click="handleLogout"
                   :title="i18nStore.t('sign_out')"
-                  class="p-2 rounded-xl bg-foreground/[0.04] border border-border text-muted hover:text-red-400 hover:bg-red-500/10 transition-all active:scale-95">
+                  class="bg-red-600 p-2 rounded-xl bg-foreground/[0.04] border border-border text-muted text-white hover:bg-red-500/10 transition-all active:scale-95">
             <LogOut class="w-4 h-4" />
           </button>
         </div>
