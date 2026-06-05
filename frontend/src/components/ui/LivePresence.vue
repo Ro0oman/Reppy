@@ -144,7 +144,15 @@ const displayOperatives = computed(() => {
       level: authStore.user.current_level || 1
     });
   }
-  return ops;
+  // Number anonymous users if there are multiple: Atleta Anónimo 1, 2…
+  let anonCount = 0;
+  return ops.map(op => {
+    if (String(op.id).startsWith('anon-') || op.name === 'Atleta Anónimo') {
+      anonCount++;
+      return { ...op, name: anonCount > 1 ? `Atleta Anónimo ${anonCount}` : 'Atleta Anónimo', anonymous: true };
+    }
+    return op;
+  });
 });
 
 const goToProfile = (userId) => {
