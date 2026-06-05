@@ -266,4 +266,26 @@ router.get('/analytics', authenticate, isAdmin, async (req, res) => {
   }
 });
 
+// Give gems/coins to a user by ID
+router.post('/give-currency', authenticate, isAdmin, async (req, res) => {
+  const { user_id, gems, coins } = req.body;
+  if (!user_id) return res.status(400).json({ message: 'user_id required' });
+  try {
+    const gemAmount  = parseInt(gems  || 0, 10);
+    const coinAmount = parseInt(coins || 0, 10);
+    const result = await query(
+      `UPDATE users
+         SET reppy_gems  = reppy_gems  + $1,
+             reppy_coins = reppy_coins + $2
+       WHERE id = $3
+       RETURNING id, reppy_gems, reppy_coins`,
+      [gemAmount, coinAmount, user_id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ message: 'User not found' });
+    res.json({ ok: true, ...result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 export default router;
