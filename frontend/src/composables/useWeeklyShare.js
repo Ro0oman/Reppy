@@ -76,6 +76,24 @@ function pill(ctx, txt, cx, y, bg, border, textColor, fontSize = 26, hPad = 64, 
   return pillH;
 }
 
+function measureContentHeight(data) {
+  // Estimate total height of all content blocks (no canvas needed)
+  let h = 0;
+  h += 70;   // logo
+  h += 30;   // gap
+  h += 55;   // week pill
+  h += 30;   // gap
+  if (data.ranking?.globalRank) { h += 110; h += 44; } // ranking badge + gap
+  h += 310;  // main stat label + number
+  h += 50;   // separator + gap
+  h += 185;  // stat cards
+  h += 50;   // gap
+  if (data.gear?.weapon || data.gear?.armor) { h += 158; h += 40; } // gear + gap
+  if (data.starExercise) { h += 70; h += 12; }
+  if (data.activeBuff)   { h += 70; h += 12; }
+  return h;
+}
+
 function renderCard(data, locale) {
   const canvas = document.createElement('canvas');
   canvas.width = W;
@@ -104,8 +122,11 @@ function renderCard(data, locale) {
     ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
   }
 
-  // ── Logo ────────────────────────────────────────────────────────────────────
-  let curY = 130;
+  // ── Vertical centering ───────────────────────────────────────────────────────
+  const FOOTER_RESERVE = 130; // keep footer anchored at bottom
+  const contentH = measureContentHeight(data);
+  const availableH = H - FOOTER_RESERVE;
+  let curY = Math.max(100, Math.round((availableH - contentH) / 2));
   const ls = 64;
   ctx.font = `900 50px ${FONT}`;
   const wordW = ctx.measureText('REPPY').width;
