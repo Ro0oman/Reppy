@@ -327,7 +327,7 @@
                   ]">
                      <!-- Item Preview -->
                      <div class="relative h-20 sm:h-28 flex items-center justify-center p-3 sm:p-4 bg-black/40 rounded-t-2xl cursor-pointer overflow-hidden"
-                          :style="isDraggableItem(item) ? { touchAction: 'none' } : {}"
+                          :style="dragState.active && dragState.item?.id === item.id ? { touchAction: 'none' } : {}"
                           :class="{ 'opacity-30': dragState.item && dragState.item.id === item.id && dragState.active }"
                           @pointerdown="onItemPointerDown($event, item)"
                           @click="!justDragged && openItemDetails(item)">
@@ -1206,25 +1206,55 @@ const dragState = ref({ active: false, item: null, x: 0, y: 0, hoverType: null }
 const justDragged = ref(false);
 let dragStartX = 0;
 let dragStartY = 0;
+let longPressTimer = null;
+let dragCancelled = false;
+
+const LONG_PRESS_MS = 250;
+const SCROLL_CANCEL_PX = 10; // vertical movement before long press → cancel drag, allow scroll
+
+const cancelDragSetup = () => {
+  clearTimeout(longPressTimer);
+  longPressTimer = null;
+  window.removeEventListener('pointermove', onDragMove);
+  window.removeEventListener('pointerup', onDragEnd);
+  dragState.value = { active: false, item: null, x: 0, y: 0, hoverType: null };
+};
 
 const onItemPointerDown = (e, item) => {
   if (!isDraggableItem(item)) return;
   dragStartX = e.clientX;
   dragStartY = e.clientY;
+  dragCancelled = false;
   dragState.value = { active: false, item, x: e.clientX, y: e.clientY, hoverType: null };
   window.addEventListener('pointermove', onDragMove);
   window.addEventListener('pointerup', onDragEnd);
+
+  // Activate drag only after long press so quick scrolls pass through
+  longPressTimer = setTimeout(() => {
+    longPressTimer = null;
+    if (!dragCancelled) {
+      dragState.value.active = true;
+      document.body.style.userSelect = 'none';
+    }
+  }, LONG_PRESS_MS);
 };
 
 const onDragMove = (e) => {
   const st = dragState.value;
   if (!st.item) return;
-  if (!st.active) {
-    const dist = Math.hypot(e.clientX - dragStartX, e.clientY - dragStartY);
-    if (dist < 8) return;
-    st.active = true;
-    document.body.style.userSelect = 'none';
+
+  const dx = e.clientX - dragStartX;
+  const dy = e.clientY - dragStartY;
+
+  // If long press hasn't fired yet and vertical movement dominates → user is scrolling
+  if (longPressTimer && Math.abs(dy) > SCROLL_CANCEL_PX && Math.abs(dy) > Math.abs(dx)) {
+    dragCancelled = true;
+    cancelDragSetup();
+    return;
   }
+
+  if (!st.active) return;
+
   st.x = e.clientX;
   st.y = e.clientY;
   const el = document.elementFromPoint(e.clientX, e.clientY);
@@ -1232,13 +1262,14 @@ const onDragMove = (e) => {
 };
 
 const onDragEnd = async () => {
+  clearTimeout(longPressTimer);
+  longPressTimer = null;
   window.removeEventListener('pointermove', onDragMove);
   window.removeEventListener('pointerup', onDragEnd);
   document.body.style.userSelect = '';
   const { active, item, hoverType } = dragState.value;
   dragState.value = { active: false, item: null, x: 0, y: 0, hoverType: null };
   if (!item || !active) return;
-  // Suppress the click that fires right after a drag gesture
   justDragged.value = true;
   setTimeout(() => { justDragged.value = false; }, 50);
   if (hoverType === item.type && !isEquipped(item)) {
