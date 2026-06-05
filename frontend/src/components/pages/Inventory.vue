@@ -329,7 +329,9 @@
                      <div class="relative h-20 sm:h-28 flex items-center justify-center p-3 sm:p-4 bg-black/40 rounded-t-2xl cursor-pointer overflow-hidden"
                           :style="dragState.active && dragState.item?.id === item.id ? { touchAction: 'none' } : {}"
                           :class="{ 'opacity-30': dragState.item && dragState.item.id === item.id && dragState.active }"
+                          class="select-none"
                           @pointerdown="onItemPointerDown($event, item)"
+                          @contextmenu.prevent
                           @click="!justDragged && openItemDetails(item)">
                         <div class="absolute inset-x-0 h-px bg-primary-500/20 top-0 group-hover:top-full transition-all duration-[1.5s] ease-linear pointer-events-none z-10"></div>
                         
