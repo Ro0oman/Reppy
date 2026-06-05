@@ -68,6 +68,47 @@
               </div>
             </div>
 
+            <!-- Global ranking -->
+            <div
+              v-if="weeklyData.ranking?.globalRank"
+              class="rounded-2xl border px-5 py-3 flex items-center gap-4"
+              :class="weeklyData.ranking.globalRank <= 3
+                ? 'border-amber-500/40 bg-amber-500/[0.10]'
+                : weeklyData.ranking.globalRank <= 10
+                  ? 'border-primary-500/30 bg-primary-500/[0.08]'
+                  : 'border-white/[0.09] bg-white/[0.03]'"
+            >
+              <div class="shrink-0 text-center w-14">
+                <p
+                  class="text-3xl font-black tabular-nums leading-none"
+                  :class="weeklyData.ranking.globalRank === 1
+                    ? 'text-amber-400'
+                    : weeklyData.ranking.globalRank <= 3
+                      ? 'text-amber-300'
+                      : weeklyData.ranking.globalRank <= 10
+                        ? 'text-primary-400'
+                        : 'text-white/80'"
+                >
+                  #{{ weeklyData.ranking.globalRank }}
+                </p>
+                <p class="text-[9px] font-bold tracking-wider uppercase mt-0.5 text-white/40">
+                  {{ i18n.locale === 'es' ? 'mundial' : 'global' }}
+                </p>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-[10px] font-bold tracking-widest uppercase"
+                  :class="weeklyData.ranking.globalRank <= 3 ? 'text-amber-400/80' : 'text-primary-400/80'">
+                  {{ rankingLabel }}
+                </p>
+                <p class="text-xs text-white/50 mt-0.5" v-if="weeklyData.ranking.totalPlayers">
+                  {{ i18n.locale === 'es'
+                    ? `de ${weeklyData.ranking.totalPlayers.toLocaleString()} atletas`
+                    : `of ${weeklyData.ranking.totalPlayers.toLocaleString()} athletes` }}
+                </p>
+              </div>
+              <span class="text-2xl shrink-0">{{ rankingEmoji }}</span>
+            </div>
+
             <!-- Gear row -->
             <div v-if="weeklyData.gear?.weapon || weeklyData.gear?.armor" class="grid grid-cols-2 gap-2">
               <div
@@ -251,6 +292,28 @@ const statCards = computed(() => {
       border: 'rgba(16,185,129,0.25)',
     },
   ];
+});
+
+const rankingEmoji = computed(() => {
+  const r = weeklyData.value?.ranking?.globalRank;
+  if (!r) return '';
+  if (r === 1) return '👑';
+  if (r <= 3) return '🏆';
+  if (r <= 10) return '🥇';
+  if (r <= 50) return '⚔️';
+  return '🎯';
+});
+
+const rankingLabel = computed(() => {
+  const r = weeklyData.value?.ranking?.globalRank;
+  if (!r) return '';
+  const es = i18n.locale === 'es';
+  if (r === 1) return es ? '¡NÚMERO 1 DEL MUNDO!' : 'NUMBER 1 IN THE WORLD!';
+  if (r <= 3) return es ? 'TOP 3 MUNDIAL' : 'TOP 3 WORLDWIDE';
+  if (r <= 10) return es ? 'TOP 10 MUNDIAL' : 'TOP 10 WORLDWIDE';
+  if (r <= 50) return es ? 'TOP 50 MUNDIAL' : 'TOP 50 WORLDWIDE';
+  if (r <= 100) return es ? 'TOP 100 MUNDIAL' : 'TOP 100 WORLDWIDE';
+  return es ? 'RANKING GLOBAL' : 'GLOBAL RANKING';
 });
 
 const gearItems = computed(() => {

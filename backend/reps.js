@@ -468,7 +468,7 @@ router.get('/weekly-summary', authenticate, async (req, res) => {
     const weekStart = lastMonday.toISOString().slice(0, 10);
     const weekEnd = lastSunday.toISOString().slice(0, 10);
 
-    const [repsRes, userRes, streakStatus] = await Promise.all([
+    const [repsRes, userRes, streakStatus, rankingRes] = await Promise.all([
       query(
         `SELECT
            SUM(count)::int                                           AS total_reps,
@@ -486,6 +486,8 @@ router.get('/weekly-summary', authenticate, async (req, res) => {
            u.level_chests_claimed,
            u.damage_multiplier,
            u.damage_multiplier_expiry,
+           u.total_reps         AS all_time_reps,
+           u.is_private,
            iw.name  AS weapon_name,  iw.rarity AS weapon_rarity,
            ia.name  AS armor_name,   ia.rarity AS armor_rarity
          FROM users u
@@ -495,6 +497,15 @@ router.get('/weekly-summary', authenticate, async (req, res) => {
         [userId]
       ),
       getStreakStatus(userId),
+      // Global rank by all-time total_reps (public users only)
+      query(
+        `SELECT (COUNT(*) + 1)::int AS global_rank,
+                (SELECT COUNT(*)::int FROM users WHERE is_private = false AND total_reps > 0) AS total_players
+         FROM users
+         WHERE is_private = false
+           AND total_reps > (SELECT total_reps FROM users WHERE id = $1)`,
+        [userId]
+      ),
     ]);
 
     const rows = repsRes.rows;
@@ -525,6 +536,10 @@ router.get('/weekly-summary', authenticate, async (req, res) => {
       (user.level_chests || 0) - (user.level_chests_claimed || 0)
     );
 
+    const rankRow = rankingRes.rows[0] || {};
+    const globalRank = rankRow.global_rank || null;
+    const totalPlayers = rankRow.total_players || null;
+
     res.json({
       weekStart,
       weekEnd,
@@ -540,6 +555,7 @@ router.get('/weekly-summary', authenticate, async (req, res) => {
       },
       activeBuff,
       unclaimedChests,
+      ranking: user.is_private ? null : { globalRank, totalPlayers },
     });
   } catch (error) {
     console.error('Error fetching weekly summary:', error);

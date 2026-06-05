@@ -120,6 +120,54 @@ function renderCard(data, locale) {
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillText(pillTxt, CX, pillY + 2);
 
+  // ── Global ranking badge ─────────────────────────────────────────────────────
+  if (data.ranking?.globalRank) {
+    const r = data.ranking.globalRank;
+    const rankY = 360;
+    const rankColor = r === 1 ? AMBER : r <= 3 ? '#fbbf24' : r <= 10 ? PRIMARY : 'rgba(255,255,255,0.7)';
+    const rankEmoji = r === 1 ? '👑' : r <= 3 ? '🏆' : r <= 10 ? '🥇' : '⚔️';
+    const rankLabel = r === 1
+      ? (locale === 'es' ? '¡Nº 1 DEL MUNDO!' : 'N° 1 IN THE WORLD!')
+      : r <= 3 ? (locale === 'es' ? 'TOP 3 MUNDIAL' : 'TOP 3 WORLDWIDE')
+      : r <= 10 ? (locale === 'es' ? 'TOP 10 MUNDIAL' : 'TOP 10 WORLDWIDE')
+      : r <= 50 ? (locale === 'es' ? 'TOP 50 MUNDIAL' : 'TOP 50 WORLDWIDE')
+      : (locale === 'es' ? `RANKING GLOBAL #${r}` : `GLOBAL RANK #${r}`);
+
+    const subLabel = data.ranking.totalPlayers
+      ? (locale === 'es'
+          ? `#${r} de ${data.ranking.totalPlayers.toLocaleString()} atletas`
+          : `#${r} of ${data.ranking.totalPlayers.toLocaleString()} athletes`)
+      : `#${r}`;
+
+    ctx.font = `800 30px ${FONT}`;
+    const mainTxt = `${rankEmoji}  ${rankLabel}`;
+    const badgeW = Math.min(ctx.measureText(mainTxt).width + 80, W - 80);
+    const badgeH = 100;
+    const badgeX = CX - badgeW / 2;
+
+    // Badge background
+    roundRect(ctx, badgeX, rankY, badgeW, badgeH, 30);
+    const rankGrad = ctx.createLinearGradient(badgeX, rankY, badgeX + badgeW, rankY);
+    rankGrad.addColorStop(0, r <= 3 ? 'rgba(245,158,11,0.18)' : 'rgba(37,99,235,0.15)');
+    rankGrad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = rankGrad; ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = r <= 3 ? 'rgba(245,158,11,0.5)' : 'rgba(37,99,235,0.4)';
+    ctx.stroke();
+
+    // Main rank label
+    setShadow(ctx, 16, r <= 3 ? 'rgba(245,158,11,0.4)' : 'rgba(37,99,235,0.4)');
+    ctx.fillStyle = rankColor;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(mainTxt, CX, rankY + 38);
+    setShadow(ctx, 0);
+
+    // Sub label
+    ctx.font = `600 24px ${FONT}`;
+    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    ctx.fillText(subLabel, CX, rankY + 76);
+  }
+
   // ── Main stat: total reps ────────────────────────────────────────────────────
   const mainY = 620;
   const mainLabel = locale === 'es' ? 'REPETICIONES TOTALES' : 'TOTAL REPS';
@@ -362,12 +410,18 @@ export function useWeeklyShare() {
       const canvas = renderCard(weeklyData.value, i18n.locale);
       const blob = await canvasToBlob(canvas);
       const file = new File([blob], 'reppy-mi-semana.png', { type: 'image/png' });
-      const gearPart = weeklyData.value.gear?.weapon?.name
-        ? (i18n.locale === 'es' ? ` · 🗡️ ${weeklyData.value.gear.weapon.name}` : ` · 🗡️ ${weeklyData.value.gear.weapon.name}`)
+      const gearPart = weeklyData.value.gear?.weapon?.name ? ` · 🗡️ ${weeklyData.value.gear.weapon.name}` : '';
+      const rank = weeklyData.value.ranking?.globalRank;
+      const rankPart = rank
+        ? (rank === 1
+            ? (i18n.locale === 'es' ? ' · 👑 Nº 1 del mundo' : ' · 👑 #1 in the world')
+            : rank <= 10
+              ? (i18n.locale === 'es' ? ` · 🏆 Top ${rank} mundial` : ` · 🏆 Top ${rank} worldwide`)
+              : ` · #${rank}`)
         : '';
       const caption = i18n.locale === 'es'
-        ? `💪 Mi semana en Reppy: ${fmtNumber(weeklyData.value.totalReps)} reps · Racha ${weeklyData.value.streak} días · Nv. ${weeklyData.value.level}${gearPart} 🔥`
-        : `💪 My week on Reppy: ${fmtNumber(weeklyData.value.totalReps)} reps · ${weeklyData.value.streak}-day streak · Lv. ${weeklyData.value.level}${gearPart} 🔥`;
+        ? `💪 Mi semana en Reppy: ${fmtNumber(weeklyData.value.totalReps)} reps · Racha ${weeklyData.value.streak} días · Nv. ${weeklyData.value.level}${rankPart}${gearPart} 🔥`
+        : `💪 My week on Reppy: ${fmtNumber(weeklyData.value.totalReps)} reps · ${weeklyData.value.streak}-day streak · Lv. ${weeklyData.value.level}${rankPart}${gearPart} 🔥`;
 
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({ files: [file], title: 'Reppy', text: caption });
