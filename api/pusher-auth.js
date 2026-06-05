@@ -26,7 +26,10 @@ export default async function handler(req, res) {
 
     const socketId = body.socket_id;
     const channel = body.channel_name;
-    const userId = body.user_id || 'anon-' + Math.random().toString(36).substr(2, 9);
+    const rawId = body.user_id;
+    const userId = (rawId && rawId !== 'undefined' && rawId !== 'null')
+      ? rawId
+      : 'anon-' + Math.random().toString(36).substr(2, 9);
     const userName = body.user_name || 'Anonymous';
     const avatarUrl = body.avatar_url || '';
     const userLevel = body.level || 1;
