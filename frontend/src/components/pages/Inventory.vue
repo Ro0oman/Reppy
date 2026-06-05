@@ -326,10 +326,9 @@
                     getCardClass(item)
                   ]">
                      <!-- Item Preview -->
-                     <div class="relative h-20 sm:h-28 flex items-center justify-center p-3 sm:p-4 bg-black/40 rounded-t-2xl cursor-pointer overflow-hidden"
+                     <div class="relative h-20 sm:h-28 flex items-center justify-center p-3 sm:p-4 bg-black/40 rounded-t-2xl cursor-pointer overflow-hidden select-none"
                           :style="dragState.active && dragState.item?.id === item.id ? { touchAction: 'none' } : {}"
                           :class="{ 'opacity-30': dragState.item && dragState.item.id === item.id && dragState.active }"
-                          class="select-none"
                           @pointerdown="onItemPointerDown($event, item)"
                           @contextmenu.prevent
                           @click="!justDragged && openItemDetails(item)">

@@ -609,18 +609,15 @@
                   class="p-4 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between">
                   <div class="flex items-center gap-3">
                     <div class="p-2 bg-white/5 rounded-lg border border-white/10">
-                      <component :is="stat === 'duration' ? Clock : (stat === 'multiplier' ? Zap : Activity)"
+                      <component :is="stat === 'duration' ? Clock : (stat === 'damage_multiplier' || stat === 'multiplier' ? Zap : Activity)"
                         class="w-4 h-4 text-muted" />
                     </div>
-                    <span class="text-[10px] font-black uppercase tracking-widest text-muted">{{ statLabels[stat] ||
-                      stat
-                      }}</span>
+                    <span class="text-[10px] font-black uppercase tracking-widest text-muted">{{ statLabels[stat] || stat }}</span>
                   </div>
                   <div class="flex items-center gap-2">
                     <span v-if="isUpgrade(selectedItem, stat)" class="text-xs font-black text-neon-lime">↑</span>
                     <span class="text-xl font-black tabular-nums"
-                      :class="val >= 0 ? 'text-neon-lime' : 'text-red-500'">{{
-                        val > 0 ? '+' : '' }}{{ val }}</span>
+                      :class="val >= 0 ? 'text-neon-lime' : 'text-red-500'">{{ formatStatValue(stat, val) }}</span>
                   </div>
                 </div>
               </div>
@@ -733,8 +730,23 @@ const statLabels = {
   cha: 'Carisma',
   duration: 'Duración',
   multiplier: 'Multiplicador',
+  damage_multiplier: 'Mult. Daño',
+  dex_bonus: 'Bonus DEX',
   crit_chance: 'Prob. Crítica',
   crit_damage: 'Daño Crítico'
+};
+
+const formatStatValue = (stat, val) => {
+  if (stat === 'duration') {
+    const secs = Number(val);
+    const h = Math.floor(secs / 3600);
+    const m = Math.floor((secs % 3600) / 60);
+    if (h > 0 && m > 0) return `${h}h ${m}m`;
+    if (h > 0) return `${h}h`;
+    return `${m}m`;
+  }
+  if (stat === 'damage_multiplier' || stat === 'multiplier') return `x${val}`;
+  return (val > 0 ? '+' : '') + val;
 };
 
 const selectedCategory = ref('all');

@@ -61,7 +61,7 @@ const COSMIC_ITEMS = [
     price: COSMIC_PRICE_COINS,
     price_gems: COSMIC_PRICE_GEMS,
     svg_key: 'potion_omega',
-    stats: JSON.stringify({ damage_multiplier: 3.0, duration: 7200 }), // 2h
+    stats: JSON.stringify({ damage_multiplier: 8.0, duration: 7200 }), // 2h, x8 damage
     is_seasonal: false,
   },
 ];
