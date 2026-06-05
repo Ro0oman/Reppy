@@ -264,8 +264,13 @@ function renderAnimatedCard({ c, format, bgGifUrl, av1, av2 }) {
     overlay.width = W; overlay.height = H;
     drawOverlay(overlay.getContext('2d'), c, L, av1, av2);
 
+    // The browser only advances GIF frames for <img> elements that are live in the DOM.
+    // We attach it invisibly so animation runs, then remove it when recording finishes.
     const gifImg = new Image();
+    gifImg.style.cssText = 'position:fixed;opacity:0;pointer-events:none;width:1px;height:1px;top:-9999px';
     gifImg.onload = () => {
+      document.body.appendChild(gifImg);
+
       const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
         ? 'video/webm;codecs=vp9'
         : 'video/webm';
@@ -275,12 +280,16 @@ function renderAnimatedCard({ c, format, bgGifUrl, av1, av2 }) {
         stream = canvas.captureStream(30);
         recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 4_000_000 });
       } catch (e) {
+        gifImg.remove();
         return reject(e);
       }
 
       const chunks = [];
       recorder.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
-      recorder.onstop = () => resolve(new Blob(chunks, { type: mimeType.split(';')[0] }));
+      recorder.onstop = () => {
+        gifImg.remove();
+        resolve(new Blob(chunks, { type: mimeType.split(';')[0] }));
+      };
 
       const DURATION = 3500; // ms — long enough for most GIF loops
       const start = performance.now();
@@ -288,7 +297,7 @@ function renderAnimatedCard({ c, format, bgGifUrl, av1, av2 }) {
       function frame() {
         ctx.fillStyle = '#0a0a0a';
         ctx.fillRect(0, 0, W, H);
-        if (gifImg.complete && gifImg.naturalWidth) {
+        if (gifImg.naturalWidth) {
           drawCover(ctx, gifImg, 0, 0, W, H);
         }
         ctx.drawImage(overlay, 0, 0);
