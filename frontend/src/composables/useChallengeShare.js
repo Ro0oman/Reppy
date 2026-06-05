@@ -1,6 +1,7 @@
 import { ref } from 'vue';
 import { useNotificationStore } from '@/stores/notification';
 import { useI18nStore } from '@/stores/i18n';
+import { parseGIF, decompressFrames } from 'gifuct-js';
 
 // Client-side share-image/video generator for finished challenges (Issue #201).
 // Pure Canvas API + MediaRecorder — no extra dependencies.
@@ -248,74 +249,88 @@ function renderStaticCard({ c, format, bgImg, av1, av2 }) {
   return canvas;
 }
 
-// Animated WebM render: draws GIF live onto canvas and captures via MediaRecorder.
-// The browser advances GIF frames naturally when we drawImage the <img> element each tick.
-function renderAnimatedCard({ c, format, bgGifUrl, av1, av2 }) {
-  return new Promise((resolve, reject) => {
-    const L = FORMATS[format];
-    const W = L.w, H = L.h;
+// Fetch and decode all GIF frames using gifuct-js.
+async function decodeGifFrames(url) {
+  const resp = await fetch(url);
+  const buf = await resp.arrayBuffer();
+  const gif = parseGIF(buf);
+  const frames = decompressFrames(gif, true); // true = patch transparent pixels
+  return frames;
+}
 
-    const canvas = document.createElement('canvas');
-    canvas.width = W; canvas.height = H;
-    const ctx = canvas.getContext('2d');
+// Animated WebM render: decodes GIF frames with gifuct-js and draws them
+// frame-by-frame at the correct delay onto the canvas, captured by MediaRecorder.
+async function renderAnimatedCard({ c, format, bgGifUrl, av1, av2 }) {
+  const L = FORMATS[format];
+  const W = L.w, H = L.h;
 
-    // Pre-render static overlay to offscreen canvas so we don't re-compute each frame.
-    const overlay = document.createElement('canvas');
-    overlay.width = W; overlay.height = H;
-    drawOverlay(overlay.getContext('2d'), c, L, av1, av2);
+  const frames = await decodeGifFrames(bgGifUrl);
+  if (!frames.length) throw new Error('no-gif-frames');
 
-    // The browser only advances GIF frames for <img> elements that are live in the DOM.
-    // We attach it invisibly so animation runs, then remove it when recording finishes.
-    const gifImg = new Image();
-    gifImg.style.cssText = 'position:fixed;opacity:0;pointer-events:none;width:1px;height:1px;top:-9999px';
-    gifImg.onload = () => {
-      document.body.appendChild(gifImg);
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
 
-      const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
-        ? 'video/webm;codecs=vp9'
-        : 'video/webm';
+  // Pre-render static overlay once.
+  const overlay = document.createElement('canvas');
+  overlay.width = W; overlay.height = H;
+  drawOverlay(overlay.getContext('2d'), c, L, av1, av2);
 
-      let stream, recorder;
-      try {
-        stream = canvas.captureStream(30);
-        recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 4_000_000 });
-      } catch (e) {
-        gifImg.remove();
-        return reject(e);
+  // Offscreen canvas for compositing each GIF frame (gifuct gives us raw pixel data).
+  const gifCanvas = document.createElement('canvas');
+  const gifCtx = gifCanvas.getContext('2d');
+
+  const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+    ? 'video/webm;codecs=vp9'
+    : 'video/webm';
+
+  const stream = canvas.captureStream(30);
+  const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 4_000_000 });
+  const chunks = [];
+  recorder.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+
+  const videoBlob = await new Promise((resolve, reject) => {
+    recorder.onstop = () => resolve(new Blob(chunks, { type: mimeType.split(';')[0] }));
+    recorder.onerror = reject;
+
+    const LOOPS = 2; // record 2 full GIF loops
+    const totalFrames = frames.length * LOOPS;
+    let frameIdx = 0;
+
+    recorder.start();
+
+    function drawNextFrame() {
+      if (frameIdx >= totalFrames) {
+        recorder.stop();
+        stream.getTracks().forEach((t) => t.stop());
+        return;
       }
 
-      const chunks = [];
-      recorder.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
-      recorder.onstop = () => {
-        gifImg.remove();
-        resolve(new Blob(chunks, { type: mimeType.split(';')[0] }));
-      };
+      const f = frames[frameIdx % frames.length];
+      frameIdx++;
 
-      const DURATION = 3500; // ms — long enough for most GIF loops
-      const start = performance.now();
+      // Resize gifCanvas to match this frame's dimensions.
+      gifCanvas.width = f.dims.width;
+      gifCanvas.height = f.dims.height;
+      const imgData = gifCtx.createImageData(f.dims.width, f.dims.height);
+      imgData.data.set(f.patch);
+      gifCtx.putImageData(imgData, 0, 0);
 
-      function frame() {
-        ctx.fillStyle = '#0a0a0a';
-        ctx.fillRect(0, 0, W, H);
-        if (gifImg.naturalWidth) {
-          drawCover(ctx, gifImg, 0, 0, W, H);
-        }
-        ctx.drawImage(overlay, 0, 0);
+      // Draw: dark base → GIF frame scaled to card → overlay.
+      ctx.fillStyle = '#0a0a0a';
+      ctx.fillRect(0, 0, W, H);
+      drawCover(ctx, gifCanvas, 0, 0, W, H);
+      ctx.drawImage(overlay, 0, 0);
 
-        if (performance.now() - start < DURATION) {
-          requestAnimationFrame(frame);
-        } else {
-          recorder.stop();
-          stream.getTracks().forEach((t) => t.stop());
-        }
-      }
+      // Advance after this frame's delay (gifuct gives delay in ms).
+      const delay = Math.max((f.delay || 10) * 10, 20); // centiseconds → ms, min 20ms
+      setTimeout(drawNextFrame, delay);
+    }
 
-      recorder.start();
-      requestAnimationFrame(frame);
-    };
-    gifImg.onerror = () => reject(new Error('gif-load-failed'));
-    gifImg.src = bgGifUrl;
+    drawNextFrame();
   });
+
+  return videoBlob;
 }
 
 function canvasToBlob(canvas) {

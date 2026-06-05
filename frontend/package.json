@@ -16,6 +16,7 @@
     "axios": "^1.13.6",
     "canvas-confetti": "^1.9.4",
     "date-fns": "^4.1.0",
+    "gifuct-js": "^2.1.2",
     "lucide-vue-next": "^1.0.0",
     "marked": "^18.0.0",
     "pinia": "^3.0.4",
