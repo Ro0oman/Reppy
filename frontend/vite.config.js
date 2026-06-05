@@ -49,10 +49,22 @@ export default defineConfig({
   ssgOptions: {
     script: 'async',
     formatting: 'minify',
-    includedRoutes() {
+    async includedRoutes() {
       const blogPosts = JSON.parse(fs.readFileSync('./src/blogPosts.json', 'utf8'));
       const blogSlugs = blogPosts.map(post => post.slug);
-      
+
+      // Fetch top public athletes for SSG prerendering
+      let athleteUsernames = [];
+      try {
+        const res = await fetch(`${process.env.VITE_API_URL || 'http://localhost:5001'}/api/profile/top-public?limit=100`);
+        if (res.ok) {
+          const users = await res.json();
+          athleteUsernames = users.map(u => u.username).filter(Boolean);
+        }
+      } catch (e) {
+        console.warn('[SSG] Could not fetch top athletes — skipping profile prerender:', e.message);
+      }
+
       const routes = [
         '/',
         '/es',
@@ -80,10 +92,16 @@ export default defineConfig({
         '/en/social'
       ];
 
-      // Add dynamic blog routes for each language
+      // Blog routes
       blogSlugs.forEach(slug => {
         routes.push(`/es/blog/${slug}`);
         routes.push(`/en/blog/${slug}`);
+      });
+
+      // Top athlete profile routes
+      athleteUsernames.forEach(username => {
+        routes.push(`/es/atleta/${username}`);
+        routes.push(`/en/athlete/${username}`);
       });
 
       return routes;

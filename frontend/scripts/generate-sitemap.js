@@ -120,9 +120,37 @@ const buildBlogSitemap = () => {
   return xml;
 };
 
+
+// ── Build athletes sitemap ────────────────────────────────────────────────────
+
+const buildAthletesSitemap = async () => {
+  let xml = urlsetOpen;
+
+  try {
+    const apiBase = process.env.VITE_API_URL || 'http://localhost:5001';
+    const res = await fetch(`${apiBase}/api/profile/top-public?limit=100`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const users = await res.json();
+
+    for (const user of users) {
+      if (!user.username) continue;
+      const esHref = `${BASE_URL}/es/atleta/${user.username}`;
+      const enHref = `${BASE_URL}/en/athlete/${user.username}`;
+      xml += urlEntry({ loc: esHref, lastmod, changefreq: 'weekly', priority: '0.6', esHref, enHref });
+      xml += urlEntry({ loc: enHref, lastmod, changefreq: 'weekly', priority: '0.6', esHref, enHref });
+    }
+    console.log(`[SEO] ${users.filter(u => u.username).length} athlete profiles added to sitemap`);
+  } catch (e) {
+    console.warn('[SEO] Could not fetch athletes for sitemap:', e.message);
+  }
+
+  xml += urlsetClose;
+  return xml;
+};
+
 // ── Build sitemap index ───────────────────────────────────────────────────────
 
-const buildSitemapIndex = () => `<?xml version="1.0" encoding="UTF-8"?>
+const buildSitemapIndexWithAthletes = () => `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
     <loc>${BASE_URL}/sitemap-pages.xml</loc>
@@ -132,15 +160,21 @@ const buildSitemapIndex = () => `<?xml version="1.0" encoding="UTF-8"?>
     <loc>${BASE_URL}/sitemap-blog.xml</loc>
     <lastmod>${lastmod}</lastmod>
   </sitemap>
+  <sitemap>
+    <loc>${BASE_URL}/sitemap-athletes.xml</loc>
+    <lastmod>${lastmod}</lastmod>
+  </sitemap>
 </sitemapindex>`;
 
 // ── Write files ───────────────────────────────────────────────────────────────
 
 try {
-  fs.writeFileSync(path.join(publicDir, 'sitemap.xml'),       buildSitemapIndex());
-  fs.writeFileSync(path.join(publicDir, 'sitemap-pages.xml'), buildPagesSitemap());
-  fs.writeFileSync(path.join(publicDir, 'sitemap-blog.xml'),  buildBlogSitemap());
-  console.log('🚀 [SEO] Sitemap index + pages + blog generated in public/');
+  const athletesSitemap = await buildAthletesSitemap();
+  fs.writeFileSync(path.join(publicDir, 'sitemap.xml'),          buildSitemapIndexWithAthletes());
+  fs.writeFileSync(path.join(publicDir, 'sitemap-pages.xml'),    buildPagesSitemap());
+  fs.writeFileSync(path.join(publicDir, 'sitemap-blog.xml'),     buildBlogSitemap());
+  fs.writeFileSync(path.join(publicDir, 'sitemap-athletes.xml'), athletesSitemap);
+  console.log('🚀 [SEO] Sitemap index + pages + blog + athletes generated in public/');
 } catch (err) {
   console.error('❌ [SEO] Failed to generate sitemaps:', err.message);
   process.exit(1);

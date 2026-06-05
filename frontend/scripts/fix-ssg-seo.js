@@ -37,6 +37,11 @@ const localizedSibling = (route, lang) => {
   if (route === '/es' || route === '/en') return `/${lang}`;
   if (lang === 'en' && SLUG_MAP[route]) return SLUG_MAP[route];
   if (lang === 'es' && SLUG_MAP_REVERSE[route]) return SLUG_MAP_REVERSE[route];
+  // Athlete profiles: /es/atleta/:u ↔ /en/athlete/:u
+  const athleteEs = route.match(/^\/es\/atleta\/(.+)$/);
+  if (athleteEs && lang === 'en') return `/en/athlete/${athleteEs[1]}`;
+  const athleteEn = route.match(/^\/en\/athlete\/(.+)$/);
+  if (athleteEn && lang === 'es') return `/es/atleta/${athleteEn[1]}`;
   return route.replace(/^\/(es|en)/, `/${lang}`);
 };
 
@@ -390,6 +395,21 @@ const metaForRoute = (route, lang) => {
       keywords: isEnglish
         ? 'calisthenics app, best calisthenics app, free workout tracker, bodyweight training app, street workout app'
         : 'app calistenia, app dominadas, app flexiones, aplicacion calistenia gratis, street workout app, entrenamiento cuerpo libre app'
+    };
+  }
+
+  // Athlete profiles /es/atleta/:username or /en/athlete/:username
+  const athleteMatch = route.match(/^\/(es|en)\/(atleta|athlete)\/(.+)$/);
+  if (athleteMatch) {
+    const username = athleteMatch[3];
+    return {
+      title: isEnglish ? `${username} — Reppy Athlete Profile` : `${username} — Perfil de Atleta Reppy`,
+      description: isEnglish
+        ? `View ${username}'s public Reppy profile: total reps, streak, level, RPG attributes and training history.`
+        : `Perfil público de ${username} en Reppy: reps totales, racha, nivel, atributos RPG e historial de entrenamiento.`,
+      keywords: isEnglish
+        ? `${username} reppy, calisthenics athlete profile, pull-up tracker profile, fitness rpg profile`
+        : `${username} reppy, perfil atleta calistenia, perfil tracker dominadas, perfil fitness rpg`
     };
   }
 

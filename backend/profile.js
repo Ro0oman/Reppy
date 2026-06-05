@@ -5,6 +5,38 @@ import { optionalAuthenticate } from './middleware.js';
 
 const router = express.Router();
 
+// Top public users for SSG prerendering
+router.get('/top-public', async (req, res) => {
+  try {
+    const limit = Math.min(parseInt(req.query.limit) || 100, 200);
+    const result = await query(
+      `SELECT id, name, username, avatar_url, current_level, total_reps
+       FROM users
+       WHERE is_private = false AND username IS NOT NULL AND total_reps > 0
+       ORDER BY total_reps DESC
+       LIMIT $1`,
+      [limit]
+    );
+    res.json(result.rows);
+  } catch (e) {
+    res.status(500).json({ message: 'Error fetching top users' });
+  }
+});
+
+// Resolve username → user id (frontend then fetches /api/profile/:id)
+router.get('/u/:username', async (req, res) => {
+  try {
+    const result = await query(
+      'SELECT id FROM users WHERE username = $1 AND is_private = false',
+      [req.params.username.toLowerCase()]
+    );
+    if (!result.rows[0]) return res.status(404).json({ message: 'Athlete not found' });
+    res.json({ id: result.rows[0].id });
+  } catch (e) {
+    res.status(500).json({ message: 'Error resolving username' });
+  }
+});
+
 router.get('/:id', optionalAuthenticate, async (req, res) => {
   const rawId = req.params.id;
   const { type = 'pullups' } = req.query;

@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { query } from './db.js';
+import { ensureUsername } from './utils/username.js';
 
 const router = express.Router();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -63,6 +64,9 @@ router.post('/google', async (req, res) => {
       user = userResult.rows[0];
       const { referral_code: incomingRef } = req.body;
       await applyReferral(user.id, incomingRef);
+      ensureUsername(user.id, user.name).catch(() => {});
+    } else {
+      ensureUsername(user.id, user.name).catch(() => {});
     }
 
     const sessionToken = generateToken(user.id, user.is_admin);
@@ -120,6 +124,7 @@ router.post('/signup', async (req, res) => {
 
     const user = result.rows[0];
     await applyReferral(user.id, incomingRef);
+    ensureUsername(user.id, user.name).catch(() => {});
     const token = generateToken(user.id, user.is_admin);
 
     res.json({

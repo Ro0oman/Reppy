@@ -21,6 +21,7 @@ const NotFound = () => import('./components/pages/NotFound.vue')
 const ChallengeLanding = () => import('./components/pages/ChallengeLanding.vue')
 const ComparisonLanding = () => import('./components/pages/ComparisonLanding.vue')
 const RpgPullupCounterLanding = () => import('./components/pages/RpgPullupCounterLanding.vue')
+const PublicProfile = () => import('./components/pages/PublicProfile.vue')
 
 export const routes = [
   // Redirección adaptativa de la raíz basada en detección de idioma
@@ -207,11 +208,19 @@ export const routes = [
           descriptionKey: 'blog_list_subtitle'
         }
       },
-      { 
-        path: 'blog/:slug', 
-        component: () => import('./components/pages/BlogView.vue'), 
+      {
+        path: 'blog/:slug',
+        component: () => import('./components/pages/BlogView.vue'),
         name: 'blog-post',
         meta: { title: 'Blog | Reppy' }
+      },
+      {
+        path: 'atleta/:username',
+        alias: 'athlete/:username',
+        component: PublicProfile,
+        name: 'public-profile',
+        props: true,
+        meta: { title: 'Atleta | Reppy' }
       }
     ]
   },
