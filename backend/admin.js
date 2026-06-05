@@ -292,7 +292,11 @@ router.post('/give-item', authenticate, isAdmin, async (req, res) => {
         await query(
           `INSERT INTO items (name, description, type, rarity, css_value, price, price_gems, svg_key, stats, is_seasonal)
            VALUES ($1,$2,$3,'cosmico',$4,$5,$6,$7,$8,false)
-           ON CONFLICT (name) DO NOTHING`,
+           ON CONFLICT (name) DO UPDATE SET
+             stats = EXCLUDED.stats,
+             price = EXCLUDED.price,
+             price_gems = EXCLUDED.price_gems,
+             description = EXCLUDED.description`,
           [item.name, item.description, item.type, item.css_value, item.price, item.price_gems, item.svg_key || null, item.stats]
         );
       }
