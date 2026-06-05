@@ -266,6 +266,24 @@ router.get('/analytics', authenticate, isAdmin, async (req, res) => {
   }
 });
 
+// Give an item to a user by item name
+router.post('/give-item', authenticate, isAdmin, async (req, res) => {
+  const { user_id, item_name } = req.body;
+  if (!user_id || !item_name) return res.status(400).json({ message: 'user_id and item_name required' });
+  try {
+    const itemRes = await query('SELECT id, name, type FROM items WHERE LOWER(name) = LOWER($1)', [item_name]);
+    if (itemRes.rows.length === 0) return res.status(404).json({ message: `Item "${item_name}" not found` });
+    const item = itemRes.rows[0];
+    await query(
+      `INSERT INTO user_items (user_id, item_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
+      [user_id, item.id]
+    );
+    res.json({ ok: true, item });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // Give gems/coins to a user by ID
 router.post('/give-currency', authenticate, isAdmin, async (req, res) => {
   const { user_id, gems, coins } = req.body;
