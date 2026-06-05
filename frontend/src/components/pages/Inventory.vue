@@ -1509,20 +1509,26 @@ onUnmounted(() => {
   position: relative;
   border-color: transparent !important;
   overflow: visible !important;
+  box-shadow:
+    0 0 18px rgba(167, 139, 250, 0.55),
+    0 0 40px rgba(56, 189, 248, 0.30),
+    0 0 70px rgba(244, 114, 182, 0.20);
+  animation: cosmic-card-glow 3s ease-in-out infinite;
 }
 .cosmic-card::before {
   content: "";
   position: absolute;
-  inset: -2px;
+  inset: -3px;
   z-index: -1;
-  border-radius: 1.5rem;
-  background: conic-gradient(from var(--cosmic-angle, 0deg), #a78bfa, #38bdf8, #f472b6, #818cf8, #a78bfa);
-  animation: cosmic-card-spin 3s linear infinite;
+  border-radius: 1.6rem;
+  background: conic-gradient(from var(--cosmic-angle, 0deg), #a78bfa, #38bdf8, #f472b6, #c084fc, #38bdf8, #f472b6, #a78bfa);
+  animation: cosmic-card-spin 2s linear infinite;
+  filter: blur(0.5px);
 }
 .cosmic-card::after {
   content: "";
   position: absolute;
-  inset: 2px;
+  inset: 3px;
   z-index: 0;
   border-radius: 1.35rem;
   background: #0a0a0a;
@@ -1539,6 +1545,11 @@ onUnmounted(() => {
 }
 @keyframes cosmic-card-spin {
   to { --cosmic-angle: 360deg; }
+}
+@keyframes cosmic-card-glow {
+  0%, 100% { box-shadow: 0 0 18px rgba(167,139,250,0.55), 0 0 40px rgba(56,189,248,0.30), 0 0 70px rgba(244,114,182,0.20); }
+  33%       { box-shadow: 0 0 25px rgba(56,189,248,0.70),  0 0 55px rgba(244,114,182,0.40), 0 0 90px rgba(167,139,250,0.25); }
+  66%       { box-shadow: 0 0 25px rgba(244,114,182,0.70), 0 0 55px rgba(167,139,250,0.40), 0 0 90px rgba(56,189,248,0.25); }
 }
 
 /* Slide Down Transition for categories */
