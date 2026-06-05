@@ -734,7 +734,8 @@ const rarities = [
   { id: 'rare', label: 'rarity_rare', activeClass: 'bg-blue-600 text-white border-blue-500 shadow-lg shadow-blue-500/20' },
   { id: 'especial', label: 'rarity_special', activeClass: 'bg-purple-600 text-white border-purple-500 shadow-lg shadow-purple-500/20' },
   { id: 'legendary', label: 'rarity_legendary', activeClass: 'bg-orange-600 text-white border-orange-500 shadow-lg shadow-orange-500/20' },
-  { id: 'calistenico', label: 'rarity_calisthenic', activeClass: 'bg-[#ccff00] text-black border-[#ccff00] shadow-lg shadow-[#ccff00]/20' }
+  { id: 'calistenico', label: 'rarity_calisthenic', activeClass: 'bg-[#ccff00] text-black border-[#ccff00] shadow-lg shadow-[#ccff00]/20' },
+  { id: 'cosmico', label: 'rarity_cosmico', activeClass: 'bg-violet-500 text-white border-violet-400 shadow-lg shadow-violet-500/30' }
 ];
 
 const selectedStat = ref(null);
@@ -1195,6 +1196,7 @@ const isDraggableItem = (item) => !!item && !isConsumableItem(item) && item.type
 
 const rarityBorder = (rarity) => {
   switch ((rarity || '').toLowerCase()) {
+    case 'cosmico': return 'border-violet-400/80 shadow-violet-400/30';
     case 'legendary': return 'border-yellow-400/70 shadow-yellow-400/20';
     case 'epic':
     case 'especial': return 'border-purple-500/70 shadow-purple-500/20';
@@ -1373,6 +1375,7 @@ const getRarityLabel = (rarity) => {
     case 'especial': return i18n.t('rarity_special');
     case 'legendary': return i18n.t('rarity_legendary');
     case 'calistenico': return i18n.t('rarity_calisthenic');
+    case 'cosmico': return 'CÓSMICO';
     default: return i18n.t('rarity_common');
   }
 };

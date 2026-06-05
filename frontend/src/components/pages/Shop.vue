@@ -83,7 +83,8 @@
                   item.rarity === 'rare' ? 'bg-blue-500' :
                     item.rarity === 'epic' || item.rarity === 'especial' ? 'bg-purple-500' :
                       item.rarity === 'legendary' ? 'bg-yellow-500' :
-                        item.rarity === 'calistenico' ? 'bg-red-600' : 'bg-primary-500'
+                        item.rarity === 'calistenico' ? 'bg-red-600' :
+                          item.rarity === 'cosmico' ? 'bg-violet-400' : 'bg-primary-500'
               ]"></div>
 
               <div class="p-2 flex-1 flex flex-col items-center relative z-10">
@@ -859,7 +860,7 @@ const filteredItems = computed(() => {
 const rouletteTicketItem = computed(() => items.value.find(item => item.name === 'Ticket de Ruleta'));
 const bundleItems = computed(() => filteredItems.value.filter(item => item.type === 'bundle' && item.name !== 'Ticket de Ruleta'));
 const consumableItems = computed(() => items.value.filter(item => item.type === 'consumable'));
-const hasLegendaryDaily = computed(() => shopStore.dailyItems.some(item => item.rarity === 'legendary' || item.rarity === 'calistenico'));
+const hasLegendaryDaily = computed(() => shopStore.dailyItems.some(item => item.rarity === 'legendary' || item.rarity === 'calistenico' || item.rarity === 'cosmico'));
 
 const getBundlePreviewItems = (bundle) => {
   const ids = extractBundleItemIds(bundle);
@@ -953,6 +954,7 @@ const getRarityBadge = (item) => {
   if (!item) return { label: 'COMÚN', classes: 'text-muted border-white/10' };
   const rarity = item.rarity?.toLowerCase() || 'common';
   switch (rarity) {
+    case 'cosmico': return { label: 'CÓSMICO', classes: 'text-violet-300 bg-violet-500/10 border-violet-400/50 shadow-violet-500/30 animate-pulse' };
     case 'calistenico': return { label: 'MÍTICO', classes: 'text-red-500 bg-red-500/10 border-red-500/40 shadow-red-500/20' };
     case 'legendary': return { label: 'LEGENDARIO', classes: 'text-yellow-500 bg-yellow-500/10 border-yellow-500/40 shadow-yellow-500/20' };
     case 'especial':

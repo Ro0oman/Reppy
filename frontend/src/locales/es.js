@@ -1139,6 +1139,7 @@ export default {
     rarity_special: 'ESPECIAL',
     rarity_legendary: 'LEGENDARIO',
     rarity_calisthenic: 'CALISTÉNICO',
+    rarity_cosmico: 'CÓSMICO',
     
     inv_total_power: 'DAÑO_TOTAL_POTENCIAL',
     dash_base_dmg: 'DAÑO_BASE_POR_REP',
@@ -1244,6 +1245,7 @@ export default {
     rarity_special: 'Epico',
     rarity_legendary: 'Legendario',
     rarity_calisthenic: 'Calisténico',
+    rarity_cosmico: 'Cósmico',
     dashboard_title: 'Panel',
     ui_total_power: 'Potencia Total',
     ui_gear_mod: 'Modificador de Equipo',

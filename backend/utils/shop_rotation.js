@@ -33,7 +33,8 @@ export const rotateDailyShop = async (userId = null) => {
       'rare': 30,
       'especial': 30,
       'legendary': 15,
-      'calistenico': 5
+      'calistenico': 5,
+      'cosmico': 2
     };
 
     const selectedItems = [];

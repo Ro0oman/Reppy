@@ -1066,6 +1066,7 @@ export default {
     rarity_special: 'SPECIAL',
     rarity_legendary: 'LEGENDARY',
     rarity_calisthenic: 'CALISTHENIC',
+    rarity_cosmico: 'COSMIC',
     
     // Combat Dashboard
     dash_base_dmg: 'BASE_DAMAGE_PER_REP',
@@ -1252,6 +1253,7 @@ export default {
     rarity_special: 'Special',
     rarity_legendary: 'Legendary',
     rarity_calisthenic: 'Calisthenic',
+    rarity_cosmico: 'Cosmic',
     shop_armory_title: 'Goggins Armory',
     shop_armory_subtitle: 'Elite performance and tactical equipment',
     shop_reppy_coins: 'REPPY COINS',
