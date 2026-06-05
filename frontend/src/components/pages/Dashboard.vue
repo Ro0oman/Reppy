@@ -10,14 +10,24 @@
             {{ authStore.user?.name?.split(' ')[0] || (i18n.locale === 'es' ? 'Atleta' : 'Athlete') }}
           </h2>
         </div>
-        <button
-          v-if="guidedTrainingStateLoaded && !trainingStore.activePlan"
-          type="button"
-          class="shrink-0 rounded-xl border border-border bg-foreground/[0.03] px-3 py-2 text-xs font-semibold text-muted transition hover:border-primary-500/30 hover:text-foreground active:scale-95"
-          @click="openPlanPicker"
-        >
-          {{ i18n.locale === 'es' ? 'Plan guiado' : 'Guided plan' }}
-        </button>
+        <div class="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            class="flex items-center gap-1.5 rounded-xl border border-primary-500/25 bg-primary-500/10 px-3 py-2 text-xs font-semibold text-primary-400 transition hover:bg-primary-500/20 active:scale-95"
+            @click="showWeeklyCard = true"
+          >
+            <Share2 class="w-3.5 h-3.5" />
+            {{ i18n.locale === 'es' ? 'Mi semana' : 'My week' }}
+          </button>
+          <button
+            v-if="guidedTrainingStateLoaded && !trainingStore.activePlan"
+            type="button"
+            class="rounded-xl border border-border bg-foreground/[0.03] px-3 py-2 text-xs font-semibold text-muted transition hover:border-primary-500/30 hover:text-foreground active:scale-95"
+            @click="openPlanPicker"
+          >
+            {{ i18n.locale === 'es' ? 'Plan guiado' : 'Guided plan' }}
+          </button>
+        </div>
       </div>
       <!-- Exercise selector: compact pills -->
       <ExerciseSelector v-model="activeExercise" compact class="w-full md:hidden" />
@@ -555,6 +565,7 @@
       @close="handleGoalOnboardingClose"
       @selected="handleGuidedPlanSelected"
     />
+    <WeeklyShareCard :open="showWeeklyCard" @close="showWeeklyCard = false" />
   </div>
 </template>
 
@@ -564,7 +575,7 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import {
   Trophy, Target, Flame, Zap, Activity, History, Inbox,
-  BarChart3, Check, X, Trash2, Globe, Sword, Swords, FlaskConical, Coins, Snowflake, ChevronDown
+  BarChart3, Check, X, Trash2, Globe, Sword, Swords, FlaskConical, Coins, Snowflake, ChevronDown, Share2
 } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';
@@ -580,6 +591,7 @@ import LivePresence from '@/components/ui/LivePresence.vue';
 import QuickStartOnboardingModal from '@/components/modals/QuickStartOnboardingModal.vue';
 import GoalOnboardingModal from '@/components/modals/GoalOnboardingModal.vue';
 import TodayWorkout from '@/components/training/TodayWorkout.vue';
+import WeeklyShareCard from '@/components/modals/WeeklyShareCard.vue';
 import { getLocalDateString } from '@/utils/dateUtils.js';
 
 const emit = defineEmits(['viewProfile', 'start']);
@@ -611,6 +623,7 @@ const unclaimedMissions = ref(0);
 const highlightRepsInput = ref(false);
 const repsInputSection = ref(null);
 const quickStartEvaluated = ref(false);
+const showWeeklyCard = ref(false);
 const suppressRPGModal = ref(false);
 const todayMission = ref(null);
 const todayMissionStateLoaded = ref(false);

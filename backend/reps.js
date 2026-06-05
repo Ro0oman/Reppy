@@ -449,6 +449,72 @@ router.get('/stats', authenticate, async (req, res) => {
   }
 });
 
+// Weekly summary for share card (last full ISO week: Mon-Sun)
+router.get('/weekly-summary', authenticate, async (req, res) => {
+  const userId = req.user.id;
+  try {
+    // Compute last full ISO week (Monday to Sunday)
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0=Sun
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const thisMonday = new Date(now);
+    thisMonday.setDate(now.getDate() + mondayOffset);
+    thisMonday.setHours(0, 0, 0, 0);
+    const lastMonday = new Date(thisMonday);
+    lastMonday.setDate(thisMonday.getDate() - 7);
+    const lastSunday = new Date(thisMonday);
+    lastSunday.setDate(thisMonday.getDate() - 1);
+
+    const weekStart = lastMonday.toISOString().slice(0, 10);
+    const weekEnd = lastSunday.toISOString().slice(0, 10);
+
+    const [repsRes, userRes, streakStatus] = await Promise.all([
+      query(
+        `SELECT
+           SUM(count)::int                                           AS total_reps,
+           SUM(boss_damage_dealt)::int                              AS boss_damage,
+           exercise_type
+         FROM reps
+         WHERE user_id = $1 AND date >= $2 AND date <= $3
+         GROUP BY exercise_type`,
+        [userId, weekStart, weekEnd]
+      ),
+      query('SELECT current_level FROM users WHERE id = $1', [userId]),
+      getStreakStatus(userId),
+    ]);
+
+    const rows = repsRes.rows;
+    const totalReps = rows.reduce((s, r) => s + (r.total_reps || 0), 0);
+    const bossDamage = rows.reduce((s, r) => s + (r.boss_damage || 0), 0);
+
+    // Star exercise: exercise_type with most reps
+    let starExercise = null;
+    let starCount = 0;
+    for (const r of rows) {
+      if (r.exercise_type && r.total_reps > starCount) {
+        starCount = r.total_reps;
+        starExercise = r.exercise_type;
+      }
+    }
+
+    const user = userRes.rows[0] || {};
+
+    res.json({
+      weekStart,
+      weekEnd,
+      totalReps,
+      bossDamage,
+      starExercise,
+      starCount,
+      streak: streakStatus.streak || 0,
+      level: user.current_level || 1,
+    });
+  } catch (error) {
+    console.error('Error fetching weekly summary:', error);
+    res.status(500).json({ message: 'Error fetching weekly summary' });
+  }
+});
+
 // Edit reps by ID
 router.put('/:id', authenticate, async (req, res) => {
   const { id } = req.params;
