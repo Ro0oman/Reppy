@@ -25,6 +25,7 @@ const staticRoutes = [
   { path: '/app-fondos', priority: '0.8', changefreq: 'weekly' },
   { path: '/reto-calistenia-30-dias', priority: '0.9', changefreq: 'weekly' },
   { path: '/reppy-vs-otras-apps-calistenia', priority: '0.8', changefreq: 'monthly' },
+  { path: '/free-rpg-pull-up-counter', priority: '0.9', changefreq: 'weekly', languages: ['en'] },
   { path: '/social', priority: '0.8', changefreq: 'hourly' },
   { path: '/blog', priority: '0.8', changefreq: 'daily' },
 ];
@@ -34,8 +35,8 @@ const generateSitemap = () => {
   xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n`;
 
   // Helper to add a URL with its alternates
-  const addUrl = (path, priority, changefreq, customLastmod = lastmod) => {
-    languages.forEach(lang => {
+  const addUrl = (path, priority, changefreq, customLastmod = lastmod, routeLanguages = languages) => {
+    routeLanguages.forEach(lang => {
       const fullPath = `/${lang}${path}`;
       xml += `  <url>\n`;
       xml += `    <loc>${BASE_URL}${fullPath}</loc>\n`;
@@ -44,11 +45,11 @@ const generateSitemap = () => {
       xml += `    <priority>${priority}</priority>\n`;
       
       // Hreflang alternates
-      languages.forEach(altLang => {
+      routeLanguages.forEach(altLang => {
         xml += `    <xhtml:link rel="alternate" hreflang="${altLang}" href="${BASE_URL}/${altLang}${path}" />\n`;
       });
-      // x-default (pointing to es as default)
-      xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE_URL}/es${path}" />\n`;
+      const defaultLang = routeLanguages.includes('es') ? 'es' : routeLanguages[0];
+      xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE_URL}/${defaultLang}${path}" />\n`;
       
       xml += `  </url>\n`;
     });
@@ -56,7 +57,7 @@ const generateSitemap = () => {
 
   // 1. Static Routes
   staticRoutes.forEach(route => {
-    addUrl(route.path, route.priority, route.changefreq);
+    addUrl(route.path, route.priority, route.changefreq, lastmod, route.languages || languages);
   });
 
   // 2. Dynamic Blog Posts

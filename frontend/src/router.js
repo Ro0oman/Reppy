@@ -20,6 +20,7 @@ const Missions = () => import('./components/pages/Missions.vue')
 const NotFound = () => import('./components/pages/NotFound.vue')
 const ChallengeLanding = () => import('./components/pages/ChallengeLanding.vue')
 const ComparisonLanding = () => import('./components/pages/ComparisonLanding.vue')
+const RpgPullupCounterLanding = () => import('./components/pages/RpgPullupCounterLanding.vue')
 
 export const routes = [
   // Redirección adaptativa de la raíz basada en detección de idioma
@@ -188,6 +189,15 @@ export const routes = [
         name: 'seo-vs',
         meta: { titleKey: 'vs_seo_title', descriptionKey: 'vs_seo_desc' }
       },
+      {
+        path: 'free-rpg-pull-up-counter',
+        component: RpgPullupCounterLanding,
+        name: 'seo-free-rpg-pullup',
+        meta: {
+          title: 'Free RPG Pull-up Counter | Reppy',
+          description: 'Reppy is a free RPG pull-up counter and gamified calisthenics app. Track pull-ups, earn XP, level up attributes, keep streaks, and join boss fights.'
+        }
+      },
       { 
         path: 'blog', 
         component: BlogList, 
@@ -228,7 +238,8 @@ export function setupRouterGuards(router) {
         'profile', 'admin', 'notifications', 'blog', 'login', 'missions',
         'contador-dominadas', 'contador-flexiones', 'app-calistenia',
         'app-dominadas', 'app-flexiones', 'app-fondos',
-        'reto-calistenia-30-dias', 'reppy-vs-otras-apps-calistenia'
+        'reto-calistenia-30-dias', 'reppy-vs-otras-apps-calistenia',
+        'free-rpg-pull-up-counter'
       ];
       
       const firstPart = to.path.split('/')[1];
@@ -361,6 +372,5 @@ export function setupRouterGuards(router) {
     }
   });
 }
-
 
 

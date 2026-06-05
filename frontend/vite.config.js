@@ -75,6 +75,7 @@ export default defineConfig({
         '/en/reto-calistenia-30-dias',
         '/es/reppy-vs-otras-apps-calistenia',
         '/en/reppy-vs-otras-apps-calistenia',
+        '/en/free-rpg-pull-up-counter',
         '/es/social',
         '/en/social'
       ];

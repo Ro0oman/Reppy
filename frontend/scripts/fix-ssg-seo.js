@@ -29,6 +29,57 @@ const replaceAttribute = (html, selector, value) => {
   return html.replace(pattern, `$1"${value}"`);
 };
 
+const rpgPullupJsonLd = () => JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Reppy',
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'Web, Android, iOS',
+      url: `${BASE_URL}/en/free-rpg-pull-up-counter`,
+      description: 'Reppy is a free RPG pull-up counter and gamified calisthenics app. Track pull-ups, earn XP, level up attributes, keep streaks, and join boss fights.',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      featureList: [
+        'Free pull-up counter',
+        'RPG fitness progression',
+        'Calisthenics workout tracker',
+        'Training heatmap',
+        'Community boss fights'
+      ]
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'Is Reppy a free pull-up counter?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes. Reppy lets you track pull-ups for free and also supports push-ups, dips, muscle-ups, and weighted pull-ups.'
+          }
+        },
+        {
+          '@type': 'Question',
+          name: 'Does Reppy have RPG progression?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes. Workouts earn XP and level up RPG-style attributes, so your training feels like character progression.'
+          }
+        },
+        {
+          '@type': 'Question',
+          name: 'Can I use Reppy as a gamified fitness app?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes. Reppy combines rep tracking with streaks, rankings, achievements, RPG attributes, and community boss fights.'
+          }
+        }
+      ]
+    }
+  ]
+});
+
 const metaForRoute = (route, lang) => {
   const isEnglish = lang === 'en';
 
@@ -137,6 +188,14 @@ const metaForRoute = (route, lang) => {
     };
   }
 
+  if (route.endsWith('/free-rpg-pull-up-counter')) {
+    return {
+      title: 'Free RPG Pull-up Counter | Reppy',
+      description: 'Reppy is a free RPG pull-up counter and gamified calisthenics app. Track pull-ups, earn XP, level up attributes, keep streaks, and join boss fights.',
+      keywords: 'pullup counter free rpg, pull-up counter free rpg, free rpg fitness app, gamified pull-up counter, rpg pull-up tracker, free calisthenics rpg'
+    };
+  }
+
   if (route.endsWith('/app-calistenia') || route.endsWith('/calisthenics-app')) {
     return {
       title: isEnglish ? 'Best Calisthenics App Free | Reppy' : 'App de Calistenia Gratis | Reppy',
@@ -183,8 +242,9 @@ const patchHtml = (filePath) => {
   const route = routeForHtml(filePath);
   const lang = route.startsWith('/en') ? 'en' : 'es';
   const canonicalUrl = `${BASE_URL}${route}`;
-  const esUrl = `${BASE_URL}${localizedSibling(route, 'es')}`;
-  const enUrl = `${BASE_URL}${localizedSibling(route, 'en')}`;
+  const isEnglishOnlyRpgPullup = route.endsWith('/free-rpg-pull-up-counter');
+  const esUrl = isEnglishOnlyRpgPullup ? canonicalUrl : `${BASE_URL}${localizedSibling(route, 'es')}`;
+  const enUrl = isEnglishOnlyRpgPullup ? canonicalUrl : `${BASE_URL}${localizedSibling(route, 'en')}`;
   const routeMeta = metaForRoute(route, lang);
 
   let html = fs.readFileSync(filePath, 'utf8');
@@ -213,6 +273,10 @@ const patchHtml = (filePath) => {
     if (routeMeta.keywords) {
       html = replaceAttribute(html, 'name="keywords"', routeMeta.keywords);
     }
+  }
+
+  if (isEnglishOnlyRpgPullup && !html.includes('rpg-pullup-jsonld')) {
+    html = html.replace('</head>', `<script id="rpg-pullup-jsonld" type="application/ld+json">${rpgPullupJsonLd()}</script></head>`);
   }
 
   fs.writeFileSync(filePath, html);

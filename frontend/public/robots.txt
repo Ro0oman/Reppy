@@ -9,6 +9,7 @@ Allow: /app-flexiones
 Allow: /app-fondos
 Allow: /reto-calistenia-30-dias
 Allow: /reppy-vs-otras-apps-calistenia
+Allow: /free-rpg-pull-up-counter
 Allow: /social
 Allow: /profile
 
