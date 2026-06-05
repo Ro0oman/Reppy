@@ -479,7 +479,21 @@ router.get('/weekly-summary', authenticate, async (req, res) => {
          GROUP BY exercise_type`,
         [userId, weekStart, weekEnd]
       ),
-      query('SELECT current_level FROM users WHERE id = $1', [userId]),
+      query(
+        `SELECT
+           u.current_level,
+           u.level_chests,
+           u.level_chests_claimed,
+           u.damage_multiplier,
+           u.damage_multiplier_expiry,
+           iw.name  AS weapon_name,  iw.rarity AS weapon_rarity,
+           ia.name  AS armor_name,   ia.rarity AS armor_rarity
+         FROM users u
+         LEFT JOIN items iw ON u.equipped_weapon_id = iw.id
+         LEFT JOIN items ia ON u.equipped_armor_id  = ia.id
+         WHERE u.id = $1`,
+        [userId]
+      ),
       getStreakStatus(userId),
     ]);
 
@@ -499,6 +513,18 @@ router.get('/weekly-summary', authenticate, async (req, res) => {
 
     const user = userRes.rows[0] || {};
 
+    // Active damage buff
+    const buffActive = user.damage_multiplier_expiry
+      && new Date(user.damage_multiplier_expiry) > new Date();
+    const activeBuff = buffActive
+      ? { multiplier: Number(user.damage_multiplier) }
+      : null;
+
+    // Unclaimed level chests
+    const unclaimedChests = Math.max(0,
+      (user.level_chests || 0) - (user.level_chests_claimed || 0)
+    );
+
     res.json({
       weekStart,
       weekEnd,
@@ -508,6 +534,12 @@ router.get('/weekly-summary', authenticate, async (req, res) => {
       starCount,
       streak: streakStatus.streak || 0,
       level: user.current_level || 1,
+      gear: {
+        weapon: user.weapon_name ? { name: user.weapon_name, rarity: user.weapon_rarity } : null,
+        armor:  user.armor_name  ? { name: user.armor_name,  rarity: user.armor_rarity  } : null,
+      },
+      activeBuff,
+      unclaimedChests,
     });
   } catch (error) {
     console.error('Error fetching weekly summary:', error);

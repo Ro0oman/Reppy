@@ -209,23 +209,112 @@ function renderCard(data, locale) {
     ctx.fillText(card.label.toUpperCase(), cx + cardW / 2, cardY + 174);
   });
 
-  // ── Star exercise banner ─────────────────────────────────────────────────────
-  if (data.starExercise) {
-    const starY = cardY + cardH + 70;
-    const starTxt = locale === 'es'
-      ? `🏅 EJERCICIO ESTRELLA · ${exerciseLabel(data.starExercise, locale).toUpperCase()} · ${fmtNumber(data.starCount)} REPS`
-      : `🏅 STAR EXERCISE · ${exerciseLabel(data.starExercise, locale).toUpperCase()} · ${fmtNumber(data.starCount)} REPS`;
+  // ── Gear row ──────────────────────────────────────────────────────────────────
+  const RARITY_COLORS = {
+    common: '#9ca3af', rare: '#60a5fa', especial: '#a78bfa',
+    legendary: '#f59e0b', calistenico: '#34d399', cosmico: '#f472b6',
+  };
+  const gearItems = [
+    data.gear?.weapon ? { icon: '🗡️', label: locale === 'es' ? 'ARMA' : 'WEAPON', ...data.gear.weapon } : null,
+    data.gear?.armor  ? { icon: '🛡️', label: locale === 'es' ? 'ARMADURA' : 'ARMOR',  ...data.gear.armor  } : null,
+  ].filter(Boolean);
 
-    ctx.font = `800 28px ${FONT}`;
-    const starTxtW = ctx.measureText(starTxt).width;
-    const starBannerW = Math.min(starTxtW + 72, W - 80);
-    const starBannerH = 68;
-    roundRect(ctx, CX - starBannerW / 2, starY, starBannerW, starBannerH, starBannerH / 2);
-    ctx.fillStyle = 'rgba(245,158,11,0.12)'; ctx.fill();
-    ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(245,158,11,0.35)'; ctx.stroke();
-    ctx.fillStyle = AMBER;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(starTxt, CX, starY + starBannerH / 2 + 2);
+  if (gearItems.length) {
+    const gearY = cardY + cardH + 60;
+    const gearH = 130;
+    const gearW = gearItems.length === 2 ? (W - 120) / 2 : W - 80;
+    const gearGap = 40;
+    const gearTotalW = gearItems.length === 2 ? gearW * 2 + gearGap : gearW;
+    const gearStartX = CX - gearTotalW / 2;
+
+    gearItems.forEach((g, i) => {
+      const gx = gearStartX + i * (gearW + gearGap);
+      const color = RARITY_COLORS[g.rarity] || '#9ca3af';
+
+      const gGrad = ctx.createLinearGradient(gx, gearY, gx, gearY + gearH);
+      gGrad.addColorStop(0, 'rgba(255,255,255,0.06)');
+      gGrad.addColorStop(1, 'rgba(255,255,255,0.02)');
+      roundRect(ctx, gx, gearY, gearW, gearH, 24);
+      ctx.fillStyle = gGrad; ctx.fill();
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = color + '55'; ctx.stroke();
+
+      // Colored left accent bar
+      roundRect(ctx, gx, gearY + 16, 5, gearH - 32, 3);
+      ctx.fillStyle = color; ctx.fill();
+
+      ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      // Icon
+      ctx.font = `38px ${FONT}`;
+      ctx.fillText(g.icon, gx + 24, gearY + gearH / 2 - 14);
+      // Slot label
+      ctx.font = `700 20px ${FONT}`;
+      ctx.fillStyle = color;
+      ctx.fillText(g.label, gx + 72, gearY + gearH / 2 - 18);
+      // Name
+      ctx.font = `800 24px ${FONT}`;
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      const maxNameW = gearW - 84;
+      let name = g.name || '';
+      while (name.length > 1 && ctx.measureText(name).width > maxNameW) name = name.slice(0, -1);
+      if (name !== g.name) name += '…';
+      ctx.fillText(name, gx + 72, gearY + gearH / 2 + 16);
+    });
+
+    // ── Star exercise banner ───────────────────────────────────────────────────
+    if (data.starExercise) {
+      const starY = gearY + gearH + 50;
+      const starTxt = locale === 'es'
+        ? `🏅 EJERCICIO ESTRELLA · ${exerciseLabel(data.starExercise, locale).toUpperCase()} · ${fmtNumber(data.starCount)} REPS`
+        : `🏅 STAR EXERCISE · ${exerciseLabel(data.starExercise, locale).toUpperCase()} · ${fmtNumber(data.starCount)} REPS`;
+
+      ctx.font = `800 26px ${FONT}`;
+      const starTxtW = ctx.measureText(starTxt).width;
+      const starBannerW = Math.min(starTxtW + 72, W - 80);
+      const starBannerH = 64;
+      roundRect(ctx, CX - starBannerW / 2, starY, starBannerW, starBannerH, starBannerH / 2);
+      ctx.fillStyle = 'rgba(245,158,11,0.12)'; ctx.fill();
+      ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(245,158,11,0.35)'; ctx.stroke();
+      ctx.fillStyle = AMBER;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(starTxt, CX, starY + starBannerH / 2 + 2);
+    }
+
+    // ── Active buff pill ───────────────────────────────────────────────────────
+    if (data.activeBuff) {
+      const buffY = (data.starExercise ? cardY + cardH + 60 + gearH + 50 + 64 : cardY + cardH + 60 + gearH) + 50;
+      const buffTxt = locale === 'es'
+        ? `⚗️ BUFF ACTIVO · ×${data.activeBuff.multiplier} DAÑO`
+        : `⚗️ ACTIVE BUFF · ×${data.activeBuff.multiplier} DAMAGE`;
+      ctx.font = `800 26px ${FONT}`;
+      const buffW = Math.min(ctx.measureText(buffTxt).width + 72, W - 80);
+      const buffH = 64;
+      roundRect(ctx, CX - buffW / 2, buffY, buffW, buffH, buffH / 2);
+      ctx.fillStyle = 'rgba(139,92,246,0.15)'; ctx.fill();
+      ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(139,92,246,0.40)'; ctx.stroke();
+      ctx.fillStyle = '#a78bfa';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(buffTxt, CX, buffY + buffH / 2 + 2);
+    }
+  } else {
+    // No gear — fall back to original star exercise position
+    if (data.starExercise) {
+      const starY = cardY + cardH + 70;
+      const starTxt = locale === 'es'
+        ? `🏅 EJERCICIO ESTRELLA · ${exerciseLabel(data.starExercise, locale).toUpperCase()} · ${fmtNumber(data.starCount)} REPS`
+        : `🏅 STAR EXERCISE · ${exerciseLabel(data.starExercise, locale).toUpperCase()} · ${fmtNumber(data.starCount)} REPS`;
+
+      ctx.font = `800 28px ${FONT}`;
+      const starTxtW = ctx.measureText(starTxt).width;
+      const starBannerW = Math.min(starTxtW + 72, W - 80);
+      const starBannerH = 68;
+      roundRect(ctx, CX - starBannerW / 2, starY, starBannerW, starBannerH, starBannerH / 2);
+      ctx.fillStyle = 'rgba(245,158,11,0.12)'; ctx.fill();
+      ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(245,158,11,0.35)'; ctx.stroke();
+      ctx.fillStyle = AMBER;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(starTxt, CX, starY + starBannerH / 2 + 2);
+    }
   }
 
   // ── Footer ───────────────────────────────────────────────────────────────────
@@ -273,9 +362,12 @@ export function useWeeklyShare() {
       const canvas = renderCard(weeklyData.value, i18n.locale);
       const blob = await canvasToBlob(canvas);
       const file = new File([blob], 'reppy-mi-semana.png', { type: 'image/png' });
+      const gearPart = weeklyData.value.gear?.weapon?.name
+        ? (i18n.locale === 'es' ? ` · 🗡️ ${weeklyData.value.gear.weapon.name}` : ` · 🗡️ ${weeklyData.value.gear.weapon.name}`)
+        : '';
       const caption = i18n.locale === 'es'
-        ? `💪 Mi semana en Reppy: ${fmtNumber(weeklyData.value.totalReps)} reps · Racha ${weeklyData.value.streak} días · Nv. ${weeklyData.value.level} 🔥`
-        : `💪 My week on Reppy: ${fmtNumber(weeklyData.value.totalReps)} reps · ${weeklyData.value.streak}-day streak · Lv. ${weeklyData.value.level} 🔥`;
+        ? `💪 Mi semana en Reppy: ${fmtNumber(weeklyData.value.totalReps)} reps · Racha ${weeklyData.value.streak} días · Nv. ${weeklyData.value.level}${gearPart} 🔥`
+        : `💪 My week on Reppy: ${fmtNumber(weeklyData.value.totalReps)} reps · ${weeklyData.value.streak}-day streak · Lv. ${weeklyData.value.level}${gearPart} 🔥`;
 
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({ files: [file], title: 'Reppy', text: caption });

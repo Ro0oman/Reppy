@@ -39,10 +39,11 @@
               <div v-for="i in 3" :key="i" class="h-24 rounded-xl bg-white/[0.04]" />
             </div>
             <div class="h-10 rounded-xl bg-white/[0.04]" />
+            <div class="h-10 rounded-xl bg-white/[0.04]" />
           </div>
 
           <!-- Content -->
-          <div v-else-if="weeklyData" class="px-5 py-5 space-y-4">
+          <div v-else-if="weeklyData" class="px-5 py-5 space-y-3">
             <!-- Main stat -->
             <div class="rounded-2xl bg-primary-500/10 border border-primary-500/20 px-5 py-4 text-center">
               <p class="text-[10px] font-bold tracking-widest text-primary-400/70 uppercase mb-1">
@@ -54,7 +55,7 @@
             </div>
 
             <!-- Stat row -->
-            <div class="grid grid-cols-3 gap-3">
+            <div class="grid grid-cols-3 gap-2">
               <div
                 v-for="stat in statCards"
                 :key="stat.label"
@@ -67,14 +68,65 @@
               </div>
             </div>
 
+            <!-- Gear row -->
+            <div v-if="weeklyData.gear?.weapon || weeklyData.gear?.armor" class="grid grid-cols-2 gap-2">
+              <div
+                v-for="item in gearItems"
+                :key="item.slot"
+                class="rounded-xl border bg-white/[0.03] px-3 py-2.5 flex items-center gap-2"
+                :style="{ borderColor: rarityBorder(item.rarity) }"
+              >
+                <span class="text-lg shrink-0">{{ item.icon }}</span>
+                <div class="min-w-0">
+                  <p class="text-[9px] font-bold tracking-wider uppercase" :style="{ color: rarityColor(item.rarity) }">
+                    {{ item.slot }}
+                  </p>
+                  <p class="text-[11px] font-semibold text-white/80 truncate">{{ item.name }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Active buff -->
+            <div
+              v-if="weeklyData.activeBuff"
+              class="rounded-xl border border-violet-500/30 bg-violet-500/[0.08] px-4 py-2.5 flex items-center gap-3"
+            >
+              <span class="text-xl">⚗️</span>
+              <div>
+                <p class="text-[9px] font-bold tracking-widest text-violet-400/70 uppercase">
+                  {{ i18n.locale === 'es' ? 'Buff activo' : 'Active buff' }}
+                </p>
+                <p class="text-sm font-bold text-violet-300">
+                  ×{{ weeklyData.activeBuff.multiplier }}
+                  <span class="font-normal text-violet-400/60 text-xs">
+                    {{ i18n.locale === 'es' ? 'daño' : 'damage' }}
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            <!-- Unclaimed chests -->
+            <div
+              v-if="weeklyData.unclaimedChests > 0"
+              class="rounded-xl border border-amber-500/30 bg-amber-500/[0.08] px-4 py-2.5 flex items-center gap-3"
+            >
+              <span class="text-xl">📦</span>
+              <div>
+                <p class="text-[9px] font-bold tracking-widest text-amber-400/70 uppercase">
+                  {{ i18n.locale === 'es' ? 'Cofres sin abrir' : 'Unclaimed chests' }}
+                </p>
+                <p class="text-sm font-bold text-amber-300">{{ weeklyData.unclaimedChests }}</p>
+              </div>
+            </div>
+
             <!-- Star exercise -->
             <div
               v-if="weeklyData.starExercise"
-              class="rounded-xl border border-amber-500/25 bg-amber-500/[0.07] px-4 py-3 flex items-center gap-3"
+              class="rounded-xl border border-amber-500/25 bg-amber-500/[0.07] px-4 py-2.5 flex items-center gap-3"
             >
-              <span class="text-2xl">🏅</span>
+              <span class="text-xl">🏅</span>
               <div class="min-w-0">
-                <p class="text-[10px] font-bold tracking-widest text-amber-400/70 uppercase">
+                <p class="text-[9px] font-bold tracking-widest text-amber-400/70 uppercase">
                   {{ i18n.locale === 'es' ? 'Ejercicio estrella' : 'Star exercise' }}
                 </p>
                 <p class="text-sm font-bold text-amber-300 truncate">
@@ -84,7 +136,7 @@
               </div>
             </div>
 
-            <!-- Empty state: no data this week -->
+            <!-- Empty state -->
             <div
               v-if="weeklyData.totalReps === 0"
               class="rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-5 text-center"
@@ -98,12 +150,12 @@
           </div>
 
           <!-- Actions -->
-          <div v-if="weeklyData" class="flex gap-3 px-5 pb-6">
+          <div v-if="weeklyData" class="flex gap-3 px-5 pb-6 pt-2">
             <button
               type="button"
               class="flex-1 flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.05] py-3 text-sm font-semibold text-foreground/80 hover:bg-white/[0.09] transition-colors active:scale-[0.98]"
               :disabled="generating"
-              @click="handleDownload"
+              @click="share()"
             >
               <Download class="w-4 h-4" />
               {{ i18n.locale === 'es' ? 'Descargar' : 'Download' }}
@@ -112,7 +164,7 @@
               type="button"
               class="flex-1 flex items-center justify-center gap-2 rounded-xl bg-primary-500 py-3 text-sm font-bold text-white hover:bg-primary-600 transition-colors active:scale-[0.98] disabled:opacity-50"
               :disabled="generating || weeklyData.totalReps === 0"
-              @click="handleShare"
+              @click="share()"
             >
               <Share2 class="w-4 h-4" />
               <span v-if="generating">{{ i18n.locale === 'es' ? 'Generando…' : 'Generating…' }}</span>
@@ -131,9 +183,7 @@ import { X, Download, Share2 } from 'lucide-vue-next';
 import { useWeeklyShare } from '@/composables/useWeeklyShare';
 import { useI18nStore } from '@/stores/i18n';
 
-const props = defineProps({
-  open: Boolean,
-});
+const props = defineProps({ open: Boolean });
 defineEmits(['close']);
 
 const i18n = useI18nStore();
@@ -159,6 +209,21 @@ function exerciseLabel(slug) {
     situps:  i18n.locale === 'es' ? 'Abdominales' : 'Sit-ups',
   };
   return map[slug] || (slug ? slug.charAt(0).toUpperCase() + slug.slice(1) : '—');
+}
+
+const RARITY_COLORS = {
+  common:      '#9ca3af',
+  rare:        '#60a5fa',
+  especial:    '#a78bfa',
+  legendary:   '#f59e0b',
+  calistenico: '#34d399',
+  cosmico:     '#f472b6',
+};
+
+function rarityColor(r) { return RARITY_COLORS[r] || '#9ca3af'; }
+function rarityBorder(r) {
+  const c = RARITY_COLORS[r] || '#9ca3af';
+  return c + '40';
 }
 
 const statCards = computed(() => {
@@ -188,14 +253,17 @@ const statCards = computed(() => {
   ];
 });
 
-async function handleShare() {
-  await share();
-}
-
-async function handleDownload() {
-  // Share falls back to download automatically when canShare is unavailable
-  await share();
-}
+const gearItems = computed(() => {
+  if (!weeklyData.value?.gear) return [];
+  const items = [];
+  if (weeklyData.value.gear.weapon) {
+    items.push({ slot: i18n.locale === 'es' ? 'Arma' : 'Weapon', icon: '🗡️', ...weeklyData.value.gear.weapon });
+  }
+  if (weeklyData.value.gear.armor) {
+    items.push({ slot: i18n.locale === 'es' ? 'Armadura' : 'Armor', icon: '🛡️', ...weeklyData.value.gear.armor });
+  }
+  return items;
+});
 </script>
 
 <style scoped>
