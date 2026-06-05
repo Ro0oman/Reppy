@@ -80,6 +80,174 @@ const rpgPullupJsonLd = () => JSON.stringify({
   ]
 });
 
+const softwareAppSchema = (lang, url, name, description) => ({
+  '@type': 'SoftwareApplication',
+  name: 'Reppy',
+  applicationCategory: 'HealthApplication',
+  operatingSystem: 'Web, Android, iOS',
+  url,
+  description,
+  inLanguage: lang === 'en' ? 'en' : 'es',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.8', reviewCount: '150' },
+  featureList: lang === 'en'
+    ? ['Free pull-up counter', 'Push-up tracker', 'Dips counter', 'RPG progression', 'Global leaderboard', 'Streak heatmap', 'Community boss fights']
+    : ['Contador de dominadas gratis', 'Tracker de flexiones', 'Contador de fondos', 'Progresión RPG', 'Ranking global', 'Heatmap de racha', 'Boss fights comunitarios']
+});
+
+const faqSchema = (faqs) => ({
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(([q, a]) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: { '@type': 'Answer', text: a }
+  }))
+});
+
+const jsonLdForRoute = (route, lang, canonicalUrl) => {
+  const isEn = lang === 'en';
+
+  // Exercise landing: contador-dominadas / pull-up-counter
+  if (route.endsWith('/contador-dominadas') || route.endsWith('/pull-up-counter')) {
+    const desc = isEn
+      ? 'Reppy is a free online pull-up counter with RPG progression, streak heatmap and global ranking.'
+      : 'Reppy es un contador de dominadas online gratuito con progresión RPG, heatmap de racha y ranking global.';
+    const faqs = isEn ? [
+      ['Is this pull-up counter free?', 'Yes, Reppy is 100% free with no ads and no subscription required.'],
+      ['How does the RPG progression work?', 'Every pull-up you log earns XP that levels up your Strength (STR) and Endurance (END) attributes.'],
+      ['Can I track weighted pull-ups?', 'Yes. Reppy supports added weight and counts it toward your total training volume.']
+    ] : [
+      ['¿El contador de dominadas es gratuito?', 'Sí, Reppy es 100% gratuito, sin anuncios y sin suscripción.'],
+      ['¿Cómo funciona la progresión RPG?', 'Cada dominada registrada otorga XP que sube tus atributos de Fuerza (STR) y Resistencia (END).'],
+      ['¿Puedo registrar dominadas con lastre?', 'Sí. Reppy permite añadir peso extra y lo contabiliza en tu volumen total de entrenamiento.']
+    ];
+    return JSON.stringify({ '@context': 'https://schema.org', '@graph': [softwareAppSchema(lang, canonicalUrl, 'Reppy', desc), faqSchema(faqs)] });
+  }
+
+  // app-dominadas / pull-up-app
+  if (route.endsWith('/app-dominadas') || route.endsWith('/pull-up-app')) {
+    const desc = isEn
+      ? 'Reppy is the best free pull-up app for Android and iPhone, with RPG stats, streak tracking and community boss fights.'
+      : 'Reppy es la mejor app de dominadas gratuita para Android e iPhone, con stats RPG, racha de entrenamiento y boss fights comunitarios.';
+    const faqs = isEn ? [
+      ['Is Reppy available on Android and iPhone?', 'Reppy is a progressive web app that works on any device: Android, iPhone, and desktop.'],
+      ['Is the pull-up app free?', 'Yes, Reppy is completely free. No ads, no subscription, no hidden costs.'],
+      ['Does the app track my pull-up progress over time?', 'Yes. Reppy shows a GitHub-style heatmap of all your sessions and tracks streaks, volume, and RPG level progression.']
+    ] : [
+      ['¿Está Reppy disponible para Android e iPhone?', 'Reppy es una app web progresiva que funciona en cualquier dispositivo: Android, iPhone y escritorio.'],
+      ['¿La app de dominadas es gratuita?', 'Sí, Reppy es completamente gratuita. Sin anuncios, sin suscripción, sin costes ocultos.'],
+      ['¿La app registra mi progresión de dominadas a lo largo del tiempo?', 'Sí. Reppy muestra un heatmap estilo GitHub de todas tus sesiones y sigue la racha, el volumen y la progresión de nivel RPG.']
+    ];
+    return JSON.stringify({ '@context': 'https://schema.org', '@graph': [softwareAppSchema(lang, canonicalUrl, 'Reppy', desc), faqSchema(faqs)] });
+  }
+
+  // contador-flexiones / push-up-counter
+  if (route.endsWith('/contador-flexiones') || route.endsWith('/push-up-counter')) {
+    const desc = isEn
+      ? 'Reppy is a free online push-up counter with RPG progression, global leaderboard and streak tracking.'
+      : 'Reppy es un contador de flexiones online gratuito con progresión RPG, ranking global y seguimiento de racha.';
+    const faqs = isEn ? [
+      ['Is this push-up counter free?', 'Yes, Reppy is 100% free. Track unlimited push-ups with no ads or subscription.'],
+      ['How does the push-up counter work?', 'Log your sets and reps after each workout. Reppy calculates volume, tracks streaks, and shows progress on a heatmap.'],
+      ['Can I compete with others in push-ups?', 'Yes. Reppy has a global push-up leaderboard and community boss fights where your reps deal damage.']
+    ] : [
+      ['¿El contador de flexiones es gratuito?', 'Sí, Reppy es 100% gratuito. Registra flexiones ilimitadas sin anuncios ni suscripción.'],
+      ['¿Cómo funciona el contador de flexiones?', 'Registra tus series y repeticiones tras cada entrenamiento. Reppy calcula el volumen, sigue la racha y muestra el progreso en un heatmap.'],
+      ['¿Puedo competir con otros en flexiones?', 'Sí. Reppy tiene un ranking global de flexiones y boss fights comunitarios donde tus reps hacen daño.']
+    ];
+    return JSON.stringify({ '@context': 'https://schema.org', '@graph': [softwareAppSchema(lang, canonicalUrl, 'Reppy', desc), faqSchema(faqs)] });
+  }
+
+  // app-flexiones / push-up-app
+  if (route.endsWith('/app-flexiones') || route.endsWith('/push-up-app')) {
+    const desc = isEn
+      ? 'Reppy is a free push-up tracking app with RPG stats, global rankings and streak heatmap for Android and iPhone.'
+      : 'Reppy es una app de flexiones gratuita con stats RPG, rankings globales y heatmap de racha para Android e iPhone.';
+    const faqs = isEn ? [
+      ['Is the push-up app free?', 'Yes, Reppy is completely free on all devices.'],
+      ['Does the app track push-up history?', 'Yes. Every logged session appears on a heatmap and contributes to your RPG attributes.'],
+      ['Can I track different push-up variations?', 'Yes. Reppy supports all push-up variations including diamond, wide-grip, and one-arm push-ups.']
+    ] : [
+      ['¿La app de flexiones es gratuita?', 'Sí, Reppy es completamente gratuita en todos los dispositivos.'],
+      ['¿La app registra el historial de flexiones?', 'Sí. Cada sesión registrada aparece en un heatmap y contribuye a tus atributos RPG.'],
+      ['¿Puedo registrar diferentes variantes de flexiones?', 'Sí. Reppy permite todas las variantes: diamante, agarre ancho, un brazo, etc.']
+    ];
+    return JSON.stringify({ '@context': 'https://schema.org', '@graph': [softwareAppSchema(lang, canonicalUrl, 'Reppy', desc), faqSchema(faqs)] });
+  }
+
+  // app-fondos / dips-app
+  if (route.endsWith('/app-fondos') || route.endsWith('/dips-app')) {
+    const desc = isEn
+      ? 'Reppy is a free dips tracker app with RPG progression, global ranking and streak heatmap.'
+      : 'Reppy es una app de fondos en paralelas gratuita con progresión RPG, ranking global y heatmap de racha.';
+    const faqs = isEn ? [
+      ['Is the dips tracker free?', 'Yes, Reppy is 100% free with no ads or subscription.'],
+      ['Does Reppy count dips separately from other exercises?', 'Yes. Dips have their own tracking, leaderboard, and contribute to STR and PWR attributes.'],
+      ['Can I track ring dips or weighted dips?', 'Yes. Reppy lets you add extra weight and counts all dip variations toward your total volume.']
+    ] : [
+      ['¿El tracker de fondos es gratuito?', 'Sí, Reppy es 100% gratuito sin anuncios ni suscripción.'],
+      ['¿Reppy cuenta los fondos por separado de otros ejercicios?', 'Sí. Los fondos tienen su propio tracking, ranking y contribuyen a los atributos STR y PWR.'],
+      ['¿Puedo registrar fondos en anillas o con lastre?', 'Sí. Reppy permite añadir peso extra y cuenta todas las variantes de fondos en el volumen total.']
+    ];
+    return JSON.stringify({ '@context': 'https://schema.org', '@graph': [softwareAppSchema(lang, canonicalUrl, 'Reppy', desc), faqSchema(faqs)] });
+  }
+
+  // reto-calistenia-30-dias / 30-day-calisthenics-challenge
+  if (route.endsWith('/reto-calistenia-30-dias') || route.endsWith('/30-day-calisthenics-challenge')) {
+    const faqs = isEn ? [
+      ['What is a 30-day calisthenics challenge?', 'A structured program doing pull-ups, push-ups, and dips daily for 30 days with progressive volume each week.'],
+      ['Can beginners do this challenge?', 'Yes. The challenge is scalable — start with easier variations and increase volume as you improve.'],
+      ['How does Reppy track the 30-day challenge?', 'Every rep you log counts. Reppy shows your streak heatmap so you can visually track every day of the challenge.'],
+      ['Is the challenge free?', 'Yes, Reppy and the 30-day challenge are completely free.']
+    ] : [
+      ['¿Qué es un reto de calistenia de 30 días?', 'Un programa estructurado de dominadas, flexiones y fondos durante 30 días con progresión semanal de volumen.'],
+      ['¿Pueden hacerlo principiantes?', 'Sí. El reto es escalable — empieza con variantes más fáciles y aumenta el volumen a medida que mejoras.'],
+      ['¿Cómo sigue Reppy el reto de 30 días?', 'Cada rep que registras cuenta. Reppy muestra tu heatmap de racha para visualizar cada día del reto.'],
+      ['¿El reto es gratuito?', 'Sí, Reppy y el reto de 30 días son completamente gratuitos.']
+    ];
+    const desc = isEn
+      ? '30-day calisthenics challenge with pull-ups, push-ups and dips. Track progress with RPG stats and streak heatmap. Free and beginner-friendly.'
+      : 'Reto de calistenia de 30 días con dominadas, flexiones y fondos. Sigue tu progreso con stats RPG y heatmap de racha. Gratis y para principiantes.';
+    return JSON.stringify({ '@context': 'https://schema.org', '@graph': [softwareAppSchema(lang, canonicalUrl, 'Reppy', desc), faqSchema(faqs)] });
+  }
+
+  // reppy-vs-otras-apps / reppy-vs-calisthenics-apps
+  if (route.endsWith('/reppy-vs-otras-apps-calistenia') || route.endsWith('/reppy-vs-calisthenics-apps')) {
+    const faqs = isEn ? [
+      ['Is Reppy better than Freeletics for calisthenics?', 'Reppy is free and specialized in pull-ups, push-ups, and dips with RPG progression. Freeletics requires a subscription and is more general-purpose.'],
+      ['How is Reppy different from Madbarz?', 'Reppy adds RPG attribute progression, community boss fights, and a streak heatmap — features not available in Madbarz.'],
+      ['Is Reppy free compared to other calisthenics apps?', 'Yes. Reppy is 100% free with no ads, no subscription, and no feature paywalls.']
+    ] : [
+      ['¿Es Reppy mejor que Freeletics para calistenia?', 'Reppy es gratuita y está especializada en dominadas, flexiones y fondos con progresión RPG. Freeletics requiere suscripción y es más genérica.'],
+      ['¿En qué se diferencia Reppy de Madbarz?', 'Reppy añade progresión de atributos RPG, boss fights comunitarios y heatmap de racha — funciones no disponibles en Madbarz.'],
+      ['¿Reppy es gratuita comparada con otras apps de calistenia?', 'Sí. Reppy es 100% gratuita sin anuncios, sin suscripción y sin funciones de pago.']
+    ];
+    const desc = isEn
+      ? 'Compare Reppy vs Freeletics, Madbarz and Google Fit. See why Reppy is the best free calisthenics app for pull-ups, push-ups, and dips.'
+      : 'Compara Reppy vs Freeletics, Madbarz y Google Fit. Descubre por qué Reppy es la mejor app de calistenia gratuita para dominadas, flexiones y fondos.';
+    return JSON.stringify({ '@context': 'https://schema.org', '@graph': [softwareAppSchema(lang, canonicalUrl, 'Reppy', desc), faqSchema(faqs)] });
+  }
+
+  // app-calistenia / calisthenics-app
+  if (route.endsWith('/app-calistenia') || route.endsWith('/calisthenics-app')) {
+    const desc = isEn
+      ? 'Reppy is the best free calisthenics app. Track pull-ups, push-ups, dips and muscle-ups with RPG progression and community boss fights.'
+      : 'Reppy es la mejor app de calistenia gratuita. Registra dominadas, flexiones, fondos y muscle-ups con progresión RPG y boss fights comunitarios.';
+    const faqs = isEn ? [
+      ['Is Reppy a free calisthenics app?', 'Yes, Reppy is completely free with no ads or subscription required.'],
+      ['Which exercises does Reppy track?', 'Pull-ups, push-ups, dips, muscle-ups, weighted pull-ups, squats, and more. All with RPG progression.'],
+      ['Does Reppy have a community?', 'Yes. Reppy has a global leaderboard, community boss fights, and a social feed where you can see other athletes\' progress.']
+    ] : [
+      ['¿Reppy es una app de calistenia gratuita?', 'Sí, Reppy es completamente gratuita sin anuncios ni suscripción.'],
+      ['¿Qué ejercicios registra Reppy?', 'Dominadas, flexiones, fondos, muscle-ups, dominadas con lastre, sentadillas y más. Todos con progresión RPG.'],
+      ['¿Reppy tiene comunidad?', 'Sí. Reppy tiene ranking global, boss fights comunitarios y un feed social donde ver el progreso de otros atletas.']
+    ];
+    return JSON.stringify({ '@context': 'https://schema.org', '@graph': [softwareAppSchema(lang, canonicalUrl, 'Reppy', desc), faqSchema(faqs)] });
+  }
+
+  return null;
+};
+
 const metaForRoute = (route, lang) => {
   const isEnglish = lang === 'en';
 
@@ -277,6 +445,11 @@ const patchHtml = (filePath) => {
 
   if (isEnglishOnlyRpgPullup && !html.includes('rpg-pullup-jsonld')) {
     html = html.replace('</head>', `<script id="rpg-pullup-jsonld" type="application/ld+json">${rpgPullupJsonLd()}</script></head>`);
+  }
+
+  const jsonLd = jsonLdForRoute(route, lang, canonicalUrl);
+  if (jsonLd && !html.includes('landing-jsonld')) {
+    html = html.replace('</head>', `<script id="landing-jsonld" type="application/ld+json">${jsonLd}</script></head>`);
   }
 
   fs.writeFileSync(filePath, html);
