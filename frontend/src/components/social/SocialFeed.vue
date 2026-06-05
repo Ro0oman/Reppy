@@ -92,6 +92,10 @@
               </div>
             </div>
           </article>
+          <BossKillCard
+            v-else-if="activity.post_type === 'boss_kill'"
+            :activity="activity"
+          />
           <ChallengeActivityCard
             v-else-if="activity.post_type === 'challenge'"
             :activity="activity"
@@ -199,6 +203,7 @@ import ActivitySkeleton from '@/components/social/ActivitySkeleton.vue';
 import UserCompareModal from '@/components/modals/UserCompareModal.vue';
 import PvpActivityCard from '@/components/social/PvpActivityCard.vue';
 import ChallengeActivityCard from '@/components/social/ChallengeActivityCard.vue';
+import BossKillCard from '@/components/social/BossKillCard.vue';
 import PvpConfigModal from '@/components/modals/PvpConfigModal.vue';
 import MiniActivityHeatmap from '@/components/training/MiniActivityHeatmap.vue';
 import { BarChart3, ChevronDown, Flame, Lock, Sparkles, Target, TrendingUp, Trophy, Zap, ZapOff, X } from 'lucide-vue-next';
@@ -255,6 +260,7 @@ const getFeedItemKey = (activity) => {
     if (activity.post_type === 'personal_insight') return 'private-insight-' + activity.date + '-' + activity.exerciseType;
     if (activity.post_type === 'pvp') return 'pvp-' + activity.pvp_data.id;
     if (activity.post_type === 'challenge') return 'challenge-' + activity.pvp_data.id;
+    if (activity.post_type === 'boss_kill') return 'boss_kill-' + activity.pvp_data.id;
     return activity.summary_id || 'reps-' + activity.user_id + '-' + activity.date;
 };
 

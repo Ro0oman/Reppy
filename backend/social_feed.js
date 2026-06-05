@@ -523,12 +523,53 @@ router.get('/feed', optionalAuthenticate, async (req, res) => {
           AND u1.is_private = false
           AND u2.is_private = false
       ),
+      boss_kill_feed AS (
+        SELECT
+          bkp.killer_user_id           AS user_id,
+          bkp.killer_name              AS user_name,
+          NULL                         AS avatar_url,
+          NULL::int                    AS current_level,
+          NULL::int                    AS total_reps,
+          NULL::int AS str_xp, NULL::int AS end_xp, NULL::int AS agi_xp,
+          NULL::int AS dex_xp, NULL::int AS vig_xp, NULL::int AS int_xp, NULL::int AS fth_xp,
+          NULL                         AS border_css,
+          NULL                         AS avatar_css,
+          NULL                         AS post_background_css,
+          TO_CHAR(bkp.created_at, 'YYYY-MM-DD') AS date,
+          NULL::int                    AS summary_id,
+          '☠️ BOSS DERROTADO'          AS title,
+          bkp.boss_name                AS description,
+          NULL::int                    AS cha_xp,
+          NULL                         AS title_name,
+          bkp.boss_name                AS boss_name,
+          bkp.boss_image               AS boss_image,
+          '[]'::json                   AS exercises,
+          '{}'::json                   AS equipment,
+          0::bigint                    AS like_count,
+          0::bigint                    AS comment_count,
+          false                        AS user_has_liked,
+          bkp.created_at               AS created_at,
+          'boss_kill'                  AS post_type,
+          JSON_BUILD_OBJECT(
+            'id',            bkp.id,
+            'boss_fight_id', bkp.boss_fight_id,
+            'boss_name',     bkp.boss_name,
+            'boss_image',    bkp.boss_image,
+            'killer_id',     bkp.killer_user_id,
+            'killer_name',   bkp.killer_name,
+            'top3',          bkp.top3,
+            'created_at',    bkp.created_at
+          )                            AS pvp_data
+        FROM boss_kill_posts bkp
+      ),
       feed_base AS (
         SELECT * FROM reps_feed
         UNION ALL
         SELECT * FROM pvp_feed
         UNION ALL
         SELECT * FROM challenge_feed
+        UNION ALL
+        SELECT * FROM boss_kill_feed
       )
       SELECT 
         f.*,

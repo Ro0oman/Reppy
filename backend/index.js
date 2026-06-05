@@ -474,6 +474,18 @@ apiRouter.get('/db/init', async (req, res) => {
           content TEXT,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       )`,
+      `CREATE TABLE IF NOT EXISTS boss_kill_posts (
+          id SERIAL PRIMARY KEY,
+          boss_fight_id INTEGER REFERENCES boss_fights(id) ON DELETE CASCADE,
+          boss_name VARCHAR(255),
+          boss_image TEXT,
+          killer_user_id VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
+          killer_name VARCHAR(255),
+          top3 JSONB DEFAULT '[]',
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE(boss_fight_id)
+      )`,
+      `CREATE INDEX IF NOT EXISTS idx_boss_kill_posts_created ON boss_kill_posts(created_at DESC)`,
       `CREATE INDEX IF NOT EXISTS idx_reps_user_date ON reps(user_id, date)`,
       `CREATE INDEX IF NOT EXISTS idx_summaries_user_date ON daily_summaries(user_id, date)`,
       `CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(user_id_1, user_id_2)`,

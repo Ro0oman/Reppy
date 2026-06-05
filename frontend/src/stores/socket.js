@@ -124,7 +124,17 @@ export const useSocketStore = defineStore('socket', {
         }
       });
 
-      // 3. Private User Channel
+      // 3. Boss Kill Event
+      eventsChannel.bind('boss_kill', (data) => {
+        const notificationStore = useNotificationStore();
+        const isKiller = data.killerUserId === authStore.user?.id;
+        const msg = isKiller
+          ? `👑 ¡Has dado el último golpe a ${data.bossName}! Mira el feed.`
+          : `☠️ ¡${data.bossName} ha caído! ${data.killerName} asestó el golpe final.`;
+        notificationStore.notify(msg, isKiller ? 'success' : 'info', 8000);
+      });
+
+      // 4. Private User Channel
       if (authStore.user) {
         const userChannel = this.pusher.subscribe(`private-user-${authStore.user.id}`);
         this.channels.user = userChannel;

@@ -134,4 +134,15 @@ export const broadcastDamage = (damageData) => {
   }
 };
 
+export const broadcastBossKill = (payload) => {
+  if (io) io.emit('boss_kill', payload);
+
+  const pusher = getPusher();
+  if (pusher) {
+    pusher.trigger('global-events', 'boss_kill', payload).catch(err => {
+      console.warn('[PUSHER] Error broadcasting boss_kill:', err.message);
+    });
+  }
+};
+
 export const getIO = () => io;

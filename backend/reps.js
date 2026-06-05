@@ -14,6 +14,7 @@ import { broadcastDamage } from './socketManager.js';
 import { grantLastHitBonus } from './utils/bossRewards.js';
 import { getEffectiveExerciseCount, getRewardExerciseCount, isTimedExerciseUnit } from './utils/exerciseUnits.js';
 import { getStreakStatus, JACKPOT_REWARD_COINS, JACKPOT_DAYS_REQUIRED } from './utils/streak.js';
+import { createBossKillEvent } from './utils/bossKillEvent.js';
 
 
 const router = express.Router();
@@ -98,8 +99,8 @@ router.post('/', authenticate, async (req, res) => {
 
     // 3. Boss Interaction
     const bossRes = await client.query(
-      `SELECT id, current_hp, total_hp FROM boss_fights 
-       WHERE status != 'defeated' 
+      `SELECT id, current_hp, total_hp, name, image_url FROM boss_fights
+       WHERE status != 'defeated'
        ORDER BY order_index ASC LIMIT 1`
     );
 
@@ -143,17 +144,12 @@ router.post('/', authenticate, async (req, res) => {
       );
       
       if (newHp === 0) {
-        // Trigger boss scaling/sync if defeated
-        // (Runs on pool because it might have its own internal queries)
         syncBossHealth().catch(e => console.error('Boss sync error:', e));
 
-        // Mission: Boss Last Hit
         await updateMissionProgress(userId, 'boss_last_hit', 1);
 
-        // Grant Last Hit Bonus
         const lastHitReward = await grantLastHitBonus(userId, bossId, client);
         if (lastHitReward) {
-          // You could add this to the response or broadcast it
           broadcastDamage({
             type: 'LAST_HIT',
             userId: userId,
@@ -162,6 +158,11 @@ router.post('/', authenticate, async (req, res) => {
             reward: lastHitReward
           });
         }
+
+        // Community boss kill event (fire-and-forget, runs after TX commits)
+        createBossKillEvent(
+          bossId, boss.name, boss.image_url, userId, augmentedUser.name
+        ).catch(e => console.error('Boss kill event error:', e));
       }
     }
 
