@@ -312,6 +312,25 @@ router.post('/give-item', authenticate, isAdmin, async (req, res) => {
   }
 });
 
+// Force-update cosmic item stats in DB
+router.post('/update-cosmic-stats', authenticate, isAdmin, async (req, res) => {
+  const COSMIC_STATS = [
+    { name: 'Yelmo del Vacío',   stats: { str: 24, pwr: 20, end: 24, agi: 16 } },
+    { name: 'Filo Estelar',      stats: { str: 30, pwr: 28, crit_chance: 16, crit_damage: 60 } },
+    { name: 'Coraza Nebulosa',   stats: { end: 28, pwr: 20, str: 20, agi: 16 } },
+    { name: 'Grebas del Cosmos', stats: { agi: 28, end: 20, str: 16, pwr: 20 } },
+  ];
+  const results = [];
+  for (const item of COSMIC_STATS) {
+    const r = await query(
+      `UPDATE items SET stats = $1 WHERE name = $2 RETURNING id, name, stats`,
+      [JSON.stringify(item.stats), item.name]
+    );
+    results.push(r.rows[0] || { name: item.name, error: 'not found' });
+  }
+  res.json({ ok: true, updated: results });
+});
+
 // Give gems/coins to a user by ID
 router.post('/give-currency', authenticate, isAdmin, async (req, res) => {
   const { user_id, gems, coins } = req.body;
