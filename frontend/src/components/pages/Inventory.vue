@@ -319,11 +319,12 @@
 
               <!-- Compact Item Grid -->
               <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4">
-                <div v-for="item in items" :key="item.id" 
+                <div v-for="item in items" :key="item.id"
                   @mouseenter="markSeen(item)"
-                  class="nexus-item group relative flex flex-col min-h-[154px] sm:min-h-[180px] rounded-[1.25rem] sm:rounded-[1.5rem] border transition-all duration-300" 
+                  class="nexus-item group relative flex flex-col min-h-[154px] sm:min-h-[180px] rounded-[1.25rem] sm:rounded-[1.5rem] border transition-all duration-300"
                   :class="[
-                    getCardClass(item)
+                    getCardClass(item),
+                    item.rarity === 'cosmico' ? 'cosmic-card' : ''
                   ]">
                      <!-- Item Preview -->
                      <div class="relative h-20 sm:h-28 flex items-center justify-center p-3 sm:p-4 bg-black/40 rounded-t-2xl cursor-pointer overflow-hidden select-none"
@@ -1501,6 +1502,43 @@ onUnmounted(() => {
 }
 .tactical-chest-button:active {
   transform: scale(0.98);
+}
+
+/* ── Cosmic card: conic-gradient spinning border ── */
+.cosmic-card {
+  position: relative;
+  border-color: transparent !important;
+  overflow: visible !important;
+}
+.cosmic-card::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  border-radius: 1.5rem;
+  background: conic-gradient(from var(--cosmic-angle, 0deg), #a78bfa, #38bdf8, #f472b6, #818cf8, #a78bfa);
+  animation: cosmic-card-spin 3s linear infinite;
+}
+.cosmic-card::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  z-index: 0;
+  border-radius: 1.35rem;
+  background: #0a0a0a;
+}
+.cosmic-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+@property --cosmic-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes cosmic-card-spin {
+  to { --cosmic-angle: 360deg; }
 }
 
 /* Slide Down Transition for categories */
