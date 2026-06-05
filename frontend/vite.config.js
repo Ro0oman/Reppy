@@ -65,6 +65,16 @@ export default defineConfig({
         '/en/contador-flexiones',
         '/es/app-calistenia',
         '/en/app-calistenia',
+        '/es/app-dominadas',
+        '/en/app-dominadas',
+        '/es/app-flexiones',
+        '/en/app-flexiones',
+        '/es/app-fondos',
+        '/en/app-fondos',
+        '/es/reto-calistenia-30-dias',
+        '/en/reto-calistenia-30-dias',
+        '/es/reppy-vs-otras-apps-calistenia',
+        '/en/reppy-vs-otras-apps-calistenia',
         '/es/social',
         '/en/social'
       ];

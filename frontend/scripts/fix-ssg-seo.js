@@ -77,6 +77,66 @@ const metaForRoute = (route, lang) => {
     };
   }
 
+  if (route.endsWith('/app-dominadas') || route.endsWith('/pull-up-app')) {
+    return {
+      title: isEnglish ? 'Pull-up App for Android & iPhone | Reppy' : 'App de Dominadas Android e iPhone | Reppy',
+      description: isEnglish
+        ? 'The best free pull-up app for Android and iPhone. Track your pull-ups with RPG progression, streak tracking, and global community boss fights.'
+        : 'La mejor app de dominadas gratuita para Android e iPhone. Registra tus pull-ups con progresion RPG, racha de entrenamiento y boss fights comunitarios.',
+      keywords: isEnglish
+        ? 'pull-up app android, pull-up app iphone, best pull-up app, pull-up tracker app, free calisthenics app'
+        : 'app dominadas android, app dominadas iphone, app dominadas gratis, seguimiento dominadas, app pull-up gratis'
+    };
+  }
+
+  if (route.endsWith('/app-flexiones') || route.endsWith('/push-up-app')) {
+    return {
+      title: isEnglish ? 'Push-up Tracking App Free | Reppy' : 'App de Flexiones Gratis | Reppy',
+      description: isEnglish
+        ? 'Free push-up tracking app with RPG progression. Log push-ups, monitor progress, and compete in global rankings on Android and iPhone.'
+        : 'App de flexiones gratuita con progresion RPG. Registra push-ups, monitorea tu progreso y compite en rankings globales en Android e iPhone.',
+      keywords: isEnglish
+        ? 'push-up app, push-up tracking app, free push-up app, push-up counter app android, push-up counter iphone'
+        : 'app flexiones, app contador flexiones, app push-up gratis, seguimiento flexiones android, contador flexiones online'
+    };
+  }
+
+  if (route.endsWith('/app-fondos') || route.endsWith('/dips-app')) {
+    return {
+      title: isEnglish ? 'Dips Tracker App Free | Reppy' : 'App de Fondos en Paralelas | Reppy',
+      description: isEnglish
+        ? 'Track your dips and build tricep and chest strength with RPG progression. Free dips counter app with global ranking and community events.'
+        : 'Registra tus fondos en paralelas y desarrolla fuerza en triceps y pecho con progresion RPG. App de fondos gratis con ranking global y eventos comunitarios.',
+      keywords: isEnglish
+        ? 'dips app, dips tracker, dips counter app, tricep dips app, calisthenics dips tracker'
+        : 'app fondos paralelas, contador fondos, app fondos gratis, seguimiento fondos calistenia, tracker fondos'
+    };
+  }
+
+  if (route.endsWith('/reto-calistenia-30-dias') || route.endsWith('/30-day-calisthenics-challenge')) {
+    return {
+      title: isEnglish ? '30-Day Calisthenics Challenge | Reppy' : 'Reto Calistenia 30 Días | Reppy',
+      description: isEnglish
+        ? 'Take the 30-day calisthenics challenge. Daily pull-ups, push-ups, and dips tracked with RPG progression and community boss fights. Free and beginner-friendly.'
+        : 'Acepta el reto de calistenia de 30 dias. Dominadas, flexiones y fondos diarios con progresion RPG y boss fights comunitarios. Gratis y apto para principiantes.',
+      keywords: isEnglish
+        ? '30 day calisthenics challenge, calisthenics challenge, 30 day workout challenge, beginner calisthenics plan, bodyweight challenge'
+        : 'reto calistenia 30 dias, reto dominadas flexiones, reto calistenia principiantes, plan entrenamiento calistenia, challenge calistenia'
+    };
+  }
+
+  if (route.endsWith('/reppy-vs-otras-apps-calistenia') || route.endsWith('/reppy-vs-calisthenics-apps')) {
+    return {
+      title: isEnglish ? 'Reppy vs Other Calisthenics Apps | Comparison' : 'Reppy vs Otras Apps de Calistenia | Comparativa',
+      description: isEnglish
+        ? 'How does Reppy compare to other calisthenics and workout apps? See why gamified RPG tracking beats generic fitness apps for pull-ups, push-ups, and dips.'
+        : 'Como se compara Reppy con otras apps de calistenia y fitness? Descubre por que el seguimiento RPG gamificado supera a las apps de fitness genericas.',
+      keywords: isEnglish
+        ? 'reppy vs freeletics, reppy vs calisthenics app, best calisthenics app comparison, calisthenics app review'
+        : 'reppy vs freeletics, reppy vs otras apps, mejor app calistenia comparativa, comparacion apps calistenia, reppy alternativa'
+    };
+  }
+
   if (route.endsWith('/app-calistenia') || route.endsWith('/calisthenics-app')) {
     return {
       title: isEnglish ? 'Best Calisthenics App Free | Reppy' : 'App de Calistenia Gratis | Reppy',

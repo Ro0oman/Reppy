@@ -18,6 +18,8 @@ const Codex = () => import('./components/pages/Codex.vue')
 const PvpBattleView = () => import('./components/pages/PvpBattleView.vue')
 const Missions = () => import('./components/pages/Missions.vue')
 const NotFound = () => import('./components/pages/NotFound.vue')
+const ChallengeLanding = () => import('./components/pages/ChallengeLanding.vue')
+const ComparisonLanding = () => import('./components/pages/ComparisonLanding.vue')
 
 export const routes = [
   // Redirección adaptativa de la raíz basada en detección de idioma
@@ -141,12 +143,50 @@ export const routes = [
           descriptionKey: 'pushup_seo_desc'
         }
       },
-      { 
-        path: 'app-calistenia', 
+      {
+        path: 'app-calistenia',
         alias: 'calisthenics-app',
-        component: Landing, 
+        component: Landing,
         name: 'seo-calistenia',
         meta: { titleKey: 'hero_eyebrow' }
+      },
+      {
+        path: 'app-dominadas',
+        alias: 'pull-up-app',
+        component: ExerciseLanding,
+        name: 'seo-app-dominadas',
+        props: { type: 'dominadas', appFocus: true },
+        meta: { titleKey: 'app_dominadas_seo_title', descriptionKey: 'app_dominadas_seo_desc' }
+      },
+      {
+        path: 'app-flexiones',
+        alias: 'push-up-app',
+        component: ExerciseLanding,
+        name: 'seo-app-flexiones',
+        props: { type: 'flexiones', appFocus: true },
+        meta: { titleKey: 'app_flexiones_seo_title', descriptionKey: 'app_flexiones_seo_desc' }
+      },
+      {
+        path: 'app-fondos',
+        alias: 'dips-app',
+        component: ExerciseLanding,
+        name: 'seo-app-fondos',
+        props: { type: 'fondos' },
+        meta: { titleKey: 'app_fondos_seo_title', descriptionKey: 'app_fondos_seo_desc' }
+      },
+      {
+        path: 'reto-calistenia-30-dias',
+        alias: '30-day-calisthenics-challenge',
+        component: ChallengeLanding,
+        name: 'seo-reto-30',
+        meta: { titleKey: 'challenge_seo_title', descriptionKey: 'challenge_seo_desc' }
+      },
+      {
+        path: 'reppy-vs-otras-apps-calistenia',
+        alias: 'reppy-vs-calisthenics-apps',
+        component: ComparisonLanding,
+        name: 'seo-vs',
+        meta: { titleKey: 'vs_seo_title', descriptionKey: 'vs_seo_desc' }
       },
       { 
         path: 'blog', 
@@ -186,7 +226,9 @@ export function setupRouterGuards(router) {
       const knownPaths = [
         'dashboard', 'social', 'shop', 'codex', 'inventory', 
         'profile', 'admin', 'notifications', 'blog', 'login', 'missions',
-        'contador-dominadas', 'contador-flexiones', 'app-calistenia'
+        'contador-dominadas', 'contador-flexiones', 'app-calistenia',
+        'app-dominadas', 'app-flexiones', 'app-fondos',
+        'reto-calistenia-30-dias', 'reppy-vs-otras-apps-calistenia'
       ];
       
       const firstPart = to.path.split('/')[1];

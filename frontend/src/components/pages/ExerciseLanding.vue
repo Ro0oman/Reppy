@@ -14,7 +14,7 @@
       </div>
 
       <h1 class="text-5xl md:text-8xl font-bold tracking-tight text-foreground leading-tight mb-8">
-        {{ content.h1_start }} <span class="text-primary-500 capitalize">{{ i18n.t(type === 'dominadas' ? 'pullups' : 'pushups') }}</span> {{ content.h1_end }}
+        {{ content.h1_start }} <span class="text-primary-500 capitalize">{{ i18n.t(type === 'dominadas' ? 'pullups' : type === 'flexiones' ? 'pushups' : 'dips') }}</span> {{ content.h1_end }}
       </h1>
       
       <p class="max-w-2xl text-xl md:text-2xl text-muted font-medium mb-12 leading-relaxed">
@@ -122,6 +122,10 @@ const props = defineProps({
   type: {
     type: String,
     required: true
+  },
+  appFocus: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -131,14 +135,22 @@ const authStore = useAuthStore();
 const i18n = useI18nStore();
 
 const updateMeta = () => {
-  const isDominadas = props.type === 'dominadas';
   const isEn = i18n.locale === 'en';
-  const title = isDominadas
-    ? (isEn ? 'Online Pull-up Counter | Reppy' : 'Contador de Dominadas Online | Reppy')
-    : (isEn ? 'Free Push-up Counter | Reppy' : 'Contador de Flexiones Gratis | Reppy');
-  const description = isDominadas
-    ? (isEn ? 'Log your pull-ups and compete in the global ranking. Free pull-up tracker with RPG progression, streak tracking, and community boss fights.' : 'Registra tus pull-ups y compite en el ranking mundial. Contador de dominadas gratis con progresion RPG, racha de entrenamiento y boss fights comunitarios.')
-    : (isEn ? 'Keep track of your push-ups and level up your attributes. Free push-up counter with RPG progression, leaderboard, and community events.' : 'Lleva la cuenta de tus push-ups y sube de nivel tus atributos. Contador de flexiones gratis con progresion RPG, ranking global y eventos comunitarios.');
+  const metaMap = {
+    dominadas: {
+      title: isEn ? (props.appFocus ? 'Pull-up App for Android & iPhone | Reppy' : 'Online Pull-up Counter | Reppy') : (props.appFocus ? 'App de Dominadas Android e iPhone | Reppy' : 'Contador de Dominadas Online | Reppy'),
+      description: isEn ? 'Log your pull-ups and compete in the global ranking. Free pull-up tracker with RPG progression, streak tracking, and community boss fights.' : 'Registra tus pull-ups y compite en el ranking mundial. Contador de dominadas gratis con progresion RPG, racha de entrenamiento y boss fights comunitarios.'
+    },
+    flexiones: {
+      title: isEn ? (props.appFocus ? 'Push-up Tracking App | Reppy' : 'Free Push-up Counter | Reppy') : (props.appFocus ? 'App de Flexiones Gratis | Reppy' : 'Contador de Flexiones Gratis | Reppy'),
+      description: isEn ? 'Keep track of your push-ups and level up your attributes. Free push-up counter with RPG progression, leaderboard, and community events.' : 'Lleva la cuenta de tus push-ups y sube de nivel tus atributos. Contador de flexiones gratis con progresion RPG, ranking global y eventos comunitarios.'
+    },
+    fondos: {
+      title: isEn ? 'Dips Tracker App | Reppy' : 'App de Fondos en Paralelas | Reppy',
+      description: isEn ? 'Track your dips and level up tricep and chest strength. Free dips counter with RPG progression, global ranking, and community boss fights.' : 'Registra tus fondos y sube de nivel tu fuerza de triceps y pecho. App de fondos gratis con progresion RPG, ranking global y boss fights comunitarios.'
+    }
+  };
+  const { title, description } = metaMap[props.type] || metaMap.dominadas;
   const url = `https://reppy-weld.vercel.app${route.path}`;
 
   document.title = title;
@@ -164,12 +176,13 @@ const start = () => {
 };
 
 const content = computed(() => {
-  const prefix = props.type === 'dominadas' ? 'el_pullup' : 'el_pushup';
-  
+  const prefix = props.type === 'dominadas' ? 'el_pullup' : props.type === 'flexiones' ? 'el_pushup' : 'el_dip';
+  const isEs = i18n.locale === 'es';
+
   return {
     eyebrow: i18n.t(`${prefix}_eyebrow`),
-    h1_start: i18n.locale === 'es' ? 'Contador de' : 'Free Online',
-    h1_end: i18n.locale === 'es' ? 'Gratis' : 'Counter',
+    h1_start: props.appFocus ? (isEs ? 'App de' : 'Free') : (isEs ? 'Contador de' : 'Free Online'),
+    h1_end: props.appFocus ? (isEs ? 'Gratis' : 'App') : (isEs ? 'Gratis' : 'Counter'),
     subtext: i18n.t(`${prefix}_subtext`),
     card_label: i18n.t(`${prefix}_card_label`),
     card_title: i18n.t(`${prefix}_card_title`),

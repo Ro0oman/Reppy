@@ -4,6 +4,11 @@ Allow: /blog
 Allow: /contador-dominadas
 Allow: /contador-flexiones
 Allow: /app-calistenia
+Allow: /app-dominadas
+Allow: /app-flexiones
+Allow: /app-fondos
+Allow: /reto-calistenia-30-dias
+Allow: /reppy-vs-otras-apps-calistenia
 Allow: /social
 Allow: /profile
 

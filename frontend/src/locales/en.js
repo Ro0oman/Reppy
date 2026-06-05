@@ -726,6 +726,44 @@ export default {
       <h3>Gamified training</h3>
       <p>Imagine every push-up is a hit to an enemy in an RPG. That\'s Reppy\'s philosophy. By turning physical effort into digital experience (XP) and coins, we reduce the mental friction of starting a workout. It\'s no longer "I have to train," it\'s "I have to level up."</p>
     `,
+    // Exercise Landing - Dips
+    el_dip_eyebrow: 'Free Dips App',
+    el_dip_subtext: 'Track your parallel bar dips, build tricep and chest strength, and compete in the global calisthenics ranking.',
+    el_dip_card_label: 'DIPS STAT',
+    el_dip_card_title: 'Monthly Volume',
+    el_dip_section1_h2: 'Why track your dips?',
+    el_dip_section1_body: '<p>Dips are the vertical push exercise of calisthenics. Without tracking, it\'s impossible to know if your weekly volume is increasing or if you\'ve been plateaued for weeks.</p><p>With Reppy, every dip converts to XP that improves your Strength and Power attributes. The heatmap visual history gives you the motivation to keep your streak alive.</p>',
+    el_dip_section2_h2: 'How to improve your dips',
+    el_dip_tip1_title: 'Full Range of Motion',
+    el_dip_tip1_body: 'Lower until your elbows reach 90°. Half of athletes skip full ROM. Reppy rewards quality reps.',
+    el_dip_tip2_title: 'Progressive Overload',
+    el_dip_tip2_body: 'Increase weekly volume by 5–10%. Reppy\'s tracking shows you whether you\'re making real progress.',
+    el_dip_tip3_title: 'Variations',
+    el_dip_tip3_body: 'Ring dips, weighted dips, or parallel bar dips. All count toward your Reppy level.',
+    el_dip_guide_h2: 'Complete Guide to Parallel Bar Dips',
+    el_dip_article: `
+      <h3>Dips: the calisthenics bench press</h3>
+      <p>If you want defined chest and triceps without machines, <strong>parallel bar dips</strong> are your primary tool. This push exercise works the lower chest, triceps, and anterior deltoid simultaneously.</p>
+
+      <h3>Progression and volume</h3>
+      <p>Many athletes do dips sporadically without tracking. That\'s a mistake. With a <strong>dips tracker</strong> like Reppy you can see if your monthly volume is rising, spot detraining weeks, or know when it\'s time to add weight.</p>
+
+      <h3>Why Reppy for your dips?</h3>
+      <p>Reppy converts every dip into XP, coins, and level progress. Dips also contribute to the community boss fight alongside pull-ups and push-ups, making every rep have real collective impact.</p>
+    `,
+
+    // SEO meta keys for new landing pages
+    app_dominadas_seo_title: 'Pull-up App for Android & iPhone',
+    app_dominadas_seo_desc: 'The best free pull-up app for Android and iPhone with RPG progression.',
+    app_flexiones_seo_title: 'Free Push-up Tracking App',
+    app_flexiones_seo_desc: 'Free push-up counting app with RPG progression and global ranking.',
+    app_fondos_seo_title: 'Dips Tracker App Free',
+    app_fondos_seo_desc: 'Track your dips and level up with gamified RPG progression.',
+    challenge_seo_title: '30-Day Calisthenics Challenge',
+    challenge_seo_desc: 'Take the 30-day calisthenics challenge with daily pull-ups, push-ups, and dips.',
+    vs_seo_title: 'Reppy vs Other Calisthenics Apps',
+    vs_seo_desc: 'Honest comparison between Reppy and other calisthenics and fitness apps.',
+
     el_cta_h2: 'Ready to start counting?',
     el_cta_btn: 'CREATE ACCOUNT NOW',
     el_cta_footer: '100% FREE · NO CARDS · PURE CALISTHENICS',

@@ -20,6 +20,11 @@ const staticRoutes = [
   { path: '/contador-dominadas', priority: '0.9', changefreq: 'weekly' },
   { path: '/contador-flexiones', priority: '0.9', changefreq: 'weekly' },
   { path: '/app-calistenia', priority: '0.8', changefreq: 'weekly' },
+  { path: '/app-dominadas', priority: '0.9', changefreq: 'weekly' },
+  { path: '/app-flexiones', priority: '0.9', changefreq: 'weekly' },
+  { path: '/app-fondos', priority: '0.8', changefreq: 'weekly' },
+  { path: '/reto-calistenia-30-dias', priority: '0.9', changefreq: 'weekly' },
+  { path: '/reppy-vs-otras-apps-calistenia', priority: '0.8', changefreq: 'monthly' },
   { path: '/social', priority: '0.8', changefreq: 'hourly' },
   { path: '/blog', priority: '0.8', changefreq: 'daily' },
 ];

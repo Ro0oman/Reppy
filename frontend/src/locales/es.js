@@ -753,6 +753,44 @@ export default {
       <h3>Entrenamiento gamificado</h3>
       <p>Imagina que cada flexión es un golpe a un enemigo en un RPG. Esa es la filosofía de Reppy. Al convertir el esfuerzo físico en experiencia digital (XP) y monedas, reducimos la fricción mental de empezar un entrenamiento. Ya no es "tengo que entrenar", es "tengo que subir de nivel".</p>
     `,
+    // Exercise Landing - Fondos
+    el_dip_eyebrow: 'App de Fondos Gratuita',
+    el_dip_subtext: 'Registra tus fondos en paralelas, desarrolla fuerza de tríceps y pecho, y compite en el ranking global de calistenia.',
+    el_dip_card_label: 'ESTADÍSTICA FONDOS',
+    el_dip_card_title: 'Volumen Mensual',
+    el_dip_section1_h2: '¿Por qué registrar tus fondos en paralelas?',
+    el_dip_section1_body: '<p>Los fondos son el ejercicio de empuje vertical por excelencia en calistenia. Sin un registro, es imposible saber si tu volumen semanal aumenta o si llevas semanas estancado.</p><p>Con Reppy, cada fondo se convierte en puntos de experiencia que mejoran tus atributos de Fuerza y Potencia. El historial visual en heatmap te da la motivación para mantener la racha.</p>',
+    el_dip_section2_h2: 'Cómo mejorar tus fondos',
+    el_dip_tip1_title: 'Rango Completo',
+    el_dip_tip1_body: 'Baja hasta que los codos formen 90°. La mitad de los atletas no completa el rango. Reppy te premia por la calidad.',
+    el_dip_tip2_title: 'Sobrecarga Progresiva',
+    el_dip_tip2_body: 'Aumenta el volumen semanal un 5–10%. El registro en Reppy te muestra si estás progresando de verdad.',
+    el_dip_tip3_title: 'Variantes',
+    el_dip_tip3_body: 'Fondos en anillas, con lastre o en paralelas altas. Todas cuentan para tu nivel en Reppy.',
+    el_dip_guide_h2: 'Guía Completa de Fondos en Paralelas',
+    el_dip_article: `
+      <h3>Fondos: el press de banca de la calistenia</h3>
+      <p>Si quieres pecho y tríceps definidos sin máquinas, los <strong>fondos en paralelas</strong> son tu herramienta principal. Este ejercicio de empuje trabaja pectoral inferior, tríceps y deltoides anterior de forma simultánea.</p>
+
+      <h3>Progresión y volumen</h3>
+      <p>Muchos atletas hacen fondos de forma espontánea sin llevar la cuenta. Eso es un error. Con un <strong>tracker de fondos</strong> como Reppy puedes ver si tu volumen mensual sube, si tienes semanas de desentrenamiento o si es hora de añadir lastre.</p>
+
+      <h3>¿Por qué Reppy para tus fondos?</h3>
+      <p>Reppy convierte cada fondo en XP, monedas y progreso de nivel. Además, los fondos contribuyen al jefe comunitario junto con dominadas y flexiones, haciendo que cada repetición tenga un impacto colectivo real.</p>
+    `,
+
+    // SEO meta keys for new landing pages
+    app_dominadas_seo_title: 'App de Dominadas Android e iPhone',
+    app_dominadas_seo_desc: 'La mejor app de dominadas gratuita para Android e iPhone con progresion RPG.',
+    app_flexiones_seo_title: 'App de Flexiones Gratis',
+    app_flexiones_seo_desc: 'App gratuita para contar flexiones con progresion RPG y ranking global.',
+    app_fondos_seo_title: 'App de Fondos en Paralelas',
+    app_fondos_seo_desc: 'Registra tus fondos y sube de nivel con progresion RPG gamificada.',
+    challenge_seo_title: 'Reto Calistenia 30 Días',
+    challenge_seo_desc: 'Acepta el reto de calistenia de 30 dias con dominadas, flexiones y fondos diarios.',
+    vs_seo_title: 'Reppy vs Otras Apps de Calistenia',
+    vs_seo_desc: 'Comparativa honesta entre Reppy y otras apps de calistenia y fitness.',
+
     el_cta_h2: '¿Listo para empezar a contar?',
     el_cta_btn: 'CREAR CUENTA AHORA',
     el_cta_footer: '100% GRATIS · SIN TARJETAS · CALISTENIA PURA',
