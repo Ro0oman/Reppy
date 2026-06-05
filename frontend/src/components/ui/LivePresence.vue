@@ -1,5 +1,5 @@
 <template>
-  <div v-if="authStore.isAuthenticated" class="flex flex-col gap-3 animate-in fade-in slide-in-from-right-4 duration-500">
+  <div class="flex flex-col gap-3 animate-in fade-in slide-in-from-right-4 duration-500">
     <div 
       class="flex items-center justify-between mb-4 cursor-pointer group/title"
       @click="showModal = true"
@@ -95,7 +95,8 @@
                     </div>
                   </div>
                   
-                  <button 
+                  <button
+                    v-if="!user.anonymous"
                     @click="goToProfile(user.id)"
                     class="px-3 py-1.5 bg-white/5 hover:bg-emerald-500/20 rounded-lg border border-white/10 hover:border-emerald-500/40 text-[9px] font-black text-white/60 hover:text-emerald-400 transition-all uppercase tracking-widest"
                   >
@@ -132,10 +133,15 @@ const router = useRouter();
 const i18n = useI18nStore();
 const showModal = ref(false);
 
+const AVATAR_IDS = [1,2,3,4,5,7,8,9,10,11,14,16,17,27,28,29,31,32,33,34,35,36,37,38,39,40];
+const anonAvatar = `/img/avatars/avatar_${AVATAR_IDS[Math.floor(Math.random() * AVATAR_IDS.length)]}.webp`;
+
 const displayOperatives = computed(() => {
   const ops = [...socketStore.activeOperatives];
-  // If user is authenticated but not in the list, add them as a fallback
-  if (authStore.user && !ops.find(o => o.id === authStore.user.id)) {
+  if (!authStore.isAuthenticated) {
+    // Show anonymous user as a placeholder representing the current visitor
+    ops.unshift({ id: 'anon', name: 'Atleta Anónimo', avatar_url: anonAvatar, level: 1, anonymous: true });
+  } else if (!ops.find(o => o.id === authStore.user.id)) {
     ops.unshift({
       id: authStore.user.id,
       name: authStore.user.name,
