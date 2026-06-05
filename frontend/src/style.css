@@ -5,3 +5,8 @@
 
 @import "./cosmetics.css";
 @import "./athletic-tech.css";
+
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}

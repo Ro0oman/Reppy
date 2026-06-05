@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen selection:bg-primary-500/30 relative text-foreground transition-colors duration-500" :class="[
+  <div class="min-h-screen selection:bg-primary-500/30 relative text-foreground transition-colors duration-500 overflow-x-hidden" :class="[
     authStore.user?.background_css ? 'bg-transparent' : 'bg-background',
     { 'has-custom-bg': authStore.user?.background_css }
   ]">
@@ -157,7 +157,7 @@
     </nav>
 
     <!-- Main Operational View -->
-    <main :class="['flex-1 flex flex-col', $route.name === 'pvp' ? 'p-0' : 'pt-4 pb-20']">
+    <main :class="['flex-1 flex flex-col min-w-0 overflow-x-hidden', $route.name === 'pvp' ? 'p-0' : 'pt-4 pb-20']">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" @start="onStartAction" @viewProfile="openProfile" />

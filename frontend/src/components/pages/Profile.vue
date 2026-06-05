@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 pt-4 pb-24 space-y-6 animate-in relative z-10">
+  <div class="w-full max-w-7xl mx-auto px-4 pt-4 pb-24 space-y-6 animate-in relative z-10 overflow-x-hidden">
     <div v-if="loading" class="flex flex-col items-center justify-center py-32">
       <div class="w-12 h-12 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
       <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em] mt-8">{{ i18nStore.t('profile_decrypting') }}</p>
