@@ -1,7 +1,7 @@
 import express from 'express';
 import { query } from './db.js';
 import { authenticate, optionalAuthenticate } from './middleware.js';
-import { autoGrantPendingChests } from './utils/bossRewards.js';
+import { autoGrantPendingChests, grantAllPendingChestsBeforeReset } from './utils/bossRewards.js';
 
 import { getRandomPhrase } from './utils/bossPhrases.js';
 import { getLocalDateString } from './utils/date.js';
@@ -20,6 +20,10 @@ router.get('/active', optionalAuthenticate, async (req, res) => {
 
     // AUTO-RESET LOOP: If all bosses are defeated, reset them all to active
     if (bossRes.rows.length === 0) {
+      // CRITICAL: grant chests to every participant BEFORE wiping event_participants.
+      // If we reset first, autoGrantPendingChests finds no 'defeated' bosses → 0 chests.
+      await grantAllPendingChestsBeforeReset();
+
       await query('BEGIN');
       try {
         // Reset all bosses to active and full HP

@@ -88,6 +88,42 @@ export async function autoGrantPendingChests(userId) {
 }
 
 /**
+ * Called right before the boss loop resets (all bosses defeated).
+ * Grants pending chests to EVERY user who participated in any defeated boss
+ * but has not yet received their chest. Must run BEFORE resetting event_participants.
+ */
+export async function grantAllPendingChestsBeforeReset() {
+  try {
+    console.log('[BOSS_RESET] Granting pending chests to all participants before loop reset...');
+
+    // Find all users with unclaimed chests on defeated bosses
+    const usersRes = await query(`
+      SELECT DISTINCT p.user_id
+      FROM event_participants p
+      JOIN boss_fights b ON b.id = p.boss_fight_id
+      WHERE b.status = 'defeated'
+        AND p.damage_dealt > 0
+        AND p.chests_claimed = 0
+    `);
+
+    let totalGranted = 0;
+    for (const { user_id } of usersRes.rows) {
+      const granted = await autoGrantPendingChests(user_id);
+      if (granted > 0) {
+        console.log(`[BOSS_RESET] Granted ${granted} chest(s) to user ${user_id}`);
+        totalGranted += granted;
+      }
+    }
+
+    console.log(`[BOSS_RESET] Done. Total chests granted: ${totalGranted} to ${usersRes.rows.length} users.`);
+    return totalGranted;
+  } catch (error) {
+    console.error('[BOSS_RESET] Error granting chests before reset:', error);
+    return 0;
+  }
+}
+
+/**
  * Grants a special bonus to the user who delivered the "Last Hit" (Golpe de Gracia) to a boss.
  * Bonus can be a random amount of coins or a random unowned item.
  */
