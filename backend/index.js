@@ -35,6 +35,7 @@ import trainingRoutes from './training.js';
 import exercisesRoutes from './exercises.js';
 import streakRoutes from './streak.js';
 import referralRoutes from './referral.js';
+import hevyRoutes from './hevy.js';
 import http from 'http';
 import getPusher from './pusher.js';
 import { updatePresence } from './socketManager.js';
@@ -117,6 +118,7 @@ apiRouter.use('/training', trainingRoutes);
 apiRouter.use('/exercises', exercisesRoutes);
 apiRouter.use('/streak', streakRoutes);
 apiRouter.use('/referral', referralRoutes);
+apiRouter.use('/hevy', hevyRoutes);
 
 // Pusher Auth Endpoint (Directly on app for Vercel compatibility)
 app.post('/api/pusher/auth', async (req, res) => {

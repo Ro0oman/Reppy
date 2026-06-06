@@ -320,21 +320,26 @@ router.get('/heatmap', authenticate, async (req, res) => {
   try {
     const isGlobal = !type || type === 'all' || type === 'undefined';
     
-    let q = `SELECT TO_CHAR(date, 'YYYY-MM-DD') AS date, exercise_type, SUM(count)::int as count FROM reps WHERE user_id = $1`;
+    let q = `SELECT TO_CHAR(r.date, 'YYYY-MM-DD') AS date, r.exercise_type,
+                    COALESCE(e.title_key, r.exercise_type) AS title_key,
+                    SUM(r.count)::int as count
+             FROM reps r
+             LEFT JOIN exercises e ON e.slug = r.exercise_type
+             WHERE r.user_id = $1`;
     let params = [userId];
 
     if (!isGlobal) {
-      q += ' AND exercise_type = $2';
+      q += ' AND r.exercise_type = $2';
       params.push(type);
     }
 
     if (year) {
       const yearInt = parseInt(year);
-      q += ` AND date >= '${yearInt}-01-01' AND date <= '${yearInt}-12-31'`;
+      q += ` AND r.date >= '${yearInt}-01-01' AND r.date <= '${yearInt}-12-31'`;
     }
     // No date limit when no year specified — show full history
 
-    q += ' GROUP BY date, exercise_type ORDER BY date ASC';
+    q += ' GROUP BY r.date, r.exercise_type, e.title_key ORDER BY date ASC';
 
     const result = await query(q, params);
 
