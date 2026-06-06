@@ -47,7 +47,7 @@
 
               <!-- Modal Card -->
               <div
-                class="relative w-full max-w-[320px] bg-zinc-950/90 border border-white/10 rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.4)] p-10 overflow-hidden animate-in zoom-in duration-300 backdrop-blur-md">
+                class="relative w-full max-w-[320px] max-h-[88vh] flex flex-col bg-zinc-950/90 border border-white/10 rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.4)] p-10 overflow-hidden animate-in zoom-in duration-300 backdrop-blur-md">
                 <!-- Premium Glow Effects -->
                 <div
                   class="absolute -top-20 -right-20 w-48 h-48 bg-primary/10 blur-[80px] rounded-full pointer-events-none">
@@ -62,7 +62,7 @@
                   <XIcon class="w-5 h-5" />
                 </button>
 
-                <div class="relative flex flex-col items-center gap-6">
+                <div class="relative flex flex-col items-center gap-6 overflow-y-auto custom-scrollbar min-h-0 -mr-3 pr-3">
                   <div class="flex flex-col items-center text-center">
                     <span class="text-[9px] font-black uppercase tracking-[0.4em] text-zinc-500 mb-2">
                       {{ formatDate(selectedDay.date, true) }}
@@ -360,5 +360,23 @@ const exerciseLabel = (item) => {
 .tooltip-leave-to {
   opacity: 0;
   transform: translate(-50%, 4px) scale(0.9);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.3);
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.5);
+}
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--primary) / 0.3) transparent;
 }
 </style>
