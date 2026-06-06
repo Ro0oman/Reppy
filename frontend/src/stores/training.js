@@ -67,6 +67,10 @@ export const useTrainingStore = defineStore('training', {
       return res.data.session;
     },
 
+    async cancelSession(sessionId) {
+      await axios.post(`/api/training/sessions/${sessionId}/cancel`);
+    },
+
     async completeSession(sessionId, sets) {
       const res = await axios.post(`/api/training/sessions/${sessionId}/complete`, { sets });
       await this.fetchMine();

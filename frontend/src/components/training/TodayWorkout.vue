@@ -172,15 +172,25 @@
         >
           {{ incompleteSetsLabel }}
         </p>
-        <button
-          type="button"
-          class="btn-reppy w-full !py-4 disabled:opacity-40"
-          :disabled="loading"
-          @click="finishWorkout"
-        >
-          <Loader2 v-if="loading" class="h-4 w-4 animate-spin" />
-          <span v-else>{{ i18n.t('today_finish_workout') }}</span>
-        </button>
+        <div class="flex gap-2">
+          <button
+            type="button"
+            class="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-4 text-[10px] font-black uppercase tracking-widest text-muted transition hover:border-red-500/30 hover:text-red-300 active:scale-95 disabled:opacity-40"
+            :disabled="loading"
+            @click="abandonSession"
+          >
+            {{ i18n.locale === 'es' ? 'Salir' : 'Exit' }}
+          </button>
+          <button
+            type="button"
+            class="btn-reppy flex-1 !py-4 disabled:opacity-40"
+            :disabled="loading"
+            @click="finishWorkout"
+          >
+            <Loader2 v-if="loading" class="h-4 w-4 animate-spin" />
+            <span v-else>{{ i18n.t('today_finish_workout') }}</span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -440,6 +450,21 @@ const markDone = (set) => {
       }
     }
   }, 1000);
+};
+
+const abandonSession = () => {
+  notificationStore.confirm(
+    i18n.locale === 'es' ? 'Salir del entrenamiento' : 'Exit workout',
+    i18n.locale === 'es' ? 'Tu progreso de esta sesion no se guardara.' : 'Your progress for this session will not be saved.',
+    async () => {
+      clearAllTimers();
+      const currentSessionId = session.value?.id;
+      session.value = null;
+      if (currentSessionId) {
+        trainingStore.cancelSession(currentSessionId).catch(() => {});
+      }
+    }
+  );
 };
 
 const startWorkout = async () => {

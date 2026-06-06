@@ -594,6 +594,25 @@ router.post('/sessions/start', authenticate, async (req, res) => {
   }
 });
 
+router.post('/sessions/:id/cancel', authenticate, async (req, res) => {
+  const sessionId = clampInt(req.params.id);
+  if (!sessionId) {
+    return res.status(400).json({ message: 'Invalid session id' });
+  }
+  try {
+    await query(
+      `UPDATE workout_sessions
+       SET status = 'cancelled'
+       WHERE id = $1 AND user_id = $2 AND status = 'started'`,
+      [sessionId, req.user.id]
+    );
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('Error cancelling workout session:', error);
+    res.status(500).json({ message: 'Error cancelling workout session' });
+  }
+});
+
 router.post('/sessions/:id/complete', authenticate, async (req, res) => {
   const sessionId = clampInt(req.params.id);
   const incomingSets = Array.isArray(req.body.sets) ? req.body.sets : [];
