@@ -47,11 +47,16 @@ export async function getWorkoutEvents(apiKey, sinceIso, page = 1, pageSize = 10
   return hevyFetch(apiKey, `/workouts/events?since=${encodeURIComponent(sinceIso)}&page=${page}&pageSize=${pageSize}`);
 }
 
-/** Subscribe Hevy to push new-workout events to our endpoint. */
-export async function createWebhook(apiKey, url, authHeader) {
+/**
+ * Subscribe Hevy to push new-workout events to our endpoint.
+ * Hevy reflects `authToken` back as the `Authorization` header on each call,
+ * which we use to attribute the workout to a Reppy user.
+ * Verified contract: POST { url, authToken } -> 201.
+ */
+export async function createWebhook(apiKey, url, authToken) {
   return hevyFetch(apiKey, '/webhook-subscription', {
     method: 'POST',
-    body: JSON.stringify({ url, authentication: authHeader }),
+    body: JSON.stringify({ url, authToken }),
   });
 }
 
