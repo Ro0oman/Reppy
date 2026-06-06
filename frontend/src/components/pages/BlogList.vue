@@ -17,9 +17,14 @@
           :to="`/${i18n.locale}/blog/${featuredPost.slug}`"
           class="relative group block w-full aspect-[21/9] md:aspect-[3/1] rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-surface-dark/10"
         >
-          <img 
-            :src="featuredPost.image" 
+          <img
+            :src="featuredPost.image"
+            :alt="featuredPost.locales[i18n.locale]?.title || featuredPost.locales.en.title"
             class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+            loading="eager"
+            fetchpriority="high"
+            width="1200"
+            height="400"
             @load="loadedImages[featuredPost.slug] = true"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
@@ -69,10 +74,14 @@
             class="group space-y-8 animate-in"
           >
             <div class="relative aspect-video rounded-2xl overflow-hidden border border-white/5 bg-surface-dark/10 shadow-2xl">
-              <img 
-                :src="post.image" 
-                class="w-full h-full object-cover transition-all duration-1000 group-hover:scale-105" 
+              <img
+                :src="post.image"
+                :alt="post.locales[i18n.locale]?.title || post.locales.en.title"
+                class="w-full h-full object-cover transition-all duration-1000 group-hover:scale-105"
                 :class="loadedImages[post.slug] ? 'opacity-100' : 'opacity-0'"
+                loading="lazy"
+                width="800"
+                height="450"
                 @load="loadedImages[post.slug] = true"
               />
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>

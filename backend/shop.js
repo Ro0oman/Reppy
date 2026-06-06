@@ -145,6 +145,7 @@ router.get('/daily', authenticate, async (req, res) => {
     // Check if user has daily deals
     let dailyRes = await query(`
       SELECT d.*, i.name, i.description, i.rarity, i.type, i.image_url, i.svg_key, i.stats,
+             i.price as item_price, i.price_gems as item_price_gems,
              CASE WHEN d.item_id IS NOT NULL THEN EXISTS(SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = i.id) ELSE d.is_claimed END as owned
       FROM daily_shop_items d
       LEFT JOIN items i ON d.item_id = i.id
@@ -168,6 +169,7 @@ router.get('/daily', authenticate, async (req, res) => {
       await rotateDailyShop(userId);
       dailyRes = await query(`
         SELECT d.*, i.name, i.description, i.rarity, i.type, i.image_url, i.svg_key, i.stats,
+               i.price as item_price, i.price_gems as item_price_gems,
                CASE WHEN d.item_id IS NOT NULL THEN EXISTS(SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = i.id) ELSE d.is_claimed END as owned
         FROM daily_shop_items d
         LEFT JOIN items i ON d.item_id = i.id
@@ -206,13 +208,28 @@ router.get('/daily', authenticate, async (req, res) => {
       nextRotation = new Date(rotatedAt.getTime() + 24 * 60 * 60 * 1000).toISOString();
     }
 
-    // Map deals to ensure stats are objects
+    // Map deals to ensure stats are objects and fix stale 0-price entries
     const deals = dailyRes.rows.map(item => {
       let parsedStats = item.stats;
       if (typeof item.stats === 'string') {
         try { parsedStats = JSON.parse(item.stats); } catch(e) { parsedStats = {}; }
       }
-      return { ...item, stats: parsedStats || {} };
+
+      // If this deal has both discounted prices at 0 but the item has a real base price,
+      // the entry was created when the item was mispriced. Recalculate on the fly so the
+      // frontend shows and charges the correct amount (80% of current base price).
+      let discountedPrice = item.discounted_price || 0;
+      let discountedGems = item.discounted_gems || 0;
+      if (!item.reward_type && discountedPrice === 0 && discountedGems === 0) {
+        const basePrice = item.item_price || 0;
+        const baseGems  = item.item_price_gems || 0;
+        if (basePrice > 0 || baseGems > 0) {
+          discountedPrice = Math.floor(basePrice * 0.8);
+          discountedGems  = Math.floor(baseGems  * 0.8);
+        }
+      }
+
+      return { ...item, stats: parsedStats || {}, discounted_price: discountedPrice, discounted_gems: discountedGems };
     });
 
     console.log(`Sending ${deals.length} deals to user ${userId}. Next rotation: ${nextRotation}`);
@@ -354,8 +371,16 @@ router.post('/buy/:id', authenticate, async (req, res) => {
       return res.status(400).json({ message: 'ERROR: SEASONAL UNIT - ACQUISITION VIA DAILY MERCHANT ONLY' });
     }
 
-    let price = isDailyDeal ? dailyDealRes.rows[0].discounted_price : (item.price || 0);
-    let priceGems = isDailyDeal ? dailyDealRes.rows[0].discounted_gems : (item.price_gems || 0);
+    let price = isDailyDeal ? (dailyDealRes.rows[0].discounted_price || 0) : (item.price || 0);
+    let priceGems = isDailyDeal ? (dailyDealRes.rows[0].discounted_gems || 0) : (item.price_gems || 0);
+
+    // Safeguard: daily deal may have been created when the item was mispriced (price=0).
+    // If the discounted prices are both 0 but the item now has a real base price,
+    // recalculate the discount so we never allow a free purchase via a stale entry.
+    if (isDailyDeal && price === 0 && priceGems === 0) {
+      price     = Math.floor((item.price      || 0) * 0.8);
+      priceGems = Math.floor((item.price_gems || 0) * 0.8);
+    }
 
     // Special logic for Roulette Ticket
     if (item.name === 'Ticket de Ruleta') {

@@ -83,10 +83,14 @@
         <div class="relative animate-in fade-in lg:slide-in-from-right-12 duration-1500 delay-500 justify-self-center lg:justify-self-end">
           <div class="absolute -inset-4 bg-primary-500/20 blur-3xl rounded-full animate-pulse opacity-50"></div>
           <div class="relative rounded-[3rem] overflow-hidden border border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.8)] backdrop-blur-xl rotate-3 group hover:rotate-0 transition-transform duration-700">
-            <img 
-              src="/assets/dashboard_mockup.png" 
-              alt="Reppy Dashboard Mockup" 
+            <img
+              src="/assets/dashboard_mockup.png"
+              alt="Reppy Dashboard Mockup — gamified calisthenics tracker with RPG progression"
               class="w-full max-w-[600px] h-auto object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+              loading="eager"
+              fetchpriority="high"
+              width="600"
+              height="500"
             />
           </div>
           
@@ -313,10 +317,13 @@
         <div class="relative order-2 lg:order-1 animate-in fade-in duration-1500 group">
            <div class="absolute -inset-10 bg-rose-500/10 blur-[120px] rounded-full group-hover:bg-rose-500/20 transition-all"></div>
            <div class="relative rounded-[3rem] overflow-hidden border border-white/5 shadow-2xl scale-105 lg:rotate-[-2deg] hover:rotate-0 transition-all duration-700">
-             <img 
-               src="/assets/profile_mockup.png" 
-               alt="Reppy Profile Mockup" 
+             <img
+               src="/assets/profile_mockup.png"
+               alt="Reppy RPG Profile — nivel, atributos STR/END/AGI y racha de entrenamiento"
                class="w-full h-auto opacity-90 group-hover:opacity-100"
+               loading="lazy"
+               width="600"
+               height="500"
              />
            </div>
            
@@ -457,10 +464,13 @@
         <!-- Post Card 1 (Dynamic) -->
         <router-link v-for="p in latestPosts" :key="p.slug" :to="`/${i18n.locale}/blog/${p.slug}`" class="group card-stats !p-0 overflow-hidden flex flex-col border-border/40 hover:border-primary-500/40">
           <div class="relative aspect-video overflow-hidden">
-            <img 
-              :src="p.image" 
-              :alt="p.locales[i18n.locale]?.title" 
-              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+            <img
+              :src="p.image"
+              :alt="p.locales[i18n.locale]?.title || p.locales.en.title"
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              loading="lazy"
+              width="800"
+              height="450"
               @error="(e) => e.target.src = 'https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?auto=format&fit=crop&w=800&q=60'"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent"></div>
@@ -666,7 +676,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, defineAsyncComponent, computed } from 'vue';
+import { ref, onMounted, onUnmounted, defineAsyncComponent, computed } from 'vue';
 import axios from 'axios';
 import { 
   Activity, Trophy, Users, Sword, Flame, Plus, 
@@ -730,7 +740,41 @@ const faqs = computed(() => [
 ]);
 
 onMounted(async () => {
-  // Logic here if needed, but boss logic moved to component
+  // Inject FAQPage JSON-LD specific to this landing page.
+  // Keeping it here (instead of index.html) prevents the schema from leaking
+  // into other routes (/en/free-rpg-pull-up-counter, etc.) and causing
+  // Google Search Console to flag a duplicate FAQPage.
+  const faqData = [
+    { q: i18n.t('faq_q1'), a: i18n.t('faq_a1') },
+    { q: i18n.t('faq_q2'), a: i18n.t('faq_a2') },
+    { q: i18n.t('faq_q3'), a: i18n.t('faq_a3') },
+    { q: i18n.t('faq_q4'), a: i18n.t('faq_a4') },
+    { q: i18n.t('faq_q5'), a: i18n.t('faq_a5') },
+    { q: i18n.t('faq_q6'), a: i18n.t('faq_a6') },
+    { q: i18n.t('faq_q7'), a: i18n.t('faq_a7') },
+    { q: i18n.t('faq_q8'), a: i18n.t('faq_a8') }
+  ];
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqData.map(({ q, a }) => ({
+      '@type': 'Question',
+      name: q,
+      acceptedAnswer: { '@type': 'Answer', text: a }
+    }))
+  };
+  const existing = document.getElementById('landing-faq-jsonld');
+  if (existing) existing.remove();
+  const script = document.createElement('script');
+  script.id = 'landing-faq-jsonld';
+  script.type = 'application/ld+json';
+  script.textContent = JSON.stringify(faqSchema);
+  document.head.appendChild(script);
+});
+
+onUnmounted(() => {
+  const el = document.getElementById('landing-faq-jsonld');
+  if (el) el.remove();
 });
 </script>
 

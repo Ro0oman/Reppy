@@ -146,14 +146,14 @@
                 </button>
                 <button v-else @click.stop="tryOpenItemDetails(item)"
                   class="w-full py-2 rounded-lg text-white flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg"
-                  :class="item.price_gems > 0 && !(item.price > 0) ? 'bg-emerald-500 hover:bg-emerald-400 shadow-emerald-500/30' : 'bg-primary-500 hover:bg-primary-400 shadow-primary-500/30'">
-                  <div v-if="item.price > 0" class="flex items-center gap-1">
+                  :class="(item.discounted_gems || item.price_gems) > 0 && !((item.discounted_price || item.price) > 0) ? 'bg-emerald-500 hover:bg-emerald-400 shadow-emerald-500/30' : 'bg-primary-500 hover:bg-primary-400 shadow-primary-500/30'">
+                  <div v-if="(item.discounted_price || item.price) > 0" class="flex items-center gap-1">
                     <Coins class="w-4 h-4" />
-                    <span class="text-sm font-black tabular-nums">{{ item.price }}</span>
+                    <span class="text-sm font-black tabular-nums">{{ item.discounted_price || item.price }}</span>
                   </div>
-                  <div v-if="item.price_gems > 0" class="flex items-center gap-1">
+                  <div v-if="(item.discounted_gems || item.price_gems) > 0" class="flex items-center gap-1">
                     <Gem class="w-4 h-4" />
-                    <span class="text-sm font-black tabular-nums">{{ item.price_gems }}</span>
+                    <span class="text-sm font-black tabular-nums">{{ item.discounted_gems || item.price_gems }}</span>
                   </div>
                 </button>
               </div>
@@ -659,12 +659,12 @@
                 <span class="text-[10px] font-black text-muted uppercase tracking-widest mb-1">{{
                   i18n.t('shop_initiate_acquisition') }}</span>
                 <div class="flex items-center gap-4">
-                  <div v-if="selectedItem.price > 0" class="flex items-center gap-2">
-                    <span class="text-3xl font-bold tabular-nums">{{ selectedItem.price }}</span>
+                  <div v-if="(selectedItem.discounted_price || selectedItem.price) > 0" class="flex items-center gap-2">
+                    <span class="text-3xl font-bold tabular-nums">{{ selectedItem.discounted_price || selectedItem.price }}</span>
                     <Coins class="w-5 h-5 text-primary-500" />
                   </div>
-                  <div v-if="selectedItem.price_gems > 0" class="flex items-center gap-2">
-                    <span class="text-3xl font-bold tabular-nums text-emerald-400">{{ selectedItem.price_gems }}</span>
+                  <div v-if="(selectedItem.discounted_gems || selectedItem.price_gems) > 0" class="flex items-center gap-2">
+                    <span class="text-3xl font-bold tabular-nums text-emerald-400">{{ selectedItem.discounted_gems || selectedItem.price_gems }}</span>
                     <Gem class="w-6 h-6 text-emerald-500" />
                   </div>
                 </div>
@@ -947,8 +947,8 @@ const checkShop = async () => {
 
 const canAfford = (item) => {
   if (!item) return false;
-  const price = item.discounted_price ?? item.price ?? 0;
-  const gems = item.discounted_gems ?? item.price_gems ?? 0;
+  const price = item.discounted_price || item.price || 0;
+  const gems = item.discounted_gems || item.price_gems || 0;
   return (authStore.user?.reppy_coins || 0) >= price && (authStore.user?.reppy_gems || 0) >= gems;
 };
 
@@ -1040,8 +1040,8 @@ function isUpgrade(item, stat = null) {
 }
 
 const buyItem = async (item) => {
-  const price = item.discounted_price ?? item.price ?? 0;
-  const gems = item.discounted_gems ?? item.price_gems ?? 0;
+  const price = item.discounted_price || item.price || 0;
+  const gems = item.discounted_gems || item.price_gems || 0;
   if (price <= 0 && gems <= 0) {
     notificationStore.notify(i18n.locale === 'es' ? 'Este objeto no está a la venta' : 'This item is not for sale', 'error');
     return;

@@ -56,11 +56,15 @@
           <div v-if="!imageLoaded" class="absolute inset-0 flex items-center justify-center">
             <Loader2 class="w-12 h-12 text-primary animate-spin opacity-50" />
           </div>
-          <img 
-            :src="currentPost.image" 
-            :alt="post.title" 
+          <img
+            :src="currentPost.image"
+            :alt="post.title"
             class="w-full h-full object-cover transform transition-all duration-1000 group-hover:scale-105"
             :class="imageLoaded ? 'opacity-100' : 'opacity-0'"
+            loading="eager"
+            fetchpriority="high"
+            width="1200"
+            height="675"
             @load="imageLoaded = true"
             @error="handleImageError"
           />
@@ -158,7 +162,7 @@
       <!-- Related Pillar (Master Guide) -->
       <div v-if="!currentPost.isPillar && relatedPillar" class="p-8 bg-surface/40 hover:bg-surface/60 border border-border/40 rounded-2xl flex flex-col md:flex-row items-center gap-8 transition-colors group animate-in">
         <div class="w-24 h-24 rounded-2xl overflow-hidden shrink-0 shadow-lg bg-surface-dark/10 relative flex items-center justify-center">
-          <img :src="relatedPillar.image" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+          <img :src="relatedPillar.image" :alt="(relatedPillar.locales[i18n.locale] || relatedPillar.locales.en).title" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" width="400" height="300" />
         </div>
         <div class="space-y-2 text-center md:text-left">
           <span class="text-[10px] font-black uppercase tracking-widest text-primary">{{ i18n.t('master_guide') || 'Guía Maestra' }}</span>

@@ -157,10 +157,13 @@
           class="group flex flex-col bg-surface/10 border border-white/5 rounded-2xl overflow-hidden hover:bg-surface/20 hover:border-primary-500/30 transition-all shadow-xl hover:shadow-primary-500/5"
         >
           <div class="aspect-video relative overflow-hidden bg-background">
-            <img 
-              :src="post.image" 
-              :alt="post.title" 
-              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+            <img
+              :src="post.image"
+              :alt="post.title"
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              loading="lazy"
+              width="800"
+              height="450"
               @error="handleImageError"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent"></div>
@@ -222,7 +225,7 @@
               <!-- Scanline animation -->
               <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-10 bg-[length:100%_2px,3px_100%] pointer-events-none"></div>
               
-              <img :src="post.image" :alt="post.title" class="w-full h-full object-cover blur-[2px]" />
+              <img :src="post.image" :alt="post.title" class="w-full h-full object-cover blur-[2px]" loading="lazy" width="800" height="192" />
               <div class="absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background"></div>
             </div>
 

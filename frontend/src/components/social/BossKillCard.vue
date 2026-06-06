@@ -2,7 +2,7 @@
   <article class="relative overflow-hidden rounded-2xl border border-red-500/30 bg-[#0d0608] shadow-2xl shadow-red-900/20">
     <!-- Background boss image -->
     <div v-if="d.boss_image" class="absolute inset-0 pointer-events-none">
-      <img :src="d.boss_image" class="w-full h-full object-cover opacity-10 scale-110 blur-sm" />
+      <img :src="d.boss_image" alt="" role="presentation" class="w-full h-full object-cover opacity-10 scale-110 blur-sm" loading="lazy" />
       <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/90" />
     </div>
 
@@ -57,7 +57,9 @@
             <img
               v-if="player.avatar_url"
               :src="player.avatar_url"
+              :alt="player.name"
               class="h-7 w-7 rounded-full object-cover border border-white/10 shrink-0"
+              loading="lazy"
             />
             <div v-else class="h-7 w-7 rounded-full bg-white/10 shrink-0 grid place-items-center text-xs font-black text-white/60">
               {{ (player.name || '?')[0].toUpperCase() }}

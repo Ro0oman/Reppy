@@ -576,6 +576,7 @@ router.get('/feed', optionalAuthenticate, async (req, res) => {
             'created_at',    bkp.created_at
           )                            AS pvp_data
         FROM boss_kill_posts bkp
+        WHERE bkp.created_at >= NOW() - INTERVAL '48 hours'
       ),
       feed_base AS (
         SELECT * FROM reps_feed

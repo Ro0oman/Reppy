@@ -111,7 +111,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
@@ -216,6 +216,11 @@ onMounted(() => {
   script.type = 'application/ld+json';
   script.textContent = JSON.stringify(jsonLd);
   document.head.appendChild(script);
+});
+
+onUnmounted(() => {
+  const el = document.getElementById('rpg-pullup-jsonld');
+  if (el) el.remove();
 });
 </script>
 
