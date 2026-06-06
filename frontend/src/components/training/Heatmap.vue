@@ -99,7 +99,7 @@
                             <component :is="getIconForType(item.type)" class="w-4 h-4 text-primary/60" />
                           </div>
                           <span class="text-[10px] font-bold text-zinc-300 uppercase tracking-widest">{{
-                            i18n.t(item.type) }}</span>
+                            exerciseLabel(item) }}</span>
                         </div>
                         <span class="text-lg font-black text-white tabular-nums">{{ item.count }}</span>
                       </div>
@@ -232,7 +232,7 @@ const dataMap = computed(() => {
       acc[dStr] = { total: 0, breakdown: [] };
     }
     acc[dStr].total += Number(curr.count);
-    acc[dStr].breakdown.push({ type: curr.exercise_type, count: Number(curr.count) });
+    acc[dStr].breakdown.push({ type: curr.exercise_type, title_key: curr.title_key, count: Number(curr.count) });
     return acc;
   }, {});
 });
@@ -338,6 +338,15 @@ const getIconForType = (type) => {
     all: Globe
   };
   return icons[type] || Dumbbell;
+};
+
+// Human-readable exercise name: prefer the DB title_key (i18n key when it
+// starts with 'ex_', otherwise a literal label like "Calentamiento"), and
+// fall back to translating the raw slug.
+const exerciseLabel = (item) => {
+  const tk = item.title_key;
+  if (tk) return tk.startsWith('ex_') ? i18n.t(tk) : tk;
+  return i18n.t(item.type);
 };
 </script>
 
