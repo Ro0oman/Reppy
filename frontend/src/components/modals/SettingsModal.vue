@@ -188,13 +188,13 @@ const connectHevy = async () => {
   try {
     const res = await axios.post('/api/hevy/connect', { apiKey: hevy.value.apiKey.trim() });
     hevy.value.apiKey = '';
-    const imp = res.data.imported;
+    const n = res.data.sync?.importedCount || 0;
     notificationStore.notify(
-      imp && imp.imported ? `Hevy conectado · importada "${imp.title}"` : 'Hevy conectado',
+      n > 0 ? `Hevy conectado · ${n} rutina${n > 1 ? 's' : ''} de hoy importada${n > 1 ? 's' : ''}` : 'Hevy conectado',
       'success'
     );
     await loadHevyStatus();
-    if (imp && imp.imported) emit('updated');
+    if (n > 0) emit('updated');
   } catch (error) {
     notificationStore.notify(error.response?.data?.message || i18n.t('ERR_SERVER'), 'error');
   } finally {
@@ -205,12 +205,15 @@ const connectHevy = async () => {
 const syncHevy = async () => {
   hevy.value.busy = true;
   try {
-    const res = await axios.post('/api/hevy/sync-latest');
-    if (res.data.imported) {
-      notificationStore.notify(`Importada "${res.data.title}" · +${res.data.totalReps} reps`, 'success');
+    const res = await axios.post('/api/hevy/sync-today');
+    const n = res.data.importedCount || 0;
+    if (n > 0) {
+      notificationStore.notify(`${n} rutina${n > 1 ? 's' : ''} importada${n > 1 ? 's' : ''} · +${res.data.totalReps} reps`, 'success');
       emit('updated');
+    } else if (res.data.found > 0) {
+      notificationStore.notify('Las rutinas de hoy ya estaban sincronizadas', 'info');
     } else {
-      notificationStore.notify('No hay rutina nueva de hoy en Hevy', 'info');
+      notificationStore.notify('No hay rutinas de hoy en Hevy', 'info');
     }
     await loadHevyStatus();
   } catch (error) {

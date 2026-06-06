@@ -4,7 +4,7 @@
  *   POST /api/hevy/connect      { apiKey }      — validate + store key, register webhook, import today's latest workout (test scope)
  *   GET  /api/hevy/status                        — connection state for the Settings UI
  *   POST /api/hevy/webhook       { workoutId }   — called by Hevy when a workout is saved (auth via per-user token header)
- *   POST /api/hevy/sync-latest                   — manual: import the user's most recent workout if it's from today
+ *   POST /api/hevy/sync-today                     — manual safety-net: import all of today's workouts
  *   POST /api/hevy/disconnect                    — remove key + webhook
  */
 import express from 'express';
@@ -12,7 +12,7 @@ import crypto from 'crypto';
 import { query } from './db.js';
 import { authenticate } from './middleware.js';
 import { encryptHevyKey, decryptHevyKey } from './utils/hevyCrypto.js';
-import { getWorkoutCount, getWorkout, getLatestWorkout, createWebhook, deleteWebhook } from './utils/hevyClient.js';
+import { getWorkoutCount, getWorkout, getWorkouts, createWebhook, deleteWebhook } from './utils/hevyClient.js';
 import { ingestHevyWorkout } from './utils/hevyIngest.js';
 import { getLocalDateString } from './utils/date.js';
 
@@ -22,6 +22,24 @@ function webhookBaseUrl() {
   // Prefer an explicit public URL; fall back to the known prod host.
   const base = process.env.PUBLIC_API_URL || process.env.FRONTEND_URL || 'https://reppy-weld.vercel.app';
   return `${base.replace(/\/$/, '')}/api/hevy/webhook`;
+}
+
+/**
+ * Import every Hevy workout dated today (manual safety-net for missed webhooks).
+ * Workout list items already carry full exercises/sets, so we ingest directly.
+ * Idempotent: already-imported workouts are skipped by the ledger.
+ */
+async function importTodaysWorkouts(userId, apiKey) {
+  const today = getLocalDateString();
+  const page = await getWorkouts(apiKey, 1, 10); // newest first; today's runs live here
+  const todays = (page.workouts || []).filter(w => getLocalDateString(w.start_time) === today);
+
+  const results = [];
+  for (const w of todays) {
+    results.push(await ingestHevyWorkout(userId, w));
+  }
+  const importedCount = results.filter(r => r.imported).length;
+  return { found: todays.length, importedCount, results };
 }
 
 /** Connect a Hevy account: validate key, store encrypted, register webhook, import today's latest workout. */
@@ -59,15 +77,10 @@ router.post('/connect', authenticate, async (req, res) => {
       webhook = 'failed';
     }
 
-    // 4. TEST SCOPE: import only today's latest workout (no full backfill).
-    let imported = null;
-    const latest = await getLatestWorkout(apiKey);
-    if (latest && getLocalDateString(latest.start_time) === getLocalDateString()) {
-      const full = await getWorkout(apiKey, latest.id);
-      imported = await ingestHevyWorkout(userId, full);
-    }
+    // 4. Import today's workouts (no full backfill). Idempotent.
+    const sync = await importTodaysWorkouts(userId, apiKey);
 
-    return res.json({ connected: true, workoutCount: count, webhook, imported });
+    return res.json({ connected: true, workoutCount: count, webhook, sync });
   } catch (e) {
     console.error('[hevy] connect error:', e);
     return res.status(500).json({ message: 'Error al conectar con Hevy.', detail: e.message });
@@ -92,24 +105,22 @@ router.get('/status', authenticate, async (req, res) => {
   }
 });
 
-/** Manual sync: import the most recent workout if it's from today. */
-router.post('/sync-latest', authenticate, async (req, res) => {
+/** Manual safety-net: import all of today's Hevy workouts (skips already-imported). */
+router.post('/sync-today', authenticate, async (req, res) => {
   try {
     const r = await query('SELECT hevy_api_key FROM users WHERE id = $1', [req.user.id]);
     const enc = r.rows[0]?.hevy_api_key;
     if (!enc) return res.status(400).json({ message: 'Hevy no está conectado.' });
     const apiKey = decryptHevyKey(enc);
 
-    const latest = await getLatestWorkout(apiKey);
-    if (!latest) return res.json({ imported: false, reason: 'no_workouts' });
-    if (getLocalDateString(latest.start_time) !== getLocalDateString()) {
-      return res.json({ imported: false, reason: 'latest_not_today', latestDate: getLocalDateString(latest.start_time) });
-    }
-    const full = await getWorkout(apiKey, latest.id);
-    const result = await ingestHevyWorkout(req.user.id, full);
-    return res.json(result);
+    const sync = await importTodaysWorkouts(req.user.id, apiKey);
+    // Aggregate a friendly summary for the toast.
+    const newlyImported = sync.results.filter(r => r.imported);
+    const totalReps = newlyImported.reduce((a, r) => a + (r.totalReps || 0), 0);
+    const titles = newlyImported.map(r => r.title).filter(Boolean);
+    return res.json({ ...sync, totalReps, titles });
   } catch (e) {
-    console.error('[hevy] sync-latest error:', e);
+    console.error('[hevy] sync-today error:', e);
     return res.status(500).json({ message: 'Error al sincronizar con Hevy.', detail: e.message });
   }
 });
