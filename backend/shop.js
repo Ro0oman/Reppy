@@ -325,6 +325,13 @@ router.post('/buy/:id', authenticate, async (req, res) => {
     if (itemRes.rows.length === 0) return res.status(404).json({ message: 'Item not found' });
     const item = itemRes.rows[0];
 
+    // Guard: an item with no price in either currency is not for sale.
+    // (Bundles you already own can still net to 0 via the refund logic below,
+    // because their base price is > 0 — this only blocks misconfigured 0/0 items.)
+    if ((item.price || 0) <= 0 && (item.price_gems || 0) <= 0) {
+      return res.status(400).json({ message: 'ERROR: UNIT NOT AVAILABLE FOR PURCHASE' });
+    }
+
     const userRes = await query('SELECT reppy_coins, reppy_gems FROM users WHERE id = $1', [userId]);
     const user = userRes.rows[0];
 

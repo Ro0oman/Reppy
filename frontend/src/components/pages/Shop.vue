@@ -1040,6 +1040,12 @@ function isUpgrade(item, stat = null) {
 }
 
 const buyItem = async (item) => {
+  const price = item.discounted_price ?? item.price ?? 0;
+  const gems = item.discounted_gems ?? item.price_gems ?? 0;
+  if (price <= 0 && gems <= 0) {
+    notificationStore.notify(i18n.locale === 'es' ? 'Este objeto no está a la venta' : 'This item is not for sale', 'error');
+    return;
+  }
   if (!canAfford(item)) {
     notificationStore.notify(i18n.locale === 'es' ? 'No tienes suficiente dinero' : 'Not enough funds', 'error');
     return;
