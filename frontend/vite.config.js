@@ -56,7 +56,7 @@ export default defineConfig({
       // Fetch top public athletes for SSG prerendering
       let athleteUsernames = [];
       try {
-        const res = await fetch(`${process.env.VITE_API_URL || 'http://localhost:5001'}/api/profile/top-public?limit=100`);
+        const res = await fetch(`${process.env.VITE_API_URL || 'http://localhost:5001'}/api/profile/top-public?limit=100`, { signal: AbortSignal.timeout(10000) });
         if (res.ok) {
           const users = await res.json();
           athleteUsernames = users.map(u => u.username).filter(Boolean);

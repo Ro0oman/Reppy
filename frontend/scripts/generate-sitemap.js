@@ -128,7 +128,7 @@ const buildAthletesSitemap = async () => {
 
   try {
     const apiBase = process.env.VITE_API_URL || 'http://localhost:5001';
-    const res = await fetch(`${apiBase}/api/profile/top-public?limit=100`);
+    const res = await fetch(`${apiBase}/api/profile/top-public?limit=100`, { signal: AbortSignal.timeout(10000) });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const users = await res.json();
 

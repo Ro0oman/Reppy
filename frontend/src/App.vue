@@ -494,6 +494,7 @@ const initializeApp = async () => {
 };
 
 watch(() => authStore.isAuthenticated, (val) => {
+  if (import.meta.env.SSR) return;
   if (val) {
     initializeApp();
   } else {
