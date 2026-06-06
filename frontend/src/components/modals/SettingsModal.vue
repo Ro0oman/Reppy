@@ -70,6 +70,54 @@
               </div>
             </div>
 
+            <!-- Hevy Integration Section -->
+            <div class="space-y-4">
+              <h3 class="text-[10px] font-black uppercase text-primary-500 tracking-[0.3em]">HEVY SYNC</h3>
+
+              <!-- Connected state -->
+              <div v-if="hevy.connected" class="bg-surface/40 border border-border rounded-2xl p-5 space-y-4">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-emerald-500/10 rounded-xl"><Link2 class="w-4 h-4 text-emerald-400" /></div>
+                    <div>
+                      <p class="text-xs font-black text-foreground uppercase tracking-widest">Hevy conectado</p>
+                      <p class="text-[10px] text-muted tracking-wide mt-0.5">
+                        {{ hevy.volumeKg ? `${hevy.volumeKg.toLocaleString()} kg movidos` : 'Sin volumen aún' }}
+                        <span v-if="hevy.lastSync"> · últ. sync {{ formatSync(hevy.lastSync) }}</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                </div>
+                <div class="flex gap-3">
+                  <button @click="syncHevy" :disabled="hevy.busy" class="flex-1 px-4 py-3 bg-primary-500/10 hover:bg-primary-500/20 border border-primary-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest text-primary-400 transition-all disabled:opacity-50">
+                    {{ hevy.busy ? '...' : 'Sincronizar hoy' }}
+                  </button>
+                  <button @click="disconnectHevy" :disabled="hevy.busy" class="flex-1 px-4 py-3 bg-red-500/5 hover:bg-red-500/10 border border-red-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest text-red-500 transition-all disabled:opacity-50">
+                    Desconectar
+                  </button>
+                </div>
+              </div>
+
+              <!-- Disconnected state -->
+              <div v-else class="space-y-3">
+                <p class="text-[11px] text-muted leading-relaxed">
+                  Conecta tu cuenta de <span class="text-foreground font-bold">Hevy</span> y tus entrenamientos contarán en Reppy (reps, XP, daño al boss y tonelaje).
+                </p>
+                <div class="space-y-2">
+                  <label class="text-[10px] font-black uppercase text-muted tracking-widest px-1">HEVY API KEY</label>
+                  <input v-model="hevy.apiKey" type="password" autocomplete="off" class="input-tactical w-full h-12 font-mono text-sm" placeholder="xxxxxxxx-xxxx-xxxx-…" />
+                </div>
+                <button @click="connectHevy" :disabled="hevy.busy || !hevy.apiKey" class="btn-reppy w-full !py-4 !text-xs disabled:opacity-50">
+                  {{ hevy.busy ? i18n.t('profile_loading') : 'Conectar Hevy' }}
+                </button>
+                <p class="text-[10px] text-muted/70 leading-relaxed">
+                  Necesitas <span class="text-foreground/80 font-bold">Hevy Pro</span> para generar tu API key en
+                  <span class="text-primary-400">hevy.com/settings?developer</span>.
+                </p>
+              </div>
+            </div>
+
             <!-- Risk Actions -->
             <div class="pt-8 border-t border-white/5 space-y-4">
                <button @click="handleLogout" class="flex items-center justify-between w-full p-4 bg-red-500/5 hover:bg-red-500/10 border border-red-500/20 rounded-2xl group transition-all">
@@ -99,7 +147,7 @@
 
 <script setup>
 import { ref, watch, onUnmounted } from 'vue';
-import { X, Sun, Moon, Monitor, LogOut, ChevronRight } from 'lucide-vue-next';
+import { X, Sun, Moon, Monitor, LogOut, ChevronRight, Link2 } from 'lucide-vue-next';
 import { useI18nStore } from '@/stores/i18n';
 import { useThemeStore } from '@/stores/theme';
 import { useAuthStore } from '@/stores/auth';
@@ -121,6 +169,70 @@ const notificationStore = useNotificationStore();
 const form = ref({ ...props.initialData });
 const saving = ref(false);
 
+// ── Hevy integration ──────────────────────────────────────────────
+const hevy = ref({ connected: false, lastSync: null, volumeKg: 0, apiKey: '', busy: false });
+
+const formatSync = (iso) => {
+  try { return new Date(iso).toLocaleDateString(); } catch { return ''; }
+};
+
+const loadHevyStatus = async () => {
+  try {
+    const res = await axios.get('/api/hevy/status');
+    hevy.value = { ...hevy.value, connected: !!res.data.connected, lastSync: res.data.lastSync, volumeKg: Number(res.data.volumeKg || 0) };
+  } catch (e) { /* silent: integration optional */ }
+};
+
+const connectHevy = async () => {
+  hevy.value.busy = true;
+  try {
+    const res = await axios.post('/api/hevy/connect', { apiKey: hevy.value.apiKey.trim() });
+    hevy.value.apiKey = '';
+    const imp = res.data.imported;
+    notificationStore.notify(
+      imp && imp.imported ? `Hevy conectado · importada "${imp.title}"` : 'Hevy conectado',
+      'success'
+    );
+    await loadHevyStatus();
+    if (imp && imp.imported) emit('updated');
+  } catch (error) {
+    notificationStore.notify(error.response?.data?.message || i18n.t('ERR_SERVER'), 'error');
+  } finally {
+    hevy.value.busy = false;
+  }
+};
+
+const syncHevy = async () => {
+  hevy.value.busy = true;
+  try {
+    const res = await axios.post('/api/hevy/sync-latest');
+    if (res.data.imported) {
+      notificationStore.notify(`Importada "${res.data.title}" · +${res.data.totalReps} reps`, 'success');
+      emit('updated');
+    } else {
+      notificationStore.notify('No hay rutina nueva de hoy en Hevy', 'info');
+    }
+    await loadHevyStatus();
+  } catch (error) {
+    notificationStore.notify(error.response?.data?.message || i18n.t('ERR_SERVER'), 'error');
+  } finally {
+    hevy.value.busy = false;
+  }
+};
+
+const disconnectHevy = async () => {
+  hevy.value.busy = true;
+  try {
+    await axios.post('/api/hevy/disconnect');
+    hevy.value.connected = false;
+    notificationStore.notify('Hevy desconectado', 'success');
+  } catch (error) {
+    notificationStore.notify(i18n.t('ERR_SERVER'), 'error');
+  } finally {
+    hevy.value.busy = false;
+  }
+};
+
 watch(() => props.initialData, (newVal) => {
   form.value = { ...newVal };
 }, { deep: true });
@@ -128,6 +240,7 @@ watch(() => props.initialData, (newVal) => {
 // Fix #99: Prevent background scroll when modal is open
 watch(() => props.show, (val) => {
   document.body.style.overflow = val ? 'hidden' : '';
+  if (val) loadHevyStatus();
 }, { immediate: true });
 
 onUnmounted(() => {
