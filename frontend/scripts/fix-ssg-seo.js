@@ -284,10 +284,10 @@ const metaForRoute = (route, lang) => {
 
   if (route === '/en' || route === '/es') {
     return {
-      title: isEnglish ? 'Reppy | Gamify Your Calisthenics' : 'Reppy | Gamifica tu Calistenia',
+      title: isEnglish ? 'Free Pull-up Counter · RPG Calisthenics App | Reppy' : 'Contador de Dominadas Gratis · App Calistenia RPG | Reppy',
       description: isEnglish
-        ? 'Turn bodyweight training into RPG progress. Track pull-ups, push-ups and dips, earn Reppy Coins, level up, and join community boss fights.'
-        : 'Convierte tu esfuerzo fisico en progreso RPG. Registra dominadas, flexiones y fondos para subir niveles, ganar Reppy Coins y derrotar bosses epicos con la comunidad.',
+        ? 'Track pull-ups, push-ups and dips. Level up, earn Reppy Coins, beat bosses and compete in global rankings. Free calisthenics app, no ads.'
+        : 'Registra dominadas, flexiones y fondos. Sube de nivel, gana Reppy Coins, derrota bosses y compite en rankings globales. App de calistenia gratis, sin anuncios.',
       keywords: isEnglish
         ? 'reppy, calisthenics app, pull-up tracker, push-up counter, fitness rpg, bodyweight training, workout tracker'
         : 'reppy, app calistenia, contador dominadas, contador flexiones, fitness rpg, entrenamiento cuerpo libre, tracker repeticiones'
