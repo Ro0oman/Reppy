@@ -75,9 +75,9 @@ router.get('/', authenticate, async (req, res) => {
             ON CONFLICT (user_id, mission_id) DO UPDATE SET
               is_active = true,
               is_completed = false,
-              is_claimed = false,
               current_value = 0,
               last_updated = CURRENT_TIMESTAMP
+            WHERE user_missions.is_claimed = false
           `, [userId, m.id]);
         }
         missionsWereAdded = true;
@@ -88,11 +88,11 @@ router.get('/', authenticate, async (req, res) => {
       // The user only complained about daily. Let's keep special as is or also limit it.
       if (specialActive.length < 1) {
         const newSpecial = await query(`
-          SELECT id FROM missions 
+          SELECT id FROM missions
           WHERE is_daily = false
           AND id NOT IN (
-            SELECT mission_id FROM user_missions 
-            WHERE user_id = $1 AND is_active = true
+            SELECT mission_id FROM user_missions
+            WHERE user_id = $1 AND (is_active = true OR is_claimed = true)
           )
           ORDER BY RANDOM()
           LIMIT 1
@@ -106,9 +106,9 @@ router.get('/', authenticate, async (req, res) => {
             ON CONFLICT (user_id, mission_id) DO UPDATE SET
               is_active = true,
               is_completed = false,
-              is_claimed = false,
               current_value = 0,
               last_updated = CURRENT_TIMESTAMP
+            WHERE user_missions.is_claimed = false
           `, [userId, m.id]);
           missionsWereAdded = true;
         }
