@@ -147,13 +147,13 @@ export const recalculateUserStats = async (userId, force = false) => {
     const bodyWeight = parseFloat(user.body_weight) || 75.0;
 
     const statsRes = await query(`
-      SELECT 
+      SELECT
         SUM(CASE WHEN COALESCE(e.unit, 'reps') = 'seconds' THEN 0 ELSE r.count END)::int as total_reps,
         SUM(CASE WHEN COALESCE(e.unit, 'reps') = 'seconds' THEN 0 ELSE r.count * (COALESCE(r.added_weight, 0) + $2) END) as total_volume,
-        SUM(CASE 
-          WHEN r.exercise_type IN ('muscleups', 'weighted_pullups')
+        SUM(CASE
+          WHEN r.exercise_type IN ('muscleups', 'weighted_pullups') OR COALESCE(e.stat_type, '') = 'pwr_xp'
           THEN (r.count * (10 + COALESCE(r.added_weight, 0)))
-          ELSE 0 
+          ELSE 0
         END)::int as calculated_pwr_xp,
         COUNT(DISTINCT r.exercise_type) as variety_count
       FROM reps r

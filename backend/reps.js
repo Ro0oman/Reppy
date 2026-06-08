@@ -52,13 +52,14 @@ router.post('/', authenticate, async (req, res) => {
     await client.query('BEGIN');
     const rawCount = Math.max(0, Number(count) || 0);
     const exerciseMetaRes = await client.query(
-      'SELECT difficulty_multiplier, coin_multiplier, unit FROM exercises WHERE slug = $1',
+      'SELECT difficulty_multiplier, coin_multiplier, unit, stat_type FROM exercises WHERE slug = $1',
       [exercise_type]
     );
     const exerciseMeta = exerciseMetaRes.rows[0] || {};
     const exerciseUnit = exerciseMeta.unit || 'reps';
     const diffMult = exerciseMeta.difficulty_multiplier != null ? Number(exerciseMeta.difficulty_multiplier) : null;
     const coinMult = exerciseMeta.coin_multiplier != null ? Number(exerciseMeta.coin_multiplier) : null;
+    const statTypeOverride = exerciseMeta.stat_type || null;
     const effectiveCount = getEffectiveExerciseCount(rawCount, exerciseUnit);
     const rewardCount = getRewardExerciseCount(rawCount, exerciseUnit);
 
@@ -94,7 +95,7 @@ router.post('/', authenticate, async (req, res) => {
     // 2. Rewards (Coins only, XP handled by recalculateUserStats)
     const earnedCoins = coinMult != null
       ? Math.round(rewardCount * coinMult)
-      : getExerciseRewards(exercise_type, rewardCount).coins;
+      : getExerciseRewards(exercise_type, rewardCount, statTypeOverride).coins;
     await client.query(`UPDATE users SET reppy_coins = GREATEST(0, reppy_coins + $1) WHERE id = $2`, [earnedCoins, userId]);
 
     // 3. Boss Interaction

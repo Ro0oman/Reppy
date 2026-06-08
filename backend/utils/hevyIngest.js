@@ -49,11 +49,12 @@ async function resolveExerciseType(client, hevyExercise) {
   const isWeighted = (hevyExercise.sets || []).some(s => (s.weight_kg || 0) > 0);
 
   const title = hevyExercise.title || slug;
+  const statType = isWeighted ? 'str_xp' : 'end_xp';
   await client.query(
-    `INSERT INTO exercises (slug, title_key, description_key, unit, difficulty_multiplier, coin_multiplier, is_active)
-     VALUES ($1, $2, $3, $4, 1.0, 1.0, TRUE)
+    `INSERT INTO exercises (slug, title_key, description_key, unit, difficulty_multiplier, coin_multiplier, is_active, stat_type)
+     VALUES ($1, $2, $3, $4, 1.0, 1.0, TRUE, $5)
      ON CONFLICT (slug) DO NOTHING`,
-    [slug, title, `Importado de Hevy: ${title}`, unit]
+    [slug, title, `Importado de Hevy: ${title}`, unit, statType]
   );
   await client.query(
     `INSERT INTO hevy_exercise_map (hevy_template_id, reppy_exercise_type, is_weighted)

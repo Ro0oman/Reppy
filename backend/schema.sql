@@ -134,7 +134,8 @@ CREATE TABLE IF NOT EXISTS exercises (
     difficulty_multiplier DECIMAL(5,2) DEFAULT 1.0,
     coin_multiplier DECIMAL(5,2) DEFAULT 1.0,
     is_active BOOLEAN DEFAULT TRUE,
-    image_url TEXT
+    image_url TEXT,
+    stat_type VARCHAR(20) DEFAULT 'end_xp'
 );
 
 CREATE TABLE IF NOT EXISTS user_favorite_exercises (
