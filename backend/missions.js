@@ -62,7 +62,7 @@ router.get('/', authenticate, async (req, res) => {
           WHERE is_daily = true
           AND id NOT IN (
             SELECT mission_id FROM user_missions
-            WHERE user_id = $1 AND is_active = true
+            WHERE user_id = $1 AND (is_active = true OR is_claimed = true)
           )
           ORDER BY RANDOM()
           LIMIT $2
@@ -72,12 +72,7 @@ router.get('/', authenticate, async (req, res) => {
           await query(`
             INSERT INTO user_missions (user_id, mission_id, is_active, is_completed, is_claimed, current_value)
             VALUES ($1, $2, true, false, false, 0)
-            ON CONFLICT (user_id, mission_id) DO UPDATE SET
-              is_active = true,
-              is_completed = false,
-              current_value = 0,
-              last_updated = CURRENT_TIMESTAMP
-            WHERE user_missions.is_claimed = false
+            ON CONFLICT (user_id, mission_id) DO NOTHING
           `, [userId, m.id]);
         }
         missionsWereAdded = true;
@@ -103,12 +98,7 @@ router.get('/', authenticate, async (req, res) => {
           await query(`
             INSERT INTO user_missions (user_id, mission_id, is_active, is_completed, is_claimed, current_value)
             VALUES ($1, $2, true, false, false, 0)
-            ON CONFLICT (user_id, mission_id) DO UPDATE SET
-              is_active = true,
-              is_completed = false,
-              current_value = 0,
-              last_updated = CURRENT_TIMESTAMP
-            WHERE user_missions.is_claimed = false
+            ON CONFLICT (user_id, mission_id) DO NOTHING
           `, [userId, m.id]);
           missionsWereAdded = true;
         }
