@@ -85,33 +85,44 @@
     <!-- Streak card: racha + progreso semanal + jackpot -->
     <div
       v-else-if="streakStatus"
-      class="rounded-2xl border px-4 py-3 transition-all duration-300 space-y-4"
-      :class="streakStatus.showRisk
-        ? 'border-amber-500/30 bg-amber-500/10'
-        : streakStatus.jackpotAlreadyAwarded
-          ? 'border-emerald-500/30 bg-emerald-500/10'
-          : 'border-primary-500/20 bg-primary-500/10'"
+      class="rounded-2xl border overflow-hidden transition-all duration-300"
+      :class="streakTier.cardClass"
     >
-      <!-- Top row: icon + streak number + freeze button -->
-      <div class="flex items-center gap-3">
-        <div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl border"
-          :class="streakStatus.showRisk ? 'border-amber-500/25 bg-amber-500/10 text-amber-400'
-            : streakStatus.jackpotAlreadyAwarded ? 'border-emerald-500/25 bg-emerald-500/10 text-emerald-400'
-            : 'border-primary-500/20 bg-primary-500/10 text-primary-500'">
-          <Flame class="h-5 w-5" />
+      <!-- Hero section: big flame + number -->
+      <div class="px-4 pt-4 pb-3 flex items-center gap-4">
+        <!-- Animated flame icon, scales with tier -->
+        <div class="relative shrink-0 flex items-center justify-center"
+          :class="streakTier.iconWrapClass">
+          <Flame :class="streakTier.iconClass" />
+          <!-- glow ring for high tiers -->
+          <div v-if="streakTier.level >= 3"
+            class="absolute inset-0 rounded-full blur-md opacity-40"
+            :class="streakTier.glowClass" />
         </div>
 
+        <!-- Streak number + label -->
         <div class="flex-1 min-w-0">
-          <div class="flex items-baseline gap-1.5">
-            <!-- <span class="text-s font-bold tabular-nums text-foreground leading-none">{{ streakStatus.streak }}</span> -->
-            <span class="text-sm font-semibold text-muted">{{ streakDaysLabel }}</span>
+          <div class="flex items-baseline gap-2">
+            <span class="tabular-nums font-black leading-none" :class="streakTier.numberClass">
+              {{ streakStatus.streak || 0 }}
+            </span>
+            <span class="text-xs font-semibold text-muted/70 uppercase tracking-widest">
+              {{ i18n.locale === 'es' ? 'días' : 'days' }}
+            </span>
           </div>
-          <p class="text-xs mt-0.5 truncate"
-            :class="streakStatus.showRisk ? 'text-amber-300 font-semibold'
-              : streakStatus.jackpotAlreadyAwarded ? 'text-emerald-400 font-semibold'
-              : 'text-muted/70'">
-            {{ streakStateLabel }}
-          </p>
+          <!-- tier badge -->
+          <div class="mt-1 flex items-center gap-2">
+            <span v-if="streakTier.label" class="text-[10px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md"
+              :class="streakTier.badgeClass">
+              {{ streakTier.label }}
+            </span>
+            <p class="text-[11px] truncate"
+              :class="streakStatus.showRisk ? 'text-amber-300 font-semibold'
+                : streakStatus.jackpotAlreadyAwarded ? 'text-emerald-400 font-semibold'
+                : 'text-muted/60'">
+              {{ streakStateLabel }}
+            </p>
+          </div>
         </div>
 
         <!-- Freeze CTA -->
@@ -130,10 +141,10 @@
         </button>
       </div>
 
-      <!-- Weekly progress bar: ●●●●○○○ -->
-      <div v-if="streakStatus.weeklyProgress !== undefined" class="space-y-1">
+      <!-- Milestone progress bar toward next streak tier -->
+      <div class="px-4 pb-1 space-y-1">
         <div class="flex items-center justify-between">
-          <span class="text-[10px] font-semibold text-muted/70">
+          <span class="text-[10px] font-semibold text-muted/60">
             {{ i18n.locale === 'es' ? 'Esta semana' : 'This week' }}
           </span>
           <span class="text-[10px] font-bold"
@@ -149,23 +160,30 @@
           <div
             v-for="day in 7"
             :key="day"
-            class="h-2 flex-1 rounded-full transition-all duration-500"
+            class="h-1.5 flex-1 rounded-full transition-all duration-500"
             :class="day <= streakStatus.weeklyProgress
               ? streakStatus.jackpotAlreadyAwarded
                 ? 'bg-emerald-500'
                 : day <= streakStatus.jackpotDaysRequired
-                  ? 'bg-primary-500'
-                  : 'bg-primary-400/70'
+                  ? streakTier.barClass
+                  : streakTier.barClass + ' opacity-60'
               : day === streakStatus.weeklyProgress + 1 && !streakStatus.activeToday
-                ? 'bg-foreground/20 ring-1 ring-primary-500/40'
-                : 'bg-foreground/10'"
+                ? 'bg-foreground/20 ring-1 ring-white/10'
+                : 'bg-foreground/8'"
           />
         </div>
-        <!-- Jackpot reward hint -->
-        <p v-if="!streakStatus.jackpotAlreadyAwarded" class="text-[10px] text-muted/50">
+      </div>
+
+      <!-- Next milestone hint / jackpot -->
+      <div class="px-4 pb-3 pt-1">
+        <p v-if="!streakStatus.jackpotAlreadyAwarded" class="text-[10px] text-muted/40">
           {{ i18n.locale === 'es'
             ? `${streakStatus.jackpotDaysRequired} días = +${streakStatus.jackpotReward} RC bonus`
             : `${streakStatus.jackpotDaysRequired} days = +${streakStatus.jackpotReward} RC bonus` }}
+          <span v-if="streakNextMilestone" class="ml-2 opacity-70">
+            · {{ i18n.locale === 'es' ? `Próximo hito: ${streakNextMilestone.days}d` : `Next tier: ${streakNextMilestone.days}d` }}
+            (+{{ streakNextMilestone.bonus }} RC/day)
+          </span>
         </p>
         <p v-else class="text-[10px] text-emerald-400 font-semibold">
           {{ i18n.locale === 'es' ? '¡Bonus semanal reclamado! +75 RC' : 'Weekly bonus claimed! +75 RC' }}
@@ -736,6 +754,32 @@ const streakDaysLabel = computed(() => {
   const days = Number(streakStatus.value?.streak || 0);
   if (i18n.locale === 'es') return days === 1 ? 'dia activo' : `Racha de ${days} dias `;
   return days === 1 ? 'active day' : 'active days';
+});
+
+// Streak milestones: days threshold → bonus RC per day label and visual tier
+const STREAK_MILESTONES = [
+  { days: 7,  bonus: 10,  level: 1, label: i18n.locale === 'es' ? 'SEMANA' : 'WEEK',   cardClass: 'border-orange-500/30 bg-orange-500/8',   iconWrapClass: 'w-14 h-14', iconClass: 'h-8 w-8 text-orange-400', glowClass: 'bg-orange-500', numberClass: 'text-4xl text-orange-300', badgeClass: 'bg-orange-500/20 text-orange-300', barClass: 'bg-orange-500' },
+  { days: 14, bonus: 25,  level: 2, label: i18n.locale === 'es' ? '2 SEMANAS' : '2 WEEKS', cardClass: 'border-red-500/30 bg-red-500/8',      iconWrapClass: 'w-16 h-16', iconClass: 'h-9 w-9 text-red-400',    glowClass: 'bg-red-500',    numberClass: 'text-4xl text-red-300',    badgeClass: 'bg-red-500/20 text-red-300',    barClass: 'bg-red-500' },
+  { days: 30, bonus: 50,  level: 3, label: i18n.locale === 'es' ? 'MES' : 'MONTH',      cardClass: 'border-purple-500/30 bg-purple-500/8',  iconWrapClass: 'w-16 h-16', iconClass: 'h-10 w-10 text-purple-400',glowClass: 'bg-purple-500', numberClass: 'text-5xl text-purple-300', badgeClass: 'bg-purple-500/20 text-purple-300',barClass: 'bg-purple-500' },
+  { days: 60, bonus: 100, level: 4, label: i18n.locale === 'es' ? 'LEYENDA' : 'LEGEND',  cardClass: 'border-yellow-400/40 bg-yellow-500/8',  iconWrapClass: 'w-18 h-18', iconClass: 'h-11 w-11 text-yellow-300',glowClass: 'bg-yellow-400', numberClass: 'text-5xl text-yellow-200', badgeClass: 'bg-yellow-400/20 text-yellow-300',barClass: 'bg-yellow-400' },
+];
+
+const DEFAULT_TIER = { level: 0, label: null, cardClass: 'border-primary-500/20 bg-primary-500/8', iconWrapClass: 'w-12 h-12', iconClass: 'h-7 w-7 text-primary-400', glowClass: '', numberClass: 'text-3xl text-foreground', badgeClass: '', barClass: 'bg-primary-500' };
+
+const streakTier = computed(() => {
+  const days = Number(streakStatus.value?.streak || 0);
+  if (streakStatus.value?.showRisk) {
+    return { ...DEFAULT_TIER, cardClass: 'border-amber-500/30 bg-amber-500/8', iconClass: 'h-7 w-7 text-amber-400', numberClass: 'text-3xl text-amber-300', barClass: 'bg-amber-500' };
+  }
+  for (let i = STREAK_MILESTONES.length - 1; i >= 0; i--) {
+    if (days >= STREAK_MILESTONES[i].days) return STREAK_MILESTONES[i];
+  }
+  return DEFAULT_TIER;
+});
+
+const streakNextMilestone = computed(() => {
+  const days = Number(streakStatus.value?.streak || 0);
+  return STREAK_MILESTONES.find(m => m.days > days) || null;
 });
 
 const streakStateLabel = computed(() => {
