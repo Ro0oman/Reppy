@@ -6,6 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const distDir = path.resolve(__dirname, '../dist');
 const BASE_URL = 'https://reppy-weld.vercel.app';
+const BUILD_DATE = new Date().toISOString().split('T')[0];
 
 const blogPostsPath = path.resolve(__dirname, '../src/blogPosts.json');
 const blogPosts = JSON.parse(fs.readFileSync(blogPostsPath, 'utf8'));
@@ -455,6 +456,8 @@ const patchHtml = (filePath) => {
   let html = fs.readFileSync(filePath, 'utf8');
 
   html = html.replace(/<html lang="[^"]*"/i, `<html lang="${lang}"`);
+  // Keep WebApplication freshness signal current on every build
+  html = html.replace(/("dateModified":\s*)"[^"]*"/g, `$1"${BUILD_DATE}"`);
   html = replaceAttribute(html, 'rel="canonical"', canonicalUrl);
   html = replaceAttribute(html, 'hreflang="es"', esUrl);
   html = replaceAttribute(html, 'hreflang="en"', enUrl);

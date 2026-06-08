@@ -358,17 +358,31 @@ const formattedDate = computed(() => {
 // JSON-LD for SEO
 const jsonLdScript = computed(() => {
   if (!post.value) return '';
+  const BASE = 'https://reppy-weld.vercel.app';
+  const img = currentPost.value.image
+    ? (currentPost.value.image.startsWith('http') ? currentPost.value.image : `${BASE}${currentPost.value.image}`)
+    : `${BASE}/og-image.png`;
+  const pageUrl = `${BASE}/${i18n.locale}/blog/${currentPost.value.slug}`;
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": post.value.title,
     "description": post.value.excerpt,
-    "image": [`https://reppy.fit${currentPost.value.image}`],
+    "image": [img],
     "datePublished": currentPost.value.date,
+    "dateModified": currentPost.value.date,
+    "inLanguage": i18n.locale,
+    "keywords": (post.value.keywords || []).join(', '),
+    "mainEntityOfPage": { "@type": "WebPage", "@id": pageUrl },
     "author": [{
       "@type": "Person",
       "name": currentPost.value.author
-    }]
+    }],
+    "publisher": {
+      "@type": "Organization",
+      "name": "Reppy",
+      "logo": { "@type": "ImageObject", "url": `${BASE}/og-image.png` }
+    }
   };
   return `<script type="application/ld+json">${JSON.stringify(structuredData)}<\/script>`;
 });
