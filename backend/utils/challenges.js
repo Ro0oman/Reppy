@@ -1,24 +1,32 @@
-import { query } from '../db.js';
+import { query, withTransaction } from '../db.js';
 
 const resolveChallenge = async (id, winnerId, rewardCoins, rewardGems = 0) => {
-  await query('BEGIN');
-  await query(`
-    UPDATE async_challenges
-    SET status = 'finished', winner_id = $1, resolved_at = NOW()
-    WHERE id = $2 AND status = 'active'
-  `, [winnerId, id]);
-  if (winnerId) {
-    await query(`
-      UPDATE users SET reppy_coins = reppy_coins + $1, reppy_gems = reppy_gems + $2 WHERE id = $3
-    `, [rewardCoins, rewardGems, winnerId]);
-    if (rewardGems > 0) {
-      await query(`
-        INSERT INTO gem_transactions (user_id, amount, source, description)
-        VALUES ($1, $2, 'challenge', 'Reto 24h ganado')
-      `, [winnerId, rewardGems]);
+  await withTransaction(async (client) => {
+    // GATE: only the call that actually flips active->finished pays out. The
+    // reward used to be granted unconditionally, so two concurrent resolves of
+    // the same challenge (reps hook + expiry sweep) both paid the winner. Now
+    // the loser's UPDATE matches 0 rows and grants nothing.
+    const flip = await client.query(`
+      UPDATE async_challenges
+      SET status = 'finished', winner_id = $1, resolved_at = NOW()
+      WHERE id = $2 AND status = 'active'
+      RETURNING id
+    `, [winnerId, id]);
+
+    if (flip.rowCount === 0) return; // already resolved by a concurrent caller
+
+    if (winnerId) {
+      await client.query(`
+        UPDATE users SET reppy_coins = reppy_coins + $1, reppy_gems = reppy_gems + $2 WHERE id = $3
+      `, [rewardCoins, rewardGems, winnerId]);
+      if (rewardGems > 0) {
+        await client.query(`
+          INSERT INTO gem_transactions (user_id, amount, source, description)
+          VALUES ($1, $2, 'challenge', 'Reto 24h ganado')
+        `, [winnerId, rewardGems]);
+      }
     }
-  }
-  await query('COMMIT');
+  });
 };
 
 export const updateChallengeScores = async (userId, { reps = 0, damage = 0 }) => {
