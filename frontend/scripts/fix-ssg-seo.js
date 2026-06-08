@@ -112,7 +112,6 @@ const softwareAppSchema = (lang, url, name, description) => ({
   description,
   inLanguage: lang === 'en' ? 'en' : 'es',
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
-  aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.8', reviewCount: '150' },
   featureList: lang === 'en'
     ? ['Free pull-up counter', 'Push-up tracker', 'Dips counter', 'RPG progression', 'Global leaderboard', 'Streak heatmap', 'Community boss fights']
     : ['Contador de dominadas gratis', 'Tracker de flexiones', 'Contador de fondos', 'Progresión RPG', 'Ranking global', 'Heatmap de racha', 'Boss fights comunitarios']
