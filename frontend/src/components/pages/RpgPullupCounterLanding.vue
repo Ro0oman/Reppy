@@ -209,6 +209,8 @@ onMounted(() => {
   setMeta('meta[name="twitter:description"]', 'content', description);
   setMeta('link[rel="canonical"]', 'href', url);
 
+  // Remove any FAQ schema left over from other pages to avoid Google duplicate warning
+  document.getElementById('landing-faq-jsonld')?.remove();
   const existing = document.getElementById('rpg-pullup-jsonld');
   if (existing) existing.remove();
   const script = document.createElement('script');

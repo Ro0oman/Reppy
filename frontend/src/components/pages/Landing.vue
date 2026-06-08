@@ -763,6 +763,8 @@ onMounted(async () => {
       acceptedAnswer: { '@type': 'Answer', text: a }
     }))
   };
+  // Remove any FAQ schema left over from other pages to avoid Google duplicate warning
+  document.getElementById('rpg-pullup-jsonld')?.remove();
   const existing = document.getElementById('landing-faq-jsonld');
   if (existing) existing.remove();
   const script = document.createElement('script');
