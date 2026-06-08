@@ -29,4 +29,34 @@ if (process.env.DATABASE_URL) {
 
 export const query = (text, params) => pool.query(text, params);
 
+/**
+ * Runs `fn` inside a real DB transaction on a single dedicated client.
+ *
+ * IMPORTANT: the bare `query()` helper checks out a *different* pooled
+ * connection per call, so `query('BEGIN')` + `query('UPDATE')` do NOT share a
+ * transaction. Any multi-statement atomic operation MUST use this helper and
+ * issue every statement through the `client` it provides.
+ *
+ * @param {(client: import('pg').PoolClient) => Promise<T>} fn
+ * @returns {Promise<T>}
+ */
+export const withTransaction = async (fn) => {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const result = await fn(client);
+    await client.query('COMMIT');
+    return result;
+  } catch (err) {
+    try {
+      await client.query('ROLLBACK');
+    } catch (rollbackErr) {
+      console.error('[DB] ROLLBACK failed:', rollbackErr);
+    }
+    throw err;
+  } finally {
+    client.release();
+  }
+};
+
 export default pool;

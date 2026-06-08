@@ -1,5 +1,5 @@
 import express from 'express';
-import { query } from './db.js';
+import { query, withTransaction } from './db.js';
 import { authenticate } from './middleware.js';
 import { updateMissionProgress } from './utils/missions.js';
 
@@ -139,73 +139,93 @@ router.post('/claim/:missionId', authenticate, async (req, res) => {
   const missionId = req.params.missionId;
 
   try {
-    const missionRes = await query(`
-      SELECT m.*, um.is_completed, um.is_claimed
-      FROM missions m
-      JOIN user_missions um ON m.id = um.mission_id
-      WHERE um.user_id = $1 AND um.mission_id = $2
-    `, [userId, missionId]);
+    const result = await withTransaction(async (client) => {
+      // ATOMIC CLAIM GATE.
+      // This single guarded UPDATE is the only thing that authorizes a payout.
+      // Postgres takes a row lock on the matched user_missions row, so two
+      // concurrent claims (double-click, spammed request) serialize: the first
+      // flips is_claimed false->true and matches 1 row; the second re-evaluates
+      // the WHERE against the now-committed row, matches 0 rows, and pays nothing.
+      // There is no read-then-write window to exploit — the check IS the write.
+      const claimRes = await client.query(`
+        UPDATE user_missions
+        SET is_claimed = true, is_active = false, last_updated = CURRENT_TIMESTAMP
+        WHERE user_id = $1 AND mission_id = $2
+          AND is_completed = true
+          AND is_claimed = false
+        RETURNING mission_id
+      `, [userId, missionId]);
 
-    if (missionRes.rows.length === 0) {
-      return res.status(404).json({ message: 'Mission not found or not started' });
-    }
+      if (claimRes.rowCount === 0) {
+        // We did not win the claim. Figure out why for a useful message —
+        // this is purely informational and grants nothing.
+        const stateRes = await client.query(`
+          SELECT is_completed, is_claimed
+          FROM user_missions
+          WHERE user_id = $1 AND mission_id = $2
+        `, [userId, missionId]);
 
-    const mission = missionRes.rows[0];
+        if (stateRes.rowCount === 0) {
+          return { status: 404, body: { message: 'Mission not found or not started' } };
+        }
+        if (!stateRes.rows[0].is_completed) {
+          return { status: 400, body: { message: 'Mission not completed yet' } };
+        }
+        return { status: 400, body: { message: 'Reward already claimed' } };
+      }
 
-    if (!mission.is_completed) {
-      return res.status(400).json({ message: 'Mission not completed yet' });
-    }
+      // We own the claim. Read reward amounts from the source-of-truth table
+      // (never trust a value the client could have influenced).
+      const missionRes = await client.query(
+        'SELECT title_key, reward_coins, reward_gems FROM missions WHERE id = $1',
+        [missionId]
+      );
+      const mission = missionRes.rows[0];
 
-    if (mission.is_claimed) {
-      return res.status(400).json({ message: 'Reward already claimed' });
-    }
+      // Pay out — same transaction, so the claim flag and the reward commit or
+      // roll back together. A crash here cannot leave a claimed-but-unpaid row.
+      await client.query(`
+        UPDATE users
+        SET reppy_coins = reppy_coins + $1,
+            reppy_gems = reppy_gems + $2
+        WHERE id = $3
+      `, [mission.reward_coins, mission.reward_gems, userId]);
 
-    // Start transaction
-    await query('BEGIN');
+      if (mission.reward_gems > 0) {
+        await client.query(`
+          INSERT INTO gem_transactions (user_id, amount, source, description)
+          VALUES ($1, $2, 'mission', $3)
+        `, [userId, mission.reward_gems, `Mission completed: ${mission.title_key}`]);
+      }
 
-    // Mark as claimed and DEACTIVATE (to allow refill)
-    await query(`
-      UPDATE user_missions SET is_claimed = true, is_active = false, last_updated = CURRENT_TIMESTAMP
-      WHERE user_id = $1 AND mission_id = $2
-    `, [userId, missionId]);
+      // Meta-mission progress (Complete X missions today). Count claimed-today
+      // inside the same transaction so it reflects this claim.
+      const completedTodayRes = await client.query(`
+        SELECT COUNT(*) as count FROM user_missions
+        WHERE user_id = $1 AND is_claimed = true AND last_updated >= CURRENT_DATE
+      `, [userId]);
+      const completedCount = parseInt(completedTodayRes.rows[0].count);
 
-    // Give rewards
-    await query(`
-      UPDATE users 
-      SET reppy_coins = reppy_coins + $1,
-          reppy_gems = reppy_gems + $2
-      WHERE id = $3
-    `, [mission.reward_coins, mission.reward_gems, userId]);
-
-    if (mission.reward_gems > 0) {
-      await query(`
-        INSERT INTO gem_transactions (user_id, amount, source, description)
-        VALUES ($1, $2, 'mission', $3)
-      `, [userId, mission.reward_gems, `Mission completed: ${mission.title_key}`]);
-    }
-
-    // Mission: Meta-missions (Complete X missions today)
-    const completedTodayRes = await query(`
-      SELECT COUNT(*) as count FROM user_missions 
-      WHERE user_id = $1 AND is_claimed = true AND last_updated >= CURRENT_DATE
-    `, [userId]);
-    const completedCount = parseInt(completedTodayRes.rows[0].count);
-    
-    await updateMissionProgress(userId, 'complete_3_missions', completedCount, false);
-    await updateMissionProgress(userId, 'complete_5_missions', completedCount, false);
-
-    // TODO: Add Battle Pass XP reward here when implemented
-
-    await query('COMMIT');
-
-    res.json({ 
-      message: 'Reward claimed successfully', 
-      reward_coins: mission.reward_coins, 
-      reward_gems: mission.reward_gems 
+      return {
+        status: 200,
+        completedCount,
+        body: {
+          message: 'Reward claimed successfully',
+          reward_coins: mission.reward_coins,
+          reward_gems: mission.reward_gems
+        }
+      };
     });
 
+    // Meta-missions touch *other* mission rows; run after commit so a failure
+    // there can never roll back (or double-pay) the claim we just settled.
+    if (result.status === 200) {
+      await updateMissionProgress(userId, 'complete_3_missions', result.completedCount, false);
+      await updateMissionProgress(userId, 'complete_5_missions', result.completedCount, false);
+    }
+
+    return res.status(result.status).json(result.body);
   } catch (error) {
-    await query('ROLLBACK');
     console.error('Error claiming mission:', error);
     res.status(500).json({ message: 'Error claiming reward' });
   }

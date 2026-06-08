@@ -1,5 +1,5 @@
 import express from 'express';
-import { query } from './db.js';
+import { query, withTransaction } from './db.js';
 import { authenticate } from './middleware.js';
 import { recalculateUserStats } from './utils/stats.js';
 import { updateMissionProgress } from './utils/missions.js';
@@ -286,38 +286,59 @@ router.post('/daily/claim/:id', authenticate, async (req, res) => {
     const userId = req.user.id;
     const dealId = req.params.id;
 
-    const dealRes = await query('SELECT * FROM daily_shop_items WHERE id = $1 AND user_id = $2', [dealId, userId]);
-    if (dealRes.rows.length === 0) return res.status(404).json({ message: 'DEAL NOT FOUND' });
-    
-    const deal = dealRes.rows[0];
-    if (deal.is_claimed) return res.status(400).json({ message: 'REWARD ALREADY CLAIMED' });
-    if (!deal.reward_type) return res.status(400).json({ message: 'NOT A FREE REWARD' });
+    const result = await withTransaction(async (client) => {
+      // ATOMIC CLAIM GATE — same shape as the mission claim. The guarded UPDATE
+      // flips is_claimed false->true and returns the reward only if this caller
+      // wins the row lock. Concurrent spam of this endpoint matches 0 rows on
+      // every loser, so the free reward is paid out exactly once.
+      const claimRes = await client.query(`
+        UPDATE daily_shop_items
+        SET is_claimed = TRUE
+        WHERE id = $1 AND user_id = $2
+          AND is_claimed = FALSE
+          AND reward_type IS NOT NULL
+        RETURNING reward_type, reward_amount
+      `, [dealId, userId]);
 
-    await query('BEGIN');
-    
-    if (deal.reward_type === 'coins') {
-      await query('UPDATE users SET reppy_coins = reppy_coins + $1 WHERE id = $2', [deal.reward_amount, userId]);
-    } else if (deal.reward_type === 'gems') {
-      await query('UPDATE users SET reppy_gems = reppy_gems + $1 WHERE id = $2', [deal.reward_amount, userId]);
-      await query(`
-        INSERT INTO gem_transactions (user_id, amount, source, description)
-        VALUES ($1, $2, 'SHOP_FREE', 'Daily Free Reward')
-      `, [userId, deal.reward_amount]);
-    }
+      if (claimRes.rowCount === 0) {
+        // Did not win — disambiguate, grant nothing.
+        const stateRes = await client.query(
+          'SELECT is_claimed, reward_type FROM daily_shop_items WHERE id = $1 AND user_id = $2',
+          [dealId, userId]
+        );
+        if (stateRes.rowCount === 0) return { status: 404, body: { message: 'DEAL NOT FOUND' } };
+        if (!stateRes.rows[0].reward_type) return { status: 400, body: { message: 'NOT A FREE REWARD' } };
+        return { status: 400, body: { message: 'REWARD ALREADY CLAIMED' } };
+      }
 
-    await query('UPDATE daily_shop_items SET is_claimed = TRUE WHERE id = $1', [dealId]);
-    await query('COMMIT');
+      const { reward_type: rewardType, reward_amount: rewardAmount } = claimRes.rows[0];
 
-    const userBalance = await query('SELECT reppy_coins, reppy_gems FROM users WHERE id = $1', [userId]);
-    res.json({ 
-      message: 'Reward claimed', 
-      type: deal.reward_type, 
-      amount: deal.reward_amount,
-      reppy_coins: userBalance.rows[0].reppy_coins,
-      reppy_gems: userBalance.rows[0].reppy_gems
+      if (rewardType === 'coins') {
+        await client.query('UPDATE users SET reppy_coins = reppy_coins + $1 WHERE id = $2', [rewardAmount, userId]);
+      } else if (rewardType === 'gems') {
+        await client.query('UPDATE users SET reppy_gems = reppy_gems + $1 WHERE id = $2', [rewardAmount, userId]);
+        await client.query(`
+          INSERT INTO gem_transactions (user_id, amount, source, description)
+          VALUES ($1, $2, 'SHOP_FREE', 'Daily Free Reward')
+        `, [userId, rewardAmount]);
+      }
+
+      const userBalance = await client.query('SELECT reppy_coins, reppy_gems FROM users WHERE id = $1', [userId]);
+      return {
+        status: 200,
+        body: {
+          message: 'Reward claimed',
+          type: rewardType,
+          amount: rewardAmount,
+          reppy_coins: userBalance.rows[0].reppy_coins,
+          reppy_gems: userBalance.rows[0].reppy_gems
+        }
+      };
     });
+
+    return res.status(result.status).json(result.body);
   } catch (error) {
-    await query('ROLLBACK');
+    console.error('Error claiming daily reward:', error);
     res.status(500).json({ error: error.message });
   }
 });
