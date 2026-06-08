@@ -39,6 +39,7 @@
             'ring-2 ring-primary-500/50 shadow-2xl shadow-primary-500/20': highlightedMissionId === mission.id
           }"
         >
+        
           <!-- Completion highlight -->
           <div v-if="mission.is_completed && !mission.is_claimed" class="absolute inset-0 bg-primary-500/5 rounded-2xl pointer-events-none"></div>
 
