@@ -216,8 +216,7 @@ router.get('/daily', authenticate, async (req, res) => {
       }
 
       // If this deal has both discounted prices at 0 but the item has a real base price,
-      // the entry was created when the item was mispriced. Recalculate on the fly so the
-      // frontend shows and charges the correct amount (80% of current base price).
+      // the entry was created when the item was mispriced. Fix in DB and in the response.
       let discountedPrice = item.discounted_price || 0;
       let discountedGems = item.discounted_gems || 0;
       if (!item.reward_type && discountedPrice === 0 && discountedGems === 0) {
@@ -226,6 +225,11 @@ router.get('/daily', authenticate, async (req, res) => {
         if (basePrice > 0 || baseGems > 0) {
           discountedPrice = Math.floor(basePrice * 0.8);
           discountedGems  = Math.floor(baseGems  * 0.8);
+          // Persist fix so subsequent fetches also show the correct price
+          query(
+            'UPDATE daily_shop_items SET discounted_price = $1, discounted_gems = $2 WHERE id = $3',
+            [discountedPrice, discountedGems, item.deal_id]
+          ).catch(err => console.error('[SHOP] Failed to fix stale 0-price deal', item.deal_id, err));
         }
       }
 

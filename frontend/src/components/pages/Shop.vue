@@ -144,7 +144,8 @@
                   {{ i18n.t('boss_claim_loot') }}
                   <Gift class="w-3.5 h-3.5" />
                 </button>
-                <button v-else @click.stop="tryOpenItemDetails(item)"
+                <button v-else-if="(item.discounted_price || item.price || 0) > 0 || (item.discounted_gems || item.price_gems || 0) > 0"
+                  @click.stop="tryOpenItemDetails(item)"
                   class="w-full py-2 rounded-lg text-white flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg"
                   :class="(item.discounted_gems || item.price_gems) > 0 && !((item.discounted_price || item.price) > 0) ? 'bg-emerald-500 hover:bg-emerald-400 shadow-emerald-500/30' : 'bg-primary-500 hover:bg-primary-400 shadow-primary-500/30'">
                   <div v-if="(item.discounted_price || item.price) > 0" class="flex items-center gap-1">
@@ -156,6 +157,9 @@
                     <span class="text-sm font-black tabular-nums">{{ item.discounted_gems || item.price_gems }}</span>
                   </div>
                 </button>
+                <div v-else class="w-full py-2 rounded-lg bg-foreground/5 border border-border text-muted text-[9px] font-black uppercase tracking-widest text-center">
+                  {{ i18n.locale === 'es' ? 'NO DISPONIBLE' : 'NOT AVAILABLE' }}
+                </div>
               </div>
             </div>
           </div>
