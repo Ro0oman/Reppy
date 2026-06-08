@@ -20,19 +20,24 @@
  * @param {Object} boss Optional boss object to check for weaknesses
  * @returns {Object} { totalDamage, isCrit, magicBonus, baseDamage, weaknessBonus }
  */
-export const calculateDamage = (user, reps, type, boss = null, skipBuffs = false, deterministic = false, exerciseMultiplierOverride = null) => {
-  // 1. Determine Exercise Multiplier (BUFFED)
+export const calculateDamage = (user, reps, type, boss = null, skipBuffs = false, deterministic = false, exerciseMultiplierOverride = null, addedWeightKg = 0) => {
+  // 1. Determine Exercise Multiplier
+  const weight = Math.max(0, Number(addedWeightKg) || 0);
+  // Weight bonus: +1 multiplier per 20 kg, capped at +5x (100 kg)
+  const weightBonus = Math.min(5.0, weight / 20);
+
   let exerciseMult = 3.0; // Base: Pullups
   if (exerciseMultiplierOverride != null) {
-    exerciseMult = Number(exerciseMultiplierOverride);
+    exerciseMult = Number(exerciseMultiplierOverride) + weightBonus;
   } else {
     const t = type?.toLowerCase();
-  
-    if (t === 'muscleups') exerciseMult = 10.0;
-    else if (t === 'weighted_pullups') exerciseMult = 8.0;
-    else if (t === 'dips') exerciseMult = 4.0;
-    else if (t === 'pushups') exerciseMult = 2.0;
-    else if (t === 'legs') exerciseMult = 2.0;
+
+    if (t === 'muscleups') exerciseMult = 10.0 + weightBonus;
+    else if (t === 'weighted_pullups') exerciseMult = 8.0 + weightBonus;
+    else if (t === 'dips') exerciseMult = 4.0 + weightBonus;
+    else if (t === 'pushups') exerciseMult = 2.0 + weightBonus;
+    else if (t === 'legs') exerciseMult = 2.0 + weightBonus;
+    else exerciseMult = 3.0 + weightBonus; // custom/imported exercises
   }
   
   // 2. Extract Stats & Levels (Augmented user expected)

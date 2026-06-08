@@ -78,7 +78,7 @@ router.post('/', authenticate, async (req, res) => {
     
     if (userResult.rows.length === 0) throw new Error('User not found');
     const augmentedUser = augmentUserWithLevels(userResult.rows[0]);
-    const dmgResult = calculateDamage(augmentedUser, effectiveCount, exercise_type, null, false, false, diffMult);
+    const dmgResult = calculateDamage(augmentedUser, effectiveCount, exercise_type, null, false, false, diffMult, added_weight);
 
     // 1. Insert or update reps
     const repResult = await client.query(
@@ -111,7 +111,7 @@ router.post('/', authenticate, async (req, res) => {
     if (bossRes.rows.length > 0) {
       const boss = bossRes.rows[0];
       bossId = boss.id;
-      const bossDmgResult = calculateDamage(augmentedUser, effectiveCount, exercise_type, boss, false, false, diffMult);
+      const bossDmgResult = calculateDamage(augmentedUser, effectiveCount, exercise_type, boss, false, false, diffMult, added_weight);
       actualDamageDealt = bossDmgResult.totalDamage;
       
       // Atomic health deduction
@@ -636,14 +636,15 @@ router.put('/:id', authenticate, async (req, res) => {
     
     if (userResult.rows.length === 0) throw new Error('User not found');
     const augmentedUser = augmentUserWithLevels(userResult.rows[0]);
-    const dmgResult = calculateDamage(augmentedUser, effectiveCount, oldRep.exercise_type, null, false, false, diffMult);
+    const repAddedWeight = parseFloat(oldRep.added_weight) || 0;
+    const dmgResult = calculateDamage(augmentedUser, effectiveCount, oldRep.exercise_type, null, false, false, diffMult, repAddedWeight);
 
     // 4. Boss Health Adjustment
     let newBossDamageDealt = 0;
     const isToday = getLocalDateString(oldRep.date) === getLocalDateString();
 
     const bossRes = await client.query(
-      `SELECT id, current_hp, total_hp FROM boss_fights 
+      `SELECT id, current_hp, total_hp FROM boss_fights
        WHERE id = $1 OR (status != 'defeated' AND $1 IS NULL)
        ORDER BY CASE WHEN id = $1 THEN 0 ELSE 1 END, order_index ASC LIMIT 1`,
       [oldRep.boss_fight_id]
@@ -651,7 +652,7 @@ router.put('/:id', authenticate, async (req, res) => {
 
     if (bossRes.rows.length > 0) {
       const boss = bossRes.rows[0];
-      const bossDmgResult = calculateDamage(augmentedUser, effectiveCount, oldRep.exercise_type, boss, false, false, diffMult);
+      const bossDmgResult = calculateDamage(augmentedUser, effectiveCount, oldRep.exercise_type, boss, false, false, diffMult, repAddedWeight);
       newBossDamageDealt = bossDmgResult.totalDamage;
 
       const bossHpChange = newBossDamageDealt - oldRep.boss_damage_dealt;
