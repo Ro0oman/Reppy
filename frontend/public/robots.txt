@@ -1,25 +1,43 @@
+# Reppy — https://reppy-weld.vercel.app
+# Public content (landings, blog, and public athlete profiles at
+# /es/atleta/* and /en/athlete/*) is crawlable. Only private/auth routes
+# are blocked, for both the Spanish (/es) and English (/en) locales.
+# Explicit per-locale paths are used instead of wildcards because robots
+# wildcards span "/" and could over-block legitimate content (e.g. a blog slug).
+
 User-agent: *
 Allow: /
-Allow: /blog
-Allow: /contador-dominadas
-Allow: /contador-flexiones
-Allow: /app-calistenia
-Allow: /app-dominadas
-Allow: /app-flexiones
-Allow: /app-fondos
-Allow: /reto-calistenia-30-dias
-Allow: /reppy-vs-otras-apps-calistenia
-Allow: /free-rpg-pull-up-counter
-Allow: /social
-Allow: /profile
 
-# Disallow Private & Auth Routes
+# Auth & private app routes (bare + /es + /en)
 Disallow: /login
+Disallow: /es/login
+Disallow: /en/login
 Disallow: /dashboard
-Disallow: /inventory
+Disallow: /es/dashboard
+Disallow: /en/dashboard
 Disallow: /shop
-Disallow: /admin
+Disallow: /es/shop
+Disallow: /en/shop
+Disallow: /inventory
+Disallow: /es/inventory
+Disallow: /en/inventory
+Disallow: /codex
+Disallow: /es/codex
+Disallow: /en/codex
+Disallow: /missions
+Disallow: /es/missions
+Disallow: /en/missions
 Disallow: /notifications
+Disallow: /es/notifications
+Disallow: /en/notifications
+Disallow: /admin
+Disallow: /es/admin
+Disallow: /en/admin
+Disallow: /pvp
+Disallow: /es/pvp
+Disallow: /en/pvp
+
+# API
 Disallow: /api
 
 Sitemap: https://reppy-weld.vercel.app/sitemap.xml
