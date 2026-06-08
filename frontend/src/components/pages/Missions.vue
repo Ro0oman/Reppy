@@ -63,10 +63,7 @@
                   <span v-else class="px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded text-[10px] font-black text-amber-400 uppercase tracking-widest">SPECIAL</span>
                   <h3 class="text-sm font-black text-foreground uppercase italic tracking-tight">{{ i18n.t(mission.title_key) }}</h3>
                 </div>
-                <p class="text-xs text-muted leading-relaxed max-w-md">{{ i18n.t(mission.description_key) }}</p>
-                <p class="text-[10px] font-semibold text-primary-400/80 leading-relaxed max-w-md">
-                  {{ i18n.locale === 'es' ? 'Como completarla: ' : 'How to complete: ' }}{{ getHowToComplete(mission.goal_type) }}
-                </p>
+                <p class="text-xs text-muted leading-relaxed max-w-md">{{ getMissionDescription(mission) }}</p>
                 
                 <!-- Progress Bar -->
                 <div class="space-y-2">
@@ -251,6 +248,40 @@ const getIcon = (type) => {
     case 'xp_agi': return Swords;
     default: return Target;
   }
+};
+
+const getMissionDescription = (mission) => {
+  const v = mission.goal_value;
+  const es = {
+    reps:            `Registra ${v} repeticiones.`,
+    damage:          `Inflige ${v} de daño al boss.`,
+    streak:          `Mantén una racha de ${v} días seguidos.`,
+    xp_str:          `Consigue ${v} puntos de XP de Fuerza.`,
+    xp_pwr:          `Consigue ${v} puntos de XP de Potencia.`,
+    xp_end:          `Consigue ${v} puntos de XP de Resistencia.`,
+    xp_agi:          `Consigue ${v} puntos de XP de Agilidad.`,
+    social_likes:    `Da ${v} likes a publicaciones de otros usuarios.`,
+    buy_any:         `Compra ${v} objeto${v > 1 ? 's' : ''} en la Tienda.`,
+    use_consumable:  `Usa ${v} consumible${v > 1 ? 's' : ''} desde el Inventario.`,
+    night_owl:       `Registra reps después de las 22:00 durante ${v} día${v > 1 ? 's' : ''}.`,
+    personal_record: `Supera tu récord personal de repeticiones en un día.`,
+  };
+  const en = {
+    reps:            `Log ${v} reps.`,
+    damage:          `Deal ${v} damage to the boss.`,
+    streak:          `Keep a ${v}-day streak.`,
+    xp_str:          `Earn ${v} Strength XP.`,
+    xp_pwr:          `Earn ${v} Power XP.`,
+    xp_end:          `Earn ${v} Endurance XP.`,
+    xp_agi:          `Earn ${v} Agility XP.`,
+    social_likes:    `Like ${v} posts from other users.`,
+    buy_any:         `Buy ${v} item${v > 1 ? 's' : ''} in the Shop.`,
+    use_consumable:  `Use ${v} consumable${v > 1 ? 's' : ''} from Inventory.`,
+    night_owl:       `Log reps after 22:00 for ${v} day${v > 1 ? 's' : ''}.`,
+    personal_record: `Beat your daily reps record.`,
+  };
+  const map = i18n.locale === 'es' ? es : en;
+  return map[mission.goal_type] || i18n.t(mission.description_key);
 };
 
 const getHowToComplete = (type) => {

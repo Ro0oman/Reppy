@@ -1029,42 +1029,44 @@ const getGoalTypeLabel = (goalType) => {
 };
 
 const todayMissionHowTo = computed(() => {
-  const goalType = todayMission.value?.goal_type;
+  const mission = todayMission.value;
+  const goalType = mission?.goal_type;
+  const v = mission?.goal_value;
   if (!goalType) return i18n.locale === 'es' ? 'Registra entrenamiento para avanzar.' : 'Log training to progress.';
 
   const mapEs = {
-    reps: 'Haz repeticiones (cualquier ejercicio) en Registrar.',
-    damage: 'Registra reps para infligir daño al boss.',
-    streak: 'Entrena hoy para mantener/subir tu racha.',
-    xp_str: 'Prioriza volumen y lastre para subir XP de Fuerza.',
-    xp_pwr: 'Haz muscle-ups o dominadas lastradas para subir XP de Potencia.',
-    xp_end: 'Acumula muchas reps totales para subir XP de Resistencia.',
-    xp_agi: 'Trabaja ejercicios técnicos/explosivos para subir XP de Agilidad.',
-    social_likes: 'Ve a Social y da likes a publicaciones.',
-    buy_any: 'Compra cualquier objeto en Tienda.',
-    use_consumable: 'Usa una poción/consumible desde Inventario.',
-    night_owl: 'Registra reps después de las 22:00.',
-    personal_record: 'Supera tu mejor marca diaria de reps.',
+    reps:            `Registra ${v} repeticiones (cualquier ejercicio).`,
+    damage:          `Inflige ${v} de daño al boss registrando reps.`,
+    streak:          `Mantén una racha de ${v} días seguidos.`,
+    xp_str:          `Consigue ${v} XP de Fuerza (volumen y lastre).`,
+    xp_pwr:          `Consigue ${v} XP de Potencia (muscle-ups, lastrado).`,
+    xp_end:          `Consigue ${v} XP de Resistencia (muchas reps totales).`,
+    xp_agi:          `Consigue ${v} XP de Agilidad (técnica/explosivo).`,
+    social_likes:    `Da ${v} likes a publicaciones en Social.`,
+    buy_any:         `Compra ${v} objeto${v > 1 ? 's' : ''} en la Tienda.`,
+    use_consumable:  `Usa ${v} consumible${v > 1 ? 's' : ''} desde el Inventario.`,
+    night_owl:       `Registra reps después de las 22:00.`,
+    personal_record: `Supera tu récord personal de repeticiones en un día.`,
   };
 
   const mapEn = {
-    reps: 'Do reps (any exercise) in Register.',
-    damage: 'Log reps to deal damage to the boss.',
-    streak: 'Train today to keep/increase your streak.',
-    xp_str: 'Prioritize volume and weighted work for Strength XP.',
-    xp_pwr: 'Do muscle-ups or weighted pull-ups for Power XP.',
-    xp_end: 'Accumulate high total reps for Endurance XP.',
-    xp_agi: 'Do technical/explosive work for Agility XP.',
-    social_likes: 'Go to Social and like posts.',
-    buy_any: 'Buy any item in Shop.',
-    use_consumable: 'Use a potion/consumable from Inventory.',
-    night_owl: 'Log reps after 22:00.',
-    personal_record: 'Beat your daily reps personal record.',
+    reps:            `Log ${v} reps (any exercise).`,
+    damage:          `Deal ${v} damage to the boss by logging reps.`,
+    streak:          `Keep a ${v}-day streak.`,
+    xp_str:          `Earn ${v} Strength XP (volume and weighted work).`,
+    xp_pwr:          `Earn ${v} Power XP (muscle-ups, weighted pull-ups).`,
+    xp_end:          `Earn ${v} Endurance XP (high total reps).`,
+    xp_agi:          `Earn ${v} Agility XP (technical/explosive work).`,
+    social_likes:    `Like ${v} posts in Social.`,
+    buy_any:         `Buy ${v} item${v > 1 ? 's' : ''} in the Shop.`,
+    use_consumable:  `Use ${v} consumable${v > 1 ? 's' : ''} from Inventory.`,
+    night_owl:       `Log reps after 22:00.`,
+    personal_record: `Beat your daily reps personal record.`,
   };
 
   return i18n.locale === 'es'
-    ? (mapEs[goalType] || 'Completa la acción indicada en Misiones.')
-    : (mapEn[goalType] || 'Complete the required action in Missions.');
+    ? (mapEs[goalType] || `Completa la misión desde la pantalla Misiones.`)
+    : (mapEn[goalType] || `Complete the mission from the Missions screen.`);
 });
 
 const currentTime = ref(new Date());
