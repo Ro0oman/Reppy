@@ -141,19 +141,19 @@
         </button>
       </div>
 
-      <!-- Milestone progress bar toward next streak tier -->
+      <!-- Streak progress bar (streak capped at 7, toward jackpot) -->
       <div class="px-4 pb-1 space-y-1">
         <div class="flex items-center justify-between">
           <span class="text-[10px] font-semibold text-muted/60">
-            {{ i18n.locale === 'es' ? 'Esta semana' : 'This week' }}
+            {{ i18n.locale === 'es' ? 'Racha' : 'Streak' }}
           </span>
           <span class="text-[10px] font-bold"
             :class="streakStatus.jackpotAlreadyAwarded ? 'text-emerald-400'
-              : streakStatus.weeklyProgress >= streakStatus.jackpotDaysRequired ? 'text-emerald-400'
+              : streakDays7 >= streakStatus.jackpotDaysRequired ? 'text-emerald-400'
               : 'text-muted/60'">
-            {{ streakStatus.weeklyProgress }}/7
+            {{ Math.min(streakStatus.streak, 7) }}/7
             <span v-if="streakStatus.jackpotAlreadyAwarded"> 🎉</span>
-            <span v-else-if="streakStatus.weeklyProgress >= streakStatus.jackpotDaysRequired"> ✓</span>
+            <span v-else-if="streakDays7 >= streakStatus.jackpotDaysRequired"> ✓</span>
           </span>
         </div>
         <div class="flex items-center gap-1">
@@ -161,13 +161,13 @@
             v-for="day in 7"
             :key="day"
             class="h-1.5 flex-1 rounded-full transition-all duration-500"
-            :class="day <= streakStatus.weeklyProgress
+            :class="day <= streakDays7
               ? streakStatus.jackpotAlreadyAwarded
                 ? 'bg-emerald-500'
                 : day <= streakStatus.jackpotDaysRequired
                   ? streakTier.barClass
                   : streakTier.barClass + ' opacity-60'
-              : day === streakStatus.weeklyProgress + 1 && !streakStatus.activeToday
+              : day === streakDays7 + 1 && !streakStatus.activeToday
                 ? 'bg-foreground/20 ring-1 ring-white/10'
                 : 'bg-foreground/8'"
           />
@@ -781,6 +781,8 @@ const streakNextMilestone = computed(() => {
   const days = Number(streakStatus.value?.streak || 0);
   return STREAK_MILESTONES.find(m => m.days > days) || null;
 });
+
+const streakDays7 = computed(() => Math.min(Number(streakStatus.value?.streak || 0), 7));
 
 const streakStateLabel = computed(() => {
   const status = streakStatus.value;
