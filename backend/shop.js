@@ -374,9 +374,6 @@ router.post('/buy/:id', authenticate, async (req, res) => {
       return res.status(400).json({ message: 'ERROR: UNIT NOT AVAILABLE FOR PURCHASE' });
     }
 
-    const userRes = await query('SELECT reppy_coins, reppy_gems FROM users WHERE id = $1', [userId]);
-    const user = userRes.rows[0];
-
     // Check inventory
     const inventoryRes = await query('SELECT * FROM user_items WHERE user_id = $1 AND item_id = $2', [userId, itemId]);
     if (inventoryRes.rows.length > 0 && item.type !== 'consumable') {
@@ -434,92 +431,115 @@ router.post('/buy/:id', authenticate, async (req, res) => {
       finalDeduction = Math.max(0, price - refundAmount);
     }
 
-    if (user.reppy_coins < finalDeduction) {
-      return res.status(400).json({ message: 'INSUFFICIENT FUNDS: REPPY COINS REQUIRED' });
-    }
+    const result = await withTransaction(async (client) => {
+      // Lock the buyer's row so every economy op for this user serializes.
+      // This closes the check-then-deduct race that let two concurrent buys
+      // both pass the funds check and overspend into a negative balance.
+      const lockRes = await client.query(
+        'SELECT reppy_coins, reppy_gems FROM users WHERE id = $1 FOR UPDATE',
+        [userId]
+      );
+      if (lockRes.rowCount === 0) return { status: 404, body: { message: 'User not found' } };
+      const balance = lockRes.rows[0];
 
-    if (user.reppy_gems < priceGems) {
-      return res.status(400).json({ message: 'INSUFFICIENT GEMS: SECTOR MISSION COMPLETION REQUIRED' });
-    }
-
-    // Process Purchase
-    await query('BEGIN');
-    
-    if (item.type === 'bundle' && item.bundle_items) {
-      const bundleItemIds = item.bundle_items.split(',').map(id => parseInt(id.trim()));
-      for (const id of bundleItemIds) {
-        await query(`
-          INSERT INTO user_items (user_id, item_id, quantity) 
-          VALUES ($1, $2, 1) 
-          ON CONFLICT (user_id, item_id) 
-          DO UPDATE SET quantity = user_items.quantity + 1, is_new = TRUE
-        `, [userId, id]);
+      if (balance.reppy_coins < finalDeduction) {
+        return { status: 400, body: { message: 'INSUFFICIENT FUNDS: REPPY COINS REQUIRED' } };
       }
-      
-      await query(`
-        INSERT INTO user_items (user_id, item_id) 
-        VALUES ($1, $2) 
-        ON CONFLICT (user_id, item_id) DO NOTHING
-      `, [userId, itemId]);
-    } else {
-      if (item.type === 'consumable' && inventoryRes.rows.length > 0) {
-        await query('UPDATE user_items SET quantity = quantity + 1, is_new = TRUE WHERE user_id = $1 AND item_id = $2', [userId, itemId]);
-      } else {
-        await query(`
-          INSERT INTO user_items (user_id, item_id, quantity) 
-          VALUES ($1, $2, 1) 
-          ON CONFLICT (user_id, item_id) 
-          DO UPDATE SET quantity = user_items.quantity + 1, is_new = TRUE
+      if (balance.reppy_gems < priceGems) {
+        return { status: 400, body: { message: 'INSUFFICIENT GEMS: SECTOR MISSION COMPLETION REQUIRED' } };
+      }
+
+      if (item.type === 'bundle' && item.bundle_items) {
+        const bundleItemIds = item.bundle_items.split(',').map(id => parseInt(id.trim()));
+        for (const id of bundleItemIds) {
+          await client.query(`
+            INSERT INTO user_items (user_id, item_id, quantity)
+            VALUES ($1, $2, 1)
+            ON CONFLICT (user_id, item_id)
+            DO UPDATE SET quantity = user_items.quantity + 1, is_new = TRUE
+          `, [userId, id]);
+        }
+
+        await client.query(`
+          INSERT INTO user_items (user_id, item_id)
+          VALUES ($1, $2)
+          ON CONFLICT (user_id, item_id) DO NOTHING
         `, [userId, itemId]);
+      } else {
+        if (item.type === 'consumable' && inventoryRes.rows.length > 0) {
+          await client.query('UPDATE user_items SET quantity = quantity + 1, is_new = TRUE WHERE user_id = $1 AND item_id = $2', [userId, itemId]);
+        } else {
+          await client.query(`
+            INSERT INTO user_items (user_id, item_id, quantity)
+            VALUES ($1, $2, 1)
+            ON CONFLICT (user_id, item_id)
+            DO UPDATE SET quantity = user_items.quantity + 1, is_new = TRUE
+          `, [userId, itemId]);
+        }
       }
-    }
 
-    await query('UPDATE users SET reppy_coins = reppy_coins - $1, reppy_gems = reppy_gems - $2 WHERE id = $3', [finalDeduction, priceGems, userId]);
-    
-    // Update ticket tracking if applicable
-    if (item.name === 'Ticket de Ruleta') {
-      await query(`
-        UPDATE users 
-        SET roulette_tickets_bought_today = CASE 
-            WHEN last_roulette_ticket_bought_at::date = CURRENT_DATE THEN roulette_tickets_bought_today + 1 
-            ELSE 1 
-        END,
-        last_roulette_ticket_bought_at = CURRENT_TIMESTAMP
-        WHERE id = $1
-      `, [userId]);
-    }
-    
-    if (priceGems > 0) {
-      await query(`
-        INSERT INTO gem_transactions (user_id, amount, source, description)
-        VALUES ($1, $2, 'SHOP', $3)
-      `, [userId, -priceGems, `Purchased ${item.name}`]);
-    }
+      // Guarded deduction — even if the checks above were somehow stale, the
+      // WHERE clause refuses to drive either balance negative. rowCount === 0
+      // means we lost a race for the funds; throwing rolls back the item grant.
+      const deductRes = await client.query(
+        `UPDATE users SET reppy_coins = reppy_coins - $1, reppy_gems = reppy_gems - $2
+         WHERE id = $3 AND reppy_coins >= $1 AND reppy_gems >= $2
+         RETURNING reppy_coins, reppy_gems`,
+        [finalDeduction, priceGems, userId]
+      );
+      if (deductRes.rowCount === 0) {
+        throw new Error('Insufficient balance at deduction time');
+      }
 
-    await query('COMMIT');
-    
-    // Mission Triggers
-    await updateMissionProgress(userId, 'buy_any', 1);
-    await updateMissionProgress(userId, 'spend_coins', finalDeduction);
-    if (item.rarity === 'Legendary' || item.rarity === 'Calisthenics') {
-      await updateMissionProgress(userId, 'buy_legendary', 1);
-    }
-    
-    // Mission: Own Items (Absolute count)
-    const ownRes = await query('SELECT COUNT(*) as count FROM user_items WHERE user_id = $1', [userId]);
-    await updateMissionProgress(userId, 'own_items', parseInt(ownRes.rows[0].count), false);
+      // Update ticket tracking if applicable
+      if (item.name === 'Ticket de Ruleta') {
+        await client.query(`
+          UPDATE users
+          SET roulette_tickets_bought_today = CASE
+              WHEN last_roulette_ticket_bought_at::date = CURRENT_DATE THEN roulette_tickets_bought_today + 1
+              ELSE 1
+          END,
+          last_roulette_ticket_bought_at = CURRENT_TIMESTAMP
+          WHERE id = $1
+        `, [userId]);
+      }
 
-    // Recalculate stats
-    await recalculateUserStats(userId);
+      if (priceGems > 0) {
+        await client.query(`
+          INSERT INTO gem_transactions (user_id, amount, source, description)
+          VALUES ($1, $2, 'SHOP', $3)
+        `, [userId, -priceGems, `Purchased ${item.name}`]);
+      }
 
-    res.json({ 
-      message: 'Purchase successful', 
-      remaining_coins: user.reppy_coins - finalDeduction,
-      remaining_gems: user.reppy_gems - priceGems,
-      refunded: price - finalDeduction
+      return {
+        status: 200,
+        body: {
+          message: 'Purchase successful',
+          remaining_coins: deductRes.rows[0].reppy_coins,
+          remaining_gems: deductRes.rows[0].reppy_gems,
+          refunded: price - finalDeduction
+        }
+      };
     });
+
+    if (result.status === 200) {
+      // Mission Triggers (separate rows; run after commit)
+      await updateMissionProgress(userId, 'buy_any', 1);
+      await updateMissionProgress(userId, 'spend_coins', finalDeduction);
+      if (item.rarity === 'Legendary' || item.rarity === 'Calisthenics') {
+        await updateMissionProgress(userId, 'buy_legendary', 1);
+      }
+
+      // Mission: Own Items (Absolute count)
+      const ownRes = await query('SELECT COUNT(*) as count FROM user_items WHERE user_id = $1', [userId]);
+      await updateMissionProgress(userId, 'own_items', parseInt(ownRes.rows[0].count), false);
+
+      // Recalculate stats
+      await recalculateUserStats(userId);
+    }
+
+    return res.status(result.status).json(result.body);
   } catch (error) {
-    await query('ROLLBACK');
     console.error('Error purchasing item:', error);
     res.status(500).json({ message: 'Error processing purchase' });
   }
@@ -621,95 +641,101 @@ router.post('/activate/:id', authenticate, async (req, res) => {
       return res.status(400).json({ message: 'Este objeto no es un consumible' });
     }
 
-    // Check ownership and quantity
-    const invRes = await query('SELECT * FROM user_items WHERE user_id = $1 AND item_id = $2', [userId, itemId]);
-    if (invRes.rows.length === 0 || invRes.rows[0].quantity <= 0) {
-      return res.status(403).json({ message: 'No tienes este objeto en tu inventario' });
-    }
+    const durationSeconds = item.stats.duration || 3600;
 
-    await query('BEGIN');
-
-        // 2. Activate specific stat boost or generic multiplier
-        let updateQuery = '';
-        let updateParams = [];
-        let bonusDesc = '';
-        let bonusValue = '';
-        const durationSeconds = item.stats.duration || 3600;
-
-        if (item.stats.dex_bonus) {
-            bonusDesc = 'DEX +' + item.stats.dex_bonus;
-            bonusValue = '+' + item.stats.dex_bonus;
-            updateQuery = `
-                UPDATE users 
-                SET dex_bonus = $2, 
-                    dex_bonus_expiry = NOW() + INTERVAL '1 second' * $3 
-                WHERE id = $1
-            `;
-            updateParams = [userId, item.stats.dex_bonus, durationSeconds];
-        } else {
-            const multiplier = item.stats.multiplier || 1.5;
-            bonusDesc = 'Daño x' + multiplier;
-            bonusValue = 'x' + multiplier;
-            updateQuery = `
-                UPDATE users 
-                SET damage_multiplier = $2, 
-                    damage_multiplier_expiry = NOW() + INTERVAL '1 second' * $3 
-                WHERE id = $1
-            `;
-            updateParams = [userId, multiplier, durationSeconds];
-        }
-
-        await query(updateQuery, updateParams);
-
-    // 2. Consume item
-    if (invRes.rows[0].quantity > 1) {
-      await query('UPDATE user_items SET quantity = quantity - 1 WHERE user_id = $1 AND item_id = $2', [userId, itemId]);
-    } else {
-      await query('DELETE FROM user_items WHERE user_id = $1 AND item_id = $2', [userId, itemId]);
-    }
-
-    // 3. Post to social feed
-    try {
-      const today = new Date().toISOString().split('T')[0];
-      const durationDesc = durationSeconds >= 3600 ? `${Math.floor(durationSeconds/3600)}h` : `${Math.floor(durationSeconds/60)}m`;
-      const summaryRes = await query('SELECT id, description FROM daily_summaries WHERE user_id = $1 AND date = $2', [userId, today]);
-      if (summaryRes.rows.length > 0) {
-        let newDesc = summaryRes.rows[0].description || '';
-        // If it already has buffs, just add a comma or newline without repeating the prefix too much
-        if (newDesc.includes('🚀 [BUFFS]:')) {
-          newDesc = newDesc.replace('🚀 [BUFFS]:', `🚀 [BUFFS]: ${item.name} (${bonusDesc}), `);
-        } else {
-          newDesc += `\n\n🚀 [BUFFS]: ${item.name} (${bonusDesc})`;
-        }
-        
-        await query(`
-          UPDATE daily_summaries 
-          SET description = $1
-          WHERE id = $2
-        `, [newDesc, summaryRes.rows[0].id]);
-      } else {
-        await query(`
-          INSERT INTO daily_summaries (user_id, date, title, description)
-          VALUES ($1, $2, 'Preparación para el Combate', '¡He activado un ' || $3 || '! (' || $4 || ' durante ' || $5 || ')')
-        `, [userId, today, item.name, bonusDesc, durationDesc]);
+    const result = await withTransaction(async (client) => {
+      // ATOMIC CONSUME FIRST. The guarded decrement is the gate: a unit must be
+      // spent before any buff is granted, so spamming activate can never apply
+      // the buff more times than units owned, nor drive quantity negative.
+      const consumeRes = await client.query(
+        `UPDATE user_items SET quantity = quantity - 1
+         WHERE user_id = $1 AND item_id = $2 AND quantity > 0
+         RETURNING quantity`,
+        [userId, itemId]
+      );
+      if (consumeRes.rowCount === 0) {
+        return { status: 403, body: { message: 'No tienes este objeto en tu inventario' } };
       }
-    } catch (socialErr) {
-      console.error('Error updating social feed for consumable:', socialErr);
-    }
+      // Clean up empty stacks.
+      if (consumeRes.rows[0].quantity <= 0) {
+        await client.query('DELETE FROM user_items WHERE user_id = $1 AND item_id = $2', [userId, itemId]);
+      }
 
-    await query('COMMIT');
+      // Activate specific stat boost or generic multiplier.
+      let updateQuery = '';
+      let updateParams = [];
+      let bonusDesc = '';
+      let bonusValue = '';
 
-    // Mission: Use Consumable
-    await updateMissionProgress(userId, 'use_consumable', 1);
+      if (item.stats.dex_bonus) {
+        bonusDesc = 'DEX +' + item.stats.dex_bonus;
+        bonusValue = '+' + item.stats.dex_bonus;
+        updateQuery = `
+          UPDATE users
+          SET dex_bonus = $2,
+              dex_bonus_expiry = NOW() + INTERVAL '1 second' * $3
+          WHERE id = $1
+        `;
+        updateParams = [userId, item.stats.dex_bonus, durationSeconds];
+      } else {
+        const multiplier = item.stats.multiplier || 1.5;
+        bonusDesc = 'Daño x' + multiplier;
+        bonusValue = 'x' + multiplier;
+        updateQuery = `
+          UPDATE users
+          SET damage_multiplier = $2,
+              damage_multiplier_expiry = NOW() + INTERVAL '1 second' * $3
+          WHERE id = $1
+        `;
+        updateParams = [userId, multiplier, durationSeconds];
+      }
 
-    res.json({ 
-      message: `${item.name} activado con éxito`, 
-      bonus: bonusValue,
-      expiry: new Date(Date.now() + durationSeconds * 1000)
+      await client.query(updateQuery, updateParams);
+
+      // Post to social feed (best-effort). A SAVEPOINT keeps a failure here from
+      // poisoning the transaction: in Postgres any error aborts the whole tx, so
+      // we must roll back to the savepoint to let the consume/buff still commit.
+      await client.query('SAVEPOINT social_feed');
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const durationDesc = durationSeconds >= 3600 ? `${Math.floor(durationSeconds/3600)}h` : `${Math.floor(durationSeconds/60)}m`;
+        const summaryRes = await client.query('SELECT id, description FROM daily_summaries WHERE user_id = $1 AND date = $2', [userId, today]);
+        if (summaryRes.rows.length > 0) {
+          let newDesc = summaryRes.rows[0].description || '';
+          if (newDesc.includes('🚀 [BUFFS]:')) {
+            newDesc = newDesc.replace('🚀 [BUFFS]:', `🚀 [BUFFS]: ${item.name} (${bonusDesc}), `);
+          } else {
+            newDesc += `\n\n🚀 [BUFFS]: ${item.name} (${bonusDesc})`;
+          }
+          await client.query('UPDATE daily_summaries SET description = $1 WHERE id = $2', [newDesc, summaryRes.rows[0].id]);
+        } else {
+          await client.query(`
+            INSERT INTO daily_summaries (user_id, date, title, description)
+            VALUES ($1, $2, 'Preparación para el Combate', '¡He activado un ' || $3 || '! (' || $4 || ' durante ' || $5 || ')')
+          `, [userId, today, item.name, bonusDesc, durationDesc]);
+        }
+      } catch (socialErr) {
+        await client.query('ROLLBACK TO SAVEPOINT social_feed');
+        console.error('Error updating social feed for consumable:', socialErr);
+      }
+
+      return {
+        status: 200,
+        body: {
+          message: `${item.name} activado con éxito`,
+          bonus: bonusValue,
+          expiry: new Date(Date.now() + durationSeconds * 1000)
+        }
+      };
     });
 
+    if (result.status === 200) {
+      // Mission: Use Consumable (separate row; run after commit)
+      await updateMissionProgress(userId, 'use_consumable', 1);
+    }
+
+    return res.status(result.status).json(result.body);
   } catch (error) {
-    await query('ROLLBACK');
     console.error('Error activating consumable:', error);
     res.status(500).json({ message: 'Error al activar el consumible' });
   }
@@ -729,43 +755,65 @@ router.post('/buy-chest/:type', authenticate, async (req, res) => {
   const pricing = chestPricing[type];
   if (!pricing) return res.status(400).json({ message: 'Invalid chest type' });
 
+  let column = 'boss_chests';
+  if (type === 'epic') column = 'epic_chests';
+  if (type === 'legendary') column = 'legendary_chests';
+
   try {
-    const userRes = await query('SELECT reppy_coins, reppy_gems FROM users WHERE id = $1', [userId]);
-    const user = userRes.rows[0];
+    const result = await withTransaction(async (client) => {
+      // Lock the buyer's row so concurrent chest buys serialize against each
+      // other (and against /buy), then deduct with a guard so the balance can
+      // never go negative even if two requests interleave.
+      const lockRes = await client.query('SELECT reppy_coins, reppy_gems FROM users WHERE id = $1 FOR UPDATE', [userId]);
+      if (lockRes.rowCount === 0) return { status: 404, body: { message: 'User not found' } };
+      const balance = lockRes.rows[0];
 
-    if (pricing.currency === 'coins' && user.reppy_coins < pricing.amount) {
-      return res.status(400).json({ message: 'INSUFFICIENT COINS' });
-    }
+      if (pricing.currency === 'coins' && balance.reppy_coins < pricing.amount) {
+        return { status: 400, body: { message: 'INSUFFICIENT COINS' } };
+      }
+      if (pricing.currency === 'gems' && balance.reppy_gems < pricing.amount) {
+        return { status: 400, body: { message: 'INSUFFICIENT GEMS' } };
+      }
 
-    if (pricing.currency === 'gems' && user.reppy_gems < pricing.amount) {
-      return res.status(400).json({ message: 'INSUFFICIENT GEMS' });
-    }
+      let deductRes;
+      if (pricing.currency === 'coins') {
+        deductRes = await client.query(
+          `UPDATE users SET ${column} = ${column} + 1, reppy_coins = reppy_coins - $1
+           WHERE id = $2 AND reppy_coins >= $1
+           RETURNING reppy_coins, reppy_gems`,
+          [pricing.amount, userId]
+        );
+      } else {
+        deductRes = await client.query(
+          `UPDATE users SET ${column} = ${column} + 1, reppy_gems = reppy_gems - $1
+           WHERE id = $2 AND reppy_gems >= $1
+           RETURNING reppy_coins, reppy_gems`,
+          [pricing.amount, userId]
+        );
+      }
+      if (deductRes.rowCount === 0) {
+        throw new Error('Insufficient balance at deduction time');
+      }
 
-    await query('BEGIN');
-    
-    let column = 'boss_chests';
-    if (type === 'epic') column = 'epic_chests';
-    if (type === 'legendary') column = 'legendary_chests';
+      if (pricing.currency === 'gems') {
+        await client.query(`
+          INSERT INTO gem_transactions (user_id, amount, source, description)
+          VALUES ($1, $2, 'SHOP', $3)
+        `, [userId, -pricing.amount, `Purchased ${type} chest`]);
+      }
 
-    if (pricing.currency === 'coins') {
-      await query(`UPDATE users SET ${column} = ${column} + 1, reppy_coins = reppy_coins - $1 WHERE id = $2`, [pricing.amount, userId]);
-    } else {
-      await query(`UPDATE users SET ${column} = ${column} + 1, reppy_gems = reppy_gems - $1 WHERE id = $2`, [pricing.amount, userId]);
-      await query(`
-        INSERT INTO gem_transactions (user_id, amount, source, description)
-        VALUES ($1, $2, 'SHOP', $3)
-      `, [userId, -pricing.amount, `Purchased ${type} chest`]);
-    }
-
-    await query('COMMIT');
-
-    res.json({
-      message: 'Chest purchased successfully',
-      remaining_coins: pricing.currency === 'coins' ? user.reppy_coins - pricing.amount : user.reppy_coins,
-      remaining_gems: pricing.currency === 'gems' ? user.reppy_gems - pricing.amount : user.reppy_gems
+      return {
+        status: 200,
+        body: {
+          message: 'Chest purchased successfully',
+          remaining_coins: deductRes.rows[0].reppy_coins,
+          remaining_gems: deductRes.rows[0].reppy_gems
+        }
+      };
     });
+
+    return res.status(result.status).json(result.body);
   } catch (error) {
-    await query('ROLLBACK');
     console.error('Error buying chest:', error);
     res.status(500).json({ message: 'Error processing chest purchase' });
   }
