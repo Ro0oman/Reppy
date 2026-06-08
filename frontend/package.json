@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "vite",
     "sitemap": "node scripts/generate-sitemap.js",
+    "og-images": "node scripts/generate-og-images.js",
     "sync-blog": "node -e \"const fs = require('fs'); fs.copyFileSync('../backend/blogData.json', './src/blogPosts.json')\"",
-    "build": "npm run sync-blog && npm run sitemap && vite-ssg build && node scripts/fix-ssg-seo.js",
+    "build": "npm run sync-blog && npm run sitemap && vite-ssg build && npm run og-images && node scripts/fix-ssg-seo.js",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -32,6 +33,7 @@
     "lightningcss-linux-x64-gnu": "^1.29.1"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@vitejs/plugin-vue": "^6.0.5",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",
