@@ -1,84 +1,26 @@
-import { Server } from 'socket.io';
 import getPusher from './pusher.js';
 
-let io;
-const activeUsers = new Map(); // userId -> { name, lastActive }
-const userSockets = new Map(); // userId -> Set of socketIds
-
-export const initSocket = (server) => {
-  // We keep Socket.io for local development compatibility if needed
-  io = new Server(server, {
-    cors: {
-      origin: "*",
-      methods: ["GET", "POST"]
-    }
-  });
-
-  io.on('connection', (socket) => {
-    console.log('User connected:', socket.id);
-
-    socket.on('join_battle', (user) => {
-      if (user && user.id) {
-        socket.userId = user.id;
-        
-        if (!userSockets.has(user.id)) {
-          userSockets.set(user.id, new Set());
-        }
-        userSockets.get(user.id).add(socket.id);
-
-        activeUsers.set(user.id, { 
-          id: user.id,
-          name: user.name, 
-          avatar_url: user.avatar_url,
-          lastActive: Date.now() 
-        });
-        broadcastPresence();
-      }
-    });
-
-    socket.on('disconnect', () => {
-      if (socket.userId) {
-        if (userSockets.has(socket.userId)) {
-          userSockets.get(socket.userId).delete(socket.id);
-          if (userSockets.get(socket.userId).size === 0) {
-            userSockets.delete(socket.userId);
-          }
-        }
-
-        setTimeout(() => {
-            const user = activeUsers.get(socket.userId);
-            if (user && Date.now() - user.lastActive > 30000) {
-                activeUsers.delete(socket.userId);
-                broadcastPresence();
-            }
-        }, 30000);
-      }
-    });
-  });
-
-  return io;
-};
+// In-memory presence tracker (best-effort): entries older than 60s are filtered
+// out on each broadcast. Real-time presence on the client is driven by Pusher's
+// native `presence-global` channel; the `presence_update` event below is only a
+// secondary/fallback signal. Socket.io was removed — it never worked on Vercel's
+// serverless functions (no persistent connections), Pusher handles everything.
+const activeUsers = new Map(); // userId -> { id, name, avatar_url, lastActive }
 
 export const updatePresence = (user) => {
   if (!user || !user.id) return;
-  activeUsers.set(user.id, { 
+  activeUsers.set(user.id, {
     id: user.id,
-    name: user.name, 
+    name: user.name,
     avatar_url: user.avatar_url,
-    lastActive: Date.now() 
+    lastActive: Date.now()
   });
   broadcastPresence();
 };
 
-// --- PUSHER INTEGRATION ---
-// We use Pusher for production broadcasts
 export const broadcastPresence = () => {
   const users = Array.from(activeUsers.values()).filter(u => Date.now() - u.lastActive < 60000);
-  
-  // Broadcast via Socket.io (local)
-  if (io) io.emit('presence_update', users);
-  
-  // Broadcast via Pusher (production)
+
   const pusher = getPusher();
   if (pusher) {
     pusher.trigger("presence-global", "presence_update", users).catch(err => {
@@ -88,15 +30,6 @@ export const broadcastPresence = () => {
 };
 
 export const sendToUser = (userId, event, data) => {
-  // Send via Socket.io
-  if (io && userSockets.has(userId)) {
-    const sockets = userSockets.get(userId);
-    sockets.forEach(socketId => {
-      io.to(socketId).emit(event, data);
-    });
-  }
-  
-  // Send via Pusher (private channel)
   const pusher = getPusher();
   if (pusher) {
     pusher.trigger(`private-user-${userId}`, event, data).catch(err => {
@@ -107,8 +40,6 @@ export const sendToUser = (userId, event, data) => {
 
 export const broadcastPvP = (fightId, type, data) => {
   const payload = { type, ...data };
-  if (io) io.to(`pvp_${fightId}`).emit('pvp_event', payload);
-  
   const pusher = getPusher();
   if (pusher) {
     pusher.trigger(`presence-pvp-${fightId}`, "pvp_event", payload).catch(err => {
@@ -118,15 +49,13 @@ export const broadcastPvP = (fightId, type, data) => {
 };
 
 export const broadcastDamage = (damageData) => {
-  if (io) io.emit('boss_damage', damageData);
-  
   const pusher = getPusher();
   if (pusher) {
     pusher.trigger("global-events", "boss_damage", damageData).catch(err => {
       console.warn('[PUSHER] Error broadcasting damage:', err.message);
     });
   }
-  
+
   if (damageData.userId && activeUsers.has(damageData.userId)) {
     const user = activeUsers.get(damageData.userId);
     user.lastActive = Date.now();
@@ -135,8 +64,6 @@ export const broadcastDamage = (damageData) => {
 };
 
 export const broadcastBossKill = (payload) => {
-  if (io) io.emit('boss_kill', payload);
-
   const pusher = getPusher();
   if (pusher) {
     pusher.trigger('global-events', 'boss_kill', payload).catch(err => {
@@ -144,5 +71,3 @@ export const broadcastBossKill = (payload) => {
     });
   }
 };
-
-export const getIO = () => io;

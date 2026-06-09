@@ -16,6 +16,12 @@ build/
 .DS_Store
 *.pem
 
+# Throwaway debug / scratch artifacts (kept local, not versioned)
+scratch/
+network/
+brain/
+*.har
+
 # Environment
 .env
 .env.local
