@@ -36,21 +36,15 @@ import exercisesRoutes from './exercises.js';
 import streakRoutes from './streak.js';
 import referralRoutes from './referral.js';
 import hevyRoutes from './hevy.js';
-import http from 'http';
 import getPusher from './pusher.js';
 import { updatePresence } from './socketManager.js';
 import { authenticate } from './middleware.js';
-import { initSocket } from './socketManager.js';
 import cron from 'node-cron';
 import { runStreakReminders } from './utils/streakReminders.js';
 import { runReferralReminders } from './utils/referralReminders.js';
 
 const app = express();
 const PORT = process.env.PORT || 5001;
-const server = http.createServer(app);
-
-// Initialize Socket.io
-initSocket(server);
 
 // --- SCHEDULED TASKS ---
 // Cron jobs are only useful on long-running Node processes. In serverless
@@ -598,7 +592,7 @@ async function ensureAllTrainingExercisesExist() {
 // Start server only in development or if not imported as a module
 if (process.env.NODE_ENV !== 'production' && process.env.VERCEL !== '1') {
   ensureAllTrainingExercisesExist().then(() => {
-    server.listen(PORT, () => {
+    app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
   });
