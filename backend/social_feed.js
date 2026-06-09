@@ -336,14 +336,60 @@ router.get('/feed', optionalAuthenticate, async (req, res) => {
     }
 
     const feedRes = await query(`
-      WITH daily_stats AS (
-        SELECT 
+      WITH feed_keys AS MATERIALIZED (
+        -- Cheap pass: pick exactly the page of posts we will render, then compute
+        -- the rich per-row stats below only for these (instead of all of history).
+        SELECT 'reps'::text AS post_type, r.user_id, r.date AS post_date,
+               NULL::int AS ref_id, MAX(r.created_at) AS created_at
+        FROM reps r
+        JOIN users u ON r.user_id = u.id
+        ${whereClause}
+        GROUP BY r.user_id, r.date
+
+        UNION ALL
+        SELECT 'pvp'::text, f.challenger_id, f.created_at::date, f.id, f.created_at
+        FROM pvp_fights f
+        JOIN users u1 ON f.challenger_id = u1.id
+        JOIN users u2 ON f.challenged_id = u2.id
+        WHERE f.status != 'pending' AND u1.is_private = false AND u2.is_private = false
+
+        UNION ALL
+        SELECT 'challenge'::text, ac.challenger_id,
+               COALESCE(ac.resolved_at, ac.expires_at, ac.created_at)::date, ac.id,
+               COALESCE(ac.resolved_at, ac.expires_at, ac.created_at)
+        FROM async_challenges ac
+        JOIN users u1 ON u1.id = ac.challenger_id
+        JOIN users u2 ON u2.id = ac.challenged_id
+        WHERE ac.status IN ('active', 'finished') AND u1.is_private = false AND u2.is_private = false
+
+        UNION ALL
+        SELECT 'boss_kill'::text, bkp.killer_user_id, bkp.created_at::date, bkp.id, bkp.created_at
+        FROM boss_kill_posts bkp
+        WHERE bkp.created_at >= NOW() - INTERVAL '48 hours'
+
+        ORDER BY created_at DESC
+        LIMIT ${limit} OFFSET $2
+      ),
+      exercise_rankings AS MATERIALIZED (
+        -- Global per-exercise leaderboard, computed once per request (was a
+        -- full-table window scan re-run for every feed row).
+        SELECT exercise_type, user_id, rank FROM (
+          SELECT exercise_type, user_id,
+                 RANK() OVER (PARTITION BY exercise_type ORDER BY SUM(count) DESC) AS rank
+          FROM reps
+          GROUP BY exercise_type, user_id
+        ) all_ranks
+        WHERE rank <= 10
+      ),
+      daily_stats AS (
+        SELECT
           r.user_id,
           r.date,
           SUM(CASE WHEN COALESCE(e.unit, 'reps') = 'seconds' THEN 0 ELSE r.count END)::int as day_reps,
           SUM(r.boss_damage_dealt)::int as day_damage
         FROM reps r
         LEFT JOIN exercises e ON e.slug = r.exercise_type
+        WHERE r.user_id IN (SELECT user_id FROM feed_keys)
         GROUP BY r.user_id, r.date
       ),
       reps_feed AS (
@@ -414,6 +460,7 @@ router.get('/feed', optionalAuthenticate, async (req, res) => {
             NULL::json as pvp_data
         FROM reps r
         JOIN users u ON r.user_id = u.id
+        JOIN feed_keys fk ON fk.post_type = 'reps' AND fk.user_id = u.id AND fk.post_date = r.date
         LEFT JOIN daily_summaries ds ON ds.user_id = r.user_id AND ds.date::date = r.date::date
         LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
         LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
@@ -423,8 +470,7 @@ router.get('/feed', optionalAuthenticate, async (req, res) => {
         LEFT JOIN items iWeapon ON u.equipped_weapon_id = iWeapon.id
         LEFT JOIN items iArmor ON u.equipped_armor_id = iArmor.id
         LEFT JOIN items iBoots ON u.equipped_boots_id = iBoots.id
-        ${whereClause}
-        GROUP BY 
+        GROUP BY
           u.id, r.date, ds.id, ds.title, ds.description,
           b.css_value, a.css_value, pb.css_value, t.name,
           u.name, u.avatar_url, u.current_level, u.total_reps, u.cha_xp,
@@ -474,6 +520,7 @@ router.get('/feed', optionalAuthenticate, async (req, res) => {
                 'battlefield', f.battlefield
             ) as pvp_data
         FROM pvp_fights f
+        JOIN feed_keys fk ON fk.post_type = 'pvp' AND fk.ref_id = f.id
         JOIN users u1 ON f.challenger_id = u1.id
         JOIN users u2 ON f.challenged_id = u2.id
         LEFT JOIN cosmetics b ON u1.equipped_border_id = b.id
@@ -530,6 +577,7 @@ router.get('/feed', optionalAuthenticate, async (req, res) => {
             'reward_gems', ac.reward_gems
           ) as pvp_data
         FROM async_challenges ac
+        JOIN feed_keys fk ON fk.post_type = 'challenge' AND fk.ref_id = ac.id
         JOIN users u1 ON u1.id = ac.challenger_id
         JOIN users u2 ON u2.id = ac.challenged_id
         LEFT JOIN cosmetics b  ON u1.equipped_border_id = b.id
@@ -576,6 +624,7 @@ router.get('/feed', optionalAuthenticate, async (req, res) => {
             'created_at',    bkp.created_at
           )                            AS pvp_data
         FROM boss_kill_posts bkp
+        JOIN feed_keys fk ON fk.post_type = 'boss_kill' AND fk.ref_id = bkp.id
         WHERE bkp.created_at >= NOW() - INTERVAL '48 hours'
       ),
       feed_base AS (
@@ -639,20 +688,13 @@ router.get('/feed', optionalAuthenticate, async (req, res) => {
         (
           SELECT JSON_AGG(r_stats) FROM (
             SELECT exercise_type, rank
-            FROM (
-              SELECT exercise_type, user_id, 
-                     RANK() OVER(PARTITION BY exercise_type ORDER BY SUM(count) DESC) as rank
-              FROM reps
-              GROUP BY exercise_type, user_id
-            ) all_ranks
-            WHERE user_id = f.user_id AND rank <= 10
+            FROM exercise_rankings er
+            WHERE er.user_id = f.user_id
             LIMIT 3
           ) r_stats
         ) as exercise_ranks
       FROM feed_base f
       ORDER BY f.created_at DESC
-      LIMIT ${limit} OFFSET $2
-
     `, params);
 
     res.json(feedRes.rows);
