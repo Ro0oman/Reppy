@@ -1,4 +1,436 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/miguel</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/miguel" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/miguel" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/miguel" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/miguel</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/miguel" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/miguel" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/miguel" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/lil-alexandru</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/lil-alexandru" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/lil-alexandru" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/lil-alexandru" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/lil-alexandru</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/lil-alexandru" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/lil-alexandru" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/lil-alexandru" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/roman</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/roman" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/roman" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/roman" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/roman</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/roman" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/roman" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/roman" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/victor</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/victor" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/victor" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/victor" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/victor</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/victor" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/victor" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/victor" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/jose</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/jose" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/jose" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/jose" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/jose</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/jose" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/jose" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/jose" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/roman-test</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/roman-test" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/roman-test" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/roman-test" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/roman-test</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/roman-test" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/roman-test" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/roman-test" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/emmanuel-djembussi</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/emmanuel-djembussi" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/emmanuel-djembussi" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/emmanuel-djembussi" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/emmanuel-djembussi</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/emmanuel-djembussi" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/emmanuel-djembussi" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/emmanuel-djembussi" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/suno-barras-bajas</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/suno-barras-bajas" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/suno-barras-bajas" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/suno-barras-bajas" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/suno-barras-bajas</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/suno-barras-bajas" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/suno-barras-bajas" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/suno-barras-bajas" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/andres-menzel</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/andres-menzel" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/andres-menzel" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/andres-menzel" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/andres-menzel</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/andres-menzel" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/andres-menzel" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/andres-menzel" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/jorge-mena-escriba</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/jorge-mena-escriba" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/jorge-mena-escriba" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/jorge-mena-escriba" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/jorge-mena-escriba</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/jorge-mena-escriba" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/jorge-mena-escriba" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/jorge-mena-escriba" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/tulgaenguun</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/tulgaenguun" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/tulgaenguun" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/tulgaenguun" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/tulgaenguun</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/tulgaenguun" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/tulgaenguun" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/tulgaenguun" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/test-user</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/test-user" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/test-user" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/test-user" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/test-user</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/test-user" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/test-user" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/test-user" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/guided-test-3481</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/guided-test-3481" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/guided-test-3481" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/guided-test-3481" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/guided-test-3481</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/guided-test-3481" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/guided-test-3481" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/guided-test-3481" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/guided-test-4515</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/guided-test-4515" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/guided-test-4515" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/guided-test-4515" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/guided-test-4515</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/guided-test-4515" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/guided-test-4515" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/guided-test-4515" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/guided-test-2074</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/guided-test-2074" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/guided-test-2074" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/guided-test-2074" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/guided-test-2074</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/guided-test-2074" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/guided-test-2074" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/guided-test-2074" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/talia</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/talia" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/talia" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/talia" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/talia</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/talia" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/talia" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/talia" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/tester</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/tester" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/tester" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/tester" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/tester</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/tester" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/tester" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/tester" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/c-sena</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/c-sena" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/c-sena" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/c-sena" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/c-sena</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/c-sena" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/c-sena" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/c-sena" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/lucian-panainte</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/lucian-panainte" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/lucian-panainte" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/lucian-panainte" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/lucian-panainte</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/lucian-panainte" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/lucian-panainte" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/lucian-panainte" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/devesa-98</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/devesa-98" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/devesa-98" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/devesa-98" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/devesa-98</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/devesa-98" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/devesa-98" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/devesa-98" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/talia-idanez-noguera</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/talia-idanez-noguera" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/talia-idanez-noguera" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/talia-idanez-noguera" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/talia-idanez-noguera</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/talia-idanez-noguera" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/talia-idanez-noguera" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/talia-idanez-noguera" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/guided-test-8942</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/guided-test-8942" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/guided-test-8942" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/guided-test-8942" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/guided-test-8942</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/guided-test-8942" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/guided-test-8942" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/guided-test-8942" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/guided-test-4246</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/guided-test-4246" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/guided-test-4246" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/guided-test-4246" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/guided-test-4246</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/guided-test-4246" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/guided-test-4246" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/guided-test-4246" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/es/atleta/guided-test-150</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/guided-test-150" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/guided-test-150" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/guided-test-150" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/athlete/guided-test-150</loc>
+    <lastmod>2026-06-09T10:15:10.285Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/atleta/guided-test-150" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/athlete/guided-test-150" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/atleta/guided-test-150" />
+  </url>
 </urlset>

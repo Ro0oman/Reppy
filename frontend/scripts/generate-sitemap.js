@@ -126,11 +126,16 @@ const buildBlogSitemap = () => {
 
 // ── Build athletes sitemap ────────────────────────────────────────────────────
 
+// Returns { xml, count }. count === 0 means we should NOT emit/reference the
+// athletes sitemap — Google rejects an empty <urlset> as "missing XML tag".
 const buildAthletesSitemap = async () => {
   let xml = urlsetOpen;
+  let count = 0;
 
   try {
-    const apiBase = process.env.VITE_API_URL || 'http://localhost:5001';
+    // Default to the live site's API so the production build can actually
+    // populate the sitemap; localhost is only reachable during local dev.
+    const apiBase = process.env.VITE_API_URL || BASE_URL;
     const res = await fetch(`${apiBase}/api/profile/top-public?limit=100`, { signal: AbortSignal.timeout(10000) });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const users = await res.json();
@@ -141,43 +146,57 @@ const buildAthletesSitemap = async () => {
       const enHref = `${BASE_URL}/en/athlete/${user.username}`;
       xml += urlEntry({ loc: esHref, lastmod, changefreq: 'weekly', priority: '0.6', esHref, enHref });
       xml += urlEntry({ loc: enHref, lastmod, changefreq: 'weekly', priority: '0.6', esHref, enHref });
+      count++;
     }
-    console.log(`[SEO] ${users.filter(u => u.username).length} athlete profiles added to sitemap`);
+    console.log(`[SEO] ${count} athlete profiles added to sitemap`);
   } catch (e) {
     console.warn('[SEO] Could not fetch athletes for sitemap:', e.message);
   }
 
   xml += urlsetClose;
-  return xml;
+  return { xml, count };
 };
 
 // ── Build sitemap index ───────────────────────────────────────────────────────
 
-const buildSitemapIndexWithAthletes = () => `<?xml version="1.0" encoding="UTF-8"?>
+const sitemapEntry = (name) => `  <sitemap>
+    <loc>${BASE_URL}/${name}</loc>
+    <lastmod>${lastmod}</lastmod>
+  </sitemap>`;
+
+const buildSitemapIndex = ({ includeAthletes }) => {
+  const entries = [
+    sitemapEntry('sitemap-pages.xml'),
+    sitemapEntry('sitemap-blog.xml'),
+  ];
+  if (includeAthletes) entries.push(sitemapEntry('sitemap-athletes.xml'));
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <sitemap>
-    <loc>${BASE_URL}/sitemap-pages.xml</loc>
-    <lastmod>${lastmod}</lastmod>
-  </sitemap>
-  <sitemap>
-    <loc>${BASE_URL}/sitemap-blog.xml</loc>
-    <lastmod>${lastmod}</lastmod>
-  </sitemap>
-  <sitemap>
-    <loc>${BASE_URL}/sitemap-athletes.xml</loc>
-    <lastmod>${lastmod}</lastmod>
-  </sitemap>
+${entries.join('\n')}
 </sitemapindex>`;
+};
 
 // ── Write files ───────────────────────────────────────────────────────────────
 
 try {
-  const athletesSitemap = await buildAthletesSitemap();
-  fs.writeFileSync(path.join(publicDir, 'sitemap.xml'),          buildSitemapIndexWithAthletes());
-  fs.writeFileSync(path.join(publicDir, 'sitemap-pages.xml'),    buildPagesSitemap());
-  fs.writeFileSync(path.join(publicDir, 'sitemap-blog.xml'),     buildBlogSitemap());
-  fs.writeFileSync(path.join(publicDir, 'sitemap-athletes.xml'), athletesSitemap);
-  console.log('🚀 [SEO] Sitemap index + pages + blog + athletes generated in public/');
+  const { xml: athletesSitemap, count: athletesCount } = await buildAthletesSitemap();
+  const includeAthletes = athletesCount > 0;
+
+  fs.writeFileSync(path.join(publicDir, 'sitemap.xml'),       buildSitemapIndex({ includeAthletes }));
+  fs.writeFileSync(path.join(publicDir, 'sitemap-pages.xml'), buildPagesSitemap());
+  fs.writeFileSync(path.join(publicDir, 'sitemap-blog.xml'),  buildBlogSitemap());
+
+  const athletesPath = path.join(publicDir, 'sitemap-athletes.xml');
+  if (includeAthletes) {
+    fs.writeFileSync(athletesPath, athletesSitemap);
+  } else {
+    // Don't ship an empty <urlset> — Google flags it as "missing XML tag".
+    // Remove any stale file so the index (which omits it) stays consistent.
+    if (fs.existsSync(athletesPath)) fs.rmSync(athletesPath);
+    console.warn('[SEO] No athlete profiles available — athletes sitemap omitted from index');
+  }
+  console.log(`🚀 [SEO] Sitemap index + pages + blog${includeAthletes ? ' + athletes' : ''} generated in public/`);
 } catch (err) {
   console.error('❌ [SEO] Failed to generate sitemaps:', err.message);
   process.exit(1);

@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://reppy-weld.vercel.app/es/blog/ejercicios-hombros-calistenia</loc>
+    <lastmod>2026-06-09T00:00:00.000Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/blog/ejercicios-hombros-calistenia" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/blog/ejercicios-hombros-calistenia" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/blog/ejercicios-hombros-calistenia" />
+  </url>
+  <url>
+    <loc>https://reppy-weld.vercel.app/en/blog/ejercicios-hombros-calistenia</loc>
+    <lastmod>2026-06-09T00:00:00.000Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy-weld.vercel.app/es/blog/ejercicios-hombros-calistenia" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy-weld.vercel.app/en/blog/ejercicios-hombros-calistenia" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy-weld.vercel.app/es/blog/ejercicios-hombros-calistenia" />
+  </url>
+  <url>
     <loc>https://reppy-weld.vercel.app/es/blog/dolor-antebrazo-codo-dominadas</loc>
     <lastmod>2026-06-08T00:00:00.000Z</lastmod>
     <changefreq>monthly</changefreq>
