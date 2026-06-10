@@ -1,41 +1,34 @@
 <template>
   <div class="relative flex items-center justify-center" :style="{ width: size + 'px', height: size + 'px' }">
-    <svg :width="size" :height="size" class="transform -rotate-90 drop-shadow-xl">
-      <!-- Background Circle -->
+    <svg :width="size" :height="size" class="-rotate-90">
+      <!-- Track -->
       <circle
         :cx="size / 2"
         :cy="size / 2"
         :r="radius"
+        :stroke-width="strokeWidth"
         stroke="currentColor"
-        stroke-width="12"
         fill="transparent"
-        class="text-foreground/5"
+        class="text-foreground/10"
       />
-      <!-- Progress Circle -->
+      <!-- Progress -->
       <circle
         :cx="size / 2"
         :cy="size / 2"
         :r="radius"
-        stroke="url(#progressGradient)"
-        stroke-width="12"
+        :stroke-width="strokeWidth"
+        :stroke="isComplete ? 'hsl(var(--accent))' : 'hsl(var(--primary))'"
         fill="transparent"
         stroke-linecap="round"
         :stroke-dasharray="circumference"
         :stroke-dashoffset="dashoffset"
-        class="transition-all duration-1000 ease-out filter drop-shadow-[0_0_8px_hsl(var(--primary) / 0.3)]"
+        class="transition-all duration-700 ease-out"
       />
-      <!-- Gradient Definition -->
-      <defs>
-        <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#FF4500" />
-          <stop offset="100%" stop-color="#CCFF00" />
-        </linearGradient>
-      </defs>
     </svg>
-    <!-- Center Label -->
+    <!-- Center content -->
     <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
       <slot>
-        <span class="text-2xl font-black text-industrial text-foreground">{{ Math.round(progress) }}%</span>
+        <span class="text-2xl font-bold tabular-nums text-foreground">{{ Math.round(clampedProgress) }}%</span>
       </slot>
     </div>
   </div>
@@ -45,26 +38,15 @@
 import { computed } from 'vue';
 
 const props = defineProps({
-  progress: {
-    type: Number,
-    default: 0
-  },
-  size: {
-    type: Number,
-    default: 160
-  }
+  // 0–100
+  progress: { type: Number, default: 0 },
+  size: { type: Number, default: 160 },
+  strokeWidth: { type: Number, default: 12 },
 });
 
-const radius = computed(() => (props.size / 2) - 10);
+const clampedProgress = computed(() => Math.min(Math.max(props.progress, 0), 100));
+const isComplete = computed(() => clampedProgress.value >= 100);
+const radius = computed(() => (props.size / 2) - props.strokeWidth);
 const circumference = computed(() => 2 * Math.PI * radius.value);
-const dashoffset = computed(() => {
-  const p = Math.min(Math.max(props.progress, 0), 100);
-  return circumference.value - (p / 100) * circumference.value;
-});
+const dashoffset = computed(() => circumference.value - (clampedProgress.value / 100) * circumference.value);
 </script>
-
-<style scoped>
-.text-industrial {
-  font-family: 'Inter Tight', sans-serif;
-}
-</style>

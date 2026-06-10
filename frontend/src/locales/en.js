@@ -1184,6 +1184,9 @@ export default {
      notif_push_never: 'No, never',
 
     // ── Dashboard ──────────────────────────────────────────────
+    dash_close: 'Close',
+    dash_ring_of: 'of',
+    dash_stats_boss_toggle: 'Progress & boss',
     dash_my_week: 'My week',
     dash_guided_plan: 'Guided plan',
     dash_overview_mode: 'Overview mode',
