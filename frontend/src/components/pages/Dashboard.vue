@@ -1,194 +1,140 @@
 <template>
   <div class="max-w-7xl mx-auto w-full px-4 space-y-4 sm:space-y-6 pb-24 pt-2 sm:pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-    <!-- Header: greeting + exercise selector inline -->
-    <header class="flex flex-col gap-3">
-      <!-- Top row: greeting left, plans button right -->
-      <div class="flex items-center justify-between gap-3">
-        <div class="min-w-0 flex-1">
-          <p class="dashboard-daily-quote text-[11px] font-black uppercase tracking-[0.08em] text-primary-500/90">{{ dailyQuote }}</p>
-          <h2 class="text-xl font-bold tracking-tight text-foreground leading-tight mt-0.5">
-            {{ authStore.user?.name?.split(' ')[0] || (i18n.locale === 'es' ? 'Atleta' : 'Athlete') }}
-          </h2>
-        </div>
-        <div class="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            class="flex items-center gap-1.5 rounded-xl border border-primary-500/25 bg-primary-500/10 px-3 py-2 text-xs font-semibold text-primary-400 transition hover:bg-primary-500/20 active:scale-95"
-            @click="showWeeklyCard = true"
-          >
-            <Share2 class="w-3.5 h-3.5" />
-            {{ i18n.locale === 'es' ? 'Mi semana' : 'My week' }}
-          </button>
-          <button
-            v-if="guidedTrainingStateLoaded && !trainingStore.activePlan"
-            type="button"
-            class="rounded-xl border border-border bg-foreground/[0.03] px-3 py-2 text-xs font-semibold text-muted transition hover:border-primary-500/30 hover:text-foreground active:scale-95"
-            @click="openPlanPicker"
-          >
-            {{ i18n.locale === 'es' ? 'Plan guiado' : 'Guided plan' }}
-          </button>
-        </div>
+    <!-- Header: greeting -->
+    <header class="flex items-center justify-between gap-3">
+      <div class="min-w-0 flex-1">
+        <h1 class="text-2xl font-bold tracking-tight text-foreground leading-tight truncate">
+          {{ greeting }}<span class="text-primary-500">, {{ firstName }}</span>
+        </h1>
+        <p class="dashboard-daily-quote mt-1 text-xs text-muted/60">{{ dailyQuote }}</p>
       </div>
-      <!-- Exercise selector: compact pills -->
-      <ExerciseSelector v-model="activeExercise" compact class="w-full md:hidden" />
+      <div class="flex items-center gap-2 shrink-0">
+        <button
+          type="button"
+          class="flex items-center gap-1.5 rounded-xl border border-primary-500/25 bg-primary-500/10 px-3 py-2 text-xs font-semibold text-primary-400 transition hover:bg-primary-500/20 active:scale-95"
+          @click="showWeeklyCard = true"
+        >
+          <Share2 class="w-3.5 h-3.5" />
+          {{ i18n.locale === 'es' ? 'Mi semana' : 'My week' }}
+        </button>
+        <button
+          v-if="guidedTrainingStateLoaded && !trainingStore.activePlan"
+          type="button"
+          class="rounded-xl border border-border bg-foreground/[0.03] px-3 py-2 text-xs font-semibold text-muted transition hover:border-primary-500/30 hover:text-foreground active:scale-95"
+          @click="openPlanPicker"
+        >
+          {{ i18n.locale === 'es' ? 'Plan guiado' : 'Guided plan' }}
+        </button>
+      </div>
     </header>
 
-    <!-- 2. The Hero: Active Session -->
+    <!-- The Hero: pick exercise → log (kept together, all breakpoints) -->
     <section
       v-if="!trainingStore.todayWorkout || showFreeLog"
-      ref="repsInputSection"
-      class="max-w-4xl mx-auto w-full transition-all duration-500 rounded-2xl"
-      :class="highlightRepsInput ? 'ring-2 ring-primary-500/60 shadow-[0_0_30px_hsl(var(--primary) / 0.25)]' : ''"
+      class="max-w-3xl mx-auto w-full space-y-3"
     >
-      <div v-if="activeExercise === 'all'" class="bg-surface/10 border border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center text-center p-8 sm:p-12">
-        <Globe class="w-12 h-12 text-muted mb-4" />
-        <h3 class="text-xl font-bold tracking-tight">
-          {{ i18n.locale === 'es' ? 'Modo resumen activo' : 'Overview mode active' }}
-        </h3>
-        <p class="text-xs text-muted/60 max-w-[340px] mx-auto mt-2">
-          {{ i18n.locale === 'es' ? 'Elige un ejercicio para registrar reps ahora.' : 'Pick an exercise below to log reps now.' }}
-        </p>
-        <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-xl">
-          <button
-            v-for="option in quickLogOptions"
-            :key="option.id"
-            @click="activeExercise = option.id"
-            class="h-10 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-primary-500/10 hover:border-primary-500/30 text-[10px] font-bold tracking-wide text-foreground/90 transition-all active:scale-[0.98]"
-          >
-            {{ option.label }}
-          </button>
+      <ExerciseSelector v-model="activeExercise" compact class="w-full" />
+      <div
+        ref="repsInputSection"
+        class="transition-all duration-500 rounded-2xl"
+        :class="highlightRepsInput ? 'ring-2 ring-primary-500/60 shadow-[0_0_30px_hsl(var(--primary)/0.25)]' : ''"
+      >
+        <div v-if="activeExercise === 'all'" class="bg-surface/5 border border-dashed border-border rounded-2xl flex flex-col items-center justify-center text-center p-8 sm:p-10">
+          <Globe class="w-10 h-10 text-muted/50 mb-3" />
+          <h3 class="text-lg font-bold tracking-tight text-foreground">
+            {{ i18n.locale === 'es' ? 'Modo resumen' : 'Overview mode' }}
+          </h3>
+          <p class="text-xs text-muted/60 max-w-[320px] mx-auto mt-1.5">
+            {{ i18n.locale === 'es' ? 'Elige un ejercicio para registrar reps ahora.' : 'Pick an exercise to log reps now.' }}
+          </p>
+          <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md">
+            <button
+              v-for="option in quickLogOptions"
+              :key="option.id"
+              @click="activeExercise = option.id"
+              class="h-10 rounded-xl border border-border bg-foreground/[0.03] hover:bg-primary-500/10 hover:border-primary-500/30 text-xs font-semibold text-foreground/90 transition-all active:scale-[0.98]"
+            >
+              {{ option.label }}
+            </button>
+          </div>
         </div>
+        <RepsInput v-else :exercise-type="activeExercise" @updated="fetchData" class="w-full" />
       </div>
-      <RepsInput v-else :exercise-type="activeExercise" @updated="fetchData" class="w-full" />
     </section>
 
-    <!-- Streak card skeleton -->
+    <!-- Streak band skeleton -->
     <div
       v-if="isLoading && !streakStatus"
-      class="rounded-2xl border border-primary-500/20 bg-primary-500/10 px-4 py-3 space-y-4 animate-pulse"
+      class="flex items-center gap-3 rounded-2xl border border-border/60 bg-foreground/[0.02] px-4 py-3 animate-pulse"
     >
-      <div class="flex items-center gap-3">
-        <div class="h-10 w-10 shrink-0 rounded-xl bg-foreground/10"></div>
-        <div class="flex-1 space-y-2">
-          <div class="h-3 w-32 bg-foreground/10 rounded"></div>
-          <div class="h-2 w-24 bg-foreground/5 rounded"></div>
-        </div>
-      </div>
-      <div class="space-y-1">
-        <div class="flex gap-1">
-          <div v-for="i in 7" :key="i" class="h-2 flex-1 rounded-full bg-foreground/10"></div>
-        </div>
-        <div class="h-2 w-28 bg-foreground/5 rounded"></div>
+      <div class="h-10 w-10 shrink-0 rounded-xl bg-foreground/10"></div>
+      <div class="flex-1 space-y-2">
+        <div class="h-3 w-28 bg-foreground/10 rounded"></div>
+        <div class="h-2 w-40 bg-foreground/5 rounded"></div>
       </div>
     </div>
 
-    <!-- Streak card: racha + progreso semanal + jackpot -->
+    <!-- Streak band: one scale (days), amber only when at risk -->
     <div
       v-else-if="streakStatus"
-      class="rounded-2xl border overflow-hidden transition-all duration-300"
-      :class="streakTier.cardClass"
+      class="flex items-center gap-3 rounded-2xl border px-4 py-3 transition-colors"
+      :class="streakStatus.showRisk ? 'border-amber-500/30 bg-amber-500/[0.07]' : 'border-primary-500/20 bg-primary-500/[0.06]'"
     >
-      <!-- Hero section: big flame + number -->
-      <div class="px-4 pt-4 pb-3 flex items-center gap-4">
-        <!-- Animated flame icon, scales with tier -->
-        <div class="relative shrink-0 flex items-center justify-center"
-          :class="streakTier.iconWrapClass">
-          <Flame :class="streakTier.iconClass" />
-          <!-- glow ring for high tiers -->
-          <div v-if="streakTier.level >= 3"
-            class="absolute inset-0 rounded-full blur-md opacity-40"
-            :class="streakTier.glowClass" />
-        </div>
-
-        <!-- Streak number + label -->
-        <div class="flex-1 min-w-0">
-          <div class="flex items-baseline gap-2">
-            <span class="tabular-nums font-black leading-none" :class="streakTier.numberClass">
-              {{ streakStatus.streak || 0 }}
-            </span>
-            <span class="text-xs font-semibold text-muted/70 uppercase tracking-widest">
-              {{ i18n.locale === 'es' ? 'días' : 'days' }}
-            </span>
-          </div>
-          <!-- tier badge -->
-          <div class="mt-1 flex items-center gap-2">
-            <span v-if="streakTier.label" class="text-[10px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md"
-              :class="streakTier.badgeClass">
-              {{ streakTier.label }}
-            </span>
-            <p class="text-[11px] truncate"
-              :class="streakStatus.showRisk ? 'text-amber-300 font-semibold'
-                : streakStatus.jackpotAlreadyAwarded ? 'text-emerald-400 font-semibold'
-                : 'text-muted/60'">
-              {{ streakStateLabel }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Freeze CTA -->
-        <button
-          v-if="streakStatus.isAtRisk && !streakStatus.frozenToday"
-          type="button"
-          class="shrink-0 flex items-center gap-1 rounded-xl border px-3 py-2 text-xs transition-all active:scale-95 disabled:opacity-40"
-          :class="streakStatus.canFreeze
-            ? 'border-amber-500/35 bg-amber-500/15 text-amber-200 hover:bg-amber-500/25'
-            : 'border-border bg-foreground/[0.04] text-muted'"
-          :disabled="!streakStatus.canFreeze || freezingStreak"
-          @click="freezeStreak"
-        >
-          <Snowflake class="h-3.5 w-3.5" />
-          <span>{{ freezeButtonLabel }}</span>
-        </button>
+      <div
+        class="grid place-items-center h-10 w-10 shrink-0 rounded-xl"
+        :class="streakStatus.showRisk ? 'bg-amber-500/15' : 'bg-primary-500/15'"
+      >
+        <Flame class="h-5 w-5" :class="streakStatus.showRisk ? 'text-amber-400' : 'text-primary-400'" />
       </div>
 
-      <!-- Streak progress bar (streak capped at 7, toward jackpot) -->
-      <div class="px-4 pb-1 space-y-1">
-        <div class="flex items-center justify-between">
-          <span class="text-[10px] font-semibold text-muted/60">
-            {{ i18n.locale === 'es' ? 'Racha' : 'Streak' }}
-          </span>
-          <span class="text-[10px] font-bold"
-            :class="streakStatus.jackpotAlreadyAwarded ? 'text-emerald-400'
-              : streakDays7 >= streakStatus.jackpotDaysRequired ? 'text-emerald-400'
-              : 'text-muted/60'">
-            {{ Math.min(streakStatus.streak, 7) }}/7
-            <span v-if="streakStatus.jackpotAlreadyAwarded"> 🎉</span>
-            <span v-else-if="streakDays7 >= streakStatus.jackpotDaysRequired"> ✓</span>
-          </span>
+      <div class="min-w-0 flex-1">
+        <div class="flex items-baseline gap-1.5">
+          <span class="text-xl font-bold tabular-nums leading-none text-foreground">{{ streakStatus.streak || 0 }}</span>
+          <span class="text-sm font-semibold text-muted/70">{{ i18n.locale === 'es' ? 'días' : 'days' }}</span>
+          <span
+            v-if="streakTier.label"
+            class="ml-1 text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-md bg-foreground/[0.06] text-muted"
+          >{{ streakTier.label }}</span>
         </div>
+        <p
+          class="mt-0.5 text-xs truncate"
+          :class="streakStatus.showRisk ? 'text-amber-400 font-medium'
+            : streakStatus.jackpotAlreadyAwarded ? 'text-emerald-400 font-medium'
+            : 'text-muted/60'"
+        >{{ streakStateLabel }}</p>
+      </div>
+
+      <!-- Weekly micro-indicator (secondary, distinct from the total streak number) -->
+      <div class="hidden sm:flex flex-col items-end gap-1 shrink-0">
+        <span class="text-[10px] font-medium text-muted/50">
+          {{ i18n.locale === 'es' ? 'Semana' : 'Week' }} {{ Math.min(streakStatus.streak, 7) }}/7
+        </span>
         <div class="flex items-center gap-1">
-          <div
+          <span
             v-for="day in 7"
             :key="day"
-            class="h-1.5 flex-1 rounded-full transition-all duration-500"
+            class="h-1.5 w-3 rounded-full transition-colors"
             :class="day <= streakDays7
-              ? streakStatus.jackpotAlreadyAwarded
-                ? 'bg-emerald-500'
-                : day <= streakStatus.jackpotDaysRequired
-                  ? streakTier.barClass
-                  : streakTier.barClass + ' opacity-60'
-              : day === streakDays7 + 1 && !streakStatus.activeToday
-                ? 'bg-foreground/20 ring-1 ring-white/10'
-                : 'bg-foreground/8'"
+              ? (streakStatus.jackpotAlreadyAwarded ? 'bg-emerald-500' : 'bg-primary-500')
+              : 'bg-foreground/10'"
           />
         </div>
       </div>
 
-      <!-- Next milestone hint / jackpot -->
-      <div class="px-4 pb-3 pt-1">
-        <p v-if="!streakStatus.jackpotAlreadyAwarded" class="text-[10px] text-muted/40">
-          {{ i18n.locale === 'es'
-            ? `${streakStatus.jackpotDaysRequired} días = +${streakStatus.jackpotReward} RC bonus`
-            : `${streakStatus.jackpotDaysRequired} days = +${streakStatus.jackpotReward} RC bonus` }}
-          <span v-if="streakNextMilestone" class="ml-2 opacity-70">
-            · {{ i18n.locale === 'es' ? `Próximo hito: ${streakNextMilestone.days}d` : `Next tier: ${streakNextMilestone.days}d` }}
-            (+{{ streakNextMilestone.bonus }} RC/day)
-          </span>
-        </p>
-        <p v-else class="text-[10px] text-emerald-400 font-semibold">
-          {{ i18n.locale === 'es' ? '¡Bonus semanal reclamado! +75 RC' : 'Weekly bonus claimed! +75 RC' }}
-        </p>
-      </div>
+      <!-- Freeze CTA (only when at risk) -->
+      <button
+        v-if="streakStatus.isAtRisk && !streakStatus.frozenToday"
+        type="button"
+        class="shrink-0 flex items-center gap-1 rounded-xl border px-2.5 py-2 text-xs transition-all active:scale-95 disabled:opacity-40"
+        :class="streakStatus.canFreeze
+          ? 'border-amber-500/35 bg-amber-500/15 text-amber-200 hover:bg-amber-500/25'
+          : 'border-border bg-foreground/[0.04] text-muted'"
+        :disabled="!streakStatus.canFreeze || freezingStreak"
+        @click="freezeStreak"
+      >
+        <Snowflake class="h-3.5 w-3.5" />
+        <span class="hidden sm:inline">{{ freezeButtonLabel }}</span>
+      </button>
     </div>
 
     <TodayWorkout
@@ -202,14 +148,14 @@
 
     <section
       v-if="shouldShowActivePlanCard"
-      class="rounded-2xl border border-white/10 bg-white/[0.03] p-3 sm:p-4"
+      class="rounded-2xl border border-border/60 bg-foreground/[0.02] p-3 sm:p-4"
     >
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div class="min-w-0">
-          <p class="text-xs font-black uppercase tracking-[0.2em] text-muted">
+          <p class="text-xs font-semibold text-muted">
             {{ i18n.locale === 'es' ? 'Plan activo' : 'Active plan' }}
           </p>
-          <p class="mt-1 text-sm font-black text-foreground">
+          <p class="mt-1 text-sm font-bold text-foreground">
             {{ i18n.t(trainingStore.activePlan.titleKey) }}
             <span v-if="trainingStore.isPlanPaused" class="text-amber-400">· {{ i18n.locale === 'es' ? 'Pausado' : 'Paused' }}</span>
           </p>
@@ -243,31 +189,29 @@
 
     <section
       v-else-if="shouldShowPlanPromo"
-      class="rounded-[1.5rem] border border-primary-500/35 bg-primary-500/10 p-4 shadow-[0_0_35px_hsl(var(--primary) / 0.08)] sm:p-5"
+      class="relative rounded-2xl border border-primary-500/30 bg-primary-500/[0.07] p-4 sm:p-5"
     >
+      <button
+        type="button"
+        class="absolute right-3 top-3 grid h-7 w-7 place-items-center rounded-lg border border-border bg-foreground/[0.04] text-muted transition hover:text-foreground active:scale-95"
+        :aria-label="i18n.locale === 'es' ? 'Ocultar bloque de plan guiado' : 'Hide guided plan block'"
+        @click="dismissPlanPromo"
+      >
+        <X class="h-4 w-4" />
+      </button>
       <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div class="min-w-0">
-          <div class="flex items-start justify-between gap-3">
-            <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary-500">
-              {{ i18n.locale === 'es' ? 'Empieza tu progresion' : 'Start your progression' }}
-            </p>
-            <button
-              type="button"
-              class="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-white/10 bg-white/[0.04] text-muted transition hover:text-foreground active:scale-95"
-              :aria-label="i18n.locale === 'es' ? 'Ocultar bloque de plan guiado' : 'Hide guided plan block'"
-              @click="dismissPlanPromo"
-            >
-              <X class="h-4 w-4" />
-            </button>
-          </div>
-          <h3 class="mt-2 text-2xl font-bold uppercase leading-tight text-foreground">
+        <div class="min-w-0 pr-8 sm:pr-0">
+          <p class="text-xs font-semibold text-primary-500">
+            {{ i18n.locale === 'es' ? 'Empieza tu progresión' : 'Start your progression' }}
+          </p>
+          <h3 class="mt-1.5 text-xl font-bold tracking-tight leading-tight text-foreground">
             {{ i18n.locale === 'es' ? 'Elige un plan guiado' : 'Choose a guided plan' }}
           </h3>
-          <p class="mt-2 max-w-2xl text-sm font-semibold leading-relaxed text-muted/75">
-            {{ i18n.locale === 'es' ? 'Reppy te dira que entrenar hoy, bloqueara el siguiente dia hasta manana y convertira tus reps en progreso real.' : 'Reppy will tell you what to train today, lock the next day until tomorrow, and turn your reps into real progress.' }}
+          <p class="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted/75">
+            {{ i18n.locale === 'es' ? 'Reppy te dice qué entrenar hoy y convierte tus reps en progreso real.' : 'Reppy tells you what to train today and turns your reps into real progress.' }}
           </p>
         </div>
-        <button type="button" class="btn-reppy w-full !py-4 px-5 sm:w-auto" @click="openPlanPicker">
+        <button type="button" class="btn-reppy w-full px-5 sm:w-auto" @click="openPlanPicker">
           {{ i18n.locale === 'es' ? 'Ver planes' : 'View plans' }}
         </button>
       </div>
@@ -276,7 +220,7 @@
     <div v-if="shouldShowFreeLogToggle" class="flex justify-center">
       <button
         type="button"
-        class="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-[10px] font-black uppercase tracking-[0.15em] text-muted transition hover:border-primary-500/30 hover:text-foreground active:scale-95"
+        class="rounded-xl border border-border bg-foreground/[0.03] px-4 py-2 text-xs font-semibold text-muted transition hover:border-primary-500/30 hover:text-foreground active:scale-95"
         @click="showFreeLog = !showFreeLog"
       >
         {{ i18n.t('today_free_log') }}
@@ -299,26 +243,26 @@
 
     <section
       v-else-if="shouldShowTodayMissionCard"
-      class="w-full rounded-2xl border p-4 sm:p-6 transition-all duration-500"
-      :class="missionCompletionPulse ? 'border-emerald-500/40 bg-emerald-500/10 shadow-[0_0_35px_rgba(16,185,129,0.2)]' : 'border-primary-500/25 bg-primary-500/10'"
+      class="w-full rounded-2xl border p-4 sm:p-5 transition-all duration-500"
+      :class="missionCompletionPulse ? 'border-emerald-500/40 bg-emerald-500/10' : 'border-primary-500/25 bg-primary-500/[0.07]'"
     >
       <div class="flex flex-col lg:flex-row lg:items-center gap-4">
         <div class="flex-1 min-w-0 space-y-2">
           <p class="text-xs font-semibold text-primary-500">
             {{ i18n.locale === 'es' ? 'Misión de hoy' : "Today's mission" }}
           </p>
-          <h3 class="text-lg sm:text-2xl font-bold tracking-tight text-foreground leading-tight">
+          <h3 class="text-lg font-bold tracking-tight text-foreground leading-tight">
             {{ todayMissionTitle }}
           </h3>
-          <p class="text-[11px] font-semibold text-muted/75 leading-relaxed">
+          <p class="text-xs text-muted/70 leading-relaxed">
             {{ todayMissionHowTo }}
           </p>
-          <div class="space-y-1.5">
-            <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
+          <div class="space-y-1.5 pt-1">
+            <div class="flex items-center justify-between text-xs font-medium">
               <span class="text-muted">{{ todayMissionProgressLabel }}</span>
               <span :class="isDailyObjectiveDone ? 'text-emerald-500' : 'text-primary-500'">{{ todayMissionPercent }}%</span>
             </div>
-            <div class="h-2 rounded-full bg-white/10 border border-white/10 overflow-hidden">
+            <div class="h-2 rounded-full bg-foreground/10 overflow-hidden">
               <div
                 class="h-full rounded-full transition-all duration-700"
                 :class="isDailyObjectiveDone ? 'bg-emerald-500' : 'bg-primary-500'"
@@ -328,24 +272,21 @@
           </div>
         </div>
 
-        <!-- Compact reward + CTA row (streak shown above separately) -->
-        <div class="flex flex-wrap items-center gap-2 mt-2">
-          <div class="flex items-center gap-1.5 text-xs font-semibold text-foreground">
-            <Coins class="w-3.5 h-3.5 text-primary-500 shrink-0" />
+        <div class="flex items-center justify-between gap-3 lg:flex-col lg:items-end lg:justify-center">
+          <div class="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+            <Coins class="w-4 h-4 text-primary-500 shrink-0" />
             <span>{{ todayMissionRewardLabel }}</span>
           </div>
           <button
             @click="handleTodayMissionAction"
-            class="ml-auto rounded-xl px-4 py-2 text-xs font-bold transition-all active:scale-95"
-            :class="isDailyObjectiveDone ? 'bg-emerald-500 hover:bg-emerald-400 text-white' : 'bg-primary-500 hover:bg-primary-400 text-white'"
+            class="rounded-xl px-4 py-2 text-sm font-semibold text-white transition-all active:scale-95"
+            :class="isDailyObjectiveDone ? 'bg-emerald-500 hover:bg-emerald-400' : 'bg-primary-500 hover:bg-primary-400'"
           >
             {{ todayMissionActionLabel }}
           </button>
         </div>
       </div>
     </section>
-
-    <ExerciseSelector v-model="activeExercise" class="w-full hidden md:block" />
 
     <!-- Mobile toggle: show advanced stats on demand -->
     <div class="lg:hidden">
@@ -359,160 +300,120 @@
       </button>
     </div>
 
-    <!-- 3. Global Intel & Metrics (hidden on mobile until toggled) -->
-    <section v-show="showAdvancedStats || isDesktop" class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
+    <!-- Stats & boss (hidden on mobile until toggled) -->
+    <section v-show="showAdvancedStats || isDesktop" class="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
       <!-- Boss Intel -->
       <div class="lg:col-span-2 space-y-4">
-        <div class="flex items-center gap-3 px-2">
+        <div class="flex items-center gap-2 px-1">
           <Zap class="w-4 h-4 text-primary-500" />
-          <h3 class="text-xs font-black uppercase tracking-widest text-muted/60">{{ i18n.t('dash_boss_status') }}</h3>
+          <h3 class="text-xs font-semibold uppercase tracking-wide text-muted/70">{{ i18n.t('dash_boss_status') }}</h3>
         </div>
-        
-        <!-- Live Battle Presence -->
-        <LivePresence class="mb-4" />
+
+        <LivePresence class="mb-2" />
 
         <BossHealth ref="bossHealthRef" />
       </div>
 
-      <!-- Quick Metrics Bento -->
-      <div class="grid grid-cols-1 gap-4 h-full">
-         <!-- Combat Power (New Breakdown Card) -->
-         <div class="bg-gradient-to-br from-primary-500/10 to-surface/5 border border-primary-500/20 rounded-2xl p-6 flex flex-col justify-between group relative overflow-hidden">
-            <div class="absolute -right-4 -top-4 opacity-5 group-hover:scale-110 transition-transform duration-700">
-               <Sword class="w-32 h-32 text-primary-500" />
-            </div>
-            
-            <div class="flex items-center justify-between relative z-10">
-              <span class="text-[10px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('ui_combat_power') }}</span>
+      <!-- Metrics -->
+      <div class="space-y-4">
+         <!-- Combat Power (condensed) -->
+         <div class="card-stats">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wide text-primary-500">{{ i18n.t('ui_combat_power') }}</span>
               <Sword class="w-4 h-4 text-primary-500" />
             </div>
 
-            <div class="mt-4 relative z-10">
-              <div class="flex items-baseline gap-2">
-                <template v-if="isLoading">
-                  <div class="h-10 w-28 bg-foreground/10 rounded-xl animate-pulse"></div>
-                </template>
-                <template v-else>
-                  <span class="text-4xl font-bold text-foreground italic tracking-tighter">
-                    {{ stats.combatPower.minDamage }}
+            <div class="mt-3">
+              <div v-if="isLoading" class="h-9 w-32 bg-foreground/10 rounded-xl animate-pulse"></div>
+              <template v-else>
+                <div class="flex items-baseline gap-2">
+                  <span class="text-3xl font-bold text-foreground tabular-nums">{{ stats.combatPower.minDamage }}–{{ stats.combatPower.maxDamage }}</span>
+                  <span class="text-[10px] font-semibold text-muted/60 uppercase tracking-wide">{{ i18n.t('ui_dmg_range') }}</span>
+                </div>
+                <p class="mt-1 text-xs text-muted/60">
+                  {{ i18n.t('ui_avg_estimated') }}: <span class="font-semibold text-foreground/80">{{ stats.combatPower.total }}</span>
+                  <span class="text-muted/40">
+                    · {{ i18n.t('dash_base_skill') }} {{ stats.combatPower.base }} · {{ i18n.t('dash_gear_bonus') }} +{{ stats.combatPower.gear }}<template v-if="stats.combatPower.buff > 0"> · {{ i18n.t('dash_active_buffs') }} +{{ stats.combatPower.buff }}</template>
                   </span>
-                  <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18n.t('ui_dmg_range') }}</span>
-                </template>
-              </div>
-              <div class="text-xs font-bold text-primary-500/60 uppercase tracking-[0.2em] mt-1 italic">
-                <template v-if="isLoading">
-                  <div class="h-3 w-20 bg-foreground/5 rounded animate-pulse mt-1"></div>
-                </template>
-                <template v-else>
-                  {{ i18n.t('ui_avg_estimated') }}: {{ stats.combatPower.total }}
-                </template>
-              </div>
-              
-              <!-- Detailed Breakdown -->
-              <div class="grid grid-cols-1 gap-2 mt-6 pt-6 border-t border-white/5">
-                <div class="flex justify-between items-center">
-                  <span class="text-xs font-bold text-muted/60 uppercase">{{ i18n.t('dash_base_skill') }}</span>
-                  <div v-if="isLoading" class="h-3 w-10 bg-foreground/10 rounded animate-pulse"></div>
-                  <span v-else class="text-xs font-black text-foreground italic">{{ stats.combatPower.base }}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                  <span class="text-xs font-bold text-primary-400 uppercase">⚔️ {{ i18n.t('dash_gear_bonus') }}</span>
-                  <div v-if="isLoading" class="h-3 w-10 bg-foreground/10 rounded animate-pulse"></div>
-                  <span v-else class="text-xs font-black text-primary-400 italic">+{{ stats.combatPower.gear }}</span>
-                </div>
-                <div class="flex justify-between items-center" v-if="stats.combatPower.buff > 0">
-                  <span class="text-xs font-bold text-neon-lime uppercase">🧪 {{ i18n.t('dash_active_buffs') }}</span>
-                  <span class="text-xs font-black text-neon-lime italic">+{{ stats.combatPower.buff }}</span>
-                </div>
+                </p>
+              </template>
+            </div>
 
-                <!-- Contribution Bar -->
-                <div class="mt-4 space-y-1.5" v-if="stats.combatPower.buff > 0">
-                  <div class="h-1 bg-white/5 rounded-full overflow-hidden">
-                    <div class="h-full bg-neon-lime shadow-[0_0_10px_rgba(183,255,0,0.4)] transition-all duration-1000" 
-                         :style="{ width: Math.min(100, (stats.combatPower.buff / stats.combatPower.total) * 100) + '%' }"></div>
-                  </div>
-                  <div class="flex justify-between text-[10px] font-black uppercase tracking-widest text-muted/40">
-                    <span>{{ i18n.t('dash_potion_impact') }}</span>
-                    <span class="text-neon-lime">{{ Math.round((stats.combatPower.buff / stats.combatPower.total) * 100) }}% {{ i18n.t('dash_of_total') }}</span>
-                  </div>
-                </div>
-                
-                <!-- Active Potion Timer (Real-time) -->
-                <div v-for="boost in activePotions" :key="boost.type" class="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-between">
-                  <div class="flex items-center gap-2">
-                    <FlaskConical class="w-3.5 h-3.5 text-emerald-500 animate-bounce" />
-                    <span class="text-xs font-black text-emerald-500 uppercase tracking-widest">{{ boost.label }} {{ boost.value }}</span>
-                  </div>
-                  <span class="text-[10px] font-black text-foreground font-mono">{{ boost.timeLeft }}</span>
-                </div>
+            <!-- Active potion timer (sober) -->
+            <div v-for="boost in activePotions" :key="boost.type" class="mt-3 flex items-center justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <FlaskConical class="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span class="text-xs font-semibold text-emerald-500 truncate">{{ boost.label }} {{ boost.value }}</span>
               </div>
+              <span class="text-[10px] font-semibold text-foreground tabular-nums shrink-0">{{ boost.timeLeft }}</span>
             </div>
          </div>
 
          <div class="grid grid-cols-2 gap-4">
             <!-- Total reps -->
-            <div class="bg-surface/10 border border-white/5 rounded-2xl p-5 flex flex-col justify-between">
-              <Activity class="w-3.5 h-3.5 text-primary-500 mb-4" />
-              <div>
-                <div v-if="isLoading" class="h-8 w-20 bg-foreground/10 rounded-xl animate-pulse mb-1"></div>
-                <span v-else class="text-3xl font-bold text-foreground tabular-nums">{{ totalReps }}</span>
-                <p class="text-xs font-semibold text-muted/60 mt-1">{{ i18n.locale === 'es' ? 'Reps totales' : 'Total reps' }}</p>
+            <div class="card-stats">
+              <Activity class="w-4 h-4 text-primary-500" />
+              <div class="mt-3">
+                <div v-if="isLoading" class="h-7 w-16 bg-foreground/10 rounded-lg animate-pulse"></div>
+                <span v-else class="text-2xl font-bold text-foreground tabular-nums">{{ totalReps }}</span>
+                <p class="text-xs text-muted/60 mt-0.5">{{ i18n.locale === 'es' ? 'Reps totales' : 'Total reps' }}</p>
               </div>
             </div>
             <!-- Tonnage -->
-            <div class="bg-surface/10 border border-white/5 rounded-2xl p-5 flex flex-col justify-between">
-              <Trophy class="w-3.5 h-3.5 text-primary-500 mb-4" />
-              <div>
-                <div v-if="isLoading" class="h-8 w-20 bg-foreground/10 rounded-xl animate-pulse mb-1"></div>
-                <span v-else class="text-3xl font-bold text-foreground tabular-nums">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</span>
-                <p class="text-xs font-semibold text-muted/60 mt-1">{{ i18n.t('dash_tons_moved') }}</p>
+            <div class="card-stats">
+              <Trophy class="w-4 h-4 text-primary-500" />
+              <div class="mt-3">
+                <div v-if="isLoading" class="h-7 w-16 bg-foreground/10 rounded-lg animate-pulse"></div>
+                <span v-else class="text-2xl font-bold text-foreground tabular-nums">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</span>
+                <p class="text-xs text-muted/60 mt-0.5">{{ i18n.t('dash_tons_moved') }}</p>
               </div>
             </div>
          </div>
 
          <!-- Missions Entry Point -->
-         <div 
+         <button
+          type="button"
           @click="router.push({ name: 'missions', params: { lang: i18n.locale } })"
-          class="bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 rounded-2xl p-5 flex flex-col justify-between group cursor-pointer transition-all active:scale-95"
+          class="card-stats w-full text-left !bg-indigo-500/10 hover:!border-indigo-500/40 transition-all active:scale-[0.99]"
          >
             <div class="flex items-center justify-between">
               <Target class="w-4 h-4 text-indigo-400" />
-              <div v-if="unclaimedMissions > 0" class="flex items-center gap-1.5 px-2 py-0.5 bg-indigo-500 text-[10px] font-black text-foreground uppercase rounded-full animate-pulse">
+              <span v-if="unclaimedMissions > 0" class="px-2 py-0.5 bg-indigo-500 text-[10px] font-bold text-white uppercase rounded-full animate-pulse">
                 {{ unclaimedMissions }} {{ i18n.t('missions_available') || 'READY' }}
-              </div>
+              </span>
             </div>
-            <div class="mt-4">
-              <span class="text-xl font-black text-foreground  tracking-tighter ">{{ i18n.t('nav_missions') }}</span>
-              <p class="text-xs font-black text-indigo-400/60 uppercase tracking-widest mt-1">{{ i18n.t('missions_subtitle') }}</p>
+            <div class="mt-3">
+              <span class="text-lg font-bold tracking-tight text-foreground">{{ i18n.t('nav_missions') }}</span>
+              <p class="text-xs text-muted/60 mt-0.5">{{ i18n.t('missions_subtitle') }}</p>
             </div>
-         </div>
+         </button>
       </div>
     </section>
 
-    <!-- 4. Combat Analytics (Tabbed, also follows mobile toggle) -->
-    <section v-show="showAdvancedStats || isDesktop" class="space-y-6">
-      <div class="flex items-center justify-center p-1 bg-surface/20 border border-white/5 rounded-2xl w-fit mx-auto">
-        <button 
+    <!-- Analytics: activity heatmap / history (follows mobile toggle) -->
+    <section v-show="showAdvancedStats || isDesktop" class="space-y-4">
+      <div class="flex items-center gap-1 p-1 bg-foreground/[0.04] border border-border/60 rounded-xl w-fit mx-auto">
+        <button
           @click="activeTab = 'heatmap'"
-          class="px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
-          :class="activeTab === 'heatmap' ? 'bg-primary-500 text-foreground shadow-lg shadow-primary-500/20' : 'text-muted/40 hover:text-foreground'"
+          class="px-5 py-2 rounded-lg text-xs font-semibold transition-all"
+          :class="activeTab === 'heatmap' ? 'bg-primary-500 text-white shadow-sm' : 'text-muted hover:text-foreground'"
         >
           {{ i18n.t('activity_stream') }}
         </button>
-        <button 
+        <button
           @click="activeTab = 'history'"
-          class="px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
-          :class="activeTab === 'history' ? 'bg-primary-500 text-foreground shadow-lg shadow-primary-500/20' : 'text-muted/40 hover:text-foreground'"
+          class="px-5 py-2 rounded-lg text-xs font-semibold transition-all"
+          :class="activeTab === 'history' ? 'bg-primary-500 text-white shadow-sm' : 'text-muted hover:text-foreground'"
         >
           {{ i18n.t('dash_history_title') }}
         </button>
       </div>
 
       <transition name="fade" mode="out-in">
-        <div v-if="activeTab === 'heatmap'" key="heatmap" class="bg-surface/5 border border-white/5 rounded-2xl p-6 sm:p-10">
-          <Heatmap 
-            :data="heatmapData" 
-            :key="`${activeExercise}-${activeYear}`" 
+        <div v-if="activeTab === 'heatmap'" key="heatmap" class="bg-surface/5 border border-border/60 rounded-2xl p-4 sm:p-6">
+          <Heatmap
+            :data="heatmapData"
+            :key="`${activeExercise}-${activeYear}`"
             :loading="isLoading"
             :selected-year="activeYear"
             :exercise-label="activeExerciseLabel"
@@ -521,47 +422,54 @@
           />
         </div>
 
-        <div v-else key="history" class="bg-surface/5 border border-white/5 rounded-2xl overflow-hidden">
-          <div class="overflow-x-auto">
-            <table class="w-full text-left">
-              <thead>
-                <tr class="text-muted/40 text-xs uppercase font-black tracking-[0.3em] border-b border-white/5">
-                  <th class="px-10 py-6">{{ i18n.t('ui_timestamp') }}</th>
-                  <th class="px-10 py-6 text-right">{{ i18n.t('ui_magnitude') }}</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-white/[0.02]">
-                <tr v-for="rep in reps" :key="rep.id" class="group hover:bg-white/[0.02] transition-colors">
-                  <td class="px-10 py-6">
-                    <span class="text-xs font-bold text-muted/60 group-hover:text-foreground transition-colors uppercase tracking-tight">
-                      {{ formatDate(rep.date) }}
-                    </span>
-                  </td>
-                  <td class="px-10 py-6 text-right">
-                    <div v-if="editingId === rep.id" class="flex items-center justify-end gap-3">
-                      <input v-model.number="editValue" type="number"
-                        class="w-20 bg-surface/60 border border-primary-500/30 rounded-xl px-2 py-1.5 text-right font-black italic focus:outline-none text-foreground"
-                        @keyup.enter="saveEdit(rep.id)" />
-                      <button @click="saveEdit(rep.id)" class="text-primary-500"><Check class="w-4 h-4" /></button>
-                    </div>
-                    <div v-else class="flex items-center justify-end gap-6">
-                      <span @click="startEdit(rep)" class="text-2xl font-bold italic tracking-tighter text-foreground cursor-pointer hover:text-primary-500 transition-colors">
-                        {{ rep.count }}
-                      </span>
-                      <button @click="confirmDelete(rep.id)" class="opacity-0 group-hover:opacity-100 text-muted/20 hover:text-red-500 transition-all">
-                        <Trash2 class="w-4.5 h-4.5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr v-if="reps.length === 0">
-                  <td colspan="2" class="py-24 text-center">
-                    <Inbox class="w-12 h-12 mx-auto mb-4 text-muted/20" />
-                    <span class="text-[10px] font-black uppercase tracking-[0.3em] text-muted/20">{{ i18n.t('dash_protocol_null') }}</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+        <div v-else key="history" class="bg-surface/5 border border-border/60 rounded-2xl overflow-hidden">
+          <ul v-if="reps.length" class="divide-y divide-border/40">
+            <li
+              v-for="rep in reps"
+              :key="rep.id"
+              class="flex items-center justify-between gap-3 px-4 py-3 sm:px-5 hover:bg-foreground/[0.02] transition-colors"
+            >
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-foreground tabular-nums">{{ rep.count }} {{ i18n.t('ui_reps') }}</p>
+                <p class="text-xs text-muted/60 mt-0.5">{{ formatDate(rep.date) }}</p>
+              </div>
+              <div v-if="editingId === rep.id" class="flex items-center gap-2 shrink-0">
+                <input v-model.number="editValue" type="number"
+                  class="w-20 bg-surface/60 border border-primary-500/40 rounded-lg px-2 py-1.5 text-right font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                  @keyup.enter="saveEdit(rep.id)" />
+                <button
+                  @click="saveEdit(rep.id)"
+                  class="grid place-items-center h-9 w-9 rounded-lg bg-primary-500/15 text-primary-500 active:scale-95 transition-transform"
+                  :aria-label="i18n.locale === 'es' ? 'Guardar' : 'Save'"
+                ><Check class="w-4 h-4" /></button>
+              </div>
+              <div v-else class="flex items-center gap-1 shrink-0">
+                <button
+                  @click="startEdit(rep)"
+                  class="grid place-items-center h-9 w-9 rounded-lg text-muted/60 hover:text-primary-500 hover:bg-foreground/[0.04] active:scale-95 transition-colors"
+                  :aria-label="i18n.locale === 'es' ? 'Editar registro' : 'Edit entry'"
+                ><Pencil class="w-4 h-4" /></button>
+                <button
+                  @click="confirmDelete(rep.id)"
+                  class="grid place-items-center h-9 w-9 rounded-lg text-muted/60 hover:text-red-500 hover:bg-foreground/[0.04] active:scale-95 transition-colors"
+                  :aria-label="i18n.locale === 'es' ? 'Borrar registro' : 'Delete entry'"
+                ><Trash2 class="w-4 h-4" /></button>
+              </div>
+            </li>
+          </ul>
+          <div v-else class="py-16 px-6 text-center">
+            <Inbox class="w-10 h-10 mx-auto mb-3 text-muted/30" />
+            <p class="text-sm font-semibold text-foreground">{{ i18n.locale === 'es' ? 'Aún no hay registros' : 'No entries yet' }}</p>
+            <p class="text-xs text-muted/60 mt-1 max-w-[260px] mx-auto">
+              {{ i18n.locale === 'es' ? 'Registra tus primeras reps para empezar a llenar tu historial.' : 'Log your first reps to start filling your history.' }}
+            </p>
+            <button
+              type="button"
+              @click="scrollToRepsInput"
+              class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-primary-500 hover:bg-primary-400 px-4 py-2 text-xs font-semibold text-white active:scale-95 transition-all"
+            >
+              {{ i18n.locale === 'es' ? 'Registrar reps' : 'Log reps' }}
+            </button>
           </div>
         </div>
       </transition>
@@ -593,7 +501,7 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import {
   Trophy, Target, Flame, Zap, Activity, History, Inbox,
-  BarChart3, Check, X, Trash2, Globe, Sword, Swords, FlaskConical, Coins, Snowflake, ChevronDown, Share2
+  BarChart3, Check, X, Trash2, Globe, Sword, Swords, FlaskConical, Coins, Snowflake, ChevronDown, Share2, Pencil
 } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';
@@ -637,7 +545,10 @@ const showGoalOnboarding = ref(false);
 const showFreeLog = ref(false);
 const activeTab = ref('heatmap');
 const showAdvancedStats = ref(false);
-const isDesktop = computed(() => typeof window !== 'undefined' && window.innerWidth >= 1024);
+// Reactive desktop breakpoint: kept in sync with viewport via matchMedia (see onMounted/onUnmounted).
+const isDesktop = ref(typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches);
+let desktopMql = null;
+const handleDesktopChange = (e) => { isDesktop.value = e.matches; };
 const unclaimedMissions = ref(0);
 const highlightRepsInput = ref(false);
 const repsInputSection = ref(null);
@@ -827,7 +738,6 @@ const fetchStreakStatus = async () => {
   try {
     const res = await axios.get('/api/streak/status', { params: { t: Date.now() } });
     streakStatus.value = res.data;
-    console.log('Fetched streak status:', res.data);
     await maybeCelebrateStreak(res.data);
   } catch (error) {
     console.error('Error fetching streak status:', error);
@@ -901,6 +811,19 @@ const stats = reactive({
 
 const activeExerciseLabel = computed(() => {
   return i18n.t(activeExercise.value);
+});
+
+const firstName = computed(() =>
+  authStore.user?.name?.split(' ')[0] || (i18n.locale === 'es' ? 'Atleta' : 'Athlete')
+);
+
+const greeting = computed(() => {
+  const hour = new Date().getHours();
+  const es = i18n.locale === 'es';
+  if (hour < 6) return es ? 'Buenas noches' : 'Good night';
+  if (hour < 12) return es ? 'Buenos días' : 'Good morning';
+  if (hour < 20) return es ? 'Buenas tardes' : 'Good afternoon';
+  return es ? 'Buenas noches' : 'Good evening';
 });
 
 const quickLogOptions = computed(() => [
@@ -1355,11 +1278,19 @@ onMounted(async () => {
   timerInterval = setInterval(() => {
     currentTime.value = new Date();
   }, 1000);
+
+  // Keep isDesktop in sync with the viewport (drives the mobile stats toggle).
+  if (typeof window !== 'undefined') {
+    desktopMql = window.matchMedia('(min-width: 1024px)');
+    isDesktop.value = desktopMql.matches;
+    desktopMql.addEventListener('change', handleDesktopChange);
+  }
 });
 
 onUnmounted(() => {
   if (refreshInterval) clearInterval(refreshInterval);
   if (timerInterval) clearInterval(timerInterval);
+  if (desktopMql) desktopMql.removeEventListener('change', handleDesktopChange);
 });
 
 watch(
@@ -1391,20 +1322,20 @@ watch(
 
 .plan-action {
   border-radius: 0.75rem;
-  border: 1px solid rgb(255 255 255 / 0.1);
-  background: rgb(255 255 255 / 0.04);
-  padding: 0.55rem 0.75rem;
-  color: rgb(255 255 255 / 0.78);
-  font-size: 0.65rem;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  border: 1px solid hsl(var(--border));
+  background: hsla(var(--foreground) / 0.04);
+  padding: 0.5rem 0.75rem;
+  color: hsl(var(--muted));
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
   transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 
 .plan-action:hover {
-  border-color: rgb(255 69 0 / 0.35);
-  color: rgb(255 255 255 / 0.95);
+  border-color: hsl(var(--primary) / 0.35);
+  color: hsl(var(--foreground));
 }
 
 .plan-action:active {

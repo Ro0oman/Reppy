@@ -1,5 +1,5 @@
 <template>
-  <section class="w-full rounded-[1.5rem] border border-primary-500/30 bg-primary-500/10 p-4 shadow-[0_0_35px_hsl(var(--primary) / 0.08)] sm:p-6">
+  <section class="w-full rounded-2xl border border-primary-500/30 bg-primary-500/[0.07] p-4 sm:p-6">
     <div v-if="completedToday" class="space-y-4">
       <div>
         <p class="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-400">
