@@ -1263,6 +1263,9 @@ export default {
      ex_chest: 'Pecho',
 
     // ── Dashboard ──────────────────────────────────────────────
+    dash_close: 'Cerrar',
+    dash_ring_of: 'de',
+    dash_stats_boss_toggle: 'Ver progreso y boss',
     dash_my_week: 'Mi semana',
     dash_guided_plan: 'Plan guiado',
     dash_overview_mode: 'Modo resumen',

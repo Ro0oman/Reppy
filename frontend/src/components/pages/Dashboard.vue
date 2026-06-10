@@ -28,37 +28,58 @@
       </div>
     </header>
 
-    <!-- The Hero: pick exercise → log (kept together, all breakpoints) -->
+    <!-- The Hero (Momentum): pick exercise → see today's ring → log -->
     <section
       v-if="!trainingStore.todayWorkout || showFreeLog"
-      class="max-w-3xl mx-auto w-full space-y-3"
+      class="max-w-md mx-auto w-full space-y-4"
     >
       <ExerciseSelector v-model="activeExercise" compact class="w-full" />
-      <div
-        ref="repsInputSection"
-        class="transition-all duration-500 rounded-2xl"
-        :class="highlightRepsInput ? 'ring-2 ring-primary-500/60 shadow-[0_0_30px_hsl(var(--primary)/0.25)]' : ''"
-      >
-        <div v-if="activeExercise === 'all'" class="bg-surface/5 border border-dashed border-border rounded-2xl flex flex-col items-center justify-center text-center p-8 sm:p-10">
-          <Globe aria-hidden="true" class="w-10 h-10 text-muted/50 mb-3" />
-          <h3 class="text-lg font-bold tracking-tight text-foreground">
-            {{ i18n.t('dash_overview_mode') }}
-          </h3>
-          <p class="text-xs text-muted/60 max-w-[320px] mx-auto mt-1.5">
-            {{ i18n.t('dash_overview_hint') }}
-          </p>
-          <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md">
-            <button
-              v-for="option in quickLogOptions"
-              :key="option.id"
-              @click="activeExercise = option.id"
-              class="h-10 rounded-xl border border-border bg-foreground/[0.03] hover:bg-primary-500/10 hover:border-primary-500/30 text-xs font-semibold text-foreground/90 transition-all active:scale-[0.98]"
-            >
-              {{ option.label }}
-            </button>
-          </div>
+
+      <!-- Overview mode: no single exercise picked yet -->
+      <div v-if="activeExercise === 'all'" class="bg-surface/5 border border-dashed border-border rounded-2xl flex flex-col items-center justify-center text-center p-8 sm:p-10">
+        <Globe aria-hidden="true" class="w-10 h-10 text-muted/50 mb-3" />
+        <h3 class="text-lg font-bold tracking-tight text-foreground">
+          {{ i18n.t('dash_overview_mode') }}
+        </h3>
+        <p class="text-xs text-muted/60 max-w-[320px] mx-auto mt-1.5">
+          {{ i18n.t('dash_overview_hint') }}
+        </p>
+        <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md">
+          <button
+            v-for="option in quickLogOptions"
+            :key="option.id"
+            @click="activeExercise = option.id"
+            class="h-10 rounded-xl border border-border bg-foreground/[0.03] hover:bg-primary-500/10 hover:border-primary-500/30 text-xs font-semibold text-foreground/90 transition-all active:scale-[0.98]"
+          >
+            {{ option.label }}
+          </button>
         </div>
-        <RepsInput v-else :exercise-type="activeExercise" @updated="fetchData" class="w-full" />
+      </div>
+
+      <!-- Day ring + log CTA -->
+      <div
+        v-else
+        ref="repsInputSection"
+        class="flex flex-col items-center transition-all duration-500 rounded-3xl"
+        :class="highlightRepsInput ? 'ring-2 ring-primary-500/60' : ''"
+      >
+        <RadialProgress :progress="dayRingPercent" :size="208" :stroke-width="14">
+          <div class="flex flex-col items-center">
+            <span class="text-[2.75rem] font-bold tabular-nums leading-none text-foreground">{{ todayProgress }}</span>
+            <span class="mt-2 text-xs text-muted/60">
+              {{ i18n.t('dash_ring_of') }} {{ stats.dailyGoal }} · {{ activeExerciseLabel }}
+            </span>
+          </div>
+        </RadialProgress>
+
+        <button
+          type="button"
+          @click="openLogSheet"
+          class="mt-5 w-full max-w-xs flex items-center justify-center gap-2 rounded-2xl bg-primary-500 hover:bg-primary-400 active:bg-primary-600 px-5 py-3.5 text-base font-semibold text-white transition-all active:scale-[0.98] shadow-lg shadow-primary-500/20"
+        >
+          <Plus aria-hidden="true" class="w-5 h-5" />
+          {{ i18n.t('dash_log_reps_cta') }}
+        </button>
       </div>
     </section>
 
@@ -288,20 +309,20 @@
       </div>
     </section>
 
-    <!-- Mobile toggle: show advanced stats on demand -->
-    <div class="lg:hidden">
+    <!-- Disclosure: heavy progress + boss section, collapsed by default (Momentum: home stays light) -->
+    <div>
       <button
         @click="showAdvancedStats = !showAdvancedStats"
         class="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-border/60 bg-foreground/[0.02] hover:bg-foreground/[0.05] text-sm font-semibold text-muted hover:text-foreground transition-all active:scale-[0.98]"
       >
         <BarChart3 aria-hidden="true" class="w-4 h-4" />
-        {{ showAdvancedStats ? i18n.t('dash_stats_hide') : i18n.t('dash_stats_show') }}
+        {{ showAdvancedStats ? i18n.t('dash_stats_hide') : i18n.t('dash_stats_boss_toggle') }}
         <ChevronDown aria-hidden="true" class="w-4 h-4 transition-transform duration-200" :class="showAdvancedStats ? 'rotate-180' : ''" />
       </button>
     </div>
 
-    <!-- Stats & boss (hidden on mobile until toggled) -->
-    <section v-show="showAdvancedStats || isDesktop" class="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
+    <!-- Stats & boss (collapsed until toggled, all breakpoints) -->
+    <section v-show="showAdvancedStats" class="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
       <!-- Boss Intel -->
       <div class="lg:col-span-2 space-y-4">
         <div class="flex items-center gap-2 px-1">
@@ -390,8 +411,8 @@
       </div>
     </section>
 
-    <!-- Analytics: activity heatmap / history (follows mobile toggle) -->
-    <section v-show="showAdvancedStats || isDesktop" class="space-y-4">
+    <!-- Analytics: activity heatmap / history (follows disclosure) -->
+    <section v-show="showAdvancedStats" class="space-y-4">
       <div class="flex items-center gap-1 p-1 bg-foreground/[0.04] border border-border/60 rounded-xl w-fit mx-auto">
         <button
           @click="activeTab = 'heatmap'"
@@ -508,6 +529,12 @@
       @selected="handleGuidedPlanSelected"
     />
     <WeeklyShareCard :open="showWeeklyCard" @close="showWeeklyCard = false" />
+    <LogSheet
+      :open="showLogSheet"
+      :exercise-type="activeExercise"
+      @close="showLogSheet = false"
+      @updated="fetchData"
+    />
   </div>
 </template>
 
@@ -517,14 +544,15 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import {
   Trophy, Target, Flame, Zap, Activity, Inbox,
-  BarChart3, Check, X, Trash2, Globe, Sword, FlaskConical, Coins, Snowflake, ChevronDown, Share2, Pencil
+  BarChart3, Check, X, Trash2, Globe, Sword, FlaskConical, Coins, Snowflake, ChevronDown, Share2, Pencil, Plus
 } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';
 import { useNotificationStore } from '@/stores/notification';
 import { useTrainingStore } from '@/stores/training';
 import Heatmap from '@/components/training/Heatmap.vue';
-import RepsInput from '@/components/training/RepsInput.vue';
+import RadialProgress from '@/components/ui/RadialProgress.vue';
+import LogSheet from '@/components/training/LogSheet.vue';
 import ExerciseSelector from '@/components/training/ExerciseSelector.vue';
 import BossHealth from '@/components/boss/BossHealth.vue';
 import RPGReleaseModal from '@/components/modals/RPGReleaseModal.vue';
@@ -557,12 +585,9 @@ const showRPGModal = ref(false);
 const showQuickStartModal = ref(false);
 const showGoalOnboarding = ref(false);
 const showFreeLog = ref(false);
+const showLogSheet = ref(false);
 const activeTab = ref('heatmap');
 const showAdvancedStats = ref(false);
-// Reactive desktop breakpoint: kept in sync with viewport via matchMedia (see onMounted/onUnmounted).
-const isDesktop = ref(typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches);
-let desktopMql = null;
-const handleDesktopChange = (e) => { isDesktop.value = e.matches; };
 const unclaimedMissions = ref(0);
 const highlightRepsInput = ref(false);
 const repsInputSection = ref(null);
@@ -760,17 +785,22 @@ const freezeStreak = async () => {
   }
 };
 
-const scrollToRepsInput = async () => {
+// Opens the log sheet (Momentum's primary gesture). Ensures a concrete exercise
+// is selected first, briefly highlights the ring, and surfaces it into view.
+const openLogSheet = async () => {
   if (activeExercise.value === 'all') {
     activeExercise.value = 'pullups';
   }
+  showFreeLog.value = true;
   await nextTick();
   repsInputSection.value?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   highlightRepsInput.value = true;
-  setTimeout(() => {
-    highlightRepsInput.value = false;
-  }, 1500);
+  setTimeout(() => { highlightRepsInput.value = false; }, 1200);
+  showLogSheet.value = true;
 };
+
+// Back-compat: existing callers (empty states, ?log=1 intent) now open the sheet.
+const scrollToRepsInput = openLogSheet;
 
 const handleCloseQuickStartModal = () => {
   markQuickStartSeen();
@@ -833,6 +863,12 @@ const todayProgress = computed(() => {
   return reps.value
     .filter(r => getLocalDateString(r.date) === today)
     .reduce((acc, curr) => acc + Number(curr.count), 0);
+});
+
+// Day ring fill: today's reps for the selected exercise vs the daily goal.
+const dayRingPercent = computed(() => {
+  const goal = Math.max(1, Number(stats.dailyGoal) || 0);
+  return Math.min(100, Math.round((todayProgress.value / goal) * 100));
 });
 
 const isDailyObjectiveDone = computed(() => {
@@ -1228,18 +1264,10 @@ onMounted(async () => {
   timerInterval = setInterval(() => {
     currentTime.value = new Date();
   }, 1000);
-
-  // Keep isDesktop in sync with the viewport (drives the mobile stats toggle).
-  if (typeof window !== 'undefined') {
-    desktopMql = window.matchMedia('(min-width: 1024px)');
-    isDesktop.value = desktopMql.matches;
-    desktopMql.addEventListener('change', handleDesktopChange);
-  }
 });
 
 onUnmounted(() => {
   if (timerInterval) clearInterval(timerInterval);
-  if (desktopMql) desktopMql.removeEventListener('change', handleDesktopChange);
 });
 
 watch(
