@@ -188,7 +188,7 @@ export default {
     
     // Social
     active_users: 'ACTIVE OPERATIVES',
-    live_operatives: 'LIVE OPERATIVES',
+    live_operatives: 'Live Operatives',
     boss_raid: 'RAID STATUS',
     find_friends: 'Find Friends',
     search_placeholder: 'Search enthusiasts...',
@@ -343,7 +343,7 @@ export default {
     // Login
     login_title: 'Sign In',
     login_welcome: 'Welcome to Reppy',
-    login_subtitle: 'SYSTEM ACCESS',
+    login_subtitle: 'System access',
     login_password: 'Password',
     login_email: 'Email',
     login_name: 'Full Name',
@@ -524,46 +524,46 @@ export default {
     exercise_mastery_desc: 'HISTORICAL REPOSITORY OF EFFORT BY EXERCISE',
 
     // RPG Stats
-    codex_title: 'THE CODEX',
-    codex_subtitle: 'LEVEL UP GUIDE',
+    codex_title: 'The Codex',
+    codex_subtitle: 'Level up guide',
     codex_next_lv: 'NEXT LEVEL: +100 XP POINTS REQUIRED',
     codex_lv_up: 'Level Up:',
 
-    codex_str_name: 'STRENGTH',
+    codex_str_name: 'Strength',
     codex_str_quote: 'Pure destructive power.',
     codex_str_desc: 'Increases base damage and scaling for heavy exercises like Muscleups and Weighted Pullups.',
     codex_str_action: 'Do weighted exercises or explosive movements.',
 
-    codex_dex_name: 'DEXTERITY',
+    codex_dex_name: 'Dexterity',
     codex_dex_quote: 'Precision over force.',
     codex_dex_desc: 'Increases Critical Hit chance and the damage they deal. Every level significantly boosts your impact against Bosses.',
     codex_dex_action: 'Muscle-ups and Weighted Pull-ups: You gain 10 base XP + extra weight per rep.',
 
-    codex_end_name: 'ENDURANCE',
+    codex_end_name: 'Endurance',
     codex_end_quote: 'The fire that never goes out.',
     codex_end_desc: 'Secondary damage scaling based on total repetition volume. Ideal for high-volume sets.',
     codex_end_action: 'Accumulate more daily reps.',
 
-    codex_vig_name: 'VIGOR',
+    codex_vig_name: 'Vigor',
     codex_vig_quote: 'Iron mind, unbreakable body.',
     codex_vig_desc: 'Increases your resilience and adds stability to your critical hits. Earned through training streaks.',
     codex_vig_action: 'Keep your daily streak alive.',
 
-    codex_int_name: 'INTELLIGENCE',
+    codex_int_name: 'Intelligence',
     codex_int_quote: 'Knowledge is the ultimate gains.',
     codex_int_desc: 'Training efficiency. Grants a global XP bonus (+5% per level) to all training stats. Earned by reading tactical guides.',
     codex_int_action: 'Read tactical guides in the blog to level up Intelligence.',
 
-    codex_fth_name: 'FAITH',
+    codex_fth_name: 'Faith',
     codex_fth_quote: 'The bar provides, the iron judge.',
     codex_fth_desc: 'Divine damage and community aura. Increases your Holy damage multiplier and provides extra flat damage bonuses.',
     codex_fth_action: 'Participate in Boss Battles. Every 50 damage dealt grants 1 XP.',
-    codex_cha_name: 'CHARISMA',
+    codex_cha_name: 'Charisma',
     codex_cha_quote: 'Your aura precedes you.',
     codex_cha_desc: 'Social impact and damage multiplier. Earned by interacting with the community.',
     codex_cha_action: 'Like or comment on posts in the social feed.',
     blog_xp_gained: 'Knowledge acquired! +100 INT XP earned.',
-    intelecto_adquirido: 'KNOWLEDGE ACQUIRED',
+    intelecto_adquirido: 'Knowledge acquired',
     blog_read_congrats: 'Guide complete: Intellect increased.',
 
     // Post Backgrounds
@@ -799,17 +799,17 @@ export default {
     active_yield_desc: 'ACTIVE OPERATIVES YIELD',
 
     // Social & Community
-    community: 'COMMUNITY',
-    community_subtitle: 'SYNCHRONIZE WITH THE CORE ELITE.',
+    community: 'Community',
+    community_subtitle: 'See what people are training and join in.',
     social_wall: 'SOCIAL WALL',
-    rankings: 'RANKINGS',
+    rankings: 'Rankings',
     global_rankings: 'GLOBAL.RANKINGS',
     find_athletes: 'FIND_OPERATIVES',
-    inner_circle: 'INNER_CIRCLE',
+    inner_circle: 'My Inner Circle',
     reps_collected: 'REPS COLLECTED',
     reps_scaled: 'REPS SCALED',
     protocol_label: 'Registry',
-    live_sync: 'LIVE RANKING SYNCHRONIZATION',
+    live_sync: 'Live sync',
     friend_added: 'Friend added successfully!',
     friend_add_failed: 'Failed to add friend',
 
@@ -975,7 +975,7 @@ export default {
     // Activity Card
     activity_level_label: 'LVL',
     activity_reps_session: 'REPS',
-    activity_damage_session: 'DAMAGE',
+    activity_damage_session: 'Damage',
     activity_milestone_msg: '{threshold} total {exercise}!',
     activity_personal_record: 'PERSONAL RECORD',
     activity_rank_top: 'RANK #{n} GLOBAL',

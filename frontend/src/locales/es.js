@@ -197,7 +197,7 @@ export default {
     
     // Social
     active_users: 'OPERATIVOS ACTIVOS',
-    live_operatives: 'OPERATIVOS EN DIRECTO',
+    live_operatives: 'Operativos en directo',
     boss_raid: 'ESTADO DE RAID',
     find_friends: 'Buscar Amigos',
     search_placeholder: 'Buscar entusiastas...',
@@ -356,7 +356,7 @@ export default {
     // Login
     login_title: 'Iniciar Sesión',
     login_welcome: 'Bienvenido a Reppy',
-    login_subtitle: 'ACCESO AL SISTEMA',
+    login_subtitle: 'Acceso al sistema',
     login_password: 'Contraseña',
     login_email: 'Email',
     login_name: 'Nombre completo',
@@ -543,8 +543,8 @@ export default {
     exercise_mastery_desc: 'REPOSITORIO HISTÓRICO DE MAGNITUD POR EJERCICIO',
 
     // Codex
-    codex_title: 'EL CODEX',
-    codex_subtitle: 'GUÍA PARA SUBIR DE NIVEL',
+    codex_title: 'El Códex',
+    codex_subtitle: 'Guía para subir de nivel',
     codex_next_lv: 'PRÓXIMO NIVEL: +100 XP REQUERIDOS',
     codex_lv_up: 'Mejora:',
 
@@ -577,7 +577,7 @@ export default {
     codex_cha_action: 'Da like o comenta en las publicaciones del feed social.',
     
     blog_xp_gained: '¡Conocimiento adquirido! +100 XP de INT ganada.',
-    intelecto_adquirido: 'INTELECTO ADQUIRIDO',
+    intelecto_adquirido: 'Intelecto adquirido',
     blog_read_congrats: 'Estudio completado: Intelecto aumentado.',
 
     // Post Backgrounds
@@ -837,7 +837,7 @@ export default {
     boss_anomaly: 'ANOMALÍAS DE BOSS',
     monthly_projection: 'PROYECCIÓN MENSUAL',
     active_yield_desc: 'RENDIMIENTO OPERATIVO ACTIVO',
-    feat_heatmap_title: 'MAPA DE CALOR DE DISTRIBUCIÓN',
+    feat_heatmap_title: 'Heatmap táctico',
     stats_active_days: 'Activo 365 Días',
 
     // Social & Community
@@ -1025,7 +1025,7 @@ export default {
     // Activity Card
     activity_level_label: 'LVL',
     activity_reps_session: 'REPS',
-    activity_damage_session: 'DAÑO',
+    activity_damage_session: 'Daño',
     activity_personal_record: 'RÉCORD PERSONAL',
     activity_rank_top: 'RANK #{n} GLOBAL',
     activity_top_dated: 'TOP {n}% ({date})',
