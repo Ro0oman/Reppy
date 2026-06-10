@@ -14,8 +14,8 @@
           class="flex items-center gap-1.5 rounded-xl border border-primary-500/25 bg-primary-500/10 px-3 py-2 text-xs font-semibold text-primary-400 transition hover:bg-primary-500/20 active:scale-95"
           @click="showWeeklyCard = true"
         >
-          <Share2 class="w-3.5 h-3.5" />
-          {{ i18n.locale === 'es' ? 'Mi semana' : 'My week' }}
+          <Share2 class="w-3.5 h-3.5" aria-hidden="true" />
+          {{ i18n.t('dash_my_week') }}
         </button>
         <button
           v-if="guidedTrainingStateLoaded && !trainingStore.activePlan"
@@ -23,7 +23,7 @@
           class="rounded-xl border border-border bg-foreground/[0.03] px-3 py-2 text-xs font-semibold text-muted transition hover:border-primary-500/30 hover:text-foreground active:scale-95"
           @click="openPlanPicker"
         >
-          {{ i18n.locale === 'es' ? 'Plan guiado' : 'Guided plan' }}
+          {{ i18n.t('dash_guided_plan') }}
         </button>
       </div>
     </header>
@@ -40,12 +40,12 @@
         :class="highlightRepsInput ? 'ring-2 ring-primary-500/60 shadow-[0_0_30px_hsl(var(--primary)/0.25)]' : ''"
       >
         <div v-if="activeExercise === 'all'" class="bg-surface/5 border border-dashed border-border rounded-2xl flex flex-col items-center justify-center text-center p-8 sm:p-10">
-          <Globe class="w-10 h-10 text-muted/50 mb-3" />
+          <Globe aria-hidden="true" class="w-10 h-10 text-muted/50 mb-3" />
           <h3 class="text-lg font-bold tracking-tight text-foreground">
-            {{ i18n.locale === 'es' ? 'Modo resumen' : 'Overview mode' }}
+            {{ i18n.t('dash_overview_mode') }}
           </h3>
           <p class="text-xs text-muted/60 max-w-[320px] mx-auto mt-1.5">
-            {{ i18n.locale === 'es' ? 'Elige un ejercicio para registrar reps ahora.' : 'Pick an exercise to log reps now.' }}
+            {{ i18n.t('dash_overview_hint') }}
           </p>
           <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md">
             <button
@@ -84,13 +84,13 @@
         class="grid place-items-center h-10 w-10 shrink-0 rounded-xl"
         :class="streakStatus.showRisk ? 'bg-amber-500/15' : 'bg-primary-500/15'"
       >
-        <Flame class="h-5 w-5" :class="streakStatus.showRisk ? 'text-amber-400' : 'text-primary-400'" />
+        <Flame aria-hidden="true" class="h-5 w-5" :class="streakStatus.showRisk ? 'text-amber-400' : 'text-primary-400'" />
       </div>
 
       <div class="min-w-0 flex-1">
         <div class="flex items-baseline gap-1.5">
           <span class="text-xl font-bold tabular-nums leading-none text-foreground">{{ streakStatus.streak || 0 }}</span>
-          <span class="text-sm font-semibold text-muted/70">{{ i18n.locale === 'es' ? 'días' : 'days' }}</span>
+          <span class="text-sm font-semibold text-muted/70">{{ i18n.t('streak_days_unit') }}</span>
           <span
             v-if="streakTier.label"
             class="ml-1 text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-md bg-foreground/[0.06] text-muted"
@@ -104,17 +104,17 @@
         >{{ streakStateLabel }}</p>
       </div>
 
-      <!-- Weekly micro-indicator (secondary, distinct from the total streak number) -->
+      <!-- Weekly bonus micro-indicator: days trained THIS week toward the jackpot (5/7) -->
       <div class="hidden sm:flex flex-col items-end gap-1 shrink-0">
-        <span class="text-[10px] font-medium text-muted/50">
-          {{ i18n.locale === 'es' ? 'Semana' : 'Week' }} {{ Math.min(streakStatus.streak, 7) }}/7
+        <span class="text-[10px] font-medium" :class="streakStatus.jackpotAlreadyAwarded ? 'text-emerald-500/80' : 'text-muted/50'">
+          {{ i18n.t('streak_weekly_bonus') }} {{ weeklyBonusProgress }}/{{ weeklyBonusTarget }}
         </span>
         <div class="flex items-center gap-1">
           <span
-            v-for="day in 7"
+            v-for="day in weeklyBonusTarget"
             :key="day"
             class="h-1.5 w-3 rounded-full transition-colors"
-            :class="day <= streakDays7
+            :class="day <= weeklyBonusProgress
               ? (streakStatus.jackpotAlreadyAwarded ? 'bg-emerald-500' : 'bg-primary-500')
               : 'bg-foreground/10'"
           />
@@ -132,7 +132,7 @@
         :disabled="!streakStatus.canFreeze || freezingStreak"
         @click="freezeStreak"
       >
-        <Snowflake class="h-3.5 w-3.5" />
+        <Snowflake aria-hidden="true" class="h-3.5 w-3.5" />
         <span class="hidden sm:inline">{{ freezeButtonLabel }}</span>
       </button>
     </div>
@@ -153,11 +153,11 @@
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div class="min-w-0">
           <p class="text-xs font-semibold text-muted">
-            {{ i18n.locale === 'es' ? 'Plan activo' : 'Active plan' }}
+            {{ i18n.t('dash_active_plan') }}
           </p>
           <p class="mt-1 text-sm font-bold text-foreground">
             {{ i18n.t(trainingStore.activePlan.titleKey) }}
-            <span v-if="trainingStore.isPlanPaused" class="text-amber-400">· {{ i18n.locale === 'es' ? 'Pausado' : 'Paused' }}</span>
+            <span v-if="trainingStore.isPlanPaused" class="text-amber-400">· {{ i18n.t('dash_plan_paused') }}</span>
           </p>
         </div>
         <div class="flex flex-wrap gap-2">
@@ -167,7 +167,7 @@
             class="plan-action"
             @click="resumePlan"
           >
-            {{ i18n.locale === 'es' ? 'Reanudar' : 'Resume' }}
+            {{ i18n.t('dash_plan_resume') }}
           </button>
           <button
             v-else
@@ -175,13 +175,13 @@
             class="plan-action"
             @click="pausePlan"
           >
-            {{ i18n.locale === 'es' ? 'Pausar' : 'Pause' }}
+            {{ i18n.t('dash_plan_pause') }}
           </button>
           <button type="button" class="plan-action" @click="openPlanPicker">
-            {{ i18n.locale === 'es' ? 'Cambiar plan' : 'Change plan' }}
+            {{ i18n.t('dash_plan_change') }}
           </button>
           <button type="button" class="plan-action text-red-300 hover:text-red-200" @click="abandonPlan">
-            {{ i18n.locale === 'es' ? 'Abandonar' : 'Abandon' }}
+            {{ i18n.t('dash_plan_abandon') }}
           </button>
         </div>
       </div>
@@ -194,25 +194,25 @@
       <button
         type="button"
         class="absolute right-3 top-3 grid h-7 w-7 place-items-center rounded-lg border border-border bg-foreground/[0.04] text-muted transition hover:text-foreground active:scale-95"
-        :aria-label="i18n.locale === 'es' ? 'Ocultar bloque de plan guiado' : 'Hide guided plan block'"
+        :aria-label="i18n.t('dash_plan_promo_hide')"
         @click="dismissPlanPromo"
       >
-        <X class="h-4 w-4" />
+        <X aria-hidden="true" class="h-4 w-4" />
       </button>
       <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div class="min-w-0 pr-8 sm:pr-0">
           <p class="text-xs font-semibold text-primary-500">
-            {{ i18n.locale === 'es' ? 'Empieza tu progresión' : 'Start your progression' }}
+            {{ i18n.t('dash_plan_promo_kicker') }}
           </p>
           <h3 class="mt-1.5 text-xl font-bold tracking-tight leading-tight text-foreground">
-            {{ i18n.locale === 'es' ? 'Elige un plan guiado' : 'Choose a guided plan' }}
+            {{ i18n.t('dash_plan_promo_title') }}
           </h3>
           <p class="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted/75">
-            {{ i18n.locale === 'es' ? 'Reppy te dice qué entrenar hoy y convierte tus reps en progreso real.' : 'Reppy tells you what to train today and turns your reps into real progress.' }}
+            {{ i18n.t('dash_plan_promo_desc') }}
           </p>
         </div>
         <button type="button" class="btn-reppy w-full px-5 sm:w-auto" @click="openPlanPicker">
-          {{ i18n.locale === 'es' ? 'Ver planes' : 'View plans' }}
+          {{ i18n.t('dash_plan_promo_cta') }}
         </button>
       </div>
     </section>
@@ -249,7 +249,7 @@
       <div class="flex flex-col lg:flex-row lg:items-center gap-4">
         <div class="flex-1 min-w-0 space-y-2">
           <p class="text-xs font-semibold text-primary-500">
-            {{ i18n.locale === 'es' ? 'Misión de hoy' : "Today's mission" }}
+            {{ i18n.t('dash_today_mission') }}
           </p>
           <h3 class="text-lg font-bold tracking-tight text-foreground leading-tight">
             {{ todayMissionTitle }}
@@ -274,7 +274,7 @@
 
         <div class="flex items-center justify-between gap-3 lg:flex-col lg:items-end lg:justify-center">
           <div class="flex items-center gap-1.5 text-sm font-semibold text-foreground">
-            <Coins class="w-4 h-4 text-primary-500 shrink-0" />
+            <Coins aria-hidden="true" class="w-4 h-4 text-primary-500 shrink-0" />
             <span>{{ todayMissionRewardLabel }}</span>
           </div>
           <button
@@ -294,9 +294,9 @@
         @click="showAdvancedStats = !showAdvancedStats"
         class="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-border/60 bg-foreground/[0.02] hover:bg-foreground/[0.05] text-sm font-semibold text-muted hover:text-foreground transition-all active:scale-[0.98]"
       >
-        <BarChart3 class="w-4 h-4" />
-        {{ showAdvancedStats ? (i18n.locale === 'es' ? 'Ocultar estadísticas' : 'Hide stats') : (i18n.locale === 'es' ? 'Ver estadísticas y boss' : 'Stats & boss') }}
-        <ChevronDown class="w-4 h-4 transition-transform duration-200" :class="showAdvancedStats ? 'rotate-180' : ''" />
+        <BarChart3 aria-hidden="true" class="w-4 h-4" />
+        {{ showAdvancedStats ? i18n.t('dash_stats_hide') : i18n.t('dash_stats_show') }}
+        <ChevronDown aria-hidden="true" class="w-4 h-4 transition-transform duration-200" :class="showAdvancedStats ? 'rotate-180' : ''" />
       </button>
     </div>
 
@@ -305,7 +305,7 @@
       <!-- Boss Intel -->
       <div class="lg:col-span-2 space-y-4">
         <div class="flex items-center gap-2 px-1">
-          <Zap class="w-4 h-4 text-primary-500" />
+          <Zap aria-hidden="true" class="w-4 h-4 text-primary-500" />
           <h3 class="text-xs font-semibold uppercase tracking-wide text-muted/70">{{ i18n.t('dash_boss_status') }}</h3>
         </div>
 
@@ -320,7 +320,7 @@
          <div class="card-stats">
             <div class="flex items-center justify-between">
               <span class="text-xs font-semibold uppercase tracking-wide text-primary-500">{{ i18n.t('ui_combat_power') }}</span>
-              <Sword class="w-4 h-4 text-primary-500" />
+              <Sword aria-hidden="true" class="w-4 h-4 text-primary-500" />
             </div>
 
             <div class="mt-3">
@@ -332,7 +332,7 @@
                 </div>
                 <p class="mt-1 text-xs text-muted/60">
                   {{ i18n.t('ui_avg_estimated') }}: <span class="font-semibold text-foreground/80">{{ stats.combatPower.total }}</span>
-                  <span class="text-muted/40">
+                  <span class="text-muted/60">
                     · {{ i18n.t('dash_base_skill') }} {{ stats.combatPower.base }} · {{ i18n.t('dash_gear_bonus') }} +{{ stats.combatPower.gear }}<template v-if="stats.combatPower.buff > 0"> · {{ i18n.t('dash_active_buffs') }} +{{ stats.combatPower.buff }}</template>
                   </span>
                 </p>
@@ -342,7 +342,7 @@
             <!-- Active potion timer (sober) -->
             <div v-for="boost in activePotions" :key="boost.type" class="mt-3 flex items-center justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2">
               <div class="flex items-center gap-2 min-w-0">
-                <FlaskConical class="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <FlaskConical aria-hidden="true" class="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                 <span class="text-xs font-semibold text-emerald-500 truncate">{{ boost.label }} {{ boost.value }}</span>
               </div>
               <span class="text-[10px] font-semibold text-foreground tabular-nums shrink-0">{{ boost.timeLeft }}</span>
@@ -352,16 +352,16 @@
          <div class="grid grid-cols-2 gap-4">
             <!-- Total reps -->
             <div class="card-stats">
-              <Activity class="w-4 h-4 text-primary-500" />
+              <Activity aria-hidden="true" class="w-4 h-4 text-primary-500" />
               <div class="mt-3">
                 <div v-if="isLoading" class="h-7 w-16 bg-foreground/10 rounded-lg animate-pulse"></div>
                 <span v-else class="text-2xl font-bold text-foreground tabular-nums">{{ totalReps }}</span>
-                <p class="text-xs text-muted/60 mt-0.5">{{ i18n.locale === 'es' ? 'Reps totales' : 'Total reps' }}</p>
+                <p class="text-xs text-muted/60 mt-0.5">{{ i18n.t('dash_total_reps') }}</p>
               </div>
             </div>
             <!-- Tonnage -->
             <div class="card-stats">
-              <Trophy class="w-4 h-4 text-primary-500" />
+              <Trophy aria-hidden="true" class="w-4 h-4 text-primary-500" />
               <div class="mt-3">
                 <div v-if="isLoading" class="h-7 w-16 bg-foreground/10 rounded-lg animate-pulse"></div>
                 <span v-else class="text-2xl font-bold text-foreground tabular-nums">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</span>
@@ -377,7 +377,7 @@
           class="card-stats w-full text-left !bg-indigo-500/10 hover:!border-indigo-500/40 transition-all active:scale-[0.99]"
          >
             <div class="flex items-center justify-between">
-              <Target class="w-4 h-4 text-indigo-400" />
+              <Target aria-hidden="true" class="w-4 h-4 text-indigo-400" />
               <span v-if="unclaimedMissions > 0" class="px-2 py-0.5 bg-indigo-500 text-[10px] font-bold text-white uppercase rounded-full animate-pulse">
                 {{ unclaimedMissions }} {{ i18n.t('missions_available') || 'READY' }}
               </span>
@@ -411,7 +411,23 @@
 
       <transition name="fade" mode="out-in">
         <div v-if="activeTab === 'heatmap'" key="heatmap" class="bg-surface/5 border border-border/60 rounded-2xl p-4 sm:p-6">
+          <!-- Cold start: a new user sees guidance instead of an empty grid -->
+          <div v-if="!isLoading && !totalReps && !heatmapData.length" class="py-10 px-6 text-center">
+            <Flame aria-hidden="true" class="w-10 h-10 mx-auto mb-3 text-muted/30" />
+            <p class="text-sm font-semibold text-foreground">{{ i18n.t('dash_heatmap_empty_title') }}</p>
+            <p class="text-xs text-muted/60 mt-1 max-w-[280px] mx-auto">
+              {{ i18n.t('dash_heatmap_empty_desc') }}
+            </p>
+            <button
+              type="button"
+              @click="scrollToRepsInput"
+              class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-primary-500 hover:bg-primary-400 px-4 py-2 text-xs font-semibold text-white active:scale-95 transition-all"
+            >
+              {{ i18n.t('dash_log_reps_cta') }}
+            </button>
+          </div>
           <Heatmap
+            v-else
             :data="heatmapData"
             :key="`${activeExercise}-${activeYear}`"
             :loading="isLoading"
@@ -440,35 +456,35 @@
                 <button
                   @click="saveEdit(rep.id)"
                   class="grid place-items-center h-9 w-9 rounded-lg bg-primary-500/15 text-primary-500 active:scale-95 transition-transform"
-                  :aria-label="i18n.locale === 'es' ? 'Guardar' : 'Save'"
-                ><Check class="w-4 h-4" /></button>
+                  :aria-label="i18n.t('dash_save')"
+                ><Check aria-hidden="true" class="w-4 h-4" /></button>
               </div>
               <div v-else class="flex items-center gap-1 shrink-0">
                 <button
                   @click="startEdit(rep)"
                   class="grid place-items-center h-9 w-9 rounded-lg text-muted/60 hover:text-primary-500 hover:bg-foreground/[0.04] active:scale-95 transition-colors"
-                  :aria-label="i18n.locale === 'es' ? 'Editar registro' : 'Edit entry'"
-                ><Pencil class="w-4 h-4" /></button>
+                  :aria-label="i18n.t('dash_edit_entry')"
+                ><Pencil aria-hidden="true" class="w-4 h-4" /></button>
                 <button
                   @click="confirmDelete(rep.id)"
                   class="grid place-items-center h-9 w-9 rounded-lg text-muted/60 hover:text-red-500 hover:bg-foreground/[0.04] active:scale-95 transition-colors"
-                  :aria-label="i18n.locale === 'es' ? 'Borrar registro' : 'Delete entry'"
-                ><Trash2 class="w-4 h-4" /></button>
+                  :aria-label="i18n.t('dash_delete_entry')"
+                ><Trash2 aria-hidden="true" class="w-4 h-4" /></button>
               </div>
             </li>
           </ul>
           <div v-else class="py-16 px-6 text-center">
-            <Inbox class="w-10 h-10 mx-auto mb-3 text-muted/30" />
-            <p class="text-sm font-semibold text-foreground">{{ i18n.locale === 'es' ? 'Aún no hay registros' : 'No entries yet' }}</p>
+            <Inbox aria-hidden="true" class="w-10 h-10 mx-auto mb-3 text-muted/30" />
+            <p class="text-sm font-semibold text-foreground">{{ i18n.t('dash_history_empty_title') }}</p>
             <p class="text-xs text-muted/60 mt-1 max-w-[260px] mx-auto">
-              {{ i18n.locale === 'es' ? 'Registra tus primeras reps para empezar a llenar tu historial.' : 'Log your first reps to start filling your history.' }}
+              {{ i18n.t('dash_history_empty_desc') }}
             </p>
             <button
               type="button"
               @click="scrollToRepsInput"
               class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-primary-500 hover:bg-primary-400 px-4 py-2 text-xs font-semibold text-white active:scale-95 transition-all"
             >
-              {{ i18n.locale === 'es' ? 'Registrar reps' : 'Log reps' }}
+              {{ i18n.t('dash_log_reps_cta') }}
             </button>
           </div>
         </div>
@@ -500,8 +516,8 @@ import { ref, onMounted, onUnmounted, computed, reactive, watch, nextTick } from
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import {
-  Trophy, Target, Flame, Zap, Activity, History, Inbox,
-  BarChart3, Check, X, Trash2, Globe, Sword, Swords, FlaskConical, Coins, Snowflake, ChevronDown, Share2, Pencil
+  Trophy, Target, Flame, Zap, Activity, Inbox,
+  BarChart3, Check, X, Trash2, Globe, Sword, FlaskConical, Coins, Snowflake, ChevronDown, Share2, Pencil
 } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';
@@ -511,7 +527,6 @@ import Heatmap from '@/components/training/Heatmap.vue';
 import RepsInput from '@/components/training/RepsInput.vue';
 import ExerciseSelector from '@/components/training/ExerciseSelector.vue';
 import BossHealth from '@/components/boss/BossHealth.vue';
-import RadialProgress from '@/components/ui/RadialProgress.vue';
 import RPGReleaseModal from '@/components/modals/RPGReleaseModal.vue';
 import LivePresence from '@/components/ui/LivePresence.vue';
 import QuickStartOnboardingModal from '@/components/modals/QuickStartOnboardingModal.vue';
@@ -521,7 +536,6 @@ import WeeklyShareCard from '@/components/modals/WeeklyShareCard.vue';
 import { getLocalDateString } from '@/utils/dateUtils.js';
 import { buildActiveBoosts } from '@/utils/activeBuffs';
 
-const emit = defineEmits(['viewProfile', 'start']);
 const authStore = useAuthStore();
 const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
@@ -538,7 +552,7 @@ const editValue = ref(0);
 const deletingRepIds = ref(new Set());
 const bossHealthRef = ref(null);
 const isLoading = ref(false);
-const activeYear = ref(2026);
+const activeYear = ref(new Date().getFullYear());
 const showRPGModal = ref(false);
 const showQuickStartModal = ref(false);
 const showGoalOnboarding = ref(false);
@@ -571,12 +585,12 @@ const STREAK_CELEBRATED_PREFIX = 'reppy_streak_celebrated_v1';
 const bossMotivationQuotes = {
   es: [
     '"Has sobrevivido al tutorial. Ahora sube de nivel."',
-    '"Ese boss no te espera: te esta guardando sitio."',
-    '"Tus limites tienen barra de vida. Bajala hoy."',
+    '"Ese boss no te espera: te está guardando sitio."',
+    '"Tus límites tienen barra de vida. Bájala hoy."',
     '"El respawn es entrar otra vez y registrar reps."',
     '"No eres el minion del mapa. Eres la raid entera."',
-    '"Hoy farmeas fuerza. Manana desbloqueas leyenda."',
-    '"El jefe final tambien empezo con una repeticion."',
+    '"Hoy farmeas fuerza. Mañana desbloqueas leyenda."',
+    '"El jefe final también empezó con una repetición."',
     '"Que tiemble el boss: vienes con buff de disciplina."',
   ],
   en: [
@@ -662,57 +676,44 @@ const clearPlanPromoDismissed = () => {
   planPromoDismissed.value = false;
 };
 
-const streakDaysLabel = computed(() => {
-  const days = Number(streakStatus.value?.streak || 0);
-  if (i18n.locale === 'es') return days === 1 ? 'dia activo' : `Racha de ${days} dias `;
-  return days === 1 ? 'active day' : 'active days';
-});
-
-// Streak milestones: days threshold → bonus RC per day label and visual tier
+// Streak milestones: days threshold → tier badge shown next to the streak number
 const STREAK_MILESTONES = [
-  { days: 7,  bonus: 10,  level: 1, label: i18n.locale === 'es' ? 'SEMANA' : 'WEEK',   cardClass: 'border-orange-500/30 bg-orange-500/8',   iconWrapClass: 'w-14 h-14', iconClass: 'h-8 w-8 text-orange-400', glowClass: 'bg-orange-500', numberClass: 'text-4xl text-orange-300', badgeClass: 'bg-orange-500/20 text-orange-300', barClass: 'bg-orange-500' },
-  { days: 14, bonus: 25,  level: 2, label: i18n.locale === 'es' ? '2 SEMANAS' : '2 WEEKS', cardClass: 'border-red-500/30 bg-red-500/8',      iconWrapClass: 'w-16 h-16', iconClass: 'h-9 w-9 text-red-400',    glowClass: 'bg-red-500',    numberClass: 'text-4xl text-red-300',    badgeClass: 'bg-red-500/20 text-red-300',    barClass: 'bg-red-500' },
-  { days: 30, bonus: 50,  level: 3, label: i18n.locale === 'es' ? 'MES' : 'MONTH',      cardClass: 'border-purple-500/30 bg-purple-500/8',  iconWrapClass: 'w-16 h-16', iconClass: 'h-10 w-10 text-purple-400',glowClass: 'bg-purple-500', numberClass: 'text-5xl text-purple-300', badgeClass: 'bg-purple-500/20 text-purple-300',barClass: 'bg-purple-500' },
-  { days: 60, bonus: 100, level: 4, label: i18n.locale === 'es' ? 'LEYENDA' : 'LEGEND',  cardClass: 'border-yellow-400/40 bg-yellow-500/8',  iconWrapClass: 'w-18 h-18', iconClass: 'h-11 w-11 text-yellow-300',glowClass: 'bg-yellow-400', numberClass: 'text-5xl text-yellow-200', badgeClass: 'bg-yellow-400/20 text-yellow-300',barClass: 'bg-yellow-400' },
+  { days: 7,  labelKey: 'streak_tier_week' },
+  { days: 14, labelKey: 'streak_tier_2weeks' },
+  { days: 30, labelKey: 'streak_tier_month' },
+  { days: 60, labelKey: 'streak_tier_legend' },
 ];
-
-const DEFAULT_TIER = { level: 0, label: null, cardClass: 'border-primary-500/20 bg-primary-500/8', iconWrapClass: 'w-12 h-12', iconClass: 'h-7 w-7 text-primary-400', glowClass: '', numberClass: 'text-3xl text-foreground', badgeClass: '', barClass: 'bg-primary-500' };
 
 const streakTier = computed(() => {
   const days = Number(streakStatus.value?.streak || 0);
-  if (streakStatus.value?.showRisk) {
-    return { ...DEFAULT_TIER, cardClass: 'border-amber-500/30 bg-amber-500/8', iconClass: 'h-7 w-7 text-amber-400', numberClass: 'text-3xl text-amber-300', barClass: 'bg-amber-500' };
-  }
+  // While at risk the amber state takes over; hide the tier badge to keep focus.
+  if (streakStatus.value?.showRisk) return { label: null };
   for (let i = STREAK_MILESTONES.length - 1; i >= 0; i--) {
-    if (days >= STREAK_MILESTONES[i].days) return STREAK_MILESTONES[i];
+    if (days >= STREAK_MILESTONES[i].days) return { label: i18n.t(STREAK_MILESTONES[i].labelKey) };
   }
-  return DEFAULT_TIER;
+  return { label: null };
 });
 
-const streakNextMilestone = computed(() => {
-  const days = Number(streakStatus.value?.streak || 0);
-  return STREAK_MILESTONES.find(m => m.days > days) || null;
-});
-
-const streakDays7 = computed(() => Math.min(Number(streakStatus.value?.streak || 0), 7));
+// Weekly jackpot indicator: fed by days trained THIS week (backend weeklyProgress),
+// scaled to the real reward threshold (jackpotDaysRequired = 5), not the total streak.
+const weeklyBonusTarget = computed(() => Number(streakStatus.value?.jackpotDaysRequired || 5));
+const weeklyBonusProgress = computed(() =>
+  Math.min(Number(streakStatus.value?.weeklyProgress || 0), weeklyBonusTarget.value)
+);
 
 const streakStateLabel = computed(() => {
   const status = streakStatus.value;
   if (!status) return '';
-  if (status.trainedToday) return i18n.locale === 'es' ? 'Protegida: ya entrenaste hoy.' : 'Protected: you trained today.';
-  if (status.frozenToday) return i18n.locale === 'es' ? 'Protegida con congelacion hasta manana.' : 'Protected with a freeze until tomorrow.';
-  if (status.isAtRisk) {
-    return i18n.locale === 'es'
-      ? `En riesgo`
-      : `At risk: ${status.hoursLeftToday} h left to save it.`;
-  }
-  return i18n.locale === 'es' ? 'Entrena hoy para empezar o subir tu racha.' : 'Train today to start or grow your streak.';
+  if (status.trainedToday) return i18n.t('streak_protected_trained');
+  if (status.frozenToday) return i18n.t('streak_protected_frozen');
+  if (status.isAtRisk) return i18n.t('streak_at_risk', { hours: status.hoursLeftToday });
+  return i18n.t('streak_start_hint');
 });
 
 const freezeButtonLabel = computed(() => {
   const cost = Number(streakStatus.value?.freezeCost || 0);
-  if (freezingStreak.value) return i18n.locale === 'es' ? 'Congelando...' : 'Freezing...';
-  return i18n.locale === 'es' ? `Congelar por ${cost}` : `Freeze for ${cost} coins`;
+  if (freezingStreak.value) return i18n.t('streak_freezing');
+  return i18n.t('streak_freeze_for', { cost });
 });
 
 const maybeCelebrateStreak = async (status) => {
@@ -751,12 +752,9 @@ const freezeStreak = async () => {
     const res = await axios.post('/api/streak/freeze');
     streakStatus.value = res.data;
     await authStore.fetchProfile(true);
-    notificationStore.notify(
-      i18n.locale === 'es' ? 'Racha congelada hasta manana' : 'Streak frozen until tomorrow',
-      'success'
-    );
+    notificationStore.notify(i18n.t('streak_frozen_notify'), 'success');
   } catch (error) {
-    notificationStore.notify(error.response?.data?.message || (i18n.locale === 'es' ? 'No se pudo congelar la racha' : 'Could not freeze streak'), 'error');
+    notificationStore.notify(error.response?.data?.message || i18n.t('streak_freeze_error'), 'error');
   } finally {
     freezingStreak.value = false;
   }
@@ -801,11 +799,8 @@ const handleLogQueryIntent = async () => {
 
 const stats = reactive({
   streak: 0,
-  topMonth: 'N/A',
-  topMonthCount: 0,
   dailyGoal: 50,
   totalVolume: 0,
-  bodyWeight: 75,
   combatPower: { total: 0, base: 0, gear: 0, buff: 0, critChance: 0, critMultiplier: 1, minDamage: 0, maxDamage: 0 }
 });
 
@@ -814,16 +809,15 @@ const activeExerciseLabel = computed(() => {
 });
 
 const firstName = computed(() =>
-  authStore.user?.name?.split(' ')[0] || (i18n.locale === 'es' ? 'Atleta' : 'Athlete')
+  authStore.user?.name?.split(' ')[0] || i18n.t('dash_default_athlete')
 );
 
 const greeting = computed(() => {
   const hour = new Date().getHours();
-  const es = i18n.locale === 'es';
-  if (hour < 6) return es ? 'Buenas noches' : 'Good night';
-  if (hour < 12) return es ? 'Buenos días' : 'Good morning';
-  if (hour < 20) return es ? 'Buenas tardes' : 'Good afternoon';
-  return es ? 'Buenas noches' : 'Good evening';
+  if (hour < 6) return i18n.t('greeting_night');
+  if (hour < 12) return i18n.t('greeting_morning');
+  if (hour < 20) return i18n.t('greeting_afternoon');
+  return i18n.t('greeting_evening');
 });
 
 const quickLogOptions = computed(() => [
@@ -860,7 +854,7 @@ const todayMissionPercent = computed(() => {
 
 const todayMissionTitle = computed(() => {
   if (todayMission.value?.title_key) return i18n.t(todayMission.value.title_key);
-  return i18n.locale === 'es' ? 'Completa tu objetivo diario de reps' : 'Complete your daily reps objective';
+  return i18n.t('dash_mission_default_title');
 });
 
 const todayMissionProgressLabel = computed(() => {
@@ -878,9 +872,7 @@ const todayMissionProgressLabel = computed(() => {
 });
 
 const todayMissionRewardLabel = computed(() => {
-  if (!todayMission.value) {
-    return i18n.locale === 'es' ? '+50 RC' : '+50 RC';
-  }
+  if (!todayMission.value) return '+50 RC';
   const coins = Number(todayMission.value.reward_coins || 0);
   const gems = Number(todayMission.value.reward_gems || 0);
   const xp = Number(todayMission.value.reward_xp || 0);
@@ -888,29 +880,28 @@ const todayMissionRewardLabel = computed(() => {
   if (coins > 0) parts.push(`+${coins} RC`);
   if (gems > 0) parts.push(`+${gems} G`);
   if (xp > 0) parts.push(`+${xp} XP`);
-  return parts.length ? parts.join(' · ') : (i18n.locale === 'es' ? 'Recompensa activa' : 'Active reward');
+  return parts.length ? parts.join(' · ') : i18n.t('dash_mission_reward_active');
 });
 
 const todayMissionActionLabel = computed(() => {
   if (todayMission.value?.is_completed && !todayMission.value?.is_claimed) {
-    return i18n.locale === 'es' ? 'Reclamar en Misiones' : 'Claim in Missions';
+    return i18n.t('dash_mission_claim');
   }
   if (isDailyObjectiveDone.value) {
-    return i18n.locale === 'es' ? 'Objetivo completado' : 'Objective completed';
+    return i18n.t('dash_mission_done');
   }
   const goalType = todayMission.value?.goal_type;
-  if (goalType === 'social_likes') return i18n.locale === 'es' ? 'Ir a Social' : 'Go to Social';
-  if (goalType === 'buy_any') return i18n.locale === 'es' ? 'Ir a Tienda' : 'Go to Shop';
-  if (goalType === 'use_consumable') return i18n.locale === 'es' ? 'Ir a Inventario' : 'Go to Inventory';
-  return i18n.locale === 'es' ? 'Registrar reps ahora' : 'Log reps now';
+  if (goalType === 'social_likes') return i18n.t('dash_mission_go_social');
+  if (goalType === 'buy_any') return i18n.t('dash_mission_go_shop');
+  if (goalType === 'use_consumable') return i18n.t('dash_mission_go_inventory');
+  return i18n.t('dash_mission_log_now');
 });
 
 const shouldShowTodayMissionCard = computed(() => {
   if (!todayMissionStateLoaded.value) return false;
   if (!guidedTrainingStateLoaded.value) return false;
   if (trainingStore.todayWorkout || trainingStore.completedToday) return false;
-  if (isDailyObjectiveDone.value) return false;
-  return !['Objetivo completado', 'Objective completed'].includes(todayMissionActionLabel.value);
+  return !isDailyObjectiveDone.value;
 });
 
 const shouldShowTodayWorkout = computed(() => {
@@ -934,63 +925,19 @@ const shouldShowFreeLogToggle = computed(() => {
   return !!trainingStore.todayWorkout;
 });
 
+const KNOWN_GOAL_TYPES = ['reps', 'damage', 'streak', 'xp_str', 'xp_pwr', 'xp_end', 'xp_agi', 'social_likes', 'buy_any', 'use_consumable', 'night_owl', 'personal_record'];
+
 const getGoalTypeLabel = (goalType) => {
-  const labels = {
-    reps: i18n.locale === 'es' ? 'REPS' : 'REPS',
-    damage: i18n.locale === 'es' ? 'DAÑO' : 'DAMAGE',
-    streak: i18n.locale === 'es' ? 'DÍAS' : 'DAYS',
-    xp_str: i18n.locale === 'es' ? 'XP FUERZA' : 'XP STRENGTH',
-    xp_pwr: i18n.locale === 'es' ? 'XP POTENCIA' : 'XP POWER',
-    xp_end: i18n.locale === 'es' ? 'XP RESISTENCIA' : 'XP ENDURANCE',
-    xp_agi: i18n.locale === 'es' ? 'XP AGILIDAD' : 'XP AGILITY',
-    social_likes: i18n.locale === 'es' ? 'LIKES' : 'LIKES',
-    buy_any: i18n.locale === 'es' ? 'COMPRAS' : 'PURCHASES',
-    use_consumable: i18n.locale === 'es' ? 'USOS' : 'USES',
-    night_owl: i18n.locale === 'es' ? 'SESIÓN NOCTURNA' : 'NIGHT SESSION',
-    personal_record: i18n.locale === 'es' ? 'RÉCORD' : 'RECORD',
-  };
-  return labels[goalType] || '';
+  if (!KNOWN_GOAL_TYPES.includes(goalType)) return '';
+  return i18n.t(`goal_label_${goalType}`);
 };
 
 const todayMissionHowTo = computed(() => {
   const mission = todayMission.value;
   const goalType = mission?.goal_type;
-  const v = mission?.goal_value;
-  if (!goalType) return i18n.locale === 'es' ? 'Registra entrenamiento para avanzar.' : 'Log training to progress.';
-
-  const mapEs = {
-    reps:            `Registra ${v} repeticiones (cualquier ejercicio).`,
-    damage:          `Inflige ${v} de daño al boss registrando reps.`,
-    streak:          `Mantén una racha de ${v} días seguidos.`,
-    xp_str:          `Consigue ${v} XP de Fuerza (volumen y lastre).`,
-    xp_pwr:          `Consigue ${v} XP de Potencia (muscle-ups, lastrado).`,
-    xp_end:          `Consigue ${v} XP de Resistencia (muchas reps totales).`,
-    xp_agi:          `Consigue ${v} XP de Agilidad (técnica/explosivo).`,
-    social_likes:    `Da ${v} likes a publicaciones en Social.`,
-    buy_any:         `Compra ${v} objeto${v > 1 ? 's' : ''} en la Tienda.`,
-    use_consumable:  `Usa ${v} consumible${v > 1 ? 's' : ''} desde el Inventario.`,
-    night_owl:       `Registra reps después de las 22:00.`,
-    personal_record: `Supera tu récord personal de repeticiones en un día.`,
-  };
-
-  const mapEn = {
-    reps:            `Log ${v} reps (any exercise).`,
-    damage:          `Deal ${v} damage to the boss by logging reps.`,
-    streak:          `Keep a ${v}-day streak.`,
-    xp_str:          `Earn ${v} Strength XP (volume and weighted work).`,
-    xp_pwr:          `Earn ${v} Power XP (muscle-ups, weighted pull-ups).`,
-    xp_end:          `Earn ${v} Endurance XP (high total reps).`,
-    xp_agi:          `Earn ${v} Agility XP (technical/explosive work).`,
-    social_likes:    `Like ${v} posts in Social.`,
-    buy_any:         `Buy ${v} item${v > 1 ? 's' : ''} in the Shop.`,
-    use_consumable:  `Use ${v} consumable${v > 1 ? 's' : ''} from Inventory.`,
-    night_owl:       `Log reps after 22:00.`,
-    personal_record: `Beat your daily reps personal record.`,
-  };
-
-  return i18n.locale === 'es'
-    ? (mapEs[goalType] || `Completa la misión desde la pantalla Misiones.`)
-    : (mapEn[goalType] || `Complete the mission from the Missions screen.`);
+  if (!goalType) return i18n.t('dash_mission_fallback_hint');
+  if (!KNOWN_GOAL_TYPES.includes(goalType)) return i18n.t('goal_howto_fallback');
+  return i18n.t(`goal_howto_${goalType}`, { v: mission?.goal_value });
 });
 
 const currentTime = ref(new Date());
@@ -1045,11 +992,8 @@ const fetchData = async () => {
     heatmapData.value = heatmapRes.data;
     totalReps.value = statsRes.data.totalReps;
     stats.streak = statsRes.data.streak;
-    stats.topMonth = statsRes.data.topMonth;
-    stats.topMonthCount = statsRes.data.topMonthCount;
     stats.dailyGoal = statsRes.data.dailyGoal || 50;
     stats.totalVolume = statsRes.data.totalVolume || 0;
-    stats.bodyWeight = statsRes.data.bodyWeight || 75;
     stats.combatPower = statsRes.data.combatPower || { total: 0, base: 0, gear: 0, buff: 0 };
     await Promise.all([
       fetchGlobalData(),
@@ -1101,10 +1045,10 @@ const saveEdit = async (id) => {
   try {
     await axios.put(`/api/reps/${id}`, { count: editValue.value });
     editingId.value = null;
-    notificationStore.notify('Entry updated', 'success');
+    notificationStore.notify(i18n.t('dash_entry_updated'), 'success');
     fetchData();
   } catch (err) {
-    notificationStore.notify('Update failed', 'error');
+    notificationStore.notify(i18n.t('dash_update_failed'), 'error');
   }
 };
 
@@ -1123,30 +1067,28 @@ watch(
 const confirmDelete = (id) => {
   if (deletingRepIds.value.has(id)) return;
   notificationStore.confirm(
-    'Delete Log',
-    'Are you sure you want to delete this entry?',
+    i18n.t('dash_delete_title'),
+    i18n.t('dash_delete_confirm'),
     async () => {
       try {
         deletingRepIds.value.add(id);
         await axios.delete(`/api/reps/${id}`);
-        notificationStore.notify('Entry deleted', 'success');
+        notificationStore.notify(i18n.t('dash_entry_deleted'), 'success');
         fetchData();
       } catch (err) {
         if (err?.response?.status === 404) {
           // Already deleted or stale client state: update UI silently
           reps.value = reps.value.filter(r => r.id !== id);
-          notificationStore.notify('Entry already removed', 'info');
+          notificationStore.notify(i18n.t('dash_entry_already_removed'), 'info');
           return;
         }
-        notificationStore.notify('Delete failed', 'error');
+        notificationStore.notify(i18n.t('dash_delete_failed'), 'error');
       } finally {
         deletingRepIds.value.delete(id);
       }
     }
   );
 };
-
-let refreshInterval = null;
 
 const handleCloseRPGModal = () => {
   showRPGModal.value = false;
@@ -1214,34 +1156,34 @@ const openPlanPicker = () => {
 const pausePlan = async () => {
   try {
     await trainingStore.pausePlan();
-    notificationStore.notify(i18n.locale === 'es' ? 'Plan pausado' : 'Plan paused', 'success');
+    notificationStore.notify(i18n.t('dash_plan_paused_notify'), 'success');
     await fetchData();
   } catch (error) {
-    notificationStore.notify(i18n.locale === 'es' ? 'No se pudo pausar el plan' : 'Could not pause plan', 'error');
+    notificationStore.notify(i18n.t('dash_plan_pause_error'), 'error');
   }
 };
 
 const resumePlan = async () => {
   try {
     await trainingStore.resumePlan();
-    notificationStore.notify(i18n.locale === 'es' ? 'Plan reanudado' : 'Plan resumed', 'success');
+    notificationStore.notify(i18n.t('dash_plan_resumed_notify'), 'success');
     await fetchData();
   } catch (error) {
-    notificationStore.notify(i18n.locale === 'es' ? 'No se pudo reanudar el plan' : 'Could not resume plan', 'error');
+    notificationStore.notify(i18n.t('dash_plan_resume_error'), 'error');
   }
 };
 
 const abandonPlan = async () => {
   notificationStore.confirm(
-    i18n.locale === 'es' ? 'Abandonar plan' : 'Abandon plan',
-    i18n.locale === 'es' ? 'Podras elegir otro plan despues.' : 'You can choose another plan afterwards.',
+    i18n.t('dash_plan_abandon_title'),
+    i18n.t('dash_plan_abandon_confirm'),
     async () => {
       try {
         await trainingStore.abandonPlan();
-        notificationStore.notify(i18n.locale === 'es' ? 'Plan abandonado' : 'Plan abandoned', 'success');
+        notificationStore.notify(i18n.t('dash_plan_abandoned_notify'), 'success');
         await fetchData();
       } catch (error) {
-        notificationStore.notify(i18n.locale === 'es' ? 'No se pudo abandonar el plan' : 'Could not abandon plan', 'error');
+        notificationStore.notify(i18n.t('dash_plan_abandon_error'), 'error');
       }
     }
   );
@@ -1270,10 +1212,7 @@ onMounted(async () => {
 
   fetchData();
   handleLogQueryIntent();
-  // Auto-refresh removed to save Supabase/Vercel resources. 
-  // Real-time events via Socket.io handle the live feel.
-  // refreshInterval = setInterval(fetchData, 60000);
-  
+
   // Timer for active effects
   timerInterval = setInterval(() => {
     currentTime.value = new Date();
@@ -1288,7 +1227,6 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
-  if (refreshInterval) clearInterval(refreshInterval);
   if (timerInterval) clearInterval(timerInterval);
   if (desktopMql) desktopMql.removeEventListener('change', handleDesktopChange);
 });
@@ -1302,10 +1240,7 @@ watch(
     }
     if (isCompleted) {
       missionCompletionPulse.value = true;
-      notificationStore.notify(
-        i18n.locale === 'es' ? 'Mision diaria completada' : 'Daily mission completed',
-        'success'
-      );
+      notificationStore.notify(i18n.t('dash_mission_completed_notify'), 'success');
       setTimeout(() => {
         missionCompletionPulse.value = false;
       }, 1800);
@@ -1315,8 +1250,6 @@ watch(
 </script>
 
 <style scoped>
-.text-industrial { font-family: 'Inter Tight', sans-serif; }
-.text-precision { font-family: 'JetBrains Mono', monospace; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 

@@ -2,41 +2,41 @@
   <section class="w-full rounded-2xl border border-primary-500/30 bg-primary-500/[0.07] p-4 sm:p-6">
     <div v-if="completedToday" class="space-y-4">
       <div>
-        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-400">
-          {{ i18n.locale === 'es' ? 'Dia completado' : 'Day completed' }}
+        <p class="text-[10px] font-semibold uppercase tracking-wide text-emerald-400">
+          {{ i18n.locale === 'es' ? 'Día completado' : 'Day completed' }}
         </p>
-        <h3 class="mt-2 text-2xl font-bold uppercase leading-tight tracking-tight text-foreground sm:text-3xl">
+        <h3 class="mt-2 text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
           {{ completedTitle }}
         </h3>
         <p class="mt-2 text-sm font-bold text-muted/70">
-          {{ i18n.locale === 'es' ? 'Manana sigues. La proxima mision queda bloqueada hasta el nuevo dia.' : 'Continue tomorrow. The next mission unlocks on the next day.' }}
+          {{ i18n.locale === 'es' ? 'Mañana sigues. La próxima misión queda bloqueada hasta el nuevo día.' : 'Continue tomorrow. The next mission unlocks on the next day.' }}
         </p>
       </div>
       <div class="grid grid-cols-2 gap-2 sm:max-w-sm">
-        <div class="rounded-2xl border border-white/10 bg-deep-abyss/75 p-4 text-center">
-          <p class="text-xs font-black uppercase tracking-widest text-muted">
+        <div class="rounded-2xl border border-border bg-deep-abyss/75 p-4 text-center">
+          <p class="text-xs font-semibold uppercase tracking-wide text-muted">
             {{ i18n.locale === 'es' ? 'Vuelves en' : 'Come back in' }}
           </p>
           <p class="mt-1 text-2xl font-bold text-primary-500">{{ unlockHours }}</p>
-          <p class="text-[10px] font-black uppercase tracking-widest text-muted">h</p>
+          <p class="text-[10px] font-semibold uppercase tracking-wide text-muted">h</p>
         </div>
-        <div class="rounded-2xl border border-white/10 bg-deep-abyss/75 p-4 text-center">
-          <p class="text-xs font-black uppercase tracking-widest text-muted">
+        <div class="rounded-2xl border border-border bg-deep-abyss/75 p-4 text-center">
+          <p class="text-xs font-semibold uppercase tracking-wide text-muted">
             {{ i18n.locale === 'es' ? 'Minutos' : 'Minutes' }}
           </p>
           <p class="mt-1 text-2xl font-bold text-primary-500">{{ unlockMinutes }}</p>
-          <p class="text-[10px] font-black uppercase tracking-widest text-muted">min</p>
+          <p class="text-[10px] font-semibold uppercase tracking-wide text-muted">min</p>
         </div>
       </div>
-      <div v-if="nextWorkoutPreview" class="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-        <p class="text-xs font-black uppercase tracking-widest text-muted">
-          {{ i18n.locale === 'es' ? 'Proxima mision' : 'Next mission' }}
+      <div v-if="nextWorkoutPreview" class="rounded-2xl border border-border bg-foreground/[0.04] p-4">
+        <p class="text-xs font-semibold uppercase tracking-wide text-muted">
+          {{ i18n.locale === 'es' ? 'Próxima misión' : 'Next mission' }}
         </p>
-        <p class="mt-1 text-lg font-black text-foreground">
+        <p class="mt-1 text-lg font-bold text-foreground">
           {{ i18n.t(nextWorkoutPreview.day.titleKey) }}
         </p>
         <p class="mt-1 text-xs font-bold text-muted/70">
-          {{ i18n.t(nextWorkoutPreview.plan.titleKey) }} · {{ i18n.locale === 'es' ? 'Dia' : 'Day' }} {{ nextWorkoutPreview.day.dayNumber }}/{{ nextWorkoutPreview.plan.durationDays }}
+          {{ i18n.t(nextWorkoutPreview.plan.titleKey) }} · {{ i18n.locale === 'es' ? 'Día' : 'Day' }} {{ nextWorkoutPreview.day.dayNumber }}/{{ nextWorkoutPreview.plan.durationDays }}
         </p>
       </div>
     </div>
@@ -44,29 +44,29 @@
     <template v-else-if="workout">
     <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
       <div class="min-w-0">
-        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-primary-500">
+        <p class="text-[10px] font-semibold uppercase tracking-wide text-primary-500">
           {{ i18n.t('today_workout_title') }}
         </p>
-        <h3 class="mt-2 text-2xl font-bold uppercase leading-tight tracking-tight text-foreground sm:text-3xl">
+        <h3 class="mt-2 text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">
           {{ i18n.t(workout.day.titleKey) }}
         </h3>
         <p class="mt-1 text-sm font-bold text-muted/70">
-          {{ i18n.t(workout.plan.titleKey) }} · {{ i18n.locale === 'es' ? 'Dia' : 'Day' }} {{ workout.day.dayNumber }}/{{ workout.plan.durationDays }}
+          {{ i18n.t(workout.plan.titleKey) }} · {{ i18n.locale === 'es' ? 'Día' : 'Day' }} {{ workout.day.dayNumber }}/{{ workout.plan.durationDays }}
         </p>
       </div>
 
       <div class="grid grid-cols-3 gap-2 text-center lg:min-w-[280px]">
-        <div class="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2">
+        <div class="rounded-xl border border-border bg-foreground/[0.04] px-3 py-2">
           <Clock class="mx-auto h-4 w-4 text-primary-500" />
-          <p class="mt-1 text-xs font-black text-foreground">{{ workout.day.estimatedMinutes }}m</p>
+          <p class="mt-1 text-xs font-bold text-foreground">{{ workout.day.estimatedMinutes }}m</p>
         </div>
-        <div class="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2">
+        <div class="rounded-xl border border-border bg-foreground/[0.04] px-3 py-2">
           <Sparkles class="mx-auto h-4 w-4 text-amber-400" />
-          <p class="mt-1 text-xs font-black text-foreground">{{ workout.day.rewardXp }} XP</p>
+          <p class="mt-1 text-xs font-bold text-foreground">{{ workout.day.rewardXp }} XP</p>
         </div>
-        <div class="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2">
+        <div class="rounded-xl border border-border bg-foreground/[0.04] px-3 py-2">
           <Coins class="mx-auto h-4 w-4 text-primary-500" />
-          <p class="mt-1 text-xs font-black text-foreground">{{ workout.day.rewardCoins }} RC</p>
+          <p class="mt-1 text-xs font-bold text-foreground">{{ workout.day.rewardCoins }} RC</p>
         </div>
       </div>
     </div>
@@ -87,18 +87,18 @@
       <article
         v-for="block in workout.blocks"
         :key="block.id"
-        class="rounded-2xl border border-white/10 bg-deep-abyss/70 p-4"
+        class="rounded-2xl border border-border bg-deep-abyss/70 p-4"
       >
         <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div class="min-w-0">
-            <p class="text-xs font-black uppercase tracking-widest text-primary-500">{{ block.blockType }}</p>
-            <h4 class="mt-1 text-lg font-black text-foreground cursor-pointer hover:text-primary-500 transition flex items-center gap-2 select-none" @click="openExerciseDetail(block.exerciseType || 'pullups')">
+            <p class="text-xs font-semibold uppercase tracking-wide text-primary-500">{{ block.blockType }}</p>
+            <h4 class="mt-1 text-lg font-bold text-foreground cursor-pointer hover:text-primary-500 transition flex items-center gap-2 select-none" @click="openExerciseDetail(block.exerciseType || 'pullups')">
               {{ block.title }}
               <Info class="h-3.5 w-3.5 opacity-40 hover:opacity-100 transition" />
             </h4>
             <p class="mt-1 text-sm font-semibold leading-relaxed text-muted/70">{{ block.instructions }}</p>
           </div>
-          <div class="flex shrink-0 items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted">
+          <div class="flex shrink-0 items-center gap-2 text-[10px] font-semibold uppercase tracking-wide text-muted">
             <TimerReset class="h-4 w-4 text-primary-500" />
             {{ block.restSeconds }}s
           </div>
@@ -108,13 +108,13 @@
           <div
             v-for="set in setsForBlock(block.id)"
             :key="`${block.id}-${set.setIndex}`"
-            class="grid grid-cols-[1fr_auto] items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3"
+            class="grid grid-cols-[1fr_auto] items-center gap-3 rounded-xl border border-border bg-foreground/[0.03] p-3"
           >
             <div>
-              <p class="text-xs font-black uppercase tracking-widest text-muted">
+              <p class="text-xs font-semibold uppercase tracking-wide text-muted">
                 Set {{ set.setIndex }} · {{ set.targetReps }} {{ unitLabel(set.unit) }}
               </p>
-              <p class="mt-1 text-lg font-black text-foreground">{{ formatSetValue(set.actualReps, set.unit) }}</p>
+              <p class="mt-1 text-lg font-bold text-foreground">{{ formatSetValue(set.actualReps, set.unit) }}</p>
             </div>
 
             <div class="flex items-center gap-2">
@@ -127,7 +127,7 @@
               <button
                 v-if="isTimedSet(set)"
                 type="button"
-                class="inline-flex h-10 min-w-[5rem] items-center justify-center gap-1 rounded-xl border border-primary-500/30 bg-primary-500/10 px-3 text-[10px] font-black uppercase tracking-widest text-primary-400 transition hover:bg-primary-500/20 active:scale-95"
+                class="inline-flex h-10 min-w-[5rem] items-center justify-center gap-1 rounded-xl border border-primary-500/30 bg-primary-500/10 px-3 text-[10px] font-semibold uppercase tracking-wide text-primary-400 transition hover:bg-primary-500/20 active:scale-95"
                 @click="toggleWorkTimer(set)"
                 :aria-label="set.workTimerActive ? 'Parar contador' : 'Iniciar contador'"
               >
@@ -137,21 +137,21 @@
               </button>
                <button
                 type="button"
-                class="rounded-xl px-3 py-2 text-[10px] font-black uppercase tracking-widest transition active:scale-95"
-                :class="set.completed ? 'bg-emerald-500 text-white' : 'bg-white/10 text-foreground hover:bg-white/15'"
+                class="rounded-xl px-3 py-2 text-[10px] font-semibold uppercase tracking-wide transition active:scale-95"
+                :class="set.completed ? 'bg-emerald-500 text-white' : 'bg-foreground/10 text-foreground hover:bg-foreground/15'"
                 @click="markDone(set)"
               >
                 <Check class="h-4 w-4" />
               </button>
               <div
                 v-if="set.timerActive"
-                class="rounded-xl px-3 py-2 text-[10px] font-black uppercase tracking-widest bg-amber-500/20 text-amber-500 border border-amber-500/30 flex items-center gap-1 select-none"
+                class="rounded-xl px-3 py-2 text-[10px] font-semibold uppercase tracking-wide bg-amber-500/20 text-amber-500 border border-amber-500/30 flex items-center gap-1 select-none"
               >
                 <Clock class="h-3.5 w-3.5 animate-pulse" />
                 {{ set.restTimer }}s
               </div>
             </div>
-            <div v-if="isTimedSet(set)" class="col-span-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+            <div v-if="isTimedSet(set)" class="col-span-2 h-1.5 overflow-hidden rounded-full bg-foreground/10">
               <div
                 class="h-full rounded-full bg-primary-500 transition-all"
                 :style="{ width: `${timedProgress(set)}%` }"
@@ -161,21 +161,21 @@
         </div>
       </article>
 
-      <div class="sticky bottom-3 z-10 rounded-2xl border border-white/10 bg-deep-abyss/95 p-3 backdrop-blur-xl sm:static sm:bg-transparent sm:p-0 sm:backdrop-blur-0">
-        <div class="mb-3 flex items-center justify-between text-xs font-black uppercase tracking-widest text-muted sm:hidden">
+      <div class="sticky bottom-3 z-10 rounded-2xl border border-border bg-deep-abyss/95 p-3 backdrop-blur-xl sm:static sm:bg-transparent sm:p-0 sm:backdrop-blur-0">
+        <div class="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-muted sm:hidden">
           <span>{{ totalProgressLabel }}</span>
           <span>{{ completionRate }}%</span>
         </div>
         <p
           v-if="incompleteSets.length"
-          class="mb-3 rounded-xl border border-amber-400/25 bg-amber-400/10 px-3 py-2 text-center text-[10px] font-black uppercase tracking-widest text-amber-300"
+          class="mb-3 rounded-xl border border-amber-400/25 bg-amber-400/10 px-3 py-2 text-center text-[10px] font-semibold uppercase tracking-wide text-amber-300"
         >
           {{ incompleteSetsLabel }}
         </p>
         <div class="flex gap-2">
           <button
             type="button"
-            class="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-4 text-[10px] font-black uppercase tracking-widest text-muted transition hover:border-red-500/30 hover:text-red-300 active:scale-95 disabled:opacity-40"
+            class="rounded-2xl border border-border bg-foreground/[0.04] px-4 py-4 text-[10px] font-semibold uppercase tracking-wide text-muted transition hover:border-red-500/30 hover:text-red-300 active:scale-95 disabled:opacity-40"
             :disabled="loading"
             @click="abandonSession"
           >
@@ -247,7 +247,7 @@ const completedTitle = computed(() => {
   const day = plan?.lastCompletedDay || Math.max(1, Number(plan?.currentDay || 1) - 1);
   const duration = plan?.durationDays || props.nextWorkoutPreview?.plan?.durationDays || 0;
   return i18n.locale === 'es'
-    ? `Dia ${day}/${duration} completado`
+    ? `Día ${day}/${duration} completado`
     : `Day ${day}/${duration} completed`;
 });
 
@@ -356,8 +356,8 @@ const incompleteSetsLabel = computed(() => {
   if (!count) return '';
   if (i18n.locale === 'es') {
     return count === 1
-      ? 'Te falta 1 set para completar la mision'
-      : `Te faltan ${count} sets para completar la mision`;
+      ? 'Te falta 1 set para completar la misión'
+      : `Te faltan ${count} sets para completar la misión`;
   }
   return count === 1
     ? '1 set left to complete the mission'
@@ -455,7 +455,7 @@ const markDone = (set) => {
 const abandonSession = () => {
   notificationStore.confirm(
     i18n.locale === 'es' ? 'Salir del entrenamiento' : 'Exit workout',
-    i18n.locale === 'es' ? 'Tu progreso de esta sesion no se guardara.' : 'Your progress for this session will not be saved.',
+    i18n.locale === 'es' ? 'Tu progreso de esta sesión no se guardará.' : 'Your progress for this session will not be saved.',
     async () => {
       clearAllTimers();
       const currentSessionId = session.value?.id;
@@ -472,7 +472,7 @@ const startWorkout = async () => {
   try {
     session.value = await trainingStore.startSession(props.workout.day.id);
   } catch (error) {
-    notificationStore.notify(i18n.locale === 'es' ? 'No se pudo iniciar la mision' : 'Mission could not start', 'error');
+    notificationStore.notify(i18n.locale === 'es' ? 'No se pudo iniciar la misión' : 'Mission could not start', 'error');
   } finally {
     loading.value = false;
   }
@@ -502,7 +502,7 @@ const finishWorkout = async () => {
 
     notificationStore.notify(
       i18n.locale === 'es'
-        ? `Mision completada: ${finishedLabel} registrados`
+        ? `Misión completada: ${finishedLabel} registrados`
         : `Mission completed: ${finishedLabel} logged`,
       'success'
     );
@@ -537,9 +537,9 @@ const finishWorkout = async () => {
   width: 2.5rem;
   place-items: center;
   border-radius: 0.75rem;
-  border: 1px solid rgb(255 255 255 / 0.1);
-  background: rgb(255 255 255 / 0.05);
-  color: rgb(255 255 255 / 0.8);
+  border: 1px solid hsl(var(--border));
+  background: hsla(var(--foreground) / 0.05);
+  color: hsla(var(--foreground) / 0.8);
   transition: transform 0.15s ease, background 0.15s ease;
 }
 
@@ -548,6 +548,6 @@ const finishWorkout = async () => {
 }
 
 .icon-btn:hover {
-  background: rgb(255 255 255 / 0.1);
+  background: hsla(var(--foreground) / 0.1);
 }
 </style>
