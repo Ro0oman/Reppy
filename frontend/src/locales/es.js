@@ -443,16 +443,17 @@ export default {
 
     // Lucky Wheel
     wheel_title_start: 'Ruleta',
-    wheel_title_end: 'Diaria',
-    wheel_subtitle: 'Gira el dial para ganar monedas, cofres y bufos.',
+    wheel_title_end: 'Reppy',
+    wheel_subtitle: 'Gira cada 4 horas para ganar monedas, cofres y bufos.',
     wheel_btn_spin: 'GIRAR',
     wheel_btn_spinning: '...',
-    wheel_already_spun: "Ya has usado tu giro diario",
+    wheel_already_spun: "Ya has usado tu giro gratis",
     wheel_btn_close: 'Cerrar',
     wheel_legendary: '¡OBJETO LEGENDARIO!',
-    wheel_try_tomorrow: 'VUELVE MAÑANA',
+    wheel_try_tomorrow: 'VUELVE PRONTO',
     wheel_congrats: '¡Felicidades por tu premio!',
-    wheel_return_tomorrow: 'Mañana más y mejor suerte',
+    wheel_return_tomorrow: 'Vuelve en unas horas para otro giro gratis',
+    wheel_cooldown: 'Disponible en {time}',
     wheel_nothing: 'NADA',
     wheel_coins: 'MONEDAS',
     wheel_potion: 'POCIÓN DE PODER',
@@ -463,7 +464,7 @@ export default {
     wheel_prizemsg_item: '¡{name}! 🏆',
     wheel_prizemsg_chest: '¡Cofre de Nivel! 🎁',
     wheel_spin_again: 'GIRAR DE NUEVO',
-    wheel_return_info: 'Prueba suerte mañana para el giro gratis',
+    wheel_return_info: 'Vuelve en 4 horas para tu giro gratis',
 
     // Level Bar
     level_xp_info: 'Consigue XP para ganar COFRES DE BOTÍN. Cada repetición suma.',
@@ -1156,6 +1157,7 @@ export default {
     // Inventory Redesign
     inv_artifact_detail: 'DETALLE',
     inv_artifact_rarity: 'RAREZA',
+    inv_duration: 'DURACIÓN',
     inv_artifact_description: 'DESCRIPCIÓN',
     inv_artifact_stats: 'ANÁLISIS_COMBATE',
     inv_link_artifact: 'ENLAZAR',
@@ -1205,6 +1207,8 @@ export default {
     inv_dmg_mult_desc: '+{percent}% de daño global',
     inv_dex_boost: 'Aumento de Destreza',
     inv_dex_boost_desc: 'Aumenta críticos y precisión',
+    inv_stat_boost: 'Aumento de {stat}',
+    inv_stat_boost_desc: 'Mejora temporal de {stat}',
     inv_boost_active: 'Boost Activo',
     inv_time_left: 'Tiempo Restante',
     inv_sync_stash: 'Sincronizando Almacén...',

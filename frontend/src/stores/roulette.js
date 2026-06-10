@@ -8,6 +8,7 @@ export const useRouletteStore = defineStore('roulette', {
     hasTicket: false,
     ticketCount: 0,
     extraSpinCost: 5,
+    nextSpinAt: null,
     lastCheck: 0,
     fetchPromise: null,
     showModal: false
@@ -41,6 +42,7 @@ export const useRouletteStore = defineStore('roulette', {
           this.hasTicket = res.data.hasTicket;
           this.ticketCount = res.data.ticketCount;
           this.extraSpinCost = res.data.extraSpinCost || 5;
+          this.nextSpinAt = res.data.nextSpinAt || null;
           this.lastCheck = Date.now();
           return this.canSpin;
         } catch (e) {
@@ -56,6 +58,9 @@ export const useRouletteStore = defineStore('roulette', {
 
     setSpun() {
       this.canSpin = false;
+      // Optimistic: show a 4h countdown immediately. checkStatus(true) runs after
+      // the spin animation and replaces this with the server's exact nextSpinAt.
+      this.nextSpinAt = new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString();
       this.lastCheck = Date.now();
     }
   }

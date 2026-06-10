@@ -22,56 +22,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { FlaskConical, Timer } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';
+import { buildActiveBoosts } from '@/utils/activeBuffs';
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();
 const currentTime = ref(new Date());
 let timerInterval = null;
 
-const formatTimeLeft = (diff) => {
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-};
-
-const activePotions = computed(() => {
-  const user = authStore.user;
-  if (!user) return [];
-  
-  const now = currentTime.value;
-  const boosts = [];
-
-  // Check Damage Multiplier
-  if (user.damage_multiplier_expiry && new Date(user.damage_multiplier_expiry) > now) {
-    const expiry = new Date(user.damage_multiplier_expiry);
-    const diff = expiry - now;
-    boosts.push({
-      type: 'multiplier',
-      label: i18n.t('inv_dmg_mult'),
-      value: `x${parseFloat(user.damage_multiplier).toFixed(1)}`,
-      timeLeft: formatTimeLeft(diff)
-    });
-  }
-
-  // Check DEX Bonus
-  if (user.dex_bonus_expiry && new Date(user.dex_bonus_expiry) > now) {
-    const expiry = new Date(user.dex_bonus_expiry);
-    const diff = expiry - now;
-    boosts.push({
-      type: 'dex',
-      label: i18n.t('inv_dex_boost'),
-      value: `+${user.dex_bonus}`,
-      timeLeft: formatTimeLeft(diff)
-    });
-  }
-
-  return boosts;
-});
+const activePotions = computed(() => buildActiveBoosts(authStore.user, currentTime.value, i18n));
 
 onMounted(() => {
   timerInterval = setInterval(() => {

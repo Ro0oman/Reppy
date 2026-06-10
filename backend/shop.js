@@ -661,36 +661,56 @@ router.post('/activate/:id', authenticate, async (req, res) => {
         await client.query('DELETE FROM user_items WHERE user_id = $1 AND item_id = $2', [userId, itemId]);
       }
 
-      // Activate specific stat boost or generic multiplier.
-      let updateQuery = '';
-      let updateParams = [];
-      let bonusDesc = '';
-      let bonusValue = '';
+      // Map the consumable's stats onto the two buff mechanics the engine
+      // applies: temporary per-stat level bonuses (stat_buffs JSONB, read by
+      // augmentUserWithLevels) and a global damage multiplier. This is what makes
+      // the activated effect actually match the stats shown on the item.
+      const STAT_KEYS = ['str', 'dex', 'end', 'vig', 'int', 'fth'];
+      const STAT_LABELS = { str: 'FUE', dex: 'DES', end: 'RES', vig: 'VIG', int: 'INT', fth: 'FE' };
 
-      if (item.stats.dex_bonus) {
-        bonusDesc = 'DEX +' + item.stats.dex_bonus;
-        bonusValue = '+' + item.stats.dex_bonus;
-        updateQuery = `
-          UPDATE users
-          SET dex_bonus = $2,
-              dex_bonus_expiry = NOW() + INTERVAL '1 second' * $3
-          WHERE id = $1
-        `;
-        updateParams = [userId, item.stats.dex_bonus, durationSeconds];
-      } else {
-        const multiplier = item.stats.multiplier || 1.5;
-        bonusDesc = 'Daño x' + multiplier;
-        bonusValue = 'x' + multiplier;
-        updateQuery = `
-          UPDATE users
-          SET damage_multiplier = $2,
-              damage_multiplier_expiry = NOW() + INTERVAL '1 second' * $3
-          WHERE id = $1
-        `;
-        updateParams = [userId, multiplier, durationSeconds];
+      const statBonuses = {};
+      for (const k of STAT_KEYS) {
+        // Accept both the plain key (e.g. `dex`) and the legacy `${k}_bonus` key.
+        const v = (Number(item.stats[k]) || 0) + (Number(item.stats[`${k}_bonus`]) || 0);
+        if (v > 0) statBonuses[k] = v;
+      }
+      const multiplier = Number(item.stats.multiplier) || Number(item.stats.damage_multiplier) || 0;
+
+      const expiryIso = new Date(Date.now() + durationSeconds * 1000).toISOString();
+      const descParts = [];
+
+      if (Object.keys(statBonuses).length > 0) {
+        const buffPayload = {};
+        for (const [stat, value] of Object.entries(statBonuses)) {
+          buffPayload[stat] = { value, expiry: expiryIso };
+          descParts.push(`${STAT_LABELS[stat]} +${value}`);
+        }
+        // Merge so a still-running buff on a different stat survives this drink.
+        await client.query(
+          `UPDATE users SET stat_buffs = COALESCE(stat_buffs, '{}'::jsonb) || $2::jsonb WHERE id = $1`,
+          [userId, JSON.stringify(buffPayload)]
+        );
       }
 
-      await client.query(updateQuery, updateParams);
+      if (multiplier > 1) {
+        await client.query(
+          `UPDATE users SET damage_multiplier = $2, damage_multiplier_expiry = NOW() + INTERVAL '1 second' * $3 WHERE id = $1`,
+          [userId, multiplier, durationSeconds]
+        );
+        descParts.push(`Daño x${multiplier}`);
+      }
+
+      // Fallback so a misconfigured consumable still grants something visible.
+      if (descParts.length === 0) {
+        await client.query(
+          `UPDATE users SET damage_multiplier = 1.5, damage_multiplier_expiry = NOW() + INTERVAL '1 second' * $2 WHERE id = $1`,
+          [userId, durationSeconds]
+        );
+        descParts.push('Daño x1.5');
+      }
+
+      const bonusDesc = descParts.join(', ');
+      const bonusValue = descParts.join(' · ');
 
       // Post to social feed (best-effort). A SAVEPOINT keeps a failure here from
       // poisoning the transaction: in Postgres any error aborts the whole tx, so

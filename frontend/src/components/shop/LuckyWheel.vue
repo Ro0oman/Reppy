@@ -90,7 +90,8 @@
           <div v-else-if="!rouletteStore.canSpin && !spinning" class="text-center">
             <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1 italic">{{ i18n.t('wheel_return_tomorrow') }}</p>
             <div class="bg-zinc-100 dark:bg-white/5 px-6 py-2 rounded-xl border border-zinc-200 dark:border-white/10">
-               <span class="text-sm font-bold text-zinc-400">{{ i18n.t('wheel_already_spun') }}</span>
+               <span v-if="cooldownText" class="text-sm font-bold text-zinc-400">{{ i18n.t('wheel_cooldown', { time: cooldownText }) }}</span>
+               <span v-else class="text-sm font-bold text-zinc-400">{{ i18n.t('wheel_already_spun') }}</span>
             </div>
           </div>
         </div>
@@ -168,7 +169,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Sparkles } from 'lucide-vue-next';
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
@@ -194,22 +195,42 @@ const rotation = ref(0);
 const prizeResult = ref(null);
 const showResultModal = ref(false);
 
+// Live clock so the cooldown countdown ticks while the modal is open.
+const now = ref(Date.now());
+let cooldownTimer = null;
+
+// "2h 14m" / "37m" / "<1m" until the free spin recharges, or null if ready.
+const cooldownText = computed(() => {
+  if (!rouletteStore.nextSpinAt) return null;
+  const remaining = new Date(rouletteStore.nextSpinAt).getTime() - now.value;
+  if (remaining <= 0) return null;
+  const totalMinutes = Math.ceil(remaining / 60000);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  if (hours > 0) return `${hours}h ${minutes}m`;
+  if (minutes > 0) return `${minutes}m`;
+  return '<1m';
+});
+
 const closeResult = () => {
   showResultModal.value = false;
   emit('close');
 };
 
+// Keep in sync with ROULETTE_PRIZES in backend/roulette.js — `size` is the
+// prize weight × 3.6 so the slices fill 360°, and `id` must match so the wheel
+// lands on the segment the backend actually awarded.
 const rewards = [
-  { id: 0, name: '200 🪙', bgColor: '#FBBF24', size: 72 }, // 20 * 3.6
-  { id: 1, name: '400 🪙', bgColor: '#F59E0B', size: 54 }, // 15 * 3.6
-  { id: 2, name: '600 🪙', bgColor: '#D97706', size: 43.2 }, // 12 * 3.6
-  { id: 3, name: '800 🪙', bgColor: '#B45309', size: 36 }, // 10 * 3.6
-  { id: 4, name: '1000 🪙', bgColor: '#4F46E5', size: 28.8 }, // 8 * 3.6
-  { id: 5, name: '2000 🪙', bgColor: '#EF4444', size: 14.4 }, // 4 * 3.6
-  { id: 10, name: '3 💎', bgColor: '#10B981', size: 72 }, // 20 * 3.6
+  { id: 0, name: '40 🪙', bgColor: '#FBBF24', size: 153 }, // 42.5 * 3.6
+  { id: 1, name: '75 🪙', bgColor: '#F59E0B', size: 64.8 }, // 18 * 3.6
+  { id: 2, name: '120 🪙', bgColor: '#D97706', size: 36 }, // 10 * 3.6
+  { id: 3, name: '200 🪙', bgColor: '#B45309', size: 21.6 }, // 6 * 3.6
+  { id: 4, name: '350 🪙', bgColor: '#4F46E5', size: 10.8 }, // 3 * 3.6
+  { id: 5, name: '600 🪙', bgColor: '#EF4444', size: 3.6 }, // 1 * 3.6
+  { id: 10, name: '2 💎', bgColor: '#10B981', size: 36 }, // 10 * 3.6
   { id: 6, name: '🧪', bgColor: '#6366F1', size: 21.6 }, // 6 * 3.6
-  { id: 7, name: '🎁 L', bgColor: '#8B5CF6', size: 10.8 }, // 3 * 3.6
-  { id: 8, name: '🎁 B', bgColor: '#EC4899', size: 5.4 }, // 1.5 * 3.6
+  { id: 7, name: '🎁 L', bgColor: '#8B5CF6', size: 7.2 }, // 2 * 3.6
+  { id: 8, name: '🎁 B', bgColor: '#EC4899', size: 3.6 }, // 1 * 3.6
   { id: 9, name: '🎁 E', bgColor: '#F43F5E', size: 1.8 } // 0.5 * 3.6
 ];
 
@@ -286,6 +307,8 @@ const spinWheel = async () => {
       // Update balances
       authStore.user.reppy_coins = data.new_coins;
       authStore.user.reppy_gems = data.new_gems;
+      // Refresh cooldown/ticket state from the server (authoritative nextSpinAt).
+      rouletteStore.checkStatus(true);
 
       if (data.prize.type !== 'nothing') {
         confetti({
@@ -336,6 +359,8 @@ const spinAgainWithGems = async () => {
       
       authStore.user.reppy_coins = data.new_coins;
       authStore.user.reppy_gems = data.new_gems;
+      // Refresh cooldown/ticket state from the server (authoritative nextSpinAt).
+      rouletteStore.checkStatus(true);
 
       if (data.prize.type !== 'nothing') {
         confetti({
@@ -356,6 +381,11 @@ const spinAgainWithGems = async () => {
 
 onMounted(async () => {
   rouletteStore.checkStatus();
+  cooldownTimer = setInterval(() => { now.value = Date.now(); }, 1000);
+});
+
+onUnmounted(() => {
+  if (cooldownTimer) clearInterval(cooldownTimer);
 });
 </script>
 

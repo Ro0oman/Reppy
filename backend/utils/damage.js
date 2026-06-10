@@ -79,17 +79,16 @@ export const calculateDamage = (user, reps, type, boss = null, skipBuffs = false
   const damageWithGearNoCrit = (baseDamageValue * levelMult * intBonus * chaBonus * strScale * endScale * fthScale) + divineBonus;
   
   // --- ACTIVE CONSUMABLE MULTIPLIER ---
+  // Temporary stat bonuses (str/dex/end/...) are already folded into the *_lvl
+  // values by augmentUserWithLevels, so they flow through the scaling below.
+  // Only the global damage multiplier needs to be applied here.
   let activeMultiplier = 1.0;
-  let dexBonus = 0;
   if (!skipBuffs && user.damage_multiplier_expiry && new Date(user.damage_multiplier_expiry) > new Date()) {
     activeMultiplier = parseFloat(user.damage_multiplier) || 1.0;
   }
-  if (!skipBuffs && user.dex_bonus_expiry && new Date(user.dex_bonus_expiry) > new Date()) {
-    dexBonus = parseInt(user.dex_bonus) || 0;
-  }
 
-  // Final dex level for crit
-  const finalDexLvl = dexLvl; // dexLvl already includes gear/buffs if passed correctly, but let's be safe
+  // Final dex level for crit (already includes gear + temporary buffs).
+  const finalDexLvl = dexLvl;
   const critChance = (finalDexLvl * 2.5) + (vigLvl * 0.5);
   const critMult = 2.0 + (finalDexLvl * 0.1);
 

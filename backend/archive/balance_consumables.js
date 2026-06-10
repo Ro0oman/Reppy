@@ -10,6 +10,19 @@ const statTotalByRarity = {
     'calistenico': 25
 };
 
+// Buff length (seconds) by rarity — restores the durations the original
+// diversify_consumables.js seeded, which this script used to wipe. Without it
+// stats.duration is gone and the buff silently falls back to 1h (shop.js).
+const durationByRarity = {
+    'common': 1800,      // 30 min
+    'uncommon': 2700,    // 45 min
+    'rare': 3600,        // 1 h
+    'epic': 10800,       // 3 h
+    'especial': 10800,   // 3 h
+    'legendary': 21600,  // 6 h
+    'calistenico': 86400 // 24 h
+};
+
 // Configuración específica de consumibles
 const potionConfig = {
     "Vial de Energía Básica": {
@@ -72,7 +85,10 @@ async function balanceConsumables() {
             } else {
                 newStats[config.stat] = totalPoints;
             }
-            
+
+            // Keep the buff duration so it shows in the UI and drives activation.
+            newStats.duration = durationByRarity[item.rarity] || 3600;
+
             await query(
                 'UPDATE items SET stats = $1, description = $2 WHERE id = $3',
                 [newStats, config.desc, item.id]

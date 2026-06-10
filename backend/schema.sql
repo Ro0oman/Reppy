@@ -272,6 +272,8 @@ UPDATE users SET level_chests_claimed = GREATEST(level_chests_claimed, 1) WHERE 
 -- Damage & Consumables Update
 ALTER TABLE users ADD COLUMN IF NOT EXISTS damage_multiplier DECIMAL DEFAULT 1.0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS damage_multiplier_expiry TIMESTAMP WITH TIME ZONE;
+-- Temporary per-stat consumable buffs: { "str": { "value": 3, "expiry": "<iso>" }, ... }
+ALTER TABLE users ADD COLUMN IF NOT EXISTS stat_buffs JSONB DEFAULT '{}'::jsonb;
 ALTER TABLE user_inventory ADD COLUMN IF NOT EXISTS quantity INTEGER DEFAULT 1;
 ALTER TABLE user_inventory ADD COLUMN IF NOT EXISTS is_new BOOLEAN DEFAULT TRUE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS cha_xp INTEGER DEFAULT 0;

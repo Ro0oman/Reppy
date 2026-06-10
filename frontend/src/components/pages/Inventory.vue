@@ -358,7 +358,7 @@
                           </div>
                           <h4 class="text-xs sm:text-[10px] font-black text-foreground truncate uppercase tracking-wide mb-1">{{ item.name }}</h4>
                           <div v-if="item.stats" class="hidden sm:flex flex-wrap gap-1">
-                             <span v-for="(val, stat) in item.stats" :key="stat" v-show="val > 0 && stat !== 'duration' && stat !== 'multiplier'" class="text-[10px] font-black text-primary-500/80 uppercase">+{{ val }} {{ statLabels[stat] || stat }}</span>
+                             <span v-for="(val, stat) in item.stats" :key="stat" v-show="val > 0 && stat !== 'duration' && stat !== 'multiplier' && stat !== 'damage_multiplier'" class="text-[10px] font-black text-primary-500/80 uppercase">+{{ val }} {{ statLabels[stat] || stat }}</span>
                           </div>
                         </div>
 
@@ -448,13 +448,24 @@
                      <div class="h-px flex-1 bg-white/5"></div>
                    </h4>
                    <div class="grid grid-cols-2 gap-4">
-                    <div v-for="(val, key) in selectedItem.stats" :key="key" class="p-4 bg-white/5 rounded-2xl border border-white/5 flex flex-col gap-1">
+                    <div v-for="(val, key) in selectedItem.stats" v-show="key !== 'duration'" :key="key" class="p-4 bg-white/5 rounded-2xl border border-white/5 flex flex-col gap-1">
                       <p class="text-[10px] font-black text-primary-500/60 uppercase tracking-widest">{{ statLabels[key] || key.replace('_', ' ') }}</p>
                       <p class="text-xl font-black text-white italic tabular-nums">
-                        {{ key === 'multiplier' ? 'x' : '+' }}{{ val }}{{ key.includes('percent') || key.includes('chance') ? '%' : '' }}
+                        {{ (key === 'multiplier' || key === 'damage_multiplier') ? 'x' : '+' }}{{ val }}{{ key.includes('percent') || key.includes('chance') ? '%' : '' }}
                       </p>
                     </div>
                   </div>
+                </div>
+
+                <!-- Duration (consumables only) -->
+                <div v-if="selectedItem.type === 'consumable'" class="flex items-center justify-between p-6 bg-white/5 rounded-[22px] border border-white/5">
+                  <div class="flex items-center gap-3">
+                    <Timer class="w-4 h-4 text-muted" />
+                    <span class="text-[10px] font-black text-muted uppercase tracking-widest">{{ i18n.t('inv_duration') }}</span>
+                  </div>
+                  <span class="px-4 py-1.5 rounded-xl border border-primary-500/30 bg-primary-500/10 text-primary-400 text-[10px] font-black uppercase tracking-widest shadow-lg">
+                    {{ formatDuration(selectedItem.stats?.duration || 3600) }}
+                  </span>
                 </div>
 
                 <!-- Rarity Section -->
@@ -576,6 +587,7 @@ import axios from 'axios';
 import { useAudio } from '@/composables/useAudio';
 import { isItemUpgrade, normalizeStats } from '@/composables/useItemUpgrade';
 import ItemIcon from '@/components/ui/ItemIcon.vue';
+import { buildActiveBoosts } from '@/utils/activeBuffs';
 
 const { playZip, playEquipBlip, playClickBlip } = useAudio();
 const authStore = useAuthStore();
@@ -599,50 +611,7 @@ function isUpgrade(item, specificStat = null) {
   return isItemUpgrade({ item, equippedItem: equipped, specificStat });
 }
 
-const formatTimeLeft = (diff) => {
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-};
-
-const activePotions = computed(() => {
-  const user = authStore.user;
-  if (!user) return [];
-  
-  const now = currentTime.value;
-  const boosts = [];
-
-  // Check Damage Multiplier
-  if (user.damage_multiplier_expiry && new Date(user.damage_multiplier_expiry) > now) {
-    const expiry = new Date(user.damage_multiplier_expiry);
-    const diff = expiry - now;
-    const mult = parseFloat(user.damage_multiplier);
-    const percent = Math.round((mult - 1) * 100);
-    boosts.push({
-      type: 'multiplier',
-      label: 'inv_dmg_mult',
-      value: `x${mult.toFixed(1)}`,
-      description: i18n.t('inv_dmg_mult_desc', { percent }),
-      timeLeft: formatTimeLeft(diff)
-    });
-  }
-
-  // Check DEX Bonus
-  if (user.dex_bonus_expiry && new Date(user.dex_bonus_expiry) > now) {
-    const expiry = new Date(user.dex_bonus_expiry);
-    const diff = expiry - now;
-    boosts.push({
-      type: 'dex',
-      label: 'inv_dex_boost',
-      value: `+${user.dex_bonus}`,
-      description: i18n.t('inv_dex_boost_desc'),
-      timeLeft: formatTimeLeft(diff)
-    });
-  }
-
-  return boosts;
-});
+const activePotions = computed(() => buildActiveBoosts(authStore.user, currentTime.value, i18n));
 
 const combatStats = ref({
   total: 0,
@@ -683,17 +652,25 @@ watch(() => activePotions.value.length, (newLen, oldLen) => {
   }
 });
 
+const POTION_STAT_KEYS = ['str', 'dex', 'end', 'vig', 'int', 'fth'];
+
 const isPotionTypeActive = (item) => {
   if (!item || !item.stats) return false;
   const user = authStore.user;
   if (!user) return false;
   const now = currentTime.value;
-  
-  if (item.stats.multiplier) {
-    return user.damage_multiplier_expiry && new Date(user.damage_multiplier_expiry) > now;
+
+  // Damage-multiplier potion already running?
+  if ((item.stats.multiplier || item.stats.damage_multiplier)
+      && user.damage_multiplier_expiry && new Date(user.damage_multiplier_expiry) > now) {
+    return true;
   }
-  if (item.stats.dex_bonus) {
-    return user.dex_bonus_expiry && new Date(user.dex_bonus_expiry) > now;
+  // Stat potion: any of its stats already buffed?
+  const buffs = user.stat_buffs || {};
+  for (const k of POTION_STAT_KEYS) {
+    if ((item.stats[k] || item.stats[`${k}_bonus`]) && buffs[k] && new Date(buffs[k].expiry) > now) {
+      return true;
+    }
   }
   return false;
 };
@@ -761,9 +738,21 @@ const statLabels = {
   fth: 'Fe',
   cha: 'Carisma',
   multiplier: 'Multiplicador',
+  damage_multiplier: 'Daño',
   crit_chance: 'Prob. Crítica',
   crit_damage: 'Daño Crítico',
   duration: 'Duración'
+};
+
+// Consumable buff length. Mirrors the backend default (shop.js uses
+// stats.duration || 3600), so what we show matches what activation actually grants.
+const formatDuration = (seconds) => {
+  const s = Number(seconds) || 0;
+  if (s <= 0) return '—';
+  const hours = Math.floor(s / 3600);
+  const minutes = Math.round((s % 3600) / 60);
+  if (hours > 0) return minutes ? `${hours} h ${minutes} min` : `${hours} h`;
+  return `${minutes} min`;
 };
 
 const getStatDiff = (stat, newValue) => {

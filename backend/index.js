@@ -351,6 +351,8 @@ apiRouter.get('/db/init', async (req, res) => {
       `UPDATE cosmetics SET rarity = 'epic' WHERE price < 1200 AND price >= 600`,
       `UPDATE cosmetics SET rarity = 'rare' WHERE price < 600 AND price >= 200`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_spin_at TIMESTAMP WITH TIME ZONE`,
+      // Temporary per-stat consumable buffs: { "str": { "value": 3, "expiry": "<iso>" }, ... }
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS stat_buffs JSONB DEFAULT '{}'::jsonb`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_avatar_overhaul BOOLEAN DEFAULT FALSE`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_streak_reward_date DATE`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS push_disabled BOOLEAN DEFAULT FALSE`,

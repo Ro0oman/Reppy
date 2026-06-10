@@ -72,16 +72,25 @@ export const augmentUserWithLevels = (user) => {
     });
   });
 
+  // Temporary consumable buffs live in users.stat_buffs as
+  // { "str": { value, expiry }, "dex": {...}, ... }. node-postgres returns JSONB
+  // as an object, but parse defensively in case a caller passes a raw string.
+  let statBuffs = user.stat_buffs || {};
+  if (typeof statBuffs === 'string') {
+    try { statBuffs = JSON.parse(statBuffs); } catch { statBuffs = {}; }
+  }
+  const nowTs = new Date();
+
   stats.forEach(stat => {
     const xp = user[`${stat}_xp`] || 0;
     const baseLvl = getStatLevel(xp);
     let itemBonus = itemBonuses[stat] || 0;
-    
-    // Check for temporary stat bonuses (e.g., DEX potion)
-    if (stat === 'dex' && user.dex_bonus && user.dex_bonus_expiry) {
-      if (new Date(user.dex_bonus_expiry) > new Date()) {
-        itemBonus += user.dex_bonus;
-      }
+
+    // Add any active temporary stat bonus from a consumable (counts as levels,
+    // exactly like gear bonuses, so the damage engine picks it up via *_lvl).
+    const buff = statBuffs[stat];
+    if (buff && buff.expiry && new Date(buff.expiry) > nowTs) {
+      itemBonus += Number(buff.value) || 0;
     }
 
     const totalLvl = baseLvl + itemBonus;

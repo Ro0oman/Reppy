@@ -2,19 +2,27 @@ import express from 'express';
 import { query, withTransaction } from './db.js';
 import { authenticate, optionalAuthenticate } from './middleware.js';
 
+// How often the free spin recharges. Used by /status and /spin so they can
+// never disagree on whether the user is still on cooldown.
+const SPIN_COOLDOWN_HOURS = 4;
+
 // Prize table — shared by the free spin and the bought extra spin so both
-// endpoints can never drift apart.
+// endpoints can never drift apart. Rebalanced for the 4h cooldown (~6 free
+// spins/day vs 1): coin payouts and gem/chest odds are lowered so the daily
+// economy stays roughly flat despite the much higher spin frequency.
+// NOTE: weights must sum to 100 — the wheel UI maps each weight to a slice of
+// 360° (weight × 3.6), and pickPrize() walks a 0–100 cumulative range.
 const ROULETTE_PRIZES = [
-  { id: 0, value: 200, weight: 20, type: 'coins' },
-  { id: 1, value: 400, weight: 15, type: 'coins' },
-  { id: 2, value: 600, weight: 12, type: 'coins' },
-  { id: 3, value: 800, weight: 10, type: 'coins' },
-  { id: 4, value: 1000, weight: 8, type: 'coins' },
-  { id: 5, value: 2000, weight: 4, type: 'coins' },
-  { id: 10, value: 3, weight: 20, type: 'gems', label: '3 Gemas' },
-  { id: 6, rarity: 'common', weight: 6, type: 'consumable', label: 'Poción de Fuerza (x1.5)' },
-  { id: 7, type: 'chest', rarity: 'level', weight: 3, label: 'Cofre de Nivel' },
-  { id: 8, type: 'chest', rarity: 'boss', weight: 1.5, label: 'Cofre de Boss' },
+  { id: 0, value: 40, weight: 42.5, type: 'coins' },
+  { id: 1, value: 75, weight: 18, type: 'coins' },
+  { id: 2, value: 120, weight: 10, type: 'coins' },
+  { id: 3, value: 200, weight: 6, type: 'coins' },
+  { id: 4, value: 350, weight: 3, type: 'coins' },
+  { id: 5, value: 600, weight: 1, type: 'coins' },
+  { id: 10, value: 2, weight: 10, type: 'gems', label: '2 Gemas' },
+  { id: 6, rarity: 'common', weight: 6, type: 'consumable', label: 'Consumible Común' },
+  { id: 7, type: 'chest', rarity: 'level', weight: 2, label: 'Cofre de Nivel' },
+  { id: 8, type: 'chest', rarity: 'boss', weight: 1, label: 'Cofre de Boss' },
   { id: 9, type: 'chest', rarity: 'epic', weight: 0.5, label: 'Cofre Épico' }
 ];
 
@@ -98,32 +106,36 @@ router.get('/status', optionalAuthenticate, async (req, res) => {
     }
 
     const userRes = await query(`
-      SELECT last_spin_at, 
-      (last_spin_at AT TIME ZONE 'UTC')::date = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')::date as already_spun
+      SELECT last_spin_at,
+      (last_spin_at IS NOT NULL AND last_spin_at > NOW() - make_interval(hours => $2)) AS on_cooldown,
+      (last_spin_at + make_interval(hours => $2)) AS next_spin_at
       FROM users WHERE id = $1
-    `, [req.user.id]);
+    `, [req.user.id, SPIN_COOLDOWN_HOURS]);
 
     const row = userRes.rows[0];
-    const alreadySpun = row.last_spin_at && row.already_spun;
-    
+    const onCooldown = row.on_cooldown;
+
     // Check for tickets
     const ticketRes = await query(`
-      SELECT quantity 
+      SELECT quantity
       FROM user_items ui
       JOIN items i ON ui.item_id = i.id
       WHERE ui.user_id = $1 AND i.name = 'Ticket de Ruleta'
     `, [req.user.id]);
-    
+
     const ticketCount = ticketRes.rows.length > 0 ? ticketRes.rows[0].quantity : 0;
-    const canSpin = !alreadySpun || ticketCount > 0;
+    const canSpin = !onCooldown || ticketCount > 0;
     const extraSpinCost = await getRouletteTicketPrice(req.user.id);
 
-    res.json({ 
+    res.json({
       canSpin,
       hasTicket: ticketCount > 0,
       ticketCount,
       extraSpinCost,
-      lastSpinAt: row.last_spin_at 
+      lastSpinAt: row.last_spin_at,
+      // When the next free spin unlocks (null if it's already available).
+      nextSpinAt: onCooldown ? row.next_spin_at : null,
+      cooldownHours: SPIN_COOLDOWN_HOURS
     });
   } catch (error) {
     console.error('Error checking roulette status:', error);
@@ -139,18 +151,18 @@ router.post('/spin', authenticate, async (req, res) => {
     const result = await withTransaction(async (client) => {
       // Lock the user row so concurrent spins serialize. This is what stops the
       // double-free-spin race: the first spin flips last_spin_at inside the lock,
-      // so the second sees already_spun = true and must pay with a ticket.
+      // so the second sees on_cooldown = true and must pay with a ticket.
       const userRes = await client.query(`
         SELECT last_spin_at,
-        (last_spin_at AT TIME ZONE 'UTC')::date = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')::date as already_spun
+        (last_spin_at IS NOT NULL AND last_spin_at > NOW() - make_interval(hours => $2)) AS on_cooldown
         FROM users WHERE id = $1 FOR UPDATE
-      `, [userId]);
+      `, [userId, SPIN_COOLDOWN_HOURS]);
       if (userRes.rowCount === 0) return { status: 404, body: { message: 'User not found' } };
 
-      const alreadySpun = userRes.rows[0].last_spin_at && userRes.rows[0].already_spun;
+      const onCooldown = userRes.rows[0].on_cooldown;
       let usingTicket = false;
 
-      if (alreadySpun) {
+      if (onCooldown) {
         // Find a ticket the user actually owns, then consume it atomically. The
         // guarded decrement is the gate — concurrent extra spins can't share one
         // ticket because only one UPDATE can take quantity from N to N-1 per row.
@@ -162,7 +174,7 @@ router.post('/spin', authenticate, async (req, res) => {
         `, [userId]);
 
         if (ticketRes.rowCount === 0) {
-          return { status: 400, body: { message: 'Ya has girado la ruleta hoy. ¡Compra un Ticket de Ruleta para girar de nuevo!' } };
+          return { status: 400, body: { message: 'La ruleta aún está recargándose. ¡Vuelve en unas horas o compra un Ticket de Ruleta para girar ya!' } };
         }
         const ticketId = ticketRes.rows[0].item_id;
         const consume = await client.query(
@@ -172,14 +184,15 @@ router.post('/spin', authenticate, async (req, res) => {
           [userId, ticketId]
         );
         if (consume.rowCount === 0) {
-          return { status: 400, body: { message: 'Ya has girado la ruleta hoy. ¡Compra un Ticket de Ruleta para girar de nuevo!' } };
+          return { status: 400, body: { message: 'La ruleta aún está recargándose. ¡Vuelve en unas horas o compra un Ticket de Ruleta para girar ya!' } };
         }
         if (consume.rows[0].quantity <= 0) {
           await client.query('DELETE FROM user_items WHERE user_id = $1 AND item_id = $2', [userId, ticketId]);
         }
         usingTicket = true;
       } else {
-        // Claim the free daily spin by stamping last_spin_at under the lock.
+        // Claim the free spin by stamping last_spin_at under the lock — this
+        // starts the 4h cooldown.
         await client.query('UPDATE users SET last_spin_at = CURRENT_TIMESTAMP WHERE id = $1', [userId]);
       }
 
