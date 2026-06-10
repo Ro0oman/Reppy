@@ -1008,20 +1008,18 @@ const fetchGlobalData = async () => {
   }
 };
 
-const fetchData = async () => {
+// Exercise-scoped data only: reps history, heatmap and stats for the selected
+// exercise. This is the ONLY thing that changes when you switch exercise — it
+// must NOT touch missions, the guided plan or the streak (they're global).
+const fetchExerciseData = async () => {
   isLoading.value = true;
-  guidedTrainingStateLoaded.value = false;
   try {
-    const params = { 
-      type: activeExercise.value,
-      year: activeYear.value 
-    };
+    const params = { type: activeExercise.value, year: activeYear.value };
     const t = Date.now();
     const [repsRes, heatmapRes, statsRes] = await Promise.all([
       axios.get('/api/reps', { params: { ...params, t } }),
       axios.get('/api/reps/heatmap', { params: { ...params, t } }),
       axios.get('/api/reps/stats', { params: { ...params, t } }),
-      fetchStreakStatus()
     ]);
 
     reps.value = repsRes.data;
@@ -1031,7 +1029,21 @@ const fetchData = async () => {
     stats.dailyGoal = statsRes.data.dailyGoal || 50;
     stats.totalVolume = statsRes.data.totalVolume || 0;
     stats.combatPower = statsRes.data.combatPower || { total: 0, base: 0, gear: 0, buff: 0 };
+    return statsRes;
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// Full refresh: exercise data + global state (streak, missions, guided plan,
+// boss) + first-run onboarding. Use on mount and after a mutation that changes
+// global state (logging reps, editing/deleting entries) — NOT on exercise switch.
+const fetchData = async () => {
+  guidedTrainingStateLoaded.value = false;
+  try {
+    const statsRes = await fetchExerciseData();
     await Promise.all([
+      fetchStreakStatus(),
       fetchGlobalData(),
       trainingStore.fetchMine()
     ]);
@@ -1059,8 +1071,6 @@ const fetchData = async () => {
   } catch (error) {
     console.error('Error fetching data:', error);
     guidedTrainingStateLoaded.value = true;
-  } finally {
-    isLoading.value = false;
   }
 };
 
@@ -1088,9 +1098,10 @@ const saveEdit = async (id) => {
   }
 };
 
-// Update data when exercise type changes
+// Switching exercise only refetches exercise-scoped data — missions, the guided
+// plan and the streak stay put (they don't depend on the selected exercise).
 watch(activeExercise, () => {
-  fetchData();
+  fetchExerciseData();
 });
 
 watch(
