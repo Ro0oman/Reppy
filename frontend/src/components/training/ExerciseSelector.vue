@@ -35,7 +35,7 @@
   <div v-else class="space-y-3">
     <div class="flex items-center justify-between px-1">
       <div class="flex items-center gap-3">
-        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted/50">
+        <p class="text-[10px] font-semibold uppercase tracking-wide text-muted/60">
           {{ isEs ? 'Ejercicio activo' : 'Active exercise' }}
         </p>
         <button type="button" @click="isModalOpen = true" class="favorites-chip">
@@ -43,7 +43,7 @@
           {{ isEs ? 'Editar favoritos' : 'Edit favorites' }}
         </button>
       </div>
-      <p class="text-[11px] font-black uppercase tracking-tight text-primary-500">
+      <p class="text-[11px] font-semibold text-primary-500">
         {{ currentExerciseLabel }}
       </p>
     </div>
@@ -57,8 +57,8 @@
         :aria-pressed="modelValue === ex.id"
         class="touch-action-manipulation rounded-2xl border p-3 text-left transition-all active:scale-[0.98]"
         :class="modelValue === ex.id
-          ? 'bg-primary-500/15 border-primary-500/40 shadow-[0_0_20px_hsl(var(--primary) / 0.2)]'
-          : 'bg-surface/10 border-white/10 hover:border-primary-500/25 hover:bg-white/[0.03]'"
+          ? 'bg-primary-500/15 border-primary-500/40 shadow-sm'
+          : 'bg-surface/10 border-border hover:border-primary-500/25 hover:bg-foreground/[0.03]'"
       >
         <div class="flex items-start justify-between gap-2">
           <span v-if="typeof ex.icon === 'string'" class="text-base">{{ ex.icon }}</span>
@@ -70,13 +70,13 @@
           />
           <span
             v-if="modelValue === ex.id"
-            class="text-[10px] font-black uppercase tracking-wider text-primary-500"
+            class="text-[10px] font-semibold uppercase tracking-wide text-primary-500"
           >
             {{ isEs ? 'Activo' : 'Active' }}
           </span>
         </div>
         <p
-          class="mt-2 text-[12px] font-black uppercase tracking-tight leading-tight"
+          class="mt-2 text-[12px] font-semibold tracking-tight leading-tight"
           :class="modelValue === ex.id ? 'text-foreground' : 'text-foreground/85'"
         >
           {{ labelFor(ex.id, ex.fallbackEs, ex.fallbackEn) }}
@@ -290,17 +290,17 @@ watch(
   padding: 0.35rem 0.6rem;
   color: rgb(253 230 138);
   font-size: 0.68rem;
-  font-weight: 900;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  box-shadow: 0 0 18px rgb(245 158 11 / 0.14);
+  font-weight: 600;
+  letter-spacing: 0;
+
+  
   transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease, color 160ms ease;
 }
 
 .favorites-chip:hover {
   border-color: rgb(251 191 36 / 0.7);
   color: rgb(254 243 199);
-  box-shadow: 0 0 26px rgb(245 158 11 / 0.24);
+  
   transform: translateY(-1px);
 }
 
