@@ -237,8 +237,6 @@ const submitReps = async () => {
 </script>
 
 <style scoped>
-.text-industrial { font-family: 'Inter Tight', sans-serif; }
-.text-precision { font-family: 'JetBrains Mono', monospace; }
 .touch-action-manipulation { touch-action: manipulation; }
 
 input[type='number']::-webkit-outer-spin-button,
