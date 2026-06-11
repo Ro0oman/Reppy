@@ -1262,6 +1262,24 @@ export default {
      ex_shoulders: 'Hombros',
      ex_chest: 'Pecho',
 
+    // ── Dashboard · Frontline ─────────────────────────────────
+    fl_sec_combat: 'COMBATE',
+    fl_sec_attack: 'TU ATAQUE',
+    fl_sec_loadout: 'EQUIPO',
+    fl_boss_global: 'JEFE GLOBAL DE LA COMUNIDAD',
+    fl_boss_damage_today: 'TU DAÑO HOY',
+    fl_boss_hp_left: 'HP REST.',
+    fl_boss_active: 'ACTIVO',
+    fl_boss_epic: 'ÉPICO',
+    fl_boss_legendary: 'LEGENDARIO',
+    fl_today: 'HOY',
+    fl_stat_power: 'PODER',
+    fl_stat_streak: 'RACHA',
+    fl_stat_volume: 'VOL · T',
+    fl_days_short: 'D',
+    fl_prev_exercise: 'Ejercicio anterior',
+    fl_next_exercise: 'Siguiente ejercicio',
+
     // ── Dashboard ──────────────────────────────────────────────
     dash_close: 'Cerrar',
     dash_ring_of: 'de',

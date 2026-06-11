@@ -1,161 +1,129 @@
 <template>
   <div class="max-w-7xl mx-auto w-full px-4 space-y-4 sm:space-y-6 pb-24 pt-2 sm:pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-    <!-- Header: greeting -->
-    <header class="flex items-center justify-between gap-3">
-      <div class="min-w-0 flex-1">
-        <h1 class="text-2xl font-bold tracking-tight text-foreground leading-tight truncate">
-          {{ greeting }}<span class="text-primary-500">, {{ firstName }}</span>
-        </h1>
-        <p class="dashboard-daily-quote mt-1 text-xs text-muted/60">{{ dailyQuote }}</p>
-      </div>
-      <div class="flex items-center gap-2 shrink-0">
-        <button
-          type="button"
-          class="flex items-center gap-1.5 rounded-xl border border-primary-500/25 bg-primary-500/10 px-3 py-2 text-xs font-semibold text-primary-400 transition hover:bg-primary-500/20 active:scale-95"
-          @click="showWeeklyCard = true"
-        >
+    <!-- ░ FRONTLINE — the home is the battle ░ -->
+    <div class="max-w-md mx-auto w-full">
+
+      <!-- Slim top actions -->
+      <div class="flex items-center justify-end gap-2 mb-4">
+        <button type="button" class="fl-action" @click="showWeeklyCard = true">
           <Share2 class="w-3.5 h-3.5" aria-hidden="true" />
           {{ i18n.t('dash_my_week') }}
         </button>
         <button
           v-if="guidedTrainingStateLoaded && !trainingStore.activePlan"
           type="button"
-          class="rounded-xl border border-border bg-foreground/[0.03] px-3 py-2 text-xs font-semibold text-muted transition hover:border-primary-500/30 hover:text-foreground active:scale-95"
+          class="fl-action"
           @click="openPlanPicker"
         >
           {{ i18n.t('dash_guided_plan') }}
         </button>
       </div>
-    </header>
 
-    <!-- The Hero (Momentum): pick exercise → see today's ring → log -->
-    <section
-      v-if="!trainingStore.todayWorkout || showFreeLog"
-      class="max-w-md mx-auto w-full space-y-4"
-    >
-      <ExerciseSelector v-model="activeExercise" compact class="w-full" />
-
-      <!-- Overview mode: no single exercise picked yet -->
-      <div v-if="activeExercise === 'all'" class="bg-surface/5 border border-dashed border-border rounded-2xl flex flex-col items-center justify-center text-center p-8 sm:p-10">
-        <Globe aria-hidden="true" class="w-10 h-10 text-muted/50 mb-3" />
-        <h3 class="text-lg font-bold tracking-tight text-foreground">
-          {{ i18n.t('dash_overview_mode') }}
-        </h3>
-        <p class="text-xs text-muted/60 max-w-[320px] mx-auto mt-1.5">
-          {{ i18n.t('dash_overview_hint') }}
-        </p>
-        <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md">
-          <button
-            v-for="option in quickLogOptions"
-            :key="option.id"
-            @click="activeExercise = option.id"
-            class="h-10 rounded-xl border border-border bg-foreground/[0.03] hover:bg-primary-500/10 hover:border-primary-500/30 text-xs font-semibold text-foreground/90 transition-all active:scale-[0.98]"
-          >
-            {{ option.label }}
-          </button>
+      <!-- 01 — COMBAT: the community boss, alive at the top -->
+      <button
+        v-if="bossData"
+        type="button"
+        class="w-full text-left block group"
+        @click="showAdvancedStats = true"
+      >
+        <div class="flex items-center justify-between mb-2.5">
+          <span class="fl-index">01 — {{ i18n.t('fl_sec_combat') }}</span>
+          <span class="fl-mono text-[10px] tracking-[0.12em] text-red-400 border border-red-500/40 px-1.5 py-0.5">{{ bossTag }}</span>
         </div>
-      </div>
+        <h2 class="text-2xl sm:text-[1.7rem] font-bold uppercase tracking-tight text-foreground leading-none group-hover:text-primary-400 transition-colors">{{ bossData.name }}</h2>
+        <p class="fl-mono text-[10.5px] tracking-[0.14em] text-muted/60 mt-1.5">{{ i18n.t('fl_boss_global') }}</p>
+        <div class="flex gap-0.5 mt-3 h-2.5">
+          <div class="bg-red-500" :style="{ flexGrow: bossHpPercent }"></div>
+          <div class="bg-red-950/50" :style="{ flexGrow: 100 - bossHpPercent }"></div>
+        </div>
+        <div class="flex justify-between mt-2">
+          <span class="fl-mono text-[11px] text-primary-400">{{ i18n.t('fl_boss_damage_today') }} · {{ formatCompact(bossDailyDamage) }}</span>
+          <span class="fl-mono text-[11px] text-muted/60">{{ formatCompact(bossHpRemaining) }} {{ i18n.t('fl_boss_hp_left') }}</span>
+        </div>
+      </button>
 
-      <!-- Day ring + log CTA -->
-      <div
-        v-else
+      <div v-if="bossData" class="fl-rule my-4"></div>
+
+      <!-- 02 — ATTACK: pick exercise, see today, log -->
+      <section
+        v-if="!trainingStore.todayWorkout || showFreeLog"
         ref="repsInputSection"
-        class="flex flex-col items-center transition-all duration-500 rounded-3xl"
+        class="transition-all duration-500"
         :class="highlightRepsInput ? 'ring-2 ring-primary-500/60' : ''"
       >
-        <RadialProgress :progress="dayRingPercent" :size="208" :stroke-width="14">
-          <div class="flex flex-col items-center">
-            <span class="text-[2.75rem] font-bold tabular-nums leading-none text-foreground">{{ todayProgress }}</span>
-            <span class="mt-2 text-xs text-muted/60">
-              {{ i18n.t('dash_ring_of') }} {{ stats.dailyGoal }} · {{ activeExerciseLabel }}
-            </span>
-          </div>
-        </RadialProgress>
+        <span class="fl-index">02 — {{ i18n.t('fl_sec_attack') }}</span>
 
+        <!-- Exercise switcher -->
+        <div class="flex items-center justify-between gap-2 mt-3 mb-3.5">
+          <button type="button" class="text-muted/40 hover:text-foreground active:scale-90 transition-colors" :aria-label="i18n.t('fl_prev_exercise')" @click="switchExercise(-1)">
+            <ChevronLeft class="w-6 h-6" />
+          </button>
+          <span class="flex-1 min-w-0 text-center text-[1.7rem] font-bold uppercase tracking-tight text-foreground leading-none truncate">{{ activeExerciseLabel }}</span>
+          <button type="button" class="text-muted hover:text-foreground active:scale-90 transition-colors" :aria-label="i18n.t('fl_next_exercise')" @click="switchExercise(1)">
+            <ChevronRight class="w-6 h-6" />
+          </button>
+        </div>
+
+        <!-- Typographic day progress (no ring) -->
+        <div class="flex items-baseline gap-2">
+          <span class="fl-mono text-[2rem] font-bold leading-none text-foreground tabular-nums">{{ todayProgress }}</span>
+          <span class="fl-mono text-sm font-semibold text-muted/60">/ {{ stats.dailyGoal }} {{ i18n.t('fl_today') }}</span>
+        </div>
+        <div class="flex gap-0.5 mt-2 mb-4 h-[3px]">
+          <div class="bg-primary-500" :style="{ flexGrow: dayRingPercent }"></div>
+          <div class="bg-foreground/10" :style="{ flexGrow: 100 - dayRingPercent }"></div>
+        </div>
+
+        <!-- Attack CTA (square, brutalist) -->
         <button
           type="button"
           @click="openLogSheet"
-          class="mt-5 w-full max-w-xs flex items-center justify-center gap-2 rounded-2xl bg-primary-500 hover:bg-primary-400 active:bg-primary-600 px-5 py-3.5 text-base font-semibold text-white transition-all active:scale-[0.98] shadow-lg shadow-primary-500/20"
+          class="w-full flex items-center justify-between bg-primary-500 hover:bg-primary-400 active:bg-primary-600 px-5 py-4 text-white transition-colors active:scale-[0.99]"
         >
-          <Plus aria-hidden="true" class="w-5 h-5" />
-          {{ i18n.t('dash_log_reps_cta') }}
+          <span class="text-[15px] font-bold uppercase tracking-[0.04em]">{{ i18n.t('dash_log_reps_cta') }}</span>
+          <ArrowRight class="w-5 h-5" />
+        </button>
+      </section>
+
+      <div class="fl-rule my-4"></div>
+
+      <!-- 03 — LOADOUT: cockpit stats -->
+      <section>
+        <span class="fl-index">03 — {{ i18n.t('fl_sec_loadout') }}</span>
+        <div class="flex mt-3">
+          <div class="flex-1 min-w-0 pr-3">
+            <div class="fl-mono text-[9.5px] tracking-[0.16em] text-muted/60">{{ i18n.t('fl_stat_power') }}</div>
+            <div class="fl-mono text-2xl font-bold text-foreground mt-1 tabular-nums truncate">{{ formatCompact(stats.combatPower.total) }}</div>
+          </div>
+          <div class="fl-divider"></div>
+          <div class="flex-1 min-w-0 px-3">
+            <div class="fl-mono text-[9.5px] tracking-[0.16em] text-muted/60">{{ i18n.t('fl_stat_streak') }}</div>
+            <div class="fl-mono text-2xl font-bold text-primary-400 mt-1 tabular-nums">{{ streakStatus?.streak || 0 }}<span class="text-sm text-muted/60"> {{ i18n.t('fl_days_short') }}</span></div>
+          </div>
+          <div class="fl-divider"></div>
+          <div class="flex-1 min-w-0 pl-3">
+            <div class="fl-mono text-[9.5px] tracking-[0.16em] text-muted/60">{{ i18n.t('fl_stat_volume') }}</div>
+            <div class="fl-mono text-2xl font-bold text-foreground mt-1 tabular-nums truncate">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Streak at-risk alert (retention: keep the freeze CTA prominent) -->
+      <div
+        v-if="streakStatus && streakStatus.isAtRisk && !streakStatus.frozenToday"
+        class="mt-4 flex items-center gap-3 border border-amber-500/40 bg-amber-500/[0.08] px-4 py-3"
+      >
+        <Flame class="h-5 w-5 text-amber-400 shrink-0" aria-hidden="true" />
+        <p class="flex-1 min-w-0 text-xs font-medium text-amber-300">{{ streakStateLabel }}</p>
+        <button
+          type="button"
+          class="fl-mono shrink-0 text-[11px] uppercase tracking-wide border border-amber-500/50 bg-amber-500/15 text-amber-200 px-3 py-2 disabled:opacity-40 active:scale-95 transition-transform"
+          :disabled="!streakStatus.canFreeze || freezingStreak"
+          @click="freezeStreak"
+        >
+          {{ freezeButtonLabel }}
         </button>
       </div>
-    </section>
-
-    <!-- Streak band skeleton -->
-    <div
-      v-if="isLoading && !streakStatus"
-      class="flex items-center gap-3 rounded-2xl border border-border/60 bg-foreground/[0.02] px-4 py-3 animate-pulse"
-    >
-      <div class="h-10 w-10 shrink-0 rounded-xl bg-foreground/10"></div>
-      <div class="flex-1 space-y-2">
-        <div class="h-3 w-28 bg-foreground/10 rounded"></div>
-        <div class="h-2 w-40 bg-foreground/5 rounded"></div>
-      </div>
-    </div>
-
-    <!-- Streak band: one scale (days), amber only when at risk -->
-    <div
-      v-else-if="streakStatus"
-      class="flex items-center gap-3 rounded-2xl border px-4 py-3 transition-colors"
-      :class="streakStatus.showRisk ? 'border-amber-500/30 bg-amber-500/[0.07]' : 'border-primary-500/20 bg-primary-500/[0.06]'"
-    >
-      <div
-        class="grid place-items-center h-10 w-10 shrink-0 rounded-xl"
-        :class="streakStatus.showRisk ? 'bg-amber-500/15' : 'bg-primary-500/15'"
-      >
-        <Flame aria-hidden="true" class="h-5 w-5" :class="streakStatus.showRisk ? 'text-amber-400' : 'text-primary-400'" />
-      </div>
-
-      <div class="min-w-0 flex-1">
-        <div class="flex items-baseline gap-1.5">
-          <span class="text-xl font-bold tabular-nums leading-none text-foreground">{{ streakStatus.streak || 0 }}</span>
-          <span class="text-sm font-semibold text-muted/70">{{ i18n.t('streak_days_unit') }}</span>
-          <span
-            v-if="streakTier.label"
-            class="ml-1 text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-md bg-foreground/[0.06] text-muted"
-          >{{ streakTier.label }}</span>
-        </div>
-        <p
-          class="mt-0.5 text-xs truncate"
-          :class="streakStatus.showRisk ? 'text-amber-400 font-medium'
-            : streakStatus.jackpotAlreadyAwarded ? 'text-emerald-400 font-medium'
-            : 'text-muted/60'"
-        >{{ streakStateLabel }}</p>
-      </div>
-
-      <!-- Weekly bonus micro-indicator: days trained THIS week toward the jackpot (5/7) -->
-      <div class="hidden sm:flex flex-col items-end gap-1 shrink-0">
-        <span class="text-[10px] font-medium" :class="streakStatus.jackpotAlreadyAwarded ? 'text-emerald-500/80' : 'text-muted/50'">
-          {{ i18n.t('streak_weekly_bonus') }} {{ weeklyBonusProgress }}/{{ weeklyBonusTarget }}
-        </span>
-        <div class="flex items-center gap-1">
-          <span
-            v-for="day in weeklyBonusTarget"
-            :key="day"
-            class="h-1.5 w-3 rounded-full transition-colors"
-            :class="day <= weeklyBonusProgress
-              ? (streakStatus.jackpotAlreadyAwarded ? 'bg-emerald-500' : 'bg-primary-500')
-              : 'bg-foreground/10'"
-          />
-        </div>
-      </div>
-
-      <!-- Freeze CTA (only when at risk) -->
-      <button
-        v-if="streakStatus.isAtRisk && !streakStatus.frozenToday"
-        type="button"
-        class="shrink-0 flex items-center gap-1 rounded-xl border px-2.5 py-2 text-xs transition-all active:scale-95 disabled:opacity-40"
-        :class="streakStatus.canFreeze
-          ? 'border-amber-500/35 bg-amber-500/15 text-amber-200 hover:bg-amber-500/25'
-          : 'border-border bg-foreground/[0.04] text-muted'"
-        :disabled="!streakStatus.canFreeze || freezingStreak"
-        @click="freezeStreak"
-      >
-        <Snowflake aria-hidden="true" class="h-3.5 w-3.5" />
-        <span class="hidden sm:inline">{{ freezeButtonLabel }}</span>
-      </button>
     </div>
 
     <TodayWorkout
@@ -544,16 +512,16 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import {
   Trophy, Target, Flame, Zap, Activity, Inbox,
-  BarChart3, Check, X, Trash2, Globe, Sword, FlaskConical, Coins, Snowflake, ChevronDown, Share2, Pencil, Plus
+  BarChart3, Check, X, Trash2, Sword, FlaskConical, Coins, ChevronDown, Share2, Pencil,
+  ChevronLeft, ChevronRight, ArrowRight
 } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';
 import { useNotificationStore } from '@/stores/notification';
 import { useTrainingStore } from '@/stores/training';
+import { useBossStore } from '@/stores/boss';
 import Heatmap from '@/components/training/Heatmap.vue';
-import RadialProgress from '@/components/ui/RadialProgress.vue';
 import LogSheet from '@/components/training/LogSheet.vue';
-import ExerciseSelector from '@/components/training/ExerciseSelector.vue';
 import BossHealth from '@/components/boss/BossHealth.vue';
 import RPGReleaseModal from '@/components/modals/RPGReleaseModal.vue';
 import LivePresence from '@/components/ui/LivePresence.vue';
@@ -568,6 +536,7 @@ const authStore = useAuthStore();
 const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
 const trainingStore = useTrainingStore();
+const bossStore = useBossStore();
 const router = useRouter();
 const route = useRoute();
 
@@ -606,40 +575,6 @@ const QUICKSTART_SEEN_PREFIX = 'reppy_quickstart_seen_v1';
 const GOAL_ONBOARDING_DISMISSED_PREFIX = 'reppy_goal_onboarding_dismissed_v1';
 const PLAN_PROMO_DISMISSED_PREFIX = 'reppy_plan_promo_dismissed_v1';
 const STREAK_CELEBRATED_PREFIX = 'reppy_streak_celebrated_v1';
-
-const bossMotivationQuotes = {
-  es: [
-    '"Has sobrevivido al tutorial. Ahora sube de nivel."',
-    '"Ese boss no te espera: te está guardando sitio."',
-    '"Tus límites tienen barra de vida. Bájala hoy."',
-    '"El respawn es entrar otra vez y registrar reps."',
-    '"No eres el minion del mapa. Eres la raid entera."',
-    '"Hoy farmeas fuerza. Mañana desbloqueas leyenda."',
-    '"El jefe final también empezó con una repetición."',
-    '"Que tiemble el boss: vienes con buff de disciplina."',
-  ],
-  en: [
-    '"You survived the tutorial. Now level up."',
-    '"That boss is not waiting. It is saving your slot."',
-    '"Your limits have a health bar. Drain it today."',
-    '"Respawn means showing up and logging reps."',
-    '"You are not a map minion. You are the whole raid."',
-    '"Farm strength today. Unlock legend tomorrow."',
-    '"The final boss also started with one rep."',
-    '"Make the boss shake: discipline buff active."',
-  ],
-};
-
-const pickRandomQuote = (locale) => {
-  const quotes = locale === 'en' ? bossMotivationQuotes.en : bossMotivationQuotes.es;
-  return quotes[Math.floor(Math.random() * quotes.length)];
-};
-
-const dailyQuote = ref(pickRandomQuote(i18n.locale));
-
-watch(() => i18n.locale, (locale) => {
-  dailyQuote.value = pickRandomQuote(locale);
-});
 
 // Scroll lock when modals are active
 watch([showRPGModal, showQuickStartModal, showGoalOnboarding], ([rpgModal, quickStartModal, goalOnboarding]) => {
@@ -700,31 +635,6 @@ const clearPlanPromoDismissed = () => {
   localStorage.removeItem(getPlanPromoDismissedKey());
   planPromoDismissed.value = false;
 };
-
-// Streak milestones: days threshold → tier badge shown next to the streak number
-const STREAK_MILESTONES = [
-  { days: 7,  labelKey: 'streak_tier_week' },
-  { days: 14, labelKey: 'streak_tier_2weeks' },
-  { days: 30, labelKey: 'streak_tier_month' },
-  { days: 60, labelKey: 'streak_tier_legend' },
-];
-
-const streakTier = computed(() => {
-  const days = Number(streakStatus.value?.streak || 0);
-  // While at risk the amber state takes over; hide the tier badge to keep focus.
-  if (streakStatus.value?.showRisk) return { label: null };
-  for (let i = STREAK_MILESTONES.length - 1; i >= 0; i--) {
-    if (days >= STREAK_MILESTONES[i].days) return { label: i18n.t(STREAK_MILESTONES[i].labelKey) };
-  }
-  return { label: null };
-});
-
-// Weekly jackpot indicator: fed by days trained THIS week (backend weeklyProgress),
-// scaled to the real reward threshold (jackpotDaysRequired = 5), not the total streak.
-const weeklyBonusTarget = computed(() => Number(streakStatus.value?.jackpotDaysRequired || 5));
-const weeklyBonusProgress = computed(() =>
-  Math.min(Number(streakStatus.value?.weeklyProgress || 0), weeklyBonusTarget.value)
-);
 
 const streakStateLabel = computed(() => {
   const status = streakStatus.value;
@@ -838,18 +748,6 @@ const activeExerciseLabel = computed(() => {
   return i18n.t(activeExercise.value);
 });
 
-const firstName = computed(() =>
-  authStore.user?.name?.split(' ')[0] || i18n.t('dash_default_athlete')
-);
-
-const greeting = computed(() => {
-  const hour = new Date().getHours();
-  if (hour < 6) return i18n.t('greeting_night');
-  if (hour < 12) return i18n.t('greeting_morning');
-  if (hour < 20) return i18n.t('greeting_afternoon');
-  return i18n.t('greeting_evening');
-});
-
 const quickLogOptions = computed(() => [
   { id: 'pullups', label: i18n.t('pullups') },
   { id: 'pushups', label: i18n.t('pushups') },
@@ -870,6 +768,37 @@ const dayRingPercent = computed(() => {
   const goal = Math.max(1, Number(stats.dailyGoal) || 0);
   return Math.min(100, Math.round((todayProgress.value / goal) * 100));
 });
+
+// ── Frontline: community boss band (fed by the shared boss store) ──
+const bossData = computed(() => bossStore.activeBoss?.boss || null);
+const bossDailyDamage = computed(() => Number(bossStore.activeBoss?.daily_damage || 0));
+const bossHpRemaining = computed(() => Number(bossData.value?.current_hp || 0));
+const bossHpPercent = computed(() => {
+  const b = bossData.value;
+  if (!b || !b.total_hp) return 0;
+  return Math.max(0, Math.min(100, (b.current_hp / b.total_hp) * 100));
+});
+const bossTag = computed(() => {
+  if (bossData.value?.is_legendary) return i18n.t('fl_boss_legendary');
+  if (bossData.value?.is_epic) return i18n.t('fl_boss_epic');
+  return i18n.t('fl_boss_active');
+});
+
+// Compact number formatter for tactical readouts: 14210 -> "14.2K".
+const formatCompact = (n) => {
+  const v = Number(n) || 0;
+  if (v >= 1000) return `${(v / 1000).toFixed(1).replace(/\.0$/, '')}K`;
+  return String(Math.round(v));
+};
+
+// Frontline exercise switcher: cycle through the concrete log options.
+const switchExercise = (dir) => {
+  const list = quickLogOptions.value;
+  if (!list.length) return;
+  const i = list.findIndex((o) => o.id === activeExercise.value);
+  const next = ((i < 0 ? 0 : i) + dir + list.length) % list.length;
+  activeExercise.value = list[next].id;
+};
 
 const isDailyObjectiveDone = computed(() => {
   // If there is an active daily mission from backend, trust that source of truth.
@@ -1259,6 +1188,8 @@ onMounted(async () => {
 
   fetchData();
   handleLogQueryIntent();
+  // Frontline boss band (deduped; BossHealth in the disclosure shares this store).
+  bossStore.fetchActiveBoss().catch(() => {});
 
   // Timer for active effects
   timerInterval = setInterval(() => {
@@ -1314,11 +1245,33 @@ watch(
   transform: scale(0.97);
 }
 
-.dashboard-daily-quote {
-  line-height: 1.2;
-  max-width: min(100%, 22rem);
-  overflow-wrap: anywhere;
+/* ── Frontline visual system ── */
+.fl-mono { font-family: 'JetBrains Mono', monospace; }
+
+.fl-index {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  color: hsl(var(--muted) / 0.6);
 }
+
+.fl-rule { height: 1px; background: hsl(var(--border)); }
+.fl-divider { width: 1px; background: hsl(var(--border)); }
+
+.fl-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid hsl(var(--border));
+  background: transparent;
+  padding: 0.4rem 0.7rem;
+  color: hsl(var(--muted));
+  font-size: 0.72rem;
+  font-weight: 600;
+  transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+.fl-action:hover { border-color: hsl(var(--primary) / 0.35); color: hsl(var(--foreground)); }
+.fl-action:active { transform: scale(0.97); }
 
 .fade-enter-active,
 .fade-leave-active {

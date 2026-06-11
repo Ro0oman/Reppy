@@ -1183,6 +1183,24 @@ export default {
      notif_push_later: 'MAYBE LATER',
      notif_push_never: 'No, never',
 
+    // ── Dashboard · Frontline ─────────────────────────────────
+    fl_sec_combat: 'COMBAT',
+    fl_sec_attack: 'YOUR ATTACK',
+    fl_sec_loadout: 'LOADOUT',
+    fl_boss_global: 'GLOBAL COMMUNITY BOSS',
+    fl_boss_damage_today: 'YOUR DAMAGE TODAY',
+    fl_boss_hp_left: 'HP LEFT',
+    fl_boss_active: 'ACTIVE',
+    fl_boss_epic: 'EPIC',
+    fl_boss_legendary: 'LEGENDARY',
+    fl_today: 'TODAY',
+    fl_stat_power: 'POWER',
+    fl_stat_streak: 'STREAK',
+    fl_stat_volume: 'VOL · T',
+    fl_days_short: 'D',
+    fl_prev_exercise: 'Previous exercise',
+    fl_next_exercise: 'Next exercise',
+
     // ── Dashboard ──────────────────────────────────────────────
     dash_close: 'Close',
     dash_ring_of: 'of',

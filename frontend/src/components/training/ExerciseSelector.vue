@@ -1,35 +1,29 @@
 <template>
 <div class="min-w-0 max-w-full">
-  <!-- Compact mode (mobile Dashboard) -->
-  <div v-if="compact" class="space-y-2">
-    <!-- Header: just the label + edit link, minimal -->
-    <div class="flex items-center justify-between px-0.5">
-      <p class="text-xs font-semibold text-muted">{{ isEs ? 'Ejercicio' : 'Exercise' }}</p>
-      <button type="button" @click="isModalOpen = true"
-        class="favorites-chip favorites-chip-compact">
-        <Star class="w-3.5 h-3.5 fill-amber-300 text-amber-300" />
-        <span>{{ isEs ? 'Favoritos' : 'Favorites' }}</span>
-      </button>
-    </div>
-    <!-- Scrollable pill row -->
+  <!-- Compact mode (mobile Dashboard): single clean pill row + favorites -->
+  <div v-if="compact" class="flex items-center gap-2">
     <div ref="compactScroller"
-      class="flex max-w-full items-center gap-1.5 overflow-x-auto overscroll-x-contain no-scrollbar scroll-smooth scroll-px-1 pb-0.5">
+      class="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto overscroll-x-contain no-scrollbar scroll-smooth scroll-px-1 py-0.5">
       <button
         v-for="ex in exercises"
         :key="`compact-${ex.id}`"
         :data-exercise-id="ex.id"
         @click="$emit('update:modelValue', ex.id)"
         :aria-pressed="modelValue === ex.id"
-        class="touch-action-manipulation shrink-0 h-9 px-3 rounded-xl border flex items-center gap-1.5 text-xs font-semibold transition-all active:scale-[0.97]"
+        class="touch-action-manipulation shrink-0 h-9 px-3.5 rounded-full border flex items-center gap-1.5 text-xs font-semibold transition-all active:scale-[0.97]"
         :class="modelValue === ex.id
-          ? 'bg-primary-500 border-primary-500 text-white shadow-md shadow-primary-500/20'
-          : 'bg-foreground/[0.04] border-border text-muted hover:text-foreground hover:border-primary-500/30'"
+          ? 'bg-primary-500 border-primary-500 text-white'
+          : 'bg-transparent border-foreground/10 text-muted hover:text-foreground hover:border-primary-500/30'"
       >
-        <span v-if="typeof ex.icon === 'string'" class="text-sm leading-none">{{ ex.icon }}</span>
-        <component v-else :is="ex.icon" class="w-3.5 h-3.5 shrink-0" />
+        <component v-if="typeof ex.icon !== 'string'" :is="ex.icon" class="w-3.5 h-3.5 shrink-0" />
         <span class="truncate">{{ labelFor(ex.id, ex.fallbackEs, ex.fallbackEn) }}</span>
       </button>
     </div>
+    <button type="button" @click="isModalOpen = true"
+      class="shrink-0 grid h-9 w-9 place-items-center rounded-full border border-foreground/10 text-muted transition-colors hover:text-foreground hover:border-primary-500/30 active:scale-95"
+      :aria-label="isEs ? 'Favoritos' : 'Favorites'">
+      <Star class="w-4 h-4" />
+    </button>
   </div>
 
   <div v-else class="space-y-3">

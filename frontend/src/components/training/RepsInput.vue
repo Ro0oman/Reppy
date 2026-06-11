@@ -1,38 +1,21 @@
 <template>
   <div class="flex flex-col gap-3">
 
-    <!-- Exercise label + damage chip (subtle, not prominent) -->
-    <div class="flex items-center justify-between px-1">
-      <p class="text-sm font-semibold text-muted">{{ activeLabel }}</p>
-      <div v-if="damagePreview.total > 0" class="flex items-center gap-1.5 text-xs text-muted/60">
-        <Zap class="w-3.5 h-3.5 text-primary-500/60" />
+    <!-- Exercise label + damage chip (subtle pill) -->
+    <div class="flex items-center justify-between gap-3">
+      <p class="text-base font-semibold tracking-tight text-foreground">{{ activeLabel }}</p>
+      <div v-if="damagePreview.total > 0" class="flex items-center gap-1.5 rounded-full bg-primary-500/10 px-2.5 py-1 text-[11px] font-semibold text-primary-400">
+        <Zap class="w-3 h-3" />
         <span class="tabular-nums">{{ damagePreview.total }} dmg</span>
       </div>
     </div>
 
-    <!-- Quick presets -->
-    <div class="grid grid-cols-4 gap-2">
-      <button
-        v-for="preset in quickPresets"
-        :key="preset"
-        @click="setReps(preset)"
-        :disabled="loading"
-        class="touch-action-manipulation h-14 rounded-2xl border text-lg font-bold transition-all active:scale-95"
-        :class="selectedReps === preset
-          ? 'bg-primary-500 text-white border-primary-500 shadow-lg shadow-primary-500/25'
-          : 'bg-foreground/[0.04] border-border text-foreground hover:border-primary-500/40 hover:bg-foreground/[0.07]'"
-      >
-        {{ preset }}
-      </button>
-    </div>
-
-    <!-- Custom counter -->
-    <!-- grid garantiza que el + nunca se empuje fuera, sin importar el min-width del input -->
-    <div class="grid items-center gap-2" style="grid-template-columns: 3.5rem 1fr 3.5rem">
+    <!-- Custom counter: circular −/+ around a clean number -->
+    <div class="grid items-center gap-3 py-1" style="grid-template-columns: 3.5rem 1fr 3.5rem">
       <button
         @click="decrementReps"
         :disabled="loading || selectedReps <= 1"
-        class="touch-action-manipulation h-14 w-full rounded-2xl border border-border/80 bg-foreground/[0.08] text-foreground font-bold active:scale-95 disabled:opacity-30 flex items-center justify-center hover:bg-foreground/[0.12] transition-colors"
+        class="touch-action-manipulation h-14 w-14 rounded-full border border-foreground/10 bg-foreground/[0.04] text-foreground active:scale-95 disabled:opacity-30 flex items-center justify-center hover:bg-foreground/[0.08] transition-colors"
         aria-label="Quitar rep"
       >
         <Minus class="w-5 h-5" />
@@ -43,15 +26,31 @@
         min="1"
         inputmode="numeric"
         pattern="[0-9]*"
-        class="touch-action-manipulation h-14 w-full min-w-0 rounded-2xl border border-border bg-foreground/[0.03] px-2 text-center text-3xl font-bold text-foreground focus:outline-none focus:border-primary-500/50 focus:ring-2 focus:ring-primary-500/20 transition-all"
+        class="touch-action-manipulation h-16 w-full min-w-0 bg-transparent px-2 text-center text-5xl font-bold tabular-nums text-foreground focus:outline-none"
       />
       <button
         @click="incrementReps"
         :disabled="loading"
-        class="touch-action-manipulation h-14 w-full rounded-2xl border border-primary-500/40 bg-primary-500/10 text-primary-500 font-bold active:scale-95 disabled:opacity-30 flex items-center justify-center hover:bg-primary-500/20 transition-colors"
+        class="touch-action-manipulation h-14 w-14 rounded-full bg-primary-500 text-white active:scale-95 disabled:opacity-30 flex items-center justify-center hover:bg-primary-400 transition-colors"
         aria-label="Añadir rep"
       >
         <Plus class="w-5 h-5" />
+      </button>
+    </div>
+
+    <!-- Quick presets: segmented pill chips -->
+    <div class="grid grid-cols-4 gap-2">
+      <button
+        v-for="preset in quickPresets"
+        :key="preset"
+        @click="setReps(preset)"
+        :disabled="loading"
+        class="touch-action-manipulation h-11 rounded-full border text-base font-semibold tabular-nums transition-all active:scale-95"
+        :class="selectedReps === preset
+          ? 'bg-primary-500 text-white border-primary-500'
+          : 'bg-transparent border-foreground/10 text-muted hover:text-foreground hover:border-primary-500/40'"
+      >
+        {{ preset }}
       </button>
     </div>
 
