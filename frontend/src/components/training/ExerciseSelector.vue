@@ -11,23 +11,21 @@
         <span>{{ isEs ? 'Favoritos' : 'Favorites' }}</span>
       </button>
     </div>
-    <!-- Scrollable pill row -->
-    <div ref="compactScroller"
-      class="flex max-w-full items-center gap-1.5 overflow-x-auto overscroll-x-contain no-scrollbar scroll-smooth scroll-px-1 pb-0.5">
+    <!-- Always-visible icon grid -->
+    <div class="grid grid-cols-4 gap-1.5">
       <button
         v-for="ex in exercises"
         :key="`compact-${ex.id}`"
-        :data-exercise-id="ex.id"
         @click="$emit('update:modelValue', ex.id)"
         :aria-pressed="modelValue === ex.id"
-        class="touch-action-manipulation shrink-0 h-9 px-3 rounded-xl border flex items-center gap-1.5 text-xs font-semibold transition-all active:scale-[0.97]"
+        class="touch-action-manipulation flex flex-col items-center justify-center gap-1 rounded-xl border py-2 px-1 text-center transition-all active:scale-[0.97]"
         :class="modelValue === ex.id
           ? 'bg-primary-500 border-primary-500 text-white shadow-md shadow-primary-500/20'
           : 'bg-foreground/[0.04] border-border text-muted hover:text-foreground hover:border-primary-500/30'"
       >
-        <span v-if="typeof ex.icon === 'string'" class="text-sm leading-none">{{ ex.icon }}</span>
-        <component v-else :is="ex.icon" class="w-3.5 h-3.5 shrink-0" />
-        <span class="truncate">{{ labelFor(ex.id, ex.fallbackEs, ex.fallbackEn) }}</span>
+        <span v-if="typeof ex.icon === 'string'" class="text-base leading-none">{{ ex.icon }}</span>
+        <component v-else :is="ex.icon" class="w-4 h-4 shrink-0" />
+        <span class="w-full truncate text-[10px] font-semibold leading-tight">{{ labelFor(ex.id, ex.fallbackEs, ex.fallbackEn) }}</span>
       </button>
     </div>
   </div>
@@ -98,7 +96,7 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { Dumbbell, Zap, Flame, Target, Trophy, Globe, Star } from 'lucide-vue-next';
 import FavoritesModal from '@/components/modals/FavoritesModal.vue';
 import { useI18nStore } from '@/stores/i18n';
@@ -124,14 +122,6 @@ const isEs = computed(() => i18n.locale !== 'en');
 
 const customFavorites = ref([]);
 const isModalOpen = ref(false);
-const compactScroller = ref(null);
-
-const scrollActiveCompactExerciseIntoView = async () => {
-  if (!props.compact || !compactScroller.value || !props.modelValue) return;
-  await nextTick();
-  const activeButton = compactScroller.value.querySelector(`[data-exercise-id="${props.modelValue}"]`);
-  activeButton?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-};
 
 const fetchFavorites = async () => {
   try {
@@ -153,7 +143,6 @@ const fetchFavorites = async () => {
 
 onMounted(() => {
   fetchFavorites();
-  scrollActiveCompactExerciseIntoView();
 });
 
 const defaultExercises = [
@@ -253,28 +242,11 @@ const currentExerciseLabel = computed(() => {
   if (!active) return '';
   return labelFor(active.id, active.fallbackEs, active.fallbackEn);
 });
-
-watch(
-  [() => props.modelValue, () => exercises.value.map((exercise) => exercise.id).join('|')],
-  () => {
-    scrollActiveCompactExerciseIntoView();
-  },
-  { flush: 'post' }
-);
 </script>
 
 <style scoped>
 .touch-action-manipulation {
   touch-action: manipulation;
-}
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
 }
 
 .favorites-chip {
