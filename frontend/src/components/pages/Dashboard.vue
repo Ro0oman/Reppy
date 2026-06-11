@@ -152,7 +152,7 @@
       <!-- The Hero (Momentum): pick exercise → see today's ring → log -->
       <div
         v-if="!trainingStore.todayWorkout || showFreeLog"
-        class="md:grid md:grid-cols-[minmax(0,28rem)_14rem] md:gap-6 md:items-center md:justify-center mx-auto w-full md:max-w-3xl"
+        class="md:grid md:grid-cols-[minmax(0,28rem)_14rem] lg:grid-cols-[minmax(0,28rem)_1fr] md:gap-6 md:items-center md:justify-center mx-auto w-full md:max-w-3xl lg:max-w-4xl"
       >
         <section class="max-w-md mx-auto w-full space-y-4 md:mx-0">
           <ExerciseSelector v-model="activeExercise" compact class="w-full" />
@@ -205,8 +205,8 @@
           </div>
         </section>
 
-        <!-- Quick stats: fills the side gap on tablet/narrow-desktop widths -->
-        <div class="hidden md:flex md:flex-col md:gap-3 md:mt-0 mt-4">
+        <!-- Quick stats: fills the side gap on tablet/desktop widths -->
+        <div class="hidden md:grid md:grid-cols-1 lg:grid-cols-2 md:gap-3 md:mt-0 mt-4">
           <div class="rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5">
             <div class="flex items-center gap-1.5">
               <Flame class="w-4 h-4 text-primary-500" aria-hidden="true" />
@@ -220,6 +220,13 @@
               <span class="text-xs text-muted">{{ i18n.t('comp_stat_power') }}</span>
             </div>
             <div class="mt-1.5 text-xl font-bold text-foreground tabular-nums">{{ stats.combatPower.total }}</div>
+          </div>
+          <div class="hidden lg:block lg:col-span-2 rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5">
+            <div class="flex items-center gap-1.5">
+              <Sword class="w-4 h-4 text-primary-500" aria-hidden="true" />
+              <span class="text-xs text-muted">{{ i18n.t('ui_dmg_range') }}</span>
+            </div>
+            <div class="mt-1.5 text-xl font-bold text-foreground tabular-nums">{{ stats.combatPower.minDamage }}–{{ stats.combatPower.maxDamage }}</div>
           </div>
         </div>
       </div>

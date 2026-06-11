@@ -1292,6 +1292,18 @@ export default {
     streak_frozen_notify: 'Racha congelada hasta mañana',
     streak_freeze_error: 'No se pudo congelar la racha',
 
+    // Companion (resumen móvil/escritorio)
+    comp_level_short: 'Nv.',
+    comp_today: 'hoy',
+    comp_log_cta: 'Registrar reps',
+    comp_stat_streak: 'Racha',
+    comp_stat_power: 'Poder de Combate',
+    comp_boss_taunt: '{boss} te espera. ¿Le plantas cara?',
+    comp_mood_risk: 'Tu racha está en riesgo. ¡Entrena ya!',
+    comp_mood_done: 'Objetivo del día completado. ¡Buen trabajo!',
+    comp_mood_start: 'Listo para empezar. ¡Vamos a por esas reps!',
+    comp_mood_close: 'Casi lo tienes: te quedan {n} reps.',
+
     // Plan guiado
     dash_active_plan: 'Plan activo',
     dash_plan_paused: 'Pausado',
