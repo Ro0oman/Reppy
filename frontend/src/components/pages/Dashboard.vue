@@ -150,59 +150,79 @@
       </header>
 
       <!-- The Hero (Momentum): pick exercise → see today's ring → log -->
-      <section
+      <div
         v-if="!trainingStore.todayWorkout || showFreeLog"
-        class="max-w-md mx-auto w-full space-y-4"
+        class="md:grid md:grid-cols-[minmax(0,28rem)_14rem] md:gap-6 md:items-center md:justify-center mx-auto w-full md:max-w-3xl"
       >
-        <ExerciseSelector v-model="activeExercise" compact class="w-full" />
+        <section class="max-w-md mx-auto w-full space-y-4 md:mx-0">
+          <ExerciseSelector v-model="activeExercise" compact class="w-full" />
 
-        <!-- Overview mode: no single exercise picked yet -->
-        <div v-if="activeExercise === 'all'" class="bg-surface/5 border border-dashed border-border rounded-2xl flex flex-col items-center justify-center text-center p-8 sm:p-10">
-          <Globe aria-hidden="true" class="w-10 h-10 text-muted/50 mb-3" />
-          <h3 class="text-lg font-bold tracking-tight text-foreground">
-            {{ i18n.t('dash_overview_mode') }}
-          </h3>
-          <p class="text-xs text-muted/60 max-w-[320px] mx-auto mt-1.5">
-            {{ i18n.t('dash_overview_hint') }}
-          </p>
-          <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md">
+          <!-- Overview mode: no single exercise picked yet -->
+          <div v-if="activeExercise === 'all'" class="bg-surface/5 border border-dashed border-border rounded-2xl flex flex-col items-center justify-center text-center p-8 sm:p-10">
+            <Globe aria-hidden="true" class="w-10 h-10 text-muted/50 mb-3" />
+            <h3 class="text-lg font-bold tracking-tight text-foreground">
+              {{ i18n.t('dash_overview_mode') }}
+            </h3>
+            <p class="text-xs text-muted/60 max-w-[320px] mx-auto mt-1.5">
+              {{ i18n.t('dash_overview_hint') }}
+            </p>
+            <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md">
+              <button
+                v-for="option in quickLogOptions"
+                :key="option.id"
+                @click="activeExercise = option.id"
+                class="h-10 rounded-xl border border-border bg-foreground/[0.03] hover:bg-primary-500/10 hover:border-primary-500/30 text-xs font-semibold text-foreground/90 transition-all active:scale-[0.98]"
+              >
+                {{ option.label }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Day ring + log CTA -->
+          <div
+            v-else
+            ref="repsInputSectionDesktop"
+            class="flex flex-col items-center transition-all duration-500 rounded-3xl"
+            :class="highlightRepsInput ? 'ring-2 ring-primary-500/60' : ''"
+          >
+            <RadialProgress :progress="dayRingPercent" :size="208" :stroke-width="14">
+              <div class="flex flex-col items-center">
+                <span class="text-[2.75rem] font-bold tabular-nums leading-none text-foreground">{{ todayProgress }}</span>
+                <span class="mt-2 text-xs text-muted/60">
+                  {{ i18n.t('dash_ring_of') }} {{ stats.dailyGoal }} · {{ activeExerciseLabel }}
+                </span>
+              </div>
+            </RadialProgress>
+
             <button
-              v-for="option in quickLogOptions"
-              :key="option.id"
-              @click="activeExercise = option.id"
-              class="h-10 rounded-xl border border-border bg-foreground/[0.03] hover:bg-primary-500/10 hover:border-primary-500/30 text-xs font-semibold text-foreground/90 transition-all active:scale-[0.98]"
+              type="button"
+              @click="openLogSheet"
+              class="mt-5 w-full max-w-xs flex items-center justify-center gap-2 rounded-2xl bg-primary-500 hover:bg-primary-400 active:bg-primary-600 px-5 py-3.5 text-base font-semibold text-white transition-all active:scale-[0.98] shadow-lg shadow-primary-500/20"
             >
-              {{ option.label }}
+              <Plus aria-hidden="true" class="w-5 h-5" />
+              {{ i18n.t('dash_log_reps_cta') }}
             </button>
           </div>
-        </div>
+        </section>
 
-        <!-- Day ring + log CTA -->
-        <div
-          v-else
-          ref="repsInputSectionDesktop"
-          class="flex flex-col items-center transition-all duration-500 rounded-3xl"
-          :class="highlightRepsInput ? 'ring-2 ring-primary-500/60' : ''"
-        >
-          <RadialProgress :progress="dayRingPercent" :size="208" :stroke-width="14">
-            <div class="flex flex-col items-center">
-              <span class="text-[2.75rem] font-bold tabular-nums leading-none text-foreground">{{ todayProgress }}</span>
-              <span class="mt-2 text-xs text-muted/60">
-                {{ i18n.t('dash_ring_of') }} {{ stats.dailyGoal }} · {{ activeExerciseLabel }}
-              </span>
+        <!-- Quick stats: fills the side gap on tablet/narrow-desktop widths -->
+        <div class="hidden md:flex md:flex-col md:gap-3 md:mt-0 mt-4">
+          <div class="rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5">
+            <div class="flex items-center gap-1.5">
+              <Flame class="w-4 h-4 text-primary-500" aria-hidden="true" />
+              <span class="text-xs text-muted">{{ i18n.t('comp_stat_streak') }}</span>
             </div>
-          </RadialProgress>
-
-          <button
-            type="button"
-            @click="openLogSheet"
-            class="mt-5 w-full max-w-xs flex items-center justify-center gap-2 rounded-2xl bg-primary-500 hover:bg-primary-400 active:bg-primary-600 px-5 py-3.5 text-base font-semibold text-white transition-all active:scale-[0.98] shadow-lg shadow-primary-500/20"
-          >
-            <Plus aria-hidden="true" class="w-5 h-5" />
-            {{ i18n.t('dash_log_reps_cta') }}
-          </button>
+            <div class="mt-1.5 text-xl font-bold text-foreground tabular-nums">{{ streakStatus?.streak || 0 }} <span class="text-sm font-medium text-muted/70">{{ i18n.t('streak_days_unit') }}</span></div>
+          </div>
+          <div class="rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5">
+            <div class="flex items-center gap-1.5">
+              <Sword class="w-4 h-4 text-primary-500" aria-hidden="true" />
+              <span class="text-xs text-muted">{{ i18n.t('comp_stat_power') }}</span>
+            </div>
+            <div class="mt-1.5 text-xl font-bold text-foreground tabular-nums">{{ stats.combatPower.total }}</div>
+          </div>
         </div>
-      </section>
+      </div>
 
       <!-- Streak band skeleton -->
       <div
