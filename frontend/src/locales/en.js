@@ -1213,6 +1213,18 @@ export default {
     streak_frozen_notify: 'Streak frozen until tomorrow',
     streak_freeze_error: 'Could not freeze streak',
 
+    // Companion (mobile/desktop overview)
+    comp_level_short: 'Lv.',
+    comp_today: 'today',
+    comp_log_cta: 'Log reps',
+    comp_stat_streak: 'Streak',
+    comp_stat_power: 'Combat Power',
+    comp_boss_taunt: '{boss} is waiting. Ready to face it?',
+    comp_mood_risk: 'Your streak is at risk. Train now!',
+    comp_mood_done: "Today's goal complete. Great work!",
+    comp_mood_start: "Ready to start. Let's get those reps!",
+    comp_mood_close: 'Almost there: {n} reps left.',
+
     // Guided plan
     dash_active_plan: 'Active plan',
     dash_plan_paused: 'Paused',

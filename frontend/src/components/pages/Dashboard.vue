@@ -1,17 +1,13 @@
 <template>
   <div class="max-w-7xl mx-auto w-full px-4 space-y-4 sm:space-y-6 pb-24 pt-2 sm:pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-    <!-- Header: greeting -->
-    <header class="flex items-center justify-between gap-3">
-      <div class="min-w-0 flex-1">
-        <h1 class="text-2xl font-bold tracking-tight text-foreground leading-tight truncate">
-          {{ greeting }}<span class="text-primary-500">, {{ firstName }}</span>
-        </h1>
-        <p class="dashboard-daily-quote mt-1 text-xs text-muted/60">{{ dailyQuote }}</p>
-      </div>
-      <div class="flex items-center gap-2 shrink-0">
+    <!-- ☻ COMPANION (mobile) — your fighter leads ☻ -->
+    <div v-if="isMobile" class="max-w-md mx-auto w-full space-y-4">
+
+      <!-- Slim top actions -->
+      <div class="flex items-center justify-end gap-2">
         <button
           type="button"
-          class="flex items-center gap-1.5 rounded-xl border border-primary-500/25 bg-primary-500/10 px-3 py-2 text-xs font-semibold text-primary-400 transition hover:bg-primary-500/20 active:scale-95"
+          class="flex items-center gap-1.5 rounded-full border border-primary-500/25 bg-primary-500/10 px-3 py-1.5 text-xs font-semibold text-primary-400 transition hover:bg-primary-500/20 active:scale-95"
           @click="showWeeklyCard = true"
         >
           <Share2 class="w-3.5 h-3.5" aria-hidden="true" />
@@ -20,143 +16,296 @@
         <button
           v-if="guidedTrainingStateLoaded && !trainingStore.activePlan"
           type="button"
-          class="rounded-xl border border-border bg-foreground/[0.03] px-3 py-2 text-xs font-semibold text-muted transition hover:border-primary-500/30 hover:text-foreground active:scale-95"
+          class="rounded-full border border-border bg-foreground/[0.03] px-3 py-1.5 text-xs font-semibold text-muted transition hover:border-primary-500/30 hover:text-foreground active:scale-95"
           @click="openPlanPicker"
         >
           {{ i18n.t('dash_guided_plan') }}
         </button>
       </div>
-    </header>
 
-    <!-- The Hero (Momentum): pick exercise → see today's ring → log -->
-    <section
-      v-if="!trainingStore.todayWorkout || showFreeLog"
-      class="max-w-md mx-auto w-full space-y-4"
-    >
-      <ExerciseSelector v-model="activeExercise" compact class="w-full" />
+      <!-- Character hero: your fighter, with today's progress as its aura -->
+      <div class="flex flex-col items-center text-center pt-1">
+        <div class="relative">
+          <RadialProgress :progress="dayRingPercent" :size="138" :stroke-width="6">
+            <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :size="104" />
+          </RadialProgress>
+          <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-primary-500 px-2.5 py-0.5 text-[11px] font-bold text-white border-2 border-background whitespace-nowrap">
+            {{ i18n.t('comp_level_short') }} {{ userLevel }}
+          </span>
+        </div>
 
-      <!-- Overview mode: no single exercise picked yet -->
-      <div v-if="activeExercise === 'all'" class="bg-surface/5 border border-dashed border-border rounded-2xl flex flex-col items-center justify-center text-center p-8 sm:p-10">
-        <Globe aria-hidden="true" class="w-10 h-10 text-muted/50 mb-3" />
-        <h3 class="text-lg font-bold tracking-tight text-foreground">
-          {{ i18n.t('dash_overview_mode') }}
-        </h3>
-        <p class="text-xs text-muted/60 max-w-[320px] mx-auto mt-1.5">
-          {{ i18n.t('dash_overview_hint') }}
-        </p>
-        <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md">
-          <button
-            v-for="option in quickLogOptions"
-            :key="option.id"
-            @click="activeExercise = option.id"
-            class="h-10 rounded-xl border border-border bg-foreground/[0.03] hover:bg-primary-500/10 hover:border-primary-500/30 text-xs font-semibold text-foreground/90 transition-all active:scale-[0.98]"
-          >
-            {{ option.label }}
-          </button>
+        <h1 class="mt-4 text-xl font-bold tracking-tight text-foreground">{{ firstName }}</h1>
+
+        <!-- Mood / status line: the fighter has personality -->
+        <div class="mt-2 inline-flex items-center gap-1.5 rounded-full bg-foreground/[0.05] px-3 py-1.5 max-w-full">
+          <component :is="companionMood.icon" class="w-3.5 h-3.5 shrink-0" :class="companionMood.color" aria-hidden="true" />
+          <span class="text-xs text-muted truncate">{{ companionMood.text }}</span>
         </div>
       </div>
 
-      <!-- Day ring + log CTA -->
+      <!-- Log card -->
       <div
-        v-else
-        ref="repsInputSection"
-        class="flex flex-col items-center transition-all duration-500 rounded-3xl"
+        v-if="!trainingStore.todayWorkout || showFreeLog"
+        ref="repsInputSectionMobile"
+        class="rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5 transition-all duration-500"
         :class="highlightRepsInput ? 'ring-2 ring-primary-500/60' : ''"
       >
-        <RadialProgress :progress="dayRingPercent" :size="208" :stroke-width="14">
-          <div class="flex flex-col items-center">
-            <span class="text-[2.75rem] font-bold tabular-nums leading-none text-foreground">{{ todayProgress }}</span>
-            <span class="mt-2 text-xs text-muted/60">
-              {{ i18n.t('dash_ring_of') }} {{ stats.dailyGoal }} · {{ activeExerciseLabel }}
-            </span>
-          </div>
-        </RadialProgress>
-
+        <ExerciseSelector v-model="activeExercise" compact class="w-full" />
+        <div v-if="activeExercise !== 'all'" class="mt-3 flex items-center justify-between px-0.5">
+          <span class="text-sm font-semibold text-foreground">{{ activeExerciseLabel }}</span>
+          <span class="text-xs text-muted/70 tabular-nums"><b class="text-primary-500 font-bold">{{ todayProgress }}</b> / {{ stats.dailyGoal }} {{ i18n.t('comp_today') }}</span>
+        </div>
         <button
           type="button"
           @click="openLogSheet"
-          class="mt-5 w-full max-w-xs flex items-center justify-center gap-2 rounded-2xl bg-primary-500 hover:bg-primary-400 active:bg-primary-600 px-5 py-3.5 text-base font-semibold text-white transition-all active:scale-[0.98] shadow-lg shadow-primary-500/20"
+          class="mt-3 w-full flex items-center justify-center gap-2 rounded-xl bg-primary-500 hover:bg-primary-400 active:bg-primary-600 px-5 py-3.5 text-base font-semibold text-white transition-all active:scale-[0.98] shadow-lg shadow-primary-500/20"
         >
           <Plus aria-hidden="true" class="w-5 h-5" />
-          {{ i18n.t('dash_log_reps_cta') }}
+          {{ i18n.t('comp_log_cta') }}
         </button>
       </div>
-    </section>
 
-    <!-- Streak band skeleton -->
-    <div
-      v-if="isLoading && !streakStatus"
-      class="flex items-center gap-3 rounded-2xl border border-border/60 bg-foreground/[0.02] px-4 py-3 animate-pulse"
-    >
-      <div class="h-10 w-10 shrink-0 rounded-xl bg-foreground/10"></div>
-      <div class="flex-1 space-y-2">
-        <div class="h-3 w-28 bg-foreground/10 rounded"></div>
-        <div class="h-2 w-40 bg-foreground/5 rounded"></div>
+      <!-- Stats row: streak + power -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5">
+          <div class="flex items-center gap-1.5">
+            <Flame class="w-4 h-4 text-primary-500" aria-hidden="true" />
+            <span class="text-xs text-muted">{{ i18n.t('comp_stat_streak') }}</span>
+          </div>
+          <div class="mt-1.5 text-xl font-bold text-foreground tabular-nums">{{ streakStatus?.streak || 0 }} <span class="text-sm font-medium text-muted/70">{{ i18n.t('streak_days_unit') }}</span></div>
+        </div>
+        <div class="rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5">
+          <div class="flex items-center gap-1.5">
+            <Sword class="w-4 h-4 text-primary-500" aria-hidden="true" />
+            <span class="text-xs text-muted">{{ i18n.t('comp_stat_power') }}</span>
+          </div>
+          <div class="mt-1.5 text-xl font-bold text-foreground tabular-nums">{{ stats.combatPower.total }}</div>
+        </div>
       </div>
-    </div>
 
-    <!-- Streak band: one scale (days), amber only when at risk -->
-    <div
-      v-else-if="streakStatus"
-      class="flex items-center gap-3 rounded-2xl border px-4 py-3 transition-colors"
-      :class="streakStatus.showRisk ? 'border-amber-500/30 bg-amber-500/[0.07]' : 'border-primary-500/20 bg-primary-500/[0.06]'"
-    >
+      <!-- Streak at-risk alert (retention: keep the freeze CTA prominent) -->
       <div
-        class="grid place-items-center h-10 w-10 shrink-0 rounded-xl"
-        :class="streakStatus.showRisk ? 'bg-amber-500/15' : 'bg-primary-500/15'"
+        v-if="streakStatus && streakStatus.isAtRisk && !streakStatus.frozenToday"
+        class="flex items-center gap-3 rounded-2xl border border-amber-500/40 bg-amber-500/[0.08] px-4 py-3"
       >
-        <Flame aria-hidden="true" class="h-5 w-5" :class="streakStatus.showRisk ? 'text-amber-400' : 'text-primary-400'" />
+        <Flame class="h-5 w-5 text-amber-400 shrink-0" aria-hidden="true" />
+        <p class="flex-1 min-w-0 text-xs font-medium text-amber-300">{{ streakStateLabel }}</p>
+        <button
+          type="button"
+          class="shrink-0 rounded-xl border border-amber-500/50 bg-amber-500/15 text-amber-200 px-3 py-2 text-xs font-semibold disabled:opacity-40 active:scale-95 transition-transform"
+          :disabled="!streakStatus.canFreeze || freezingStreak"
+          @click="freezeStreak"
+        >
+          {{ freezeButtonLabel }}
+        </button>
       </div>
 
-      <div class="min-w-0 flex-1">
-        <div class="flex items-baseline gap-1.5">
-          <span class="text-xl font-bold tabular-nums leading-none text-foreground">{{ streakStatus.streak || 0 }}</span>
-          <span class="text-sm font-semibold text-muted/70">{{ i18n.t('streak_days_unit') }}</span>
-          <span
-            v-if="streakTier.label"
-            class="ml-1 text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-md bg-foreground/[0.06] text-muted"
-          >{{ streakTier.label }}</span>
-        </div>
-        <p
-          class="mt-0.5 text-xs truncate"
-          :class="streakStatus.showRisk ? 'text-amber-400 font-medium'
-            : streakStatus.jackpotAlreadyAwarded ? 'text-emerald-400 font-medium'
-            : 'text-muted/60'"
-        >{{ streakStateLabel }}</p>
-      </div>
-
-      <!-- Weekly bonus micro-indicator: days trained THIS week toward the jackpot (5/7) -->
-      <div class="hidden sm:flex flex-col items-end gap-1 shrink-0">
-        <span class="text-[10px] font-medium" :class="streakStatus.jackpotAlreadyAwarded ? 'text-emerald-500/80' : 'text-muted/50'">
-          {{ i18n.t('streak_weekly_bonus') }} {{ weeklyBonusProgress }}/{{ weeklyBonusTarget }}
-        </span>
-        <div class="flex items-center gap-1">
-          <span
-            v-for="day in weeklyBonusTarget"
-            :key="day"
-            class="h-1.5 w-3 rounded-full transition-colors"
-            :class="day <= weeklyBonusProgress
-              ? (streakStatus.jackpotAlreadyAwarded ? 'bg-emerald-500' : 'bg-primary-500')
-              : 'bg-foreground/10'"
-          />
-        </div>
-      </div>
-
-      <!-- Freeze CTA (only when at risk) -->
+      <!-- Boss: a friendly challenge, not a war room -->
       <button
-        v-if="streakStatus.isAtRisk && !streakStatus.frozenToday"
+        v-if="bossData"
         type="button"
-        class="shrink-0 flex items-center gap-1 rounded-xl border px-2.5 py-2 text-xs transition-all active:scale-95 disabled:opacity-40"
-        :class="streakStatus.canFreeze
-          ? 'border-amber-500/35 bg-amber-500/15 text-amber-200 hover:bg-amber-500/25'
-          : 'border-border bg-foreground/[0.04] text-muted'"
-        :disabled="!streakStatus.canFreeze || freezingStreak"
-        @click="freezeStreak"
+        class="w-full flex items-center gap-3 rounded-2xl border border-border/60 bg-foreground/[0.02] px-4 py-3 text-left hover:border-primary-500/30 transition-colors active:scale-[0.99]"
+        @click="showAdvancedStats = true"
       >
-        <Snowflake aria-hidden="true" class="h-3.5 w-3.5" />
-        <span class="hidden sm:inline">{{ freezeButtonLabel }}</span>
+        <div class="grid place-items-center h-10 w-10 shrink-0 rounded-xl bg-red-500/10">
+          <Sword class="w-5 h-5 text-red-400" aria-hidden="true" />
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold text-foreground truncate">{{ i18n.t('comp_boss_taunt', { boss: bossData.name }) }}</p>
+          <div class="mt-1.5 h-1.5 rounded-full bg-red-950/40 overflow-hidden">
+            <div class="h-full bg-red-500 rounded-full" :style="{ width: `${bossHpPercent}%` }"></div>
+          </div>
+        </div>
+        <ChevronRight class="w-5 h-5 text-muted/50 shrink-0" aria-hidden="true" />
       </button>
     </div>
+
+    <!-- ⚙ MOMENTUM (desktop/tablet) — header + day ring + streak band ⚙ -->
+    <template v-else>
+      <header class="flex items-center justify-between gap-3">
+        <div class="min-w-0 flex-1">
+          <h1 class="text-2xl font-bold tracking-tight text-foreground leading-tight truncate">
+            {{ greeting }}<span class="text-primary-500">, {{ firstName }}</span>
+          </h1>
+          <p class="dashboard-daily-quote mt-1 text-xs text-muted/60">{{ dailyQuote }}</p>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            class="flex items-center gap-1.5 rounded-xl border border-primary-500/25 bg-primary-500/10 px-3 py-2 text-xs font-semibold text-primary-400 transition hover:bg-primary-500/20 active:scale-95"
+            @click="showWeeklyCard = true"
+          >
+            <Share2 class="w-3.5 h-3.5" aria-hidden="true" />
+            {{ i18n.t('dash_my_week') }}
+          </button>
+          <button
+            v-if="guidedTrainingStateLoaded && !trainingStore.activePlan"
+            type="button"
+            class="rounded-xl border border-border bg-foreground/[0.03] px-3 py-2 text-xs font-semibold text-muted transition hover:border-primary-500/30 hover:text-foreground active:scale-95"
+            @click="openPlanPicker"
+          >
+            {{ i18n.t('dash_guided_plan') }}
+          </button>
+        </div>
+      </header>
+
+      <!-- The Hero (Momentum): pick exercise → see today's ring → log -->
+      <div
+        v-if="!trainingStore.todayWorkout || showFreeLog"
+        class="md:grid md:grid-cols-[minmax(0,28rem)_14rem] lg:grid-cols-[minmax(0,28rem)_1fr] md:gap-6 md:items-center md:justify-center mx-auto w-full md:max-w-3xl lg:max-w-4xl"
+      >
+        <section class="max-w-md mx-auto w-full space-y-4 md:mx-0">
+          <ExerciseSelector v-model="activeExercise" compact class="w-full" />
+
+          <!-- Overview mode: no single exercise picked yet -->
+          <div v-if="activeExercise === 'all'" class="bg-surface/5 border border-dashed border-border rounded-2xl flex flex-col items-center justify-center text-center p-8 sm:p-10">
+            <Globe aria-hidden="true" class="w-10 h-10 text-muted/50 mb-3" />
+            <h3 class="text-lg font-bold tracking-tight text-foreground">
+              {{ i18n.t('dash_overview_mode') }}
+            </h3>
+            <p class="text-xs text-muted/60 max-w-[320px] mx-auto mt-1.5">
+              {{ i18n.t('dash_overview_hint') }}
+            </p>
+            <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md">
+              <button
+                v-for="option in quickLogOptions"
+                :key="option.id"
+                @click="activeExercise = option.id"
+                class="h-10 rounded-xl border border-border bg-foreground/[0.03] hover:bg-primary-500/10 hover:border-primary-500/30 text-xs font-semibold text-foreground/90 transition-all active:scale-[0.98]"
+              >
+                {{ option.label }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Day ring + log CTA -->
+          <div
+            v-else
+            ref="repsInputSectionDesktop"
+            class="flex flex-col items-center transition-all duration-500 rounded-3xl"
+            :class="highlightRepsInput ? 'ring-2 ring-primary-500/60' : ''"
+          >
+            <RadialProgress :progress="dayRingPercent" :size="208" :stroke-width="14">
+              <div class="flex flex-col items-center">
+                <span class="text-[2.75rem] font-bold tabular-nums leading-none text-foreground">{{ todayProgress }}</span>
+                <span class="mt-2 text-xs text-muted/60">
+                  {{ i18n.t('dash_ring_of') }} {{ stats.dailyGoal }} · {{ activeExerciseLabel }}
+                </span>
+              </div>
+            </RadialProgress>
+
+            <button
+              type="button"
+              @click="openLogSheet"
+              class="mt-5 w-full max-w-xs flex items-center justify-center gap-2 rounded-2xl bg-primary-500 hover:bg-primary-400 active:bg-primary-600 px-5 py-3.5 text-base font-semibold text-white transition-all active:scale-[0.98] shadow-lg shadow-primary-500/20"
+            >
+              <Plus aria-hidden="true" class="w-5 h-5" />
+              {{ i18n.t('dash_log_reps_cta') }}
+            </button>
+          </div>
+        </section>
+
+        <!-- Quick stats: fills the side gap on tablet/desktop widths -->
+        <div class="hidden md:grid md:grid-cols-1 lg:grid-cols-2 md:gap-3 md:mt-0 mt-4">
+          <div class="rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5">
+            <div class="flex items-center gap-1.5">
+              <Flame class="w-4 h-4 text-primary-500" aria-hidden="true" />
+              <span class="text-xs text-muted">{{ i18n.t('comp_stat_streak') }}</span>
+            </div>
+            <div class="mt-1.5 text-xl font-bold text-foreground tabular-nums">{{ streakStatus?.streak || 0 }} <span class="text-sm font-medium text-muted/70">{{ i18n.t('streak_days_unit') }}</span></div>
+          </div>
+          <div class="rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5">
+            <div class="flex items-center gap-1.5">
+              <Sword class="w-4 h-4 text-primary-500" aria-hidden="true" />
+              <span class="text-xs text-muted">{{ i18n.t('comp_stat_power') }}</span>
+            </div>
+            <div class="mt-1.5 text-xl font-bold text-foreground tabular-nums">{{ stats.combatPower.total }}</div>
+          </div>
+          <div class="hidden lg:block lg:col-span-2 rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5">
+            <div class="flex items-center gap-1.5">
+              <Sword class="w-4 h-4 text-primary-500" aria-hidden="true" />
+              <span class="text-xs text-muted">{{ i18n.t('ui_dmg_range') }}</span>
+            </div>
+            <div class="mt-1.5 text-xl font-bold text-foreground tabular-nums">{{ stats.combatPower.minDamage }}–{{ stats.combatPower.maxDamage }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Streak band skeleton -->
+      <div
+        v-if="isLoading && !streakStatus"
+        class="flex items-center gap-3 rounded-2xl border border-border/60 bg-foreground/[0.02] px-4 py-3 animate-pulse"
+      >
+        <div class="h-10 w-10 shrink-0 rounded-xl bg-foreground/10"></div>
+        <div class="flex-1 space-y-2">
+          <div class="h-3 w-28 bg-foreground/10 rounded"></div>
+          <div class="h-2 w-40 bg-foreground/5 rounded"></div>
+        </div>
+      </div>
+
+      <!-- Streak band: one scale (days), amber only when at risk -->
+      <div
+        v-else-if="streakStatus"
+        class="flex items-center gap-3 rounded-2xl border px-4 py-3 transition-colors"
+        :class="streakStatus.showRisk ? 'border-amber-500/30 bg-amber-500/[0.07]' : 'border-primary-500/20 bg-primary-500/[0.06]'"
+      >
+        <div
+          class="grid place-items-center h-10 w-10 shrink-0 rounded-xl"
+          :class="streakStatus.showRisk ? 'bg-amber-500/15' : 'bg-primary-500/15'"
+        >
+          <Flame aria-hidden="true" class="h-5 w-5" :class="streakStatus.showRisk ? 'text-amber-400' : 'text-primary-400'" />
+        </div>
+
+        <div class="min-w-0 flex-1">
+          <div class="flex items-baseline gap-1.5">
+            <span class="text-xl font-bold tabular-nums leading-none text-foreground">{{ streakStatus.streak || 0 }}</span>
+            <span class="text-sm font-semibold text-muted/70">{{ i18n.t('streak_days_unit') }}</span>
+            <span
+              v-if="streakTier.label"
+              class="ml-1 text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-md bg-foreground/[0.06] text-muted"
+            >{{ streakTier.label }}</span>
+          </div>
+          <p
+            class="mt-0.5 text-xs truncate"
+            :class="streakStatus.showRisk ? 'text-amber-400 font-medium'
+              : streakStatus.jackpotAlreadyAwarded ? 'text-emerald-400 font-medium'
+              : 'text-muted/60'"
+          >{{ streakStateLabel }}</p>
+        </div>
+
+        <!-- Weekly bonus micro-indicator: days trained THIS week toward the jackpot (5/7) -->
+        <div class="hidden sm:flex flex-col items-end gap-1 shrink-0">
+          <span class="text-[10px] font-medium" :class="streakStatus.jackpotAlreadyAwarded ? 'text-emerald-500/80' : 'text-muted/50'">
+            {{ i18n.t('streak_weekly_bonus') }} {{ weeklyBonusProgress }}/{{ weeklyBonusTarget }}
+          </span>
+          <div class="flex items-center gap-1">
+            <span
+              v-for="day in weeklyBonusTarget"
+              :key="day"
+              class="h-1.5 w-3 rounded-full transition-colors"
+              :class="day <= weeklyBonusProgress
+                ? (streakStatus.jackpotAlreadyAwarded ? 'bg-emerald-500' : 'bg-primary-500')
+                : 'bg-foreground/10'"
+            />
+          </div>
+        </div>
+
+        <!-- Freeze CTA (only when at risk) -->
+        <button
+          v-if="streakStatus.isAtRisk && !streakStatus.frozenToday"
+          type="button"
+          class="shrink-0 flex items-center gap-1 rounded-xl border px-2.5 py-2 text-xs transition-all active:scale-95 disabled:opacity-40"
+          :class="streakStatus.canFreeze
+            ? 'border-amber-500/35 bg-amber-500/15 text-amber-200 hover:bg-amber-500/25'
+            : 'border-border bg-foreground/[0.04] text-muted'"
+          :disabled="!streakStatus.canFreeze || freezingStreak"
+          @click="freezeStreak"
+        >
+          <Snowflake aria-hidden="true" class="h-3.5 w-3.5" />
+          <span class="hidden sm:inline">{{ freezeButtonLabel }}</span>
+        </button>
+      </div>
+    </template>
 
     <TodayWorkout
       v-if="shouldShowTodayWorkout"
@@ -543,15 +692,17 @@ import { ref, onMounted, onUnmounted, computed, reactive, watch, nextTick } from
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import {
-  Trophy, Target, Flame, Zap, Activity, Inbox,
-  BarChart3, Check, X, Trash2, Globe, Sword, FlaskConical, Coins, Snowflake, ChevronDown, Share2, Pencil, Plus
+  Trophy, Target, Flame, Zap, Activity, Inbox, Globe, Snowflake,
+  BarChart3, Check, X, Trash2, Sword, FlaskConical, Coins, ChevronDown, ChevronRight, Share2, Pencil, Plus
 } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';
 import { useNotificationStore } from '@/stores/notification';
 import { useTrainingStore } from '@/stores/training';
+import { useBossStore } from '@/stores/boss';
 import Heatmap from '@/components/training/Heatmap.vue';
 import RadialProgress from '@/components/ui/RadialProgress.vue';
+import AvatarFrame from '@/components/ui/AvatarFrame.vue';
 import LogSheet from '@/components/training/LogSheet.vue';
 import ExerciseSelector from '@/components/training/ExerciseSelector.vue';
 import BossHealth from '@/components/boss/BossHealth.vue';
@@ -568,6 +719,7 @@ const authStore = useAuthStore();
 const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
 const trainingStore = useTrainingStore();
+const bossStore = useBossStore();
 const router = useRouter();
 const route = useRoute();
 
@@ -590,7 +742,9 @@ const activeTab = ref('heatmap');
 const showAdvancedStats = ref(false);
 const unclaimedMissions = ref(0);
 const highlightRepsInput = ref(false);
-const repsInputSection = ref(null);
+const repsInputSectionMobile = ref(null);
+const repsInputSectionDesktop = ref(null);
+const isMobile = ref(typeof window !== 'undefined' ? window.innerWidth < 768 : true);
 const quickStartEvaluated = ref(false);
 const showWeeklyCard = ref(false);
 const suppressRPGModal = ref(false);
@@ -701,6 +855,7 @@ const clearPlanPromoDismissed = () => {
   planPromoDismissed.value = false;
 };
 
+
 // Streak milestones: days threshold → tier badge shown next to the streak number
 const STREAK_MILESTONES = [
   { days: 7,  labelKey: 'streak_tier_week' },
@@ -793,7 +948,8 @@ const openLogSheet = async () => {
   }
   showFreeLog.value = true;
   await nextTick();
-  repsInputSection.value?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  const target = isMobile.value ? repsInputSectionMobile.value : repsInputSectionDesktop.value;
+  target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   highlightRepsInput.value = true;
   setTimeout(() => { highlightRepsInput.value = false; }, 1200);
   showLogSheet.value = true;
@@ -842,6 +998,8 @@ const firstName = computed(() =>
   authStore.user?.name?.split(' ')[0] || i18n.t('dash_default_athlete')
 );
 
+const userLevel = computed(() => authStore.user?.current_level || 1);
+
 const greeting = computed(() => {
   const hour = new Date().getHours();
   if (hour < 6) return i18n.t('greeting_night');
@@ -865,10 +1023,32 @@ const todayProgress = computed(() => {
     .reduce((acc, curr) => acc + Number(curr.count), 0);
 });
 
-// Day ring fill: today's reps for the selected exercise vs the daily goal.
+// Day aura fill: today's reps for the selected exercise vs the daily goal.
 const dayRingPercent = computed(() => {
   const goal = Math.max(1, Number(stats.dailyGoal) || 0);
   return Math.min(100, Math.round((todayProgress.value / goal) * 100));
+});
+
+// ── Companion: the fighter's personality + the community boss as a friendly foe ──
+const companionMood = computed(() => {
+  const remaining = Math.max(0, (Number(stats.dailyGoal) || 0) - todayProgress.value);
+  if (streakStatus.value?.isAtRisk && !streakStatus.value?.frozenToday) {
+    return { icon: Flame, color: 'text-amber-400', text: i18n.t('comp_mood_risk') };
+  }
+  if (isDailyObjectiveDone.value) {
+    return { icon: Check, color: 'text-emerald-500', text: i18n.t('comp_mood_done') };
+  }
+  if (todayProgress.value <= 0) {
+    return { icon: Sword, color: 'text-primary-500', text: i18n.t('comp_mood_start') };
+  }
+  return { icon: Flame, color: 'text-primary-500', text: i18n.t('comp_mood_close', { n: remaining }) };
+});
+
+const bossData = computed(() => bossStore.activeBoss?.boss || null);
+const bossHpPercent = computed(() => {
+  const b = bossData.value;
+  if (!b || !b.total_hp) return 0;
+  return Math.max(0, Math.min(100, (b.current_hp / b.total_hp) * 100));
 });
 
 const isDailyObjectiveDone = computed(() => {
@@ -1236,7 +1416,15 @@ const abandonPlan = async () => {
   );
 };
 
+// Companion (mobile) vs Momentum (desktop/tablet) layout switch
+const updateIsMobile = () => {
+  isMobile.value = window.innerWidth < 768;
+};
+
 onMounted(async () => {
+  updateIsMobile();
+  window.addEventListener('resize', updateIsMobile);
+
   // Check for exercise pre-selection from query params
   const urlParams = new URLSearchParams(window.location.search);
   const exerciseParam = urlParams.get('exercise');
@@ -1268,6 +1456,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   if (timerInterval) clearInterval(timerInterval);
+  window.removeEventListener('resize', updateIsMobile);
 });
 
 watch(
