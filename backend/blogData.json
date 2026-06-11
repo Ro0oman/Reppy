@@ -71,7 +71,7 @@
     "slug": "lanzamiento-oficial-reppy-rpg",
     "date": "2026-04-28",
     "author": "Ro0oman",
-    "image": "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80",
+    "image": "/img/showcase/armory_preview.png",
     "category": "noticias",
     "isPillar": true,
     "locales": {
@@ -143,7 +143,7 @@
     "slug": "overhaul-avatares-rpg-2026",
     "date": "2026-04-21",
     "author": "Reppy HQ",
-    "image": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80",
+    "image": "/img/showcase/profile_preview.png",
     "category": "noticias",
     "isPillar": true,
     "locales": {
@@ -245,7 +245,7 @@
     "slug": "gamificacion-fitness-ciencia",
     "date": "2026-04-20",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1598971426620-6d4b99824de4?auto=format&fit=crop&w=1200&q=80",
+    "image": "/img/showcase/dashboard_preview.png",
     "category": "rpg",
     "isPillar": false,
     "locales": {
