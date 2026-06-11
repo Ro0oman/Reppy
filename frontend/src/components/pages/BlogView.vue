@@ -442,7 +442,7 @@ const sharePost = async () => {
   } else {
     try {
       await navigator.clipboard.writeText(url);
-      notificationStore.notify('¡Enlace copiado!', 'success');
+      notificationStore.notify(i18n.locale === 'es' ? '¡Enlace copiado!' : 'Link copied!', 'success');
     } catch (err) { console.error(err); }
   }
 };

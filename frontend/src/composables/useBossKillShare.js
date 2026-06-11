@@ -239,7 +239,8 @@ async function renderCard(data, top3, locale, bossImg) {
   ctx.font = `700 26px ${FONT}`;
   ctx.fillStyle = 'rgba(255,255,255,0.30)';
   ctx.textAlign = 'center';
-  ctx.fillText('reppy-weld.vercel.app  ·  ENTRENA · SUBE DE NIVEL', CX, H - 110);
+  const footerTagline = locale === 'es' ? 'ENTRENA · SUBE DE NIVEL' : 'TRAIN · LEVEL UP';
+  ctx.fillText(`reppy-weld.vercel.app  ·  ${footerTagline}`, CX, H - 110);
 
   return canvas;
 }

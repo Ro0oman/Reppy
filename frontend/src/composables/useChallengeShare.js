@@ -96,19 +96,27 @@ function drawAvatar(ctx, img, cx, cy, r, ringColor, name, dimmed) {
   ctx.restore();
 }
 
-function epicResultText(ctx, c, maxW) {
-  if (!c.winner_id) return { txt: '⚔️ EMPATE', color: '#fff' };
+function epicResultText(ctx, c, maxW, locale) {
+  const es = locale === 'es';
+  if (!c.winner_id) return { txt: es ? '⚔️ EMPATE' : '⚔️ DRAW', color: '#fff' };
   const challengerWon = c.winner_id === c.challenger_id;
   const wn = (challengerWon ? c.challenger_name : c.challenged_name || '').toUpperCase();
-  const score = Number(challengerWon ? c.challenger_score : c.challenged_score || 0).toLocaleString('es');
+  const score = Number(challengerWon ? c.challenger_score : c.challenged_score || 0).toLocaleString(es ? 'es' : 'en');
   let raw;
-  if (c.goal_type === 'damage') raw = `🏆 ${wn} INFLIGIÓ ${score} DE DAÑO`;
-  else if (c.goal_type === 'reps') raw = `🏆 ${wn} COMPLETÓ ${score} REPS`;
-  else raw = `🏆 ${wn} DOMINA EL RETO`;
+  if (es) {
+    if (c.goal_type === 'damage') raw = `🏆 ${wn} INFLIGIÓ ${score} DE DAÑO`;
+    else if (c.goal_type === 'reps') raw = `🏆 ${wn} COMPLETÓ ${score} REPS`;
+    else raw = `🏆 ${wn} DOMINA EL RETO`;
+  } else {
+    if (c.goal_type === 'damage') raw = `🏆 ${wn} DEALT ${score} DAMAGE`;
+    else if (c.goal_type === 'reps') raw = `🏆 ${wn} COMPLETED ${score} REPS`;
+    else raw = `🏆 ${wn} DOMINATES THE CHALLENGE`;
+  }
   return { txt: truncate(ctx, raw, maxW), color: AMBER };
 }
 
-function renderCard({ c, format, bgImg, av1, av2 }) {
+function renderCard({ c, format, bgImg, av1, av2, locale }) {
+  const es = locale === 'es';
   const L = FORMATS[format];
   const W = L.w, H = L.h;
   const canvas = document.createElement('canvas');
@@ -157,7 +165,9 @@ function renderCard({ c, format, bgImg, av1, av2 }) {
 
   // Title pill
   ctx.font = `900 30px ${FONT}`;
-  const titleTxt = (c.status === 'finished' ? 'RETO FINALIZADO' : 'RETO').toUpperCase();
+  const titleTxt = (c.status === 'finished'
+    ? (es ? 'RETO FINALIZADO' : 'CHALLENGE FINISHED')
+    : (es ? 'RETO' : 'CHALLENGE'));
   const tW = ctx.measureText(titleTxt).width;
   const pillW = tW + 64, pillH = 56;
   roundRect(ctx, cx - pillW / 2, L.pillY - pillH / 2, pillW, pillH, pillH / 2);
@@ -193,7 +203,7 @@ function renderCard({ c, format, bgImg, av1, av2 }) {
     ctx.font = `900 ${L.scoreFont}px ${FONT}`;
     ctx.fillStyle = p.won ? p.color : '#fff';
     setShadow(ctx, 16);
-    ctx.fillText(Number(p.score || 0).toLocaleString(), p.x, midY + L.scoreFont / 2 + 10);
+    ctx.fillText(Number(p.score || 0).toLocaleString(es ? 'es' : 'en'), p.x, midY + L.scoreFont / 2 + 10);
     setShadow(ctx, 0);
     ctx.restore();
   });
@@ -203,17 +213,18 @@ function renderCard({ c, format, bgImg, av1, av2 }) {
   ctx.font = `900 60px ${FONT}`;
   ctx.fillStyle = 'rgba(255,255,255,0.30)';
   ctx.fillText('VS', cx, avCy);
-  const goalLabels = { reps: 'REPS', damage: 'DAÑO' };
+  const goalLabels = es ? { reps: 'REPS', damage: 'DAÑO' } : { reps: 'REPS', damage: 'DAMAGE' };
   ctx.font = `800 24px ${FONT}`;
   ctx.fillStyle = 'rgba(255,255,255,0.55)';
   ctx.fillText((goalLabels[c.goal_type] || c.goal_type || '').toUpperCase(), cx, avCy + 50);
   ctx.font = `800 22px ${FONT}`;
   ctx.fillStyle = 'rgba(255,255,255,0.4)';
-  ctx.fillText('META ' + Number(c.goal_value || 0).toLocaleString(), cx, avCy + 84);
+  const goalLabel = es ? 'META ' : 'GOAL ';
+  ctx.fillText(goalLabel + Number(c.goal_value || 0).toLocaleString(es ? 'es' : 'en'), cx, avCy + 84);
 
   // Result banner
   ctx.font = `900 44px ${FONT}`;
-  const { txt: resultTxt, color: resultColor } = epicResultText(ctx, c, W * 0.82);
+  const { txt: resultTxt, color: resultColor } = epicResultText(ctx, c, W * 0.82, locale);
   const rW = ctx.measureText(resultTxt).width + 80;
   const rH = 86;
   roundRect(ctx, cx - rW / 2, L.resultY - rH / 2, rW, rH, 22);
@@ -230,7 +241,7 @@ function renderCard({ c, format, bgImg, av1, av2 }) {
   ctx.font = `800 26px ${FONT}`;
   ctx.fillStyle = 'rgba(255,255,255,0.55)';
   ctx.textAlign = 'center';
-  ctx.fillText('ENTRENA · COMPITE · SUBE DE NIVEL', cx, L.footerY);
+  ctx.fillText(es ? 'ENTRENA · COMPITE · SUBE DE NIVEL' : 'TRAIN · COMPETE · LEVEL UP', cx, L.footerY);
 
   return canvas;
 }
@@ -281,7 +292,7 @@ export function useChallengeShare() {
         loadImage(c.challenged_avatar, true),
       ]);
 
-      const canvas = renderCard({ c, format, bgImg, av1, av2 });
+      const canvas = renderCard({ c, format, bgImg, av1, av2, locale: i18n.locale });
       const blob = await canvasToBlob(canvas);
       const file = new File([blob], 'reppy-reto.png', { type: 'image/png' });
       const caption = captionFor(c, i18n);
