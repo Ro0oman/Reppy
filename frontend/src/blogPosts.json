@@ -37,7 +37,7 @@
     "slug": "programa-dominadas-8-semanas",
     "date": "2026-06-02",
     "author": "Ro0oman",
-    "image": "https://images.unsplash.com/photo-1598971639058-fab3c3109a00?auto=format&fit=crop&w=1200&q=80",
+    "image": "/images/blog/pullup-program-8-weeks.jpg",
     "category": "dominadas",
     "isPillar": true,
     "locales": {
@@ -755,7 +755,7 @@
     "slug": "rutina-pike-pushups",
     "date": "2026-05-20",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1434608519344-49d77a699e1d?auto=format&fit=crop&w=1200&q=80",
+    "image": "/images/blog/pike-pushup.gif",
     "category": "flexiones",
     "locales": {
       "es": {
@@ -929,7 +929,7 @@
     "slug": "hollow-body-core-maestro",
     "date": "2026-05-30",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1200&q=80",
+    "image": "/images/blog/hollow-body.webp",
     "category": "core",
     "locales": {
       "es": {
@@ -1035,7 +1035,7 @@
     "slug": "calistenia-y-correr",
     "date": "2026-06-05",
     "author": "Reppy Editorial",
-    "image": "https://images.unsplash.com/photo-1486218119243-13883505764c?auto=format&fit=crop&w=1200&q=80",
+    "image": "/images/blog/calisthenics-running.jpg",
     "category": "habitos",
     "locales": {
       "es": {
@@ -1238,7 +1238,7 @@
   {
     "slug": "muscle-up-progresion-tecnica",
     "date": "2026-04-16",
-    "image": "https://images.unsplash.com/photo-1517838276537-c7010dbf031e?auto=format&fit=crop&w=1200&q=80",
+    "image": "/images/blog/muscle-up-progression.webp",
     "category": "avanzado",
     "isPillar": true,
     "locales": {
@@ -1447,7 +1447,7 @@
     "slug": "dolor-antebrazo-codo-dominadas",
     "date": "2026-06-08",
     "author": "Ro0oman",
-    "image": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1200&q=80",
+    "image": "/images/blog/forearm-elbow-pain.webp",
     "category": "dominadas",
     "isPillar": false,
     "locales": {
