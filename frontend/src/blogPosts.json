@@ -37,7 +37,7 @@
     "slug": "programa-dominadas-8-semanas",
     "date": "2026-06-02",
     "author": "Ro0oman",
-    "image": "/images/blog/pullup-program-8-weeks.jpg",
+    "image": "/images/blog/pullup-program-8-weeks.webp",
     "category": "dominadas",
     "isPillar": true,
     "locales": {
@@ -71,7 +71,7 @@
     "slug": "lanzamiento-oficial-reppy-rpg",
     "date": "2026-04-28",
     "author": "Ro0oman",
-    "image": "/img/showcase/armory_preview.png",
+    "image": "/img/showcase/armory_preview.webp",
     "category": "noticias",
     "isPillar": true,
     "locales": {
@@ -105,7 +105,7 @@
     "slug": "guia-recompensas-cofres-bosses",
     "date": "2026-04-27",
     "author": "Reppy HQ",
-    "image": "/images/blog/legendary-chest.png",
+    "image": "/images/blog/legendary-chest.webp",
     "category": "noticias",
     "isPillar": true,
     "locales": {
@@ -143,7 +143,7 @@
     "slug": "overhaul-avatares-rpg-2026",
     "date": "2026-04-21",
     "author": "Reppy HQ",
-    "image": "/img/showcase/profile_preview.png",
+    "image": "/img/showcase/profile_preview.webp",
     "category": "noticias",
     "isPillar": true,
     "locales": {
@@ -245,7 +245,7 @@
     "slug": "gamificacion-fitness-ciencia",
     "date": "2026-04-20",
     "author": "Reppy Editorial",
-    "image": "/img/showcase/dashboard_preview.png",
+    "image": "/img/showcase/dashboard_preview.webp",
     "category": "rpg",
     "isPillar": false,
     "locales": {
@@ -1035,7 +1035,7 @@
     "slug": "calistenia-y-correr",
     "date": "2026-06-05",
     "author": "Reppy Editorial",
-    "image": "/images/blog/calisthenics-running.jpg",
+    "image": "/images/blog/calisthenics-running.webp",
     "category": "habitos",
     "locales": {
       "es": {
