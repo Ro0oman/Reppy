@@ -14,6 +14,13 @@ const BASE_URL = 'https://reppy-weld.vercel.app';
 const lastmod = new Date().toISOString();
 const today = new Date();
 
+// Exclude QA/test accounts from the public athletes sitemap.
+// Keep in sync with the same filter in vite.config.js (SSG prerender).
+const isTestAthlete = (username) => {
+  const u = (username || '').toLowerCase();
+  return /^guided-test-\d+$/.test(u) || ['roman-test', 'test-user', 'tester', 'test'].includes(u);
+};
+
 // Per-language slug map: { es, en, priority, changefreq }
 // "en" key absent = English uses the same slug as Spanish
 const staticRoutes = [
@@ -141,7 +148,7 @@ const buildAthletesSitemap = async () => {
     const users = await res.json();
 
     for (const user of users) {
-      if (!user.username) continue;
+      if (!user.username || isTestAthlete(user.username)) continue;
       const esHref = `${BASE_URL}/es/atleta/${user.username}`;
       const enHref = `${BASE_URL}/en/athlete/${user.username}`;
       xml += urlEntry({ loc: esHref, lastmod, changefreq: 'weekly', priority: '0.6', esHref, enHref });

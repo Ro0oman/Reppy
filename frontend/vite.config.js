@@ -59,7 +59,13 @@ export default defineConfig({
         const res = await fetch(`${process.env.VITE_API_URL || 'http://localhost:5001'}/api/profile/top-public?limit=100`, { signal: AbortSignal.timeout(10000) });
         if (res.ok) {
           const users = await res.json();
-          athleteUsernames = users.map(u => u.username).filter(Boolean);
+          // Exclude QA/test accounts so they aren't prerendered or sitemapped.
+          // Keep in sync with the same filter in scripts/generate-sitemap.js.
+          const isTestAthlete = (u) => {
+            const n = (u || '').toLowerCase();
+            return /^guided-test-\d+$/.test(n) || ['roman-test', 'test-user', 'tester', 'test'].includes(n);
+          };
+          athleteUsernames = users.map(u => u.username).filter(Boolean).filter(u => !isTestAthlete(u));
         }
       } catch (e) {
         console.warn('[SSG] Could not fetch top athletes — skipping profile prerender:', e.message);
