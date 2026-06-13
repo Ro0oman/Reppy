@@ -84,7 +84,7 @@
           <div class="absolute -inset-4 bg-primary-500/20 blur-3xl rounded-full animate-pulse opacity-50"></div>
           <div class="relative rounded-[3rem] overflow-hidden border border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.8)] backdrop-blur-xl rotate-3 group hover:rotate-0 transition-transform duration-700">
             <img
-              src="/assets/dashboard_mockup.png"
+              src="/assets/dashboard_mockup.webp"
               alt="Reppy Dashboard Mockup — gamified calisthenics tracker with RPG progression"
               class="w-full max-w-[600px] h-auto object-cover opacity-90 group-hover:opacity-100 transition-opacity"
               loading="eager"
@@ -318,7 +318,7 @@
            <div class="absolute -inset-10 bg-rose-500/10 blur-[120px] rounded-full group-hover:bg-rose-500/20 transition-all"></div>
            <div class="relative rounded-[3rem] overflow-hidden border border-white/5 shadow-2xl scale-105 lg:rotate-[-2deg] hover:rotate-0 transition-all duration-700">
              <img
-               src="/assets/profile_mockup.png"
+               src="/assets/profile_mockup.webp"
                alt="Reppy RPG Profile — nivel, atributos STR/END/AGI y racha de entrenamiento"
                class="w-full h-auto opacity-90 group-hover:opacity-100"
                loading="lazy"
