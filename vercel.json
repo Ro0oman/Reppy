@@ -5,7 +5,7 @@
   "rewrites": [
     { "source": "/api/pusher/auth", "destination": "/api/pusher-auth.js" },
     { "source": "/api/(.*)", "destination": "/api/index.js" },
-    { "source": "/((?!api/|_nuxt/|assets/|src/|og/|favicon|og-image|manifest|robots|sitemap).*)", "destination": "/index.html" }
+    { "source": "/((?!api/|_nuxt/|assets/|src/|og/|favicon|og-image|manifest|robots|sitemap|llms|.*\\.txt).*)", "destination": "/index.html" }
   ],
   "headers": [
     {
@@ -28,6 +28,13 @@
       "source": "/robots.txt",
       "headers": [
         { "key": "Content-Type", "value": "text/plain" },
+        { "key": "Cache-Control", "value": "public, max-age=3600, s-maxage=86400" }
+      ]
+    },
+    {
+      "source": "/llms.txt",
+      "headers": [
+        { "key": "Content-Type", "value": "text/plain; charset=utf-8" },
         { "key": "Cache-Control", "value": "public, max-age=3600, s-maxage=86400" }
       ]
     },

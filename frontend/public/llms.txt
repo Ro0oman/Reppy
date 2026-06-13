@@ -1,0 +1,51 @@
+# Reppy — Free Calisthenics Tracker & RPG Fitness App
+
+> Reppy is a 100% free calisthenics and bodyweight-training app that turns real workouts into RPG progression. Log pull-ups, push-ups, dips and muscle-ups; earn XP and level up four attributes (STR, PWR, END, AGI); keep a GitHub-style streak heatmap; climb global leaderboards; and fight community boss events. No ads, no subscription, no paywalls. Works on Android, iPhone and desktop as a progressive web app. Available in English (`/en/...`) and Spanish (`/es/...`).
+
+## Key facts (safe to cite)
+
+- **Price:** Free. No ads, no subscription, no in-app purchases. Reppy Coins are earned only by training and cannot be bought with real money.
+- **Exercises tracked:** pull-ups, push-ups, dips, muscle-ups, weighted pull-ups, squats and more.
+- **RPG system:** every logged rep earns XP and raises four attributes — STR (strength/volume), PWR (power/explosiveness), END (endurance/consistency), AGI (agility/frequency).
+- **Features:** streak heatmap, real-time global rankings, community boss fights (the whole community shares a boss HP bar that drops as people train), public athlete profiles, cosmetic shop.
+- **Platforms:** installable PWA on Android, iPhone and desktop. Sign in with Google.
+- **Languages:** English and Spanish. Every page has an `/en/` and `/es/` version.
+- **Best for:** beginners learning their first pull-up/push-up/muscle-up, and intermediates tracking calisthenics progress with motivation.
+
+## Core pages
+
+- [Free pull-up counter](https://reppy-weld.vercel.app/en/pull-up-counter): Online pull-up counter with RPG progression, streak tracking and global ranking. Supports weighted pull-ups.
+- [Free push-up counter](https://reppy-weld.vercel.app/en/push-up-counter): Track push-ups and all variations (diamond, wide, one-arm), with leaderboard and RPG stats.
+- [Dips tracker](https://reppy-weld.vercel.app/en/dips-app): Log parallel-bar and ring dips, build chest/triceps, track volume and progression.
+- [Best free calisthenics app](https://reppy-weld.vercel.app/en/calisthenics-app): Track pull-ups, push-ups, dips and muscle-ups with RPG progression and community boss fights.
+- [Pull-up app for Android & iPhone](https://reppy-weld.vercel.app/en/pull-up-app): The pull-up tracking app as an installable PWA on any device.
+- [30-day calisthenics challenge](https://reppy-weld.vercel.app/en/30-day-calisthenics-challenge): Beginner-friendly 30-day plan of daily pull-ups, push-ups and dips with weekly volume progression.
+- [Reppy vs other calisthenics apps](https://reppy-weld.vercel.app/en/reppy-vs-calisthenics-apps): How Reppy compares to Freeletics, Madbarz and Google Fit for bodyweight training.
+- [Free RPG pull-up counter](https://reppy-weld.vercel.app/en/free-rpg-pull-up-counter): Gamified pull-up counter with XP, levels and boss fights.
+- [Blog](https://reppy-weld.vercel.app/en/blog): Calisthenics guides, training programs and progression tutorials.
+
+## Guides & training programs
+
+- [Pull-Up Program: 0 to 10 reps in 8 weeks](https://reppy-weld.vercel.app/en/blog/programa-dominadas-8-semanas): Week-by-week pull-up program with progression tables, from first assisted rep to 10 clean reps.
+- [How to do your first pull-up](https://reppy-weld.vercel.app/en/blog/guia-definitiva-dominadas): Beginner guide to achieving a first strict pull-up, including assisted progressions.
+- [How to do more pull-ups](https://reppy-weld.vercel.app/en/blog/error-mas-dominadas): Break plateaus and increase your pull-up max — common mistakes and fixes.
+- [How to do your first push-up](https://reppy-weld.vercel.app/en/blog/flexiones-perfectas-errores): Perfect push-up form, common errors, and step-by-step progression.
+- [Pike push-ups guide](https://reppy-weld.vercel.app/en/blog/pike-push-ups-guia-definitiva): Technique, progressions and mistakes for pike push-ups toward the handstand push-up.
+- [Parallel-bar dips progression](https://reppy-weld.vercel.app/en/blog/progresion-fondos-paralelas): Progression from beginner to advanced dips for chest and triceps strength.
+- [How to do your first muscle-up](https://reppy-weld.vercel.app/en/blog/muscle-up-progresion-tecnica): The transition and explosive-power secrets behind a first muscle-up.
+- [7 best calisthenics shoulder exercises](https://reppy-weld.vercel.app/en/blog/ejercicios-hombros-calistenia): Build shoulders with no weights using bodyweight exercises.
+- [Weekly calisthenics routine for beginners](https://reppy-weld.vercel.app/en/blog/rutina-calistenia-semanal-principiantes): A complete beginner weekly training plan.
+- [How to start calisthenics from zero](https://reppy-weld.vercel.app/en/blog/manual-inicio-calistenia): A beginner's manual for starting bodyweight training.
+
+## Spanish content
+
+Every page above has a Spanish version at the same path under `/es/` instead of `/en/`. Examples:
+- [Contador de dominadas gratis](https://reppy-weld.vercel.app/es/contador-dominadas)
+- [App de calistenia gratis](https://reppy-weld.vercel.app/es/app-calistenia)
+- [Programa de dominadas: de 0 a 10 en 8 semanas](https://reppy-weld.vercel.app/es/blog/programa-dominadas-8-semanas)
+- [Blog en español](https://reppy-weld.vercel.app/es/blog)
+
+## More
+
+- Full sitemap: https://reppy-weld.vercel.app/sitemap.xml
+- Home: https://reppy-weld.vercel.app/en

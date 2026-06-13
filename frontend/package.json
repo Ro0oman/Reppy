@@ -9,7 +9,8 @@
     "og-images": "node scripts/generate-og-images.js",
     "sync-blog": "node -e \"const fs = require('fs'); fs.copyFileSync('../backend/blogData.json', './src/blogPosts.json')\"",
     "check:i18n": "node scripts/check-i18n-duplicates.mjs",
-    "build": "npm run check:i18n && npm run sync-blog && npm run sitemap && vite-ssg build && npm run og-images && node scripts/fix-ssg-seo.js",
+    "indexnow": "node scripts/indexnow-ping.js",
+    "build": "npm run check:i18n && npm run sync-blog && npm run sitemap && vite-ssg build && npm run og-images && node scripts/fix-ssg-seo.js && npm run indexnow",
     "preview": "vite preview"
   },
   "dependencies": {

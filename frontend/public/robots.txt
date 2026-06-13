@@ -4,6 +4,15 @@
 # are blocked, for both the Spanish (/es) and English (/en) locales.
 # Explicit per-locale paths are used instead of wildcards because robots
 # wildcards span "/" and could over-block legitimate content (e.g. a blog slug).
+#
+# AI assistants are welcome. We want to be cited and linked by AI search.
+# These crawlers are intentionally allowed (they inherit the rules below):
+#   OAI-SearchBot, ChatGPT-User, GPTBot       (OpenAI / ChatGPT)
+#   PerplexityBot, Perplexity-User            (Perplexity)
+#   ClaudeBot, Claude-User, Claude-SearchBot  (Anthropic / Claude)
+#   Google-Extended                           (Gemini / AI Overviews)
+#   Applebot-Extended, Bingbot, CCBot         (Apple, Bing/Copilot, Common Crawl)
+# Curated content map for LLMs: https://reppy-weld.vercel.app/llms.txt
 
 User-agent: *
 Allow: /

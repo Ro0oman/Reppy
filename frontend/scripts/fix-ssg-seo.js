@@ -270,6 +270,41 @@ const jsonLdForRoute = (route, lang, canonicalUrl) => {
   return null;
 };
 
+// BreadcrumbList structured data → breadcrumb rich results in Google SERPs.
+// Home page returns null (a single-item breadcrumb adds no value).
+const breadcrumbJsonLd = (route, lang, canonicalUrl, routeMeta) => {
+  const isEn = lang === 'en';
+  const items = [{ name: isEn ? 'Home' : 'Inicio', item: `${BASE_URL}/${lang}` }];
+
+  const blogPostMatch = route.match(/^\/(es|en)\/blog\/(.+)$/);
+  if (route.endsWith('/blog')) {
+    items.push({ name: 'Blog', item: `${BASE_URL}/${lang}/blog` });
+  } else if (blogPostMatch) {
+    items.push({ name: 'Blog', item: `${BASE_URL}/${lang}/blog` });
+    const post = blogPosts.find(p => p.slug === blogPostMatch[2]);
+    const title = post
+      ? (post.locales[lang] || post.locales.en).title.replace(/[\u{1F000}-\u{1FFFF}]|[☀-➿]/gu, '').trim()
+      : blogPostMatch[2];
+    items.push({ name: title, item: canonicalUrl });
+  } else if (routeMeta?.title && route !== `/${lang}`) {
+    // Landing / SEO / athlete / social pages: strip the " | Reppy" or " — …" suffix
+    items.push({ name: routeMeta.title.split(/\s[|—]\s/)[0].trim(), item: canonicalUrl });
+  } else {
+    return null;
+  }
+
+  return JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((it, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: it.name,
+      item: it.item
+    }))
+  });
+};
+
 const metaForRoute = (route, lang) => {
   const isEnglish = lang === 'en';
 
@@ -436,7 +471,21 @@ const metaForRoute = (route, lang) => {
       // The BlogPosting schema (in BlogView.vue) keeps the real photo for Google Images.
       const image = `${BASE_URL}/og/blog/${lang}/${slug}.png`;
       const keywords = locale.keywords?.join(', ') || '';
-      return { title, description, image, keywords };
+      return {
+        title,
+        description,
+        image,
+        imageAlt: rawTitle,
+        keywords,
+        // Article metadata so the page is typed as og:type=article with the
+        // proper Open Graph article:* tags (dates have no separate modified field).
+        article: {
+          publishedTime: post.date ? new Date(post.date).toISOString() : null,
+          modifiedTime: post.date ? new Date(post.date).toISOString() : null,
+          author: post.author || 'Reppy',
+          section: post.category || ''
+        }
+      };
     }
   }
 
@@ -477,8 +526,26 @@ const patchHtml = (filePath) => {
       html = replaceAttribute(html, 'property="og:image"', routeMeta.image);
       html = replaceAttribute(html, 'name="twitter:image"', routeMeta.image);
     }
+    if (routeMeta.imageAlt) {
+      html = replaceAttribute(html, 'property="og:image:alt"', routeMeta.imageAlt);
+      html = replaceAttribute(html, 'name="twitter:image:alt"', routeMeta.imageAlt);
+    }
     if (routeMeta.keywords) {
       html = replaceAttribute(html, 'name="keywords"', routeMeta.keywords);
+    }
+    if (routeMeta.article) {
+      // Blog posts are articles, not generic web pages.
+      html = replaceAttribute(html, 'property="og:type"', 'article');
+      if (!html.includes('property="article:published_time"')) {
+        const a = routeMeta.article;
+        const tags = [
+          a.publishedTime && `<meta property="article:published_time" content="${a.publishedTime}" />`,
+          a.modifiedTime && `<meta property="article:modified_time" content="${a.modifiedTime}" />`,
+          a.author && `<meta property="article:author" content="${a.author}" />`,
+          a.section && `<meta property="article:section" content="${a.section}" />`
+        ].filter(Boolean).join('\n    ');
+        if (tags) html = html.replace('</head>', `    ${tags}\n  </head>`);
+      }
     }
   }
 
@@ -489,6 +556,11 @@ const patchHtml = (filePath) => {
   const jsonLd = jsonLdForRoute(route, lang, canonicalUrl);
   if (jsonLd && !html.includes('landing-jsonld')) {
     html = html.replace('</head>', `<script id="landing-jsonld" type="application/ld+json">${jsonLd}</script></head>`);
+  }
+
+  const breadcrumb = breadcrumbJsonLd(route, lang, canonicalUrl, routeMeta);
+  if (breadcrumb && !html.includes('breadcrumb-jsonld')) {
+    html = html.replace('</head>', `<script id="breadcrumb-jsonld" type="application/ld+json">${breadcrumb}</script></head>`);
   }
 
   fs.writeFileSync(filePath, html);
