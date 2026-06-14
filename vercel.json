@@ -9,6 +9,8 @@
     { "source": "/en", "destination": "/en.html" },
     { "source": "/es/blog", "destination": "/es/blog.html" },
     { "source": "/en/blog", "destination": "/en/blog.html" },
+    { "source": "/es/blog/:slug", "destination": "/es/blog/:slug.html" },
+    { "source": "/en/blog/:slug", "destination": "/en/blog/:slug.html" },
     { "source": "/es/contador-dominadas", "destination": "/es/contador-dominadas.html" },
     { "source": "/en/pull-up-counter", "destination": "/en/pull-up-counter.html" },
     { "source": "/es/contador-flexiones", "destination": "/es/contador-flexiones.html" },
