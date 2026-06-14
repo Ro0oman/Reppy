@@ -10,7 +10,8 @@
 
     <!-- Main Content Area -->
     <main class="max-w-7xl w-full px-6 py-24 space-y-32">
-      
+      <h1 class="sr-only">{{ i18n.locale === 'es' ? 'Blog de Calistenia y Entrenamiento de Reppy' : 'Reppy Calisthenics and Training Blog' }}</h1>
+
       <!-- Hero Post -->
       <div v-if="featuredPost" class="animate-in">
         <router-link 

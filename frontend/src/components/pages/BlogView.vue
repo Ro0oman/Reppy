@@ -149,7 +149,7 @@
             
             <div class="flex items-center gap-3 opacity-60">
               <div class="flex -space-x-2">
-                <img v-for="i in 3" :key="i" :src="`https://ui-avatars.com/api/?name=User+${i}&background=random&color=fff`" class="w-6 h-6 rounded-full border-2 border-background" />
+                <img v-for="i in 3" :key="i" :src="`https://ui-avatars.com/api/?name=User+${i}&background=random&color=fff`" alt="" aria-hidden="true" class="w-6 h-6 rounded-full border-2 border-background" />
               </div>
               <span class="text-[10px] font-bold text-muted uppercase tracking-wider">
                 {{ i18n.locale === 'es' ? '+5,420 atletas ya compiten hoy' : '+5,420 athletes competing today' }}

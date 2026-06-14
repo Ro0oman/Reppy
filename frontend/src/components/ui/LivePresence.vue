@@ -80,7 +80,7 @@
                   <div class="flex items-center gap-4">
                     <div class="relative">
                       <div class="w-12 h-12 rounded-full border-2 border-emerald-500/20 overflow-hidden bg-black/40">
-                        <img :src="user.avatar_url || `https://ui-avatars.com/api/?name=${user.name}&background=random`" class="w-full h-full object-cover" />
+                        <img :src="user.avatar_url || `https://ui-avatars.com/api/?name=${user.name}&background=random`" :alt="user.name" class="w-full h-full object-cover" />
                       </div>
                       <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center border-2 border-[#0a0a0a] shadow-lg">
                         <span class="text-[8px] font-black text-white">{{ user.level || 1 }}</span>
