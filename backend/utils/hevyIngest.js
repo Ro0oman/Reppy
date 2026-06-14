@@ -21,11 +21,27 @@ import { getExerciseRewards } from './rewards.js';
 import { updateMissionProgress } from './missions.js';
 import { getEffectiveExerciseCount, getRewardExerciseCount, isTimedExerciseUnit } from './exerciseUnits.js';
 
-/** Decide a Reppy unit ('reps' | 'seconds') from a Hevy exercise's sets. */
+/**
+ * Warmup sets must not count toward reps/damage/coins. Hevy marks them with
+ * set type "warmup" (the v1 API uses `type`; we also accept `set_type` defensively).
+ * Anything not explicitly "warmup" (normal/failure/dropset/undefined) counts.
+ */
+function isWarmupSet(s) {
+  const t = String(s?.type ?? s?.set_type ?? '').toLowerCase();
+  return t === 'warmup';
+}
+
+/** A Hevy exercise's working sets (warmups excluded). */
+function workingSets(ex) {
+  return (ex?.sets || []).filter(s => !isWarmupSet(s));
+}
+
+/** Decide a Reppy unit ('reps' | 'seconds') from a Hevy exercise's working sets. */
 function inferUnit(sets) {
-  const anyReps = sets.some(s => s.reps != null && s.reps > 0);
+  const working = sets.filter(s => !isWarmupSet(s));
+  const anyReps = working.some(s => s.reps != null && s.reps > 0);
   if (anyReps) return 'reps';
-  const anyDuration = sets.some(s => s.duration_seconds != null && s.duration_seconds > 0);
+  const anyDuration = working.some(s => s.duration_seconds != null && s.duration_seconds > 0);
   return anyDuration ? 'seconds' : 'reps';
 }
 
@@ -46,7 +62,7 @@ async function resolveExerciseType(client, hevyExercise) {
   // Unmapped (bench press, deadlift, machines, …) → user-custom exercise, counts x1.
   const slug = `hevy_${String(templateId).toLowerCase()}`;
   const unit = inferUnit(hevyExercise.sets || []);
-  const isWeighted = (hevyExercise.sets || []).some(s => (s.weight_kg || 0) > 0);
+  const isWeighted = workingSets(hevyExercise).some(s => (s.weight_kg || 0) > 0);
 
   const title = hevyExercise.title || slug;
   const statType = isWeighted ? 'str_xp' : 'end_xp';
@@ -103,7 +119,7 @@ export async function ingestHevyWorkout(userId, workout) {
         bucket = { reps: 0, volumeKg: 0, wRepSum: 0, wWeightSum: 0, unit, diffMult, coinMult };
         agg.set(type, bucket);
       }
-      for (const s of (ex.sets || [])) {
+      for (const s of workingSets(ex)) {
         if (isTimedExerciseUnit(unit)) {
           bucket.reps += Math.max(0, Number(s.duration_seconds) || 0);
         } else {
