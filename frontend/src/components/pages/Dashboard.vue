@@ -104,7 +104,7 @@
         v-if="bossData"
         type="button"
         class="w-full flex items-center gap-3 rounded-2xl border border-border/60 bg-foreground/[0.02] px-4 py-3 text-left hover:border-primary-500/30 transition-colors active:scale-[0.99]"
-        @click="showAdvancedStats = true"
+        @click="showBossHealth"
       >
         <div class="grid place-items-center h-10 w-10 shrink-0 rounded-xl bg-red-500/10">
           <Sword class="w-5 h-5 text-red-400" aria-hidden="true" />
@@ -522,7 +522,7 @@
     <!-- Stats & boss (collapsed until toggled, all breakpoints) -->
     <section v-show="showAdvancedStats" class="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
       <!-- Boss Intel -->
-      <div class="lg:col-span-2 space-y-4">
+      <div ref="bossHealthSection" class="lg:col-span-2 space-y-4 scroll-mt-4">
         <div class="flex items-center gap-2 px-1">
           <Zap aria-hidden="true" class="w-4 h-4 text-primary-500" />
           <h3 class="text-xs font-semibold uppercase tracking-wide text-muted/70">{{ i18n.t('dash_boss_status') }}</h3>
@@ -796,6 +796,7 @@ const editingId = ref(null);
 const editValue = ref(0);
 const deletingRepIds = ref(new Set());
 const bossHealthRef = ref(null);
+const bossHealthSection = ref(null);
 const isLoading = ref(false);
 const activeYear = ref(new Date().getFullYear());
 const showRPGModal = ref(false);
@@ -1118,6 +1119,13 @@ const bossHpPercent = computed(() => {
   if (!b || !b.total_hp) return 0;
   return Math.max(0, Math.min(100, (b.current_hp / b.total_hp) * 100));
 });
+
+// Reveal the advanced section and scroll to the boss-health component.
+const showBossHealth = async () => {
+  showAdvancedStats.value = true;
+  await nextTick();
+  bossHealthSection.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
 
 const isDailyObjectiveDone = computed(() => {
   // If there is an active daily mission from backend, trust that source of truth.
