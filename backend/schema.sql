@@ -58,8 +58,12 @@ CREATE TABLE IF NOT EXISTS training_plans (
     goal_type VARCHAR(80) NOT NULL,
     duration_days INTEGER NOT NULL,
     difficulty VARCHAR(40) DEFAULT 'beginner',
-    is_active BOOLEAN DEFAULT TRUE
+    is_active BOOLEAN DEFAULT TRUE,
+    -- NULL owner = predefined/global plan; otherwise a user-created (custom) plan
+    owner_user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    is_custom BOOLEAN DEFAULT FALSE
 );
+CREATE INDEX IF NOT EXISTS idx_training_plans_owner ON training_plans(owner_user_id);
 
 CREATE TABLE IF NOT EXISTS training_plan_days (
     id SERIAL PRIMARY KEY,
@@ -283,7 +287,9 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_streak_reward_date DATE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS push_disabled BOOLEAN DEFAULT FALSE;
 ALTER TABLE user_active_plans ADD COLUMN IF NOT EXISTS last_completed_date DATE;
 ALTER TABLE user_active_plans ADD COLUMN IF NOT EXISTS last_completed_day INTEGER;
- 
+ALTER TABLE training_plans ADD COLUMN IF NOT EXISTS owner_user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE;
+ALTER TABLE training_plans ADD COLUMN IF NOT EXISTS is_custom BOOLEAN DEFAULT FALSE;
+
 -- Push Notifications
 CREATE TABLE IF NOT EXISTS push_subscriptions (
     id SERIAL PRIMARY KEY,

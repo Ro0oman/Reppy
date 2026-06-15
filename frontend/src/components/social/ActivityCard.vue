@@ -190,6 +190,14 @@
              </div>
           </div>
 
+          <!-- MUSCLE MAP -->
+          <div v-if="hasMuscleData" class="space-y-2">
+             <p class="text-[10px] font-black text-muted/40 uppercase tracking-[0.3em]">{{ i18n.locale === 'es' ? 'Músculos trabajados' : 'Worked muscles' }}</p>
+             <div class="rounded-2xl border border-border/10 bg-foreground/[0.02] p-3">
+                <BodyMuscleMap :activation="muscleActivation" />
+             </div>
+          </div>
+
           <!-- LOADOUT -->
           <div class="space-y-2">
              <p class="text-[10px] font-black text-muted/40 uppercase tracking-[0.3em]">{{ i18n.t('ui_loadout_active') }}</p>
@@ -397,12 +405,18 @@ import { useRouter } from 'vue-router';
 import ItemIcon from '@/components/ui/ItemIcon.vue';
 import BackgroundEffect from '@/components/system/BackgroundEffect.vue';
 import ChestIcon from '@/components/ui/ChestIcon.vue';
+import BodyMuscleMap from '@/components/training/BodyMuscleMap.vue';
 import { isDeveloper } from '@/utils/developers';
+import { aggregateMuscleActivation } from '@/utils/muscleMap';
+import { buildMuscleShareImage } from '@/composables/useMuscleShare';
 
 const props = defineProps({
     activity: { type: Object, required: true },
     highlighted: { type: Boolean, default: false }
 });
+
+const muscleActivation = computed(() => aggregateMuscleActivation(props.activity.exercises));
+const hasMuscleData = computed(() => Object.keys(muscleActivation.value).length > 0);
 
 const emit = defineEmits(['toggleLike', 'viewProfile', 'commentAdded', 'compare', 'challenge', 'edit']);
 
@@ -509,19 +523,54 @@ const compactTimeAgo = (date) => {
 };
 
 const sharePost = async () => {
-  const text = `Check out this training by ${props.activity.user_name} on Reppy!`;
+  const text = i18n.locale === 'es'
+    ? `Mira este entrenamiento de ${props.activity.user_name} en Reppy!`
+    : `Check out this training by ${props.activity.user_name} on Reppy!`;
   const url = `${window.location.origin}/${i18n.locale}/social?user=${props.activity.user_id}&date=${props.activity.date}`;
-  
+  // Many targets drop the `url` field when a file is attached, so fold the link
+  // into the text too — that way the exact-workout link always travels along.
+  const textWithLink = `${text} ${url}`;
+
+  // Try to attach a rendered image of the worked-muscle map.
+  let file = null;
+  try {
+    file = await buildMuscleShareImage(props.activity, i18n.locale);
+  } catch (e) { console.log('Muscle image failed', e); }
+
+  if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file], title: 'Reppy', text: textWithLink, url });
+      return;
+    } catch (e) {
+      if (e?.name === 'AbortError') return;
+      console.log('File share failed', e);
+    }
+  }
+
   if (navigator.share) {
     try {
       await navigator.share({ title: 'Reppy Activity', text, url });
-    } catch (e) { console.log('Share failed', e); }
-  } else {
-    try {
-      await navigator.clipboard.writeText(`${text} ${url}`);
-      notificationStore.addNotification({ type: 'success', message: i18n.t('ui_link_copied') || 'Link copiado!' });
-    } catch (e) { console.log('Copy failed', e); }
+      return;
+    } catch (e) {
+      if (e?.name === 'AbortError') return;
+      console.log('Share failed', e);
+    }
   }
+
+  // No share targets: download the image (if any) and copy the link.
+  if (file) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(file);
+    a.download = file.name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  }
+  try {
+    await navigator.clipboard.writeText(`${text} ${url}`);
+    notificationStore.addNotification({ type: 'success', message: i18n.t('ui_link_copied') || 'Link copiado!' });
+  } catch (e) { console.log('Copy failed', e); }
 };
 
 const calculateStatLevel = (xp) => {

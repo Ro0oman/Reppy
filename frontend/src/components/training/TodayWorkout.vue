@@ -84,6 +84,21 @@
     </div>
 
     <div v-else class="mt-5 space-y-3">
+      <!-- Overall session progress -->
+      <div class="rounded-2xl border border-primary-500/25 bg-primary-500/[0.06] p-4">
+        <div class="flex items-center justify-between text-xs font-bold uppercase tracking-wide">
+          <span class="text-muted">{{ i18n.locale === 'es' ? 'Progreso de la sesión' : 'Session progress' }}</span>
+          <span class="text-primary-500 tabular-nums">{{ completedSetsCount }}/{{ totalSetsCount }} sets</span>
+        </div>
+        <div class="mt-2 h-2.5 overflow-hidden rounded-full bg-foreground/10">
+          <div
+            class="h-full rounded-full transition-all duration-500"
+            :class="setsProgress >= 100 ? 'bg-emerald-500' : 'bg-primary-500'"
+            :style="{ width: setsProgress + '%' }"
+          ></div>
+        </div>
+      </div>
+
       <article
         v-for="block in workout.blocks"
         :key="block.id"
@@ -143,19 +158,39 @@
               >
                 <Check class="h-4 w-4" />
               </button>
-              <div
-                v-if="set.timerActive"
-                class="rounded-xl px-3 py-2 text-[10px] font-semibold uppercase tracking-wide bg-amber-500/20 text-amber-500 border border-amber-500/30 flex items-center gap-1 select-none"
-              >
-                <Clock class="h-3.5 w-3.5 animate-pulse" />
-                {{ set.restTimer }}s
-              </div>
             </div>
             <div v-if="isTimedSet(set)" class="col-span-2 h-1.5 overflow-hidden rounded-full bg-foreground/10">
               <div
                 class="h-full rounded-full bg-primary-500 transition-all"
                 :style="{ width: `${timedProgress(set)}%` }"
               ></div>
+            </div>
+
+            <!-- Rest countdown: progress bar + countdown + ±15s controls -->
+            <div
+              v-if="set.timerActive"
+              class="col-span-2 mt-1 rounded-xl border border-amber-500/30 bg-amber-500/[0.08] p-3"
+            >
+              <div class="flex items-center justify-between gap-2">
+                <span class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-amber-300">
+                  <Clock class="h-3.5 w-3.5 animate-pulse" />
+                  {{ i18n.locale === 'es' ? 'Descanso' : 'Rest' }}
+                </span>
+                <span class="text-lg font-black tabular-nums text-amber-200">{{ set.restTimer }}s</span>
+              </div>
+              <div class="mt-2 h-2 overflow-hidden rounded-full bg-amber-950/40">
+                <div
+                  class="h-full rounded-full bg-amber-400 transition-all duration-1000 ease-linear"
+                  :style="{ width: `${restProgress(set)}%` }"
+                ></div>
+              </div>
+              <div class="mt-3 flex items-center gap-2">
+                <button type="button" class="rest-btn" @click="adjustRest(set, -15)">−15s</button>
+                <button type="button" class="rest-btn" @click="adjustRest(set, 15)">+15s</button>
+                <button type="button" class="rest-btn ml-auto !text-amber-200" @click="skipRest(set)">
+                  {{ i18n.locale === 'es' ? 'Saltar' : 'Skip' }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -202,6 +237,15 @@
       :exercise-slug="selectedExerciseSlug"
       @close="detailModalOpen = false"
     />
+
+    <!-- Post-workout overview (becomes the published post) -->
+    <WorkoutSummaryModal
+      :show="summaryOpen"
+      :exercises="summaryExercises"
+      :stats="summaryStats"
+      :title="summaryTitle"
+      @close="summaryOpen = false"
+    />
   </section>
 </template>
 
@@ -209,6 +253,7 @@
 import { computed, onUnmounted, ref, watch } from 'vue';
 import { Check, Clock, Coins, Loader2, Minus, Play, Plus, Sparkles, Square, TimerReset, Info } from 'lucide-vue-next';
 import ExerciseDetailModal from '@/components/modals/ExerciseDetailModal.vue';
+import WorkoutSummaryModal from '@/components/training/WorkoutSummaryModal.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';
 import { useNotificationStore } from '@/stores/notification';
@@ -233,6 +278,10 @@ const session = ref(null);
 const setLogs = ref([]);
 const detailModalOpen = ref(false);
 const selectedExerciseSlug = ref('');
+const summaryOpen = ref(false);
+const summaryExercises = ref([]);
+const summaryStats = ref({});
+const summaryTitle = ref('');
 
 const openExerciseDetail = (slug) => {
   selectedExerciseSlug.value = slug;
@@ -304,6 +353,7 @@ const createSetLogs = () => {
       unit,
       restSeconds: Number(block.restSeconds || 60),
       restTimer: 0,
+      restTotal: 0,
       timerActive: false,
       intervalId: null,
       workTimerActive: false,
@@ -351,6 +401,9 @@ const setTargetValue = (set) => Number(set.targetReps || 0);
 const setActualValue = (set) => Number(set.actualReps || 0);
 const setIsComplete = (set) => !!set.completed && setActualValue(set) >= setTargetValue(set);
 const incompleteSets = computed(() => setLogs.value.filter(set => !setIsComplete(set)));
+const totalSetsCount = computed(() => setLogs.value.length);
+const completedSetsCount = computed(() => setLogs.value.filter(setIsComplete).length);
+const setsProgress = computed(() => totalSetsCount.value ? Math.round((completedSetsCount.value / totalSetsCount.value) * 100) : 0);
 const incompleteSetsLabel = computed(() => {
   const count = incompleteSets.value.length;
   if (!count) return '';
@@ -430,7 +483,11 @@ const markDone = (set) => {
 
   clearAllTimers();
 
+  // No rest configured → don't start a countdown.
+  if (!set.restSeconds || set.restSeconds <= 0) return;
+
   set.restTimer = set.restSeconds;
+  set.restTotal = set.restSeconds;
   set.timerActive = true;
   if (set.intervalId) clearInterval(set.intervalId);
 
@@ -451,6 +508,34 @@ const markDone = (set) => {
     }
   }, 1000);
 };
+
+const stopRest = (set) => {
+  if (set.intervalId) {
+    clearInterval(set.intervalId);
+    set.intervalId = null;
+  }
+  set.restTimer = 0;
+  set.timerActive = false;
+};
+
+// Elapsed-rest percentage for the countdown progress bar.
+const restProgress = (set) => {
+  const total = Number(set?.restTotal || 0);
+  if (total <= 0) return 0;
+  const remaining = Math.max(0, Number(set.restTimer || 0));
+  return Math.max(0, Math.min(100, Math.round(((total - remaining) / total) * 100)));
+};
+
+// Let the user add/remove 15s from the running rest countdown.
+const adjustRest = (set, delta) => {
+  if (!set.timerActive) return;
+  const next = Number(set.restTimer || 0) + delta;
+  if (next <= 0) { stopRest(set); return; }
+  set.restTimer = next;
+  if (next > Number(set.restTotal || 0)) set.restTotal = next;
+};
+
+const skipRest = (set) => stopRest(set);
 
 const abandonSession = () => {
   notificationStore.confirm(
@@ -498,7 +583,9 @@ const finishWorkout = async () => {
   loading.value = true;
   try {
     const finishedLabel = totalProgressLabel.value;
-    const result = await trainingStore.completeSession(session.value.id, setLogs.value);
+    // Snapshot what was performed before we reset the session, for the overview/post.
+    const performed = setLogs.value;
+    const result = await trainingStore.completeSession(session.value.id, performed);
 
     notificationStore.notify(
       i18n.locale === 'es'
@@ -506,6 +593,24 @@ const finishWorkout = async () => {
         : `Mission completed: ${finishedLabel} logged`,
       'success'
     );
+
+    // Build the workout overview (muscle map + totals) shown as the post preview.
+    const byExercise = new Map();
+    for (const set of performed) {
+      const slug = set.exerciseType || 'pullups';
+      const entry = byExercise.get(slug) || { exercise_type: slug, count: 0, unit: set.unit || 'reps' };
+      entry.count += Number(set.actualReps || 0);
+      byExercise.set(slug, entry);
+    }
+    summaryExercises.value = Array.from(byExercise.values());
+    summaryStats.value = {
+      reps: Number(result?.totalReps ?? result?.total_reps ?? 0),
+      seconds: performed.filter(s => (s.unit || 'reps') === 'seconds').reduce((sum, s) => sum + Number(s.actualReps || 0), 0),
+      damage: Number(result?.totalDamage ?? 0),
+      coins: Number(result?.earnedCoins ?? 0),
+    };
+    summaryTitle.value = props.workout?.day?.titleKey ? i18n.t(props.workout.day.titleKey) : '';
+    summaryOpen.value = true;
 
     await authStore.fetchProfile(true);
     markPushPromptEligible();
@@ -550,4 +655,17 @@ const finishWorkout = async () => {
 .icon-btn:hover {
   background: hsla(var(--foreground) / 0.1);
 }
+
+.rest-btn {
+  border-radius: 0.6rem;
+  border: 1px solid hsl(45 93% 47% / 0.35);
+  background: hsl(45 93% 47% / 0.12);
+  padding: 0.4rem 0.7rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: hsl(45 93% 70%);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.rest-btn:hover { background: hsl(45 93% 47% / 0.22); }
+.rest-btn:active { transform: scale(0.95); }
 </style>

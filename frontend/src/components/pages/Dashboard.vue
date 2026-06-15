@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-7xl mx-auto w-full px-4 space-y-4 sm:space-y-6 pb-24 pt-2 sm:pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
     <!-- ☻ COMPANION (mobile) — your fighter leads ☻ -->
-    <div v-if="isMobile" class="max-w-md mx-auto w-full space-y-4">
+    <div v-if="isMobile" class="max-w-md mx-auto w-full space-y-3">
 
       <!-- Slim top actions -->
       <div class="flex items-center justify-end gap-2">
@@ -13,43 +13,42 @@
           <Share2 class="w-3.5 h-3.5" aria-hidden="true" />
           {{ i18n.t('dash_my_week') }}
         </button>
-        <button
-          v-if="guidedTrainingStateLoaded && !trainingStore.activePlan"
-          type="button"
-          class="rounded-full border border-border bg-foreground/[0.03] px-3 py-1.5 text-xs font-semibold text-muted transition hover:border-primary-500/30 hover:text-foreground active:scale-95"
-          @click="openPlanPicker"
-        >
-          {{ i18n.t('dash_guided_plan') }}
-        </button>
       </div>
 
       <!-- Character hero: your fighter, with today's progress as its aura -->
-      <div class="flex flex-col items-center text-center pt-1">
+      <div class="flex flex-col items-center text-center">
         <div class="relative">
-          <RadialProgress :progress="dayRingPercent" :size="138" :stroke-width="6">
-            <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :size="104" />
+          <RadialProgress :progress="dayRingPercent" :size="112" :stroke-width="6">
+            <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :size="84" />
           </RadialProgress>
           <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-primary-500 px-2.5 py-0.5 text-[11px] font-bold text-white border-2 border-background whitespace-nowrap">
             {{ i18n.t('comp_level_short') }} {{ userLevel }}
           </span>
         </div>
 
-        <h1 class="mt-4 text-xl font-bold tracking-tight text-foreground">{{ firstName }}</h1>
+        <h1 class="mt-3 text-xl font-bold tracking-tight text-foreground">{{ firstName }}</h1>
 
         <!-- Mood / status line: the fighter has personality -->
-        <div class="mt-2 inline-flex items-center gap-1.5 rounded-full bg-foreground/[0.05] px-3 py-1.5 max-w-full">
+        <div class="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-foreground/[0.05] px-3 py-1 max-w-full">
           <component :is="companionMood.icon" class="w-3.5 h-3.5 shrink-0" :class="companionMood.color" aria-hidden="true" />
           <span class="text-xs text-muted truncate">{{ companionMood.text }}</span>
         </div>
       </div>
 
-      <!-- Log card -->
+      <!-- Quick log: surfaced right under the hero so logging reps is 1–2 taps
+           away — pick an exercise and hit register without scrolling. -->
       <div
-        v-if="!trainingStore.todayWorkout || showFreeLog"
+        v-if="guidedTrainingStateLoaded && (!trainingStore.todayWorkout || showFreeLog)"
         ref="repsInputSectionMobile"
-        class="rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5 transition-all duration-500"
+        class="rounded-2xl border border-primary-500/30 bg-primary-500/[0.06] p-3.5 transition-all duration-500"
         :class="highlightRepsInput ? 'ring-2 ring-primary-500/60' : ''"
       >
+        <div class="mb-3 flex items-center gap-2">
+          <Zap class="h-4 w-4 text-primary-500" aria-hidden="true" />
+          <h2 class="text-xs font-bold uppercase tracking-wide text-muted/70">
+            {{ i18n.locale === 'es' ? 'Registro rápido' : 'Quick log' }}
+          </h2>
+        </div>
         <ExerciseSelector v-model="activeExercise" compact class="w-full" />
         <div v-if="activeExercise !== 'all'" class="mt-3 flex items-center justify-between px-0.5">
           <span class="text-sm font-semibold text-foreground">{{ activeExerciseLabel }}</span>
@@ -138,98 +137,8 @@
             <Share2 class="w-3.5 h-3.5" aria-hidden="true" />
             {{ i18n.t('dash_my_week') }}
           </button>
-          <button
-            v-if="guidedTrainingStateLoaded && !trainingStore.activePlan"
-            type="button"
-            class="rounded-xl border border-border bg-foreground/[0.03] px-3 py-2 text-xs font-semibold text-muted transition hover:border-primary-500/30 hover:text-foreground active:scale-95"
-            @click="openPlanPicker"
-          >
-            {{ i18n.t('dash_guided_plan') }}
-          </button>
         </div>
       </header>
-
-      <!-- The Hero (Momentum): pick exercise → see today's ring → log -->
-      <div
-        v-if="!trainingStore.todayWorkout || showFreeLog"
-        class="md:grid md:grid-cols-[minmax(0,28rem)_14rem] lg:grid-cols-[minmax(0,28rem)_1fr] md:gap-6 md:items-center md:justify-center mx-auto w-full md:max-w-3xl lg:max-w-4xl"
-      >
-        <section class="max-w-md mx-auto w-full space-y-4 md:mx-0">
-          <ExerciseSelector v-model="activeExercise" compact class="w-full" />
-
-          <!-- Overview mode: no single exercise picked yet -->
-          <div v-if="activeExercise === 'all'" class="bg-surface/5 border border-dashed border-border rounded-2xl flex flex-col items-center justify-center text-center p-8 sm:p-10">
-            <Globe aria-hidden="true" class="w-10 h-10 text-muted/50 mb-3" />
-            <h3 class="text-lg font-bold tracking-tight text-foreground">
-              {{ i18n.t('dash_overview_mode') }}
-            </h3>
-            <p class="text-xs text-muted/60 max-w-[320px] mx-auto mt-1.5">
-              {{ i18n.t('dash_overview_hint') }}
-            </p>
-            <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md">
-              <button
-                v-for="option in quickLogOptions"
-                :key="option.id"
-                @click="activeExercise = option.id"
-                class="h-10 rounded-xl border border-border bg-foreground/[0.03] hover:bg-primary-500/10 hover:border-primary-500/30 text-xs font-semibold text-foreground/90 transition-all active:scale-[0.98]"
-              >
-                {{ option.label }}
-              </button>
-            </div>
-          </div>
-
-          <!-- Day ring + log CTA -->
-          <div
-            v-else
-            ref="repsInputSectionDesktop"
-            class="flex flex-col items-center transition-all duration-500 rounded-3xl"
-            :class="highlightRepsInput ? 'ring-2 ring-primary-500/60' : ''"
-          >
-            <RadialProgress :progress="dayRingPercent" :size="208" :stroke-width="14">
-              <div class="flex flex-col items-center">
-                <span class="text-[2.75rem] font-bold tabular-nums leading-none text-foreground">{{ todayProgress }}</span>
-                <span class="mt-2 text-xs text-muted/60">
-                  {{ i18n.t('dash_ring_of') }} {{ stats.dailyGoal }} · {{ activeExerciseLabel }}
-                </span>
-              </div>
-            </RadialProgress>
-
-            <button
-              type="button"
-              @click="openLogSheet"
-              class="mt-5 w-full max-w-xs flex items-center justify-center gap-2 rounded-2xl bg-primary-500 hover:bg-primary-400 active:bg-primary-600 px-5 py-3.5 text-base font-semibold text-white transition-all active:scale-[0.98] shadow-lg shadow-primary-500/20"
-            >
-              <Plus aria-hidden="true" class="w-5 h-5" />
-              {{ i18n.t('dash_log_reps_cta') }}
-            </button>
-          </div>
-        </section>
-
-        <!-- Quick stats: fills the side gap on tablet/desktop widths -->
-        <div class="hidden md:grid md:grid-cols-1 lg:grid-cols-2 md:gap-3 md:mt-0 mt-4">
-          <div class="rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5">
-            <div class="flex items-center gap-1.5">
-              <Flame class="w-4 h-4 text-primary-500" aria-hidden="true" />
-              <span class="text-xs text-muted">{{ i18n.t('comp_stat_streak') }}</span>
-            </div>
-            <div class="mt-1.5 text-xl font-bold text-foreground tabular-nums">{{ streakStatus?.streak || 0 }} <span class="text-sm font-medium text-muted/70">{{ i18n.t('streak_days_unit') }}</span></div>
-          </div>
-          <div class="rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5">
-            <div class="flex items-center gap-1.5">
-              <Sword class="w-4 h-4 text-primary-500" aria-hidden="true" />
-              <span class="text-xs text-muted">{{ i18n.t('comp_stat_power') }}</span>
-            </div>
-            <div class="mt-1.5 text-xl font-bold text-foreground tabular-nums">{{ stats.combatPower.total }}</div>
-          </div>
-          <div class="hidden lg:block lg:col-span-2 rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5">
-            <div class="flex items-center gap-1.5">
-              <Sword class="w-4 h-4 text-primary-500" aria-hidden="true" />
-              <span class="text-xs text-muted">{{ i18n.t('ui_dmg_range') }}</span>
-            </div>
-            <div class="mt-1.5 text-xl font-bold text-foreground tabular-nums">{{ stats.combatPower.minDamage }}–{{ stats.combatPower.maxDamage }}</div>
-          </div>
-        </div>
-      </div>
 
       <!-- Streak band skeleton -->
       <div
@@ -307,6 +216,26 @@
       </div>
     </template>
 
+    <!-- ===== MIS RUTINAS (rutinas fijas / creadas) ===== -->
+    <section v-if="guidedTrainingStateLoaded" class="flex items-center justify-between gap-2 pt-1">
+      <div class="flex items-center gap-2">
+        <ClipboardList class="h-4 w-4 text-primary-500" aria-hidden="true" />
+        <h2 class="text-xs font-bold uppercase tracking-wide text-muted/70">
+          {{ i18n.locale === 'es' ? 'Mis rutinas' : 'My routines' }}
+        </h2>
+      </div>
+      <div class="flex items-center gap-2">
+        <button type="button" class="routine-chip" @click="showRoutineCarousel = true">
+          <LayoutGrid class="h-3.5 w-3.5" aria-hidden="true" />
+          {{ i18n.locale === 'es' ? 'Explorar' : 'Browse' }}
+        </button>
+        <button type="button" class="routine-chip" @click="openBuilder()">
+          <Plus class="h-3.5 w-3.5" aria-hidden="true" />
+          {{ i18n.locale === 'es' ? 'Crear' : 'Create' }}
+        </button>
+      </div>
+    </section>
+
     <TodayWorkout
       v-if="shouldShowTodayWorkout"
       :workout="trainingStore.todayWorkout"
@@ -318,42 +247,29 @@
 
     <section
       v-if="shouldShowActivePlanCard"
-      class="rounded-2xl border border-border/60 bg-foreground/[0.02] p-3 sm:p-4"
+      class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 rounded-2xl border border-border/60 bg-foreground/[0.02] px-4 py-2.5"
     >
-      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div class="min-w-0">
-          <p class="text-xs font-semibold text-muted">
-            {{ i18n.t('dash_active_plan') }}
-          </p>
-          <p class="mt-1 text-sm font-bold text-foreground">
-            {{ i18n.t(trainingStore.activePlan.titleKey) }}
-            <span v-if="trainingStore.isPlanPaused" class="text-amber-400">· {{ i18n.t('dash_plan_paused') }}</span>
-          </p>
-        </div>
-        <div class="flex flex-wrap gap-2">
-          <button
-            v-if="trainingStore.isPlanPaused"
-            type="button"
-            class="plan-action"
-            @click="resumePlan"
-          >
-            {{ i18n.t('dash_plan_resume') }}
-          </button>
-          <button
-            v-else
-            type="button"
-            class="plan-action"
-            @click="pausePlan"
-          >
-            {{ i18n.t('dash_plan_pause') }}
-          </button>
-          <button type="button" class="plan-action" @click="openPlanPicker">
-            {{ i18n.t('dash_plan_change') }}
-          </button>
-          <button type="button" class="plan-action text-red-300 hover:text-red-200" @click="abandonPlan">
-            {{ i18n.t('dash_plan_abandon') }}
-          </button>
-        </div>
+      <div class="flex min-w-0 items-center gap-2">
+        <span class="text-[10px] font-bold uppercase tracking-widest text-muted/60">{{ i18n.t('dash_active_plan') }}</span>
+        <span class="truncate text-sm font-bold text-foreground">{{ i18n.t(trainingStore.activePlan.titleKey) }}</span>
+        <span
+          v-if="trainingStore.isPlanPaused"
+          class="shrink-0 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-amber-400"
+        >{{ i18n.t('dash_plan_paused') }}</span>
+      </div>
+      <div class="flex flex-wrap gap-1.5">
+        <button v-if="trainingStore.isPlanPaused" type="button" class="plan-action" @click="resumePlan">
+          {{ i18n.t('dash_plan_resume') }}
+        </button>
+        <button v-else type="button" class="plan-action" @click="pausePlan">
+          {{ i18n.t('dash_plan_pause') }}
+        </button>
+        <button type="button" class="plan-action" @click="openPlanPicker">
+          {{ i18n.t('dash_plan_change') }}
+        </button>
+        <button type="button" class="plan-action text-red-300 hover:text-red-200" @click="abandonPlan">
+          {{ i18n.t('dash_plan_abandon') }}
+        </button>
       </div>
     </section>
 
@@ -387,6 +303,61 @@
       </div>
     </section>
 
+    <!-- Empty state: no active plan, no custom routines -->
+    <section
+      v-if="guidedTrainingStateLoaded && !shouldShowTodayWorkout && !shouldShowActivePlanCard && !shouldShowPlanPromo && !trainingStore.customPlans.length"
+      class="rounded-2xl border border-dashed border-primary-500/30 bg-primary-500/[0.05] p-5 text-center"
+    >
+      <Dumbbell class="mx-auto h-7 w-7 text-primary-500/70" aria-hidden="true" />
+      <h3 class="mt-2 text-base font-bold text-foreground">
+        {{ i18n.locale === 'es' ? 'Aún no tienes una rutina' : 'No routine yet' }}
+      </h3>
+      <p class="mx-auto mt-1 max-w-md text-sm text-muted/70">
+        {{ i18n.locale === 'es'
+          ? 'Explora planes guiados o crea tu propia rutina para entrenar con estructura.'
+          : 'Browse guided plans or create your own routine to train with structure.' }}
+      </p>
+      <div class="mt-4 flex flex-wrap justify-center gap-2">
+        <button type="button" class="btn-reppy px-5" @click="showRoutineCarousel = true">
+          {{ i18n.locale === 'es' ? 'Explorar rutinas' : 'Browse routines' }}
+        </button>
+        <button
+          type="button"
+          class="rounded-2xl border border-border bg-foreground/[0.04] px-5 py-3 text-sm font-semibold text-foreground transition hover:border-primary-500/30 active:scale-95"
+          @click="openBuilder()"
+        >
+          {{ i18n.locale === 'es' ? 'Crear rutina' : 'Create routine' }}
+        </button>
+      </div>
+    </section>
+
+    <!-- Mis rutinas creadas (custom plans) -->
+    <section v-if="guidedTrainingStateLoaded && trainingStore.customPlans.length" class="space-y-3">
+      <p class="text-[10px] font-bold uppercase tracking-widest text-muted/60">
+        {{ i18n.locale === 'es' ? 'Rutinas creadas por ti' : 'Routines you created' }}
+      </p>
+      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <PlanCard
+          v-for="plan in trainingStore.customPlans"
+          :key="plan.slug"
+          :plan="plan"
+          :active="trainingStore.activePlan && trainingStore.activePlan.slug === plan.slug"
+        >
+          <template #actions>
+            <button type="button" class="btn-reppy flex-1 !py-2 text-xs" @click="startCustomPlan(plan)">
+              {{ i18n.locale === 'es' ? 'Empezar' : 'Start' }}
+            </button>
+            <button type="button" class="routine-icon-btn" @click="openBuilder(plan.id)" :aria-label="i18n.locale === 'es' ? 'Editar' : 'Edit'">
+              <Pencil class="h-3.5 w-3.5" />
+            </button>
+            <button type="button" class="routine-icon-btn hover:text-red-400" @click="removeCustomPlan(plan)" :aria-label="i18n.locale === 'es' ? 'Eliminar' : 'Delete'">
+              <Trash2 class="h-3.5 w-3.5" />
+            </button>
+          </template>
+        </PlanCard>
+      </div>
+    </section>
+
     <div v-if="shouldShowFreeLogToggle" class="flex justify-center">
       <button
         type="button"
@@ -396,6 +367,84 @@
         {{ i18n.t('today_free_log') }}
       </button>
     </div>
+
+    <!-- ===== REGISTRO RÁPIDO (desktop) — en móvil se muestra bajo el héroe ===== -->
+    <section
+      v-if="!isMobile && guidedTrainingStateLoaded && (!trainingStore.todayWorkout || showFreeLog)"
+      class="space-y-4"
+    >
+      <div class="flex items-center gap-2">
+        <Zap class="h-4 w-4 text-primary-500" aria-hidden="true" />
+        <h2 class="text-xs font-bold uppercase tracking-wide text-muted/70">
+          {{ i18n.locale === 'es' ? 'Registro rápido' : 'Quick log' }}
+        </h2>
+      </div>
+
+      <!-- Desktop/tablet: ring/overview + glanceable stats fill the row -->
+      <div class="w-full space-y-4">
+        <ExerciseSelector v-model="activeExercise" compact class="w-full" />
+
+        <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-stretch">
+          <!-- Overview mode: no single exercise picked yet -->
+          <div v-if="activeExercise === 'all'" class="bg-surface/5 border border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-center p-8 sm:p-10">
+            <Globe aria-hidden="true" class="w-10 h-10 text-muted/50 mb-3" />
+            <h3 class="text-lg font-bold tracking-tight text-foreground">{{ i18n.t('dash_overview_mode') }}</h3>
+            <p class="text-xs text-muted/60 max-w-[320px] mx-auto mt-1.5">{{ i18n.t('dash_overview_hint') }}</p>
+            <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md">
+              <button
+                v-for="option in quickLogOptions"
+                :key="option.id"
+                @click="activeExercise = option.id"
+                class="h-10 rounded-xl border border-border bg-foreground/[0.03] hover:bg-primary-500/10 hover:border-primary-500/30 text-xs font-semibold text-foreground/90 transition-all active:scale-[0.98]"
+              >
+                {{ option.label }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Day ring + log CTA -->
+          <div
+            v-else
+            ref="repsInputSectionDesktop"
+            class="flex flex-col items-center justify-center transition-all duration-500 rounded-3xl border border-border/60 bg-foreground/[0.02] p-6"
+            :class="highlightRepsInput ? 'ring-2 ring-primary-500/60' : ''"
+          >
+            <RadialProgress :progress="dayRingPercent" :size="208" :stroke-width="14">
+              <div class="flex flex-col items-center">
+                <span class="text-[2.75rem] font-bold tabular-nums leading-none text-foreground">{{ todayProgress }}</span>
+                <span class="mt-2 text-xs text-muted/60">{{ i18n.t('dash_ring_of') }} {{ stats.dailyGoal }} · {{ activeExerciseLabel }}</span>
+              </div>
+            </RadialProgress>
+            <button
+              type="button"
+              @click="openLogSheet"
+              class="mt-5 w-full max-w-xs flex items-center justify-center gap-2 rounded-2xl bg-primary-500 hover:bg-primary-400 active:bg-primary-600 px-5 py-3.5 text-base font-semibold text-white transition-all active:scale-[0.98] shadow-lg shadow-primary-500/20"
+            >
+              <Plus aria-hidden="true" class="w-5 h-5" />
+              {{ i18n.t('dash_log_reps_cta') }}
+            </button>
+          </div>
+
+          <!-- Glanceable stats (streak shown once, in the band below) -->
+          <div class="grid grid-cols-2 gap-3 lg:grid-cols-1 lg:content-center">
+            <div class="rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5">
+              <div class="flex items-center gap-1.5">
+                <Sword class="w-4 h-4 text-primary-500" aria-hidden="true" />
+                <span class="text-xs text-muted">{{ i18n.t('comp_stat_power') }}</span>
+              </div>
+              <div class="mt-1.5 text-xl font-bold text-foreground tabular-nums">{{ stats.combatPower.total }}</div>
+            </div>
+            <div class="rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5">
+              <div class="flex items-center gap-1.5">
+                <Sword class="w-4 h-4 text-primary-500" aria-hidden="true" />
+                <span class="text-xs text-muted">{{ i18n.t('ui_dmg_range') }}</span>
+              </div>
+              <div class="mt-1.5 text-xl font-bold text-foreground tabular-nums">{{ stats.combatPower.minDamage }}–{{ stats.combatPower.maxDamage }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- Mission card skeleton -->
     <div
@@ -684,6 +733,18 @@
       @close="showLogSheet = false"
       @updated="fetchData"
     />
+    <RoutineCarouselModal
+      :show="showRoutineCarousel"
+      :active-slug="trainingStore.activePlan?.slug || ''"
+      @close="showRoutineCarousel = false"
+      @selected="handleGuidedPlanSelected"
+    />
+    <CustomPlanBuilder
+      :show="showBuilder"
+      :plan-id="builderPlanId"
+      @close="showBuilder = false"
+      @saved="fetchData"
+    />
   </div>
 </template>
 
@@ -693,7 +754,8 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import {
   Trophy, Target, Flame, Zap, Activity, Inbox, Globe, Snowflake,
-  BarChart3, Check, X, Trash2, Sword, FlaskConical, Coins, ChevronDown, ChevronRight, Share2, Pencil, Plus
+  BarChart3, Check, X, Trash2, Sword, FlaskConical, Coins, ChevronDown, ChevronRight, Share2, Pencil, Plus,
+  ClipboardList, LayoutGrid, Dumbbell
 } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';
@@ -710,6 +772,9 @@ import RPGReleaseModal from '@/components/modals/RPGReleaseModal.vue';
 import LivePresence from '@/components/ui/LivePresence.vue';
 import QuickStartOnboardingModal from '@/components/modals/QuickStartOnboardingModal.vue';
 import GoalOnboardingModal from '@/components/modals/GoalOnboardingModal.vue';
+import RoutineCarouselModal from '@/components/modals/RoutineCarouselModal.vue';
+import CustomPlanBuilder from '@/components/modals/CustomPlanBuilder.vue';
+import PlanCard from '@/components/training/PlanCard.vue';
 import TodayWorkout from '@/components/training/TodayWorkout.vue';
 import WeeklyShareCard from '@/components/modals/WeeklyShareCard.vue';
 import { getLocalDateString } from '@/utils/dateUtils.js';
@@ -736,6 +801,9 @@ const activeYear = ref(new Date().getFullYear());
 const showRPGModal = ref(false);
 const showQuickStartModal = ref(false);
 const showGoalOnboarding = ref(false);
+const showRoutineCarousel = ref(false);
+const showBuilder = ref(false);
+const builderPlanId = ref(null);
 const showFreeLog = ref(false);
 const showLogSheet = ref(false);
 const activeTab = ref('heatmap');
@@ -1225,7 +1293,8 @@ const fetchData = async () => {
     await Promise.all([
       fetchStreakStatus(),
       fetchGlobalData(),
-      trainingStore.fetchMine()
+      trainingStore.fetchMine(),
+      trainingStore.fetchCustomPlans().catch(() => {})
     ]);
     guidedTrainingStateLoaded.value = true;
 
@@ -1380,6 +1449,37 @@ const openPlanPicker = () => {
   showGoalOnboarding.value = true;
 };
 
+const openBuilder = (planId = null) => {
+  builderPlanId.value = typeof planId === 'number' ? planId : null;
+  showBuilder.value = true;
+};
+
+const startCustomPlan = async (plan) => {
+  try {
+    await trainingStore.selectPlan({ planSlug: plan.slug });
+    notificationStore.notify(i18n.locale === 'es' ? 'Rutina activada' : 'Routine activated', 'success');
+    await fetchData();
+  } catch (error) {
+    notificationStore.notify(i18n.locale === 'es' ? 'No se pudo activar la rutina' : 'Routine could not be activated', 'error');
+  }
+};
+
+const removeCustomPlan = (plan) => {
+  notificationStore.confirm(
+    i18n.locale === 'es' ? 'Eliminar rutina' : 'Delete routine',
+    i18n.locale === 'es' ? `¿Eliminar "${i18n.t(plan.titleKey)}"? Esta acción no se puede deshacer.` : `Delete "${i18n.t(plan.titleKey)}"? This cannot be undone.`,
+    async () => {
+      try {
+        await trainingStore.deleteCustomPlan(plan.id);
+        notificationStore.notify(i18n.locale === 'es' ? 'Rutina eliminada' : 'Routine deleted', 'success');
+        await fetchData();
+      } catch (error) {
+        notificationStore.notify(i18n.locale === 'es' ? 'No se pudo eliminar' : 'Could not delete', 'error');
+      }
+    }
+  );
+};
+
 const pausePlan = async () => {
   try {
     await trainingStore.pausePlan();
@@ -1432,9 +1532,11 @@ onMounted(async () => {
     activeExercise.value = exerciseParam;
   }
 
-  await trainingStore.fetchPlans();
+  // Don't let a single endpoint hiccup blank the whole dashboard.
+  await trainingStore.fetchPlans().catch((e) => console.error('fetchPlans failed:', e));
   guidedTrainingStateLoaded.value = false;
-  await trainingStore.fetchMine();
+  await trainingStore.fetchMine().catch((e) => console.error('fetchMine failed:', e));
+  trainingStore.fetchCustomPlans().catch(() => {});
   guidedTrainingStateLoaded.value = true;
   planPromoDismissed.value = typeof window !== 'undefined' && localStorage.getItem(getPlanPromoDismissedKey()) === '1';
   // "Al grano": don't gate brand-new users behind the guided-plan question.
@@ -1502,6 +1604,37 @@ watch(
 .plan-action:active {
   transform: scale(0.97);
 }
+
+.routine-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  border: 1px solid hsl(var(--primary) / 0.25);
+  background: hsl(var(--primary) / 0.1);
+  padding: 0.375rem 0.75rem;
+  color: hsl(var(--primary));
+  font-size: 0.7rem;
+  font-weight: 700;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.routine-chip:hover { background: hsl(var(--primary) / 0.18); }
+.routine-chip:active { transform: scale(0.96); }
+
+.routine-icon-btn {
+  display: grid;
+  place-items: center;
+  height: 2rem;
+  width: 2rem;
+  flex-shrink: 0;
+  border-radius: 0.6rem;
+  border: 1px solid hsl(var(--border));
+  background: hsla(var(--foreground) / 0.04);
+  color: hsl(var(--muted));
+  transition: color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.routine-icon-btn:hover { border-color: hsl(var(--primary) / 0.35); color: hsl(var(--foreground)); }
+.routine-icon-btn:active { transform: scale(0.95); }
 
 .dashboard-daily-quote {
   line-height: 1.2;

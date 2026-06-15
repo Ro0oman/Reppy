@@ -60,6 +60,8 @@ const shapePlan = (row) => ({
   goalType: row.goal_type,
   durationDays: Number(row.duration_days || 0),
   difficulty: row.difficulty,
+  // Custom plans store literal text in title_key/description_key (not i18n keys).
+  isCustom: !!row.is_custom,
 });
 
 const shapeWorkout = (row, blocks = []) => ({
@@ -107,6 +109,7 @@ async function getActivePlanBundle(userId) {
        tp.goal_type,
        tp.duration_days,
        tp.difficulty,
+       tp.is_custom,
        tpd.id AS plan_day_id,
        tpd.day_number,
        tpd.title_key AS day_title_key,
@@ -148,6 +151,7 @@ async function getActivePlanBundle(userId) {
       titleKey: row.plan_title_key,
       descriptionKey: row.description_key,
       goalType: row.goal_type,
+      isCustom: !!row.is_custom,
       durationDays: Number(row.duration_days || 0),
       currentDay: Number(row.current_day || 1),
       daysPerWeek: Number(row.days_per_week || 3),
@@ -344,6 +348,7 @@ router.get('/plans', authenticate, async (req, res) => {
       `SELECT *
        FROM training_plans
        WHERE is_active = TRUE
+         AND owner_user_id IS NULL
        ORDER BY id ASC`
     );
 
@@ -351,6 +356,295 @@ router.get('/plans', authenticate, async (req, res) => {
   } catch (error) {
     console.error('Error fetching training plans:', error);
     res.status(500).json({ message: 'Error fetching training plans' });
+  }
+});
+
+const BLOCK_TYPES = new Set(['warmup', 'work', 'skill', 'cooldown', 'finisher']);
+
+const sanitizeText = (value, maxLen) => String(value ?? '').trim().slice(0, maxLen);
+
+// Normalize a builder payload into a validated single-session routine.
+// A custom routine = ONE day (a list of exercise blocks). The user cannot set
+// XP/coin rewards (kept at 0 server-side to avoid farming).
+async function normalizeCustomPlanPayload(body) {
+  const title = sanitizeText(body.title, 120);
+  if (!title) {
+    const err = new Error('Plan title is required');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const rawBlocks = Array.isArray(body.blocks) ? body.blocks : [];
+
+  // Validate every referenced exercise against the exercises catalog.
+  const allSlugs = new Set();
+  for (const block of rawBlocks) {
+    const slug = sanitizeText(block.exerciseType ?? block.exercise_type, 50);
+    if (slug) allSlugs.add(slug);
+  }
+  if (allSlugs.size > 0) {
+    const exRes = await query('SELECT slug FROM exercises WHERE slug = ANY($1::text[])', [Array.from(allSlugs)]);
+    const known = new Set(exRes.rows.map(r => r.slug));
+    for (const slug of allSlugs) {
+      if (!known.has(slug)) {
+        const err = new Error(`Unknown exercise: ${slug}`);
+        err.statusCode = 400;
+        throw err;
+      }
+    }
+  }
+
+  const blocks = rawBlocks
+    .map((block, blockIdx) => {
+      const exerciseType = sanitizeText(block.exerciseType ?? block.exercise_type, 50);
+      if (!exerciseType) return null;
+      return {
+        orderIndex: blockIdx,
+        blockType: 'work',
+        // Title defaults to the exercise (the builder no longer has a separate title field).
+        title: sanitizeText(block.title, 120) || exerciseType,
+        instructions: sanitizeText(block.instructions, 500),
+        exerciseType,
+        targetSets: Math.min(20, Math.max(1, clampInt(block.targetSets ?? block.target_sets, 1))),
+        targetReps: Math.min(1000, Math.max(1, clampInt(block.targetReps ?? block.target_reps, 1))),
+        restSeconds: Math.min(600, Math.max(0, clampInt(block.restSeconds ?? block.rest_seconds, 60))),
+      };
+    })
+    .filter(Boolean);
+
+  if (blocks.length === 0) {
+    const err = new Error('A routine needs at least one exercise');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  // Wrap the routine as a single day; rewards are forced to 0 (not user-settable).
+  const days = [{
+    dayNumber: 1,
+    title,
+    focus: sanitizeText(body.focus, 80) || 'custom',
+    estimatedMinutes: 15,
+    rewardXp: 0,
+    rewardCoins: 0,
+    blocks,
+  }];
+
+  return {
+    title,
+    description: sanitizeText(body.description, 120),
+    difficulty: sanitizeText(body.difficulty, 40) || 'custom',
+    goalType: sanitizeText(body.goalType ?? body.goal_type, 80) || 'custom',
+    days,
+  };
+}
+
+// Persist days + blocks for a plan inside an existing transaction client.
+async function writeCustomPlanDays(client, planId, days) {
+  for (const day of days) {
+    const dayRes = await client.query(
+      `INSERT INTO training_plan_days
+         (plan_id, day_number, title_key, focus, estimated_minutes, reward_xp, reward_coins)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING id`,
+      [planId, day.dayNumber, day.title, day.focus, day.estimatedMinutes, day.rewardXp, day.rewardCoins]
+    );
+    const planDayId = dayRes.rows[0].id;
+    for (const block of day.blocks) {
+      await client.query(
+        `INSERT INTO training_plan_blocks
+           (plan_day_id, order_index, block_type, title, instructions, exercise_type, target_sets, target_reps, rest_seconds)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+        [planDayId, block.orderIndex, block.blockType, block.title, block.instructions, block.exerciseType, block.targetSets, block.targetReps, block.restSeconds]
+      );
+    }
+  }
+}
+
+// Full detail (days + blocks) of a single plan owned by the user — used to populate the editor.
+async function getCustomPlanDetail(planId, userId) {
+  const planRes = await query(
+    `SELECT * FROM training_plans WHERE id = $1 AND owner_user_id = $2`,
+    [planId, userId]
+  );
+  if (planRes.rows.length === 0) return null;
+
+  const daysRes = await query(
+    `SELECT tpd.*,
+            COALESCE(json_agg(
+              json_build_object(
+                'id', tpb.id,
+                'orderIndex', tpb.order_index,
+                'blockType', tpb.block_type,
+                'title', tpb.title,
+                'instructions', tpb.instructions,
+                'exerciseType', tpb.exercise_type,
+                'targetSets', tpb.target_sets,
+                'targetReps', tpb.target_reps,
+                'restSeconds', tpb.rest_seconds
+              ) ORDER BY tpb.order_index ASC
+            ) FILTER (WHERE tpb.id IS NOT NULL), '[]') AS blocks
+     FROM training_plan_days tpd
+     LEFT JOIN training_plan_blocks tpb ON tpb.plan_day_id = tpd.id
+     WHERE tpd.plan_id = $1
+     GROUP BY tpd.id
+     ORDER BY tpd.day_number ASC`,
+    [planId]
+  );
+
+  const firstDay = daysRes.rows[0];
+  return {
+    ...shapePlan(planRes.rows[0]),
+    title: planRes.rows[0].title_key,
+    description: planRes.rows[0].description_key,
+    // A custom routine is a single session: expose its blocks directly for the builder.
+    blocks: firstDay ? firstDay.blocks : [],
+  };
+}
+
+router.get('/custom-plans', authenticate, async (req, res) => {
+  try {
+    const result = await query(
+      `SELECT * FROM training_plans
+       WHERE owner_user_id = $1 AND is_active = TRUE
+       ORDER BY id DESC`,
+      [req.user.id]
+    );
+    res.json({
+      plans: result.rows.map(row => ({
+        ...shapePlan(row),
+        title: row.title_key,
+        description: row.description_key,
+      })),
+    });
+  } catch (error) {
+    console.error('Error fetching custom plans:', error);
+    res.status(500).json({ message: 'Error fetching custom plans' });
+  }
+});
+
+router.get('/custom-plans/:id', authenticate, async (req, res) => {
+  const planId = clampInt(req.params.id);
+  if (!planId) return res.status(400).json({ message: 'Invalid plan id' });
+  try {
+    const detail = await getCustomPlanDetail(planId, req.user.id);
+    if (!detail) return res.status(404).json({ message: 'Custom plan not found' });
+    res.json({ plan: detail });
+  } catch (error) {
+    console.error('Error fetching custom plan detail:', error);
+    res.status(500).json({ message: 'Error fetching custom plan detail' });
+  }
+});
+
+router.post('/custom-plans', authenticate, async (req, res) => {
+  let normalized;
+  try {
+    normalized = await normalizeCustomPlanPayload(req.body);
+  } catch (error) {
+    return res.status(error.statusCode || 400).json({ message: error.message });
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const slug = `custom_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    const planRes = await client.query(
+      `INSERT INTO training_plans
+         (slug, title_key, description_key, goal_type, duration_days, difficulty, is_active, owner_user_id, is_custom)
+       VALUES ($1, $2, $3, $4, $5, $6, TRUE, $7, TRUE)
+       RETURNING *`,
+      [slug, normalized.title, normalized.description, normalized.goalType, normalized.days.length, normalized.difficulty, req.user.id]
+    );
+    const planId = planRes.rows[0].id;
+    await writeCustomPlanDays(client, planId, normalized.days);
+    await client.query('COMMIT');
+    const detail = await getCustomPlanDetail(planId, req.user.id);
+    res.status(201).json({ ok: true, plan: detail });
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('Error creating custom plan:', error);
+    res.status(500).json({ message: 'Error creating custom plan' });
+  } finally {
+    client.release();
+  }
+});
+
+router.put('/custom-plans/:id', authenticate, async (req, res) => {
+  const planId = clampInt(req.params.id);
+  if (!planId) return res.status(400).json({ message: 'Invalid plan id' });
+
+  let normalized;
+  try {
+    normalized = await normalizeCustomPlanPayload(req.body);
+  } catch (error) {
+    return res.status(error.statusCode || 400).json({ message: error.message });
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const ownerRes = await client.query(
+      `SELECT id FROM training_plans WHERE id = $1 AND owner_user_id = $2 FOR UPDATE`,
+      [planId, req.user.id]
+    );
+    if (ownerRes.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ message: 'Custom plan not found' });
+    }
+
+    await client.query(
+      `UPDATE training_plans
+       SET title_key = $1, description_key = $2, goal_type = $3, duration_days = $4, difficulty = $5
+       WHERE id = $6`,
+      [normalized.title, normalized.description, normalized.goalType, normalized.days.length, normalized.difficulty, planId]
+    );
+    // Replace all days/blocks (cascade deletes blocks via plan_day FK).
+    await client.query('DELETE FROM training_plan_days WHERE plan_id = $1', [planId]);
+    await writeCustomPlanDays(client, planId, normalized.days);
+
+    // If the user is mid-plan, clamp current_day so it stays valid.
+    await client.query(
+      `UPDATE user_active_plans
+       SET current_day = LEAST(current_day, $1)
+       WHERE plan_id = $2`,
+      [normalized.days.length, planId]
+    );
+
+    await client.query('COMMIT');
+    const detail = await getCustomPlanDetail(planId, req.user.id);
+    res.json({ ok: true, plan: detail });
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('Error updating custom plan:', error);
+    res.status(500).json({ message: 'Error updating custom plan' });
+  } finally {
+    client.release();
+  }
+});
+
+router.delete('/custom-plans/:id', authenticate, async (req, res) => {
+  const planId = clampInt(req.params.id);
+  if (!planId) return res.status(400).json({ message: 'Invalid plan id' });
+  try {
+    // Soft-delete: keep the row so historical sessions/active enrollments don't break,
+    // but hide it from listings.
+    const result = await query(
+      `UPDATE training_plans
+       SET is_active = FALSE
+       WHERE id = $1 AND owner_user_id = $2
+       RETURNING id`,
+      [planId, req.user.id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ message: 'Custom plan not found' });
+    // Drop any active enrollment on this plan so the dashboard doesn't point at a hidden plan.
+    await query(
+      `UPDATE user_active_plans SET status = 'abandoned'
+       WHERE user_id = $1 AND plan_id = $2 AND status IN ('active', 'paused')`,
+      [req.user.id, planId]
+    );
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('Error deleting custom plan:', error);
+    res.status(500).json({ message: 'Error deleting custom plan' });
   }
 });
 
@@ -632,6 +926,7 @@ router.post('/sessions/:id/complete', authenticate, async (req, res) => {
          tpd.reward_coins,
          tp.duration_days,
          tp.title_key AS plan_title_key,
+         tp.is_custom,
          uap.current_day
        FROM workout_sessions ws
        JOIN training_plan_days tpd ON tpd.id = ws.plan_day_id
@@ -841,7 +1136,16 @@ router.post('/sessions/:id/complete', authenticate, async (req, res) => {
     );
 
     const nextDay = Number(session.current_day || 1) + 1;
-    if (nextDay > Number(session.duration_days || 0)) {
+    if (session.is_custom) {
+      // Custom routines are a single, repeatable session: stay active on day 1.
+      // The daily lock (last_completed_date) still gates it to once per day.
+      await client.query(
+        `UPDATE user_active_plans
+         SET current_day = 1
+         WHERE user_id = $1 AND plan_id = $2 AND status = 'active'`,
+        [req.user.id, session.plan_id]
+      );
+    } else if (nextDay > Number(session.duration_days || 0)) {
       await client.query(
         `UPDATE user_active_plans
          SET current_day = $1,

@@ -4,6 +4,7 @@ import axios from 'axios';
 export const useTrainingStore = defineStore('training', {
   state: () => ({
     plans: [],
+    customPlans: [],
     activePlan: null,
     todayWorkout: null,
     onboardingMode: null,
@@ -21,6 +22,35 @@ export const useTrainingStore = defineStore('training', {
     async fetchPlans() {
       const res = await axios.get('/api/training/plans');
       this.plans = res.data.plans || [];
+    },
+
+    async fetchCustomPlans() {
+      const res = await axios.get('/api/training/custom-plans');
+      this.customPlans = res.data.plans || [];
+      return this.customPlans;
+    },
+
+    async fetchCustomPlanDetail(id) {
+      const res = await axios.get(`/api/training/custom-plans/${id}`);
+      return res.data.plan;
+    },
+
+    async createCustomPlan(payload) {
+      const res = await axios.post('/api/training/custom-plans', payload);
+      await this.fetchCustomPlans();
+      return res.data.plan;
+    },
+
+    async updateCustomPlan(id, payload) {
+      const res = await axios.put(`/api/training/custom-plans/${id}`, payload);
+      await this.fetchCustomPlans();
+      return res.data.plan;
+    },
+
+    async deleteCustomPlan(id) {
+      await axios.delete(`/api/training/custom-plans/${id}`);
+      await this.fetchCustomPlans();
+      await this.fetchMine();
     },
 
     async fetchMine() {

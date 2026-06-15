@@ -68,25 +68,14 @@
               </button>
 
               <div class="grid gap-3 sm:grid-cols-2">
-                <button
+                <PlanCard
                   v-for="plan in trainingStore.plans"
                   :key="plan.slug"
-                  type="button"
-                  class="rounded-2xl border p-4 text-left transition active:scale-[0.99]"
-                  :class="selectedPlan === plan.slug ? 'border-primary-500 bg-primary-500/10' : 'border-white/10 bg-white/[0.03] hover:border-white/25'"
-                  @click="selectedPlan = plan.slug"
-                >
-                  <p class="text-sm font-black leading-tight text-foreground">
-                    {{ i18n.t(plan.titleKey) }}
-                  </p>
-                  <p class="mt-2 text-xs font-semibold leading-relaxed text-muted/70">
-                    {{ i18n.t(plan.descriptionKey) }}
-                  </p>
-                  <div class="mt-3 flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary-500">
-                    <span>{{ plan.durationDays }} {{ i18n.locale === 'es' ? 'misiones' : 'missions' }}</span>
-                    <span>{{ plan.difficulty }}</span>
-                  </div>
-                </button>
+                  :plan="plan"
+                  selectable
+                  :selected="selectedPlan === plan.slug"
+                  @select="selectedPlan = plan.slug"
+                />
               </div>
 
               <div class="grid gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:grid-cols-3">
@@ -139,6 +128,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { ChevronLeft, ListChecks, Loader2, Target, X } from 'lucide-vue-next';
+import PlanCard from '@/components/training/PlanCard.vue';
 import { useI18nStore } from '@/stores/i18n';
 import { useTrainingStore } from '@/stores/training';
 import { useNotificationStore } from '@/stores/notification';

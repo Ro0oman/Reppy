@@ -543,7 +543,12 @@ apiRouter.get('/db/init', async (req, res) => {
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS referred_by VARCHAR(255) REFERENCES users(id)`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_reward_given BOOLEAN DEFAULT FALSE`,
       `CREATE UNIQUE INDEX IF NOT EXISTS idx_users_referral_code ON users(referral_code) WHERE referral_code IS NOT NULL`,
-      `CREATE INDEX IF NOT EXISTS idx_users_referred_by ON users(referred_by)`
+      `CREATE INDEX IF NOT EXISTS idx_users_referred_by ON users(referred_by)`,
+
+      // Custom (user-created) training plans: NULL owner = predefined/global plan
+      `ALTER TABLE training_plans ADD COLUMN IF NOT EXISTS owner_user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE`,
+      `ALTER TABLE training_plans ADD COLUMN IF NOT EXISTS is_custom BOOLEAN DEFAULT FALSE`,
+      `CREATE INDEX IF NOT EXISTS idx_training_plans_owner ON training_plans(owner_user_id)`
     ];
     
     for (const q of queries) {
