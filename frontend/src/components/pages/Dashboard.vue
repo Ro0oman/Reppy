@@ -50,18 +50,17 @@
           </h2>
         </div>
         <ExerciseSelector v-model="activeExercise" compact class="w-full" />
-        <div v-if="activeExercise !== 'all'" class="mt-3 flex items-center justify-between px-0.5">
-          <span class="text-sm font-semibold text-foreground">{{ activeExerciseLabel }}</span>
-          <span class="text-xs text-muted/70 tabular-nums"><b class="text-primary-500 font-bold">{{ todayProgress }}</b> / {{ stats.dailyGoal }} {{ i18n.t('comp_today') }}</span>
-        </div>
-        <button
-          type="button"
-          @click="openLogSheet"
-          class="mt-3 w-full flex items-center justify-center gap-2 rounded-xl bg-primary-500 hover:bg-primary-400 active:bg-primary-600 px-5 py-3.5 text-base font-semibold text-white transition-all active:scale-[0.98] shadow-lg shadow-primary-500/20"
-        >
-          <Plus aria-hidden="true" class="w-5 h-5" />
-          {{ i18n.t('comp_log_cta') }}
-        </button>
+        <template v-if="activeExercise !== 'all'">
+          <div class="mt-3 mb-3 flex items-center justify-between px-0.5">
+            <span class="text-sm font-semibold text-foreground">{{ activeExerciseLabel }}</span>
+            <span class="text-xs text-muted/70 tabular-nums"><b class="text-primary-500 font-bold">{{ todayProgress }}</b> / {{ stats.dailyGoal }} {{ i18n.t('comp_today') }}</span>
+          </div>
+          <!-- Inline counter: log reps right here, no sheet, no scroll -->
+          <RepsInput :exercise-type="activeExercise" @updated="fetchData" />
+        </template>
+        <p v-else class="mt-3 text-center text-xs font-medium text-muted/60">
+          {{ i18n.locale === 'es' ? 'Elige un ejercicio para registrar tus reps' : 'Pick an exercise to log your reps' }}
+        </p>
       </div>
 
       <!-- Stats row: streak + power -->
@@ -415,14 +414,8 @@
                 <span class="mt-2 text-xs text-muted/60">{{ i18n.t('dash_ring_of') }} {{ stats.dailyGoal }} · {{ activeExerciseLabel }}</span>
               </div>
             </RadialProgress>
-            <button
-              type="button"
-              @click="openLogSheet"
-              class="mt-5 w-full max-w-xs flex items-center justify-center gap-2 rounded-2xl bg-primary-500 hover:bg-primary-400 active:bg-primary-600 px-5 py-3.5 text-base font-semibold text-white transition-all active:scale-[0.98] shadow-lg shadow-primary-500/20"
-            >
-              <Plus aria-hidden="true" class="w-5 h-5" />
-              {{ i18n.t('dash_log_reps_cta') }}
-            </button>
+            <!-- Inline counter: log reps right under the ring, no sheet -->
+            <RepsInput :exercise-type="activeExercise" @updated="fetchData" class="mt-5 w-full max-w-sm" />
           </div>
 
           <!-- Glanceable stats (streak shown once, in the band below) -->
@@ -766,6 +759,7 @@ import Heatmap from '@/components/training/Heatmap.vue';
 import RadialProgress from '@/components/ui/RadialProgress.vue';
 import AvatarFrame from '@/components/ui/AvatarFrame.vue';
 import LogSheet from '@/components/training/LogSheet.vue';
+import RepsInput from '@/components/training/RepsInput.vue';
 import ExerciseSelector from '@/components/training/ExerciseSelector.vue';
 import BossHealth from '@/components/boss/BossHealth.vue';
 import RPGReleaseModal from '@/components/modals/RPGReleaseModal.vue';

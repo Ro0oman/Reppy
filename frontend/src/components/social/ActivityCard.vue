@@ -569,7 +569,14 @@ const sharePost = async () => {
   }
   try {
     await navigator.clipboard.writeText(`${text} ${url}`);
-    notificationStore.addNotification({ type: 'success', message: i18n.t('ui_link_copied') || 'Link copiado!' });
+    // Make the silent download explicit so the user knows an image was saved.
+    const copiedMsg = i18n.t('ui_link_copied') || (i18n.locale === 'es' ? 'Enlace copiado' : 'Link copied');
+    notificationStore.addNotification({
+      type: 'success',
+      message: file
+        ? (i18n.locale === 'es' ? `Imagen descargada · ${copiedMsg}` : `Image downloaded · ${copiedMsg}`)
+        : copiedMsg,
+    });
   } catch (e) { console.log('Copy failed', e); }
 };
 
