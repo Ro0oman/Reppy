@@ -6,6 +6,10 @@ import { authenticate, optionalAuthenticate } from './middleware.js';
 // never disagree on whether the user is still on cooldown.
 const SPIN_COOLDOWN_HOURS = 4;
 
+// The Daily Roulette recharges once per day. It's the slower, higher-stakes
+// sibling of the 4h wheel: fewer spins, but rewards that actually matter.
+const DAILY_COOLDOWN_HOURS = 24;
+
 // Prize table — shared by the free spin and the bought extra spin so both
 // endpoints can never drift apart. Rebalanced for the 4h cooldown (~6 free
 // spins/day vs 1): coin payouts and gem/chest odds are lowered so the daily
@@ -26,11 +30,28 @@ const ROULETTE_PRIZES = [
   { id: 9, type: 'chest', rarity: 'epic', weight: 0.5, label: 'Cofre Épico' }
 ];
 
-function pickPrize() {
+// Daily wheel prize table — weights sum to 100. Designed around the feedback
+// that the 4h wheel feels flat: here a potion is the *expected* outcome (~60%
+// of spins grant a consumable), so players actually try the buff loop. Rarity
+// dictates probability — common is near-guaranteed, legendary is the jackpot.
+// `id` doubles as the wheel's segment index (LuckyWheel maps by array position),
+// so keep these ids === array order.
+const DAILY_PRIZES = [
+  { id: 0, rarity: 'common', weight: 40, type: 'consumable', label: 'Poción Común' },
+  { id: 1, value: 250, weight: 22, type: 'coins' },
+  { id: 2, rarity: 'rare', weight: 15, type: 'consumable', label: 'Poción Rara' },
+  { id: 3, value: 5, weight: 10, type: 'gems', label: '5 Gemas' },
+  { id: 4, type: 'chest', rarity: 'level', weight: 6, label: 'Cofre de Nivel' },
+  { id: 5, rarity: 'especial', weight: 4, type: 'consumable', label: 'Poción Especial' },
+  { id: 6, type: 'chest', rarity: 'boss', weight: 2, label: 'Cofre de Boss' },
+  { id: 7, rarity: 'legendary', weight: 1, type: 'consumable', label: 'Poción Legendaria' }
+];
+
+function pickPrize(table = ROULETTE_PRIZES) {
   const random = Math.random() * 100;
   let cumulativeWeight = 0;
-  let selected = ROULETTE_PRIZES[0];
-  for (const p of ROULETTE_PRIZES) {
+  let selected = table[0];
+  for (const p of table) {
     cumulativeWeight += p.weight;
     if (random <= cumulativeWeight) {
       selected = p;
@@ -56,7 +77,10 @@ async function grantPrize(client, userId, result) {
     const col = result.rarity === 'level' ? 'level_chests' : (result.rarity === 'boss' ? 'boss_chests' : 'epic_chests');
     await client.query(`UPDATE users SET ${col} = ${col} + 1 WHERE id = $1`, [userId]);
   } else if (result.type === 'consumable') {
-    const itemRes = await client.query("SELECT id, name FROM items WHERE type = 'consumable' AND rarity = 'common' ORDER BY RANDOM() LIMIT 1");
+    // Daily wheel awards potions of a specific rarity; the 4h wheel only ever
+    // sets 'common', so this stays backwards-compatible.
+    const rarity = result.rarity || 'common';
+    const itemRes = await client.query("SELECT id, name, description FROM items WHERE type = 'consumable' AND rarity = $1 ORDER BY RANDOM() LIMIT 1", [rarity]);
     if (itemRes.rows.length > 0) {
       const item = itemRes.rows[0];
       await client.query(
@@ -294,6 +318,77 @@ router.post('/buy-and-spin', authenticate, async (req, res) => {
   } catch (error) {
     console.error('Error in buy-and-spin:', error);
     res.status(500).json({ message: 'Error al procesar el giro extra' });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Daily Roulette — once every 24h, no tickets/gems. Separate cooldown column
+// (last_daily_spin_at) so it never interferes with the 4h wheel.
+// ---------------------------------------------------------------------------
+
+router.get('/daily-status', optionalAuthenticate, async (req, res) => {
+  try {
+    if (!req.user) return res.json({ canSpin: false });
+
+    const userRes = await query(`
+      SELECT last_daily_spin_at,
+      (last_daily_spin_at IS NOT NULL AND last_daily_spin_at > NOW() - make_interval(hours => $2)) AS on_cooldown,
+      (last_daily_spin_at + make_interval(hours => $2)) AS next_spin_at
+      FROM users WHERE id = $1
+    `, [req.user.id, DAILY_COOLDOWN_HOURS]);
+
+    const row = userRes.rows[0];
+    const onCooldown = row.on_cooldown;
+
+    res.json({
+      canSpin: !onCooldown,
+      lastSpinAt: row.last_daily_spin_at,
+      nextSpinAt: onCooldown ? row.next_spin_at : null,
+      cooldownHours: DAILY_COOLDOWN_HOURS
+    });
+  } catch (error) {
+    console.error('Error checking daily roulette status:', error);
+    res.status(500).json({ message: 'Error checking status' });
+  }
+});
+
+router.post('/daily-spin', authenticate, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const result = await withTransaction(async (client) => {
+      // Lock the row so concurrent daily spins serialize — same race-proofing
+      // pattern as the 4h /spin: stamp the cooldown under the lock before paying.
+      const userRes = await client.query(`
+        SELECT (last_daily_spin_at IS NOT NULL AND last_daily_spin_at > NOW() - make_interval(hours => $2)) AS on_cooldown
+        FROM users WHERE id = $1 FOR UPDATE
+      `, [userId, DAILY_COOLDOWN_HOURS]);
+      if (userRes.rowCount === 0) return { status: 404, body: { message: 'User not found' } };
+
+      if (userRes.rows[0].on_cooldown) {
+        return { status: 400, body: { message: 'La ruleta diaria aún no está disponible. ¡Vuelve mañana!' } };
+      }
+
+      await client.query('UPDATE users SET last_daily_spin_at = CURRENT_TIMESTAMP WHERE id = $1', [userId]);
+
+      const prize = await grantPrize(client, userId, pickPrize(DAILY_PRIZES));
+      const finalUser = (await client.query('SELECT reppy_coins, reppy_gems FROM users WHERE id = $1', [userId])).rows[0];
+
+      return {
+        status: 200,
+        body: {
+          message: '¡Giro diario completado!',
+          prize,
+          new_coins: finalUser.reppy_coins,
+          new_gems: finalUser.reppy_gems
+        }
+      };
+    });
+
+    return res.status(result.status).json(result.body);
+  } catch (error) {
+    console.error('Error spinning daily roulette:', error);
+    res.status(500).json({ message: 'Error al procesar el premio' });
   }
 });
 
