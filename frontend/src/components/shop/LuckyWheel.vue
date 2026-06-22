@@ -3,13 +3,18 @@
     <div class="cursor-pointer fixed inset-0 bg-zinc-950/80 backdrop-blur-md" @click="!spinning && $emit('close')"></div>
     
     <div class="relative bg-white dark:bg-zinc-900 w-full max-w-sm rounded-2xl shadow-2xl border border-white/10 overflow-hidden transform transition-all animate-in fade-in duration-300 my-auto">
+      <!-- Daily wheel gets a distinctive gold→magenta gradient strip at the top -->
+      <div v-if="isDaily" class="h-1.5 w-full bg-gradient-to-r from-amber-400 via-orange-500 to-fuchsia-500"></div>
       <div class="px-8 pt-8 text-center">
-        <div class="inline-flex p-3 bg-primary-500/10 rounded-2xl mb-4">
-          <Sparkles class="w-6 h-6 text-primary-600" />
+        <div class="inline-flex p-3 rounded-2xl mb-4" :class="theme.iconWrap">
+          <component :is="headerIcon" class="w-6 h-6" :class="theme.icon" />
+        </div>
+        <div v-if="isDaily" class="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 rounded-full bg-gradient-to-r from-amber-500/15 to-fuchsia-500/15 border border-fuchsia-500/30">
+          <span class="text-[9px] font-black uppercase tracking-[0.2em] bg-gradient-to-r from-amber-400 to-fuchsia-500 bg-clip-text text-transparent">{{ i18n.t('wheel_daily_badge') }}</span>
         </div>
         <h2 class="text-3xl font-bold text-zinc-900 dark:text-white  tracking-tighter  leading-none">
           {{ isDaily ? i18n.t('wheel_daily_title_start') : i18n.t('wheel_title_start') }}
-          <span class="text-primary-600">{{ isDaily ? i18n.t('wheel_daily_title_end') : i18n.t('wheel_title_end') }}</span>
+          <span :class="theme.accent">{{ isDaily ? i18n.t('wheel_daily_title_end') : i18n.t('wheel_title_end') }}</span>
         </h2>
         <p class="text-zinc-500 dark:text-zinc-400 font-medium text-sm mt-2">{{ isDaily ? i18n.t('wheel_daily_subtitle') : i18n.t('wheel_subtitle') }}</p>
       </div>
@@ -55,16 +60,17 @@
           <button
             @click="spinWheel"
             :disabled="spinning || !canSpin"
-            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white dark:bg-zinc-800 shadow-2xl border-4 border-primary-500 flex items-center justify-center z-30 transition-all disabled:opacity-50 disabled:grayscale overflow-hidden"
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white dark:bg-zinc-800 shadow-2xl border-4 flex items-center justify-center z-30 transition-all disabled:opacity-50 disabled:grayscale overflow-hidden"
+            :class="theme.centerBorder"
           >
             <div v-if="spinning" class="flex flex-col items-center">
-               <span class="text-[10px] font-black text-primary-600 uppercase tracking-tighter">{{ i18n.t('wheel_btn_spinning') }}</span>
+               <span class="text-[10px] font-black uppercase tracking-tighter" :class="theme.centerText">{{ i18n.t('wheel_btn_spinning') }}</span>
             </div>
             <div v-else-if="!isDaily && rouletteStore.hasTicket" class="flex flex-col items-center">
                <ItemIcon name="ticket" type="consumable" class-name="w-6 h-6 mb-0.5" />
                <span class="text-[10px] font-bold text-primary-500/60 leading-none">{{ rouletteStore.ticketCount }}</span>
             </div>
-            <span v-else class="text-[10px] font-black text-primary-600 uppercase tracking-tighter">{{ i18n.t('wheel_btn_spin') }}</span>
+            <span v-else class="text-[10px] font-black uppercase tracking-tighter" :class="theme.centerText">{{ i18n.t('wheel_btn_spin') }}</span>
           </button>
         </div>
 
@@ -82,8 +88,8 @@
         <div class="mt-8 min-h-[60px] flex items-center justify-center">
           <div v-if="prizeResult" class="text-center animate-bounce">
             <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">{{ prizeResult.msg }}</p>
-            <div class="bg-primary-500/10 px-6 py-2 rounded-xl border border-primary-500/20">
-               <span class="text-xl font-black text-primary-600">
+            <div class="px-6 py-2 rounded-xl border" :class="[theme.resultBg, theme.resultBorder]">
+               <span class="text-xl font-black" :class="theme.resultText">
                  {{ getPrizeText(prizeResult) }}
                </span>
             </div>
@@ -103,23 +109,23 @@
 
     <!-- Result Modal (Victory UI) -->
     <Transition name="scale">
-      <div v-if="showResultModal" class="fixed inset-0 z-[110] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/95 backdrop-blur-xl"></div>
-        
-        <div class="relative w-full max-w-sm bg-zinc-900 border border-white/10 rounded-2xl p-8 text-center shadow-[0_0_100px_rgba(79,70,229,0.3)] animate-scale-in">
+      <div v-if="showResultModal" class="fixed inset-0 z-[110] flex items-start md:items-center justify-center overflow-y-auto p-4 pt-20 md:pt-4">
+        <div class="fixed inset-0 bg-black/95 backdrop-blur-xl"></div>
+
+        <div class="relative w-full max-w-sm bg-zinc-900 border rounded-2xl p-6 md:p-8 text-center animate-scale-in my-auto" :class="theme.victoryCard">
           <div class="absolute -top-12 left-1/2 -translate-x-1/2">
-            <div class="w-24 h-24 bg-primary-600 rounded-3xl rotate-12 flex items-center justify-center shadow-2xl border-4 border-zinc-900">
-               <Sparkles class="w-12 h-12 text-white animate-pulse" />
+            <div class="w-24 h-24 rounded-3xl rotate-12 flex items-center justify-center shadow-2xl border-4 border-zinc-900" :class="theme.victoryIcon">
+               <component :is="headerIcon" class="w-12 h-12 text-white animate-pulse" />
             </div>
           </div>
 
           <div class="mt-12 space-y-2">
-            <h3 class="text-[10px] font-black text-primary-500 uppercase tracking-[0.5em]">{{ i18n.t('wheel_congrats') }}</h3>
-            <h2 class="text-4xl font-bold text-white   tracking-tighter">{{ i18n.t('ui_reward_unlocked') }}</h2>
+            <h3 class="text-[10px] font-black uppercase tracking-[0.5em]" :class="theme.congrats">{{ i18n.t('wheel_congrats') }}</h3>
+            <h2 class="text-3xl md:text-4xl font-bold text-white   tracking-tighter">{{ i18n.t('ui_reward_unlocked') }}</h2>
           </div>
 
-          <div class="my-10 p-8 bg-white/5 rounded-xl border border-white/5 relative group">
-            <div class="absolute inset-0 bg-primary-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div class="my-6 md:my-10 p-6 md:p-8 bg-white/5 rounded-xl border border-white/5 relative group">
+            <div class="absolute inset-0 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" :class="theme.victoryGlow"></div>
             
             <!-- Prize Icon/Visual -->
             <div class="text-6xl mb-4 drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
@@ -139,9 +145,9 @@
           </div>
 
           <div class="space-y-3">
-            <button 
+            <button
               @click="closeResult"
-              class="w-full py-5 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl text-xs font-black uppercase tracking-[0.4em] transition-all active:scale-95 border border-white/5"
+              class="w-full py-4 md:py-5 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl text-xs font-black uppercase tracking-[0.4em] transition-all active:scale-95 border border-white/5"
             >
               {{ i18n.t('pvp_return') }}
             </button>
@@ -150,7 +156,7 @@
               v-if="!spinning && !isDaily"
               @click="spinAgainWithGems"
               :disabled="authStore.user.reppy_gems < rouletteStore.extraSpinCost"
-              class="w-full py-5 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl text-xs font-black uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl shadow-primary-600/20 disabled:opacity-50 disabled:grayscale flex items-center justify-center gap-2 group"
+              class="w-full py-4 md:py-5 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl text-xs font-black uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl shadow-primary-600/20 disabled:opacity-50 disabled:grayscale flex items-center justify-center gap-2 group"
             >
               <span>{{ i18n.t('wheel_spin_again') || 'GIRAR DE NUEVO' }}</span>
               <div class="flex items-center gap-1.5 px-3 py-1 bg-white/10 rounded-full group-hover:bg-white/20 transition-colors">
@@ -171,7 +177,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import { Sparkles } from 'lucide-vue-next';
+import { Sparkles, Gift } from 'lucide-vue-next';
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
 import { useNotificationStore } from '@/stores/notification';
@@ -223,6 +229,40 @@ const isDaily = computed(() => rouletteStore.variant === 'daily');
 // Unified "can I spin?" — reads the right cooldown for whichever wheel is open.
 const canSpin = computed(() => isDaily.value ? rouletteStore.dailyCanSpin : rouletteStore.canSpin);
 
+// Visual theme — the daily wheel is gold/amber to set it apart from the blue 4h
+// wheel. Class strings are full literals so Tailwind's purge keeps them.
+const headerIcon = computed(() => isDaily.value ? Gift : Sparkles);
+const theme = computed(() => isDaily.value ? {
+  iconWrap: 'bg-gradient-to-br from-amber-400 to-fuchsia-500 shadow-lg shadow-fuchsia-500/30',
+  icon: 'text-white',
+  accent: 'bg-gradient-to-r from-amber-400 via-orange-400 to-fuchsia-500 bg-clip-text text-transparent',
+  centerBorder: 'border-amber-400',
+  centerText: 'text-amber-500',
+  resultBg: 'bg-gradient-to-r from-amber-500/10 to-fuchsia-500/10',
+  resultBorder: 'border-amber-400/30',
+  resultText: 'text-amber-500',
+  victoryCard: 'shadow-[0_0_120px_rgba(217,70,239,0.35)] border-amber-400/40',
+  victoryIcon: 'bg-gradient-to-br from-amber-400 via-orange-500 to-fuchsia-600',
+  victoryGlow: 'bg-gradient-to-br from-amber-500/10 to-fuchsia-500/10',
+  congrats: 'bg-gradient-to-r from-amber-400 to-fuchsia-500 bg-clip-text text-transparent'
+} : {
+  iconWrap: 'bg-primary-500/10',
+  icon: 'text-primary-600',
+  accent: 'text-primary-600',
+  centerBorder: 'border-primary-500',
+  centerText: 'text-primary-600',
+  resultBg: 'bg-primary-500/10',
+  resultBorder: 'border-primary-500/20',
+  resultText: 'text-primary-600',
+  victoryCard: 'shadow-[0_0_100px_rgba(79,70,229,0.3)] border-white/10',
+  victoryIcon: 'bg-primary-600',
+  victoryGlow: 'bg-primary-500/5',
+  congrats: 'text-primary-500'
+});
+const confettiColors = computed(() => isDaily.value
+  ? ['#FBBF24', '#F59E0B', '#D946EF', '#9333EA', '#FFFFFF']
+  : ['#4F46E5', '#8B5CF6', '#F59E0B']);
+
 // Keep in sync with ROULETTE_PRIZES / DAILY_PRIZES in backend/roulette.js — `size`
 // is the prize weight × 3.6 so the slices fill 360°. For the quick wheel the `id`
 // must match the backend id; the daily wheel uses id === array index.
@@ -239,15 +279,17 @@ const quickRewards = [
   { id: 8, name: '🎁 B', bgColor: '#EC4899', size: 3.6 }, // 1 * 3.6
   { id: 9, name: '🎁 E', bgColor: '#F43F5E', size: 1.8 } // 0.5 * 3.6
 ];
+// Premium gold→magenta→violet "jewel" palette, deliberately distinct from the
+// 4h wheel's amber/orange/blue mix so the daily wheel reads as special.
 const dailyRewards = [
-  { id: 0, name: '🧪', bgColor: '#6366F1', size: 144 }, // 40 * 3.6  Poción Común
-  { id: 1, name: '250 🪙', bgColor: '#F59E0B', size: 79.2 }, // 22 * 3.6
-  { id: 2, name: '🧪 R', bgColor: '#3B82F6', size: 54 }, // 15 * 3.6  Poción Rara
-  { id: 3, name: '5 💎', bgColor: '#10B981', size: 36 }, // 10 * 3.6
-  { id: 4, name: '🎁 L', bgColor: '#8B5CF6', size: 21.6 }, // 6 * 3.6  Cofre Nivel
-  { id: 5, name: '🧪 E', bgColor: '#A855F7', size: 14.4 }, // 4 * 3.6  Poción Especial
-  { id: 6, name: '🎁 B', bgColor: '#EC4899', size: 7.2 }, // 2 * 3.6  Cofre Boss
-  { id: 7, name: '🧪 L', bgColor: '#F43F5E', size: 3.6 } // 1 * 3.6  Poción Legendaria
+  { id: 0, name: '🧪', bgColor: '#FBBF24', size: 144 }, // 40 * 3.6  Poción Común (oro)
+  { id: 1, name: '250 🪙', bgColor: '#F59E0B', size: 79.2 }, // 22 * 3.6  (ámbar)
+  { id: 2, name: '🧪 R', bgColor: '#D946EF', size: 54 }, // 15 * 3.6  Poción Rara (fucsia)
+  { id: 3, name: '5 💎', bgColor: '#2DD4BF', size: 36 }, // 10 * 3.6  (turquesa)
+  { id: 4, name: '🎁 L', bgColor: '#7C3AED', size: 21.6 }, // 6 * 3.6  Cofre Nivel (violeta)
+  { id: 5, name: '🧪 E', bgColor: '#9333EA', size: 14.4 }, // 4 * 3.6  Poción Especial (púrpura)
+  { id: 6, name: '🎁 B', bgColor: '#DB2777', size: 7.2 }, // 2 * 3.6  Cofre Boss (rosa)
+  { id: 7, name: '🧪 L', bgColor: '#E11D48', size: 3.6 } // 1 * 3.6  Poción Legendaria (carmesí)
 ];
 const rewards = computed(() => isDaily.value ? dailyRewards : quickRewards);
 
@@ -338,7 +380,7 @@ const spinWheel = async () => {
           particleCount: 150,
           spread: 70,
           origin: { y: 0.6 },
-          colors: ['#4F46E5', '#8B5CF6', '#F59E0B']
+          colors: confettiColors.value
         });
         notificationStore.notify(i18n.t('wheel_congrats'), 'success');
       } else {
@@ -391,7 +433,7 @@ const spinAgainWithGems = async () => {
           particleCount: 150,
           spread: 70,
           origin: { y: 0.6 },
-          colors: ['#4F46E5', '#8B5CF6', '#F59E0B']
+          colors: confettiColors.value
         });
         notificationStore.notify(i18n.t('wheel_congrats'), 'success');
       }

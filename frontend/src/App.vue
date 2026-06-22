@@ -308,55 +308,73 @@
       </div>
     </Teleport>
 
-    <!-- Floating Roulette — only on desktop; on mobile it lives in the dock area -->
-    <div v-if="rouletteStore.canSpin"
-      class="hidden md:flex fixed bottom-12 right-12 z-[70] flex-col items-end gap-5 group">
-      <div
-        class="bg-primary-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap">
-        {{ i18n.t('roulette_exe_available') }}
+    <!-- Floating Roulettes (desktop) — daily on top, 4h below, in one column so
+         their cooldown chips never overlap. -->
+    <div v-if="authStore.isAuthenticated && (rouletteStore.canSpin || quickCooldown || rouletteStore.dailyCanSpin || dailyCooldown)"
+      class="hidden md:flex fixed bottom-12 right-12 z-[70] flex-col items-end gap-4">
+
+      <!-- Daily wheel -->
+      <div v-if="rouletteStore.dailyCanSpin || dailyCooldown" class="flex flex-col items-end gap-2 group">
+        <div v-if="rouletteStore.dailyCanSpin"
+          class="bg-gradient-to-r from-amber-500 to-fuchsia-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap">
+          {{ i18n.t('wheel_daily_cta') }}
+        </div>
+        <div v-else
+          class="bg-surface border border-border text-muted text-xs font-bold px-4 py-2 rounded-full shadow-xl whitespace-nowrap">
+          {{ i18n.t('wheel_cooldown', { time: dailyCooldown }) }}
+        </div>
+        <button @click="rouletteStore.openModal('daily')" :disabled="!rouletteStore.dailyCanSpin"
+          :class="rouletteStore.dailyCanSpin ? 'border-fuchsia-500/40 hover:border-fuchsia-500/70 shadow-fuchsia-500/20 active:scale-95' : 'border-border opacity-50 grayscale cursor-not-allowed'"
+          class="relative bg-surface/80 backdrop-blur-md p-5 rounded-2xl shadow-xl transition-all border group overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-br from-amber-500/20 via-transparent to-fuchsia-500/20 pointer-events-none"></div>
+          <Gift class="w-7 h-7 text-amber-400 relative z-10 transition-transform duration-300 drop-shadow-[0_0_6px_rgba(217,70,239,0.5)]" :class="{ 'group-hover:-rotate-12': rouletteStore.dailyCanSpin }" />
+          <div v-if="rouletteStore.dailyCanSpin" class="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-gradient-to-br from-amber-400 to-fuchsia-500 rounded-full ring-2 ring-background"></div>
+        </button>
       </div>
-      <button @click="rouletteStore.openModal()"
-        class="rgb-roulette-button relative bg-surface/80 backdrop-blur-md p-5 rounded-2xl shadow-xl transition-all border border-border hover:border-primary-500/40 active:scale-95 group overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-transparent pointer-events-none"></div>
-        <Dices class="w-7 h-7 text-foreground relative z-10 transition-transform duration-300 group-hover:rotate-180" />
-        <div class="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-primary-500 rounded-full ring-2 ring-background"></div>
-      </button>
+
+      <!-- 4h wheel -->
+      <div v-if="rouletteStore.canSpin || quickCooldown" class="flex flex-col items-end gap-2 group">
+        <div v-if="rouletteStore.canSpin"
+          class="bg-primary-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap">
+          {{ i18n.t('roulette_exe_available') }}
+        </div>
+        <div v-else
+          class="bg-surface border border-border text-muted text-xs font-bold px-4 py-2 rounded-full shadow-xl whitespace-nowrap">
+          {{ i18n.t('wheel_cooldown', { time: quickCooldown }) }}
+        </div>
+        <button @click="rouletteStore.openModal()" :disabled="!rouletteStore.canSpin"
+          :class="rouletteStore.canSpin ? 'rgb-roulette-button border-border hover:border-primary-500/40 active:scale-95' : 'border-border opacity-50 grayscale cursor-not-allowed'"
+          class="relative bg-surface/80 backdrop-blur-md p-5 rounded-2xl shadow-xl transition-all border group overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-transparent pointer-events-none"></div>
+          <Dices class="w-7 h-7 text-foreground relative z-10 transition-transform duration-300" :class="{ 'group-hover:rotate-180': rouletteStore.canSpin }" />
+          <div v-if="rouletteStore.canSpin" class="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-primary-500 rounded-full ring-2 ring-background"></div>
+        </button>
+      </div>
     </div>
 
-    <!-- Mobile roulette: compact chip above dock instead of floating -->
-    <div v-if="rouletteStore.canSpin && authStore.isAuthenticated"
-      class="md:hidden fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom)+0.5rem)] right-3 z-[65]">
-      <button @click="rouletteStore.openModal()"
-        class="rgb-roulette-button rgb-roulette-button-mobile flex items-center gap-2 bg-surface/90 backdrop-blur-md border border-primary-500/30 rounded-xl px-3 py-2 shadow-lg active:scale-95 transition-all overflow-hidden">
+    <!-- Floating Roulettes (mobile) — compact chips above the dock, daily on top. -->
+    <div v-if="authStore.isAuthenticated && (rouletteStore.canSpin || quickCooldown || rouletteStore.dailyCanSpin || dailyCooldown)"
+      class="md:hidden fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom)+0.5rem)] right-3 z-[65] flex flex-col items-end gap-2">
+      <!-- Daily chip -->
+      <button v-if="rouletteStore.dailyCanSpin || dailyCooldown"
+        @click="rouletteStore.openModal('daily')" :disabled="!rouletteStore.dailyCanSpin"
+        :class="rouletteStore.dailyCanSpin ? 'border-fuchsia-500/40 active:scale-95' : 'border-border opacity-60 grayscale cursor-not-allowed'"
+        class="relative flex items-center gap-2 bg-surface/90 backdrop-blur-md border rounded-xl px-3 py-2 shadow-lg transition-all overflow-hidden">
+        <div v-if="rouletteStore.dailyCanSpin" class="absolute inset-0 bg-gradient-to-r from-amber-500/15 to-fuchsia-500/15 pointer-events-none"></div>
+        <Gift class="w-4 h-4 text-amber-400 relative z-10" />
+        <span v-if="rouletteStore.dailyCanSpin" class="relative z-10 text-xs font-bold bg-gradient-to-r from-amber-400 to-fuchsia-500 bg-clip-text text-transparent">{{ i18n.t('wheel_daily_cta') }}</span>
+        <span v-else class="text-xs font-bold text-muted">{{ dailyCooldown }}</span>
+        <div v-if="rouletteStore.dailyCanSpin" class="relative z-10 w-2 h-2 bg-gradient-to-br from-amber-400 to-fuchsia-500 rounded-full"></div>
+      </button>
+      <!-- 4h chip -->
+      <button v-if="rouletteStore.canSpin || quickCooldown"
+        @click="rouletteStore.openModal()" :disabled="!rouletteStore.canSpin"
+        :class="rouletteStore.canSpin ? 'rgb-roulette-button rgb-roulette-button-mobile border-primary-500/30 active:scale-95' : 'border-border opacity-60 grayscale cursor-not-allowed'"
+        class="flex items-center gap-2 bg-surface/90 backdrop-blur-md border rounded-xl px-3 py-2 shadow-lg transition-all overflow-hidden">
         <Dices class="w-4 h-4 text-primary-500" />
-        <span class="text-xs font-bold text-primary-500">{{ i18n.locale === 'es' ? 'Ruleta' : 'Spin' }}</span>
-        <div class="w-2 h-2 bg-primary-500 rounded-full"></div>
-      </button>
-    </div>
-
-    <!-- Daily Roulette — desktop floating button, sits above the 4h wheel -->
-    <div v-if="rouletteStore.dailyCanSpin && authStore.isAuthenticated"
-      class="hidden md:flex fixed bottom-32 right-12 z-[70] flex-col items-end gap-5 group">
-      <div
-        class="bg-amber-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap">
-        {{ i18n.t('wheel_daily_cta') }}
-      </div>
-      <button @click="rouletteStore.openModal('daily')"
-        class="relative bg-surface/80 backdrop-blur-md p-5 rounded-2xl shadow-xl transition-all border border-amber-500/40 hover:border-amber-500/70 active:scale-95 group overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-br from-amber-500/15 to-transparent pointer-events-none"></div>
-        <Gift class="w-7 h-7 text-amber-500 relative z-10 transition-transform duration-300 group-hover:-rotate-12" />
-        <div class="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-amber-500 rounded-full ring-2 ring-background"></div>
-      </button>
-    </div>
-
-    <!-- Daily Roulette — mobile chip, above the 4h chip -->
-    <div v-if="rouletteStore.dailyCanSpin && authStore.isAuthenticated"
-      class="md:hidden fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom)+3.75rem)] right-3 z-[65]">
-      <button @click="rouletteStore.openModal('daily')"
-        class="flex items-center gap-2 bg-surface/90 backdrop-blur-md border border-amber-500/40 rounded-xl px-3 py-2 shadow-lg active:scale-95 transition-all overflow-hidden">
-        <Gift class="w-4 h-4 text-amber-500" />
-        <span class="text-xs font-bold text-amber-500">{{ i18n.t('wheel_daily_cta') }}</span>
-        <div class="w-2 h-2 bg-amber-500 rounded-full"></div>
+        <span v-if="rouletteStore.canSpin" class="text-xs font-bold text-primary-500">{{ i18n.locale === 'es' ? 'Ruleta' : 'Spin' }}</span>
+        <span v-else class="text-xs font-bold text-muted">{{ quickCooldown }}</span>
+        <div v-if="rouletteStore.canSpin" class="w-2 h-2 bg-primary-500 rounded-full"></div>
       </button>
     </div>
 
@@ -366,7 +384,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
 import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Gem, Bell, User, Dices, Gift, Volume2, VolumeX, Book, ShoppingBag, Target, LogIn, Plus } from 'lucide-vue-next';
@@ -472,6 +490,30 @@ const onSpun = (variant) => {
   else rouletteStore.setSpun();
 };
 
+// Live clock so the floating roulette buttons can show a ticking countdown
+// while on cooldown.
+const nowTs = ref(Date.now());
+let rouletteClock = null;
+
+// "2h 14m" / "37m" / "<1m" until a wheel recharges, or null if it's ready/unknown.
+const formatRemaining = (nextAt) => {
+  if (!nextAt) return null;
+  const remaining = new Date(nextAt).getTime() - nowTs.value;
+  if (remaining <= 0) return null;
+  const totalMinutes = Math.ceil(remaining / 60000);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  if (hours > 0) return `${hours}h ${minutes}m`;
+  if (minutes > 0) return `${minutes}m`;
+  return '<1m';
+};
+const quickCooldown = computed(() => formatRemaining(rouletteStore.nextSpinAt));
+const dailyCooldown = computed(() => formatRemaining(rouletteStore.dailyNextSpinAt));
+
+// When a countdown elapses, re-fetch status so the button flips back to active.
+watch(quickCooldown, (val) => { if (!val && !rouletteStore.canSpin) rouletteStore.checkStatus(true); });
+watch(dailyCooldown, (val) => { if (!val && !rouletteStore.dailyCanSpin) rouletteStore.checkDailyStatus(true); });
+
 const openLiveModal = () => {
   router.push({ name: 'social', params: { lang: i18n.locale } });
 };
@@ -537,6 +579,11 @@ watch(() => authStore.isAuthenticated, (val) => {
 
 onMounted(async () => {
   // Initialization is handled by the immediate watch on isAuthenticated
+  rouletteClock = setInterval(() => { nowTs.value = Date.now(); }, 1000);
+});
+
+onUnmounted(() => {
+  if (rouletteClock) clearInterval(rouletteClock);
 });
 </script>
 
