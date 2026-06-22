@@ -8,9 +8,10 @@
           <Sparkles class="w-6 h-6 text-primary-600" />
         </div>
         <h2 class="text-3xl font-bold text-zinc-900 dark:text-white  tracking-tighter  leading-none">
-          {{ i18n.t('wheel_title_start') }} <span class="text-primary-600">{{ i18n.t('wheel_title_end') }}</span>
+          {{ isDaily ? i18n.t('wheel_daily_title_start') : i18n.t('wheel_title_start') }}
+          <span class="text-primary-600">{{ isDaily ? i18n.t('wheel_daily_title_end') : i18n.t('wheel_title_end') }}</span>
         </h2>
-        <p class="text-zinc-500 dark:text-zinc-400 font-medium text-sm mt-2">{{ i18n.t('wheel_subtitle') }}</p>
+        <p class="text-zinc-500 dark:text-zinc-400 font-medium text-sm mt-2">{{ isDaily ? i18n.t('wheel_daily_subtitle') : i18n.t('wheel_subtitle') }}</p>
       </div>
 
       <div class="p-8 flex flex-col items-center">
@@ -51,15 +52,15 @@
           </svg>
 
           <!-- Center Button -->
-          <button 
+          <button
             @click="spinWheel"
-            :disabled="spinning || !rouletteStore.canSpin"
+            :disabled="spinning || !canSpin"
             class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white dark:bg-zinc-800 shadow-2xl border-4 border-primary-500 flex items-center justify-center z-30 transition-all disabled:opacity-50 disabled:grayscale overflow-hidden"
           >
             <div v-if="spinning" class="flex flex-col items-center">
                <span class="text-[10px] font-black text-primary-600 uppercase tracking-tighter">{{ i18n.t('wheel_btn_spinning') }}</span>
             </div>
-            <div v-else-if="rouletteStore.hasTicket" class="flex flex-col items-center">
+            <div v-else-if="!isDaily && rouletteStore.hasTicket" class="flex flex-col items-center">
                <ItemIcon name="ticket" type="consumable" class-name="w-6 h-6 mb-0.5" />
                <span class="text-[10px] font-bold text-primary-500/60 leading-none">{{ rouletteStore.ticketCount }}</span>
             </div>
@@ -87,8 +88,8 @@
                </span>
             </div>
           </div>
-          <div v-else-if="!rouletteStore.canSpin && !spinning" class="text-center">
-            <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1 italic">{{ i18n.t('wheel_return_tomorrow') }}</p>
+          <div v-else-if="!canSpin && !spinning" class="text-center">
+            <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1 italic">{{ isDaily ? i18n.t('wheel_daily_return_tomorrow') : i18n.t('wheel_return_tomorrow') }}</p>
             <div class="bg-zinc-100 dark:bg-white/5 px-6 py-2 rounded-xl border border-zinc-200 dark:border-white/10">
                <span v-if="cooldownText" class="text-sm font-bold text-zinc-400">{{ i18n.t('wheel_cooldown', { time: cooldownText }) }}</span>
                <span v-else class="text-sm font-bold text-zinc-400">{{ i18n.t('wheel_already_spun') }}</span>
@@ -145,8 +146,8 @@
               {{ i18n.t('pvp_return') }}
             </button>
 
-            <button 
-              v-if="!spinning"
+            <button
+              v-if="!spinning && !isDaily"
               @click="spinAgainWithGems"
               :disabled="authStore.user.reppy_gems < rouletteStore.extraSpinCost"
               class="w-full py-5 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl text-xs font-black uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl shadow-primary-600/20 disabled:opacity-50 disabled:grayscale flex items-center justify-center gap-2 group"
@@ -169,7 +170,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { Sparkles } from 'lucide-vue-next';
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
@@ -201,8 +202,9 @@ let cooldownTimer = null;
 
 // "2h 14m" / "37m" / "<1m" until the free spin recharges, or null if ready.
 const cooldownText = computed(() => {
-  if (!rouletteStore.nextSpinAt) return null;
-  const remaining = new Date(rouletteStore.nextSpinAt).getTime() - now.value;
+  const nextAt = isDaily.value ? rouletteStore.dailyNextSpinAt : rouletteStore.nextSpinAt;
+  if (!nextAt) return null;
+  const remaining = new Date(nextAt).getTime() - now.value;
   if (remaining <= 0) return null;
   const totalMinutes = Math.ceil(remaining / 60000);
   const hours = Math.floor(totalMinutes / 60);
@@ -217,10 +219,14 @@ const closeResult = () => {
   emit('close');
 };
 
-// Keep in sync with ROULETTE_PRIZES in backend/roulette.js — `size` is the
-// prize weight × 3.6 so the slices fill 360°, and `id` must match so the wheel
-// lands on the segment the backend actually awarded.
-const rewards = [
+const isDaily = computed(() => rouletteStore.variant === 'daily');
+// Unified "can I spin?" — reads the right cooldown for whichever wheel is open.
+const canSpin = computed(() => isDaily.value ? rouletteStore.dailyCanSpin : rouletteStore.canSpin);
+
+// Keep in sync with ROULETTE_PRIZES / DAILY_PRIZES in backend/roulette.js — `size`
+// is the prize weight × 3.6 so the slices fill 360°. For the quick wheel the `id`
+// must match the backend id; the daily wheel uses id === array index.
+const quickRewards = [
   { id: 0, name: '40 🪙', bgColor: '#FBBF24', size: 153 }, // 42.5 * 3.6
   { id: 1, name: '75 🪙', bgColor: '#F59E0B', size: 64.8 }, // 18 * 3.6
   { id: 2, name: '120 🪙', bgColor: '#D97706', size: 36 }, // 10 * 3.6
@@ -233,16 +239,27 @@ const rewards = [
   { id: 8, name: '🎁 B', bgColor: '#EC4899', size: 3.6 }, // 1 * 3.6
   { id: 9, name: '🎁 E', bgColor: '#F43F5E', size: 1.8 } // 0.5 * 3.6
 ];
+const dailyRewards = [
+  { id: 0, name: '🧪', bgColor: '#6366F1', size: 144 }, // 40 * 3.6  Poción Común
+  { id: 1, name: '250 🪙', bgColor: '#F59E0B', size: 79.2 }, // 22 * 3.6
+  { id: 2, name: '🧪 R', bgColor: '#3B82F6', size: 54 }, // 15 * 3.6  Poción Rara
+  { id: 3, name: '5 💎', bgColor: '#10B981', size: 36 }, // 10 * 3.6
+  { id: 4, name: '🎁 L', bgColor: '#8B5CF6', size: 21.6 }, // 6 * 3.6  Cofre Nivel
+  { id: 5, name: '🧪 E', bgColor: '#A855F7', size: 14.4 }, // 4 * 3.6  Poción Especial
+  { id: 6, name: '🎁 B', bgColor: '#EC4899', size: 7.2 }, // 2 * 3.6  Cofre Boss
+  { id: 7, name: '🧪 L', bgColor: '#F43F5E', size: 3.6 } // 1 * 3.6  Poción Legendaria
+];
+const rewards = computed(() => isDaily.value ? dailyRewards : quickRewards);
 
 // Helper to get cumulative angles
 const getCumulativeAngle = (index) => {
-  return rewards.slice(0, index).reduce((sum, r) => sum + r.size, 0);
+  return rewards.value.slice(0, index).reduce((sum, r) => sum + r.size, 0);
 };
 
 // SVG Helpers
 const getSegmentPath = (index) => {
   const startAngle = getCumulativeAngle(index);
-  const endAngle = startAngle + rewards[index].size;
+  const endAngle = startAngle + rewards.value[index].size;
   const x1 = 50 + 50 * Math.cos((Math.PI * (startAngle - 90)) / 180);
   const y1 = 50 + 50 * Math.sin((Math.PI * (startAngle - 90)) / 180);
   const x2 = 50 + 50 * Math.cos((Math.PI * (endAngle - 90)) / 180);
@@ -252,7 +269,7 @@ const getSegmentPath = (index) => {
 
 const getTextCoords = (index) => {
   const startAngle = getCumulativeAngle(index);
-  const centerXAngle = startAngle + (rewards[index].size / 2) - 90;
+  const centerXAngle = startAngle + (rewards.value[index].size / 2) - 90;
   return {
     x: 50 + 35 * Math.cos((Math.PI * centerXAngle) / 180),
     y: 50 + 35 * Math.sin((Math.PI * centerXAngle) / 180)
@@ -272,24 +289,29 @@ const getPrizeText = (prize) => {
 };
 
 const spinWheel = async () => {
-  if (spinning.value || !rouletteStore.canSpin) return;
+  if (spinning.value || !canSpin.value) return;
 
   try {
-    const res = await axios.post('/api/roulette/spin');
+    const res = await axios.post(isDaily.value ? '/api/roulette/daily-spin' : '/api/roulette/spin');
     const data = res.data;
-    
+
     spinning.value = true;
     prizeResult.value = null;
-    rouletteStore.setSpun();
-    emit('spun');
+    if (isDaily.value) rouletteStore.setDailySpun();
+    else rouletteStore.setSpun();
+    emit('spun', rouletteStore.variant);
 
     // Calculate rotation
     const extraSpins = 5 + Math.floor(Math.random() * 5);
     const targetId = data.prize.id;
-    
+
+    // Map by the `id` field, not array position: in quickRewards the array order
+    // doesn't match the ids, so using the id as an index lands on the wrong segment.
+    const targetIndex = rewards.value.findIndex(r => r.id === targetId);
+
     // Find the center of the target segment
-    const targetStartAngle = getCumulativeAngle(targetId);
-    const targetCenterAngle = targetStartAngle + (rewards[targetId].size / 2);
+    const targetStartAngle = getCumulativeAngle(targetIndex);
+    const targetCenterAngle = targetStartAngle + (rewards.value[targetIndex].size / 2);
     
     // Rotation = (Current Full Rotations) + (Extra Full Spins) + (Adjustment to land on targetCenterAngle at the top pointer)
     // The pointer is at top (0 deg). To land targetCenterAngle at top, we rotate by 360 - targetCenterAngle
@@ -308,7 +330,8 @@ const spinWheel = async () => {
       authStore.user.reppy_coins = data.new_coins;
       authStore.user.reppy_gems = data.new_gems;
       // Refresh cooldown/ticket state from the server (authoritative nextSpinAt).
-      rouletteStore.checkStatus(true);
+      if (isDaily.value) rouletteStore.checkDailyStatus(true);
+      else rouletteStore.checkStatus(true);
 
       if (data.prize.type !== 'nothing') {
         confetti({
@@ -346,8 +369,9 @@ const spinAgainWithGems = async () => {
     // Calculate rotation (copy from spinWheel)
     const extraSpins = 5 + Math.floor(Math.random() * 5);
     const targetId = data.prize.id;
-    const targetStartAngle = getCumulativeAngle(targetId);
-    const targetCenterAngle = targetStartAngle + (rewards[targetId].size / 2);
+    const targetIndex = rewards.value.findIndex(r => r.id === targetId);
+    const targetStartAngle = getCumulativeAngle(targetIndex);
+    const targetCenterAngle = targetStartAngle + (rewards.value[targetIndex].size / 2);
     const currentBase = Math.floor(rotation.value / 360) * 360;
     const targetRotation = currentBase + (extraSpins * 360) + (360 - targetCenterAngle);
     rotation.value = targetRotation;
@@ -379,8 +403,19 @@ const spinAgainWithGems = async () => {
   }
 };
 
+// The component stays mounted (only its content is v-if'd), so refresh the
+// correct wheel's status each time the modal opens, and reset the visual state.
+watch(() => props.show, (open) => {
+  if (!open) return;
+  prizeResult.value = null;
+  showResultModal.value = false;
+  if (isDaily.value) rouletteStore.checkDailyStatus();
+  else rouletteStore.checkStatus();
+});
+
 onMounted(async () => {
-  rouletteStore.checkStatus();
+  if (isDaily.value) rouletteStore.checkDailyStatus();
+  else rouletteStore.checkStatus();
   cooldownTimer = setInterval(() => { now.value = Date.now(); }, 1000);
 });
 

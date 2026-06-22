@@ -334,6 +334,32 @@
       </button>
     </div>
 
+    <!-- Daily Roulette — desktop floating button, sits above the 4h wheel -->
+    <div v-if="rouletteStore.dailyCanSpin && authStore.isAuthenticated"
+      class="hidden md:flex fixed bottom-32 right-12 z-[70] flex-col items-end gap-5 group">
+      <div
+        class="bg-amber-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap">
+        {{ i18n.t('wheel_daily_cta') }}
+      </div>
+      <button @click="rouletteStore.openModal('daily')"
+        class="relative bg-surface/80 backdrop-blur-md p-5 rounded-2xl shadow-xl transition-all border border-amber-500/40 hover:border-amber-500/70 active:scale-95 group overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-amber-500/15 to-transparent pointer-events-none"></div>
+        <Gift class="w-7 h-7 text-amber-500 relative z-10 transition-transform duration-300 group-hover:-rotate-12" />
+        <div class="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-amber-500 rounded-full ring-2 ring-background"></div>
+      </button>
+    </div>
+
+    <!-- Daily Roulette — mobile chip, above the 4h chip -->
+    <div v-if="rouletteStore.dailyCanSpin && authStore.isAuthenticated"
+      class="md:hidden fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom)+3.75rem)] right-3 z-[65]">
+      <button @click="rouletteStore.openModal('daily')"
+        class="flex items-center gap-2 bg-surface/90 backdrop-blur-md border border-amber-500/40 rounded-xl px-3 py-2 shadow-lg active:scale-95 transition-all overflow-hidden">
+        <Gift class="w-4 h-4 text-amber-500" />
+        <span class="text-xs font-bold text-amber-500">{{ i18n.t('wheel_daily_cta') }}</span>
+        <div class="w-2 h-2 bg-amber-500 rounded-full"></div>
+      </button>
+    </div>
+
     <PushPrompt />
 
   </div>
@@ -343,7 +369,7 @@
 import { ref, onMounted, watch, computed } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
-import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Gem, Bell, User, Dices, Volume2, VolumeX, Book, ShoppingBag, Target, LogIn, Plus } from 'lucide-vue-next';
+import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Gem, Bell, User, Dices, Gift, Volume2, VolumeX, Book, ShoppingBag, Target, LogIn, Plus } from 'lucide-vue-next';
 import { useAuthStore } from './stores/auth';
 import { useI18nStore } from './stores/i18n';
 import { useNotificationsStore } from './stores/notifications';
@@ -438,9 +464,13 @@ const earnings = [
 
 const checkRoulette = async () => {
   await rouletteStore.checkStatus();
+  await rouletteStore.checkDailyStatus();
 };
 
-const onSpun = () => { rouletteStore.setSpun(); };
+const onSpun = (variant) => {
+  if (variant === 'daily') rouletteStore.setDailySpun();
+  else rouletteStore.setSpun();
+};
 
 const openLiveModal = () => {
   router.push({ name: 'social', params: { lang: i18n.locale } });
@@ -481,6 +511,7 @@ const initializeApp = async () => {
   authStore.fetchProfile();
   shopStore.fetchInventory();
   rouletteStore.checkStatus();
+  rouletteStore.checkDailyStatus();
   notifStore.fetchNotifications();
 
   // Periodic presence ping for Pusher/Backend tracking
