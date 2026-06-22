@@ -351,6 +351,8 @@ apiRouter.get('/db/init', async (req, res) => {
       `UPDATE cosmetics SET rarity = 'epic' WHERE price < 1200 AND price >= 600`,
       `UPDATE cosmetics SET rarity = 'rare' WHERE price < 600 AND price >= 200`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_spin_at TIMESTAMP WITH TIME ZONE`,
+      // Daily Roulette cooldown (24h wheel), separate from the 4h last_spin_at.
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_daily_spin_at TIMESTAMP WITH TIME ZONE`,
       // Temporary per-stat consumable buffs: { "str": { "value": 3, "expiry": "<iso>" }, ... }
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS stat_buffs JSONB DEFAULT '{}'::jsonb`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_avatar_overhaul BOOLEAN DEFAULT FALSE`,
@@ -596,9 +598,21 @@ async function ensureAllTrainingExercisesExist() {
   }
 }
 
+// Lightweight, idempotent schema migrations run on every startup. Unlike the
+// heavy /db/init endpoint, this only ensures columns that newer code depends on
+// exist, so the app never queries a column that isn't there yet.
+async function ensureSchemaMigrations() {
+  try {
+    await query('ALTER TABLE users ADD COLUMN IF NOT EXISTS last_daily_spin_at TIMESTAMP WITH TIME ZONE');
+    console.log('[Startup migration] Schema migrations applied.');
+  } catch (err) {
+    console.error('[Startup migration] Failed to apply schema migrations:', err);
+  }
+}
+
 // Start server only in development or if not imported as a module
 if (process.env.NODE_ENV !== 'production' && process.env.VERCEL !== '1') {
-  ensureAllTrainingExercisesExist().then(() => {
+  Promise.all([ensureSchemaMigrations(), ensureAllTrainingExercisesExist()]).then(() => {
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
