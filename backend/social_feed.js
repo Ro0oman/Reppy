@@ -69,9 +69,13 @@ router.get('/stats', optionalAuthenticate, async (req, res) => {
         const weekStartStr = weekStart.toISOString().slice(0, 10);
 
         // Get current user's weekly reps
+        // Timed exercises (unit='seconds') store seconds in r.count and must not
+        // be summed as reps in the weekly ranking — same rule as the leaderboard.
         const myWeekRes = await query(
-          `SELECT COALESCE(SUM(r.count), 0)::int AS weekly_reps
-           FROM reps r WHERE r.user_id = $1 AND r.date >= $2`,
+          `SELECT COALESCE(SUM(CASE WHEN COALESCE(e.unit, 'reps') = 'seconds' THEN 0 ELSE r.count END), 0)::int AS weekly_reps
+           FROM reps r
+           LEFT JOIN exercises e ON e.slug = r.exercise_type
+           WHERE r.user_id = $1 AND r.date >= $2`,
           [req.user.id, weekStartStr]
         );
         const myWeeklyReps = parseInt(myWeekRes.rows[0]?.weekly_reps || 0);
@@ -80,10 +84,11 @@ router.get('/stats', optionalAuthenticate, async (req, res) => {
         const rivalRes = await query(
           `WITH weekly AS (
              SELECT u.id, u.name, u.avatar_url,
-                    COALESCE(SUM(r.count), 0)::int AS weekly_reps,
-                    RANK() OVER (ORDER BY COALESCE(SUM(r.count), 0) DESC) AS rank
+                    COALESCE(SUM(CASE WHEN COALESCE(e.unit, 'reps') = 'seconds' THEN 0 ELSE r.count END), 0)::int AS weekly_reps,
+                    RANK() OVER (ORDER BY COALESCE(SUM(CASE WHEN COALESCE(e.unit, 'reps') = 'seconds' THEN 0 ELSE r.count END), 0) DESC) AS rank
              FROM users u
              LEFT JOIN reps r ON r.user_id = u.id AND r.date >= $2
+             LEFT JOIN exercises e ON e.slug = r.exercise_type
              WHERE u.is_private = false
              GROUP BY u.id, u.name, u.avatar_url
            )

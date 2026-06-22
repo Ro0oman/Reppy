@@ -20,22 +20,35 @@ router.get('/global', async (req, res) => {
     const typeFilter = type === 'all' ? '' : 'AND r.exercise_type = $1';
     const queryParams = type === 'all' ? [] : [type];
 
+    // Timed exercises (unit = 'seconds') store duration-in-seconds in r.count.
+    // In the "all" aggregate they must NOT be summed as reps (a 600s plank is
+    // not 600 reps) — mirrors the canonical rule in stats.js / getRepCountForTotals.
+    // For a single timed exercise the leaderboard is internally consistent, so we
+    // keep the raw count there.
+    const repsExpr = type === 'all'
+      ? `SUM(CASE WHEN COALESCE(e.unit, 'reps') = 'seconds' THEN 0 ELSE r.count END)`
+      : `SUM(r.count)`;
+    const volumeExpr = type === 'all'
+      ? `SUM(CASE WHEN COALESCE(e.unit, 'reps') = 'seconds' THEN 0 ELSE r.count * (COALESCE(u.body_weight, 75.0) + COALESCE(r.added_weight, 0)) END)`
+      : `SUM(r.count * (COALESCE(u.body_weight, 75.0) + COALESCE(r.added_weight, 0)))`;
+
     const queryStr = `
       SELECT u.id, u.name, u.avatar_url, u.reppy_coins,
-             COALESCE(SUM(r.count), 0) as total_reps,
-             COALESCE(SUM(r.count * (COALESCE(u.body_weight, 75.0) + COALESCE(r.added_weight, 0))), 0) as total_volume,
+             COALESCE(${repsExpr}, 0) as total_reps,
+             COALESCE(${volumeExpr}, 0) as total_volume,
              t.name as title_name, t.css_value as title_css,
              b.css_value as border_css,
              a.css_value as avatar_css,
              u.current_level
       FROM users u
       LEFT JOIN reps r ON u.id = r.user_id ${typeFilter} ${dateFilter}
+      LEFT JOIN exercises e ON e.slug = r.exercise_type
       LEFT JOIN cosmetics t ON u.equipped_title_id = t.id
       LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
       LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
       WHERE u.is_private = false
       GROUP BY u.id, u.name, u.avatar_url, u.reppy_coins, t.name, t.css_value, b.css_value, a.css_value, u.current_level
-      HAVING COALESCE(SUM(r.count), 0) > 0
+      HAVING COALESCE(${repsExpr}, 0) > 0
       ORDER BY total_reps DESC
       LIMIT 20
     `;
@@ -64,16 +77,26 @@ router.get('/friends', authenticate, async (req, res) => {
     const typeFilter = type === 'all' ? '' : 'AND r.exercise_type = $2';
     const queryParams = type === 'all' ? [req.user.id] : [req.user.id, type];
 
+    // See note in /global: timed (seconds) exercises must not inflate the
+    // reps total in the "all" aggregate.
+    const repsExpr = type === 'all'
+      ? `SUM(CASE WHEN COALESCE(e.unit, 'reps') = 'seconds' THEN 0 ELSE r.count END)`
+      : `SUM(r.count)`;
+    const volumeExpr = type === 'all'
+      ? `SUM(CASE WHEN COALESCE(e.unit, 'reps') = 'seconds' THEN 0 ELSE r.count * (COALESCE(u.body_weight, 75.0) + COALESCE(r.added_weight, 0)) END)`
+      : `SUM(r.count * (COALESCE(u.body_weight, 75.0) + COALESCE(r.added_weight, 0)))`;
+
     const queryStr = `
       SELECT u.id, u.name, u.avatar_url, u.reppy_coins,
-             COALESCE(SUM(r.count), 0) as total_reps,
-             COALESCE(SUM(r.count * (COALESCE(u.body_weight, 75.0) + COALESCE(r.added_weight, 0))), 0) as total_volume,
+             COALESCE(${repsExpr}, 0) as total_reps,
+             COALESCE(${volumeExpr}, 0) as total_volume,
              t.name as title_name, t.css_value as title_css,
              b.css_value as border_css,
              a.css_value as avatar_css,
              u.current_level
       FROM users u
       LEFT JOIN reps r ON u.id = r.user_id ${typeFilter} ${dateFilter}
+      LEFT JOIN exercises e ON e.slug = r.exercise_type
       LEFT JOIN cosmetics t ON u.equipped_title_id = t.id
       LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
       LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
@@ -83,7 +106,7 @@ router.get('/friends', authenticate, async (req, res) => {
         SELECT user_id_2 FROM friendships WHERE user_id_1 = $1
       )
       GROUP BY u.id, u.name, u.avatar_url, u.reppy_coins, t.name, t.css_value, b.css_value, a.css_value, u.current_level
-      HAVING COALESCE(SUM(r.count), 0) > 0
+      HAVING COALESCE(${repsExpr}, 0) > 0
       ORDER BY total_reps DESC
       LIMIT 50
     `;
