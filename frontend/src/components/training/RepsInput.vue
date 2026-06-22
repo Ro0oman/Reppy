@@ -122,28 +122,9 @@ const quickPresets = [1, 5, 10, 20];
 
 const isEs = computed(() => i18n.locale !== 'en');
 
-const uiText = computed(() => {
-  if (isEs.value) {
-    return {
-      title: 'Registra tus reps',
-      subtitle: 'Rapido, claro y pensado para movil',
-      impact: 'Daño mínimo',
-      quickPresets: 'Presets rapidos',
-      repsLabel: 'Repeticiones',
-      extraWeight: 'Lastre adicional',
-      cta: 'Registrar',
-    };
-  }
-  return {
-    title: 'Log your reps',
-    subtitle: 'Fast, clear and mobile-first',
-    impact: 'Minimum damage',
-    quickPresets: 'Quick presets',
-    repsLabel: 'Repetitions',
-    extraWeight: 'Extra weight',
-    cta: 'Log',
-  };
-});
+const uiText = computed(() => isEs.value
+  ? { extraWeight: 'Lastre adicional', cta: 'Registrar' }
+  : { extraWeight: 'Extra weight', cta: 'Log' });
 
 const activeLabel = computed(() => {
   return i18n.t(props.exerciseType);
