@@ -3,64 +3,57 @@
     <!-- ☻ COMPANION (mobile) — your fighter leads ☻ -->
     <div v-if="isMobile" class="max-w-md mx-auto w-full space-y-3">
 
-      <!-- Slim top actions -->
-      <div class="flex items-center justify-end gap-2">
+      <!-- Compact identity row: avatar + name + level + mood, with the weekly
+           card action. Kept slim so the quick-log sits high — register on entry,
+           no scroll. -->
+      <div class="flex items-center gap-3">
+        <div class="relative shrink-0">
+          <RadialProgress :progress="dayRingPercent" :size="52" :stroke-width="4">
+            <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :size="40" />
+          </RadialProgress>
+        </div>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-2">
+            <h1 class="truncate text-base font-bold tracking-tight text-foreground">{{ firstName }}</h1>
+            <span class="shrink-0 rounded-full bg-primary-500/15 px-2 py-0.5 text-[10px] font-bold text-primary-400 whitespace-nowrap">
+              {{ i18n.t('comp_level_short') }} {{ userLevel }}
+            </span>
+          </div>
+          <div class="mt-0.5 flex items-center gap-1.5 max-w-full">
+            <component :is="companionMood.icon" class="w-3 h-3 shrink-0" :class="companionMood.color" aria-hidden="true" />
+            <span class="text-[11px] text-muted truncate">{{ companionMood.text }}</span>
+          </div>
+        </div>
         <button
           type="button"
-          class="flex items-center gap-1.5 rounded-full border border-primary-500/25 bg-primary-500/10 px-3 py-1.5 text-xs font-semibold text-primary-400 transition hover:bg-primary-500/20 active:scale-95"
+          class="shrink-0 flex items-center gap-1.5 rounded-full border border-primary-500/25 bg-primary-500/10 px-3 py-1.5 text-xs font-semibold text-primary-400 transition hover:bg-primary-500/20 active:scale-95"
           @click="showWeeklyCard = true"
         >
           <Share2 class="w-3.5 h-3.5" aria-hidden="true" />
-          {{ i18n.t('dash_my_week') }}
+          <span>{{ i18n.t('dash_my_week') }}</span>
         </button>
       </div>
 
-      <!-- Character hero: your fighter, with today's progress as its aura -->
-      <div class="flex flex-col items-center text-center">
-        <div class="relative">
-          <RadialProgress :progress="dayRingPercent" :size="112" :stroke-width="6">
-            <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :size="84" />
-          </RadialProgress>
-          <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-primary-500 px-2.5 py-0.5 text-[11px] font-bold text-white border-2 border-background whitespace-nowrap">
-            {{ i18n.t('comp_level_short') }} {{ userLevel }}
-          </span>
-        </div>
-
-        <h1 class="mt-3 text-xl font-bold tracking-tight text-foreground">{{ firstName }}</h1>
-
-        <!-- Mood / status line: the fighter has personality -->
-        <div class="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-foreground/[0.05] px-3 py-1 max-w-full">
-          <component :is="companionMood.icon" class="w-3.5 h-3.5 shrink-0" :class="companionMood.color" aria-hidden="true" />
-          <span class="text-xs text-muted truncate">{{ companionMood.text }}</span>
-        </div>
-      </div>
-
-      <!-- Quick log: surfaced right under the hero so logging reps is 1–2 taps
-           away — pick an exercise and hit register without scrolling. -->
+      <!-- Quick log: always at the top so you can register on entry — exercise
+           pre-selected, presets + counter + CTA visible without scrolling. -->
       <div
-        v-if="guidedTrainingStateLoaded && (!trainingStore.todayWorkout || showFreeLog)"
         ref="repsInputSectionMobile"
         class="rounded-2xl border border-primary-500/30 bg-primary-500/[0.06] p-3.5 transition-all duration-500"
         :class="highlightRepsInput ? 'ring-2 ring-primary-500/60' : ''"
       >
-        <div class="mb-3 flex items-center gap-2">
-          <Zap class="h-4 w-4 text-primary-500" aria-hidden="true" />
-          <h2 class="text-xs font-bold uppercase tracking-wide text-muted/70">
-            {{ i18n.locale === 'es' ? 'Registro rápido' : 'Quick log' }}
-          </h2>
+        <div class="mb-3 flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <Zap class="h-4 w-4 text-primary-500" aria-hidden="true" />
+            <h2 class="text-xs font-bold uppercase tracking-wide text-muted/70">
+              {{ i18n.locale === 'es' ? 'Registro rápido' : 'Quick log' }}
+            </h2>
+          </div>
+          <span class="text-xs text-muted/70 tabular-nums"><b class="text-primary-500 font-bold">{{ todayProgress }}</b> / {{ stats.dailyGoal }} {{ i18n.t('comp_today') }}</span>
         </div>
         <ExerciseSelector v-model="activeExercise" compact class="w-full" />
-        <template v-if="activeExercise !== 'all'">
-          <div class="mt-3 mb-3 flex items-center justify-between px-0.5">
-            <span class="text-sm font-semibold text-foreground">{{ activeExerciseLabel }}</span>
-            <span class="text-xs text-muted/70 tabular-nums"><b class="text-primary-500 font-bold">{{ todayProgress }}</b> / {{ stats.dailyGoal }} {{ i18n.t('comp_today') }}</span>
-          </div>
-          <!-- Inline counter: log reps right here, no sheet, no scroll -->
-          <RepsInput :exercise-type="activeExercise" @updated="fetchData" />
-        </template>
-        <p v-else class="mt-3 text-center text-xs font-medium text-muted/60">
-          {{ i18n.locale === 'es' ? 'Elige un ejercicio para registrar tus reps' : 'Pick an exercise to log your reps' }}
-        </p>
+        <!-- Inline counter: log reps right here, no sheet, no scroll. Falls back
+             to a concrete exercise when the selector is on the "all" overview. -->
+        <RepsInput :exercise-type="logExercise" @updated="refreshAfterLog" class="mt-3" />
       </div>
 
       <!-- Stats row: streak + power -->
@@ -215,6 +208,15 @@
       </div>
     </template>
 
+    <!-- Routines / quick-log placeholder: reserves the space of the guided-plan
+         area on first load so the real content fills in WITHOUT pushing the rest
+         of the page down (static layout, progressive fill). -->
+    <div v-if="!guidedTrainingStateLoaded" class="space-y-4 pt-1" aria-hidden="true">
+      <div class="h-4 w-28 rounded bg-foreground/10 animate-pulse"></div>
+      <div class="h-28 rounded-2xl border border-border/60 bg-foreground/[0.03] animate-pulse"></div>
+      <div v-if="!isMobile" class="h-72 rounded-3xl border border-border/60 bg-foreground/[0.03] animate-pulse"></div>
+    </div>
+
     <!-- ===== MIS RUTINAS (rutinas fijas / creadas) ===== -->
     <section v-if="guidedTrainingStateLoaded" class="flex items-center justify-between gap-2 pt-1">
       <div class="flex items-center gap-2">
@@ -223,16 +225,10 @@
           {{ i18n.locale === 'es' ? 'Mis rutinas' : 'My routines' }}
         </h2>
       </div>
-      <div class="flex items-center gap-2">
-        <button type="button" class="routine-chip" @click="showRoutineCarousel = true">
-          <LayoutGrid class="h-3.5 w-3.5" aria-hidden="true" />
-          {{ i18n.locale === 'es' ? 'Explorar' : 'Browse' }}
-        </button>
-        <button type="button" class="routine-chip" @click="openBuilder()">
-          <Plus class="h-3.5 w-3.5" aria-hidden="true" />
-          {{ i18n.locale === 'es' ? 'Crear' : 'Create' }}
-        </button>
-      </div>
+      <button type="button" class="routine-chip" @click="showRoutineCarousel = true">
+        <LayoutGrid class="h-3.5 w-3.5" aria-hidden="true" />
+        {{ i18n.locale === 'es' ? 'Explorar' : 'Browse' }}
+      </button>
     </section>
 
     <TodayWorkout
@@ -302,9 +298,9 @@
       </div>
     </section>
 
-    <!-- Empty state: no active plan, no custom routines -->
+    <!-- Empty state: no active plan -->
     <section
-      v-if="guidedTrainingStateLoaded && !shouldShowTodayWorkout && !shouldShowActivePlanCard && !shouldShowPlanPromo && !trainingStore.customPlans.length"
+      v-if="guidedTrainingStateLoaded && !shouldShowTodayWorkout && !shouldShowActivePlanCard && !shouldShowPlanPromo"
       class="rounded-2xl border border-dashed border-primary-500/30 bg-primary-500/[0.05] p-5 text-center"
     >
       <Dumbbell class="mx-auto h-7 w-7 text-primary-500/70" aria-hidden="true" />
@@ -313,47 +309,13 @@
       </h3>
       <p class="mx-auto mt-1 max-w-md text-sm text-muted/70">
         {{ i18n.locale === 'es'
-          ? 'Explora planes guiados o crea tu propia rutina para entrenar con estructura.'
-          : 'Browse guided plans or create your own routine to train with structure.' }}
+          ? 'Explora planes guiados para entrenar con estructura.'
+          : 'Browse guided plans to train with structure.' }}
       </p>
-      <div class="mt-4 flex flex-wrap justify-center gap-2">
+      <div class="mt-4 flex justify-center">
         <button type="button" class="btn-reppy px-5" @click="showRoutineCarousel = true">
           {{ i18n.locale === 'es' ? 'Explorar rutinas' : 'Browse routines' }}
         </button>
-        <button
-          type="button"
-          class="rounded-2xl border border-border bg-foreground/[0.04] px-5 py-3 text-sm font-semibold text-foreground transition hover:border-primary-500/30 active:scale-95"
-          @click="openBuilder()"
-        >
-          {{ i18n.locale === 'es' ? 'Crear rutina' : 'Create routine' }}
-        </button>
-      </div>
-    </section>
-
-    <!-- Mis rutinas creadas (custom plans) -->
-    <section v-if="guidedTrainingStateLoaded && trainingStore.customPlans.length" class="space-y-3">
-      <p class="text-[10px] font-bold uppercase tracking-widest text-muted/60">
-        {{ i18n.locale === 'es' ? 'Rutinas creadas por ti' : 'Routines you created' }}
-      </p>
-      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <PlanCard
-          v-for="plan in trainingStore.customPlans"
-          :key="plan.slug"
-          :plan="plan"
-          :active="trainingStore.activePlan && trainingStore.activePlan.slug === plan.slug"
-        >
-          <template #actions>
-            <button type="button" class="btn-reppy flex-1 !py-2 text-xs" @click="startCustomPlan(plan)">
-              {{ i18n.locale === 'es' ? 'Empezar' : 'Start' }}
-            </button>
-            <button type="button" class="routine-icon-btn" @click="openBuilder(plan.id)" :aria-label="i18n.locale === 'es' ? 'Editar' : 'Edit'">
-              <Pencil class="h-3.5 w-3.5" />
-            </button>
-            <button type="button" class="routine-icon-btn hover:text-red-400" @click="removeCustomPlan(plan)" :aria-label="i18n.locale === 'es' ? 'Eliminar' : 'Delete'">
-              <Trash2 class="h-3.5 w-3.5" />
-            </button>
-          </template>
-        </PlanCard>
       </div>
     </section>
 
@@ -383,65 +345,62 @@
       <div class="w-full space-y-4">
         <ExerciseSelector v-model="activeExercise" compact class="w-full" />
 
-        <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-stretch">
-          <!-- Overview mode: no single exercise picked yet -->
-          <div v-if="activeExercise === 'all'" class="bg-surface/5 border border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-center p-8 sm:p-10">
-            <Globe aria-hidden="true" class="w-10 h-10 text-muted/50 mb-3" />
-            <h3 class="text-lg font-bold tracking-tight text-foreground">{{ i18n.t('dash_overview_mode') }}</h3>
-            <p class="text-xs text-muted/60 max-w-[320px] mx-auto mt-1.5">{{ i18n.t('dash_overview_hint') }}</p>
-            <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md">
-              <button
-                v-for="option in quickLogOptions"
-                :key="option.id"
-                @click="activeExercise = option.id"
-                class="h-10 rounded-xl border border-border bg-foreground/[0.03] hover:bg-primary-500/10 hover:border-primary-500/30 text-xs font-semibold text-foreground/90 transition-all active:scale-[0.98]"
-              >
-                {{ option.label }}
-              </button>
-            </div>
+        <!-- Overview mode: no single exercise picked yet -->
+        <div v-if="activeExercise === 'all'" class="bg-surface/5 border border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-center p-8 sm:p-10">
+          <Globe aria-hidden="true" class="w-10 h-10 text-muted/50 mb-3" />
+          <h3 class="text-lg font-bold tracking-tight text-foreground">{{ i18n.t('dash_overview_mode') }}</h3>
+          <p class="text-xs text-muted/60 max-w-[320px] mx-auto mt-1.5">{{ i18n.t('dash_overview_hint') }}</p>
+          <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md">
+            <button
+              v-for="option in quickLogOptions"
+              :key="option.id"
+              @click="activeExercise = option.id"
+              class="h-10 rounded-xl border border-border bg-foreground/[0.03] hover:bg-primary-500/10 hover:border-primary-500/30 text-xs font-semibold text-foreground/90 transition-all active:scale-[0.98]"
+            >
+              {{ option.label }}
+            </button>
           </div>
+        </div>
 
-          <!-- Day ring + log CTA -->
-          <div
-            v-else
-            ref="repsInputSectionDesktop"
-            class="flex flex-col items-center justify-center transition-all duration-500 rounded-3xl border border-border/60 bg-foreground/[0.02] p-6"
-            :class="highlightRepsInput ? 'ring-2 ring-primary-500/60' : ''"
-          >
-            <RadialProgress :progress="dayRingPercent" :size="208" :stroke-width="14">
+        <!-- Day ring + glanceable stats (left) and the log counter (fills the row) -->
+        <div
+          v-else
+          ref="repsInputSectionDesktop"
+          class="grid gap-6 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center transition-all duration-500 rounded-3xl border border-border/60 bg-foreground/[0.02] p-6"
+          :class="highlightRepsInput ? 'ring-2 ring-primary-500/60' : ''"
+        >
+          <div class="flex flex-col items-center gap-4">
+            <RadialProgress :progress="dayRingPercent" :size="184" :stroke-width="12">
               <div class="flex flex-col items-center">
-                <span class="text-[2.75rem] font-bold tabular-nums leading-none text-foreground">{{ todayProgress }}</span>
+                <span class="text-4xl font-bold tabular-nums leading-none text-foreground">{{ todayProgress }}</span>
                 <span class="mt-2 text-xs text-muted/60">{{ i18n.t('dash_ring_of') }} {{ stats.dailyGoal }} · {{ activeExerciseLabel }}</span>
               </div>
             </RadialProgress>
-            <!-- Inline counter: log reps right under the ring, no sheet -->
-            <RepsInput :exercise-type="activeExercise" @updated="fetchData" class="mt-5 w-full max-w-sm" />
+            <div class="flex items-center gap-2">
+              <div class="flex items-center gap-1.5 rounded-xl border border-border/60 bg-foreground/[0.03] px-3 py-2">
+                <Sword class="w-3.5 h-3.5 text-primary-500 shrink-0" aria-hidden="true" />
+                <span class="text-sm font-bold text-foreground tabular-nums">{{ stats.combatPower.total }}</span>
+                <span class="text-[10px] text-muted/60">{{ i18n.t('comp_stat_power') }}</span>
+              </div>
+              <div class="flex items-center gap-1.5 rounded-xl border border-border/60 bg-foreground/[0.03] px-3 py-2">
+                <Zap class="w-3.5 h-3.5 text-primary-500 shrink-0" aria-hidden="true" />
+                <span class="text-sm font-bold text-foreground tabular-nums">{{ stats.combatPower.minDamage }}–{{ stats.combatPower.maxDamage }}</span>
+                <span class="text-[10px] text-muted/60">{{ i18n.t('ui_dmg_range') }}</span>
+              </div>
+            </div>
           </div>
 
-          <!-- Glanceable stats (streak shown once, in the band below) -->
-          <div class="grid grid-cols-2 gap-3 lg:grid-cols-1 lg:content-center">
-            <div class="rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5">
-              <div class="flex items-center gap-1.5">
-                <Sword class="w-4 h-4 text-primary-500" aria-hidden="true" />
-                <span class="text-xs text-muted">{{ i18n.t('comp_stat_power') }}</span>
-              </div>
-              <div class="mt-1.5 text-xl font-bold text-foreground tabular-nums">{{ stats.combatPower.total }}</div>
-            </div>
-            <div class="rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5">
-              <div class="flex items-center gap-1.5">
-                <Sword class="w-4 h-4 text-primary-500" aria-hidden="true" />
-                <span class="text-xs text-muted">{{ i18n.t('ui_dmg_range') }}</span>
-              </div>
-              <div class="mt-1.5 text-xl font-bold text-foreground tabular-nums">{{ stats.combatPower.minDamage }}–{{ stats.combatPower.maxDamage }}</div>
-            </div>
-          </div>
+          <!-- Inline counter: fills the remaining width, no dead space -->
+          <RepsInput :exercise-type="activeExercise" @updated="refreshAfterLog" class="w-full" />
         </div>
       </div>
     </section>
 
-    <!-- Mission card skeleton -->
+    <!-- Mission card skeleton: only while the mission slot is the one that will
+         render (no guided workout for today) — avoids a placeholder that pops in
+         then vanishes once the data says there's no mission card to show. -->
     <div
-      v-if="isLoading && !todayMissionStateLoaded"
+      v-if="guidedTrainingStateLoaded && !todayMissionStateLoaded && !shouldShowTodayWorkout"
       class="w-full rounded-2xl border border-primary-500/25 bg-primary-500/10 p-4 sm:p-6 animate-pulse"
     >
       <div class="space-y-3">
@@ -500,20 +459,8 @@
       </div>
     </section>
 
-    <!-- Disclosure: heavy progress + boss section, collapsed by default (Momentum: home stays light) -->
-    <div>
-      <button
-        @click="showAdvancedStats = !showAdvancedStats"
-        class="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-border/60 bg-foreground/[0.02] hover:bg-foreground/[0.05] text-sm font-semibold text-muted hover:text-foreground transition-all active:scale-[0.98]"
-      >
-        <BarChart3 aria-hidden="true" class="w-4 h-4" />
-        {{ showAdvancedStats ? i18n.t('dash_stats_hide') : i18n.t('dash_stats_boss_toggle') }}
-        <ChevronDown aria-hidden="true" class="w-4 h-4 transition-transform duration-200" :class="showAdvancedStats ? 'rotate-180' : ''" />
-      </button>
-    </div>
-
-    <!-- Stats & boss (collapsed until toggled, all breakpoints) -->
-    <section v-show="showAdvancedStats" class="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
+    <!-- Stats & boss (always visible) -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
       <!-- Boss Intel -->
       <div ref="bossHealthSection" class="lg:col-span-2 space-y-4 scroll-mt-4">
         <div class="flex items-center gap-2 px-1">
@@ -602,8 +549,8 @@
       </div>
     </section>
 
-    <!-- Analytics: activity heatmap / history (follows disclosure) -->
-    <section v-show="showAdvancedStats" class="space-y-4">
+    <!-- Analytics: activity heatmap / history -->
+    <section class="space-y-4">
       <div class="flex items-center gap-1 p-1 bg-foreground/[0.04] border border-border/60 rounded-xl w-fit mx-auto">
         <button
           @click="activeTab = 'heatmap'"
@@ -720,23 +667,11 @@
       @selected="handleGuidedPlanSelected"
     />
     <WeeklyShareCard :open="showWeeklyCard" @close="showWeeklyCard = false" />
-    <LogSheet
-      :open="showLogSheet"
-      :exercise-type="activeExercise"
-      @close="showLogSheet = false"
-      @updated="fetchData"
-    />
     <RoutineCarouselModal
       :show="showRoutineCarousel"
       :active-slug="trainingStore.activePlan?.slug || ''"
       @close="showRoutineCarousel = false"
       @selected="handleGuidedPlanSelected"
-    />
-    <CustomPlanBuilder
-      :show="showBuilder"
-      :plan-id="builderPlanId"
-      @close="showBuilder = false"
-      @saved="fetchData"
     />
   </div>
 </template>
@@ -747,7 +682,7 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import {
   Trophy, Target, Flame, Zap, Activity, Inbox, Globe, Snowflake,
-  BarChart3, Check, X, Trash2, Sword, FlaskConical, Coins, ChevronDown, ChevronRight, Share2, Pencil, Plus,
+  Check, X, Trash2, Sword, FlaskConical, Coins, ChevronRight, Share2, Pencil,
   ClipboardList, LayoutGrid, Dumbbell
 } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
@@ -758,7 +693,6 @@ import { useBossStore } from '@/stores/boss';
 import Heatmap from '@/components/training/Heatmap.vue';
 import RadialProgress from '@/components/ui/RadialProgress.vue';
 import AvatarFrame from '@/components/ui/AvatarFrame.vue';
-import LogSheet from '@/components/training/LogSheet.vue';
 import RepsInput from '@/components/training/RepsInput.vue';
 import ExerciseSelector from '@/components/training/ExerciseSelector.vue';
 import BossHealth from '@/components/boss/BossHealth.vue';
@@ -767,8 +701,6 @@ import LivePresence from '@/components/ui/LivePresence.vue';
 import QuickStartOnboardingModal from '@/components/modals/QuickStartOnboardingModal.vue';
 import GoalOnboardingModal from '@/components/modals/GoalOnboardingModal.vue';
 import RoutineCarouselModal from '@/components/modals/RoutineCarouselModal.vue';
-import CustomPlanBuilder from '@/components/modals/CustomPlanBuilder.vue';
-import PlanCard from '@/components/training/PlanCard.vue';
 import TodayWorkout from '@/components/training/TodayWorkout.vue';
 import WeeklyShareCard from '@/components/modals/WeeklyShareCard.vue';
 import { getLocalDateString } from '@/utils/dateUtils.js';
@@ -797,12 +729,8 @@ const showRPGModal = ref(false);
 const showQuickStartModal = ref(false);
 const showGoalOnboarding = ref(false);
 const showRoutineCarousel = ref(false);
-const showBuilder = ref(false);
-const builderPlanId = ref(null);
 const showFreeLog = ref(false);
-const showLogSheet = ref(false);
 const activeTab = ref('heatmap');
-const showAdvancedStats = ref(false);
 const unclaimedMissions = ref(0);
 const highlightRepsInput = ref(false);
 const repsInputSectionMobile = ref(null);
@@ -1003,9 +931,10 @@ const freezeStreak = async () => {
   }
 };
 
-// Opens the log sheet (Momentum's primary gesture). Ensures a concrete exercise
-// is selected first, briefly highlights the ring, and surfaces it into view.
-const openLogSheet = async () => {
+// Surfaces the inline rep counter into view (single logging surface — no modal).
+// Ensures a concrete exercise is selected, reveals the desktop section if it was
+// hidden by a guided workout, scrolls to it and briefly highlights it.
+const scrollToRepsInput = async () => {
   if (activeExercise.value === 'all') {
     activeExercise.value = 'pullups';
   }
@@ -1015,11 +944,7 @@ const openLogSheet = async () => {
   target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   highlightRepsInput.value = true;
   setTimeout(() => { highlightRepsInput.value = false; }, 1200);
-  showLogSheet.value = true;
 };
-
-// Back-compat: existing callers (empty states, ?log=1 intent) now open the sheet.
-const scrollToRepsInput = openLogSheet;
 
 const handleCloseQuickStartModal = () => {
   markQuickStartSeen();
@@ -1056,6 +981,12 @@ const stats = reactive({
 const activeExerciseLabel = computed(() => {
   return i18n.t(activeExercise.value);
 });
+
+// The exercise the inline counter logs to. The "all" overview isn't loggable,
+// so it falls back to pull-ups — keeps mobile quick-log always actionable.
+const logExercise = computed(() =>
+  activeExercise.value === 'all' ? 'pullups' : activeExercise.value
+);
 
 const firstName = computed(() =>
   authStore.user?.name?.split(' ')[0] || i18n.t('dash_default_athlete')
@@ -1114,9 +1045,8 @@ const bossHpPercent = computed(() => {
   return Math.max(0, Math.min(100, (b.current_hp / b.total_hp) * 100));
 });
 
-// Reveal the advanced section and scroll to the boss-health component.
+// Scroll to the boss-health component (always visible now).
 const showBossHealth = async () => {
-  showAdvancedStats.value = true;
   await nextTick();
   bossHealthSection.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
@@ -1234,12 +1164,14 @@ const activePotions = computed(() => buildActiveBoosts(authStore.user, currentTi
 // Watch for potion expiry to refresh combat stats
 watch(() => activePotions.value.length, (newLen, oldLen) => {
   if (newLen < oldLen) {
-    fetchData();
+    refreshAfterLog();
   }
 });
 
 const fetchGlobalData = async () => {
-  todayMissionStateLoaded.value = false;
+  // Don't reset `todayMissionStateLoaded` here — on the first load it starts
+  // false (ref init) and flips true once; on later refreshes it stays true so
+  // the mission card never unmounts/remounts (no flicker).
   try {
     const t = Date.now();
     const [missionsRes] = await Promise.all([
@@ -1261,8 +1193,11 @@ const fetchGlobalData = async () => {
 // Exercise-scoped data only: reps history, heatmap and stats for the selected
 // exercise. This is the ONLY thing that changes when you switch exercise — it
 // must NOT touch missions, the guided plan or the streak (they're global).
-const fetchExerciseData = async () => {
-  isLoading.value = true;
+// `silent` skips the loading skeletons: data is swapped in place without
+// unmounting anything. Used after logging reps so the scroll position and DOM
+// stay put — only the numbers change.
+const fetchExerciseData = async ({ silent = false } = {}) => {
+  if (!silent) isLoading.value = true;
   try {
     const params = { type: activeExercise.value, year: activeYear.value };
     const t = Date.now();
@@ -1281,22 +1216,40 @@ const fetchExerciseData = async () => {
     stats.combatPower = statsRes.data.combatPower || { total: 0, base: 0, gear: 0, buff: 0 };
     return statsRes;
   } finally {
-    isLoading.value = false;
+    if (!silent) isLoading.value = false;
   }
 };
 
-// Full refresh: exercise data + global state (streak, missions, guided plan,
-// boss) + first-run onboarding. Use on mount and after a mutation that changes
-// global state (logging reps, editing/deleting entries) — NOT on exercise switch.
+// Lightweight refresh after a rep mutation (log/edit/delete) or a potion expiry.
+// Updates exercise data + global state IN PLACE, without flipping
+// `guidedTrainingStateLoaded` (which unmounts half the dashboard) or re-running
+// onboarding — that's what used to cause the jarring scroll jump.
+const refreshAfterLog = async () => {
+  try {
+    await fetchExerciseData({ silent: true });
+    await Promise.all([
+      fetchStreakStatus(),
+      fetchGlobalData(),
+      trainingStore.fetchMine()
+    ]);
+    if (bossHealthRef.value) bossHealthRef.value.refresh();
+  } catch (error) {
+    console.error('Error refreshing dashboard:', error);
+  }
+};
+
+// Full load: exercise data + global state (streak, missions, guided plan, boss)
+// + first-run onboarding. Used on mount and after a plan mutation.
+// IMPORTANT: it never flips `guidedTrainingStateLoaded` back to false. Once the
+// layout is up it stays mounted; only the data inside refreshes. Flipping it off
+// mid-load is what made the cards appear → disappear → reappear on every reload.
 const fetchData = async () => {
-  guidedTrainingStateLoaded.value = false;
   try {
     const statsRes = await fetchExerciseData();
     await Promise.all([
       fetchStreakStatus(),
       fetchGlobalData(),
-      trainingStore.fetchMine(),
-      trainingStore.fetchCustomPlans().catch(() => {})
+      trainingStore.fetchMine()
     ]);
     guidedTrainingStateLoaded.value = true;
 
@@ -1343,7 +1296,7 @@ const saveEdit = async (id) => {
     await axios.put(`/api/reps/${id}`, { count: editValue.value });
     editingId.value = null;
     notificationStore.notify(i18n.t('dash_entry_updated'), 'success');
-    fetchData();
+    refreshAfterLog();
   } catch (err) {
     notificationStore.notify(i18n.t('dash_update_failed'), 'error');
   }
@@ -1372,7 +1325,7 @@ const confirmDelete = (id) => {
         deletingRepIds.value.add(id);
         await axios.delete(`/api/reps/${id}`);
         notificationStore.notify(i18n.t('dash_entry_deleted'), 'success');
-        fetchData();
+        refreshAfterLog();
       } catch (err) {
         if (err?.response?.status === 404) {
           // Already deleted or stale client state: update UI silently
@@ -1451,37 +1404,6 @@ const openPlanPicker = () => {
   showGoalOnboarding.value = true;
 };
 
-const openBuilder = (planId = null) => {
-  builderPlanId.value = typeof planId === 'number' ? planId : null;
-  showBuilder.value = true;
-};
-
-const startCustomPlan = async (plan) => {
-  try {
-    await trainingStore.selectPlan({ planSlug: plan.slug });
-    notificationStore.notify(i18n.locale === 'es' ? 'Rutina activada' : 'Routine activated', 'success');
-    await fetchData();
-  } catch (error) {
-    notificationStore.notify(i18n.locale === 'es' ? 'No se pudo activar la rutina' : 'Routine could not be activated', 'error');
-  }
-};
-
-const removeCustomPlan = (plan) => {
-  notificationStore.confirm(
-    i18n.locale === 'es' ? 'Eliminar rutina' : 'Delete routine',
-    i18n.locale === 'es' ? `¿Eliminar "${i18n.t(plan.titleKey)}"? Esta acción no se puede deshacer.` : `Delete "${i18n.t(plan.titleKey)}"? This cannot be undone.`,
-    async () => {
-      try {
-        await trainingStore.deleteCustomPlan(plan.id);
-        notificationStore.notify(i18n.locale === 'es' ? 'Rutina eliminada' : 'Routine deleted', 'success');
-        await fetchData();
-      } catch (error) {
-        notificationStore.notify(i18n.locale === 'es' ? 'No se pudo eliminar' : 'Could not delete', 'error');
-      }
-    }
-  );
-};
-
 const pausePlan = async () => {
   try {
     await trainingStore.pausePlan();
@@ -1536,9 +1458,10 @@ onMounted(async () => {
 
   // Don't let a single endpoint hiccup blank the whole dashboard.
   await trainingStore.fetchPlans().catch((e) => console.error('fetchPlans failed:', e));
-  guidedTrainingStateLoaded.value = false;
   await trainingStore.fetchMine().catch((e) => console.error('fetchMine failed:', e));
-  trainingStore.fetchCustomPlans().catch(() => {});
+  // Reveal the layout once, as soon as the plan/workout shape is known. From here
+  // it stays mounted; the heavier per-exercise data fills in below without
+  // unmounting anything (static layout, progressive load).
   guidedTrainingStateLoaded.value = true;
   planPromoDismissed.value = typeof window !== 'undefined' && localStorage.getItem(getPlanPromoDismissedKey()) === '1';
   // "Al grano": don't gate brand-new users behind the guided-plan question.
@@ -1582,9 +1505,6 @@ watch(
 </script>
 
 <style scoped>
-.scrollbar-hide::-webkit-scrollbar { display: none; }
-.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-
 .plan-action {
   border-radius: 0.75rem;
   border: 1px solid hsl(var(--border));
@@ -1622,21 +1542,6 @@ watch(
 }
 .routine-chip:hover { background: hsl(var(--primary) / 0.18); }
 .routine-chip:active { transform: scale(0.96); }
-
-.routine-icon-btn {
-  display: grid;
-  place-items: center;
-  height: 2rem;
-  width: 2rem;
-  flex-shrink: 0;
-  border-radius: 0.6rem;
-  border: 1px solid hsl(var(--border));
-  background: hsla(var(--foreground) / 0.04);
-  color: hsl(var(--muted));
-  transition: color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
-}
-.routine-icon-btn:hover { border-color: hsl(var(--primary) / 0.35); color: hsl(var(--foreground)); }
-.routine-icon-btn:active { transform: scale(0.95); }
 
 .dashboard-daily-quote {
   line-height: 1.2;

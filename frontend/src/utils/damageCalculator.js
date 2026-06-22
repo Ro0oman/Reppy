@@ -24,21 +24,25 @@ export const estimateDamage = (user, reps, type) => {
   const baseStatEnd = parseInt(user.base_end_lvl) || endLvl;
   const baseStatFth = parseInt(user.base_fth_lvl) || fthLvl;
 
-  const baseDamageValue = reps * exerciseMult;
+  // Per-rep math, mirroring backend/utils/damage.js: the flat divine bonuses are
+  // applied PER REP, so the preview matches a set logged all at once == one-by-one.
+  const perRepDamageValue = exerciseMult;
   const levelMult = 1 + (glvl / 2);
   const intBonus = 1 + (intLvl / 50);
   const chaBonus = 1 + (chaLvl / 100);
 
   const baseScale = (1 + (baseStatStr / 25)) * (1 + (baseStatEnd / 50)) * (1 + (baseStatFth / 40));
   const baseDivine = baseStatFth * 25;
-  const baseFinalDamage = (baseDamageValue * levelMult * intBonus * chaBonus * baseScale) + baseDivine;
+  const perRepBase = (perRepDamageValue * levelMult * intBonus * chaBonus * baseScale) + baseDivine;
+  const baseFinalDamage = perRepBase * reps;
 
   const strScale = 1 + (strLvl / 25);
   const endScale = 1 + (endLvl / 50);
   const fthScale = 1 + (fthLvl / 40);
   const divineBonus = fthLvl * 25;
 
-  const damageBeforeCrit = (baseDamageValue * levelMult * intBonus * chaBonus * strScale * endScale * fthScale) + divineBonus;
+  const perRepGear = (perRepDamageValue * levelMult * intBonus * chaBonus * strScale * endScale * fthScale) + divineBonus;
+  const damageBeforeCrit = perRepGear * reps;
   
   // Buff Multiplier
   let activeMultiplier = 1.0;
