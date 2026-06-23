@@ -1486,13 +1486,9 @@ onMounted(async () => {
   // unmounting anything (static layout, progressive load).
   guidedTrainingStateLoaded.value = true;
   planPromoDismissed.value = typeof window !== 'undefined' && localStorage.getItem(getPlanPromoDismissedKey()) === '1';
-  // "Al grano": don't gate brand-new users behind the guided-plan question.
-  // If they still qualify for the log-first QuickStart, let that run instead;
-  // the plan question returns on a later visit (once QuickStart has been seen).
-  showGoalOnboarding.value = trainingStore.canShowOnboarding && !hasDismissedGoalOnboarding() && !shouldShowQuickStart(totalReps.value);
-  if (showGoalOnboarding.value) {
-    suppressRPGModal.value = true;
-  }
+  // Onboarding-modal choice lives in a single place (fetchData → quickStart
+  // evaluation), decided once on real data. Deciding here too — on a stale
+  // totalReps of 0 — was the fragile bit that risked two modals stacking.
 
   fetchData();
   handleLogQueryIntent();
