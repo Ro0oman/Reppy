@@ -256,6 +256,37 @@
           </div>
 
 
+          <!-- What each currency is for (consistent iconography) -->
+          <div class="space-y-4 p-8 md:px-12 pt-6">
+            <h3 class="text-[10px] font-black uppercase text-foreground/70 tracking-[0.3em]">{{ i18n.t('economy_currencies_title') }}</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <!-- Reppy Coins -->
+              <div class="flex flex-col gap-2 p-4 bg-primary-500/[0.06] border border-primary-500/20 rounded-2xl">
+                <div class="flex items-center gap-2">
+                  <Coins class="w-4 h-4 text-primary-500 shrink-0" />
+                  <span class="text-xs font-black text-foreground uppercase tracking-wide">{{ i18n.t('economy_coins_name') }}</span>
+                </div>
+                <p class="text-xs text-muted/80 leading-relaxed">{{ i18n.t('economy_coins_for') }}</p>
+              </div>
+              <!-- Reppy Gems -->
+              <div class="flex flex-col gap-2 p-4 bg-indigo-500/[0.06] border border-indigo-500/20 rounded-2xl">
+                <div class="flex items-center gap-2">
+                  <Gem class="w-4 h-4 text-indigo-500 shrink-0" />
+                  <span class="text-xs font-black text-foreground uppercase tracking-wide">{{ i18n.t('economy_gems_name') }}</span>
+                </div>
+                <p class="text-xs text-muted/80 leading-relaxed">{{ i18n.t('economy_gems_for') }}</p>
+              </div>
+              <!-- Chests -->
+              <div class="flex flex-col gap-2 p-4 bg-amber-500/[0.06] border border-amber-500/20 rounded-2xl">
+                <div class="flex items-center gap-2">
+                  <Package class="w-4 h-4 text-amber-400 shrink-0" />
+                  <span class="text-xs font-black text-foreground uppercase tracking-wide">{{ i18n.t('economy_chests_name') }}</span>
+                </div>
+                <p class="text-xs text-muted/80 leading-relaxed">{{ i18n.t('economy_chests_for') }}</p>
+              </div>
+            </div>
+          </div>
+
           <!-- Generation Protocol -->
           <div class="space-y-6">
             <h3 class="text-[10px] font-black uppercase text-primary-500 tracking-[0.3em]">{{ i18n.t('economy_revenue')
