@@ -9,7 +9,7 @@
             <Target class="w-6 h-6 text-primary-500" />
             {{ i18n.t('missions_title') }}
           </h1>
-          <p class="text-xs font-medium text-muted/60">{{ i18n.t('missions_subtitle') }}</p>
+          <p class="text-xs font-medium text-muted/80">{{ i18n.t('missions_subtitle') }}</p>
         </div>
 
         <!-- Global Reset Timer -->

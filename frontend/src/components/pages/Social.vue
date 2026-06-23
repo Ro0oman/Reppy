@@ -157,7 +157,7 @@
                 <BarChart3 class="w-4 h-4 text-primary-500" />
                 <div>
                   <h3 class="text-sm font-black text-industrial uppercase text-foreground tracking-tight leading-none">
-                    {{ activeExerciseLabel }} <span class="text-muted/60 text-[10px]">{{ i18n.t('protocol_label') }}</span>
+                    {{ activeExerciseLabel }} <span class="text-muted/80 text-[10px]">{{ i18n.t('protocol_label') }}</span>
                   </h3>
                   <p class="text-[10px] font-black text-muted uppercase tracking-[0.2em] mt-1 opacity-50">{{ i18n.t('live_sync') }}</p>
                 </div>
@@ -283,7 +283,7 @@
               class="p-16 text-center bg-surface/10 border border-dashed border-border rounded-2xl">
               <Users2 class="w-10 h-10 text-muted/30 mx-auto mb-3" />
               <p class="text-sm font-medium text-muted">{{ i18n.t('solo_journey') }}</p>
-              <p class="text-xs text-muted/60 mt-1">{{ i18n.t('solo_desc') }}</p>
+              <p class="text-xs text-muted/80 mt-1">{{ i18n.t('solo_desc') }}</p>
             </div>
           </div>
         </section>
@@ -291,7 +291,7 @@
           <div class="p-10 text-center bg-surface/10 border border-dashed border-border rounded-2xl">
             <Users2 class="w-10 h-10 text-muted/30 mx-auto mb-3" />
             <p class="text-sm font-black text-foreground uppercase tracking-tight">{{ i18n.t('nav_social') }}</p>
-            <p class="text-xs text-muted/60 mt-1">{{ i18n.t('community_subtitle') }}</p>
+            <p class="text-xs text-muted/80 mt-1">{{ i18n.t('community_subtitle') }}</p>
           </div>
         </section>
       </div>

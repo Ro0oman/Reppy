@@ -42,25 +42,25 @@
             {{ profile.user.title_name }}
           </p>
           <h1 class="text-3xl font-black text-foreground tracking-tight">{{ profile.user.name }}</h1>
-          <p class="text-xs text-muted/60">@{{ username }}</p>
+          <p class="text-xs text-muted/80">@{{ username }}</p>
 
           <!-- Quick stats -->
           <div class="flex flex-wrap justify-center sm:justify-start gap-4 pt-3">
             <div class="text-center">
               <p class="text-2xl font-black tabular-nums text-foreground">{{ profile.stats.totalReps.toLocaleString() }}</p>
-              <p class="text-[9px] font-bold uppercase tracking-widest text-muted/50">{{ locale === 'es' ? 'Reps' : 'Reps' }}</p>
+              <p class="text-[9px] font-bold uppercase tracking-widest text-muted/70">{{ locale === 'es' ? 'Reps' : 'Reps' }}</p>
             </div>
             <div class="text-center">
               <p class="text-2xl font-black tabular-nums text-foreground">{{ profile.stats.streak }}</p>
-              <p class="text-[9px] font-bold uppercase tracking-widest text-muted/50">{{ locale === 'es' ? 'Racha' : 'Streak' }}</p>
+              <p class="text-[9px] font-bold uppercase tracking-widest text-muted/70">{{ locale === 'es' ? 'Racha' : 'Streak' }}</p>
             </div>
             <div class="text-center">
               <p class="text-2xl font-black tabular-nums text-foreground">{{ profile.user.current_level }}</p>
-              <p class="text-[9px] font-bold uppercase tracking-widest text-muted/50">{{ locale === 'es' ? 'Nivel' : 'Level' }}</p>
+              <p class="text-[9px] font-bold uppercase tracking-widest text-muted/70">{{ locale === 'es' ? 'Nivel' : 'Level' }}</p>
             </div>
             <div v-if="globalRank" class="text-center">
               <p class="text-2xl font-black tabular-nums text-amber-400">#{{ globalRank }}</p>
-              <p class="text-[9px] font-bold uppercase tracking-widest text-muted/50">{{ locale === 'es' ? 'Ranking' : 'Rank' }}</p>
+              <p class="text-[9px] font-bold uppercase tracking-widest text-muted/70">{{ locale === 'es' ? 'Ranking' : 'Rank' }}</p>
             </div>
           </div>
         </div>
@@ -68,13 +68,13 @@
 
       <!-- RPG Attributes -->
       <section class="rounded-2xl border border-border/40 bg-surface/10 p-5 space-y-3">
-        <h2 class="text-xs font-black tracking-widest uppercase text-muted/50">
+        <h2 class="text-xs font-black tracking-widest uppercase text-muted/70">
           {{ locale === 'es' ? 'Atributos RPG' : 'RPG Attributes' }}
         </h2>
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div v-for="attr in attributes" :key="attr.key" class="rounded-xl border border-border/30 bg-black/20 px-3 py-2.5 text-center">
             <p class="text-base">{{ attr.icon }}</p>
-            <p class="text-[10px] font-black tracking-widest uppercase text-muted/50 mt-0.5">{{ attr.key }}</p>
+            <p class="text-[10px] font-black tracking-widest uppercase text-muted/70 mt-0.5">{{ attr.key }}</p>
             <p class="text-lg font-black text-foreground tabular-nums">{{ attr.level }}</p>
           </div>
         </div>
@@ -89,7 +89,7 @@
           <p class="text-xl font-black text-amber-300">{{ exerciseName(profile.stats.favExercise) }}</p>
         </div>
         <div v-if="profile.user.weapon_name" class="rounded-2xl border border-border/30 bg-surface/10 p-4 space-y-2">
-          <p class="text-[9px] font-black tracking-widest uppercase text-muted/50">
+          <p class="text-[9px] font-black tracking-widest uppercase text-muted/70">
             {{ locale === 'es' ? 'Arma equipada' : 'Equipped weapon' }}
           </p>
           <p class="text-sm font-bold text-foreground">🗡️ {{ profile.user.weapon_name }}</p>
@@ -101,7 +101,7 @@
 
       <!-- Heatmap -->
       <section class="space-y-3">
-        <h2 class="text-xs font-black tracking-widest uppercase text-muted/50">
+        <h2 class="text-xs font-black tracking-widest uppercase text-muted/70">
           {{ locale === 'es' ? 'Historial de entrenamiento' : 'Training history' }}
         </h2>
         <Heatmap :data="profile.heatmap" class="w-full" />
@@ -109,7 +109,7 @@
 
       <!-- Exercise breakdown -->
       <section v-if="profile.stats.breakdown?.length" class="rounded-2xl border border-border/40 bg-surface/10 p-5 space-y-3">
-        <h2 class="text-xs font-black tracking-widest uppercase text-muted/50">
+        <h2 class="text-xs font-black tracking-widest uppercase text-muted/70">
           {{ locale === 'es' ? 'Desglose por ejercicio' : 'Exercise breakdown' }}
         </h2>
         <div class="space-y-2">
@@ -125,7 +125,7 @@
                 :style="{ width: `${Math.min(100, (ex.count / maxBreakdownCount) * 100)}%` }"
               />
             </div>
-            <p class="text-xs font-black tabular-nums text-muted/60 w-16 text-right shrink-0">
+            <p class="text-xs font-black tabular-nums text-muted/80 w-16 text-right shrink-0">
               {{ ex.count.toLocaleString() }}
             </p>
           </div>

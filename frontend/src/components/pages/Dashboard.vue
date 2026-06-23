@@ -118,7 +118,7 @@
           <h1 class="text-2xl font-bold tracking-tight text-foreground leading-tight truncate">
             {{ greeting }}<span class="text-primary-500">, {{ firstName }}</span>
           </h1>
-          <p class="dashboard-daily-quote mt-1 text-xs text-muted/60">{{ dailyQuote }}</p>
+          <p class="dashboard-daily-quote mt-1 text-xs text-muted/80">{{ dailyQuote }}</p>
         </div>
         <div class="flex items-center gap-2 shrink-0">
           <button
@@ -170,13 +170,13 @@
             class="mt-0.5 text-xs truncate"
             :class="streakStatus.showRisk ? 'text-amber-400 font-medium'
               : streakStatus.jackpotAlreadyAwarded ? 'text-emerald-400 font-medium'
-              : 'text-muted/60'"
+              : 'text-muted/80'"
           >{{ streakStateLabel }}</p>
         </div>
 
         <!-- Weekly bonus micro-indicator: days trained THIS week toward the jackpot (5/7) -->
         <div class="hidden sm:flex flex-col items-end gap-1 shrink-0">
-          <span class="text-[10px] font-medium" :class="streakStatus.jackpotAlreadyAwarded ? 'text-emerald-500/80' : 'text-muted/50'">
+          <span class="text-[10px] font-medium" :class="streakStatus.jackpotAlreadyAwarded ? 'text-emerald-500/80' : 'text-muted/70'">
             {{ i18n.t('streak_weekly_bonus') }} {{ weeklyBonusProgress }}/{{ weeklyBonusTarget }}
           </span>
           <div class="flex items-center gap-1">
@@ -245,7 +245,7 @@
       class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 rounded-2xl border border-border/60 bg-foreground/[0.02] px-4 py-2.5"
     >
       <div class="flex min-w-0 items-center gap-2">
-        <span class="text-[10px] font-bold uppercase tracking-widest text-muted/60">{{ i18n.t('dash_active_plan') }}</span>
+        <span class="text-[10px] font-bold uppercase tracking-widest text-muted/80">{{ i18n.t('dash_active_plan') }}</span>
         <span class="truncate text-sm font-bold text-foreground">{{ i18n.t(trainingStore.activePlan.titleKey) }}</span>
         <span
           v-if="trainingStore.isPlanPaused"
@@ -373,14 +373,14 @@
             <RadialProgress :progress="dayRingPercent" :size="184" :stroke-width="12">
               <div class="flex flex-col items-center">
                 <span class="text-4xl font-bold tabular-nums leading-none text-foreground">{{ animatedTodayProgress }}</span>
-                <span class="mt-2 text-xs text-muted/60">{{ i18n.t('dash_ring_of') }} {{ stats.dailyGoal }} · {{ activeExerciseLabel }}</span>
+                <span class="mt-2 text-xs text-muted/80">{{ i18n.t('dash_ring_of') }} {{ stats.dailyGoal }} · {{ activeExerciseLabel }}</span>
               </div>
             </RadialProgress>
             <div class="flex items-center gap-2">
               <div class="flex items-center gap-1.5 rounded-xl border border-border/60 bg-foreground/[0.03] px-3 py-2">
                 <Sword class="w-3.5 h-3.5 text-primary-500 shrink-0" aria-hidden="true" />
                 <span class="text-sm font-bold text-foreground tabular-nums">{{ stats.combatPower.total }}</span>
-                <span class="text-[10px] text-muted/60">{{ i18n.t('comp_stat_power') }}</span>
+                <span class="text-[10px] text-muted/80">{{ i18n.t('comp_stat_power') }}</span>
               </div>
             </div>
           </div>
@@ -482,11 +482,11 @@
               <template v-else>
                 <div class="flex items-baseline gap-2">
                   <span class="text-3xl font-bold text-foreground tabular-nums">{{ stats.combatPower.minDamage }}–{{ stats.combatPower.maxDamage }}</span>
-                  <span class="text-[10px] font-semibold text-muted/60 uppercase tracking-wide">{{ i18n.t('ui_dmg_range') }}</span>
+                  <span class="text-[10px] font-semibold text-muted/80 uppercase tracking-wide">{{ i18n.t('ui_dmg_range') }}</span>
                 </div>
-                <p class="mt-1 text-xs text-muted/60">
+                <p class="mt-1 text-xs text-muted/80">
                   {{ i18n.t('ui_avg_estimated') }}: <span class="font-semibold text-foreground/80">{{ stats.combatPower.total }}</span>
-                  <span class="text-muted/60">
+                  <span class="text-muted/80">
                     · {{ i18n.t('dash_base_skill') }} {{ stats.combatPower.base }} · {{ i18n.t('dash_gear_bonus') }} +{{ stats.combatPower.gear }}<template v-if="stats.combatPower.buff > 0"> · {{ i18n.t('dash_active_buffs') }} +{{ stats.combatPower.buff }}</template>
                   </span>
                 </p>
@@ -510,7 +510,7 @@
               <div class="mt-3">
                 <div v-if="isLoading" class="h-7 w-16 bg-foreground/10 rounded-lg animate-pulse"></div>
                 <span v-else class="text-2xl font-bold text-foreground tabular-nums">{{ totalReps }}</span>
-                <p class="text-xs text-muted/60 mt-0.5">{{ i18n.t('dash_total_reps') }}</p>
+                <p class="text-xs text-muted/80 mt-0.5">{{ i18n.t('dash_total_reps') }}</p>
               </div>
             </div>
             <!-- Tonnage -->
@@ -519,7 +519,7 @@
               <div class="mt-3">
                 <div v-if="isLoading" class="h-7 w-16 bg-foreground/10 rounded-lg animate-pulse"></div>
                 <span v-else class="text-2xl font-bold text-foreground tabular-nums">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</span>
-                <p class="text-xs text-muted/60 mt-0.5">{{ i18n.t('dash_tons_moved') }}</p>
+                <p class="text-xs text-muted/80 mt-0.5">{{ i18n.t('dash_tons_moved') }}</p>
               </div>
             </div>
          </div>
@@ -538,7 +538,7 @@
             </div>
             <div class="mt-3">
               <span class="text-lg font-bold tracking-tight text-foreground">{{ i18n.t('nav_missions') }}</span>
-              <p class="text-xs text-muted/60 mt-0.5">{{ i18n.t('missions_subtitle') }}</p>
+              <p class="text-xs text-muted/80 mt-0.5">{{ i18n.t('missions_subtitle') }}</p>
             </div>
          </button>
       </div>
@@ -569,7 +569,7 @@
           <div v-if="!isLoading && !totalReps && !heatmapData.length" class="py-10 px-6 text-center">
             <Flame aria-hidden="true" class="w-10 h-10 mx-auto mb-3 text-muted/30" />
             <p class="text-sm font-semibold text-foreground">{{ i18n.t('dash_heatmap_empty_title') }}</p>
-            <p class="text-xs text-muted/60 mt-1 max-w-[280px] mx-auto">
+            <p class="text-xs text-muted/80 mt-1 max-w-[280px] mx-auto">
               {{ i18n.t('dash_heatmap_empty_desc') }}
             </p>
             <button
@@ -601,7 +601,7 @@
             >
               <div class="min-w-0">
                 <p class="text-sm font-semibold text-foreground tabular-nums">{{ rep.count }} {{ i18n.t('ui_reps') }}</p>
-                <p class="text-xs text-muted/60 mt-0.5">{{ formatDate(rep.date) }}</p>
+                <p class="text-xs text-muted/80 mt-0.5">{{ formatDate(rep.date) }}</p>
               </div>
               <div v-if="editingId === rep.id" class="flex items-center gap-2 shrink-0">
                 <input v-model.number="editValue" type="number"
@@ -630,7 +630,7 @@
           <div v-else class="py-16 px-6 text-center">
             <Inbox aria-hidden="true" class="w-10 h-10 mx-auto mb-3 text-muted/30" />
             <p class="text-sm font-semibold text-foreground">{{ i18n.t('dash_history_empty_title') }}</p>
-            <p class="text-xs text-muted/60 mt-1 max-w-[260px] mx-auto">
+            <p class="text-xs text-muted/80 mt-1 max-w-[260px] mx-auto">
               {{ i18n.t('dash_history_empty_desc') }}
             </p>
             <button

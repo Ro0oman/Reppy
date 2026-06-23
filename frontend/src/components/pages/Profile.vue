@@ -112,7 +112,7 @@
                 <span class="text-sm font-bold text-foreground tabular-nums leading-none">
                   Lv <span class="text-base" :class="attr.labelColor">{{ attr.lvl }}</span>
                 </span>
-                <span class="text-[10px] text-muted/60 tabular-nums">
+                <span class="text-[10px] text-muted/80 tabular-nums">
                   {{ attr.xpIntoLevel }}<span class="opacity-50">/{{ attr.xpForNext }}</span>
                 </span>
               </div>
