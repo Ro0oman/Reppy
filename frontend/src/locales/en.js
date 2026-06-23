@@ -1304,6 +1304,7 @@ export default {
     dash_stats_hide: 'Hide stats',
     dash_stats_show: 'Stats & boss',
     dash_total_reps: 'Total reps',
+    dash_first_rep_celebrate: '🎉 First rep logged! Your journey starts now.',
     dash_save: 'Save',
     dash_edit_entry: 'Edit entry',
     dash_delete_entry: 'Delete entry',

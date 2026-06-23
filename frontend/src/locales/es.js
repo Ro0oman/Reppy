@@ -1383,6 +1383,7 @@ export default {
     dash_stats_hide: 'Ocultar estadísticas',
     dash_stats_show: 'Ver estadísticas y boss',
     dash_total_reps: 'Reps totales',
+    dash_first_rep_celebrate: '🎉 ¡Primera repetición registrada! Tu aventura empieza ahora.',
     dash_save: 'Guardar',
     dash_edit_entry: 'Editar registro',
     dash_delete_entry: 'Borrar registro',

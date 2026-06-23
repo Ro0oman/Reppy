@@ -746,6 +746,7 @@ const QUICKSTART_SEEN_PREFIX = 'reppy_quickstart_seen_v1';
 const GOAL_ONBOARDING_DISMISSED_PREFIX = 'reppy_goal_onboarding_dismissed_v1';
 const PLAN_PROMO_DISMISSED_PREFIX = 'reppy_plan_promo_dismissed_v1';
 const STREAK_CELEBRATED_PREFIX = 'reppy_streak_celebrated_v1';
+const FIRST_REP_CELEBRATED_PREFIX = 'reppy_first_rep_celebrated_v1';
 
 const bossMotivationQuotes = {
   es: [
@@ -798,6 +799,31 @@ const getQuickStartStorageKey = () => `${QUICKSTART_SEEN_PREFIX}:${authStore.use
 const getGoalOnboardingDismissedKey = () => `${GOAL_ONBOARDING_DISMISSED_PREFIX}:${authStore.user?.id || 'guest'}`;
 const getPlanPromoDismissedKey = () => `${PLAN_PROMO_DISMISSED_PREFIX}:${authStore.user?.id || 'guest'}`;
 const getStreakCelebratedKey = () => `${STREAK_CELEBRATED_PREFIX}:${authStore.user?.id || 'guest'}`;
+const getFirstRepCelebratedKey = () => `${FIRST_REP_CELEBRATED_PREFIX}:${authStore.user?.id || 'guest'}`;
+
+// One-shot celebration the very first time a user goes from 0 → first logged rep.
+// Bigger confetti than the streak beat + a dedicated toast, marking the start of
+// their journey. Guarded per-user in localStorage so it never fires twice.
+const maybeCelebrateFirstRep = async () => {
+  if (typeof window === 'undefined') return;
+  const key = getFirstRepCelebratedKey();
+  if (localStorage.getItem(key) === '1') return;
+  localStorage.setItem(key, '1');
+
+  notificationStore.notify(i18n.t('dash_first_rep_celebrate'), 'success');
+  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  if (reduceMotion) return;
+  try {
+    const { default: confetti } = await import('canvas-confetti');
+    confetti({
+      particleCount: 110,
+      spread: 90,
+      startVelocity: 38,
+      origin: { y: 0.55 },
+      colors: ['#3b82f6', '#60a5fa', '#34d399', '#fbbf24', '#ffffff']
+    });
+  } catch (_) {}
+};
 
 const hasSeenQuickStart = () => {
   if (typeof window === 'undefined') return true;
@@ -1248,6 +1274,8 @@ const fetchExerciseData = async ({ silent = false } = {}) => {
 // onboarding — that's what used to cause the jarring scroll jump.
 const refreshAfterLog = async () => {
   try {
+    // Capture the historical-total BEFORE the refresh to detect the very first rep.
+    const hadNoRepsBefore = Number(totalReps.value || 0) === 0;
     await fetchExerciseData({ silent: true });
     await Promise.all([
       fetchStreakStatus(),
@@ -1255,6 +1283,10 @@ const refreshAfterLog = async () => {
       trainingStore.fetchMine()
     ]);
     if (bossHealthRef.value) bossHealthRef.value.refresh();
+    // 0 → first ever rep: celebrate the start of the journey (once per user).
+    if (hadNoRepsBefore && Number(totalReps.value || 0) > 0) {
+      maybeCelebrateFirstRep();
+    }
   } catch (error) {
     console.error('Error refreshing dashboard:', error);
   }
