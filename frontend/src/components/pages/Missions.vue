@@ -232,8 +232,12 @@ const getGoalLabel = (type) => {
     case 'xp_agi': return 'XP Agilidad';
     case 'social_likes': return 'Likes';
     case 'buy_any': return 'Compras';
+    case 'buy_legendary': return 'Compras';
     case 'use_consumable': return 'Pociones';
-    default: return type.toUpperCase();
+    case 'night_owl': return 'Días';
+    case 'personal_record': return 'Récord';
+    // Unknown goal type: show no unit instead of leaking the raw slug.
+    default: return '';
   }
 };
 
