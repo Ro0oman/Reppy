@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@iconify/vue": "^5.0.0",
+    "@vercel/analytics": "^2.0.1",
     "@vueuse/core": "^14.2.1",
     "axios": "^1.13.6",
     "canvas-confetti": "^1.9.4",

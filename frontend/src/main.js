@@ -9,6 +9,7 @@ import { useAuthStore } from './stores/auth'
 import { useThemeStore } from './stores/theme'
 import { useNotificationStore } from './stores/notification'
 import { initLogger } from './utils/logger'
+import { inject as injectVercelAnalytics } from '@vercel/analytics'
 
 export const createApp = ViteSSG(
   App,
@@ -42,6 +43,9 @@ export const createApp = ViteSSG(
 
       // Initialize logger
       initLogger(notificationStore)
+
+      // Vercel Web Analytics (client-only; auto-tracks SPA navigation)
+      injectVercelAnalytics({ mode: import.meta.env.PROD ? 'production' : 'development' })
 
       // Initialize all on client
       await Promise.all([
