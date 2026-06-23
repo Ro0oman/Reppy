@@ -10,3 +10,16 @@ html, body {
   overflow-x: hidden;
   max-width: 100vw;
 }
+
+/* Accessibility: honour the user's reduced-motion preference globally.
+   Neutralises animations and transitions (decorative loops, confetti,
+   count-ups, slide/pulse effects) for users who opt out of motion,
+   while keeping a tiny duration so transitionend/animationend still fire. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
