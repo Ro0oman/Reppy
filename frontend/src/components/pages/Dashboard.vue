@@ -48,9 +48,9 @@
               {{ i18n.locale === 'es' ? 'Registro rápido' : 'Quick log' }}
             </h2>
           </div>
-          <span class="text-xs text-muted/70 tabular-nums"><b class="text-primary-500 font-bold">{{ todayProgress }}</b> / {{ stats.dailyGoal }} {{ i18n.t('comp_today') }}</span>
+          <span class="text-xs text-muted/70 tabular-nums"><b class="text-primary-500 font-bold">{{ animatedTodayProgress }}</b> / {{ stats.dailyGoal }} {{ i18n.t('comp_today') }}</span>
         </div>
-        <ExerciseSelector v-model="activeExercise" compact class="w-full" />
+        <ExerciseSelector v-model="activeExercise" compact hide-overview class="w-full" />
         <!-- Inline counter: log reps right here, no sheet, no scroll. Falls back
              to a concrete exercise when the selector is on the "all" overview. -->
         <RepsInput :exercise-type="logExercise" @updated="refreshAfterLog" class="mt-3" />
@@ -343,7 +343,7 @@
 
       <!-- Desktop/tablet: ring/overview + glanceable stats fill the row -->
       <div class="w-full space-y-4">
-        <ExerciseSelector v-model="activeExercise" compact class="w-full" />
+        <ExerciseSelector v-model="activeExercise" compact hide-overview class="w-full" />
 
         <!-- Overview mode: no single exercise picked yet -->
         <div v-if="activeExercise === 'all'" class="bg-surface/5 border border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-center p-8 sm:p-10">
@@ -372,7 +372,7 @@
           <div class="flex flex-col items-center gap-4">
             <RadialProgress :progress="dayRingPercent" :size="184" :stroke-width="12">
               <div class="flex flex-col items-center">
-                <span class="text-4xl font-bold tabular-nums leading-none text-foreground">{{ todayProgress }}</span>
+                <span class="text-4xl font-bold tabular-nums leading-none text-foreground">{{ animatedTodayProgress }}</span>
                 <span class="mt-2 text-xs text-muted/60">{{ i18n.t('dash_ring_of') }} {{ stats.dailyGoal }} · {{ activeExerciseLabel }}</span>
               </div>
             </RadialProgress>
@@ -381,11 +381,6 @@
                 <Sword class="w-3.5 h-3.5 text-primary-500 shrink-0" aria-hidden="true" />
                 <span class="text-sm font-bold text-foreground tabular-nums">{{ stats.combatPower.total }}</span>
                 <span class="text-[10px] text-muted/60">{{ i18n.t('comp_stat_power') }}</span>
-              </div>
-              <div class="flex items-center gap-1.5 rounded-xl border border-border/60 bg-foreground/[0.03] px-3 py-2">
-                <Zap class="w-3.5 h-3.5 text-primary-500 shrink-0" aria-hidden="true" />
-                <span class="text-sm font-bold text-foreground tabular-nums">{{ stats.combatPower.minDamage }}–{{ stats.combatPower.maxDamage }}</span>
-                <span class="text-[10px] text-muted/60">{{ i18n.t('ui_dmg_range') }}</span>
               </div>
             </div>
           </div>
@@ -775,15 +770,19 @@ const bossMotivationQuotes = {
   ],
 };
 
-const pickRandomQuote = (locale) => {
+// Deterministic per local day: the quote stays stable across reloads/visits
+// within the same day (less noisy than a fresh random pick every mount).
+const pickDailyQuote = (locale) => {
   const quotes = locale === 'en' ? bossMotivationQuotes.en : bossMotivationQuotes.es;
-  return quotes[Math.floor(Math.random() * quotes.length)];
+  const now = new Date();
+  const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+  return quotes[dayOfYear % quotes.length];
 };
 
-const dailyQuote = ref(pickRandomQuote(i18n.locale));
+const dailyQuote = ref(pickDailyQuote(i18n.locale));
 
 watch(() => i18n.locale, (locale) => {
-  dailyQuote.value = pickRandomQuote(locale);
+  dailyQuote.value = pickDailyQuote(locale);
 });
 
 // Scroll lock when modals are active
@@ -1022,6 +1021,29 @@ const dayRingPercent = computed(() => {
   const goal = Math.max(1, Number(stats.dailyGoal) || 0);
   return Math.min(100, Math.round((todayProgress.value / goal) * 100));
 });
+
+// Count-up: the ring number tweens to the new total after logging instead of
+// snapping, giving the primary action a small celebratory beat. The ring stroke
+// already animates via CSS; this just animates the displayed figure.
+const animatedTodayProgress = ref(0);
+let progressRaf = null;
+watch(todayProgress, (to, from) => {
+  if (typeof window === 'undefined') { animatedTodayProgress.value = to; return; }
+  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  // When hidden, rAF is paused — set directly so the figure never stays stale.
+  if (reduceMotion || document.hidden) { animatedTodayProgress.value = to; return; }
+  const start = Number(from) || 0;
+  const startTime = performance.now();
+  const duration = 600;
+  cancelAnimationFrame(progressRaf);
+  const step = (now) => {
+    const p = Math.min(1, (now - startTime) / duration);
+    const eased = 1 - Math.pow(1 - p, 3);
+    animatedTodayProgress.value = Math.round(start + (to - start) * eased);
+    if (p < 1) progressRaf = requestAnimationFrame(step);
+  };
+  progressRaf = requestAnimationFrame(step);
+}, { immediate: true });
 
 // ── Companion: the fighter's personality + the community boss as a friendly foe ──
 const companionMood = computed(() => {
@@ -1483,6 +1505,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   if (timerInterval) clearInterval(timerInterval);
+  if (progressRaf) cancelAnimationFrame(progressRaf);
   window.removeEventListener('resize', updateIsMobile);
 });
 

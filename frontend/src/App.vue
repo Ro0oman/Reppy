@@ -316,11 +316,11 @@
       <!-- Daily wheel -->
       <div v-if="rouletteStore.dailyCanSpin || dailyCooldown" class="flex flex-col items-end gap-2 group">
         <div v-if="rouletteStore.dailyCanSpin"
-          class="bg-gradient-to-r from-amber-500 to-fuchsia-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap">
+          class="hidden group-hover:block bg-gradient-to-r from-amber-500 to-fuchsia-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-xl whitespace-nowrap">
           {{ i18n.t('wheel_daily_cta') }}
         </div>
         <div v-else
-          class="bg-surface border border-border text-muted text-xs font-bold px-4 py-2 rounded-full shadow-xl whitespace-nowrap">
+          class="hidden group-hover:block bg-surface border border-border text-muted text-xs font-bold px-4 py-2 rounded-full shadow-xl whitespace-nowrap">
           {{ i18n.t('wheel_cooldown', { time: dailyCooldown }) }}
         </div>
         <button @click="rouletteStore.openModal('daily')" :disabled="!rouletteStore.dailyCanSpin"
@@ -335,11 +335,11 @@
       <!-- 4h wheel -->
       <div v-if="rouletteStore.canSpin || quickCooldown" class="flex flex-col items-end gap-2 group">
         <div v-if="rouletteStore.canSpin"
-          class="bg-primary-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap">
+          class="hidden group-hover:block bg-primary-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-xl whitespace-nowrap">
           {{ i18n.t('roulette_exe_available') }}
         </div>
         <div v-else
-          class="bg-surface border border-border text-muted text-xs font-bold px-4 py-2 rounded-full shadow-xl whitespace-nowrap">
+          class="hidden group-hover:block bg-surface border border-border text-muted text-xs font-bold px-4 py-2 rounded-full shadow-xl whitespace-nowrap">
           {{ i18n.t('wheel_cooldown', { time: quickCooldown }) }}
         </div>
         <button @click="rouletteStore.openModal()" :disabled="!rouletteStore.canSpin"
@@ -363,7 +363,6 @@
         <div v-if="rouletteStore.dailyCanSpin" class="absolute inset-0 bg-gradient-to-r from-amber-500/15 to-fuchsia-500/15 pointer-events-none"></div>
         <Gift class="w-4 h-4 text-amber-400 relative z-10" />
         <span v-if="rouletteStore.dailyCanSpin" class="relative z-10 text-xs font-bold bg-gradient-to-r from-amber-400 to-fuchsia-500 bg-clip-text text-transparent">{{ i18n.t('wheel_daily_cta') }}</span>
-        <span v-else class="text-xs font-bold text-muted">{{ dailyCooldown }}</span>
         <div v-if="rouletteStore.dailyCanSpin" class="relative z-10 w-2 h-2 bg-gradient-to-br from-amber-400 to-fuchsia-500 rounded-full"></div>
       </button>
       <!-- 4h chip -->
@@ -373,7 +372,6 @@
         class="flex items-center gap-2 bg-surface/90 backdrop-blur-md border rounded-xl px-3 py-2 shadow-lg transition-all overflow-hidden">
         <Dices class="w-4 h-4 text-primary-500" />
         <span v-if="rouletteStore.canSpin" class="text-xs font-bold text-primary-500">{{ i18n.locale === 'es' ? 'Ruleta' : 'Spin' }}</span>
-        <span v-else class="text-xs font-bold text-muted">{{ quickCooldown }}</span>
         <div v-if="rouletteStore.canSpin" class="w-2 h-2 bg-primary-500 rounded-full"></div>
       </button>
     </div>

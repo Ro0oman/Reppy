@@ -114,6 +114,12 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  // Hide the "Resumen"/overview ('all') entry. Used by the Dashboard quick-log,
+  // where picking "all" is a dead-end (you can't log reps for "all exercises").
+  hideOverview: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 defineEmits(['update:modelValue']);
@@ -205,8 +211,9 @@ const defaultExercises = [
 ];
 
 const exercises = computed(() => {
+  let list;
   if (customFavorites.value && customFavorites.value.length > 0) {
-    return [
+    list = [
       {
         id: 'all',
         icon: Globe,
@@ -224,8 +231,10 @@ const exercises = computed(() => {
         hintEn: f.description_key,
       }))
     ];
+  } else {
+    list = defaultExercises;
   }
-  return defaultExercises;
+  return props.hideOverview ? list.filter(ex => ex.id !== 'all') : list;
 });
 
 const safeTranslate = (key) => {
