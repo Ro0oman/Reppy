@@ -1216,6 +1216,7 @@ export default {
     streak_start_hint: 'Train today to start or grow your streak.',
     streak_freezing: 'Freezing…',
     streak_freeze_for: 'Freeze for {cost} RC',
+    streak_save_today: 'Save today',
     streak_frozen_notify: 'Streak frozen until tomorrow',
     streak_freeze_error: 'Could not freeze streak',
 

@@ -49,7 +49,7 @@
               class="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-500 px-3 py-2 text-xs font-bold text-white transition hover:bg-primary-600 active:scale-95"
             >
               <Plus class="h-3.5 w-3.5" />
-              {{ i18n.locale === 'es' ? 'Salvar hoy' : 'Save today' }}
+              {{ i18n.t('streak_save_today') }}
             </router-link>
           </div>
       </div>

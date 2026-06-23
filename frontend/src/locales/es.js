@@ -1295,6 +1295,7 @@ export default {
     streak_start_hint: 'Entrena hoy para empezar o subir tu racha.',
     streak_freezing: 'Congelando…',
     streak_freeze_for: 'Congelar por {cost} RC',
+    streak_save_today: 'Salvar hoy',
     streak_frozen_notify: 'Racha congelada hasta mañana',
     streak_freeze_error: 'No se pudo congelar la racha',
 

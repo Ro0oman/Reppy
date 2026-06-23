@@ -981,16 +981,18 @@ const isEquipped = (item) => {
 };
 
 const getRarityBadge = (item) => {
-  if (!item) return { label: 'COMÚN', classes: 'text-muted border-white/10' };
+  // Labels come from the shared rarity_* i18n keys (single source of truth,
+  // same as Inventory/Profile); only the colours are shop-specific.
+  if (!item) return { label: i18n.t('rarity_common'), classes: 'text-muted border-white/10' };
   const rarity = item.rarity?.toLowerCase() || 'common';
   switch (rarity) {
-    case 'cosmico': return { label: 'CÓSMICO', classes: 'text-violet-300 bg-violet-500/10 border-violet-400/50 shadow-violet-500/30 animate-pulse' };
-    case 'calistenico': return { label: 'MÍTICO', classes: 'text-red-500 bg-red-500/10 border-red-500/40 shadow-red-500/20' };
-    case 'legendary': return { label: 'LEGENDARIO', classes: 'text-yellow-500 bg-yellow-500/10 border-yellow-500/40 shadow-yellow-500/20' };
+    case 'cosmico': return { label: i18n.t('rarity_cosmico'), classes: 'text-violet-300 bg-violet-500/10 border-violet-400/50 shadow-violet-500/30 animate-pulse' };
+    case 'calistenico': return { label: i18n.t('rarity_calisthenic'), classes: 'text-red-500 bg-red-500/10 border-red-500/40 shadow-red-500/20' };
+    case 'legendary': return { label: i18n.t('rarity_legendary'), classes: 'text-yellow-500 bg-yellow-500/10 border-yellow-500/40 shadow-yellow-500/20' };
     case 'especial':
-    case 'epic': return { label: 'ÉPICO', classes: 'text-purple-400 bg-purple-500/10 border-purple-500/30 shadow-purple-500/20' };
-    case 'rare': return { label: 'RARO', classes: 'text-blue-400 bg-blue-500/10 border-blue-500/30 shadow-blue-500/20' };
-    default: return { label: 'COMÚN', classes: 'text-slate-400 bg-white/5 border-white/10' };
+    case 'epic': return { label: i18n.t('rarity_special'), classes: 'text-purple-400 bg-purple-500/10 border-purple-500/30 shadow-purple-500/20' };
+    case 'rare': return { label: i18n.t('rarity_rare'), classes: 'text-blue-400 bg-blue-500/10 border-blue-500/30 shadow-blue-500/20' };
+    default: return { label: i18n.t('rarity_common'), classes: 'text-slate-400 bg-white/5 border-white/10' };
   }
 };
 
