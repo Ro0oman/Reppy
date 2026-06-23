@@ -311,7 +311,7 @@
     <!-- Floating Roulettes (desktop) — daily on top, 4h below, in one column so
          their cooldown chips never overlap. -->
     <div v-if="authStore.isAuthenticated && (rouletteStore.canSpin || quickCooldown || rouletteStore.dailyCanSpin || dailyCooldown)"
-      class="hidden md:flex fixed bottom-12 right-12 z-[70] flex-col items-end gap-4">
+      class="hidden lg:flex fixed bottom-12 right-12 z-[70] flex-col items-end gap-4">
 
       <!-- Daily wheel -->
       <div v-if="rouletteStore.dailyCanSpin || dailyCooldown" class="flex flex-col items-end gap-2 group">
@@ -354,7 +354,7 @@
 
     <!-- Floating Roulettes (mobile) — compact chips above the dock, daily on top. -->
     <div v-if="authStore.isAuthenticated && (rouletteStore.canSpin || quickCooldown || rouletteStore.dailyCanSpin || dailyCooldown)"
-      class="md:hidden fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom)+0.5rem)] right-3 z-[65] flex flex-col items-end gap-2">
+      class="lg:hidden fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom)+0.5rem)] right-3 z-[65] flex flex-col items-end gap-2">
       <!-- Daily chip -->
       <button v-if="rouletteStore.dailyCanSpin || dailyCooldown"
         @click="rouletteStore.openModal('daily')" :disabled="!rouletteStore.dailyCanSpin"
