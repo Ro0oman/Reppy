@@ -1341,6 +1341,7 @@ export default {
 
     // Misión de hoy
     dash_today_mission: 'Misión de hoy',
+    dash_next_step: 'Tu próximo paso',
     dash_mission_default_title: 'Completa tu objetivo diario de reps',
     dash_mission_reward_active: 'Recompensa activa',
     dash_mission_claim: 'Reclamar en Misiones',

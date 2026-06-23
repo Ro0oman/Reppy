@@ -414,8 +414,9 @@
     >
       <div class="flex flex-col lg:flex-row lg:items-center gap-4">
         <div class="flex-1 min-w-0 space-y-2">
-          <p class="text-xs font-semibold text-primary-500">
-            {{ i18n.t('dash_today_mission') }}
+          <p class="flex items-center gap-1.5 text-xs font-semibold text-primary-500">
+            <Compass class="w-3.5 h-3.5" aria-hidden="true" />
+            {{ i18n.t('dash_next_step') }}
           </p>
           <h3 class="text-lg font-bold tracking-tight text-foreground leading-tight">
             {{ todayMissionTitle }}
@@ -678,7 +679,7 @@ import axios from 'axios';
 import {
   Trophy, Target, Flame, Zap, Activity, Inbox, Globe, Snowflake,
   Check, X, Trash2, Sword, FlaskConical, Coins, ChevronRight, Share2, Pencil,
-  ClipboardList, LayoutGrid, Dumbbell
+  ClipboardList, LayoutGrid, Dumbbell, Compass
 } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';

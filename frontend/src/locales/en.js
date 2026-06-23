@@ -1262,6 +1262,7 @@ export default {
 
     // Today's mission
     dash_today_mission: "Today's mission",
+    dash_next_step: 'Your next step',
     dash_mission_default_title: 'Complete your daily reps objective',
     dash_mission_reward_active: 'Active reward',
     dash_mission_claim: 'Claim in Missions',
