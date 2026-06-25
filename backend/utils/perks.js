@@ -38,6 +38,7 @@ export const PERKS = {
   potion_master: { branch: 'vigor', tier: 1, maxRank: 5, perRank: 0.10, kind: 'potion_dur',     requires: null },
   chest_luck:    { branch: 'vigor', tier: 2, maxRank: 3, perRank: 0.05, kind: 'chest_luck',     requires: { perk: 'potion_master', rank: 1 } },
   daily_blessing:{ branch: 'vigor', tier: 3, maxRank: 3, perRank: 0.10, kind: 'daily_coin_pct', requires: { perk: 'chest_luck', rank: 1 } },
+  ascension:     { branch: 'vigor', tier: 4, maxRank: 2, perRank: 1,    kind: 'levelup_points', requires: { perk: 'daily_blessing', rank: 1 } },
 
   // ── 📘 WISDOM (progression) ──────────────────────────────────────
   scholar:  { branch: 'wisdom', tier: 1, maxRank: 5, perRank: 0.02, kind: 'xp_pct',            requires: null },
@@ -80,6 +81,7 @@ export const getPerkBonuses = (skillPerks) => ({
   potionDur:      perkRank(skillPerks, 'potion_master') * PERKS.potion_master.perRank,
   chestLuck:      perkRank(skillPerks, 'chest_luck') * PERKS.chest_luck.perRank,
   dailyCoinPct:   perkRank(skillPerks, 'daily_blessing') * PERKS.daily_blessing.perRank,
+  levelupPoints:  perkRank(skillPerks, 'ascension') * PERKS.ascension.perRank,
   // wisdom
   xpPct:          perkRank(skillPerks, 'scholar') * PERKS.scholar.perRank,
   chestItemChance: perkRank(skillPerks, 'treasure') * PERKS.treasure.perRank,

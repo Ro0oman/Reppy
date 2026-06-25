@@ -1248,6 +1248,8 @@ export default {
     perk_treasure_desc: 'Chance of an extra item from chests.',
     perk_mentor_name: 'Mentor',
     perk_mentor_desc: 'Chance of a bonus skill point on level-up.',
+    perk_ascension_name: 'Ascension',
+    perk_ascension_desc: 'Earn guaranteed extra skill points every time you level up.',
     perk_power_name: 'Power',
     perk_power_desc: 'Increases the raw damage of every hit.',
     perk_crit_chance_name: 'Lethal Precision',

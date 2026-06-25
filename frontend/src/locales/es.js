@@ -1327,6 +1327,8 @@ export default {
     perk_treasure_desc: 'Probabilidad de un objeto extra en los cofres.',
     perk_mentor_name: 'Mentor',
     perk_mentor_desc: 'Probabilidad de un punto de habilidad extra al subir de nivel.',
+    perk_ascension_name: 'Ascensión',
+    perk_ascension_desc: 'Ganas puntos de habilidad extra garantizados cada vez que subes de nivel.',
     perk_power_name: 'Poder',
     perk_power_desc: 'Aumenta el daño bruto de todos tus golpes.',
     perk_crit_chance_name: 'Precisión letal',

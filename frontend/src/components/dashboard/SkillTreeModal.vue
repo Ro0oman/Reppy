@@ -148,7 +148,7 @@ import {
   Network, X, Lock, Check, ChevronRight,
   Sword, Target, Zap, Crosshair, Skull,
   Coins, HandCoins, Gift, Gem,
-  FlaskConical, Clover, CalendarCheck,
+  FlaskConical, Clover, CalendarCheck, TrendingUp,
   GraduationCap, Package, Sparkles,
 } from 'lucide-vue-next';
 import { useSkillTreeStore } from '../../stores/skilltree';
@@ -183,6 +183,7 @@ const PERK_META = {
   potion_master:   { icon: FlaskConical },
   chest_luck:      { icon: Clover },
   daily_blessing:  { icon: CalendarCheck },
+  ascension:       { icon: TrendingUp },
   scholar:         { icon: GraduationCap },
   treasure:        { icon: Package },
   mentor:          { icon: Sparkles },
@@ -197,6 +198,7 @@ function fmtEffect(kind, v) {
     case 'gem_chance':
     case 'chest_item_chance':
     case 'point_chance': return `${Math.round(v * 100)}%`;
+    case 'levelup_points': return `+${v}/nv`;
     default: return `+${Math.round(v * 100)}%`;
   }
 }

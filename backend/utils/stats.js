@@ -268,13 +268,19 @@ export const recalculateUserStats = async (userId, force = false) => {
     let additionalSkillPoints = 0;
     let newSkillPointsClaimed = user.skill_points_claimed || 1;
     if (newLevel > newSkillPointsClaimed) {
-      additionalSkillPoints = newLevel - newSkillPointsClaimed;
+      const levelsGained = newLevel - newSkillPointsClaimed; // base: 1 point per level
+      additionalSkillPoints = levelsGained;
       newSkillPointsClaimed = newLevel;
+
+      // ascension perk: deterministic +N extra points per level gained (max +2).
+      if (progressionBonuses.levelupPoints > 0) {
+        additionalSkillPoints += levelsGained * progressionBonuses.levelupPoints;
+      }
 
       // mentor perk: each new level independently rolls for +1 bonus skill point.
       if (progressionBonuses.pointChance > 0) {
         let bonusPoints = 0;
-        for (let i = 0; i < additionalSkillPoints; i++) {
+        for (let i = 0; i < levelsGained; i++) {
           if (Math.random() < progressionBonuses.pointChance) bonusPoints++;
         }
         additionalSkillPoints += bonusPoints;
