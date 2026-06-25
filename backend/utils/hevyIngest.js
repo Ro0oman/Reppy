@@ -20,6 +20,7 @@ import { getLocalDateString } from './date.js';
 import { getExerciseRewards } from './rewards.js';
 import { updateMissionProgress } from './missions.js';
 import { getEffectiveExerciseCount, getRewardExerciseCount, isTimedExerciseUnit } from './exerciseUnits.js';
+import { getExerciseTemplate } from './hevyClient.js';
 
 /**
  * Warmup sets must not count toward reps/damage/coins. Hevy marks them with
@@ -49,14 +50,20 @@ function inferUnit(sets) {
  * Resolve a Hevy exercise to a Reppy exercise_type, creating a custom exercise
  * + map entry when it isn't in the global calisthenics map.
  */
-async function resolveExerciseType(client, hevyExercise) {
+async function resolveExerciseType(client, hevyExercise, apiKey = null) {
   const templateId = hevyExercise.exercise_template_id;
   const mapRes = await client.query(
     'SELECT reppy_exercise_type, is_weighted FROM hevy_exercise_map WHERE hevy_template_id = $1',
     [templateId]
   );
   if (mapRes.rows.length > 0) {
-    return { type: mapRes.rows[0].reppy_exercise_type, fromMap: true };
+    const type = mapRes.rows[0].reppy_exercise_type;
+    // Heal legacy custom rows whose name is still the raw `hevy_<id>` slug
+    // (created before names were captured). Best-effort; never blocks ingest.
+    if (/^hevy_/i.test(type)) {
+      await backfillCustomName(client, type, templateId, hevyExercise, apiKey);
+    }
+    return { type, fromMap: true };
   }
 
   // Unmapped (bench press, deadlift, machines, …) → user-custom exercise, counts x1.
@@ -64,12 +71,16 @@ async function resolveExerciseType(client, hevyExercise) {
   const unit = inferUnit(hevyExercise.sets || []);
   const isWeighted = workingSets(hevyExercise).some(s => (s.weight_kg || 0) > 0);
 
-  const title = hevyExercise.title || slug;
+  const title = await resolveExerciseTitle(hevyExercise, templateId, apiKey, slug);
   const statType = isWeighted ? 'str_xp' : 'end_xp';
   await client.query(
     `INSERT INTO exercises (slug, title_key, description_key, unit, difficulty_multiplier, coin_multiplier, is_active, stat_type)
      VALUES ($1, $2, $3, $4, 1.0, 1.0, TRUE, $5)
-     ON CONFLICT (slug) DO NOTHING`,
+     ON CONFLICT (slug) DO UPDATE
+       SET title_key = EXCLUDED.title_key,
+           description_key = EXCLUDED.description_key,
+           unit = EXCLUDED.unit
+       WHERE exercises.title_key LIKE 'hevy\\_%'`,
     [slug, title, `Importado de Hevy: ${title}`, unit, statType]
   );
   await client.query(
@@ -81,11 +92,42 @@ async function resolveExerciseType(client, hevyExercise) {
 }
 
 /**
+ * Resolve a human exercise name: prefer Hevy's canonical exercise template,
+ * fall back to the per-workout `title`, then to the slug. The template lookup
+ * is best-effort — a failure (no key, network) must never break the import.
+ */
+async function resolveExerciseTitle(hevyExercise, templateId, apiKey, slug) {
+  if (apiKey && templateId) {
+    try {
+      const tpl = await getExerciseTemplate(apiKey, templateId);
+      if (tpl && tpl.title && tpl.title.trim()) return tpl.title.trim();
+    } catch (err) {
+      console.warn(`[Hevy] template lookup failed for ${templateId}:`, err.message);
+    }
+  }
+  const t = (hevyExercise.title || '').trim();
+  return t || slug;
+}
+
+/** Update a custom exercise row still named after its slug, in place. */
+async function backfillCustomName(client, slug, templateId, hevyExercise, apiKey) {
+  const title = await resolveExerciseTitle(hevyExercise, templateId, apiKey, slug);
+  if (title === slug) return; // nothing better available
+  await client.query(
+    `UPDATE exercises SET title_key = $2, description_key = $3
+       WHERE slug = $1 AND title_key LIKE 'hevy\\_%'`,
+    [slug, title, `Importado de Hevy: ${title}`]
+  );
+}
+
+/**
  * @param {string} userId
  * @param {object} workout  Full Hevy workout (GET /v1/workouts/{id})
+ * @param {object} [opts]
+ * @param {string} [opts.apiKey] Hevy API key, used to resolve canonical exercise names.
  * @returns {Promise<object>} summary
  */
-export async function ingestHevyWorkout(userId, workout) {
+export async function ingestHevyWorkout(userId, workout, { apiKey = null } = {}) {
   if (!workout || !workout.id) throw new Error('Invalid workout payload');
 
   // Idempotency guard — already imported?
@@ -103,7 +145,7 @@ export async function ingestHevyWorkout(userId, workout) {
     // 1. Aggregate sets per resolved Reppy exercise_type.
     const agg = new Map(); // type -> { reps, volumeKg, wRepSum, wWeightSum }
     for (const ex of (workout.exercises || [])) {
-      const { type } = await resolveExerciseType(client, ex);
+      const { type } = await resolveExerciseType(client, ex, apiKey);
       // Pull exercise meta to know how to count.
       const metaRes = await client.query(
         'SELECT unit, difficulty_multiplier, coin_multiplier FROM exercises WHERE slug = $1',

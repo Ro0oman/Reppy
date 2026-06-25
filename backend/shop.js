@@ -4,6 +4,7 @@ import { authenticate } from './middleware.js';
 import { recalculateUserStats } from './utils/stats.js';
 import { updateMissionProgress } from './utils/missions.js';
 import { rotateDailyShop } from './utils/shop_rotation.js';
+import { getPerkBonuses } from './utils/perks.js';
 
 
 const router = express.Router();
@@ -641,7 +642,10 @@ router.post('/activate/:id', authenticate, async (req, res) => {
       return res.status(400).json({ message: 'Este objeto no es un consumible' });
     }
 
-    const durationSeconds = item.stats.duration || 3600;
+    // potion_master perk extends consumable buff duration.
+    const perkRes = await query('SELECT skill_perks FROM users WHERE id = $1', [userId]);
+    const { potionDur } = getPerkBonuses(perkRes.rows[0]?.skill_perks);
+    const durationSeconds = Math.round((item.stats.duration || 3600) * (1 + potionDur));
 
     const result = await withTransaction(async (client) => {
       // ATOMIC CONSUME FIRST. The guarded decrement is the gate: a unit must be

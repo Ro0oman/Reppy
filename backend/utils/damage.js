@@ -2,6 +2,7 @@
  * RPG Damage System Utility
  * Handles stat-based damage calculation and random critical hits.
  */
+import { getPerkBonuses } from './perks.js';
 
 /**
  * Calculates damage for a user logging reps.
@@ -50,6 +51,9 @@ export const calculateDamage = (user, reps, type, boss = null, skipBuffs = false
   const fthLvl = parseInt(user.fth_lvl) || 1;
   const chaLvl = parseInt(user.cha_lvl) || 1;
 
+  // Skill-tree combat perks — bounded modifiers layered on top of the stats above.
+  const perks = getPerkBonuses(user.skill_perks);
+
   // 3. Scaling Formula (Dark Souls Style) — computed PER REP.
   // Every rep is its own attack: the flat divine bonus AND the crit roll apply
   // per rep, so logging 20 reps at once is identical to logging them one-by-one.
@@ -78,7 +82,9 @@ export const calculateDamage = (user, reps, type, boss = null, skipBuffs = false
   const perRepBaseNoCrit = (perRepDamageValue * levelMult * intBonus * chaBonus * baseScale) + baseDivine;
 
   // --- DAMAGE WITH GEAR per rep (No potions) ---
-  const perRepGearNoCrit = (perRepDamageValue * levelMult * intBonus * chaBonus * strScale * endScale * fthScale) + divineBonus;
+  // The `power` perk adds a flat % to raw damage (folded into the gear bonus breakdown).
+  const perkDamageMult = 1 + perks.damagePct;
+  const perRepGearNoCrit = ((perRepDamageValue * levelMult * intBonus * chaBonus * strScale * endScale * fthScale) + divineBonus) * perkDamageMult;
 
   // --- ACTIVE CONSUMABLE MULTIPLIER ---
   // Temporary stat bonuses (str/dex/end/...) are already folded into the *_lvl
@@ -91,8 +97,9 @@ export const calculateDamage = (user, reps, type, boss = null, skipBuffs = false
 
   // Final dex level for crit (already includes gear + temporary buffs).
   const finalDexLvl = dexLvl;
-  const critChance = Math.min(80, (finalDexLvl * 2.5) + (vigLvl * 0.5));
-  const critMult = 2.0 + (finalDexLvl * 0.1);
+  // crit_chance perk adds flat % before the 80% cap; crit_damage perk adds to the multiplier.
+  const critChance = Math.min(80, (finalDexLvl * 2.5) + (vigLvl * 0.5) + perks.critChanceFlat);
+  const critMult = 2.0 + (finalDexLvl * 0.1) + perks.critMultFlat;
 
   // 4. Per-rep crit rolls. Each rep independently rolls a critical hit; we
   // accumulate a crit-weighted rep count (sum of 1 or critMult per rep). This is
@@ -126,14 +133,22 @@ export const calculateDamage = (user, reps, type, boss = null, skipBuffs = false
     const w = boss.weakness_stat.toLowerCase();
     const weaknessLevel = parseInt(user[`${w}_lvl`]) || 1;
     if (weaknessLevel > 1) {
-       weaknessBonus = 1.5 + (weaknessLevel * 0.02);
+       // weakness_hunter perk amplifies the exploit bonus.
+       weaknessBonus = (1.5 + (weaknessLevel * 0.02)) * (1 + perks.weaknessPct);
     }
+  }
+
+  // execution perk: bonus damage to a boss that's below 25% HP (the finishing blow).
+  let executionMult = 1.0;
+  if (boss && perks.executionPct > 0 && Number(boss.total_hp) > 0) {
+    const hpRatio = Number(boss.current_hp) / Number(boss.total_hp);
+    if (hpRatio < 0.25) executionMult = 1 + perks.executionPct;
   }
 
   // --- FINAL CALCULATIONS (sum across reps via critWeightedReps) ---
   const totalBase = perRepBaseNoCrit * critWeightedReps * weaknessBonus;
   const totalWithGear = perRepGearNoCrit * critWeightedReps * weaknessBonus;
-  const finalDamage = totalWithGear * activeMultiplier;
+  const finalDamage = totalWithGear * activeMultiplier * executionMult;
   const gearBonus = Math.max(0, totalWithGear - totalBase);
   const buffBonus = Math.max(0, finalDamage - totalWithGear);
 

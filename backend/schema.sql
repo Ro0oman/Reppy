@@ -301,6 +301,14 @@ CREATE TABLE IF NOT EXISTS push_subscriptions (
 );
 CREATE INDEX IF NOT EXISTS idx_push_subs_user ON push_subscriptions(user_id);
 
+-- Skill Tree (combat perks). 1 skill point per level-up (granted in utils/stats.js,
+-- mirroring level_chests_claimed). Perks are bounded modifiers on top of the
+-- auto-derived stats; allocations live in skill_perks JSONB: { "<perkId>": <rank> }.
+-- Existing users keep claimed=1 so they retroactively earn points up to their level.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS skill_points INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS skill_points_claimed INTEGER DEFAULT 1;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS skill_perks JSONB DEFAULT '{}'::jsonb;
+
 -- Referral System
 ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_code VARCHAR(20) UNIQUE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS referred_by VARCHAR(255) REFERENCES users(id);

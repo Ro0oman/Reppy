@@ -20,6 +20,7 @@ import shopRoutes from './shop.js';
 import bossRoutes from './boss.js';
 import profileRoutes from './profile.js';
 import rouletteRoutes from './roulette.js';
+import skillTreeRoutes from './skilltree.js';
 import socialFeedRoutes from './social_feed.js';
 import notificationRoutes from './notifications.js';
 import { query } from './db.js';
@@ -42,6 +43,7 @@ import { authenticate } from './middleware.js';
 import cron from 'node-cron';
 import { runStreakReminders } from './utils/streakReminders.js';
 import { runReferralReminders } from './utils/referralReminders.js';
+import { autoFinishExpiredFights } from './utils/pvp_cleanup.js';
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -64,17 +66,53 @@ if (process.env.VERCEL !== '1') {
       .then(count => console.log(`[CRON] Referral reminders enviados: ${count}`))
       .catch(err => console.error('[CRON] Error en referral reminders:', err));
   });
+  // Finalize expired PvP fights every 2 minutes, independent of request traffic.
+  // On serverless the throttled triggerFightCleanup() (called from hot read
+  // paths) covers this instead. See issue #263.
+  cron.schedule('*/2 * * * *', () => {
+    autoFinishExpiredFights().catch(err => console.error('[CRON] Error finishing expired fights:', err));
+  });
 }
 // -----------------------
 
-app.use(cors());
+// CORS allowlist: prod origin, Vercel preview deploys, and localhost dev.
+// In prod the SPA is same-origin with the API, so requests usually carry no
+// Origin header (allowed below); the allowlist guards genuine cross-origin calls.
+const allowedOrigins = [
+  'https://reppy-weld.vercel.app',
+  /\.vercel\.app$/, // preview deployments
+  'http://localhost:5173',
+  'http://localhost:5001',
+];
+if (process.env.FRONTEND_URL) allowedOrigins.push(process.env.FRONTEND_URL);
+
+const corsOptions = {
+  origin(origin, callback) {
+    // No Origin header => same-origin request, curl, mobile webview, server-to-server.
+    if (!origin) return callback(null, true);
+    const ok = allowedOrigins.some((o) => (o instanceof RegExp ? o.test(origin) : o === origin));
+    return ok ? callback(null, true) : callback(new Error(`Origin not allowed by CORS: ${origin}`));
+  },
+  credentials: true,
+};
+app.use(cors(corsOptions));
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-      "connect-src": ["*"],
+      // Realtime (Pusher) + analytics; 'self' covers the same-origin API.
+      "connect-src": [
+        "'self'",
+        "https://*.pusher.com",
+        "wss://*.pusher.com",
+        "https://sockjs-mt1.pusher.com",
+        "https://www.google-analytics.com",
+        "https://www.googletagmanager.com",
+      ],
       "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://www.googletagmanager.com", "https://www.google-analytics.com"],
-      "img-src": ["*"],
+      // Boss art (arbitrary wikia hosts) and user avatars (Supabase/Google) come
+      // from many https origins; allow any https image but block plaintext http.
+      "img-src": ["'self'", "data:", "blob:", "https:"],
 
 
       "frame-src": ["'self'", "https://accounts.google.com/"],
@@ -101,6 +139,7 @@ apiRouter.use('/shop', shopRoutes);
 apiRouter.use('/boss', bossRoutes);
 apiRouter.use('/profile', profileRoutes);
 apiRouter.use('/roulette', rouletteRoutes);
+apiRouter.use('/skilltree', skillTreeRoutes);
 apiRouter.use('/admin', adminRoutes);
 apiRouter.use('/blog-tracking', blogRoutes);
 apiRouter.use('/pvp', pvpRoutes);
@@ -256,9 +295,15 @@ apiRouter.get('/blog', (req, res) => {
 });
 
 
-// Automated DB initialization for the user
-// Automated DB initialization for the user
+// One-off schema setup / re-seed. Schema-mutating, so it is gated behind a
+// secret token (DB_INIT_SECRET) supplied via the `x-init-secret` header or
+// `?secret=` query param. Without a configured secret the endpoint is disabled.
 apiRouter.get('/db/init', async (req, res) => {
+  const expected = process.env.DB_INIT_SECRET;
+  const provided = req.get('x-init-secret') || req.query.secret;
+  if (!expected || provided !== expected) {
+    return res.status(404).json({ error: 'Not found' });
+  }
   try {
     const queries = [
       `CREATE TABLE IF NOT EXISTS users (
@@ -339,7 +384,8 @@ apiRouter.get('/db/init', async (req, res) => {
           UNIQUE(user_id, post_slug)
       )`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE`,
-      `UPDATE users SET is_admin = TRUE WHERE email = 'romainot99@gmail.com'`,
+      // Admin grant is intentionally NOT performed here. Bootstrap an admin with
+      // `node backend/scripts/grant_admin.js <email>` instead of via HTTP.
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS daily_boss_damage INTEGER DEFAULT 0`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_boss_damage_date DATE DEFAULT CURRENT_DATE`,
       `ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS image_url TEXT`,
@@ -488,6 +534,10 @@ apiRouter.get('/db/init', async (req, res) => {
           UNIQUE(boss_fight_id)
       )`,
       `CREATE INDEX IF NOT EXISTS idx_boss_kill_posts_created ON boss_kill_posts(created_at DESC)`,
+      // Hot status/interaction scans (issue #265).
+      `CREATE INDEX IF NOT EXISTS idx_summary_interactions_summary_type ON summary_interactions(summary_id, type)`,
+      `CREATE INDEX IF NOT EXISTS idx_pvp_fights_status ON pvp_fights(status)`,
+      `CREATE INDEX IF NOT EXISTS idx_async_challenges_status ON async_challenges(status)`,
       `CREATE INDEX IF NOT EXISTS idx_reps_user_date ON reps(user_id, date)`,
       `CREATE INDEX IF NOT EXISTS idx_summaries_user_date ON daily_summaries(user_id, date)`,
       `CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(user_id_1, user_id_2)`,
@@ -604,6 +654,10 @@ async function ensureAllTrainingExercisesExist() {
 async function ensureSchemaMigrations() {
   try {
     await query('ALTER TABLE users ADD COLUMN IF NOT EXISTS last_daily_spin_at TIMESTAMP WITH TIME ZONE');
+    // Indexes for hot status/interaction scans (issue #265).
+    await query("CREATE INDEX IF NOT EXISTS idx_summary_interactions_summary_type ON summary_interactions(summary_id, type)");
+    await query("CREATE INDEX IF NOT EXISTS idx_pvp_fights_status ON pvp_fights(status)");
+    await query("CREATE INDEX IF NOT EXISTS idx_async_challenges_status ON async_challenges(status)");
     console.log('[Startup migration] Schema migrations applied.');
   } catch (err) {
     console.error('[Startup migration] Failed to apply schema migrations:', err);

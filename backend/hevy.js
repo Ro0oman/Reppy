@@ -36,7 +36,7 @@ async function importTodaysWorkouts(userId, apiKey) {
 
   const results = [];
   for (const w of todays) {
-    results.push(await ingestHevyWorkout(userId, w));
+    results.push(await ingestHevyWorkout(userId, w, { apiKey }));
   }
   const importedCount = results.filter(r => r.imported).length;
   return { found: todays.length, importedCount, results };
@@ -143,7 +143,7 @@ router.post('/webhook', async (req, res) => {
     }
     const apiKey = decryptHevyKey(user.hevy_api_key);
     const full = await getWorkout(apiKey, workoutId);
-    const result = await ingestHevyWorkout(user.id, full);
+    const result = await ingestHevyWorkout(user.id, full, { apiKey });
     return res.status(200).json({ ok: true, result });
   } catch (e) {
     console.error('[hevy] webhook error:', e);

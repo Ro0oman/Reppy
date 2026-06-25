@@ -170,7 +170,7 @@
                      class="grid grid-cols-2 gap-4 py-2 border-b border-border/5 last:border-0">
                     <div class="flex flex-col gap-1">
                        <span class="text-[10px] font-black uppercase tracking-wider text-foreground">
-                         {{ ex.title_key ? (ex.title_key.startsWith('ex_') ? i18n.t(ex.title_key) : ex.title_key) : (i18n.t(ex.exercise_type) || ex.exercise_type) }}
+                         {{ exerciseLabel(ex) }}
                        </span>
                        <span class="text-xs font-bold" :class="dominantStatColor(getAttributeName(ex.exercise_type).toLowerCase())">
                           +{{ Math.ceil(exerciseEffectiveCount(ex) / 5) }} {{ getAttributeName(ex.exercise_type) }} {{ i18n.t('ui_xp') || 'XP' }}
@@ -651,6 +651,16 @@ const dominantStatColor = (stat) => {
         case 'agi': return 'text-emerald-500';
         default: return 'text-primary-500';
     }
+};
+
+// Human-readable exercise name. Never leak a raw `hevy_<templateId>` slug from
+// unmapped Hevy imports (issue #294) — show a generic label instead.
+const exerciseLabel = (ex) => {
+    const looksLikeHevySlug = (s) => typeof s === 'string' && /^hevy_/i.test(s);
+    const tk = ex.title_key;
+    if (tk && !looksLikeHevySlug(tk)) return tk.startsWith('ex_') ? i18n.t(tk) : tk;
+    if (looksLikeHevySlug(tk) || looksLikeHevySlug(ex.exercise_type)) return i18n.t('ex_imported_generic');
+    return i18n.t(ex.exercise_type) || ex.exercise_type;
 };
 
 const getAttributeName = (type) => {

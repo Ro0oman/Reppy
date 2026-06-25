@@ -42,6 +42,15 @@ export async function getLatestWorkout(apiKey) {
   return (d.workouts && d.workouts[0]) || null;
 }
 
+/**
+ * Canonical exercise template (authoritative name/equipment) by id.
+ * Used to resolve a human name for unmapped imported exercises instead of
+ * relying on the per-workout `title`, which can be missing.
+ */
+export async function getExerciseTemplate(apiKey, templateId) {
+  return hevyFetch(apiKey, `/exercise_templates/${encodeURIComponent(templateId)}`);
+}
+
 /** Incremental events (updates/deletes) since an ISO date — for the cron safety-net. */
 export async function getWorkoutEvents(apiKey, sinceIso, page = 1, pageSize = 10) {
   return hevyFetch(apiKey, `/workouts/events?since=${encodeURIComponent(sinceIso)}&page=${page}&pageSize=${pageSize}`);

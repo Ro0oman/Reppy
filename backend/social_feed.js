@@ -6,7 +6,7 @@ import { createNotification } from './utils/notifications.js';
 import { recalculateUserStats } from './utils/stats.js';
 import { updateMissionProgress } from './utils/missions.js';
 import { getLocalDateString } from './utils/date.js';
-import { autoFinishExpiredFights } from './utils/pvp_cleanup.js';
+import { triggerFightCleanup } from './utils/pvp_cleanup.js';
 
 const router = express.Router();
 
@@ -318,8 +318,9 @@ router.get('/feed', optionalAuthenticate, async (req, res) => {
   const offset = (page - 1) * limit;
   const userId = req.user?.id || null;
   
-  // Clean up expired fights before fetching feed
-  await autoFinishExpiredFights();
+  // Kick off expired-fight cleanup in the background (throttled, never awaited)
+  // so this hot read path doesn't pay for it. See issue #263.
+  triggerFightCleanup();
 
 
   try {

@@ -25,6 +25,10 @@
 
     --white-to-gray: 240 10% 20%;
 
+    /* Redesign accents (Gemini mockups) — neon glow palette (light fallback) */
+    --neon: 168 70% 40%;
+    --neon-violet: 255 70% 62%;
+
     /* Heatmap Levels (Light - Azure) */
     --heatmap-bg: 0 0% 100%;
     --heatmap-l0: 240 8% 95%;
@@ -45,6 +49,11 @@
     --border: 240 6% 16%;          /* #28282C */
     --border-alpha: 1;
     --ring: 215 92% 56% / 0.4;
+
+    /* Redesign accents (Gemini mockups) — local neon glow palette.
+       Layered on top of --primary/--accent; not a brand replacement. */
+    --neon: 168 76% 52%;           /* Teal / mint — daily goal rings, tree icon */
+    --neon-violet: 255 92% 76%;    /* Violet — day-streak rings, milestones */
 
     /* Heatmap Levels (Dark - Azure) */
     --heatmap-bg: 240 8% 5%;
@@ -102,6 +111,19 @@
 }
 
 @layer components {
+
+  /* ─── Neon glow (redesign) ──────────────────────────────────────────────
+     Soft outer glow for cards/icons in the refreshed dashboard. */
+  .glow-neon {
+    box-shadow: 0 0 0 1px hsla(var(--neon) / 0.25),
+                0 0 24px -4px hsla(var(--neon) / 0.45);
+  }
+  .glow-violet {
+    box-shadow: 0 0 0 1px hsla(var(--neon-violet) / 0.25),
+                0 0 24px -4px hsla(var(--neon-violet) / 0.45);
+  }
+  .text-neon { color: hsl(var(--neon)); }
+  .text-neon-violet { color: hsl(var(--neon-violet)); }
 
   /* ─── Affordance system ─────────────────────────────────────────────────
      Every interactive element must pass this checklist:

@@ -1,212 +1,223 @@
 <template>
-  <div class="max-w-7xl mx-auto w-full px-4 space-y-4 sm:space-y-6 pb-24 pt-2 sm:pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-    <!-- ☻ COMPANION (mobile) — your fighter leads ☻ -->
-    <div v-if="isMobile" class="max-w-md mx-auto w-full space-y-3">
-
-      <!-- Compact identity row: avatar + name + level + mood, with the weekly
-           card action. Kept slim so the quick-log sits high — register on entry,
-           no scroll. -->
-      <div class="flex items-center gap-3">
-        <div class="relative shrink-0">
-          <RadialProgress :progress="dayRingPercent" :size="52" :stroke-width="4">
-            <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :size="40" />
-          </RadialProgress>
-        </div>
+  <div class="max-w-7xl mx-auto w-full px-4 space-y-4 sm:space-y-6 pt-2 sm:pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700"
+    :class="hasFloatingActions ? 'pb-40 lg:pb-52' : 'pb-24'">
+    <!-- ✦ GREETING — refreshed neon hero card ✦ -->
+    <div class="relative overflow-hidden rounded-3xl border border-border/60 bg-foreground/[0.03] p-4 sm:p-5">
+      <Sparkles class="pointer-events-none absolute -right-4 -top-4 h-24 w-24 text-[hsl(var(--neon))]/[0.12]" aria-hidden="true" />
+      <div class="relative flex items-center gap-3 sm:gap-4">
+        <RadialProgress :progress="dayRingPercent" :size="isMobile ? 50 : 58" :stroke-width="4" color="neon" glow gradient>
+          <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :size="isMobile ? 38 : 46" />
+        </RadialProgress>
         <div class="min-w-0 flex-1">
-          <div class="flex items-center gap-2">
-            <h1 class="truncate text-base font-bold tracking-tight text-foreground">{{ firstName }}</h1>
-            <span class="shrink-0 rounded-full bg-primary-500/15 px-2 py-0.5 text-[10px] font-bold text-primary-400 whitespace-nowrap">
-              {{ i18n.t('comp_level_short') }} {{ userLevel }}
-            </span>
-          </div>
-          <div class="mt-0.5 flex items-center gap-1.5 max-w-full">
-            <component :is="companionMood.icon" class="w-3 h-3 shrink-0" :class="companionMood.color" aria-hidden="true" />
-            <span class="text-[11px] text-muted truncate">{{ companionMood.text }}</span>
-          </div>
+          <h1 class="truncate text-lg sm:text-xl font-bold tracking-tight text-foreground">
+            {{ greeting }}<span class="text-[hsl(var(--neon))]">, {{ firstName }}</span>
+          </h1>
+          <p class="mt-0.5 text-xs sm:text-sm text-muted/80 truncate">{{ i18n.t('dash_ready_subtitle') }}</p>
         </div>
         <button
           type="button"
-          class="shrink-0 flex items-center gap-1.5 rounded-full border border-primary-500/25 bg-primary-500/10 px-3 py-1.5 text-xs font-semibold text-primary-400 transition hover:bg-primary-500/20 active:scale-95"
+          class="shrink-0 flex items-center gap-1.5 rounded-full border border-[hsl(var(--neon))]/25 bg-[hsl(var(--neon))]/10 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-[hsl(var(--neon))] transition hover:bg-[hsl(var(--neon))]/20 active:scale-95"
+          :aria-label="i18n.t('dash_my_week')"
           @click="showWeeklyCard = true"
         >
           <Share2 class="w-3.5 h-3.5" aria-hidden="true" />
-          <span>{{ i18n.t('dash_my_week') }}</span>
+          <span class="hidden sm:inline">{{ i18n.t('dash_my_week') }}</span>
         </button>
       </div>
+    </div>
 
-      <!-- Quick log: always at the top so you can register on entry — exercise
-           pre-selected, presets + counter + CTA visible without scrolling. -->
-      <div
-        ref="repsInputSectionMobile"
-        class="rounded-2xl border border-primary-500/30 bg-primary-500/[0.06] p-3.5 transition-all duration-500"
-        :class="highlightRepsInput ? 'ring-2 ring-primary-500/60' : ''"
-      >
-        <div class="mb-3 flex items-center justify-between gap-2">
+    <!-- ✦ BOSS LEVEL — tap to open the skill tree (Senda del Boss) ✦ -->
+    <div
+      class="tap-card relative overflow-hidden rounded-3xl border border-border/60 bg-foreground/[0.03] p-4 sm:p-5"
+      role="button"
+      tabindex="0"
+      @click="skillTreeStore.openModal()"
+      @keydown.enter="skillTreeStore.openModal()"
+    >
+      <ChevronRight class="absolute right-3 top-3 h-4 w-4 text-muted/40" aria-hidden="true" />
+      <div class="flex items-center gap-4">
+        <div class="min-w-0 flex-1">
           <div class="flex items-center gap-2">
-            <Zap class="h-4 w-4 text-primary-500" aria-hidden="true" />
-            <h2 class="text-xs font-bold uppercase tracking-wide text-muted/70">
-              {{ i18n.locale === 'es' ? 'Registro rápido' : 'Quick log' }}
-            </h2>
+            <p class="text-xs font-semibold text-muted">{{ i18n.t('dash_boss_level') }}</p>
+            <span
+              v-if="skillTreeStore.skillPoints > 0"
+              class="rounded-full bg-[hsl(var(--neon))]/15 px-2 py-0.5 text-[10px] font-bold text-[hsl(var(--neon))] glow-neon whitespace-nowrap"
+            >{{ i18n.t('skilltree_points', { n: skillTreeStore.skillPoints }) }}</span>
           </div>
-          <span class="text-xs text-muted/70 tabular-nums"><b class="text-primary-500 font-bold">{{ animatedTodayProgress }}</b> / {{ stats.dailyGoal }} {{ i18n.t('comp_today') }}</span>
+          <p class="mt-0.5 text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground leading-none">
+            {{ i18n.t('comp_level_short') }} {{ userLevel }}
+          </p>
+          <div class="mt-3 h-2 rounded-full bg-foreground/10 overflow-hidden">
+            <div
+              class="h-full rounded-full transition-all duration-700"
+              :style="{ width: bossXpPercent + '%', background: 'linear-gradient(90deg, hsl(var(--neon)), hsl(var(--neon-violet)))' }"
+            ></div>
+          </div>
+          <p class="mt-1.5 text-[11px] text-muted/70 tabular-nums">{{ fmtNum(bossXpInto) }} / {{ fmtNum(bossXpFor) }} XP</p>
         </div>
-        <ExerciseSelector v-model="activeExercise" compact hide-overview class="w-full" />
-        <!-- Inline counter: log reps right here, no sheet, no scroll. Falls back
-             to a concrete exercise when the selector is on the "all" overview. -->
-        <RepsInput :exercise-type="logExercise" @updated="refreshAfterLog" class="mt-3" />
-      </div>
-
-      <!-- Stats row: streak + power -->
-      <div class="grid grid-cols-2 gap-3">
-        <div class="rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5">
-          <div class="flex items-center gap-1.5">
-            <Flame class="w-4 h-4 text-primary-500" aria-hidden="true" />
-            <span class="text-xs text-muted">{{ i18n.t('comp_stat_streak') }}</span>
-          </div>
-          <div class="mt-1.5 text-xl font-bold text-foreground tabular-nums">{{ streakStatus?.streak || 0 }} <span class="text-sm font-medium text-muted/70">{{ i18n.t('streak_days_unit') }}</span></div>
-        </div>
-        <div class="rounded-2xl border border-border/60 bg-foreground/[0.02] p-3.5">
-          <div class="flex items-center gap-1.5">
-            <Sword class="w-4 h-4 text-primary-500" aria-hidden="true" />
-            <span class="text-xs text-muted">{{ i18n.t('comp_stat_power') }}</span>
-          </div>
-          <div class="mt-1.5 text-xl font-bold text-foreground tabular-nums">{{ stats.combatPower.total }}</div>
+        <div class="relative shrink-0 grid place-items-center">
+          <div class="absolute inset-0 rounded-2xl glow-neon"></div>
+          <AvatarFrame
+            :src="authStore.user?.avatar_url"
+            :border-css="authStore.user?.border_css"
+            :size="isMobile ? 58 : 68"
+            class="relative rounded-2xl"
+          />
         </div>
       </div>
+    </div>
 
-      <!-- Streak at-risk alert (retention: keep the freeze CTA prominent) -->
-      <div
-        v-if="streakStatus && streakStatus.isAtRisk && !streakStatus.frozenToday"
-        class="flex items-center gap-3 rounded-2xl border border-amber-500/40 bg-amber-500/[0.08] px-4 py-3"
-      >
-        <Flame class="h-5 w-5 text-amber-400 shrink-0" aria-hidden="true" />
-        <p class="flex-1 min-w-0 text-xs font-medium text-amber-300">{{ streakStateLabel }}</p>
-        <button
-          type="button"
-          class="shrink-0 rounded-xl border border-amber-500/50 bg-amber-500/15 text-amber-200 px-3 py-2 text-xs font-semibold disabled:opacity-40 active:scale-95 transition-transform"
-          :disabled="!streakStatus.canFreeze || freezingStreak"
-          @click="freezeStreak"
-        >
-          {{ freezeButtonLabel }}
-        </button>
+    <!-- ✦ TODAY'S PROGRESS — twin neon rings ✦ -->
+    <section>
+      <h2 class="mb-3 text-xs font-bold uppercase tracking-wide text-muted/70">{{ i18n.t('dash_today_progress') }}</h2>
+      <div class="grid grid-cols-2 gap-3 sm:gap-4">
+        <!-- Daily goal ring (teal) -->
+        <div class="rounded-3xl border border-border/60 bg-foreground/[0.02] p-4 flex flex-col items-center">
+          <div class="w-full flex items-center justify-between">
+            <span class="text-xs font-semibold text-muted">{{ i18n.t('dash_daily_goal') }}</span>
+          </div>
+          <RadialProgress :progress="dayRingPercent" :size="ringSize" :stroke-width="9" color="neon" glow gradient class="my-2">
+            <Zap class="w-4 h-4 text-[hsl(var(--neon))] mb-0.5" aria-hidden="true" />
+            <span class="text-xl font-extrabold tabular-nums leading-none text-foreground">{{ animatedTodayProgress }}</span>
+            <span class="mt-0.5 text-[10px] text-muted/70">/ {{ stats.dailyGoal }} {{ i18n.t('dash_pts_short') }}</span>
+          </RadialProgress>
+          <span class="text-sm font-bold text-[hsl(var(--neon))] tabular-nums">{{ dayRingPercent }}%</span>
+        </div>
+
+        <!-- Day streak ring (violet) -->
+        <div class="rounded-3xl border border-border/60 bg-foreground/[0.02] p-4 flex flex-col items-center">
+          <div class="w-full flex items-center justify-between">
+            <span class="text-xs font-semibold text-muted">{{ i18n.t('dash_day_streak') }}</span>
+            <span
+              v-if="streakTier.label"
+              class="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-md bg-foreground/[0.06] text-muted"
+            >{{ streakTier.label }}</span>
+          </div>
+          <RadialProgress :progress="streakRingPercent" :size="ringSize" :stroke-width="9" color="violet" glow gradient class="my-2">
+            <Flame class="w-4 h-4 text-[hsl(var(--neon-violet))] mb-0.5" aria-hidden="true" />
+            <span class="text-xl font-extrabold tabular-nums leading-none text-foreground">{{ streakStatus?.streak || 0 }}</span>
+            <span class="mt-0.5 text-[10px] text-muted/70">{{ i18n.t('streak_days_unit') }}</span>
+          </RadialProgress>
+          <span class="text-sm font-bold text-[hsl(var(--neon-violet))] tabular-nums">{{ weeklyBonusProgress }}/{{ weeklyBonusTarget }}</span>
+        </div>
       </div>
+    </section>
 
-      <!-- Boss: a friendly challenge, not a war room -->
+    <!-- ✦ NEXT MILESTONE — XP to the next level + glowing gem ✦ -->
+    <div class="relative overflow-hidden rounded-3xl border border-[hsl(var(--neon-violet))]/25 bg-[hsl(var(--neon-violet))]/[0.06] p-4 flex items-center gap-4">
+      <div class="min-w-0 flex-1">
+        <p class="text-xs font-semibold text-muted">{{ i18n.t('dash_next_milestone') }}</p>
+        <p class="mt-0.5 text-base sm:text-lg font-bold text-foreground truncate">{{ i18n.t('dash_reach_level', { n: nextLevel }) }}</p>
+        <p class="text-[11px] text-muted/70 tabular-nums">{{ i18n.t('dash_xp_to_go', { n: fmtNum(xpToGo) }) }}</p>
+        <div class="mt-2 h-2 rounded-full bg-foreground/10 overflow-hidden">
+          <div
+            class="h-full rounded-full transition-all duration-700"
+            :style="{ width: bossXpPercent + '%', background: 'linear-gradient(90deg, hsl(var(--neon-violet)), hsl(var(--neon)))' }"
+          ></div>
+        </div>
+      </div>
+      <Gem class="h-11 w-11 sm:h-12 sm:w-12 shrink-0 text-[hsl(var(--neon-violet))]" aria-hidden="true" style="filter: drop-shadow(0 0 10px hsl(var(--neon-violet) / 0.6))" />
+    </div>
+
+    <!-- Streak at-risk alert (retention: keep the freeze CTA prominent) -->
+    <div
+      v-if="streakStatus && streakStatus.isAtRisk && !streakStatus.frozenToday"
+      class="flex items-center gap-3 rounded-2xl border border-amber-500/40 bg-amber-500/[0.08] px-4 py-3"
+    >
+      <Snowflake class="h-5 w-5 text-amber-400 shrink-0" aria-hidden="true" />
+      <p class="flex-1 min-w-0 text-xs font-medium text-amber-300">{{ streakStateLabel }}</p>
       <button
-        v-if="bossData"
         type="button"
-        class="w-full flex items-center gap-3 rounded-2xl border border-border/60 bg-foreground/[0.02] px-4 py-3 text-left hover:border-primary-500/30 transition-colors active:scale-[0.99]"
-        @click="showBossHealth"
+        class="shrink-0 rounded-xl border border-amber-500/50 bg-amber-500/15 text-amber-200 px-3 py-2 text-xs font-semibold disabled:opacity-40 active:scale-95 transition-transform"
+        :disabled="!streakStatus.canFreeze || freezingStreak"
+        @click="freezeStreak"
       >
-        <div class="grid place-items-center h-10 w-10 shrink-0 rounded-xl bg-red-500/10">
-          <Sword class="w-5 h-5 text-red-400" aria-hidden="true" />
-        </div>
-        <div class="flex-1 min-w-0">
-          <p class="text-sm font-semibold text-foreground truncate">{{ i18n.t('comp_boss_taunt', { boss: bossData.name }) }}</p>
-          <div class="mt-1.5 h-1.5 rounded-full bg-red-950/40 overflow-hidden">
-            <div class="h-full bg-red-500 rounded-full" :style="{ width: `${bossHpPercent}%` }"></div>
-          </div>
-        </div>
-        <ChevronRight class="w-5 h-5 text-muted/50 shrink-0" aria-hidden="true" />
+        {{ freezeButtonLabel }}
       </button>
     </div>
 
-    <!-- ⚙ MOMENTUM (desktop/tablet) — header + day ring + streak band ⚙ -->
-    <template v-else>
-      <header class="flex items-center justify-between gap-3">
-        <div class="min-w-0 flex-1">
-          <h1 class="text-2xl font-bold tracking-tight text-foreground leading-tight truncate">
-            {{ greeting }}<span class="text-primary-500">, {{ firstName }}</span>
-          </h1>
-          <p class="dashboard-daily-quote mt-1 text-xs text-muted/80">{{ dailyQuote }}</p>
+    <!-- Quick log (mobile): register on entry — exercise pre-selected, no scroll -->
+    <div
+      v-if="isMobile"
+      ref="repsInputSectionMobile"
+      class="rounded-2xl border border-[hsl(var(--neon))]/30 bg-[hsl(var(--neon))]/[0.05] p-3.5 transition-all duration-500"
+      :class="highlightRepsInput ? 'ring-2 ring-[hsl(var(--neon))]/60' : ''"
+    >
+      <div class="mb-3 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <Zap class="h-4 w-4 text-[hsl(var(--neon))]" aria-hidden="true" />
+          <h2 class="text-xs font-bold uppercase tracking-wide text-muted/70">{{ i18n.t('dash_quick_log') }}</h2>
         </div>
-        <div class="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            class="flex items-center gap-1.5 rounded-xl border border-primary-500/25 bg-primary-500/10 px-3 py-2 text-xs font-semibold text-primary-400 transition hover:bg-primary-500/20 active:scale-95"
-            @click="showWeeklyCard = true"
-          >
-            <Share2 class="w-3.5 h-3.5" aria-hidden="true" />
-            {{ i18n.t('dash_my_week') }}
-          </button>
-        </div>
-      </header>
-
-      <!-- Streak band skeleton -->
-      <div
-        v-if="isLoading && !streakStatus"
-        class="flex items-center gap-3 rounded-2xl border border-border/60 bg-foreground/[0.02] px-4 py-3 animate-pulse"
-      >
-        <div class="h-10 w-10 shrink-0 rounded-xl bg-foreground/10"></div>
-        <div class="flex-1 space-y-2">
-          <div class="h-3 w-28 bg-foreground/10 rounded"></div>
-          <div class="h-2 w-40 bg-foreground/5 rounded"></div>
-        </div>
+        <span class="text-xs text-muted/70 tabular-nums"><b class="text-[hsl(var(--neon))] font-bold">{{ animatedTodayProgress }}</b> / {{ stats.dailyGoal }} {{ i18n.t('comp_today') }}</span>
       </div>
+      <ExerciseSelector v-model="activeExercise" compact hide-overview class="w-full" />
+      <RepsInput :exercise-type="logExercise" @updated="refreshAfterLog" class="mt-3" />
+    </div>
 
-      <!-- Streak band: one scale (days), amber only when at risk -->
-      <div
-        v-else-if="streakStatus"
-        class="flex items-center gap-3 rounded-2xl border px-4 py-3 transition-colors"
-        :class="streakStatus.showRisk ? 'border-amber-500/30 bg-amber-500/[0.07]' : 'border-primary-500/20 bg-primary-500/[0.06]'"
-      >
-        <div
-          class="grid place-items-center h-10 w-10 shrink-0 rounded-xl"
-          :class="streakStatus.showRisk ? 'bg-amber-500/15' : 'bg-primary-500/15'"
-        >
-          <Flame aria-hidden="true" class="h-5 w-5" :class="streakStatus.showRisk ? 'text-amber-400' : 'text-primary-400'" />
-        </div>
-
-        <div class="min-w-0 flex-1">
-          <div class="flex items-baseline gap-1.5">
-            <span class="text-xl font-bold tabular-nums leading-none text-foreground">{{ streakStatus.streak || 0 }}</span>
-            <span class="text-sm font-semibold text-muted/70">{{ i18n.t('streak_days_unit') }}</span>
-            <span
-              v-if="streakTier.label"
-              class="ml-1 text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-md bg-foreground/[0.06] text-muted"
-            >{{ streakTier.label }}</span>
-          </div>
-          <p
-            class="mt-0.5 text-xs truncate"
-            :class="streakStatus.showRisk ? 'text-amber-400 font-medium'
-              : streakStatus.jackpotAlreadyAwarded ? 'text-emerald-400 font-medium'
-              : 'text-muted/80'"
-          >{{ streakStateLabel }}</p>
-        </div>
-
-        <!-- Weekly bonus micro-indicator: days trained THIS week toward the jackpot (5/7) -->
-        <div class="hidden sm:flex flex-col items-end gap-1 shrink-0">
-          <span class="text-[10px] font-medium" :class="streakStatus.jackpotAlreadyAwarded ? 'text-emerald-500/80' : 'text-muted/70'">
-            {{ i18n.t('streak_weekly_bonus') }} {{ weeklyBonusProgress }}/{{ weeklyBonusTarget }}
-          </span>
-          <div class="flex items-center gap-1">
-            <span
-              v-for="day in weeklyBonusTarget"
-              :key="day"
-              class="h-1.5 w-3 rounded-full transition-colors"
-              :class="day <= weeklyBonusProgress
-                ? (streakStatus.jackpotAlreadyAwarded ? 'bg-emerald-500' : 'bg-primary-500')
-                : 'bg-foreground/10'"
-            />
-          </div>
-        </div>
-
-        <!-- Freeze CTA (only when at risk) -->
-        <button
-          v-if="streakStatus.isAtRisk && !streakStatus.frozenToday"
-          type="button"
-          class="shrink-0 flex items-center gap-1 rounded-xl border px-2.5 py-2 text-xs transition-all active:scale-95 disabled:opacity-40"
-          :class="streakStatus.canFreeze
-            ? 'border-amber-500/35 bg-amber-500/15 text-amber-200 hover:bg-amber-500/25'
-            : 'border-border bg-foreground/[0.04] text-muted'"
-          :disabled="!streakStatus.canFreeze || freezingStreak"
-          @click="freezeStreak"
-        >
-          <Snowflake aria-hidden="true" class="h-3.5 w-3.5" />
-          <span class="hidden sm:inline">{{ freezeButtonLabel }}</span>
+    <!-- ✦ TODAY'S CHALLENGES — daily missions overview (mockup) ✦ -->
+    <section v-if="dailyChallenges.length">
+      <div class="mb-3 flex items-center justify-between">
+        <h2 class="text-xs font-bold uppercase tracking-wide text-muted/70">{{ i18n.t('dash_today_challenges') }}</h2>
+        <button type="button" class="flex items-center gap-0.5 text-xs font-semibold text-[hsl(var(--neon))]" @click="router.push({ name: 'missions', params: { lang: i18n.locale } })">
+          {{ i18n.t('dash_view_all') }}
+          <ChevronRight class="h-3.5 w-3.5" aria-hidden="true" />
         </button>
       </div>
-    </template>
+      <div class="space-y-2.5">
+        <button
+          v-for="m in dailyChallenges.slice(0, 3)"
+          :key="m.id"
+          type="button"
+          class="tap-card w-full flex items-center gap-3 rounded-2xl border border-border/60 bg-foreground/[0.02] p-3 text-left"
+          @click="router.push({ name: 'missions', params: { lang: i18n.locale }, query: { missionId: String(m.id) } })"
+        >
+          <div
+            class="grid place-items-center h-10 w-10 shrink-0 rounded-xl"
+            :class="m.is_completed && !m.is_claimed ? 'bg-[hsl(var(--neon))]/15' : 'bg-foreground/[0.05]'"
+          >
+            <component :is="challengeIcon(m)" class="h-5 w-5" :class="m.is_completed && !m.is_claimed ? 'text-[hsl(var(--neon))]' : 'text-muted'" aria-hidden="true" />
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center justify-between gap-2">
+              <p class="text-sm font-semibold text-foreground truncate">{{ challengeTitle(m) }}</p>
+              <span v-if="challengeReward(m)" class="shrink-0 rounded-full bg-[hsl(var(--neon-violet))]/15 px-2 py-0.5 text-[10px] font-bold text-[hsl(var(--neon-violet))] whitespace-nowrap">{{ challengeReward(m) }}</span>
+            </div>
+            <p class="text-[11px] text-muted/70 truncate">{{ challengeDesc(m) }}</p>
+            <div class="mt-1.5 flex items-center gap-2">
+              <div class="h-1.5 flex-1 rounded-full bg-foreground/10 overflow-hidden">
+                <div
+                  class="h-full rounded-full transition-all duration-500"
+                  :style="{ width: challengePct(m) + '%', background: m.is_completed ? 'hsl(var(--neon))' : 'linear-gradient(90deg, hsl(var(--neon)), hsl(var(--neon-violet)))' }"
+                ></div>
+              </div>
+              <span class="shrink-0 text-[10px] tabular-nums text-muted/70">{{ m.current_value || (m.is_completed ? m.goal_value : 0) }}/{{ m.goal_value }}</span>
+            </div>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- Boss board (mobile): a friendly challenge, not a war room -->
+    <button
+      v-if="isMobile && bossData"
+      type="button"
+      class="w-full flex items-center gap-3 rounded-2xl border border-border/60 bg-foreground/[0.02] px-4 py-3 text-left hover:border-[hsl(var(--neon))]/30 transition-colors active:scale-[0.99]"
+      @click="showBossHealth"
+    >
+      <div class="grid place-items-center h-10 w-10 shrink-0 rounded-xl bg-red-500/10">
+        <Sword class="w-5 h-5 text-red-400" aria-hidden="true" />
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-semibold text-foreground truncate">{{ i18n.t('comp_boss_taunt', { boss: bossData.name }) }}</p>
+        <div class="mt-1.5 h-1.5 rounded-full bg-red-950/40 overflow-hidden">
+          <div class="h-full bg-red-500 rounded-full" :style="{ width: `${bossHpPercent}%` }"></div>
+        </div>
+      </div>
+      <ChevronRight class="w-5 h-5 text-muted/50 shrink-0" aria-hidden="true" />
+    </button>
+
+    <!-- ✦ SKILL TREE modal (opened from the "Tu nivel" card) ✦ -->
+    <SkillTreeModal />
 
     <!-- Routines / quick-log placeholder: reserves the space of the guided-plan
          area on first load so the real content fills in WITHOUT pushing the rest
@@ -679,13 +690,15 @@ import axios from 'axios';
 import {
   Trophy, Target, Flame, Zap, Activity, Inbox, Globe, Snowflake,
   Check, X, Trash2, Sword, FlaskConical, Coins, ChevronRight, Share2, Pencil,
-  ClipboardList, LayoutGrid, Dumbbell, Compass
+  ClipboardList, LayoutGrid, Dumbbell, Compass, Sparkles, Gem
 } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';
 import { useNotificationStore } from '@/stores/notification';
 import { useTrainingStore } from '@/stores/training';
 import { useBossStore } from '@/stores/boss';
+import { useRouletteStore } from '@/stores/roulette';
+import { useSkillTreeStore } from '@/stores/skilltree';
 import Heatmap from '@/components/training/Heatmap.vue';
 import RadialProgress from '@/components/ui/RadialProgress.vue';
 import AvatarFrame from '@/components/ui/AvatarFrame.vue';
@@ -699,6 +712,7 @@ import GoalOnboardingModal from '@/components/modals/GoalOnboardingModal.vue';
 import RoutineCarouselModal from '@/components/modals/RoutineCarouselModal.vue';
 import TodayWorkout from '@/components/training/TodayWorkout.vue';
 import WeeklyShareCard from '@/components/modals/WeeklyShareCard.vue';
+import SkillTreeModal from '@/components/dashboard/SkillTreeModal.vue';
 import { getLocalDateString } from '@/utils/dateUtils.js';
 import { buildActiveBoosts } from '@/utils/activeBuffs';
 
@@ -707,6 +721,18 @@ const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
 const trainingStore = useTrainingStore();
 const bossStore = useBossStore();
+const rouletteStore = useRouletteStore();
+const skillTreeStore = useSkillTreeStore();
+
+// Mirrors App.vue's floating-roulette visibility: when a wheel button (available
+// or on cooldown) is shown bottom-right, reserve bottom space so it never traps
+// the last metrics cards under it (issue #278).
+const hasFloatingActions = computed(() =>
+  authStore.isAuthenticated && (
+    rouletteStore.canSpin || rouletteStore.dailyCanSpin ||
+    !!rouletteStore.nextSpinAt || !!rouletteStore.dailyNextSpinAt
+  )
+);
 const router = useRouter();
 const route = useRoute();
 
@@ -736,6 +762,7 @@ const quickStartEvaluated = ref(false);
 const showWeeklyCard = ref(false);
 const suppressRPGModal = ref(false);
 const todayMission = ref(null);
+const dailyChallenges = ref([]); // daily missions list for the "Today's Challenges" card
 const todayMissionStateLoaded = ref(false);
 const missionCompletionPulse = ref(false);
 const missionCompletionStateReady = ref(false);
@@ -1049,6 +1076,23 @@ const dayRingPercent = computed(() => {
   return Math.min(100, Math.round((todayProgress.value / goal) * 100));
 });
 
+// Today's Progress ring sizing — slightly smaller on mobile so two fit side-by-side.
+const ringSize = computed(() => (isMobile.value ? 116 : 132));
+
+// Character-level XP (Boss Level + Next Milestone cards). Augmented by /users/me.
+const bossXpInto = computed(() => Math.max(0, Number(authStore.user?.xp_into_level) || 0));
+const bossXpFor = computed(() => Math.max(1, Number(authStore.user?.xp_for_next_level) || 1));
+const bossXpPercent = computed(() => Math.min(100, Math.round((bossXpInto.value / bossXpFor.value) * 100)));
+const nextLevel = computed(() => userLevel.value + 1);
+const xpToGo = computed(() => Math.max(0, bossXpFor.value - bossXpInto.value));
+const fmtNum = (n) => Number(n || 0).toLocaleString(i18n.locale === 'es' ? 'es-ES' : 'en-US');
+
+// Day-streak ring fill: days trained this week toward the weekly jackpot.
+const streakRingPercent = computed(() => {
+  const target = Math.max(1, weeklyBonusTarget.value);
+  return Math.min(100, Math.round((weeklyBonusProgress.value / target) * 100));
+});
+
 // Count-up: the ring number tweens to the new total after logging instead of
 // snapping, giving the primary action a small celebratory beat. The ring stroke
 // already animates via CSS; this just animates the displayed figure.
@@ -1122,6 +1166,30 @@ const todayMissionTitle = computed(() => {
   return i18n.t('dash_mission_default_title');
 });
 
+// ── Today's Challenges helpers (per-mission, reuse mission fields) ──
+const challengePct = (m) => {
+  if (m.is_completed) return 100;
+  const goal = Math.max(1, Number(m.goal_value) || 1);
+  return Math.max(0, Math.min(100, Math.round((Number(m.current_value || 0) / goal) * 100)));
+};
+const challengeReward = (m) => {
+  if (Number(m.reward_xp) > 0) return `+${m.reward_xp} XP`;
+  if (Number(m.reward_gems) > 0) return `+${m.reward_gems} G`;
+  if (Number(m.reward_coins) > 0) return `+${m.reward_coins} RC`;
+  return '';
+};
+const challengeTitle = (m) => (m.title_key ? i18n.t(m.title_key) : i18n.t('dash_mission_default_title'));
+const challengeDesc = (m) => (m.goal_type ? i18n.t(`goal_howto_${m.goal_type}`, { v: m.goal_value }) : '');
+const challengeIcon = (m) => {
+  const t = m.goal_type || '';
+  if (t === 'streak') return Flame;
+  if (t === 'social_likes') return Share2;
+  if (t === 'buy_any' || t === 'buy_legendary') return Coins;
+  if (t === 'use_consumable') return FlaskConical;
+  if (t.startsWith('xp_') || t === 'reps') return Dumbbell;
+  return Trophy;
+};
+
 const todayMissionProgressLabel = computed(() => {
   const goalLabel = getGoalTypeLabel(todayMission.value?.goal_type);
   if (isDailyObjectiveDone.value) {
@@ -1157,7 +1225,7 @@ const todayMissionActionLabel = computed(() => {
   }
   const goalType = todayMission.value?.goal_type;
   if (goalType === 'social_likes') return i18n.t('dash_mission_go_social');
-  if (goalType === 'buy_any') return i18n.t('dash_mission_go_shop');
+  if (goalType === 'buy_any' || goalType === 'buy_legendary') return i18n.t('dash_mission_go_shop');
   if (goalType === 'use_consumable') return i18n.t('dash_mission_go_inventory');
   return i18n.t('dash_mission_log_now');
 });
@@ -1190,7 +1258,7 @@ const shouldShowFreeLogToggle = computed(() => {
   return !!trainingStore.todayWorkout;
 });
 
-const KNOWN_GOAL_TYPES = ['reps', 'damage', 'streak', 'xp_str', 'xp_pwr', 'xp_end', 'xp_agi', 'social_likes', 'buy_any', 'use_consumable', 'night_owl', 'personal_record'];
+const KNOWN_GOAL_TYPES = ['reps', 'damage', 'streak', 'xp_str', 'xp_pwr', 'xp_end', 'xp_agi', 'social_likes', 'buy_any', 'buy_legendary', 'use_consumable', 'night_owl', 'personal_record'];
 
 const getGoalTypeLabel = (goalType) => {
   if (!KNOWN_GOAL_TYPES.includes(goalType)) return '';
@@ -1210,12 +1278,25 @@ let timerInterval = null;
 
 const activePotions = computed(() => buildActiveBoosts(authStore.user, currentTime.value, i18n));
 
-// Watch for potion expiry to refresh combat stats
-watch(() => activePotions.value.length, (newLen, oldLen) => {
-  if (newLen < oldLen) {
-    refreshAfterLog();
-  }
-});
+// The 1s tick only exists to count down / expire active buffs. Run it solely
+// while there are buffs, so an idle dashboard doesn't re-render every second.
+// activePotions also reacts to authStore.user, so activating a buff (a user
+// update) restarts the timer even while it's frozen. See issue #277.
+const startEffectTimer = () => {
+  if (timerInterval) return;
+  currentTime.value = new Date();
+  timerInterval = setInterval(() => { currentTime.value = new Date(); }, 1000);
+};
+const stopEffectTimer = () => {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+};
+
+// Drive the timer off active-buff count, and refresh combat stats on expiry.
+watch(() => activePotions.value.length, (newLen, oldLen = 0) => {
+  if (newLen > 0) startEffectTimer();
+  else stopEffectTimer();
+  if (newLen < oldLen) refreshAfterLog();
+}, { immediate: true });
 
 const fetchGlobalData = async () => {
   // Don't reset `todayMissionStateLoaded` here — on the first load it starts
@@ -1232,6 +1313,14 @@ const fetchGlobalData = async () => {
     const dailyMissions = missionList.filter(m => m.is_daily);
     const completedUnclaimedDaily = dailyMissions.find(m => m.is_completed && !m.is_claimed);
     todayMission.value = completedUnclaimedDaily || dailyMissions.find(m => !m.is_completed) || dailyMissions[0] || null;
+    // "Today's Challenges": all active missions (not yet claimed-and-done), with
+    // claim-ready first, then daily, then the rest — so the card always has content.
+    dailyChallenges.value = missionList
+      .filter(m => !(m.is_completed && m.is_claimed))
+      .sort((a, b) => {
+        const score = (m) => (m.is_completed && !m.is_claimed ? 0 : 1) + (m.is_daily ? 0 : 0.1);
+        return score(a) - score(b);
+      });
     todayMissionStateLoaded.value = true;
   } catch (err) {
     console.error('Error fetching global dashboard data:', err);
@@ -1298,13 +1387,16 @@ const refreshAfterLog = async () => {
 // IMPORTANT: it never flips `guidedTrainingStateLoaded` back to false. Once the
 // layout is up it stays mounted; only the data inside refreshes. Flipping it off
 // mid-load is what made the cards appear → disappear → reappear on every reload.
-const fetchData = async () => {
+// `skipFetchMine`: on initial mount, onMounted already calls fetchMine() to
+// reveal the layout early, so fetchData skips it to avoid a duplicate
+// GET /api/training/me. Mutation-triggered calls keep the default (refresh it).
+const fetchData = async ({ skipFetchMine = false } = {}) => {
   try {
     const statsRes = await fetchExerciseData();
     await Promise.all([
       fetchStreakStatus(),
       fetchGlobalData(),
-      trainingStore.fetchMine()
+      ...(skipFetchMine ? [] : [trainingStore.fetchMine()])
     ]);
     guidedTrainingStateLoaded.value = true;
 
@@ -1418,7 +1510,7 @@ const handleTodayMissionAction = async () => {
     router.push({ name: 'social', params: { lang: i18n.locale } });
     return;
   }
-  if (goalType === 'buy_any') {
+  if (goalType === 'buy_any' || goalType === 'buy_legendary') {
     router.push({ name: 'shop', params: { lang: i18n.locale } });
     return;
   }
@@ -1503,6 +1595,8 @@ const updateIsMobile = () => {
 onMounted(async () => {
   updateIsMobile();
   window.addEventListener('resize', updateIsMobile);
+  // Populate the skill-point pill on the "Tu nivel" card (modal refetches on open).
+  skillTreeStore.fetchTree();
 
   // Check for exercise pre-selection from query params
   const urlParams = new URLSearchParams(window.location.search);
@@ -1523,13 +1617,10 @@ onMounted(async () => {
   // evaluation), decided once on real data. Deciding here too — on a stale
   // totalReps of 0 — was the fragile bit that risked two modals stacking.
 
-  fetchData();
+  fetchData({ skipFetchMine: true });
   handleLogQueryIntent();
-
-  // Timer for active effects
-  timerInterval = setInterval(() => {
-    currentTime.value = new Date();
-  }, 1000);
+  // The active-effects timer is started on demand by the activePotions watcher,
+  // so an idle dashboard with no buffs never ticks every second (issue #277).
 });
 
 onUnmounted(() => {

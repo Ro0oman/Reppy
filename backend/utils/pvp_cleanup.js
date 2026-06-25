@@ -1,6 +1,27 @@
 import { query } from '../db.js';
 import { broadcastPvP } from '../socketManager.js';
 
+const CLEANUP_THROTTLE_MS = 2 * 60 * 1000; // run at most once every 2 minutes
+let lastCleanupAt = 0;
+let cleanupInFlight = false;
+
+/**
+ * Non-blocking, throttled trigger for hot read paths (e.g. GET /feed). Callers
+ * must NOT await this — it kicks off cleanup in the background at most once per
+ * throttle window, so requests never pay the cost while expired fights still
+ * get finalized within ~2 minutes of activity. On a long-running server the
+ * cron in index.js drives it independently of traffic. See issue #263.
+ */
+export function triggerFightCleanup() {
+  const now = Date.now();
+  if (cleanupInFlight || now - lastCleanupAt < CLEANUP_THROTTLE_MS) return;
+  lastCleanupAt = now;
+  cleanupInFlight = true;
+  autoFinishExpiredFights()
+    .catch((e) => console.error('triggerFightCleanup error:', e))
+    .finally(() => { cleanupInFlight = false; });
+}
+
 /**
  * Automatically finishes PvP fights that have exceeded their time limit.
  */

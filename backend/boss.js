@@ -8,6 +8,7 @@ const BOSS_RESET_LOCK = 919191;
 
 import { getRandomPhrase } from './utils/bossPhrases.js';
 import { getLocalDateString } from './utils/date.js';
+import { getPerkBonuses } from './utils/perks.js';
 
 const router = express.Router();
 
@@ -224,12 +225,18 @@ router.post('/open-chest', authenticate, async (req, res) => {
       // count negative, and a loser of the race matches 0 rows — so loot is only
       // ever generated once per chest, even under concurrent open requests.
       const spendRes = await client.query(
-        'UPDATE users SET boss_chests = boss_chests - 1 WHERE id = $1 AND boss_chests > 0 RETURNING boss_chests',
+        'UPDATE users SET boss_chests = boss_chests - 1 WHERE id = $1 AND boss_chests > 0 RETURNING boss_chests, skill_perks',
         [userId]
       );
       if (spendRes.rowCount === 0) {
         return { status: 400, body: { message: 'No tienes cofres para abrir' } };
       }
+
+      // Skill perks: chest_bounty (+% coins), chest_luck (better rarity odds),
+      // treasure (chance of an extra item).
+      const { chestCoinPct, chestLuck, chestItemChance } = getPerkBonuses(spendRes.rows[0].skill_perks);
+      const luckMult = 1 + chestLuck;
+      const itemCount = numItems + (Math.random() < chestItemChance ? 1 : 0);
 
       const rewards = [];
       let totalCoins = 0;
@@ -239,14 +246,14 @@ router.post('/open-chest', authenticate, async (req, res) => {
       totalCoins += baseGold;
       rewards.push({ type: 'coins', amount: baseGold, message: 'Oro garantizado' });
 
-      for (let i = 0; i < numItems; i++) {
-        // Random rarity weighted logic
+      for (let i = 0; i < itemCount; i++) {
+        // Random rarity weighted logic — chest_luck widens the higher-rarity bands.
         const rand = Math.random();
         let targetRarity = 'common';
-        if (rand < 0.005) targetRarity = 'calistenico';
-        else if (rand < 0.03) targetRarity = 'legendary';
-        else if (rand < 0.12) targetRarity = 'especial';
-        else if (rand < 0.35) targetRarity = 'rare';
+        if (rand < 0.005 * luckMult) targetRarity = 'calistenico';
+        else if (rand < 0.03 * luckMult) targetRarity = 'legendary';
+        else if (rand < 0.12 * luckMult) targetRarity = 'especial';
+        else if (rand < 0.35 * luckMult) targetRarity = 'rare';
 
         // Try to find an unowned item of that rarity
         let itemRes = await client.query(`
@@ -301,6 +308,8 @@ router.post('/open-chest', authenticate, async (req, res) => {
         }
       }
 
+      // chest_bounty perk: boost the total gold from this chest.
+      totalCoins = Math.round(totalCoins * (1 + chestCoinPct));
       // Add the coins won (the chest was already spent by the gate above).
       await client.query('UPDATE users SET reppy_coins = reppy_coins + $1 WHERE id = $2', [totalCoins, userId]);
 

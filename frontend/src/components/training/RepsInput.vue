@@ -197,6 +197,11 @@ const addReps = async (count) => {
     }
     // ─────────────────────────────────────────────────────────────────
 
+    // gem_vein skill perk: celebrate a lucky gem drop.
+    if (res.data.gem_dropped) {
+      notificationStore.notify(i18n.t('skilltree_gem_dropped'), 'success');
+    }
+
     // Refresh global user state to sync header level/XP
     const authStore = useAuthStore();
     await authStore.fetchProfile();

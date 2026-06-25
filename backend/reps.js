@@ -7,6 +7,7 @@ import { recalculateUserStats, augmentUserWithLevels } from './utils/stats.js';
 import { syncBossHealth } from './utils/boss.js';
 import { getLocalDateString } from './utils/date.js';
 import { calculateDamage } from './utils/damage.js';
+import { getPerkBonuses } from './utils/perks.js';
 import { getUserWithGear } from './utils/user.js';
 import { updateMissionProgress } from './utils/missions.js';
 import { updateChallengeScores } from './utils/challenges.js';
@@ -80,23 +81,48 @@ router.post('/', authenticate, async (req, res) => {
     const augmentedUser = augmentUserWithLevels(userResult.rows[0]);
     const dmgResult = calculateDamage(augmentedUser, effectiveCount, exercise_type, null, false, false, diffMult, added_weight);
 
+    // daily_blessing perk: bonus applies on a SECOND+ session the same day, so we
+    // check for an existing rep today BEFORE inserting this one.
+    const todayStr = date || getLocalDateString();
+    const trainedTodayRes = await client.query(
+      'SELECT 1 FROM reps WHERE user_id = $1 AND date = $2 AND count > 0 LIMIT 1',
+      [userId, todayStr]
+    );
+    const trainedTodayAlready = trainedTodayRes.rows.length > 0;
+
     // 1. Insert or update reps
     const repResult = await client.query(
-      `INSERT INTO reps (user_id, count, date, exercise_type, added_weight, is_crit) 
-       VALUES ($1, $2, $3, $4, $5, $6) 
-       ON CONFLICT (user_id, date, exercise_type) 
+      `INSERT INTO reps (user_id, count, date, exercise_type, added_weight, is_crit)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       ON CONFLICT (user_id, date, exercise_type)
        DO UPDATE SET count = reps.count + EXCLUDED.count,
                      added_weight = EXCLUDED.added_weight,
                      is_crit = EXCLUDED.is_crit
        RETURNING *`,
-      [userId, rawCount, date || getLocalDateString(), exercise_type, parseFloat(added_weight) || 0, dmgResult.isCrit]
+      [userId, rawCount, todayStr, exercise_type, parseFloat(added_weight) || 0, dmgResult.isCrit]
     );
 
     // 2. Rewards (Coins only, XP handled by recalculateUserStats)
-    const earnedCoins = coinMult != null
+    const baseCoins = coinMult != null
       ? Math.round(rewardCount * coinMult)
       : getExerciseRewards(exercise_type, rewardCount, statTypeOverride).coins;
+    // Skill perks: coin_gain (%), coin_flat (per rep), daily_blessing (% on repeat days).
+    const perkBonuses = getPerkBonuses(augmentedUser.skill_perks);
+    const { coinPct, coinFlatPerRep, dailyCoinPct, gemChance } = perkBonuses;
+    const dailyPct = trainedTodayAlready ? dailyCoinPct : 0;
+    const earnedCoins = Math.round((baseCoins * (1 + coinPct + dailyPct)) + (coinFlatPerRep * rewardCount));
     await client.query(`UPDATE users SET reppy_coins = GREATEST(0, reppy_coins + $1) WHERE id = $2`, [earnedCoins, userId]);
+
+    // gem_vein perk: one roll per logging event for a free Reppy Gem.
+    let gemDropped = 0;
+    if (gemChance > 0 && Math.random() < gemChance) {
+      gemDropped = 1;
+      await client.query('UPDATE users SET reppy_gems = reppy_gems + 1 WHERE id = $1', [userId]);
+      await client.query(
+        "INSERT INTO gem_transactions (user_id, amount, source, description) VALUES ($1, 1, 'skill_gem_vein', 'Veta de gemas')",
+        [userId]
+      );
+    }
 
     // 3. Boss Interaction
     const bossRes = await client.query(
@@ -292,6 +318,7 @@ router.post('/', authenticate, async (req, res) => {
       damage_dealt_this_set: actualDamageDealt,
       jackpot_awarded: jackpotAwarded,
       jackpot_coins: jackpotAwarded ? JACKPOT_REWARD_COINS : 0,
+      gem_dropped: gemDropped,
     });
 
     // Broadcast damage event for real-time visualization
@@ -323,6 +350,7 @@ router.get('/heatmap', authenticate, async (req, res) => {
     
     let q = `SELECT TO_CHAR(r.date, 'YYYY-MM-DD') AS date, r.exercise_type,
                     COALESCE(e.title_key, r.exercise_type) AS title_key,
+                    COALESCE(e.unit, 'reps') AS unit,
                     SUM(r.count)::int as count
              FROM reps r
              LEFT JOIN exercises e ON e.slug = r.exercise_type
@@ -340,7 +368,7 @@ router.get('/heatmap', authenticate, async (req, res) => {
     }
     // No date limit when no year specified — show full history
 
-    q += ' GROUP BY r.date, r.exercise_type, e.title_key ORDER BY date ASC';
+    q += ' GROUP BY r.date, r.exercise_type, e.title_key, e.unit ORDER BY date ASC';
 
     const result = await query(q, params);
 

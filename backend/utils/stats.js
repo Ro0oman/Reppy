@@ -2,6 +2,7 @@ import { query } from '../db.js';
 import { createNotification } from './notifications.js';
 import { getLocalDateString } from './date.js';
 import { getStreakStatus } from './streak.js';
+import { getPerkBonuses } from './perks.js';
 
 /**
  * Shared utility to recalculate and sync user stats (total_reps and XP levels)
@@ -148,6 +149,7 @@ export const recalculateUserStats = async (userId, force = false) => {
     // 1. Get user data for level tracking
     const userRes = await query(`
       SELECT body_weight, current_level, level_chests_claimed, level_chests, cha_xp, last_streak_reward_date,
+             skill_points, skill_points_claimed, skill_perks,
              equipped_head_id, equipped_weapon_id, equipped_armor_id, equipped_boots_id
       FROM users WHERE id = $1
     `, [userId]);
@@ -225,8 +227,13 @@ export const recalculateUserStats = async (userId, force = false) => {
     // Include charisma
     const chaXP = user.cha_xp || 0;
 
-    // Total XP for Character Level
-    const totalXP = strXP + dexXP + endXP + vigXP + intXP + fthXP + chaXP;
+    // Skill-tree perks that affect progression (scholar = +% XP, mentor = bonus points).
+    const progressionBonuses = getPerkBonuses(user.skill_perks);
+
+    // Total XP for Character Level. The scholar perk boosts the global character
+    // XP (and thus level), not the individual stat levels.
+    const rawTotalXP = strXP + dexXP + endXP + vigXP + intXP + fthXP + chaXP;
+    const totalXP = Math.floor(rawTotalXP * (1 + progressionBonuses.xpPct));
 
     // 4. Character Level Calculation (Dynamic Quadratic: base 1000)
     // L = (1 + sqrt(1 + 8 * totalXP / 1000)) / 2
@@ -239,12 +246,13 @@ export const recalculateUserStats = async (userId, force = false) => {
     const xpIntoLevel = totalXP - xpCurrentLevelStart;
     const xpForNextLevel = xpNextLevelStart - xpCurrentLevelStart;
 
-    // 5. Reward Logic (Every level reached gives a chest)
-    let additionalChests = 0;
+    // 5. Reward Logic. Levelling no longer grants a chest — the skill point earned
+    // per level (granted below) is the reward. We still track level_chests_claimed
+    // purely to detect a fresh level-up for the notification (no chests added).
+    const additionalChests = 0;
     let newLevelChestsClaimed = user.level_chests_claimed || 1;
 
     if (newLevel > newLevelChestsClaimed) {
-      additionalChests = newLevel - newLevelChestsClaimed;
       newLevelChestsClaimed = newLevel;
 
       await createNotification(
@@ -254,16 +262,25 @@ export const recalculateUserStats = async (userId, force = false) => {
         `¡Has alcanzado el nivel ${newLevel}!`,
         newLevel.toString()
       );
-
-      await createNotification(
-        userId,
-        'NEW_CHEST',
-        null,
-        `Has recibido ${additionalChests} cofre(s) por subir de nivel`,
-        'LEVEL_CHEST'
-      );
     }
-    
+
+    // --- SKILL POINTS (1 per level reached) — mirrors the chest grant above ---
+    let additionalSkillPoints = 0;
+    let newSkillPointsClaimed = user.skill_points_claimed || 1;
+    if (newLevel > newSkillPointsClaimed) {
+      additionalSkillPoints = newLevel - newSkillPointsClaimed;
+      newSkillPointsClaimed = newLevel;
+
+      // mentor perk: each new level independently rolls for +1 bonus skill point.
+      if (progressionBonuses.pointChance > 0) {
+        let bonusPoints = 0;
+        for (let i = 0; i < additionalSkillPoints; i++) {
+          if (Math.random() < progressionBonuses.pointChance) bonusPoints++;
+        }
+        additionalSkillPoints += bonusPoints;
+      }
+    }
+
     // --- STREAK REWARDS ---
     const todayStr = getLocalDateString();
     let additionalCoins = 0;
@@ -302,18 +319,22 @@ export const recalculateUserStats = async (userId, force = false) => {
         level_chests = COALESCE(level_chests, 0) + $11,
         level_chests_claimed = $12,
         reppy_coins = reppy_coins + $13,
-        last_streak_reward_date = $14
+        last_streak_reward_date = $14,
+        skill_points = COALESCE(skill_points, 0) + $15,
+        skill_points_claimed = $16
       WHERE id = $1
     `, [
-      userId, 
-      totalReps, 
-      strXP, dexXP, endXP, vigXP, intXP, fthXP, 
-      totalXP, 
-      newLevel, 
-      additionalChests, 
+      userId,
+      totalReps,
+      strXP, dexXP, endXP, vigXP, intXP, fthXP,
+      totalXP,
+      newLevel,
+      additionalChests,
       newLevelChestsClaimed,
       additionalCoins,
-      newLastStreakRewardDate
+      newLastStreakRewardDate,
+      additionalSkillPoints,
+      newSkillPointsClaimed
     ]);
     
     // 7. Mission Triggers (XP and Streaks are absolute values, use isIncremental = false)

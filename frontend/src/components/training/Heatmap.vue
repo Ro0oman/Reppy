@@ -101,7 +101,7 @@
                           <span class="text-[10px] font-bold text-zinc-300 uppercase tracking-widest">{{
                             exerciseLabel(item) }}</span>
                         </div>
-                        <span class="text-lg font-black text-white tabular-nums">{{ item.count }}</span>
+                        <span class="text-lg font-black text-white tabular-nums">{{ formatBreakdownCount(item) }}</span>
                       </div>
                     </div>
                   </div>
@@ -231,8 +231,13 @@ const dataMap = computed(() => {
     if (!acc[dStr]) {
       acc[dStr] = { total: 0, breakdown: [] };
     }
-    acc[dStr].total += Number(curr.count);
-    acc[dStr].breakdown.push({ type: curr.exercise_type, title_key: curr.title_key, count: Number(curr.count) });
+    // Timed exercises (dead hang, imported warm-ups, …) store seconds in `count`.
+    // They must not be summed into the day's REP total — that's what made Hevy
+    // imports show "raras" totals that didn't match the app (issue #293). They
+    // still appear in the breakdown, formatted with a time unit.
+    const isTimed = curr.unit === 'seconds';
+    if (!isTimed) acc[dStr].total += Number(curr.count);
+    acc[dStr].breakdown.push({ type: curr.exercise_type, title_key: curr.title_key, count: Number(curr.count), unit: curr.unit || 'reps' });
     return acc;
   }, {});
 });
@@ -345,8 +350,24 @@ const getIconForType = (type) => {
 // fall back to translating the raw slug.
 const exerciseLabel = (item) => {
   const tk = item.title_key;
-  if (tk) return tk.startsWith('ex_') ? i18n.t(tk) : tk;
+  // Unmapped Hevy imports (warm-ups, machines, …) get a `hevy_<templateId>` slug.
+  // When no human title was captured, title_key falls back to that slug — never
+  // leak it raw; show a generic label instead. New imports keep their real name.
+  const looksLikeHevySlug = (s) => typeof s === 'string' && /^hevy_/i.test(s);
+  if (tk && !looksLikeHevySlug(tk)) return tk.startsWith('ex_') ? i18n.t(tk) : tk;
+  if (looksLikeHevySlug(tk) || looksLikeHevySlug(item.type)) return i18n.t('ex_imported_generic');
   return i18n.t(item.type);
+};
+
+// Timed exercises store seconds; show them as mm:ss (or s) instead of a raw
+// number that reads like reps (issue #293). Rep-based exercises stay as-is.
+const formatBreakdownCount = (item) => {
+  const n = Number(item.count) || 0;
+  if (item.unit !== 'seconds') return n.toLocaleString();
+  if (n < 60) return `${n}s`;
+  const m = Math.floor(n / 60);
+  const s = n % 60;
+  return s === 0 ? `${m}min` : `${m}:${String(s).padStart(2, '0')}`;
 };
 </script>
 
