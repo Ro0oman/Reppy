@@ -93,18 +93,13 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import axios from 'axios';
 import { Zap, Check, Sword, Plus, Minus } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';
-import { useNotificationStore } from '@/stores/notification';
-import { useDamageStore } from '@/stores/damage';
-import { getLocalDateString } from '@/utils/dateUtils.js';
-import { markPushPromptEligible } from '@/utils/pushEligibility.js';
-import { useAudio } from '@/composables/useAudio';
+import { useRepLogger } from '@/composables/useRepLogger';
 import { estimateDamage } from '@/utils/damageCalculator';
 
-const { playHit } = useAudio();
+const { loading, logReps } = useRepLogger();
 const authStore = useAuthStore();
 const props = defineProps({
   exerciseType: {
@@ -114,7 +109,6 @@ const props = defineProps({
 });
 
 const i18n = useI18nStore();
-const notificationStore = useNotificationStore();
 const emit = defineEmits(['updated']);
 const selectedReps = ref(10);
 const addedWeight = ref(null);
@@ -129,8 +123,6 @@ const uiText = computed(() => isEs.value
 const activeLabel = computed(() => {
   return i18n.t(props.exerciseType);
 });
-
-const loading = ref(false);
 
 const damagePreview = computed(() => {
   const reps = Number(selectedReps.value) || 0;
@@ -159,66 +151,14 @@ const decrementReps = () => {
   selectedReps.value = Math.max(1, normalizedReps.value - 1);
 };
 
-const addReps = async (count) => {
-  if (!count || loading.value) return;
-  
-  loading.value = true;
-  playHit();
-  try {
-    const today = getLocalDateString();
-    const res = await axios.post('/api/reps', {
-      count,
-      date: today,
-      exercise_type: props.exerciseType,
-      added_weight: addedWeight.value || 0
-    });
-    
-    // Damage animation
-    const damageToAnimate = res.data.damage_dealt_this_set ?? res.data.boss_damage_dealt;
-    if (damageToAnimate > 0) {
-      const damageStore = useDamageStore();
-      damageStore.addDamage(damageToAnimate, props.exerciseType, undefined, undefined, res.data.is_crit);
-    }
-
-    // ── 5/7 JACKPOT feedback ──────────────────────────────────────────
-    if (res.data.jackpot_awarded) {
-      const jackpotMsg = i18n.locale === 'es'
-        ? `🎉 ¡Bonus semanal! +${res.data.jackpot_coins} RC por entrenar ${5} días esta semana`
-        : `🎉 Weekly bonus! +${res.data.jackpot_coins} RC for training ${5} days this week`;
-      notificationStore.notify(jackpotMsg, 'success');
-      // Big confetti burst
-      try {
-        const { default: confetti } = await import('canvas-confetti');
-        confetti({ particleCount: 120, spread: 90, origin: { y: 0.6 }, colors: ['#3b82f6','#60a5fa','#34d399','#fbbf24'] });
-      } catch (_) {}
-    } else {
-      const msg = i18n.locale === 'es' ? `+${count} reps registradas` : `+${count} reps logged`;
-      notificationStore.notify(msg, 'success');
-    }
-    // ─────────────────────────────────────────────────────────────────
-
-    // gem_vein skill perk: celebrate a lucky gem drop.
-    if (res.data.gem_dropped) {
-      notificationStore.notify(i18n.t('skilltree_gem_dropped'), 'success');
-    }
-
-    // Refresh global user state to sync header level/XP
-    const authStore = useAuthStore();
-    await authStore.fetchProfile();
-    markPushPromptEligible();
-
-    emit('updated');
-  } catch (error) {
-    console.error('Error logging reps:', error);
-    notificationStore.notify('Failed to log reps', 'error');
-  } finally {
-    loading.value = false;
-  }
-};
-
 const submitReps = async () => {
   const repsToSubmit = Math.max(1, normalizedReps.value);
-  await addReps(repsToSubmit);
+  const res = await logReps({
+    count: repsToSubmit,
+    exerciseType: props.exerciseType,
+    addedWeight: addedWeight.value || 0,
+  });
+  if (res) emit('updated');
 };
 </script>
 

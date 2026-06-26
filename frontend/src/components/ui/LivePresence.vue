@@ -1,6 +1,7 @@
 <template>
   <div class="flex flex-col gap-3 animate-in fade-in slide-in-from-right-4 duration-500">
-    <div 
+    <div
+      v-if="!modalOnly"
       class="flex items-center justify-between mb-4 cursor-pointer group/title"
       @click="showModal = true"
     >
@@ -18,9 +19,9 @@
       </span>
     </div>
     
-    <div class="flex -space-x-2 overflow-hidden p-1">
-      <div 
-        v-for="user in displayOperatives.slice(0, 8)" 
+    <div v-if="!modalOnly" class="flex -space-x-2 overflow-hidden p-1">
+      <div
+        v-for="user in displayOperatives.slice(0, 8)"
         :key="user.id"
         class="cursor-pointer relative group"
         @click="showModal = true"
@@ -131,11 +132,19 @@ import { useRouter } from 'vue-router';
 import { Users, X } from 'lucide-vue-next';
 import { isDeveloper } from '@/utils/developers';
 
+defineProps({
+  // When true, render only the modal (no avatar strip/title); open via the
+  // exposed open() method. Used by the battle view's participant counter.
+  modalOnly: { type: Boolean, default: false },
+});
+
 const socketStore = useSocketStore();
 const authStore = useAuthStore();
 const router = useRouter();
 const i18n = useI18nStore();
 const showModal = ref(false);
+
+defineExpose({ open: () => { showModal.value = true; } });
 
 const displayOperatives = computed(() => {
   const ops = [...socketStore.activeOperatives];

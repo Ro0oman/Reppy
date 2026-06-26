@@ -1,30 +1,46 @@
 <template>
   <div class="max-w-7xl mx-auto w-full px-4 space-y-4 sm:space-y-6 pt-2 sm:pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700"
     :class="hasFloatingActions ? 'pb-40 lg:pb-52' : 'pb-24'">
-    <!-- ✦ GREETING — refreshed neon hero card ✦ -->
-    <div class="relative overflow-hidden rounded-3xl border border-border/60 bg-foreground/[0.03] p-4 sm:p-5">
-      <Sparkles class="pointer-events-none absolute -right-4 -top-4 h-24 w-24 text-[hsl(var(--neon))]/[0.12]" aria-hidden="true" />
-      <div class="relative flex items-center gap-3 sm:gap-4">
-        <RadialProgress :progress="dayRingPercent" :size="isMobile ? 50 : 58" :stroke-width="4" color="neon" glow gradient>
-          <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :size="isMobile ? 38 : 46" />
-        </RadialProgress>
-        <div class="min-w-0 flex-1">
-          <h1 class="truncate text-lg sm:text-xl font-bold tracking-tight text-foreground">
-            {{ greeting }}<span class="text-[hsl(var(--neon))]">, {{ firstName }}</span>
-          </h1>
-          <p class="mt-0.5 text-xs sm:text-sm text-muted/80 truncate">{{ i18n.t('dash_ready_subtitle') }}</p>
+
+    <!-- ✦ CAMPAMENTO — entrar a la batalla (acceso protagonista) ✦ -->
+    <router-link :to="{ name: 'battle', params: { lang: i18n.locale } }"
+      class="group relative block overflow-hidden rounded-3xl border border-orange-500/30 p-4 sm:p-5 shadow-lg shadow-orange-900/20 transition-transform active:scale-[0.99]">
+      <div class="absolute inset-0 -z-10 bg-gradient-to-br from-[#1a0d09] via-[#2a120a] to-[#0c0705]"></div>
+      <div class="absolute inset-0 -z-10 bg-[radial-gradient(120%_120%_at_85%_-10%,rgba(234,88,12,0.45),transparent_55%)]"></div>
+      <div class="flex items-center justify-between gap-4">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <p class="text-[10px] font-black uppercase tracking-[0.3em] text-orange-300/80">{{ i18n.t('camp_title') }}</p>
+            <NewBadge feature-key="battle_view" />
+          </div>
+          <h2 class="mt-1 text-xl sm:text-2xl font-black uppercase tracking-tight text-white">
+            {{ dayRingPercent > 0 ? i18n.t('camp_resume_adventure') : i18n.t('camp_start_adventure') }}
+          </h2>
+          <p class="mt-1 text-xs text-orange-100/60">{{ i18n.t('camp_enter_battle_hint') }}</p>
         </div>
-        <button
-          type="button"
-          class="shrink-0 flex items-center gap-1.5 rounded-full border border-[hsl(var(--neon))]/25 bg-[hsl(var(--neon))]/10 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-[hsl(var(--neon))] transition hover:bg-[hsl(var(--neon))]/20 active:scale-95"
-          :aria-label="i18n.t('dash_my_week')"
-          @click="showWeeklyCard = true"
-        >
-          <Share2 class="w-3.5 h-3.5" aria-hidden="true" />
-          <span class="hidden sm:inline">{{ i18n.t('dash_my_week') }}</span>
-        </button>
+        <span class="shrink-0 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/40 transition-transform group-active:scale-95 group-hover:scale-105">
+          <Sword class="h-7 w-7" />
+        </span>
       </div>
+    </router-link>
+
+    <!-- ✦ ESTACIONES DEL CAMPAMENTO — gestión entre batallas (rutas existentes) ✦ -->
+    <div class="grid grid-cols-4 gap-2 sm:gap-3">
+      <router-link v-for="st in campStations" :key="st.id" :to="st.to"
+        class="group relative flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-amber-500/15 bg-foreground/[0.03] py-3 transition-all hover:border-amber-500/35 hover:bg-amber-500/[0.06] active:scale-[0.97]">
+        <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-500 transition-transform group-hover:scale-105">
+          <component :is="st.icon" class="h-[18px] w-[18px]" />
+        </span>
+        <span class="text-[10px] sm:text-[11px] font-bold text-foreground/80">{{ st.label }}</span>
+        <span v-if="st.count > 0"
+          class="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-black text-white ring-2 ring-background">
+          {{ st.count }}
+        </span>
+        <span v-else-if="st.dot"
+          class="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-background"></span>
+      </router-link>
     </div>
+
 
     <!-- ✦ BOSS LEVEL — tap to open the skill tree (Senda del Boss) ✦ -->
     <div
@@ -41,8 +57,8 @@
             <p class="text-xs font-semibold text-muted">{{ i18n.t('dash_boss_level') }}</p>
             <span
               v-if="skillTreeStore.skillPoints > 0"
-              class="rounded-full bg-[hsl(var(--neon))]/15 px-2 py-0.5 text-[10px] font-bold text-[hsl(var(--neon))] glow-neon whitespace-nowrap"
-            >{{ i18n.t('skilltree_points', { n: skillTreeStore.skillPoints }) }}</span>
+              class="rounded-full bg-[hsl(var(--neon))]/15 px-2 py-0.5 text-[10px] font-bold text-[hsl(var(--neon))] glow-neon"
+            >{{ i18n.t('skilltree_points_available', { n: skillTreeStore.skillPoints }) }}</span>
           </div>
           <p class="mt-0.5 text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground leading-none">
             {{ i18n.t('comp_level_short') }} {{ userLevel }}
@@ -690,7 +706,8 @@ import axios from 'axios';
 import {
   Trophy, Target, Flame, Zap, Activity, Inbox, Globe, Snowflake,
   Check, X, Trash2, Sword, FlaskConical, Coins, ChevronRight, Share2, Pencil,
-  ClipboardList, LayoutGrid, Dumbbell, Compass, Sparkles, Gem
+  ClipboardList, LayoutGrid, Dumbbell, Compass, Sparkles, Gem,
+  Gift, Shield, ShoppingBag
 } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';
@@ -699,6 +716,7 @@ import { useTrainingStore } from '@/stores/training';
 import { useBossStore } from '@/stores/boss';
 import { useRouletteStore } from '@/stores/roulette';
 import { useSkillTreeStore } from '@/stores/skilltree';
+import { useBadgesStore } from '@/stores/badges';
 import Heatmap from '@/components/training/Heatmap.vue';
 import RadialProgress from '@/components/ui/RadialProgress.vue';
 import AvatarFrame from '@/components/ui/AvatarFrame.vue';
@@ -713,6 +731,7 @@ import RoutineCarouselModal from '@/components/modals/RoutineCarouselModal.vue';
 import TodayWorkout from '@/components/training/TodayWorkout.vue';
 import WeeklyShareCard from '@/components/modals/WeeklyShareCard.vue';
 import SkillTreeModal from '@/components/dashboard/SkillTreeModal.vue';
+import NewBadge from '@/components/battle/NewBadge.vue';
 import { getLocalDateString } from '@/utils/dateUtils.js';
 import { buildActiveBoosts } from '@/utils/activeBuffs';
 
@@ -723,6 +742,20 @@ const trainingStore = useTrainingStore();
 const bossStore = useBossStore();
 const rouletteStore = useRouletteStore();
 const skillTreeStore = useSkillTreeStore();
+const badgesStore = useBadgesStore();
+
+// Camp "stations": quick access to the RPG-loop destinations that are NOT in the
+// bottom nav. Counts come from the shared badges store (fetched in App init).
+const campStations = computed(() => [
+  { id: 'missions', icon: ClipboardList, label: i18n.t('camp_station_missions'),
+    to: { name: 'missions', params: { lang: i18n.locale } }, count: badgesStore.missions_claimable },
+  { id: 'chests', icon: Gift, label: i18n.t('camp_station_chests'),
+    to: { name: 'inventory', params: { lang: i18n.locale }, query: { cat: 'chests' } }, count: badgesStore.chests_total },
+  { id: 'gear', icon: Shield, label: i18n.t('camp_station_gear'),
+    to: { name: 'inventory', params: { lang: i18n.locale }, query: { tab: 'customization' } }, dot: badgesStore.inventory_new },
+  { id: 'shop', icon: ShoppingBag, label: i18n.t('camp_station_shop'),
+    to: { name: 'shop', params: { lang: i18n.locale } } },
+]);
 
 // Mirrors App.vue's floating-roulette visibility: when a wheel button (available
 // or on cooldown) is shown bottom-right, reserve bottom space so it never traps

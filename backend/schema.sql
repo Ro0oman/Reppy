@@ -195,6 +195,10 @@ CREATE TABLE IF NOT EXISTS boss_fights (
     tier2_chest_unlocked BOOLEAN DEFAULT false,
     tier3_chest_unlocked BOOLEAN DEFAULT false,
     weakness_stat VARCHAR(50) DEFAULT 'str', -- 'str', 'dex', 'end', 'vig', 'int', 'fth'
+    image_url TEXT,           -- static fallback art
+    boss_gif TEXT,            -- idle video filename, served from /public/video (optional)
+    boss_damaged TEXT,        -- hit-reaction video filename, served from /public/video (optional)
+    order_index INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -339,3 +343,11 @@ BEGIN
     END LOOP;
   END LOOP;
 END $$;
+
+-- Per-user "feature seen" flags that drive the NEW badges/dots in the UI.
+CREATE TABLE IF NOT EXISTS user_feature_seen (
+    user_id     VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    feature_key VARCHAR(64) NOT NULL,
+    seen_at     TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, feature_key)
+);
