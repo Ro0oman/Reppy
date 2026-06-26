@@ -29,8 +29,9 @@
             @show-live="liveRef?.open()" />
         </div>
 
-        <!-- Right: controls (potions + register reps) -->
+        <!-- Right: controls (active buffs + potions + register reps) -->
         <div class="space-y-1.5 lg:space-y-3">
+          <BattleActiveBuffs />
           <QuickPotions @activated="onPotionActivated" />
           <BattleRepsPanel :loading="logging" :streak="streak" @train="onTrain" />
         </div>
@@ -49,6 +50,7 @@ import RpgTopBar from '@/components/battle/RpgTopBar.vue';
 import PlayerCard from '@/components/battle/PlayerCard.vue';
 import BossArena from '@/components/battle/BossArena.vue';
 import QuickPotions from '@/components/battle/QuickPotions.vue';
+import BattleActiveBuffs from '@/components/battle/BattleActiveBuffs.vue';
 import BattleRepsPanel from '@/components/battle/BattleRepsPanel.vue';
 import LivePresence from '@/components/ui/LivePresence.vue';
 import { useBossStore } from '@/stores/boss';
