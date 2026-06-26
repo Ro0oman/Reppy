@@ -61,12 +61,12 @@ router.get('/bosses', authenticate, isAdmin, async (req, res) => {
 
 // Create/Spawn Boss
 router.post('/bosses', authenticate, isAdmin, async (req, res) => {
-  const { name, description, total_hp, start_date, end_date, image_url, order_index } = req.body;
+  const { name, description, total_hp, start_date, end_date, image_url, boss_gif, boss_damaged, order_index } = req.body;
   try {
     const result = await query(
-      `INSERT INTO boss_fights (name, description, total_hp, current_hp, start_date, end_date, image_url, order_index)
-       VALUES ($1, $2, $3, $3, $4, $5, $6, $7) RETURNING *`,
-      [name, description, total_hp, start_date || new Date(), end_date || new Date(Date.now() + 100 * 365 * 24 * 60 * 60 * 1000), image_url, order_index || 0]
+      `INSERT INTO boss_fights (name, description, total_hp, current_hp, start_date, end_date, image_url, boss_gif, boss_damaged, order_index)
+       VALUES ($1, $2, $3, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+      [name, description, total_hp, start_date || new Date(), end_date || new Date(Date.now() + 100 * 365 * 24 * 60 * 60 * 1000), image_url, boss_gif || null, boss_damaged || null, order_index || 0]
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -78,7 +78,7 @@ router.post('/bosses', authenticate, isAdmin, async (req, res) => {
 // Update Boss
 router.put('/bosses/:id', authenticate, isAdmin, async (req, res) => {
   const { id } = req.params;
-  const { name, description, total_hp, current_hp, start_date, end_date, image_url, status, order_index } = req.body;
+  const { name, description, total_hp, current_hp, start_date, end_date, image_url, boss_gif, boss_damaged, status, order_index } = req.body;
   try {
     // Get current boss data to fill missing fields
     const currentBossRes = await query('SELECT * FROM boss_fights WHERE id = $1', [id]);
@@ -86,27 +86,31 @@ router.put('/bosses/:id', authenticate, isAdmin, async (req, res) => {
     const b = currentBossRes.rows[0];
 
     const result = await query(
-      `UPDATE boss_fights SET 
-        name=$1, 
-        description=$2, 
-        total_hp=$3, 
-        current_hp=$4, 
-        start_date=$5, 
-        end_date=$6, 
-        image_url=$7, 
+      `UPDATE boss_fights SET
+        name=$1,
+        description=$2,
+        total_hp=$3,
+        current_hp=$4,
+        start_date=$5,
+        end_date=$6,
+        image_url=$7,
         status=$8,
-        order_index=$9
-       WHERE id=$10 RETURNING *`,
+        order_index=$9,
+        boss_gif=$10,
+        boss_damaged=$11
+       WHERE id=$12 RETURNING *`,
       [
-        name || b.name, 
-        description || b.description, 
-        total_hp ?? b.total_hp, 
-        current_hp ?? b.current_hp, 
-        start_date || b.start_date, 
-        end_date || b.end_date, 
-        image_url ?? b.image_url, 
-        status || b.status, 
+        name || b.name,
+        description || b.description,
+        total_hp ?? b.total_hp,
+        current_hp ?? b.current_hp,
+        start_date || b.start_date,
+        end_date || b.end_date,
+        image_url ?? b.image_url,
+        status || b.status,
         order_index ?? b.order_index,
+        boss_gif ?? b.boss_gif,
+        boss_damaged ?? b.boss_damaged,
         id
       ]
     );

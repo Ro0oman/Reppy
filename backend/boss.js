@@ -73,6 +73,8 @@ router.get('/active', optionalAuthenticate, async (req, res) => {
     let boss_chests = 0;
     let epic_chests = 0;
     let legendary_chests = 0;
+    let personal_rank = null;
+    let total_participants = 0;
 
     if (req.user) {
       // Get user's personal participation and chest status
@@ -111,6 +113,23 @@ router.get('/active', optionalAuthenticate, async (req, res) => {
       boss_chests = finalUserRes.rows[0]?.boss_chests || 0;
       epic_chests = finalUserRes.rows[0]?.epic_chests || 0;
       legendary_chests = finalUserRes.rows[0]?.legendary_chests || 0;
+
+      // RANK: position among damage-dealers for this boss (1 = top). Only
+      // meaningful once the user has dealt damage; otherwise stays null ("—").
+      const totalRes = await query(
+        `SELECT COUNT(*)::int AS total FROM event_participants
+         WHERE boss_fight_id = $1 AND damage_dealt > 0`,
+        [boss.id]
+      );
+      total_participants = totalRes.rows[0]?.total || 0;
+      if (personal_damage > 0) {
+        const rankRes = await query(
+          `SELECT COUNT(*)::int + 1 AS rank FROM event_participants
+           WHERE boss_fight_id = $1 AND damage_dealt > $2`,
+          [boss.id, personal_damage]
+        );
+        personal_rank = rankRes.rows[0]?.rank || null;
+      }
     }
 
     // Get Top Damage Dealer for this boss
@@ -138,6 +157,8 @@ router.get('/active', optionalAuthenticate, async (req, res) => {
       boss_chests,
       epic_chests,
       legendary_chests,
+      personal_rank,
+      total_participants,
       top_damage_dealer: req.user ? top_damage_dealer : null
     });
   } catch (error) {

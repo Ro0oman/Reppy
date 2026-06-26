@@ -37,6 +37,7 @@ import exercisesRoutes from './exercises.js';
 import streakRoutes from './streak.js';
 import referralRoutes from './referral.js';
 import hevyRoutes from './hevy.js';
+import featuresRoutes from './features.js';
 import getPusher from './pusher.js';
 import { updatePresence } from './socketManager.js';
 import { authenticate } from './middleware.js';
@@ -82,6 +83,7 @@ const allowedOrigins = [
   'https://reppy-weld.vercel.app',
   /\.vercel\.app$/, // preview deployments
   'http://localhost:5173',
+  'http://localhost:5174',
   'http://localhost:5001',
 ];
 if (process.env.FRONTEND_URL) allowedOrigins.push(process.env.FRONTEND_URL);
@@ -152,6 +154,7 @@ apiRouter.use('/exercises', exercisesRoutes);
 apiRouter.use('/streak', streakRoutes);
 apiRouter.use('/referral', referralRoutes);
 apiRouter.use('/hevy', hevyRoutes);
+apiRouter.use('/features', featuresRoutes);
 
 // Pusher Auth Endpoint (Directly on app for Vercel compatibility)
 app.post('/api/pusher/auth', async (req, res) => {
@@ -389,6 +392,11 @@ apiRouter.get('/db/init', async (req, res) => {
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS daily_boss_damage INTEGER DEFAULT 0`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_boss_damage_date DATE DEFAULT CURRENT_DATE`,
       `ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS image_url TEXT`,
+      // Animated boss clips, stored as *filenames* of locally-hosted videos
+      // (served from /public/video): boss_gif = idle loop, boss_damaged = hit
+      // reaction. Both optional; the UI falls back to image_url when missing.
+      `ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS boss_gif TEXT`,
+      `ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS boss_damaged TEXT`,
       `ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS order_index INTEGER DEFAULT 0`,
       `ALTER TABLE cosmetics ADD COLUMN IF NOT EXISTS is_seasonal BOOLEAN DEFAULT FALSE`,
       `UPDATE cosmetics SET is_seasonal = TRUE WHERE name IN ('Aura de Pascua', 'Rabbit Slayer', 'Easter Celebration')`,
@@ -553,6 +561,13 @@ apiRouter.get('/db/init', async (req, res) => {
         is_read BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )`,
+      // Per-user "feature seen" flags (NEW badges/dots)
+      `CREATE TABLE IF NOT EXISTS user_feature_seen (
+        user_id     VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+        feature_key VARCHAR(64) NOT NULL,
+        seen_at     TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (user_id, feature_key)
+      )`,
       // Post Backgrounds Sync
       `INSERT INTO items (name, description, type, price, css_value, rarity) 
        VALUES ('Carbon Scan', 'Textura de carbono oscuro con línea de escaneo láser.', 'post_background', 1111, 'post-bg-carbon', 'rare')
@@ -654,6 +669,13 @@ async function ensureAllTrainingExercisesExist() {
 async function ensureSchemaMigrations() {
   try {
     await query('ALTER TABLE users ADD COLUMN IF NOT EXISTS last_daily_spin_at TIMESTAMP WITH TIME ZONE');
+    // Per-user "feature seen" flags that drive the NEW badges/dots.
+    await query(`CREATE TABLE IF NOT EXISTS user_feature_seen (
+        user_id     VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+        feature_key VARCHAR(64) NOT NULL,
+        seen_at     TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (user_id, feature_key)
+    )`);
     // Indexes for hot status/interaction scans (issue #265).
     await query("CREATE INDEX IF NOT EXISTS idx_summary_interactions_summary_type ON summary_interactions(summary_id, type)");
     await query("CREATE INDEX IF NOT EXISTS idx_pvp_fights_status ON pvp_fights(status)");

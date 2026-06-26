@@ -5,6 +5,7 @@ import { useI18nStore } from './stores/i18n'
 // Lazy load components to optimize the landing performance
 const Landing = () => import('./components/pages/Landing.vue')
 const Dashboard = () => import('./components/pages/Dashboard.vue')
+const BattleView = () => import('./components/pages/BattleView.vue')
 const Social = () => import('./components/pages/Social.vue')
 const Shop = () => import('./components/pages/Shop.vue')
 const Inventory = () => import('./components/pages/Inventory.vue')
@@ -58,11 +59,17 @@ export const routes = [
         name: 'login',
         meta: { title: 'Login | Reppy' }
       },
-      { 
-        path: 'dashboard', 
-        component: Dashboard, 
+      {
+        path: 'dashboard',
+        component: Dashboard,
         name: 'dashboard',
         meta: { requiresAuth: true, titleKey: 'nav_dashboard' }
+      },
+      {
+        path: 'batalla',
+        component: BattleView,
+        name: 'battle',
+        meta: { requiresAuth: true, titleKey: 'nav_train', immersive: true }
       },
       { 
         path: 'social', 

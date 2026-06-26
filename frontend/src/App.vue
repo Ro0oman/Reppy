@@ -15,7 +15,7 @@
       ]"></div>
 
     <!-- Industrial Navigation Bar -->
-    <nav v-if="authStore.isAuthenticated && $route.name !== 'pvp'"
+    <nav v-if="authStore.isAuthenticated && $route.name !== 'pvp' && !$route.meta.immersive"
       class="border-b border-border bg-surface/40 backdrop-blur-lg sticky top-0 z-50 transition-all">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
         <!-- Logo Core -->
@@ -105,7 +105,7 @@
     </nav>
 
     <!-- Public Navigation Bar -->
-    <nav v-else-if="$route.name !== 'pvp' && $route.name !== 'login'"
+    <nav v-else-if="$route.name !== 'pvp' && $route.name !== 'login' && !$route.meta.immersive"
       class="border-b border-border bg-surface/40 backdrop-blur-lg sticky top-0 z-50 transition-all">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 md:h-20 flex items-center justify-between gap-4">
         <router-link :to="{ name: 'landing', params: { lang: i18n.locale } }"
@@ -157,7 +157,7 @@
     </nav>
 
     <!-- Main Operational View -->
-    <main :class="['flex-1 flex flex-col min-w-0 overflow-x-hidden', $route.name === 'pvp' ? 'p-0' : 'pt-4 pb-20']">
+    <main :class="['flex-1 flex flex-col min-w-0 overflow-x-hidden', ($route.name === 'pvp' || $route.meta.immersive) ? 'p-0' : 'pt-4 pb-20']">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" @start="onStartAction" @viewProfile="openProfile" />
@@ -165,7 +165,7 @@
       </router-view>
     </main>
 
-    <footer class="mt-auto py-12 pb-24 md:pb-12 border-t border-border/5">
+    <footer v-if="!$route.meta.immersive" class="mt-auto py-12 pb-24 md:pb-12 border-t border-border/5">
       <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 text-muted/40">
         <span class="text-[10px] font-medium tracking-wider">{{ i18n.t('economy_reppy_core') }}</span>
         <div class="flex items-center gap-6">
@@ -201,14 +201,14 @@
           <span class="text-xs font-bold tracking-tight">{{ nav.short || i18n.t(nav.label) }}</span>
         </router-link>
 
-        <!-- Center: elevated primary action (Log reps) -->
+        <!-- Center: elevated primary action (quick log) -->
         <div class="flex justify-center">
-          <router-link :to="{ name: 'dashboard', params: { lang: i18n.locale }, query: { log: 1 } }"
-            class="-mt-7 flex flex-col items-center gap-1 group" :title="i18n.locale === 'es' ? 'Registrar reps' : 'Log reps'">
-            <span class="w-14 h-14 rounded-2xl bg-primary-500 flex items-center justify-center text-white shadow-lg shadow-primary-500/30 ring-4 ring-background transition-transform group-active:scale-95">
-              <Plus class="w-7 h-7" stroke-width="2.5" />
+          <router-link :to="{ name: 'battle', params: { lang: i18n.locale } }"
+            class="-mt-7 flex flex-col items-center gap-1 group" :title="i18n.t('nav_train')">
+            <span class="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-orange-500/40 ring-4 ring-background transition-transform group-active:scale-95">
+              <Flame class="w-7 h-7" stroke-width="2.5" />
             </span>
-            <span class="text-xs font-black uppercase tracking-tight text-primary-500">{{ i18n.locale === 'es' ? 'Registrar' : 'Log' }}</span>
+            <span class="text-xs font-black uppercase tracking-tight text-orange-500">{{ i18n.locale === 'es' ? 'Batalla' : 'Battle' }}</span>
           </router-link>
         </div>
 
@@ -219,7 +219,7 @@
           :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted hover:text-foreground'">
           <component :is="nav.icon" class="w-[22px] h-[22px] transition-transform group-active:scale-90" />
           <!-- Badge on Inventory when chests/new items available -->
-          <span v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory)"
+          <span v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory || badgesStore.inventory_new || badgesStore.chests_total > 0)"
             class="absolute top-2 right-[calc(50%-18px)] w-2 h-2 rounded-full bg-primary-500 ring-2 ring-surface"></span>
           <span class="text-xs font-bold tracking-tight">{{ nav.short || i18n.t(nav.label) }}</span>
         </router-link>
@@ -231,6 +231,7 @@
     <ConfirmDialog />
     <LuckyWheel :show="rouletteStore.showModal" @close="rouletteStore.closeModal()" @spun="onSpun" />
     <DamageNumbers />
+    <QuickLogSheet :show="showQuickLog" @close="showQuickLog = false" />
 
     <Teleport to="body">
       <div v-if="showCoinsInfo"
@@ -341,7 +342,7 @@
 
     <!-- Floating Roulettes (desktop) — daily on top, 4h below, in one column so
          their cooldown chips never overlap. -->
-    <div v-if="authStore.isAuthenticated && (rouletteStore.canSpin || quickCooldown || rouletteStore.dailyCanSpin || dailyCooldown)"
+    <div v-if="authStore.isAuthenticated && !$route.meta.immersive && (rouletteStore.canSpin || quickCooldown || rouletteStore.dailyCanSpin || dailyCooldown)"
       class="hidden lg:flex fixed bottom-12 right-12 z-[70] flex-col items-end gap-4">
 
       <!-- Daily wheel -->
@@ -384,7 +385,7 @@
     </div>
 
     <!-- Floating Roulettes (mobile) — compact chips above the dock, daily on top. -->
-    <div v-if="authStore.isAuthenticated && (rouletteStore.canSpin || quickCooldown || rouletteStore.dailyCanSpin || dailyCooldown)"
+    <div v-if="authStore.isAuthenticated && !$route.meta.immersive && (rouletteStore.canSpin || quickCooldown || rouletteStore.dailyCanSpin || dailyCooldown)"
       class="lg:hidden fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom)+0.5rem)] right-3 z-[65] flex flex-col items-end gap-2">
       <!-- Daily chip -->
       <button v-if="rouletteStore.dailyCanSpin || dailyCooldown"
@@ -416,7 +417,7 @@
 import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
-import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Gem, Bell, User, Dices, Gift, Volume2, VolumeX, Book, ShoppingBag, Target, LogIn, Plus } from 'lucide-vue-next';
+import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Gem, Bell, User, Dices, Gift, Volume2, VolumeX, Book, ShoppingBag, Target, LogIn, Plus, Tent, Flame } from 'lucide-vue-next';
 import { useAuthStore } from './stores/auth';
 import { useI18nStore } from './stores/i18n';
 import { useNotificationsStore } from './stores/notifications';
@@ -424,6 +425,8 @@ import { useAudio } from './composables/useAudio';
 import { useSocketStore } from './stores/socket';
 import { useRouletteStore } from './stores/roulette';
 import { useShopStore } from './stores/shop';
+import { useBadgesStore } from './stores/badges';
+import { useFeatureSeenStore } from './stores/featureSeen';
 import AvatarFrame from '@/components/ui/AvatarFrame.vue';
 import BackgroundEffect from '@/components/system/BackgroundEffect.vue';
 import LuckyWheel from '@/components/shop/LuckyWheel.vue';
@@ -433,10 +436,13 @@ import ConfirmDialog from '@/components/modals/ConfirmDialog.vue';
 import DamageNumbers from '@/components/system/DamageNumbers.vue';
 import NotificationsDropdown from '@/components/system/NotificationsDropdown.vue';
 import PushPrompt from '@/components/system/PushPrompt.vue';
+import QuickLogSheet from '@/components/battle/QuickLogSheet.vue';
 
 const socketStore = useSocketStore();
 const rouletteStore = useRouletteStore();
 const shopStore = useShopStore();
+const badgesStore = useBadgesStore();
+const featureSeenStore = useFeatureSeenStore();
 const authStore = useAuthStore();
 const { toggleMute, isMuted, playClickBlip } = useAudio();
 const i18n = useI18nStore();
@@ -446,6 +452,7 @@ const route = useRoute();
 
 const showCoinsInfo = ref(false);
 const showNotifications = ref(false);
+const showQuickLog = ref(false);
 
 // Global Scroll Lock for App-level modals
 watch([() => rouletteStore.showModal, showCoinsInfo], ([roulette, coins]) => {
@@ -482,12 +489,11 @@ const publicNavLinks = computed(() => [
   { id: 'blog-list', label: 'nav_blog', fallback: 'Blog', icon: Book },
 ]);
 
-// Mobile dock: core-loop centered. Logging is the elevated center action.
-// Game loop (Missions -> Inventory) flanks the center; Community & Shop sit at the edges.
-// Order renders outer->inner on the left, inner->outer on the right.
+// Mobile dock (RPG): Entrenar (battle) · Campamento (dashboard) · [center quick-log]
+// · Inventario · Tienda. The elevated center button opens the quick-log sheet.
 const mobileNavLeft = computed(() => [
   { id: 'social', icon: Users, label: 'nav_social', short: i18n.locale === 'es' ? 'Comunidad' : 'Community' },
-  { id: 'missions', icon: Target, label: 'nav_missions', short: i18n.locale === 'es' ? 'Misiones' : 'Missions' },
+  { id: 'dashboard', icon: Tent, label: 'nav_camp', short: i18n.locale === 'es' ? 'Campamento' : 'Camp' },
 ]);
 const mobileNavRight = computed(() => [
   { id: 'inventory', icon: Package, label: 'nav_inventory', short: i18n.locale === 'es' ? 'Inventario' : 'Inventory' },
@@ -584,6 +590,8 @@ const initializeApp = async () => {
   rouletteStore.checkStatus();
   rouletteStore.checkDailyStatus();
   notifStore.fetchNotifications();
+  badgesStore.fetchBadges();
+  featureSeenStore.load();
 
   // Periodic presence ping for Pusher/Backend tracking
   const pingInterval = setInterval(() => {

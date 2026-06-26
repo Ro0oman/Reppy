@@ -304,6 +304,41 @@
              <p class="text-[10px] font-black text-muted uppercase tracking-[0.4em] animate-pulse">{{ i18n.t('inv_sync_stash') }}</p>
           </div>
 
+          <!-- CHESTS category: chests rendered as item-like cards -->
+          <div v-else-if="activeStashTab === 'chests'" class="space-y-6">
+            <div class="flex items-center gap-4">
+              <span class="text-[10px] font-black text-primary-500 uppercase tracking-[0.4em] whitespace-nowrap">{{ i18n.t('shop_cat_chests') }}</span>
+              <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
+            </div>
+
+            <div v-if="chestCards.length === 0" class="py-20 text-center space-y-4">
+              <Gift class="w-14 h-14 mx-auto text-muted/20" />
+              <h3 class="text-base font-black text-muted/40 tracking-tight uppercase">{{ i18n.t('inv_no_chests') }}</h3>
+            </div>
+
+            <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4">
+              <div v-for="chest in chestCards" :key="chest.id"
+                @click="chest.open()"
+                class="nexus-item group relative flex flex-col min-h-[154px] sm:min-h-[180px] rounded-[1.25rem] sm:rounded-[1.5rem] border transition-all duration-300 cursor-pointer hover:scale-[1.02]"
+                :class="chest.cardClass">
+                <div class="relative h-20 sm:h-28 flex items-center justify-center p-3 sm:p-4 bg-black/40 rounded-t-2xl overflow-hidden">
+                  <component :is="chest.icon" class="w-10 h-10 sm:w-12 sm:h-12 transition-transform duration-500 group-hover:scale-110" :class="chest.iconClass" />
+                  <span class="absolute top-2 right-2 px-1.5 py-0.5 rounded-full bg-black/70 border border-white/15 text-[10px] font-black tabular-nums" :class="chest.iconClass">×{{ chest.count }}</span>
+                  <Sparkles class="absolute bottom-2 left-2 w-3.5 h-3.5 animate-pulse" :class="chest.iconClass" />
+                </div>
+                <div class="p-2.5 sm:p-3 bg-surface/60 border-t border-white/5 flex-1 flex flex-col justify-between">
+                  <div>
+                    <span class="text-[10px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border" :class="chest.rarityClass">{{ chest.rarity }}</span>
+                    <h4 class="mt-1.5 text-xs sm:text-[10px] font-black text-foreground truncate uppercase tracking-wide">{{ chest.label }}</h4>
+                  </div>
+                  <div class="mt-2 w-full rounded-lg bg-white/5 border border-white/10 py-1.5 text-center text-[10px] font-black uppercase tracking-widest text-foreground/80 group-hover:bg-white/10 transition">
+                    {{ i18n.t('inv_open_chest') }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div v-else-if="inventory.length === 0" class="py-24 text-center space-y-6">
             <Package class="w-16 h-16 mx-auto text-muted/20" />
             <h3 class="text-xl font-black   text-muted/40 tracking-tighter">{{ i18n.t('inv_empty_title') }}</h3>
@@ -571,8 +606,9 @@ import {
   Package, Frame, Type, Check, Sparkles, Archive, TrendingUp, 
   Dumbbell, Sword, Heart, Brain, Church, Trophy, ExternalLink, Activity, X, 
   ChevronDown, Flame, BookOpen, Swords, Info, ChevronRight, Users, Shield, Footprints,
-  FlaskConical, Timer, Construction, Plus
+  FlaskConical, Timer, Construction, Plus, Gift
 } from 'lucide-vue-next';
+import { useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { useShopStore } from '@/stores/shop';
 import { useI18nStore } from '@/stores/i18n';
@@ -593,6 +629,7 @@ const { playZip, playEquipBlip, playClickBlip } = useAudio();
 const authStore = useAuthStore();
 const shopStore = useShopStore();
 const i18n = useI18nStore();
+const route = useRoute();
 const emit = defineEmits(['start', 'viewProfile']);
 const notificationStore = useNotificationStore();
 const inventory = computed(() => shopStore.inventory);
@@ -686,6 +723,7 @@ const categories = computed(() => {
   if (activeTab.value === 'combat') {
     return [
       { id: 'all', label: 'shop_cat_all', icon: Archive },
+      { id: 'chests', label: 'shop_cat_chests', icon: Gift },
       { id: 'head', label: 'shop_cat_head', icon: Construction },
       { id: 'weapon', label: 'shop_cat_weapons', icon: Sword },
       { id: 'armor', label: 'shop_cat_armor', icon: Shield },
@@ -703,6 +741,22 @@ const categories = computed(() => {
       { id: 'background', label: 'shop_tab_backgrounds', icon: Sparkles }
     ];
   }
+});
+
+// Chests surfaced as item-like cards under the "Cofres" category.
+const chestCards = computed(() => {
+  const u = authStore.user || {};
+  const defs = [
+    { id: 'legendary', count: u.legendary_chests || 0, label: i18n.t('inv_vault_legendary'), rarity: i18n.t('rarity_legendary'), icon: Trophy,
+      cardClass: 'border-amber-500/30 bg-amber-500/5', iconClass: 'text-amber-400', rarityClass: 'text-amber-400 border-amber-500/40', open: handleOpenLegendaryChest },
+    { id: 'epic', count: u.epic_chests || 0, label: i18n.t('inv_vault_epic'), rarity: i18n.t('rarity_special'), icon: Archive,
+      cardClass: 'border-purple-500/30 bg-purple-500/5', iconClass: 'text-purple-400', rarityClass: 'text-purple-400 border-purple-500/40', open: handleOpenEpicChest },
+    { id: 'level', count: u.level_chests || 0, label: i18n.t('inv_vault_evolution'), rarity: i18n.t('rarity_rare'), icon: TrendingUp,
+      cardClass: 'border-cyan-500/30 bg-cyan-500/5', iconClass: 'text-cyan-400', rarityClass: 'text-cyan-400 border-cyan-500/40', open: handleOpenLevelChest },
+    { id: 'boss', count: u.boss_chests || 0, label: i18n.t('inv_vault_decrypted'), rarity: i18n.t('rarity_common'), icon: Gift,
+      cardClass: 'border-primary-500/30 bg-primary-500/5', iconClass: 'text-primary-400', rarityClass: 'text-primary-400 border-primary-500/40', open: handleOpenChest },
+  ];
+  return defs.filter(c => c.count > 0);
 });
 
 const rarities = [
@@ -1353,8 +1407,19 @@ const hasNewInventoryOverall = computed(() => {
 });
 
 onMounted(async () => {
+  // Deep-link: ?cat=chests (or any combat category) lands on that filter;
+  // ?tab=customization opens the loadout/customization tab.
+  const cat = route.query.cat;
+  if (typeof cat === 'string' && cat) {
+    activeTab.value = 'combat';
+    activeStashTab.value = cat;
+  } else if (route.query.tab === 'customization') {
+    activeTab.value = 'customization';
+    activeStashTab.value = 'all';
+  }
+
   await Promise.all([fetchInventory(), authStore.fetchProfile(), fetchStats()]);
-  
+
   timerInterval = setInterval(() => {
     currentTime.value = new Date();
   }, 1000);
