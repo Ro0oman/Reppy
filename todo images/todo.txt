@@ -1,0 +1,13 @@
+Actualmente la web esta alcanzando un punto muy bueno pero quiero que la web tenga mas gamificación, veo que realmente el punto interesante es la gamificación, aplicaciones de entrenar hay muchas, tal vez hasta demasiadas pero aplicaciones RPG muy pocas. Entonces, vamos a darle el factor diferenciador,. para ellohay q hacer que entrenar se sienta como un juego y no como una "carga" es por ello que quiero hacer de la web algo mas gamificable.
+
+
+Actualmente hay un componente que es "Buenas tarde, Roman" esto pues sobra un poco pero vamos a cambiarlo por algo que haga que entrenar se sienta como entrar en una partida, le daremos un color mas distinto quizá un fondo con color para que destaque sobre los demás y pondremos algo rollo comenzar o reanudar aventura.
+En realidad no, cuando el usuario le de a registrar y entre a dashboard a la vista, quiero que se sienta como en un campamento el botón que mencionaba antes le llevará a la batalla directamente pondrá entrenar y se verá claramente que servirá para entrenar, Ahí el usuario tendrá el panel para registrar las repeticiones con el tipo de Boss que está activo actualmente y abajo los botones del tipo de ejercicio y cuantas repeticiones quiere hacer, algo sencillo, tendrá un botón estilo acceso rápido para activar las pociones que tenga existentes, el usuario dentro de esta vista verá las pociones que se pueden activar y se verá el modal de siempre que se usa para usar pociones en el inventario. La idea es que de forma rápida se puedan gastar. Y conforme se vayan realizando repeticiones se vean los clásicos números volando mostrando el daño que se le realiza al boss. 
+
+Esto sería mas o menos todo, por supuesto tu añade lo que consideres. Me gustaria que cuando se entre a esta vista el fondo de la pantalla cambie como a un fondo estilo mazmorra para que sientas que estas peleando contra el boss.
+
+En la ruta "C:\Users\romai\Documents\GitHub\Reppy\todo images" se encuentan algunas imágenes
+
+Vamos a rediseñar Reppy para que se enfoque a algo mas como lo de la imagen quiero LITERALMENTE que la web se pareza lo máximo posible a la imagen.
+Osea que literalmente si podemos aplicar la mayoría de lo que se ve seria increíble.
+Esto implicaría dejar todo lo q estamos haciendo y ponernos con esto, entonces, elimina todas las tareas actuales y ponte a idear un plan de como implementarias todo esto. QUIERO HASTA EL MAS MINIMO DETALLE.
