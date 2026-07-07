@@ -686,8 +686,9 @@ async function ensureSchemaMigrations() {
   }
 }
 
-// Start server only in development or if not imported as a module
-if (process.env.NODE_ENV !== 'production' && process.env.VERCEL !== '1') {
+// Start server unless running as a Vercel serverless function (which imports
+// this module without ever calling listen()).
+if (process.env.VERCEL !== '1') {
   Promise.all([ensureSchemaMigrations(), ensureAllTrainingExercisesExist()]).then(() => {
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
