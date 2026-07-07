@@ -65,8 +65,8 @@ export async function createNotification(userId, type, actorId, content, targetI
     sendPushNotification(userId, {
       title: pushTitle,
       body: pushBody,
-      icon: actorAvatar || 'https://reppy-weld.vercel.app/logo_reppy.png',
-      badge: 'https://reppy-weld.vercel.app/logo_reppy_badge.png',
+      icon: actorAvatar || 'https://reppy.romandev.app/logo_reppy.png',
+      badge: 'https://reppy.romandev.app/logo_reppy_badge.png',
       data: {
         url: `/profile/${targetUserId || userId}`,
         type: type

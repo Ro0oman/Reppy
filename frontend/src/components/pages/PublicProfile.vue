@@ -262,7 +262,7 @@ function updateMeta() {
   const description = isEs
     ? `Perfil de ${u.name} en Reppy: ${s.totalReps.toLocaleString()} repeticiones totales, racha de ${s.streak} días, nivel ${u.current_level}. Ejercicio favorito: ${exerciseName(s.favExercise)}.`
     : `${u.name}'s Reppy profile: ${s.totalReps.toLocaleString()} total reps, ${s.streak}-day streak, level ${u.current_level}. Favourite: ${exerciseName(s.favExercise)}.`;
-  const url = `https://reppy-weld.vercel.app${route.path}`;
+  const url = `https://reppy.romandev.app${route.path}`;
 
   document.title = title;
   const sm = (sel, attr, val) => { const el = document.querySelector(sel); if (el) el.setAttribute(attr, val); };
@@ -283,7 +283,7 @@ function updateMeta() {
     url,
     image: u.avatar_url || undefined,
     description: description,
-    memberOf: { '@type': 'Organization', name: 'Reppy', url: 'https://reppy-weld.vercel.app' },
+    memberOf: { '@type': 'Organization', name: 'Reppy', url: 'https://reppy.romandev.app' },
   };
   let el = document.getElementById('athlete-jsonld');
   if (!el) {

@@ -20,7 +20,7 @@ const router = express.Router();
 
 function webhookBaseUrl() {
   // Prefer an explicit public URL; fall back to the known prod host.
-  const base = process.env.PUBLIC_API_URL || process.env.FRONTEND_URL || 'https://reppy-weld.vercel.app';
+  const base = process.env.PUBLIC_API_URL || process.env.FRONTEND_URL || 'https://reppy.romandev.app';
   return `${base.replace(/\/$/, '')}/api/hevy/webhook`;
 }
 

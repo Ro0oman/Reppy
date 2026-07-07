@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const distDir = path.resolve(__dirname, '../dist');
-const BASE_URL = 'https://reppy-weld.vercel.app';
+const BASE_URL = 'https://reppy.romandev.app';
 const BUILD_DATE = new Date().toISOString().split('T')[0];
 
 const blogPostsPath = path.resolve(__dirname, '../src/blogPosts.json');

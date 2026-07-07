@@ -12,7 +12,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const BASE_URL = 'https://reppy-weld.vercel.app';
+const BASE_URL = 'https://reppy.romandev.app';
 const HOST = new URL(BASE_URL).host;
 const KEY = '8542fbbd5bc1fc75844042edb526a0a8';
 const KEY_LOCATION = `${BASE_URL}/${KEY}.txt`;

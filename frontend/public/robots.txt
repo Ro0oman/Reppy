@@ -1,4 +1,4 @@
-# Reppy — https://reppy-weld.vercel.app
+# Reppy — https://reppy.romandev.app
 # Public content (landings, blog, and public athlete profiles at
 # /es/atleta/* and /en/athlete/*) is crawlable. Only private/auth routes
 # are blocked, for both the Spanish (/es) and English (/en) locales.
@@ -12,7 +12,7 @@
 #   ClaudeBot, Claude-User, Claude-SearchBot  (Anthropic / Claude)
 #   Google-Extended                           (Gemini / AI Overviews)
 #   Applebot-Extended, Bingbot, CCBot         (Apple, Bing/Copilot, Common Crawl)
-# Curated content map for LLMs: https://reppy-weld.vercel.app/llms.txt
+# Curated content map for LLMs: https://reppy.romandev.app/llms.txt
 
 User-agent: *
 Allow: /
@@ -49,4 +49,4 @@ Disallow: /en/pvp
 # API
 Disallow: /api
 
-Sitemap: https://reppy-weld.vercel.app/sitemap.xml
+Sitemap: https://reppy.romandev.app/sitemap.xml

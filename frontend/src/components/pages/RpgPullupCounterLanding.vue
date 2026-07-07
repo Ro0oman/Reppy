@@ -168,7 +168,7 @@ const setMeta = (selector, attr, value) => {
 onMounted(() => {
   const title = 'Free RPG Pull-up Counter | Reppy';
   const description = 'Reppy is a free RPG pull-up counter and gamified calisthenics app. Track pull-ups, earn XP, level up attributes, keep streaks, and join boss fights.';
-  const url = 'https://reppy-weld.vercel.app/en/free-rpg-pull-up-counter';
+  const url = 'https://reppy.romandev.app/en/free-rpg-pull-up-counter';
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [

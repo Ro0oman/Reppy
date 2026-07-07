@@ -190,7 +190,7 @@ const updateMeta = () => {
   const description = isEnglish
     ? 'How does Reppy compare to Freeletics, Madbarz, and Google Fit? See why gamified RPG tracking beats generic fitness apps for pull-ups, push-ups, and dips.'
     : 'Como se compara Reppy con Freeletics, Madbarz y Google Fit? Descubre por que el seguimiento RPG gamificado supera a las apps de fitness genericas para calistenia.';
-  const url = `https://reppy-weld.vercel.app${route.path}`;
+  const url = `https://reppy.romandev.app${route.path}`;
 
   document.title = title;
   const setMeta = (sel, attr, val) => { const el = document.querySelector(sel); if (el) el.setAttribute(attr, val); };

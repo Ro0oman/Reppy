@@ -191,7 +191,7 @@ const updateMeta = () => {
   const description = isEnglish
     ? 'Take the 30-day calisthenics challenge. Daily pull-ups, push-ups, and dips tracked with RPG progression and community boss fights. Free and beginner-friendly.'
     : 'Acepta el reto de calistenia de 30 dias. Dominadas, flexiones y fondos diarios con progresion RPG y boss fights comunitarios. Gratis y para principiantes.';
-  const url = `https://reppy-weld.vercel.app${route.path}`;
+  const url = `https://reppy.romandev.app${route.path}`;
 
   document.title = title;
   const setMeta = (sel, attr, val) => { const el = document.querySelector(sel); if (el) el.setAttribute(attr, val); };

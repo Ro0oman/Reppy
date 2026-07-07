@@ -358,7 +358,7 @@ const formattedDate = computed(() => {
 // JSON-LD for SEO
 const jsonLdScript = computed(() => {
   if (!post.value) return '';
-  const BASE = 'https://reppy-weld.vercel.app';
+  const BASE = 'https://reppy.romandev.app';
   const img = currentPost.value.image
     ? (currentPost.value.image.startsWith('http') ? currentPost.value.image : `${BASE}${currentPost.value.image}`)
     : `${BASE}/og-image.png`;
@@ -393,9 +393,9 @@ const updateSEOMeta = () => {
   const title = `${post.value.title} | Reppy`;
   const description = post.value.excerpt || post.value.title;
   const image = currentPost.value.image
-    ? (currentPost.value.image.startsWith('http') ? currentPost.value.image : `https://reppy-weld.vercel.app${currentPost.value.image}`)
-    : 'https://reppy-weld.vercel.app/og-image.png';
-  const url = `https://reppy-weld.vercel.app${route.path}`;
+    ? (currentPost.value.image.startsWith('http') ? currentPost.value.image : `https://reppy.romandev.app${currentPost.value.image}`)
+    : 'https://reppy.romandev.app/og-image.png';
+  const url = `https://reppy.romandev.app${route.path}`;
 
   document.title = title;
 

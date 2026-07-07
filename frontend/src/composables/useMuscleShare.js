@@ -233,7 +233,7 @@ function renderCard(data, locale) {
   // ── Footer ──────────────────────────────────────────────────────────────────
   ctx.font = `700 24px ${FONT}`;
   ctx.fillStyle = 'rgba(255,255,255,0.35)';
-  ctx.fillText('reppy-weld.vercel.app', CX, footerTop + 24);
+  ctx.fillText('reppy.romandev.app', CX, footerTop + 24);
 
   return canvas;
 }

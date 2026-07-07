@@ -274,7 +274,7 @@ export function setupRouterGuards(router) {
     }
 
     // 2. Sincronizar Etiquetas SEO Globales (Canonical, Hreflang)
-    const baseUrl = 'https://reppy-weld.vercel.app'
+    const baseUrl = 'https://reppy.romandev.app'
     const currentPath = to.path
     const currentLang = to.params.lang || 'es'
     

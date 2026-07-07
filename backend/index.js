@@ -223,7 +223,7 @@ app.use('/', apiRouter);
 
 // 1. Dynamic Sitemap API
 apiRouter.get('/sitemap', (req, res) => {
-  const BASE_URL = 'https://reppy-weld.vercel.app';
+  const BASE_URL = 'https://reppy.romandev.app';
   const today = new Date();
   
   // Only include published posts

@@ -151,7 +151,7 @@ const updateMeta = () => {
     }
   };
   const { title, description } = metaMap[props.type] || metaMap.dominadas;
-  const url = `https://reppy-weld.vercel.app${route.path}`;
+  const url = `https://reppy.romandev.app${route.path}`;
 
   document.title = title;
   const setMeta = (sel, attr, val) => { const el = document.querySelector(sel); if (el) el.setAttribute(attr, val); };

@@ -10,7 +10,7 @@ const publicDir = path.resolve(__dirname, '../public');
 
 const blogPosts = JSON.parse(fs.readFileSync(blogPostsPath, 'utf8'));
 
-const BASE_URL = 'https://reppy-weld.vercel.app';
+const BASE_URL = 'https://reppy.romandev.app';
 const lastmod = new Date().toISOString();
 const today = new Date();
 
