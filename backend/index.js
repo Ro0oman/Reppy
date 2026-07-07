@@ -156,8 +156,9 @@ apiRouter.use('/referral', referralRoutes);
 apiRouter.use('/hevy', hevyRoutes);
 apiRouter.use('/features', featuresRoutes);
 
-// Pusher Auth Endpoint (Directly on app for Vercel compatibility)
-app.post('/api/pusher/auth', async (req, res) => {
+// Pusher Auth Endpoint — en apiRouter para que funcione con y sin prefijo /api
+// (Coolify/Traefik quita el prefijo /api; apiRouter está montado en '/api' y en '/').
+apiRouter.post('/pusher/auth', async (req, res) => {
   console.log('[PUSHER AUTH REQUEST RECEIVED] Body:', req.body);
   const socketId = req.body.socket_id;
   const channel = req.body.channel_name;
