@@ -82,7 +82,7 @@ try {
   for (const lang of ['es', 'en']) {
     const dir = path.join(outRoot, lang);
     fs.mkdirSync(dir, { recursive: true });
-    const footer = lang === 'es' ? 'Guías de calistenia · reppy-weld.vercel.app' : 'Calisthenics guides · reppy-weld.vercel.app';
+    const footer = lang === 'es' ? 'Guías de calistenia · reppy.romandev.app' : 'Calisthenics guides · reppy.romandev.app';
     for (const post of blogPosts) {
       if (!post.slug) continue;
       const locale = post.locales?.[lang] || post.locales?.en;
