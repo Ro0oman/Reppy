@@ -74,21 +74,27 @@ const render = (svg) =>
     .render()
     .asPng();
 
-let count = 0;
-for (const lang of ['es', 'en']) {
-  const dir = path.join(outRoot, lang);
-  fs.mkdirSync(dir, { recursive: true });
-  const footer = lang === 'es' ? 'Guías de calistenia · reppy-weld.vercel.app' : 'Calisthenics guides · reppy-weld.vercel.app';
-  for (const post of blogPosts) {
-    if (!post.slug) continue;
-    const locale = post.locales?.[lang] || post.locales?.en;
-    if (!locale?.title) continue;
-    const title = stripEmoji(locale.title);
-    const category = (post.category || 'Reppy').toUpperCase();
-    const svg = buildSvg(title, category, footer);
-    fs.writeFileSync(path.join(dir, `${post.slug}.png`), render(svg));
-    count++;
+// Failure-tolerant: las OG images son un extra de SEO/social; si el binario nativo
+// de resvg no está disponible en el entorno de build, avisamos pero NO rompemos el
+// deploy (mismo criterio que indexnow-ping.js).
+try {
+  let count = 0;
+  for (const lang of ['es', 'en']) {
+    const dir = path.join(outRoot, lang);
+    fs.mkdirSync(dir, { recursive: true });
+    const footer = lang === 'es' ? 'Guías de calistenia · reppy-weld.vercel.app' : 'Calisthenics guides · reppy-weld.vercel.app';
+    for (const post of blogPosts) {
+      if (!post.slug) continue;
+      const locale = post.locales?.[lang] || post.locales?.en;
+      if (!locale?.title) continue;
+      const title = stripEmoji(locale.title);
+      const category = (post.category || 'Reppy').toUpperCase();
+      const svg = buildSvg(title, category, footer);
+      fs.writeFileSync(path.join(dir, `${post.slug}.png`), render(svg));
+      count++;
+    }
   }
+  console.log(`🖼️  [SEO] Generated ${count} branded OG images in dist/og/blog/{es,en}/`);
+} catch (e) {
+  console.warn('[SEO] OG image generation skipped (non-fatal):', e.message);
 }
-
-console.log(`🖼️  [SEO] Generated ${count} branded OG images in dist/og/blog/{es,en}/`);
