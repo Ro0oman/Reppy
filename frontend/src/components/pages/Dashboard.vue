@@ -1,37 +1,53 @@
 <template>
-  <div class="max-w-7xl mx-auto w-full px-4 space-y-4 sm:space-y-6 pt-2 sm:pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700"
+  <div class="os-dashboard max-w-7xl mx-auto w-full px-4 space-y-4 sm:space-y-6 pt-2 sm:pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700"
     :class="hasFloatingActions ? 'pb-40 lg:pb-52' : 'pb-24'">
 
-    <!-- ✦ CAMPAMENTO — entrar a la batalla (acceso protagonista) ✦ -->
-    <router-link :to="{ name: 'battle', params: { lang: i18n.locale } }"
-      class="group relative block overflow-hidden rounded-3xl border border-orange-500/30 p-4 sm:p-5 shadow-lg shadow-orange-900/20 transition-transform active:scale-[0.99]">
-      <div class="absolute inset-0 -z-10 bg-gradient-to-br from-[#1a0d09] via-[#2a120a] to-[#0c0705]"></div>
-      <div class="absolute inset-0 -z-10 bg-[radial-gradient(120%_120%_at_85%_-10%,rgba(234,88,12,0.45),transparent_55%)]"></div>
-      <div class="flex items-center justify-between gap-4">
-        <div class="min-w-0">
-          <div class="flex items-center gap-2">
-            <p class="text-[10px] font-black uppercase tracking-[0.3em] text-orange-300/80">{{ i18n.t('camp_title') }}</p>
-            <NewBadge feature-key="battle_view" />
-          </div>
-          <h2 class="mt-1 text-xl sm:text-2xl font-black uppercase tracking-tight text-white">
-            {{ dayRingPercent > 0 ? i18n.t('camp_resume_adventure') : i18n.t('camp_start_adventure') }}
-          </h2>
-          <p class="mt-1 text-xs text-orange-100/60">{{ i18n.t('camp_enter_battle_hint') }}</p>
+    <!-- ✦ MISSION FRAME — el boss/batalla actual es la misión dominante ✦ -->
+    <OsMissionFrame
+      variant="boss"
+      :context="i18n.t('camp_title')"
+      :title="bossData?.name || i18n.t('camp_start_adventure')"
+      :subtitle="i18n.t('camp_enter_battle_hint')"
+    >
+      <template #visual>
+        <div class="os-boss-glyph" aria-hidden="true"></div>
+      </template>
+
+      <div v-if="bossData">
+        <div class="flex items-center justify-between mb-2">
+          <span class="os-label os-label--muted">{{ i18n.t('dash_boss_status') }}</span>
+          <span class="os-label os-num">{{ fmtNum(bossData.current_hp) }} / {{ fmtNum(bossData.total_hp) }} HP</span>
         </div>
-        <span class="shrink-0 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/40 transition-transform group-active:scale-95 group-hover:scale-105">
-          <Sword class="h-7 w-7" />
-        </span>
+        <div class="os-track"><div class="os-track__fill" :style="{ width: bossHpPercent + '%' }"></div></div>
       </div>
-    </router-link>
+
+      <template #consequence>
+        <span class="os-num" style="color: var(--os-cyan); font-size: 1.9rem; margin-right: 8px;">{{ animatedTodayProgress }}</span>
+        <span>/ {{ stats.dailyGoal }} {{ i18n.t('dash_pts_short') }} · {{ i18n.t('comp_today') }}</span>
+      </template>
+
+      <template #action>
+        <span class="os-label" style="margin-bottom: 14px;">{{ i18n.t('dash_quick_log') }} <NewBadge feature-key="battle_view" /></span>
+        <button type="button" class="os-command w-full" style="min-height: 56px;" @click="scrollToRepsInput">
+          {{ i18n.t('dash_log_reps_cta') }}
+        </button>
+        <router-link
+          :to="{ name: 'battle', params: { lang: i18n.locale } }"
+          class="os-command os-command--secondary w-full mt-3"
+        >
+          {{ dayRingPercent > 0 ? i18n.t('camp_resume_adventure') : i18n.t('camp_start_adventure') }}
+        </router-link>
+      </template>
+    </OsMissionFrame>
 
     <!-- ✦ ESTACIONES DEL CAMPAMENTO — gestión entre batallas (rutas existentes) ✦ -->
     <div class="grid grid-cols-4 gap-2 sm:gap-3">
       <router-link v-for="st in campStations" :key="st.id" :to="st.to"
-        class="group relative flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-amber-500/15 bg-foreground/[0.03] py-3 transition-all hover:border-amber-500/35 hover:bg-amber-500/[0.06] active:scale-[0.97]">
-        <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-500 transition-transform group-hover:scale-105">
+        class="group os-station relative flex flex-col items-center justify-center gap-1.5 py-3 transition-all active:scale-[0.97]">
+        <span class="os-station__icon flex h-9 w-9 items-center justify-center transition-transform group-hover:scale-105">
           <component :is="st.icon" class="h-[18px] w-[18px]" />
         </span>
-        <span class="text-[10px] sm:text-[11px] font-bold text-foreground/80">{{ st.label }}</span>
+        <span class="os-station__label">{{ st.label }}</span>
         <span v-if="st.count > 0"
           class="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-black text-white ring-2 ring-background">
           {{ st.count }}
@@ -85,7 +101,7 @@
 
     <!-- ✦ TODAY'S PROGRESS — twin neon rings ✦ -->
     <section>
-      <h2 class="mb-3 text-xs font-bold uppercase tracking-wide text-muted/70">{{ i18n.t('dash_today_progress') }}</h2>
+      <h2 class="mb-3 os-label os-label--muted">{{ i18n.t('dash_today_progress') }}</h2>
       <div class="grid grid-cols-2 gap-3 sm:gap-4">
         <!-- Daily goal ring (teal) -->
         <div class="rounded-3xl border border-border/60 bg-foreground/[0.02] p-4 flex flex-col items-center">
@@ -162,7 +178,7 @@
       <div class="mb-3 flex items-center justify-between gap-2">
         <div class="flex items-center gap-2">
           <Zap class="h-4 w-4 text-[hsl(var(--neon))]" aria-hidden="true" />
-          <h2 class="text-xs font-bold uppercase tracking-wide text-muted/70">{{ i18n.t('dash_quick_log') }}</h2>
+          <h2 class="os-label os-label--muted">{{ i18n.t('dash_quick_log') }}</h2>
         </div>
         <span class="text-xs text-muted/70 tabular-nums"><b class="text-[hsl(var(--neon))] font-bold">{{ animatedTodayProgress }}</b> / {{ stats.dailyGoal }} {{ i18n.t('comp_today') }}</span>
       </div>
@@ -173,7 +189,7 @@
     <!-- ✦ TODAY'S CHALLENGES — daily missions overview (mockup) ✦ -->
     <section v-if="dailyChallenges.length">
       <div class="mb-3 flex items-center justify-between">
-        <h2 class="text-xs font-bold uppercase tracking-wide text-muted/70">{{ i18n.t('dash_today_challenges') }}</h2>
+        <h2 class="os-label os-label--muted">{{ i18n.t('dash_today_challenges') }}</h2>
         <button type="button" class="flex items-center gap-0.5 text-xs font-semibold text-[hsl(var(--neon))]" @click="router.push({ name: 'missions', params: { lang: i18n.locale } })">
           {{ i18n.t('dash_view_all') }}
           <ChevronRight class="h-3.5 w-3.5" aria-hidden="true" />
@@ -248,7 +264,7 @@
     <section v-if="guidedTrainingStateLoaded" class="flex items-center justify-between gap-2 pt-1">
       <div class="flex items-center gap-2">
         <ClipboardList class="h-4 w-4 text-primary-500" aria-hidden="true" />
-        <h2 class="text-xs font-bold uppercase tracking-wide text-muted/70">
+        <h2 class="os-label os-label--muted">
           {{ i18n.locale === 'es' ? 'Mis rutinas' : 'My routines' }}
         </h2>
       </div>
@@ -363,7 +379,7 @@
     >
       <div class="flex items-center gap-2">
         <Zap class="h-4 w-4 text-primary-500" aria-hidden="true" />
-        <h2 class="text-xs font-bold uppercase tracking-wide text-muted/70">
+        <h2 class="os-label os-label--muted">
           {{ i18n.locale === 'es' ? 'Registro rápido' : 'Quick log' }}
         </h2>
       </div>
@@ -488,7 +504,7 @@
       <div ref="bossHealthSection" class="lg:col-span-2 space-y-4 scroll-mt-4">
         <div class="flex items-center gap-2 px-1">
           <Zap aria-hidden="true" class="w-4 h-4 text-primary-500" />
-          <h3 class="text-xs font-semibold uppercase tracking-wide text-muted/70">{{ i18n.t('dash_boss_status') }}</h3>
+          <h3 class="os-label os-label--muted">{{ i18n.t('dash_boss_status') }}</h3>
         </div>
 
         <LivePresence class="mb-2" />
@@ -732,6 +748,7 @@ import TodayWorkout from '@/components/training/TodayWorkout.vue';
 import WeeklyShareCard from '@/components/modals/WeeklyShareCard.vue';
 import SkillTreeModal from '@/components/dashboard/SkillTreeModal.vue';
 import NewBadge from '@/components/battle/NewBadge.vue';
+import OsMissionFrame from '@/components/os/OsMissionFrame.vue';
 import { getLocalDateString } from '@/utils/dateUtils.js';
 import { buildActiveBoosts } from '@/utils/activeBuffs';
 
@@ -1735,4 +1752,62 @@ watch(
   opacity: 0;
   transform: translateY(10px);
 }
+
+/* ── Operative OS scope ─────────────────────────────────────
+   Geometría técnica (radio 0-4px) y bordes --os-line para toda
+   la vista, sin reescribir cada utilidad Tailwind del template. */
+.os-dashboard :deep(.rounded-3xl),
+.os-dashboard :deep(.rounded-2xl),
+.os-dashboard :deep(.rounded-xl),
+.os-dashboard :deep(.rounded-lg) {
+  border-radius: 2px;
+}
+.os-dashboard :deep(.card-stats) { border-radius: 2px; }
+
+/* Números grandes en display condensada: solo los que deciden */
+.os-dashboard :deep(.text-3xl.font-bold.tabular-nums),
+.os-dashboard :deep(.text-2xl.font-bold.tabular-nums),
+.os-dashboard :deep(.text-4xl.font-bold.tabular-nums) {
+  font-family: var(--os-font-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Glifo del boss en el mission frame (decorativo, desaparece en móvil) */
+.os-boss-glyph {
+  position: absolute;
+  right: 300px;
+  top: -30px;
+  bottom: -50px;
+  width: 380px;
+  opacity: 0.85;
+  background:
+    radial-gradient(ellipse at 54% 42%, #c7ecff 0 2.5%, #3f8cb8 3.5%, #15345f 18%, transparent 46%),
+    linear-gradient(128deg, transparent 44%, #214d7b 45% 49%, transparent 50%),
+    linear-gradient(42deg, transparent 46%, #315d9a 47% 52%, transparent 53%);
+  clip-path: polygon(49% 4%, 62% 16%, 72% 13%, 76% 31%, 93% 41%, 77% 53%, 85% 90%, 60% 99%, 48% 87%, 31% 99%, 14% 89%, 22% 55%, 4% 43%, 24% 31%, 28% 13%, 39% 16%);
+  filter: drop-shadow(0 0 26px rgba(22, 122, 255, 0.45));
+}
+@media (max-width: 820px) { .os-boss-glyph { display: none; } }
+
+/* Estaciones del campamento: rectángulos técnicos, no pills ámbar */
+.os-station {
+  border: 1px solid var(--os-line);
+  border-radius: 2px;
+  background: var(--os-panel);
+}
+.os-station:hover { border-color: var(--os-line-strong); background: var(--os-panel-raised); }
+.os-station__icon {
+  border: 1px solid var(--os-line);
+  border-radius: 2px;
+  background: var(--os-panel-raised);
+  color: var(--os-cyan);
+}
+.os-station__label {
+  font: 500 10px var(--os-font-mono);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--os-muted);
+}
+.os-station:hover .os-station__label { color: var(--os-text); }
 </style>

@@ -1,22 +1,21 @@
 <template>
-  <div class="rounded-2xl border border-white/10 bg-black/30 p-2.5 backdrop-blur-md">
+  <div class="os-player p-2.5 backdrop-blur-md">
     <div class="flex items-center gap-3">
       <!-- Avatar + level badge -->
       <div class="relative shrink-0">
         <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :size="40" />
-        <span class="absolute -bottom-1 -right-1 rounded-full bg-primary-500 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-white ring-2 ring-black/40">
-          LVL {{ level }}
+        <span class="os-player-lvl os-num absolute -bottom-1 -right-1">
+          LV.{{ level }}
         </span>
       </div>
 
-      <!-- Name + XP -->
+      <!-- Name + XP (cian = lectura de sistema) -->
       <div class="min-w-0 flex-1">
-        <p class="truncate text-sm font-bold text-white">{{ authStore.user?.name || 'Player' }}</p>
-        <div class="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-white/10">
-          <div class="h-full rounded-full bg-gradient-to-r from-indigo-500 to-fuchsia-500 transition-all duration-500"
-            :style="{ width: xpPct + '%' }"></div>
+        <p class="os-player-name truncate">{{ authStore.user?.name || 'Player' }}</p>
+        <div class="os-minibar mt-1.5 w-full" style="height: 5px;">
+          <i :style="{ width: xpPct + '%' }"></i>
         </div>
-        <p class="mt-0.5 text-[10px] font-semibold tabular-nums text-white/50">
+        <p class="os-player-xp os-num mt-1">
           {{ formatNum(xpInto) }} / {{ formatNum(xpFor) }} XP
         </p>
       </div>
@@ -24,16 +23,16 @@
       <!-- Quick shortcuts: Misiones / Cofres / Ranking -->
       <div class="flex items-center gap-1.5">
         <button v-for="s in shortcuts" :key="s.id" @click="s.onClick"
-          class="relative flex h-10 w-10 flex-col items-center justify-center gap-0.5 rounded-xl border border-white/10 bg-white/5 text-white/70 transition-all active:scale-95 hover:text-white"
+          class="os-player-shortcut relative flex h-11 w-11 flex-col items-center justify-center gap-0.5 transition-all active:scale-95"
           :title="s.label">
           <component :is="s.icon" class="h-4 w-4" />
           <span class="text-[8px] font-bold uppercase tracking-tight">{{ s.label }}</span>
           <span v-if="s.count > 0"
-            class="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-black text-white ring-2 ring-black/40">
+            class="os-player-badge os-num absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center px-1">
             {{ s.count }}
           </span>
           <span v-else-if="s.dot"
-            class="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-rose-500 ring-2 ring-black/40"></span>
+            class="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full ring-2 ring-black/40" style="background: var(--os-danger)"></span>
         </button>
       </div>
     </div>
@@ -90,3 +89,45 @@ const shortcuts = computed(() => [
   },
 ]);
 </script>
+
+<style scoped>
+.os-player {
+  background: rgba(8, 13, 21, 0.88);
+  border: 1px solid var(--os-line);
+  border-radius: 2px;
+}
+.os-player-lvl {
+  border-radius: 2px;
+  background: var(--os-blue);
+  padding: 2px 5px;
+  font: 700 9px var(--os-font-mono);
+  letter-spacing: 0.5px;
+  color: #fff;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.4);
+}
+.os-player-name {
+  font: 700 0.95rem var(--os-font-display);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--os-text);
+}
+.os-player-xp {
+  font: 500 10px var(--os-font-mono);
+  letter-spacing: 0.8px;
+  color: var(--os-cyan);
+}
+.os-player-shortcut {
+  border: 1px solid var(--os-line);
+  border-radius: 2px;
+  background: var(--os-panel);
+  color: var(--os-muted);
+}
+.os-player-shortcut:hover { color: var(--os-text); border-color: var(--os-line-strong); }
+.os-player-badge {
+  border-radius: 2px;
+  background: var(--os-danger);
+  font: 700 9px var(--os-font-mono);
+  color: #fff;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.4);
+}
+</style>

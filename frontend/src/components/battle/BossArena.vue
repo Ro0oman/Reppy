@@ -1,6 +1,6 @@
 <template>
   <div ref="rootEl"
-    class="relative overflow-hidden rounded-3xl border border-orange-500/20 bg-black/40 shadow-2xl shadow-orange-900/30">
+    class="os-arena relative overflow-hidden bg-black/40">
 
     <!-- Boss artwork -->
     <div class="relative h-56 w-full sm:h-64 lg:h-80">
@@ -17,47 +17,42 @@
       <div class="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/40 to-transparent"></div>
 
       <!-- Top-left: rank · Top-right: participants -->
-      <div class="absolute left-3 top-3 flex items-center gap-1.5 rounded-full border border-white/10 bg-black/50 px-2.5 py-1 backdrop-blur-sm">
+      <div class="os-arena-chip absolute left-3 top-3 flex items-center gap-1.5 backdrop-blur-sm">
         <Trophy class="h-3.5 w-3.5 text-amber-400" />
-        <span class="text-[11px] font-black tracking-wide text-amber-200">
+        <span class="os-num">
           {{ i18n.t('battle_rank') }} {{ rank ? '#' + formatNum(rank) : '—' }}
         </span>
       </div>
       <button v-if="liveCount > 0" type="button" @click="emit('show-live')"
-        class="absolute right-3 top-3 flex items-center gap-1.5 rounded-full border border-white/10 bg-black/50 px-2.5 py-1 backdrop-blur-sm transition-all active:scale-95 hover:border-emerald-400/40 hover:bg-emerald-500/10">
-        <span class="relative flex h-2 w-2">
-          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60"></span>
-          <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
-        </span>
+        class="os-arena-chip os-arena-chip--live absolute right-3 top-3 flex items-center gap-1.5 backdrop-blur-sm transition-all active:scale-95">
+        <span class="os-arena-live-dot" aria-hidden="true"></span>
         <Users class="h-3.5 w-3.5 text-white/60" />
-        <span class="text-[11px] font-bold tabular-nums text-white/70">{{ liveCount }}</span>
+        <span class="os-num">{{ liveCount }}</span>
       </button>
 
       <!-- Boss identity -->
       <div class="absolute inset-x-0 bottom-2 px-4 text-center">
-        <p class="text-[10px] font-black uppercase tracking-[0.3em] text-orange-400/90">{{ i18n.t('battle_boss_active') }}</p>
-        <h2 class="mt-0.5 bg-gradient-to-b from-amber-200 to-orange-500 bg-clip-text text-xl font-black uppercase tracking-tight text-transparent drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
+        <p class="os-label os-label--orange">{{ i18n.t('battle_boss_active') }}</p>
+        <h2 class="os-arena-name mt-0.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
           {{ boss?.name }}
         </h2>
       </div>
     </div>
 
-    <!-- HP + damage strip -->
-    <div class="space-y-1.5 border-t border-white/5 bg-black/50 px-4 py-2 backdrop-blur-sm">
-      <!-- HP bar -->
-      <div class="relative h-5 w-full overflow-hidden rounded-full border border-red-900/40 bg-black/60">
-        <div class="h-full rounded-full bg-gradient-to-r from-red-600 via-orange-500 to-amber-400 transition-all duration-500"
-          :style="{ width: hpPct + '%' }"></div>
-        <div class="absolute inset-0 flex items-center justify-between px-3 text-[11px] font-bold tabular-nums text-white drop-shadow">
-          <span>{{ formatNum(currentHp) }} / {{ formatNum(totalHp) }} HP</span>
-          <span>{{ hpPct }}%</span>
-        </div>
+    <!-- HP + damage strip: HP es la lectura dominante -->
+    <div class="space-y-2 border-t border-[var(--os-line)] bg-[var(--os-ink)]/90 px-4 py-3 backdrop-blur-sm">
+      <div class="flex items-center justify-between">
+        <span class="os-label os-label--muted">{{ i18n.t('battle_boss_active') }}</span>
+        <span class="os-label os-num">{{ formatNum(currentHp) }} / {{ formatNum(totalHp) }} HP · {{ hpPct }}%</span>
+      </div>
+      <div class="os-track" style="height: 16px;">
+        <div class="os-track__fill os-track__fill--danger" :style="{ width: hpPct + '%' }"></div>
       </div>
       <!-- Your total damage -->
-      <div class="flex items-center justify-center gap-2">
+      <div class="flex items-center justify-center gap-2 pt-0.5">
         <Zap class="h-3.5 w-3.5 text-orange-400" />
-        <span class="text-[11px] font-semibold uppercase tracking-wide text-white/50">{{ i18n.t('battle_total_damage') }}:</span>
-        <span class="text-sm font-black tabular-nums text-orange-300">{{ formatNum(personalDamage) }}</span>
+        <span class="os-label os-label--muted">{{ i18n.t('battle_total_damage') }}</span>
+        <span class="os-arena-damage os-num">{{ formatNum(personalDamage) }}</span>
       </div>
     </div>
   </div>
@@ -146,6 +141,44 @@ defineExpose({ getOrigin, playDamaged });
 </script>
 
 <style scoped>
+.os-arena {
+  border: 1px solid var(--os-line-strong);
+  border-radius: 2px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6), 0 0 40px rgba(255, 106, 50, 0.08);
+}
+.os-arena-chip {
+  border: 1px solid var(--os-line);
+  border-radius: 2px;
+  background: rgba(8, 12, 19, 0.75);
+  padding: 4px 9px;
+  font: 500 10px var(--os-font-mono);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #e8d9b8;
+}
+.os-arena-chip--live { color: rgba(255, 255, 255, 0.75); }
+.os-arena-chip--live:hover { border-color: var(--os-success); }
+.os-arena-live-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--os-success);
+  box-shadow: 0 0 8px var(--os-success);
+  animation: os-breathe 2.6s var(--os-ease) infinite;
+}
+.os-arena-name {
+  font: 800 1.6rem / 0.95 var(--os-font-display);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--os-text);
+}
+.os-arena-damage {
+  font: 700 1.1rem var(--os-font-display);
+  letter-spacing: 0.5px;
+  color: var(--os-orange);
+}
+@media (prefers-reduced-motion: reduce) {
+  .os-arena-live-dot { animation: none; }
+}
+
 .boss-hit {
   animation: boss-hit-anim 0.35s ease-out;
 }

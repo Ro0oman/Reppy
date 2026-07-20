@@ -3,25 +3,25 @@
     <!-- Logo → back to camp -->
     <router-link :to="{ name: 'dashboard', params: { lang: i18n.locale } }"
       class="flex items-center gap-2 group shrink-0" :title="i18n.t('nav_camp')">
-      <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-indigo-600 flex items-center justify-center font-black text-white shadow-lg shadow-primary-500/30 group-active:scale-95 transition-transform">
+      <span class="os-topbar-logo w-9 h-9 flex items-center justify-center group-active:scale-95 transition-transform">
         <Swords class="w-5 h-5" />
       </span>
-      <span class="text-lg font-black tracking-tight text-white font-industrial hidden xs:block">
+      <span class="os-topbar-wordmark hidden xs:block">
         REPPY
       </span>
     </router-link>
 
-    <!-- Coins + Gems -->
+    <!-- Coins + Gems: telemetría de economía -->
     <div class="flex items-center gap-2">
       <button @click="$emit('coins')"
-        class="flex items-center gap-1.5 rounded-full border border-amber-400/30 bg-amber-500/10 px-3 py-1.5 backdrop-blur-sm transition-all active:scale-95">
+        class="os-topbar-currency flex items-center gap-1.5 backdrop-blur-sm transition-all active:scale-95">
         <Coins class="w-4 h-4 text-amber-400" />
-        <span class="text-sm font-bold tabular-nums text-amber-100">{{ formatNum(authStore.user?.reppy_coins || 0) }}</span>
+        <span class="os-num">{{ formatNum(authStore.user?.reppy_coins || 0) }} RC</span>
       </button>
       <button @click="$emit('coins')"
-        class="flex items-center gap-1.5 rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1.5 backdrop-blur-sm transition-all active:scale-95">
-        <Gem class="w-4 h-4 text-cyan-300" />
-        <span class="text-sm font-bold tabular-nums text-cyan-100">{{ formatNum(authStore.user?.reppy_gems || 0) }}</span>
+        class="os-topbar-currency flex items-center gap-1.5 backdrop-blur-sm transition-all active:scale-95">
+        <Gem class="w-4 h-4" style="color: var(--os-cyan)" />
+        <span class="os-num">{{ formatNum(authStore.user?.reppy_gems || 0) }}</span>
       </button>
     </div>
   </div>
@@ -38,3 +38,27 @@ const i18n = useI18nStore();
 
 const formatNum = (n) => new Intl.NumberFormat('en-US').format(n);
 </script>
+
+<style scoped>
+.os-topbar-logo {
+  border-radius: 2px;
+  background: var(--os-blue);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(22, 79, 199, 0.4);
+}
+.os-topbar-wordmark {
+  font: 800 1.25rem var(--os-font-display);
+  letter-spacing: 3px;
+  color: var(--os-text);
+}
+.os-topbar-currency {
+  border: 1px solid var(--os-line);
+  border-radius: 2px;
+  background: rgba(8, 13, 21, 0.8);
+  padding: 6px 10px;
+  font: 500 11px var(--os-font-mono);
+  letter-spacing: 0.8px;
+  color: var(--os-text);
+}
+.os-topbar-currency:hover { border-color: var(--os-line-strong); }
+</style>

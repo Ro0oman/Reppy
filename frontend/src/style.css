@@ -5,6 +5,7 @@
 
 @import "./cosmetics.css";
 @import "./athletic-tech.css";
+@import "./operative-os.css";
 
 html, body {
   overflow-x: hidden;
