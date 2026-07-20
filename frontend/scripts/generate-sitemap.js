@@ -121,7 +121,7 @@ const buildBlogSitemap = () => {
     seenSlugs.add(post.slug);
     const postLastmod = post.date ? new Date(post.date).toISOString() : lastmod;
     const esHref = `${BASE_URL}/es/blog/${post.slug}`;
-    const enHref = `${BASE_URL}/en/blog/${post.slug}`;
+    const enHref = `${BASE_URL}/en/blog/${post.slugEn || post.slug}`;
     // Pillar posts are the cornerstone content — rank them higher and crawl them more often
     const priority = post.isPillar ? '0.8' : '0.5';
     const changefreq = post.isPillar ? 'weekly' : 'monthly';

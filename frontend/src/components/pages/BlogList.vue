@@ -15,7 +15,7 @@
       <!-- Hero Post -->
       <div v-if="featuredPost" class="animate-in">
         <router-link 
-          :to="`/${i18n.locale}/blog/${featuredPost.slug}`"
+          :to="`/${i18n.locale}/blog/${postSlugFor(featuredPost, i18n.locale)}`"
           class="relative group block w-full aspect-[21/9] md:aspect-[3/1] rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-surface-dark/10"
         >
           <img
@@ -71,7 +71,7 @@
           </div>
 
           <router-link 
-            :to="`/${i18n.locale}/blog/${post.slug}`" 
+            :to="`/${i18n.locale}/blog/${postSlugFor(post, i18n.locale)}`" 
             class="group space-y-8 animate-in"
           >
             <div class="relative aspect-video rounded-2xl overflow-hidden border border-white/5 bg-surface-dark/10 shadow-2xl">
@@ -171,6 +171,7 @@
 import { ref, computed, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { blogPosts } from '@/blogPosts';
+import { postSlugFor } from '@/blogSlugs';
 import { useI18nStore } from '@/stores/i18n';
 import { useAuthStore } from '@/stores/auth';
 import { ChevronLeft, ChevronRight, Loader2, CheckCircle2, ArrowRight, ArrowLeft, Rocket } from 'lucide-vue-next';

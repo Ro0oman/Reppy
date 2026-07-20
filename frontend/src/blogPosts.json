@@ -1,6 +1,7 @@
 [
   {
     "slug": "grease-the-groove-mas-dominadas",
+    "slugEn": "grease-the-groove-more-pull-ups",
     "date": "2026-06-14",
     "author": "Reppy HQ",
     "image": "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&w=1200&q=80",
@@ -37,6 +38,7 @@
   },
   {
     "slug": "rutina-calistenia-semanal-principiantes",
+    "slugEn": "beginner-weekly-calisthenics-routine",
     "date": "2026-06-01",
     "author": "Ro0oman",
     "image": "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=1200&q=80",
@@ -71,6 +73,7 @@
   },
   {
     "slug": "programa-dominadas-8-semanas",
+    "slugEn": "8-week-pull-up-program",
     "date": "2026-06-02",
     "author": "Ro0oman",
     "image": "/images/blog/pullup-program-8-weeks.webp",
@@ -105,6 +108,7 @@
   },
   {
     "slug": "lanzamiento-oficial-reppy-rpg",
+    "slugEn": "reppy-rpg-official-launch",
     "date": "2026-04-28",
     "author": "Ro0oman",
     "image": "/img/showcase/armory_preview.webp",
@@ -139,6 +143,7 @@
   },
   {
     "slug": "guia-recompensas-cofres-bosses",
+    "slugEn": "chests-bosses-rewards-guide",
     "date": "2026-04-27",
     "author": "Reppy HQ",
     "image": "/images/blog/legendary-chest.webp",
@@ -177,6 +182,7 @@
   },
   {
     "slug": "overhaul-avatares-rpg-2026",
+    "slugEn": "rpg-avatars-overhaul-2026",
     "date": "2026-04-21",
     "author": "Reppy HQ",
     "image": "/img/showcase/profile_preview.webp",
@@ -211,6 +217,7 @@
   },
   {
     "slug": "guia-definitiva-dominadas",
+    "slugEn": "ultimate-pull-up-guide",
     "date": "2026-04-16",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80",
@@ -245,6 +252,7 @@
   },
   {
     "slug": "manual-inicio-calistenia",
+    "slugEn": "calisthenics-beginner-manual",
     "date": "2026-04-16",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1517838276537-c7010dbf031e?auto=format&fit=crop&w=1200&q=80",
@@ -279,6 +287,7 @@
   },
   {
     "slug": "gamificacion-fitness-ciencia",
+    "slugEn": "fitness-gamification-science",
     "date": "2026-04-20",
     "author": "Reppy Editorial",
     "image": "/img/showcase/dashboard_preview.webp",
@@ -313,6 +322,7 @@
   },
   {
     "slug": "dolor-codo-dominadas",
+    "slugEn": "elbow-pain-pull-ups",
     "date": "2026-04-22",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1591117207239-7887103447c4?auto=format&fit=crop&w=1200&q=80",
@@ -347,6 +357,7 @@
   },
   {
     "slug": "error-mas-dominadas",
+    "slugEn": "more-pull-ups-mistake",
     "date": "2026-04-16",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&w=1200&q=80",
@@ -381,6 +392,7 @@
   },
   {
     "slug": "flexiones-perfectas-errores",
+    "slugEn": "perfect-push-ups-mistakes",
     "date": "2026-04-16",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
@@ -415,6 +427,7 @@
   },
   {
     "slug": "nutricion-calistenia",
+    "slugEn": "calisthenics-nutrition",
     "date": "2026-04-28",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1510894347713-fc3ad6cb0392?auto=format&fit=crop&w=1200&q=80",
@@ -449,6 +462,7 @@
   },
   {
     "slug": "prevencion-lesiones-muneca",
+    "slugEn": "wrist-injury-prevention",
     "date": "2026-04-30",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1598971639058-aba3c3933f7c?auto=format&fit=crop&w=1200&q=80",
@@ -483,6 +497,7 @@
   },
   {
     "slug": "sentadillas-potencia-pierna",
+    "slugEn": "squats-leg-power",
     "date": "2026-05-02",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1574680096145-d05b474e2158?auto=format&fit=crop&w=1200&q=80",
@@ -517,6 +532,7 @@
   },
   {
     "slug": "verdad-sobre-el-fallo",
+    "slugEn": "truth-about-training-to-failure",
     "date": "2026-05-04",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80",
@@ -551,6 +567,7 @@
   },
   {
     "slug": "descanso-entre-series",
+    "slugEn": "rest-between-sets",
     "date": "2026-05-06",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1541534741688-6078c64ec4d9?auto=format&fit=crop&w=1200&q=80",
@@ -585,6 +602,7 @@
   },
   {
     "slug": "calistenia-vs-pesas",
+    "slugEn": "calisthenics-vs-weights",
     "date": "2026-05-08",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=1200&q=80",
@@ -619,6 +637,7 @@
   },
   {
     "slug": "mejor-hora-para-entrenar",
+    "slugEn": "best-time-to-train",
     "date": "2026-05-10",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80",
@@ -653,6 +672,7 @@
   },
   {
     "slug": "ayuno-intermitente-calistenia",
+    "slugEn": "intermittent-fasting-calisthenics",
     "date": "2026-05-12",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=1200&q=80",
@@ -687,6 +707,7 @@
   },
   {
     "slug": "suplementos-que-valen-la-pena",
+    "slugEn": "supplements-worth-taking",
     "date": "2026-05-14",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1558017487-06bf9f82613a?auto=format&fit=crop&w=1200&q=80",
@@ -721,6 +742,7 @@
   },
   {
     "slug": "calistenia-viajando-sin-gym",
+    "slugEn": "calisthenics-while-traveling",
     "date": "2026-05-16",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1517438476312-10d79c67750d?auto=format&fit=crop&w=1200&q=80",
@@ -755,6 +777,7 @@
   },
   {
     "slug": "psicologia-del-muscle-up",
+    "slugEn": "muscle-up-psychology",
     "date": "2026-05-18",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&w=1200&q=80",
@@ -789,6 +812,7 @@
   },
   {
     "slug": "plancha-abdominal-errores",
+    "slugEn": "plank-mistakes",
     "date": "2026-05-22",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1578762560072-06e14b562317?auto=format&fit=crop&w=1200&q=80",
@@ -823,6 +847,7 @@
   },
   {
     "slug": "como-dormir-para-progresar",
+    "slugEn": "sleep-for-gains",
     "date": "2026-05-24",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1526402978125-f1d6df913175?auto=format&fit=crop&w=1200&q=80",
@@ -857,6 +882,7 @@
   },
   {
     "slug": "beneficios-de-colgarse",
+    "slugEn": "dead-hang-benefits",
     "date": "2026-05-26",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1532384748853-8f54a8f476e2?auto=format&fit=crop&w=1200&q=80",
@@ -895,6 +921,7 @@
   },
   {
     "slug": "calistenia-despues-de-los-40",
+    "slugEn": "calisthenics-after-40",
     "date": "2026-05-28",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1490645935967-10de6ba17051?auto=format&fit=crop&w=1200&q=80",
@@ -929,6 +956,7 @@
   },
   {
     "slug": "hollow-body-core-maestro",
+    "slugEn": "hollow-body-core-mastery",
     "date": "2026-05-30",
     "author": "Reppy Editorial",
     "image": "/images/blog/hollow-body.webp",
@@ -963,6 +991,7 @@
   },
   {
     "slug": "entrenar-con-frio-calistenia",
+    "slugEn": "training-in-cold-weather",
     "date": "2026-06-01",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1453306458620-5bbef13a5bca?auto=format&fit=crop&w=1200&q=80",
@@ -1001,6 +1030,7 @@
   },
   {
     "slug": "progresion-fondos-paralelas",
+    "slugEn": "dips-progression",
     "date": "2026-04-16",
     "author": "Reppy Editorial",
     "image": "https://images.unsplash.com/photo-1511295742364-903170ca94ce?auto=format&fit=crop&w=1200&q=80",
@@ -1035,6 +1065,7 @@
   },
   {
     "slug": "calistenia-y-correr",
+    "slugEn": "calisthenics-and-running",
     "date": "2026-06-05",
     "author": "Reppy Editorial",
     "image": "/images/blog/calisthenics-running.webp",
@@ -1069,6 +1100,7 @@
   },
   {
     "slug": "flexiones-hombro-pike-pushups",
+    "slugEn": "shoulder-push-ups-handstand-path",
     "date": "2026-04-26",
     "image": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8df0?auto=format&fit=crop&w=1200&q=80",
     "category": "empuje",
@@ -1096,13 +1128,14 @@
           "vertical push calisthenics",
           "handstand preparation"
         ],
-        "content": "# Shoulder Push-ups: Building Vertical Support\n\nIn calisthenics, strong shoulders are the framework upon which the game's most epic movements are built. If you want to unlock the Handstand or the legendary Handstand Push-up, you can't rely solely on traditional chest push-ups. You need specific **vertical push** training. Shoulder push-ups won't just give you that imposing 'V' shape; they will shield your joints against the discipline's most common injuries.\n\nThe base exercise is the Pike Push-up, but for many veteran warriors, the floor becomes too small. The logical progression to keep gaining XP is elevating your feet or, even better, moving to **Wall-Assisted Handstand Push-ups**. Here, the load on your deltoids is nearly 100% of your body weight, becoming the ultimate test of shoulder strength. If you can master this movement, your character will be ready for any Boss Fight requiring raw arm power.\n\n## 🛡️ Shoulder Push Attributes:\n- **Elbow Angle:** Never flare your elbows out uncontrollably. Keep them at about 45 degrees from your torso to protect the rotator cuff.\n- **Upper Lockout:** In every rep, push the floor until your elbows are straight and your shoulders touch your ears (scapular elevation).\n- **Core Control:** Keep your core tight to prevent your body from arching like a banana. Strict technique means clean XP!\n\nAre you ready to elevate your marks? Log your shoulder push-ups on the [Dashboard](/en/push-up-counter) and claim your place in the vertical warrior ranking. Share your progress toward the Handstand in the [/social](/social) feed!\n\n> **Related guide:** to master vertical pushing from scratch, start with the [definitive pike push ups guide](/en/blog/pike-push-ups-guia-definitiva): form, progressions and mistakes.\n"
+        "content": "# Shoulder Push-ups: Building Vertical Support\n\nIn calisthenics, strong shoulders are the framework upon which the game's most epic movements are built. If you want to unlock the Handstand or the legendary Handstand Push-up, you can't rely solely on traditional chest push-ups. You need specific **vertical push** training. Shoulder push-ups won't just give you that imposing 'V' shape; they will shield your joints against the discipline's most common injuries.\n\nThe base exercise is the Pike Push-up, but for many veteran warriors, the floor becomes too small. The logical progression to keep gaining XP is elevating your feet or, even better, moving to **Wall-Assisted Handstand Push-ups**. Here, the load on your deltoids is nearly 100% of your body weight, becoming the ultimate test of shoulder strength. If you can master this movement, your character will be ready for any Boss Fight requiring raw arm power.\n\n## 🛡️ Shoulder Push Attributes:\n- **Elbow Angle:** Never flare your elbows out uncontrollably. Keep them at about 45 degrees from your torso to protect the rotator cuff.\n- **Upper Lockout:** In every rep, push the floor until your elbows are straight and your shoulders touch your ears (scapular elevation).\n- **Core Control:** Keep your core tight to prevent your body from arching like a banana. Strict technique means clean XP!\n\nAre you ready to elevate your marks? Log your shoulder push-ups on the [Dashboard](/en/push-up-counter) and claim your place in the vertical warrior ranking. Share your progress toward the Handstand in the [/social](/social) feed!\n\n> **Related guide:** to master vertical pushing from scratch, start with the [definitive pike push ups guide](/en/blog/pike-push-ups-ultimate-guide): form, progressions and mistakes.\n"
       }
     },
     "author": "Reppy Editorial"
   },
   {
     "slug": "sentadilla-pistol-guia-piernas",
+    "slugEn": "pistol-squat-guide",
     "date": "2026-04-28",
     "image": "https://images.unsplash.com/photo-1562771242-a02d9090c90c?auto=format&fit=crop&w=1200&q=80",
     "category": "piernas",
@@ -1137,6 +1170,7 @@
   },
   {
     "slug": "fondos-paralelas-guia",
+    "slugEn": "parallel-bar-dips-guide",
     "date": "2026-04-30",
     "image": "https://images.unsplash.com/photo-1550345332-09e3ac987658?auto=format&fit=crop&w=1200&q=80",
     "category": "empuje",
@@ -1171,6 +1205,7 @@
   },
   {
     "slug": "orden-aprender-trucos",
+    "slugEn": "skill-learning-order",
     "date": "2026-05-02",
     "image": "https://images.unsplash.com/photo-1474224017046-182ece80b263?auto=format&fit=crop&w=1200&q=80",
     "category": "rpg",
@@ -1205,6 +1240,7 @@
   },
   {
     "slug": "errores-comunes-principiantes",
+    "slugEn": "common-beginner-mistakes",
     "date": "2026-05-04",
     "image": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80",
     "category": "principiantes",
@@ -1239,6 +1275,7 @@
   },
   {
     "slug": "muscle-up-progresion-tecnica",
+    "slugEn": "muscle-up-progression-technique",
     "date": "2026-04-16",
     "image": "/images/blog/muscle-up-progression.webp",
     "category": "avanzado",
@@ -1273,6 +1310,7 @@
   },
   {
     "slug": "nutricion-calistenia-proteina",
+    "slugEn": "calisthenics-protein-nutrition",
     "date": "2026-05-08",
     "image": "https://images.unsplash.com/photo-1598971426620-6d4b99824de4?auto=format&fit=crop&w=1200&q=80",
     "category": "nutrición",
@@ -1307,6 +1345,7 @@
   },
   {
     "slug": "front-lever-guia-fuerza",
+    "slugEn": "front-lever-strength-guide",
     "date": "2026-05-10",
     "image": "https://images.unsplash.com/photo-1591117207239-7887103447c4?auto=format&fit=crop&w=1200&q=80",
     "category": "avanzado",
@@ -1375,6 +1414,7 @@
   },
   {
     "slug": "calistenia-en-casa-sin-equipo",
+    "slugEn": "home-calisthenics-no-equipment",
     "date": "2026-05-14",
     "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80",
     "category": "principiantes",
@@ -1409,6 +1449,7 @@
   },
   {
     "slug": "pike-push-ups-guia-definitiva",
+    "slugEn": "pike-push-ups-ultimate-guide",
     "date": "2026-06-07",
     "author": "Ro0oman",
     "image": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80",
@@ -1447,12 +1488,13 @@
           "how to do pike push ups",
           "pike push up progression"
         ],
-        "content": "# Pike Push Ups: The Definitive Guide for Steel Shoulders\n\n**Pike push ups** are one of the most underrated exercises in calisthenics. If you want to build strong shoulders without weights, master the handstand, or progress toward handstand push-ups, this exercise is your mandatory starting point.\n\nIn this guide you'll find everything: which muscles it works, how to do it correctly, the most effective progressions, and the mistakes that hold most people back.\n\n## What is a Pike Push Up?\n\nThe **pike push up** is a push-up variant where you raise your hips to form an inverted \"V\" shape (the pike position). By leaning with your hips high, the weight shifts from the chest toward the **shoulders (anterior and lateral deltoids)** and **triceps**, turning the exercise into a vertical pushing movement.\n\n## Muscles Worked by Pike Push Ups\n\n- **Anterior and lateral deltoids**: primary muscle, responsible for raising the arm overhead.\n- **Triceps brachii**: extends the elbow during the push.\n- **Upper trapezius and serratus anterior**: stabilize the scapula throughout the movement.\n- **Core and glutes**: maintain the pike position without the hips sinking.\n\n## Correct Pike Push Up Technique Step by Step\n\n### Starting position\n1. Begin in a standard push-up position with hands at shoulder width.\n2. Raise your hips toward the ceiling until you form an inverted \"V\". Feet on the ground, heels pressing down.\n3. The distance between hands and feet should be slightly greater than in a normal push-up — longer = easier; shorter = harder on the shoulders.\n4. Look at the ground, between your hands. Neutral neck.\n\n### The movement\n5. Slowly bend your elbows and lower your head toward the floor between your hands. Elbows point slightly outward (45°), not fully to the sides.\n6. Lower until your head is about to touch the floor or your nose is between your hands.\n7. Push powerfully back up to the initial \"V\". Arms should be fully extended.\n\n### Key points\n- **Hips always high**: if hips drop during the movement, the exercise loses effectiveness and weight transfers to the chest.\n- **Head between hands**: the trajectory of your head should go between your hands, not in front of them.\n- **Controlled tempo**: 2 seconds down, 1 second up. Don't bounce on the floor.\n\n### Head Between Your Hands or in Front?\n\nYou'll see two schools. The first lowers the head **between the hands**, mimicking the natural bar path of a military press with a tilted torso. The second (the \"tripod\") lowers the head **slightly in front of the hands**, forming a triangle — the same base you'll later use for wall handstand push ups. Both are valid: what matters is that your hips stay high and your forearms are vertical at the bottom. If your goal is the handstand push up, practice the tripod version; if you want pure shoulder work, head-between-hands maximizes tension.\n\n## Progressions: From Zero to Handstand Push Up\n\n### Level 1 — Knee Pike Push Up (Assisted)\nKnees touch the floor to reduce bodyweight. Ideal if you can't do 1 clean rep. **Goal: 3×10 reps.**\n\n### Level 2 — Standard Pike Push Up\nFeet on the floor, hips high. The base exercise of this guide. **Goal: 4×12 reps.**\n\n### Level 3 — Elevated Pike Push Up (Feet on Bench)\nPlace your feet on a chair or elevated bench. The higher your feet, the more vertical the movement and the more it loads the shoulders. **Goal: 4×10 with feet 60-80 cm high.**\n\n### Level 4 — Pike Push Up with Resistance Band\nPlace a band around your hips anchored above to add resistance during the push phase. **Goal: 3×8 reps with medium band.**\n\n### Level 5 — Handstand Push Up\nThe final destination. With your body completely inverted against the wall, the movement is 100% vertical and the load is almost full bodyweight. Pike push ups are the indispensable bridge to get here.\n\n## Common Mistakes in Pike Push Ups\n\n**Mistake 1: Hips too low**\nIf hips aren't high, the exercise becomes a regular push-up. The body angle determines which muscle works most. High hips = shoulders. Low hips = chest.\n\n**Mistake 2: Hands too wide**\nWith hands too far apart, elbows flare out excessively and shoulder injury risk increases. Keep hands at shoulder width or slightly wider.\n\n**Mistake 3: Not fully extending arms**\nStopping halfway up reduces effective work and eliminates serratus anterior activation. Always extend fully.\n\n**Mistake 4: Excessive speed**\nDropping fast and bouncing doesn't count as a rep and increases the risk of hitting your head. Each rep should be controlled.\n\n**Mistake 5: Neck hyperextension**\nDon't look forward while descending — this compresses the cervical spine. Eyes should look at the floor, between your hands.\n\n## 4-Week Pike Push Up Shoulder Routine\n\n| Week | Sets × Reps | Rest |\n|------|-------------|------|\n| 1 | 3 × 8 | 2 min |\n| 2 | 4 × 8 | 90 sec |\n| 3 | 4 × 10 | 90 sec |\n| 4 | 4 × 12 | 60 sec |\n\nPerform this block 2-3 times per week with at least one rest day between sessions.\n\n## Pike Push Up FAQ\n\n**What is a pike push up?**\nA push-up variation performed with your hips raised in an inverted \"V\". That incline shifts the load from the chest to the shoulders and triceps, turning it into a vertical push that needs no equipment.\n\n**What muscles do pike push ups work? Do they work the whole shoulder?**\nPrimarily the anterior and lateral deltoids, plus triceps, upper traps and serratus anterior. The rear delts barely contribute, so pair them with pulling work like australian rows or band face pulls for a complete shoulder.\n\n**How many pike push ups should I do?**\nStart with 3-4 sets of 8-12 reps, 2-3 times per week with at least one rest day between sessions. Once you hit a clean 4×12, move to the next progression (feet elevated).\n\n**Do pike push ups help you get the handstand push up?**\nYes — they're the standard bridge. Progressing from floor pike to feet-elevated pike brings the movement closer and closer to vertical until the wall handstand push up becomes reachable.\n\nTo expand your shoulder training, continue with the [7 best calisthenics shoulder exercises](/en/blog/ejercicios-hombros-calistenia) and the [shoulder push-up variations toward the handstand](/en/blog/flexiones-hombro-pike-pushups).\n\n## Track Your Progress on Reppy\n\nEvery set of pike push ups you complete deserves to be recorded. On [Reppy](/en/push-up-counter) you can:\n\n- Log reps and watch your **PWR** (Power) attribute rise\n- Compare with other athletes in the push-up ranking\n- Earn XP and level up for every completed session\n- Visualize your **consistency heatmap** throughout the month\n\nPike push ups are the bridge between the basic push-up and the handstand push-up. Master them now and your shoulders will thank you."
+        "content": "# Pike Push Ups: The Definitive Guide for Steel Shoulders\n\n**Pike push ups** are one of the most underrated exercises in calisthenics. If you want to build strong shoulders without weights, master the handstand, or progress toward handstand push-ups, this exercise is your mandatory starting point.\n\nIn this guide you'll find everything: which muscles it works, how to do it correctly, the most effective progressions, and the mistakes that hold most people back.\n\n## What is a Pike Push Up?\n\nThe **pike push up** is a push-up variant where you raise your hips to form an inverted \"V\" shape (the pike position). By leaning with your hips high, the weight shifts from the chest toward the **shoulders (anterior and lateral deltoids)** and **triceps**, turning the exercise into a vertical pushing movement.\n\n## Muscles Worked by Pike Push Ups\n\n- **Anterior and lateral deltoids**: primary muscle, responsible for raising the arm overhead.\n- **Triceps brachii**: extends the elbow during the push.\n- **Upper trapezius and serratus anterior**: stabilize the scapula throughout the movement.\n- **Core and glutes**: maintain the pike position without the hips sinking.\n\n## Correct Pike Push Up Technique Step by Step\n\n### Starting position\n1. Begin in a standard push-up position with hands at shoulder width.\n2. Raise your hips toward the ceiling until you form an inverted \"V\". Feet on the ground, heels pressing down.\n3. The distance between hands and feet should be slightly greater than in a normal push-up — longer = easier; shorter = harder on the shoulders.\n4. Look at the ground, between your hands. Neutral neck.\n\n### The movement\n5. Slowly bend your elbows and lower your head toward the floor between your hands. Elbows point slightly outward (45°), not fully to the sides.\n6. Lower until your head is about to touch the floor or your nose is between your hands.\n7. Push powerfully back up to the initial \"V\". Arms should be fully extended.\n\n### Key points\n- **Hips always high**: if hips drop during the movement, the exercise loses effectiveness and weight transfers to the chest.\n- **Head between hands**: the trajectory of your head should go between your hands, not in front of them.\n- **Controlled tempo**: 2 seconds down, 1 second up. Don't bounce on the floor.\n\n### Head Between Your Hands or in Front?\n\nYou'll see two schools. The first lowers the head **between the hands**, mimicking the natural bar path of a military press with a tilted torso. The second (the \"tripod\") lowers the head **slightly in front of the hands**, forming a triangle — the same base you'll later use for wall handstand push ups. Both are valid: what matters is that your hips stay high and your forearms are vertical at the bottom. If your goal is the handstand push up, practice the tripod version; if you want pure shoulder work, head-between-hands maximizes tension.\n\n## Progressions: From Zero to Handstand Push Up\n\n### Level 1 — Knee Pike Push Up (Assisted)\nKnees touch the floor to reduce bodyweight. Ideal if you can't do 1 clean rep. **Goal: 3×10 reps.**\n\n### Level 2 — Standard Pike Push Up\nFeet on the floor, hips high. The base exercise of this guide. **Goal: 4×12 reps.**\n\n### Level 3 — Elevated Pike Push Up (Feet on Bench)\nPlace your feet on a chair or elevated bench. The higher your feet, the more vertical the movement and the more it loads the shoulders. **Goal: 4×10 with feet 60-80 cm high.**\n\n### Level 4 — Pike Push Up with Resistance Band\nPlace a band around your hips anchored above to add resistance during the push phase. **Goal: 3×8 reps with medium band.**\n\n### Level 5 — Handstand Push Up\nThe final destination. With your body completely inverted against the wall, the movement is 100% vertical and the load is almost full bodyweight. Pike push ups are the indispensable bridge to get here.\n\n## Common Mistakes in Pike Push Ups\n\n**Mistake 1: Hips too low**\nIf hips aren't high, the exercise becomes a regular push-up. The body angle determines which muscle works most. High hips = shoulders. Low hips = chest.\n\n**Mistake 2: Hands too wide**\nWith hands too far apart, elbows flare out excessively and shoulder injury risk increases. Keep hands at shoulder width or slightly wider.\n\n**Mistake 3: Not fully extending arms**\nStopping halfway up reduces effective work and eliminates serratus anterior activation. Always extend fully.\n\n**Mistake 4: Excessive speed**\nDropping fast and bouncing doesn't count as a rep and increases the risk of hitting your head. Each rep should be controlled.\n\n**Mistake 5: Neck hyperextension**\nDon't look forward while descending — this compresses the cervical spine. Eyes should look at the floor, between your hands.\n\n## 4-Week Pike Push Up Shoulder Routine\n\n| Week | Sets × Reps | Rest |\n|------|-------------|------|\n| 1 | 3 × 8 | 2 min |\n| 2 | 4 × 8 | 90 sec |\n| 3 | 4 × 10 | 90 sec |\n| 4 | 4 × 12 | 60 sec |\n\nPerform this block 2-3 times per week with at least one rest day between sessions.\n\n## Pike Push Up FAQ\n\n**What is a pike push up?**\nA push-up variation performed with your hips raised in an inverted \"V\". That incline shifts the load from the chest to the shoulders and triceps, turning it into a vertical push that needs no equipment.\n\n**What muscles do pike push ups work? Do they work the whole shoulder?**\nPrimarily the anterior and lateral deltoids, plus triceps, upper traps and serratus anterior. The rear delts barely contribute, so pair them with pulling work like australian rows or band face pulls for a complete shoulder.\n\n**How many pike push ups should I do?**\nStart with 3-4 sets of 8-12 reps, 2-3 times per week with at least one rest day between sessions. Once you hit a clean 4×12, move to the next progression (feet elevated).\n\n**Do pike push ups help you get the handstand push up?**\nYes — they're the standard bridge. Progressing from floor pike to feet-elevated pike brings the movement closer and closer to vertical until the wall handstand push up becomes reachable.\n\nTo expand your shoulder training, continue with the [7 best calisthenics shoulder exercises](/en/blog/calisthenics-shoulder-exercises) and the [shoulder push-up variations toward the handstand](/en/blog/shoulder-push-ups-handstand-path).\n\n## Track Your Progress on Reppy\n\nEvery set of pike push ups you complete deserves to be recorded. On [Reppy](/en/push-up-counter) you can:\n\n- Log reps and watch your **PWR** (Power) attribute rise\n- Compare with other athletes in the push-up ranking\n- Earn XP and level up for every completed session\n- Visualize your **consistency heatmap** throughout the month\n\nPike push ups are the bridge between the basic push-up and the handstand push-up. Master them now and your shoulders will thank you."
       }
     }
   },
   {
     "slug": "dolor-antebrazo-codo-dominadas",
+    "slugEn": "forearm-elbow-pain-pull-ups",
     "date": "2026-06-08",
     "author": "Ro0oman",
     "image": "/images/blog/forearm-elbow-pain.webp",
@@ -1489,6 +1531,7 @@
   },
   {
     "slug": "ejercicios-hombros-calistenia",
+    "slugEn": "calisthenics-shoulder-exercises",
     "date": "2026-06-09",
     "author": "Ro0oman",
     "image": "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=1200&q=80",
@@ -1521,7 +1564,7 @@
           "deltoids calisthenics",
           "vertical push exercises"
         ],
-        "content": "# Calisthenics Shoulder Exercises: The 7 Best Without Weights\n\nOne of the biggest fitness myths is that you need weights to build strong, wide shoulders. False. Calisthenics offers an arsenal of vertical pushing movements that build deltoids just as effectively as a barbell military press, and in many cases with greater athletic transfer.\n\nHere are the 7 best calisthenics shoulder exercises, ordered from lowest to highest difficulty.\n\n## The 7 Calisthenics Shoulder Exercises\n\n### 1. Pike Push Up\n**Level**: Beginner-Intermediate\n**Muscles**: Anterior/lateral deltoids, triceps, serratus anterior\n\nThe essential starting point. With hips high forming a \"V\", you lower your head between your hands, primarily activating the shoulders. It's the most accessible calisthenics shoulder exercise.\n\n**Key progression**: elevate your feet on a bench to increase the angle and load on the deltoids.\n\n**Recommended sets**: 4×10-15\n\n---\n\n### 2. Elevated Pike Push Up (Feet on Bench)\n**Level**: Intermediate\n**Muscles**: Deltoids (greater activation than standard), triceps\n\nWith feet elevated on a chair, the body tilts more toward vertical. This transfers more load to the shoulders and less to the chest. It's the bridge between standard pike push ups and the handstand push up.\n\n**Recommended sets**: 4×8-12\n\n---\n\n### 3. Wall Handstand Hold\n**Level**: Intermediate\n**Muscles**: Full shoulder, core, glutes\n\nBefore pressing in a handstand, you must hold one. Practicing static wall handstands builds isometric deltoid strength and works the scapular stability needed for HSPU.\n\n**Initial goal**: 3 sets of 20-30 seconds\n\n---\n\n### 4. Wall Handstand Push Up\n**Level**: Advanced\n**Muscles**: Deltoids, triceps, upper trapezius\n\nThe most effective calisthenics shoulder exercise. With your body inverted against the wall, you lower until your head touches the floor and push back up. Full bodyweight on the shoulders.\n\n**Recommended sets**: 5×3-8\n\n---\n\n### 5. Pseudo Planche Push Up\n**Level**: Intermediate-Advanced\n**Muscles**: Anterior deltoid, upper pec, triceps, serratus\n\nShift your hands toward your hips (instead of shoulders) in push-up position. This creates a more inclined push angle that massively activates the anterior deltoid and serratus.\n\n**Recommended sets**: 4×6-10\n\n---\n\n### 6. Vertical Torso Dips\n**Level**: Intermediate\n**Muscles**: Triceps, deltoid, pec\n\nKeeping torso completely vertical (not leaning forward), parallel bar dips become a more vertical push movement that loads the shoulder more than when the torso is inclined.\n\n**Recommended sets**: 4×10-15\n\n---\n\n### 7. Band Pull-Aparts and Face Pulls\n**Level**: Beginner-Intermediate\n**Muscles**: Posterior deltoid, rotator cuff, rhomboids\n\nThe most ignored and most important for long-term shoulder health. With a resistance band, pull apart at chest height or pull toward your face. These correct the imbalances created by excessive pushing work.\n\n**Recommended sets**: 3×15-20 (include in all shoulder sessions)\n\n## 6-Week Calisthenics Shoulder Training Plan\n\n**Block A (Week 1-2)**:\n- Pike Push Up: 4×10\n- Vertical dips: 3×12\n- Face Pull with band: 3×15\n\n**Block B (Week 3-4)**:\n- Elevated Pike Push Up (feet on bench): 4×8\n- Wall Handstand Hold: 3×20 seconds\n- Band Pull-Apart: 3×20\n\n**Block C (Week 5-6)**:\n- Handstand Push Up or max elevation: 5×5\n- Pseudo Planche Push Up: 4×6\n- Face Pull + Band Pull-Apart: 3×15 each\n\n## Track Your Progress on Reppy\n\nEvery shoulder session completed on [Reppy](/en/push-up-counter):\n- Increases your **STR** (Strength) and **PWR** (Power) attributes\n- Moves you up in the community rankings\n- Generates XP to level up your RPG character\n\nCalisthenics shoulders are built with consistency and progression. With these 7 exercises, you have everything you need.\n\n> **Related guide:** to master vertical pushing from scratch, start with the [definitive pike push ups guide](/en/blog/pike-push-ups-guia-definitiva): form, progressions and mistakes.\n"
+        "content": "# Calisthenics Shoulder Exercises: The 7 Best Without Weights\n\nOne of the biggest fitness myths is that you need weights to build strong, wide shoulders. False. Calisthenics offers an arsenal of vertical pushing movements that build deltoids just as effectively as a barbell military press, and in many cases with greater athletic transfer.\n\nHere are the 7 best calisthenics shoulder exercises, ordered from lowest to highest difficulty.\n\n## The 7 Calisthenics Shoulder Exercises\n\n### 1. Pike Push Up\n**Level**: Beginner-Intermediate\n**Muscles**: Anterior/lateral deltoids, triceps, serratus anterior\n\nThe essential starting point. With hips high forming a \"V\", you lower your head between your hands, primarily activating the shoulders. It's the most accessible calisthenics shoulder exercise.\n\n**Key progression**: elevate your feet on a bench to increase the angle and load on the deltoids.\n\n**Recommended sets**: 4×10-15\n\n---\n\n### 2. Elevated Pike Push Up (Feet on Bench)\n**Level**: Intermediate\n**Muscles**: Deltoids (greater activation than standard), triceps\n\nWith feet elevated on a chair, the body tilts more toward vertical. This transfers more load to the shoulders and less to the chest. It's the bridge between standard pike push ups and the handstand push up.\n\n**Recommended sets**: 4×8-12\n\n---\n\n### 3. Wall Handstand Hold\n**Level**: Intermediate\n**Muscles**: Full shoulder, core, glutes\n\nBefore pressing in a handstand, you must hold one. Practicing static wall handstands builds isometric deltoid strength and works the scapular stability needed for HSPU.\n\n**Initial goal**: 3 sets of 20-30 seconds\n\n---\n\n### 4. Wall Handstand Push Up\n**Level**: Advanced\n**Muscles**: Deltoids, triceps, upper trapezius\n\nThe most effective calisthenics shoulder exercise. With your body inverted against the wall, you lower until your head touches the floor and push back up. Full bodyweight on the shoulders.\n\n**Recommended sets**: 5×3-8\n\n---\n\n### 5. Pseudo Planche Push Up\n**Level**: Intermediate-Advanced\n**Muscles**: Anterior deltoid, upper pec, triceps, serratus\n\nShift your hands toward your hips (instead of shoulders) in push-up position. This creates a more inclined push angle that massively activates the anterior deltoid and serratus.\n\n**Recommended sets**: 4×6-10\n\n---\n\n### 6. Vertical Torso Dips\n**Level**: Intermediate\n**Muscles**: Triceps, deltoid, pec\n\nKeeping torso completely vertical (not leaning forward), parallel bar dips become a more vertical push movement that loads the shoulder more than when the torso is inclined.\n\n**Recommended sets**: 4×10-15\n\n---\n\n### 7. Band Pull-Aparts and Face Pulls\n**Level**: Beginner-Intermediate\n**Muscles**: Posterior deltoid, rotator cuff, rhomboids\n\nThe most ignored and most important for long-term shoulder health. With a resistance band, pull apart at chest height or pull toward your face. These correct the imbalances created by excessive pushing work.\n\n**Recommended sets**: 3×15-20 (include in all shoulder sessions)\n\n## 6-Week Calisthenics Shoulder Training Plan\n\n**Block A (Week 1-2)**:\n- Pike Push Up: 4×10\n- Vertical dips: 3×12\n- Face Pull with band: 3×15\n\n**Block B (Week 3-4)**:\n- Elevated Pike Push Up (feet on bench): 4×8\n- Wall Handstand Hold: 3×20 seconds\n- Band Pull-Apart: 3×20\n\n**Block C (Week 5-6)**:\n- Handstand Push Up or max elevation: 5×5\n- Pseudo Planche Push Up: 4×6\n- Face Pull + Band Pull-Apart: 3×15 each\n\n## Track Your Progress on Reppy\n\nEvery shoulder session completed on [Reppy](/en/push-up-counter):\n- Increases your **STR** (Strength) and **PWR** (Power) attributes\n- Moves you up in the community rankings\n- Generates XP to level up your RPG character\n\nCalisthenics shoulders are built with consistency and progression. With these 7 exercises, you have everything you need.\n\n> **Related guide:** to master vertical pushing from scratch, start with the [definitive pike push ups guide](/en/blog/pike-push-ups-ultimate-guide): form, progressions and mistakes.\n"
       }
     }
   }

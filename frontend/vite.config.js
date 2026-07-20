@@ -51,7 +51,6 @@ export default defineConfig({
     formatting: 'minify',
     async includedRoutes() {
       const blogPosts = JSON.parse(fs.readFileSync('./src/blogPosts.json', 'utf8'));
-      const blogSlugs = blogPosts.map(post => post.slug);
 
       // Fetch top public athletes for SSG prerendering
       let athleteUsernames = [];
@@ -104,10 +103,11 @@ export default defineConfig({
         '/en/social'
       ];
 
-      // Blog routes
-      blogSlugs.forEach(slug => {
-        routes.push(`/es/blog/${slug}`);
-        routes.push(`/en/blog/${slug}`);
+      // Blog routes (slug por idioma: /en usa slugEn si existe)
+      blogPosts.forEach(post => {
+        if (!post.slug) return;
+        routes.push(`/es/blog/${post.slug}`);
+        routes.push(`/en/blog/${post.slugEn || post.slug}`);
       });
 
       // Top athlete profile routes

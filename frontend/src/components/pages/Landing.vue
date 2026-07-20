@@ -462,7 +462,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <!-- Post Card 1 (Dynamic) -->
-        <router-link v-for="p in latestPosts" :key="p.slug" :to="`/${i18n.locale}/blog/${p.slug}`" class="group card-stats !p-0 overflow-hidden flex flex-col border-border/40 hover:border-primary-500/40">
+        <router-link v-for="p in latestPosts" :key="p.slug" :to="`/${i18n.locale}/blog/${postSlugFor(p, i18n.locale)}`" class="group card-stats !p-0 overflow-hidden flex flex-col border-border/40 hover:border-primary-500/40">
           <div class="relative aspect-video overflow-hidden">
             <img
               :src="p.image"
@@ -688,6 +688,7 @@ import { useAuthStore } from '@/stores/auth';
 import BossHealth from '@/components/boss/BossHealth.vue';
 import BossBanner from '@/components/boss/BossBanner.vue';
 import { blogPosts } from '@/blogPosts';
+import { postSlugFor } from '@/blogSlugs';
 
 const Leaderboard = defineAsyncComponent(() => import('@/components/social/Leaderboard.vue'));
 

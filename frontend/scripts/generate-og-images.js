@@ -90,7 +90,9 @@ try {
       const title = stripEmoji(locale.title);
       const category = (post.category || 'Reppy').toUpperCase();
       const svg = buildSvg(title, category, footer);
-      fs.writeFileSync(path.join(dir, `${post.slug}.png`), render(svg));
+      // El nombre del PNG sigue el slug de la URL de cada idioma (slugEn en /en)
+      const urlSlug = lang === 'en' && post.slugEn ? post.slugEn : post.slug;
+      fs.writeFileSync(path.join(dir, `${urlSlug}.png`), render(svg));
       count++;
     }
   }

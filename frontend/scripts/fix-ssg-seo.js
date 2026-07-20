@@ -37,10 +37,22 @@ const SLUG_MAP = {
 // Build reverse map EN → ES
 const SLUG_MAP_REVERSE = Object.fromEntries(Object.entries(SLUG_MAP).map(([k, v]) => [v, k]));
 
+// Blog: slug ES (canónico) ↔ slugEn opcional por post
+const BLOG_SLUG_EN = Object.fromEntries(blogPosts.filter(p => p.slugEn).map(p => [p.slug, p.slugEn]));
+const BLOG_SLUG_ES = Object.fromEntries(blogPosts.filter(p => p.slugEn).map(p => [p.slugEn, p.slug]));
+const findPost = (slug) => blogPosts.find(p => p.slug === slug || p.slugEn === slug);
+
 const localizedSibling = (route, lang) => {
   if (route === '/es' || route === '/en') return `/${lang}`;
   if (lang === 'en' && SLUG_MAP[route]) return SLUG_MAP[route];
   if (lang === 'es' && SLUG_MAP_REVERSE[route]) return SLUG_MAP_REVERSE[route];
+  // Blog posts con slug por idioma
+  const blogSibling = route.match(/^\/(es|en)\/blog\/(.+)$/);
+  if (blogSibling) {
+    const s = blogSibling[2];
+    const sibling = lang === 'en' ? (BLOG_SLUG_EN[s] || s) : (BLOG_SLUG_ES[s] || s);
+    return `/${lang}/blog/${sibling}`;
+  }
   // Athlete profiles: /es/atleta/:u ↔ /en/athlete/:u
   const athleteEs = route.match(/^\/es\/atleta\/(.+)$/);
   if (athleteEs && lang === 'en') return `/en/athlete/${athleteEs[1]}`;
@@ -323,7 +335,7 @@ const jsonLdForRoute = (route, lang, canonicalUrl) => {
 
   // Pillar blog: pike push ups. FAQ schema mirroring the "Preguntas Frecuentes" /
   // "FAQ" section of the post content (keep both in sync with blogData.json).
-  if (route.endsWith('/blog/pike-push-ups-guia-definitiva')) {
+  if (route.endsWith('/blog/pike-push-ups-guia-definitiva') || route.endsWith('/blog/pike-push-ups-ultimate-guide')) {
     const faqs = isEn ? [
       ['What is a pike push up?', 'A push-up variation performed with your hips raised in an inverted "V". That incline shifts the load from the chest to the shoulders and triceps, turning it into a vertical push that needs no equipment.'],
       ['What muscles do pike push ups work?', 'Primarily the anterior and lateral deltoids, plus triceps, upper traps and serratus anterior. The rear delts barely contribute, so pair them with pulling work like australian rows or band face pulls.'],
@@ -352,7 +364,7 @@ const breadcrumbJsonLd = (route, lang, canonicalUrl, routeMeta) => {
     items.push({ name: 'Blog', item: `${BASE_URL}/${lang}/blog` });
   } else if (blogPostMatch) {
     items.push({ name: 'Blog', item: `${BASE_URL}/${lang}/blog` });
-    const post = blogPosts.find(p => p.slug === blogPostMatch[2]);
+    const post = findPost(blogPostMatch[2]);
     const title = post
       ? (post.locales[lang] || post.locales.en).title.replace(/[\u{1F000}-\u{1FFFF}]|[☀-➿]/gu, '').trim()
       : blogPostMatch[2];
@@ -568,7 +580,7 @@ const metaForRoute = (route, lang) => {
   const blogMatch = route.match(/^\/(es|en)\/blog\/(.+)$/);
   if (blogMatch) {
     const slug = blogMatch[2];
-    const post = blogPosts.find(p => p.slug === slug);
+    const post = findPost(slug);
     if (post) {
       const locale = post.locales[lang] || post.locales.en;
       const rawTitle = locale.title.replace(/[\u{1F000}-\u{1FFFF}]|[☀-➿]/gu, '').trim();

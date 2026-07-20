@@ -167,7 +167,7 @@
         <div class="space-y-2 text-center md:text-left">
           <span class="text-[10px] font-black uppercase tracking-widest text-primary">{{ i18n.t('master_guide') || 'Guía Maestra' }}</span>
           <h4 class="text-xl font-bold text-foreground group-hover:text-primary transition-colors">{{ (relatedPillar.locales[i18n.locale] || relatedPillar.locales.en).title }}</h4>
-          <router-link :to="`/blog/${relatedPillar.slug}`" class="inline-flex items-center gap-2 text-sm font-black text-primary hover:underline">
+          <router-link :to="`/${i18n.locale}/blog/${postSlugFor(relatedPillar, i18n.locale)}`" class="inline-flex items-center gap-2 text-sm font-black text-primary hover:underline">
             {{ i18n.t('blog_read_ultimate') }}
             <ArrowRight class="w-4 h-4" />
           </router-link>
@@ -211,6 +211,7 @@ import {
 } from 'lucide-vue-next';
 import { marked } from 'marked';
 import { blogPosts } from '@/blogPosts';
+import { findPostBySlug, postSlugFor } from '@/blogSlugs';
 import { useI18nStore } from '@/stores/i18n';
 import { useAuthStore } from '@/stores/auth';
 import { useNotificationStore } from '@/stores/notification';
@@ -224,23 +225,31 @@ const notificationStore = useNotificationStore();
 
 const isRead = computed(() => {
   if (!authStore.user || !authStore.user.read_blogs) return false;
-  return authStore.user.read_blogs.includes(route.params.slug);
+  // read_blogs guarda siempre el slug canónico (ES)
+  return authStore.user.read_blogs.includes(currentPost.value.slug);
 });
 
 const imageLoaded = ref(false);
 
 const currentPost = computed(() => {
-  const slug = route.params.slug;
-  const found = blogPosts.find(p => p.slug === slug);
-  return found || blogPosts[0];
+  return findPostBySlug(route.params.slug) || blogPosts[0];
 });
 
 // Slug inexistente → al índice del blog. Antes se renderizaba blogPosts[0]
 // como fallback silencioso y Google llegó a indexar URLs huérfanas
 // (p. ej. /en/blog/Manual) con contenido duplicado.
-const redirectIfUnknownSlug = () => {
-  if (!blogPosts.some(p => p.slug === route.params.slug)) {
+// Slug del idioma equivocado (p. ej. /en/blog/<slug-es>) → replace al slug
+// correcto del idioma de la URL (nginx emite el 301 real para crawlers).
+const redirectIfWrongSlug = () => {
+  const post = findPostBySlug(route.params.slug);
+  if (!post) {
     router.replace(`/${i18n.locale}/blog`);
+    return true;
+  }
+  const urlLang = route.path.startsWith('/en/') ? 'en' : 'es';
+  const expected = postSlugFor(post, urlLang);
+  if (route.params.slug !== expected) {
+    router.replace(`/${urlLang}/blog/${expected}`);
     return true;
   }
   return false;
@@ -373,7 +382,7 @@ const jsonLdScript = computed(() => {
   const img = currentPost.value.image
     ? (currentPost.value.image.startsWith('http') ? currentPost.value.image : `${BASE}${currentPost.value.image}`)
     : `${BASE}/og-image.png`;
-  const pageUrl = `${BASE}/${i18n.locale}/blog/${currentPost.value.slug}`;
+  const pageUrl = `${BASE}/${i18n.locale}/blog/${postSlugFor(currentPost.value, i18n.locale)}`;
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -426,6 +435,15 @@ const updateSEOMeta = () => {
 
   const canonical = document.querySelector('link[rel="canonical"]');
   if (canonical) canonical.setAttribute('href', url);
+
+  // hreflang con el slug correcto de cada idioma (el guard global del router
+  // solo hace swap de /es|/en y no conoce los slugs por idioma del blog)
+  const BASE = 'https://reppy.romandev.app';
+  const esHref = `${BASE}/es/blog/${currentPost.value.slug}`;
+  const enHref = `${BASE}/en/blog/${postSlugFor(currentPost.value, 'en')}`;
+  setMeta('link[hreflang="es"]', 'href', esHref);
+  setMeta('link[hreflang="en"]', 'href', enHref);
+  setMeta('link[hreflang="x-default"]', 'href', esHref);
 };
 
 watch(() => i18n.locale, updateSEOMeta);
@@ -472,7 +490,9 @@ const shareWhatsapp = () => {
 
 const recordBlogRead = async () => {
   if (!authStore.isAuthenticated) return;
-  const slug = route.params.slug;
+  // Enviar siempre el slug canónico (ES): el tracking de lecturas es por post,
+  // no por URL, y así /en/<slugEn> y /es/<slug> cuentan como el mismo post.
+  const slug = currentPost.value?.slug;
   if (!slug) return;
   try {
     const response = await axios.post('/api/blog-tracking/read', { slug });
@@ -484,7 +504,7 @@ const recordBlogRead = async () => {
 };
 
 onMounted(() => {
-  if (redirectIfUnknownSlug()) return;
+  if (redirectIfWrongSlug()) return;
   window.addEventListener('scroll', updateScroll);
   recordBlogRead();
   updateSEOMeta();
@@ -493,7 +513,7 @@ onMounted(() => {
 
 watch(() => route.params.slug, () => {
   if (!route.params.slug || route.name !== 'blog-post') return;
-  if (redirectIfUnknownSlug()) return;
+  if (redirectIfWrongSlug()) return;
   recordBlogRead();
   updateSEOMeta();
   window.scrollTo(0, 0);

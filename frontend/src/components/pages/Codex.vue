@@ -153,7 +153,7 @@
         <router-link 
           v-for="post in localizedPosts" 
           :key="post.slug"
-          :to="`/${i18n.locale}/blog/${post.slug}`"
+          :to="`/${i18n.locale}/blog/${postSlugFor(post, i18n.locale)}`"
           class="group flex flex-col bg-surface/10 border border-white/5 rounded-2xl overflow-hidden hover:bg-surface/20 hover:border-primary-500/30 transition-all shadow-xl hover:shadow-primary-500/5"
         >
           <div class="aspect-video relative overflow-hidden bg-background">
@@ -340,6 +340,7 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';
 import blogPosts from '@/blogPosts.json';
+import { postSlugFor } from '@/blogSlugs';
 
 const authStore = useAuthStore();
 const i18n = useI18nStore();
