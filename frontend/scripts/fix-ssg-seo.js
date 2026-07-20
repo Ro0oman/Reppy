@@ -267,6 +267,23 @@ const jsonLdForRoute = (route, lang, canonicalUrl) => {
     return JSON.stringify({ '@context': 'https://schema.org', '@graph': [softwareAppSchema(lang, canonicalUrl, 'Reppy', desc), faqSchema(faqs)] });
   }
 
+  // Pillar blog: pike push ups. FAQ schema mirroring the "Preguntas Frecuentes" /
+  // "FAQ" section of the post content (keep both in sync with blogData.json).
+  if (route.endsWith('/blog/pike-push-ups-guia-definitiva')) {
+    const faqs = isEn ? [
+      ['What is a pike push up?', 'A push-up variation performed with your hips raised in an inverted "V". That incline shifts the load from the chest to the shoulders and triceps, turning it into a vertical push that needs no equipment.'],
+      ['What muscles do pike push ups work?', 'Primarily the anterior and lateral deltoids, plus triceps, upper traps and serratus anterior. The rear delts barely contribute, so pair them with pulling work like australian rows or band face pulls.'],
+      ['How many pike push ups should I do?', 'Start with 3-4 sets of 8-12 reps, 2-3 times per week with at least one rest day between sessions. Once you hit a clean 4x12, move to the next progression (feet elevated).'],
+      ['Do pike push ups help you get the handstand push up?', 'Yes — they are the standard bridge. Progressing from floor pike to feet-elevated pike brings the movement closer to vertical until the wall handstand push up becomes reachable.']
+    ] : [
+      ['¿Qué es un pike push up?', 'Es una variante de la flexión que se realiza con las caderas elevadas formando una "V" invertida. Esa inclinación desplaza la carga del pecho hacia los hombros y tríceps, convirtiéndola en un empuje vertical sin material.'],
+      ['¿Qué músculos trabajan los pike push ups?', 'Principalmente el deltoides anterior y lateral, junto con tríceps, trapecio superior y serrato anterior. El deltoides posterior apenas interviene, así que combínalos con ejercicios de tirón como el remo australiano o el face pull.'],
+      ['¿Cuántos pike push ups debo hacer?', 'Empieza con 3-4 series de 8-12 repeticiones, 2-3 veces por semana con al menos un día de descanso entre sesiones. Cuando llegues a 4x12 limpias, pasa a la siguiente progresión (pies elevados).'],
+      ['¿Los pike push ups sirven para llegar al handstand push up?', 'Sí — son el puente estándar. Progresando de pike en suelo a pike con pies elevados acercas el movimiento a la vertical hasta que el handstand push up contra la pared se vuelve alcanzable.']
+    ];
+    return JSON.stringify({ '@context': 'https://schema.org', '@graph': [faqSchema(faqs)] });
+  }
+
   return null;
 };
 

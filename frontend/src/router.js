@@ -216,6 +216,11 @@ export const routes = [
         }
       },
       {
+        // Post consolidado en la guía pilar (nginx devuelve el 301 real para crawlers)
+        path: 'blog/rutina-pike-pushups',
+        redirect: to => `/${to.params.lang || 'es'}/blog/pike-push-ups-guia-definitiva`
+      },
+      {
         path: 'blog/:slug',
         component: () => import('./components/pages/BlogView.vue'),
         name: 'blog-post',

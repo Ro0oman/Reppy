@@ -3,7 +3,7 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://reppy.romandev.app/es/atleta/lil-alexandru</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/lil-alexandru" />
@@ -12,7 +12,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/en/athlete/lil-alexandru</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/lil-alexandru" />
@@ -20,26 +20,8 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy.romandev.app/es/atleta/lil-alexandru" />
   </url>
   <url>
-    <loc>https://reppy.romandev.app/es/atleta/miguel</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-    <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/miguel" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://reppy.romandev.app/en/athlete/miguel" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy.romandev.app/es/atleta/miguel" />
-  </url>
-  <url>
-    <loc>https://reppy.romandev.app/en/athlete/miguel</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-    <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/miguel" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://reppy.romandev.app/en/athlete/miguel" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy.romandev.app/es/atleta/miguel" />
-  </url>
-  <url>
     <loc>https://reppy.romandev.app/es/atleta/roman</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/roman" />
@@ -48,7 +30,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/en/athlete/roman</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/roman" />
@@ -56,8 +38,26 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy.romandev.app/es/atleta/roman" />
   </url>
   <url>
+    <loc>https://reppy.romandev.app/es/atleta/miguel</loc>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/miguel" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy.romandev.app/en/athlete/miguel" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy.romandev.app/es/atleta/miguel" />
+  </url>
+  <url>
+    <loc>https://reppy.romandev.app/en/athlete/miguel</loc>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/miguel" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy.romandev.app/en/athlete/miguel" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy.romandev.app/es/atleta/miguel" />
+  </url>
+  <url>
     <loc>https://reppy.romandev.app/es/atleta/victor</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/victor" />
@@ -66,7 +66,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/en/athlete/victor</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/victor" />
@@ -75,7 +75,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/es/atleta/jose</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/jose" />
@@ -84,7 +84,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/en/athlete/jose</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/jose" />
@@ -93,7 +93,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/es/atleta/emmanuel-djembussi</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/emmanuel-djembussi" />
@@ -102,7 +102,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/en/athlete/emmanuel-djembussi</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/emmanuel-djembussi" />
@@ -111,7 +111,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/es/atleta/suno-barras-bajas</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/suno-barras-bajas" />
@@ -120,7 +120,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/en/athlete/suno-barras-bajas</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/suno-barras-bajas" />
@@ -129,7 +129,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/es/atleta/pehr-nopehr</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/pehr-nopehr" />
@@ -138,7 +138,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/en/athlete/pehr-nopehr</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/pehr-nopehr" />
@@ -147,7 +147,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/es/atleta/andres-menzel</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/andres-menzel" />
@@ -156,7 +156,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/en/athlete/andres-menzel</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/andres-menzel" />
@@ -165,7 +165,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/es/atleta/jorge-mena-escriba</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/jorge-mena-escriba" />
@@ -174,7 +174,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/en/athlete/jorge-mena-escriba</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/jorge-mena-escriba" />
@@ -183,7 +183,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/es/atleta/tulgaenguun</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/tulgaenguun" />
@@ -192,7 +192,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/en/athlete/tulgaenguun</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/tulgaenguun" />
@@ -200,8 +200,44 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy.romandev.app/es/atleta/tulgaenguun" />
   </url>
   <url>
+    <loc>https://reppy.romandev.app/es/atleta/ramon-almeida</loc>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/ramon-almeida" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy.romandev.app/en/athlete/ramon-almeida" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy.romandev.app/es/atleta/ramon-almeida" />
+  </url>
+  <url>
+    <loc>https://reppy.romandev.app/en/athlete/ramon-almeida</loc>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/ramon-almeida" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy.romandev.app/en/athlete/ramon-almeida" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy.romandev.app/es/atleta/ramon-almeida" />
+  </url>
+  <url>
+    <loc>https://reppy.romandev.app/es/atleta/pateo-f</loc>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/pateo-f" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy.romandev.app/en/athlete/pateo-f" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy.romandev.app/es/atleta/pateo-f" />
+  </url>
+  <url>
+    <loc>https://reppy.romandev.app/en/athlete/pateo-f</loc>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/pateo-f" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://reppy.romandev.app/en/athlete/pateo-f" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://reppy.romandev.app/es/atleta/pateo-f" />
+  </url>
+  <url>
     <loc>https://reppy.romandev.app/es/atleta/talia</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/talia" />
@@ -210,7 +246,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/en/athlete/talia</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/talia" />
@@ -219,7 +255,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/es/atleta/c-sena</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/c-sena" />
@@ -228,7 +264,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/en/athlete/c-sena</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/c-sena" />
@@ -237,7 +273,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/es/atleta/lucian-panainte</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/lucian-panainte" />
@@ -246,7 +282,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/en/athlete/lucian-panainte</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/lucian-panainte" />
@@ -255,7 +291,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/es/atleta/talia-idanez-noguera</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/talia-idanez-noguera" />
@@ -264,7 +300,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/en/athlete/talia-idanez-noguera</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/talia-idanez-noguera" />
@@ -273,7 +309,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/es/atleta/devesa-98</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/devesa-98" />
@@ -282,7 +318,7 @@
   </url>
   <url>
     <loc>https://reppy.romandev.app/en/athlete/devesa-98</loc>
-    <lastmod>2026-06-23T13:43:18.578Z</lastmod>
+    <lastmod>2026-07-20T07:41:55.095Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://reppy.romandev.app/es/atleta/devesa-98" />
