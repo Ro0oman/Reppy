@@ -27,16 +27,32 @@
       </template>
 
       <template #action>
-        <span class="os-label" style="margin-bottom: 14px;">{{ i18n.t('dash_quick_log') }} <NewBadge feature-key="battle_view" /></span>
-        <button type="button" class="os-command w-full" style="min-height: 56px;" @click="scrollToRepsInput">
-          {{ i18n.t('dash_log_reps_cta') }}
-        </button>
-        <router-link
-          :to="{ name: 'battle', params: { lang: i18n.locale } }"
-          class="os-command os-command--secondary w-full mt-3"
-        >
-          {{ dayRingPercent > 0 ? i18n.t('camp_resume_adventure') : i18n.t('camp_start_adventure') }}
-        </router-link>
+        <span class="os-label" style="margin-bottom: 12px;">{{ i18n.t('dash_quick_log') }} <NewBadge feature-key="battle_view" /></span>
+
+        <!-- Desktop: el input de combate vive DENTRO del mission frame -->
+        <template v-if="!isMobile">
+          <ExerciseSelector v-model="activeExercise" compact hide-overview class="w-full mb-3" />
+          <RepsInput :exercise-type="logExercise" @updated="refreshAfterLog" class="w-full" />
+          <router-link
+            :to="{ name: 'battle', params: { lang: i18n.locale } }"
+            class="os-command os-command--quiet w-full mt-2"
+          >
+            {{ dayRingPercent > 0 ? i18n.t('camp_resume_adventure') : i18n.t('camp_start_adventure') }} →
+          </router-link>
+        </template>
+
+        <!-- Móvil: CTA directo; el quick log está justo debajo del frame -->
+        <template v-else>
+          <button type="button" class="os-command w-full" style="min-height: 56px;" @click="scrollToRepsInput">
+            {{ i18n.t('dash_log_reps_cta') }}
+          </button>
+          <router-link
+            :to="{ name: 'battle', params: { lang: i18n.locale } }"
+            class="os-command os-command--secondary w-full mt-3"
+          >
+            {{ dayRingPercent > 0 ? i18n.t('camp_resume_adventure') : i18n.t('camp_start_adventure') }}
+          </router-link>
+        </template>
       </template>
     </OsMissionFrame>
 

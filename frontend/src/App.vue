@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen selection:bg-primary-500/30 relative text-foreground transition-colors duration-500 overflow-x-hidden" :class="[
     authStore.user?.background_css ? 'bg-transparent' : 'bg-background',
-    { 'has-custom-bg': authStore.user?.background_css }
+    { 'has-custom-bg': authStore.user?.background_css, 'os-shell': authStore.isAuthenticated }
   ]">
 
     <!-- Background System -->
@@ -14,94 +14,98 @@
         'contrast-shield'
       ]"></div>
 
-    <!-- Industrial Navigation Bar -->
-    <nav v-if="authStore.isAuthenticated && $route.name !== 'pvp' && !$route.meta.immersive"
-      class="border-b border-border bg-surface/40 backdrop-blur-lg sticky top-0 z-50 transition-all">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
-        <!-- Logo Core -->
-        <router-link :to="`/${i18n.locale}/dashboard`" class="flex items-center gap-3 group cursor-pointer outline-none"
-          :title="i18n.t('nav_dashboard')">
-          <div
-            class="w-10 h-10 bg-primary-500 rounded-2xl flex items-center justify-center font-bold text-white shadow-xl shadow-primary-500/20 transition-transform group-hover:scale-110 group-focus:scale-110 group-focus:ring-2 group-focus:ring-primary-500/50 shrink-0">
-            R</div>
-          <span class="text-2xl font-bold tracking-tight text-foreground font-industrial hidden xs:block">Reppy<span
-              class="text-primary-500">.</span></span>
-        </router-link>
+    <!-- ═══ OPERATIVE OS SHELL ═══
+         Rail izquierdo (desktop) + rail de telemetría (xl) + top strip (móvil).
+         Sustituye a la navbar superior en vistas autenticadas. -->
 
-        <!-- Desktop Navigation (Clean Links) -->
-        <div class="hidden lg:flex items-center gap-1">
-          <router-link v-for="nav in navLinks" :key="nav.id"
-            :to="{ name: nav.id, params: { lang: i18n.locale, ...(nav.id === 'profile' ? { userId: authStore.user?.id } : {}) } }"
-            :title="i18n.t(nav.label) || nav.fallback"
-            class="px-4 py-2 rounded-2xl text-[13px] font-semibold transition-all relative group flex items-center gap-2.5"
-            :class="$route.name === nav.id ? 'text-foreground bg-primary-500/5' : 'text-muted hover:text-foreground hover:bg-surface/10'">
-            <component :is="nav.icon" class="w-4 h-4" :class="$route.name === nav.id ? 'text-primary-500' : ''" />
-            {{ i18n.t(nav.label) || nav.fallback }}
+    <!-- Left rail: navegación por iconos, un único destino activo -->
+    <nav v-if="showChrome" class="os-rail hidden lg:flex" :aria-label="i18n.t('nav_dashboard')">
+      <router-link :to="`/${i18n.locale}/dashboard`" class="os-rail__logo" title="Reppy">R</router-link>
+      <router-link v-for="nav in railLinks" :key="nav.id"
+        :to="{ name: nav.id, params: { lang: i18n.locale, ...(nav.id === 'profile' ? { userId: authStore.user?.id } : {}) } }"
+        class="os-rail__item" :class="{ 'os-rail__item--active': $route.name === nav.id }"
+        :title="i18n.t(nav.label) || nav.tag">
+        <component :is="nav.icon" class="w-5 h-5" />
+        <span>{{ nav.tag }}</span>
+        <i v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory)"
+          class="os-rail__dot" aria-hidden="true"></i>
+      </router-link>
+      <div class="os-rail__spacer"></div>
+      <router-link v-if="authStore.user?.role === 'admin'" :to="`/${i18n.locale}/admin`"
+        class="os-rail__item" title="Admin">
+        <Shield class="w-5 h-5" />
+        <span>ADMIN</span>
+      </router-link>
+      <router-link
+        :to="{ name: 'profile', params: { lang: i18n.locale, userId: authStore.user?.id } }"
+        class="os-rail__item" :class="{ 'os-rail__item--active': $route.name === 'profile' }" :title="i18n.t('nav_profile')">
+        <User class="w-5 h-5" />
+        <span>YOU</span>
+      </router-link>
+    </nav>
 
-            <!-- Notification Dot -->
-            <div v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory)"
-              class="absolute top-1.5 right-2 w-2 h-2 bg-primary-500 rounded-full border-2 border-surface shadow-[0_0_10px_hsl(var(--primary) / 0.5)]">
-            </div>
-          </router-link>
-          <router-link v-if="authStore.user?.role === 'admin'" :to="`/${i18n.locale}/admin`"
-            class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500 hover:bg-indigo-500/10 transition-all font-industrial">
-            {{ i18n.t('economy_admin') }}
-          </router-link>
+    <!-- Right telemetry rail: piloto, racha, economía, squad en vivo -->
+    <aside v-if="showChrome" class="os-telemetry hidden xl:flex">
+      <router-link :to="{ name: 'profile', params: { lang: i18n.locale, userId: authStore.user?.id } }"
+        class="os-telemetry__pilot">
+        <AvatarFrame :src="authStore.user?.avatar_url" :size="42" />
+        <div class="min-w-0">
+          <strong class="block truncate">{{ (authStore.user?.name || 'OPERATIVE').toUpperCase() }} // LV.{{ authStore.user?.current_level || 1 }}</strong>
+          <span class="os-minibar mt-1.5 block"><i :style="{ width: shellXpPct + '%' }"></i></span>
+          <small class="os-num">{{ authStore.user?.xp_into_level || 0 }} / {{ authStore.user?.xp_for_next_level || 1000 }} XP</small>
         </div>
+      </router-link>
 
-        <!-- System Status & User Profile -->
-        <div class="flex items-center gap-2 sm:gap-6">
-          <div class="flex items-center gap-1.5 sm:gap-4">
-            <!-- Coins (always visible) -->
-            <button @click="showCoinsInfo = true" :title="i18n.t('economy_history_title')"
-              class="flex items-center gap-1.5 bg-surface/5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-full sm:rounded-xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-primary-500/50">
-              <Coins class="w-3.5 h-3.5 text-primary-500" />
-              <span class="text-xs sm:text-sm font-bold text-foreground tabular-nums">{{ authStore.user?.reppy_coins || 0 }}</span>
-            </button>
+      <div v-if="shellStreak > 0" class="os-telemetry__streak">
+        <b class="os-num">{{ shellStreak }} {{ shellStreak === 1 ? (i18n.locale === 'es' ? 'DÍA' : 'DAY') : (i18n.locale === 'es' ? 'DÍAS' : 'DAYS') }}</b>
+        <span>STREAK INTEGRITY</span>
+      </div>
 
-            <!-- Gems (always visible) -->
-            <button @click="showCoinsInfo = true" :title="i18n.t('economy_gems')"
-              class="flex items-center gap-1.5 bg-indigo-500/5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-full sm:rounded-xl border border-indigo-500/20 hover:border-indigo-500/40 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
-              <Gem class="w-3.5 h-3.5 text-indigo-500" />
-              <span class="text-xs sm:text-sm font-bold text-foreground tabular-nums">{{ authStore.user?.reppy_gems || 0 }}</span>
-            </button>
-
-            <!-- Notification Bell (always) -->
-            <div class="relative flex items-center">
-              <button @click="handleBellClick"
-                class="p-2 rounded-xl transition-all group relative border flex items-center justify-center min-w-[40px] min-h-[40px]"
-                :class="showNotifications ? 'bg-primary-500/10 border-primary-500/30 text-primary-500' : 'bg-surface/5 border-border hover:bg-surface/10'">
-                <Bell class="w-5 h-5 transition-colors"
-                  :class="showNotifications ? 'text-primary-500' : 'text-muted group-hover:text-primary-500'" />
-                <div v-if="notifStore.unreadCount > 0"
-                  class="absolute -top-1 -right-1 w-4 h-4 bg-primary-500 rounded-full border-2 border-surface flex items-center justify-center">
-                  <span class="text-[10px] font-bold text-white">{{ notifStore.unreadCount }}</span>
-                </div>
-              </button>
-              <div v-if="showNotifications"
-                class="absolute right-0 top-full mt-3 z-[150] animate-in slide-in-from-top-2 duration-200">
-                <NotificationsDropdown @close="showNotifications = false" />
-              </div>
-            </div>
-
-            
-            <!-- Level chip (always, tappable → Perfil) -->
-            <router-link :to="{ name: 'profile', params: { lang: i18n.locale, userId: authStore.user?.id } }"
-              class="flex items-center gap-1.5 bg-primary-500/10 px-2.5 py-1.5 rounded-xl border border-primary-500/20 hover:border-primary-500/40 transition-all min-h-[40px]">
-              <!-- <span class="text-[10px] font-bold text-primary-500 uppercase tracking-wide">{{ authStore.user?.name || 1 }}</span> -->
-              <AvatarFrame :src="authStore.user?.avatar_url"  :size="30" />
-            </router-link>
-
-            <!-- XP bar: desktop only -->
-            <div class="hidden sm:block">
-              <LevelBar :level="authStore.user?.current_level || 1" :current-xp="authStore.user?.xp_into_level || 0"
-                :next-level-xp="authStore.user?.xp_for_next_level || 1000" />
-            </div>
-
-          </div>
-
+      <div class="os-label" style="margin-top: 4px;">{{ i18n.locale === 'es' ? 'Recursos' : 'Resources' }}</div>
+      <button @click="showCoinsInfo = true" class="os-telemetry__strip" :title="i18n.t('economy_history_title')">
+        <span class="flex items-center gap-2"><Coins class="w-3.5 h-3.5 text-amber-400" />REPPY COINS</span>
+        <b class="os-num">{{ authStore.user?.reppy_coins || 0 }} RC</b>
+      </button>
+      <button @click="showCoinsInfo = true" class="os-telemetry__strip" :title="i18n.t('economy_gems')">
+        <span class="flex items-center gap-2"><Gem class="w-3.5 h-3.5" style="color: var(--os-cyan)" />GEMS</span>
+        <b class="os-num">{{ authStore.user?.reppy_gems || 0 }}</b>
+      </button>
+      <div class="relative">
+        <button @click="handleBellClick" class="os-telemetry__strip w-full">
+          <span class="flex items-center gap-2"><Bell class="w-3.5 h-3.5" />{{ i18n.locale === 'es' ? 'AVISOS' : 'ALERTS' }}</span>
+          <b v-if="notifStore.unreadCount > 0" class="os-telemetry__count os-num">{{ notifStore.unreadCount }}</b>
+        </button>
+        <div v-if="showNotifications" class="absolute right-0 top-full mt-2 z-[150]">
+          <NotificationsDropdown @close="showNotifications = false" />
         </div>
       </div>
+
+      <template v-if="squadActive.length">
+        <div class="os-label" style="margin-top: 16px;">SQUAD ACTIVE NOW</div>
+        <router-link v-for="op in squadActive" :key="op.id"
+          :to="{ name: 'profile', params: { lang: i18n.locale, userId: op.id } }" class="os-telemetry__member">
+          <span class="os-telemetry__presence" aria-hidden="true"></span>
+          <span class="truncate">{{ (op.name || 'OPERATIVE').toUpperCase() }}</span>
+          <small>LIVE</small>
+        </router-link>
+      </template>
+    </aside>
+
+    <!-- Mobile top strip: identidad + economía + avisos -->
+    <nav v-if="showChrome" class="os-topstrip lg:hidden sticky top-0 z-50">
+      <router-link :to="`/${i18n.locale}/dashboard`" class="os-topstrip__logo">R</router-link>
+      <span class="os-topstrip__word">REPPY</span>
+      <div class="flex-1"></div>
+      <button @click="showCoinsInfo = true" class="os-topstrip__chip os-num">
+        <Coins class="w-3.5 h-3.5 text-amber-400" />{{ authStore.user?.reppy_coins || 0 }}
+      </button>
+      <button @click="showCoinsInfo = true" class="os-topstrip__chip os-num">
+        <Gem class="w-3.5 h-3.5" style="color: var(--os-cyan)" />{{ authStore.user?.reppy_gems || 0 }}
+      </button>
+      <button @click="handleBellClick" class="os-topstrip__chip relative">
+        <Bell class="w-4 h-4" />
+        <b v-if="notifStore.unreadCount > 0" class="os-topstrip__count os-num">{{ notifStore.unreadCount }}</b>
+      </button>
     </nav>
 
     <!-- Public Navigation Bar -->
@@ -157,7 +161,9 @@
     </nav>
 
     <!-- Main Operational View -->
-    <main :class="['flex-1 flex flex-col min-w-0 overflow-x-hidden', ($route.name === 'pvp' || $route.meta.immersive) ? 'p-0' : 'pt-4 pb-20']">
+    <main :class="['flex-1 flex flex-col min-w-0 overflow-x-hidden',
+      ($route.name === 'pvp' || $route.meta.immersive) ? 'p-0' : 'pt-4 pb-20',
+      showChrome ? 'lg:pl-[76px] xl:pr-[276px]' : '']">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" @start="onStartAction" @viewProfile="openProfile" />
@@ -165,7 +171,8 @@
       </router-view>
     </main>
 
-    <footer v-if="!$route.meta.immersive" class="mt-auto py-12 pb-24 md:pb-12 border-t border-border/5">
+    <footer v-if="!$route.meta.immersive" class="mt-auto py-12 pb-24 md:pb-12 border-t border-border/5"
+      :class="showChrome ? 'lg:pl-[76px] xl:pr-[276px]' : ''">
       <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 text-muted/40">
         <span class="text-[10px] font-medium tracking-wider">{{ i18n.t('economy_reppy_core') }}</span>
         <div class="flex items-center gap-6">
@@ -188,40 +195,37 @@
       </div>
     </footer>
 
-    <!-- Mobile Bottom Dock — core-loop first, with elevated "Log" action -->
+    <!-- Mobile Bottom Dock — 4 destinos + COMBAT central elevado (Operative OS) -->
     <nav v-if="authStore.isAuthenticated && $route.name !== 'pvp'"
-      class="lg:hidden fixed bottom-0 left-0 right-0 z-[60] border-t border-border bg-surface/90 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]">
+      class="os-dock lg:hidden fixed bottom-0 left-0 right-0 z-[60] pb-[env(safe-area-inset-bottom)]">
       <div class="grid grid-cols-5 items-center h-16 max-w-md mx-auto px-1">
         <!-- Left items -->
         <router-link v-for="nav in mobileNavLeft" :key="nav.id"
           :to="getMobileNavTo(nav)"
-          class="flex flex-col items-center justify-center gap-1 h-full group transition-colors"
-          :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted hover:text-foreground'">
-          <component :is="nav.icon" class="w-[22px] h-[22px] transition-transform group-active:scale-90" />
-          <span class="text-xs font-bold tracking-tight">{{ nav.short || i18n.t(nav.label) }}</span>
+          class="os-dock__item group" :class="{ 'os-dock__item--active': $route.name === nav.id }">
+          <component :is="nav.icon" class="w-[20px] h-[20px] transition-transform group-active:scale-90" />
+          <span>{{ nav.tag }}</span>
         </router-link>
 
-        <!-- Center: elevated primary action (quick log) -->
+        <!-- Center: COMBAT, la acción persistente -->
         <div class="flex justify-center">
           <router-link :to="{ name: 'battle', params: { lang: i18n.locale } }"
             class="-mt-7 flex flex-col items-center gap-1 group" :title="i18n.t('nav_train')">
-            <span class="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-orange-500/40 ring-4 ring-background transition-transform group-active:scale-95">
-              <Flame class="w-7 h-7" stroke-width="2.5" />
+            <span class="os-dock__combat transition-transform group-active:scale-95">
+              <Swords class="w-6 h-6" stroke-width="2.2" />
             </span>
-            <span class="text-xs font-black uppercase tracking-tight text-orange-500">{{ i18n.locale === 'es' ? 'Batalla' : 'Battle' }}</span>
+            <span class="os-dock__combat-tag">COMBAT</span>
           </router-link>
         </div>
 
         <!-- Right items -->
         <router-link v-for="nav in mobileNavRight" :key="nav.id"
           :to="getMobileNavTo(nav)"
-          class="flex flex-col items-center justify-center gap-1 h-full group relative transition-colors"
-          :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted hover:text-foreground'">
-          <component :is="nav.icon" class="w-[22px] h-[22px] transition-transform group-active:scale-90" />
-          <!-- Badge on Inventory when chests/new items available -->
+          class="os-dock__item group relative" :class="{ 'os-dock__item--active': $route.name === nav.id }">
+          <component :is="nav.icon" class="w-[20px] h-[20px] transition-transform group-active:scale-90" />
           <span v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory || badgesStore.inventory_new || badgesStore.chests_total > 0)"
-            class="absolute top-2 right-[calc(50%-18px)] w-2 h-2 rounded-full bg-primary-500 ring-2 ring-surface"></span>
-          <span class="text-xs font-bold tracking-tight">{{ nav.short || i18n.t(nav.label) }}</span>
+            class="os-dock__dot" aria-hidden="true"></span>
+          <span>{{ nav.tag }}</span>
         </router-link>
       </div>
     </nav>
@@ -347,39 +351,31 @@
 
       <!-- Daily wheel -->
       <div v-if="rouletteStore.dailyCanSpin || dailyCooldown" class="flex flex-col items-end gap-2 group">
-        <div v-if="rouletteStore.dailyCanSpin"
-          class="hidden group-hover:block bg-gradient-to-r from-amber-500 to-fuchsia-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-xl whitespace-nowrap">
+        <div v-if="rouletteStore.dailyCanSpin" class="os-float-tip hidden group-hover:block">
           {{ i18n.t('wheel_daily_cta') }}
         </div>
-        <div v-else
-          class="hidden group-hover:block bg-surface border border-border text-muted text-xs font-bold px-4 py-2 rounded-full shadow-xl whitespace-nowrap">
+        <div v-else class="os-float-tip os-float-tip--muted hidden group-hover:block os-num">
           {{ i18n.t('wheel_cooldown', { time: dailyCooldown }) }}
         </div>
         <button @click="rouletteStore.openModal('daily')" :disabled="!rouletteStore.dailyCanSpin"
-          :class="rouletteStore.dailyCanSpin ? 'border-fuchsia-500/40 hover:border-fuchsia-500/70 shadow-fuchsia-500/20 active:scale-95' : 'border-border opacity-50 grayscale cursor-not-allowed'"
-          class="relative bg-surface/80 backdrop-blur-md p-5 rounded-2xl shadow-xl transition-all border group overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-br from-amber-500/20 via-transparent to-fuchsia-500/20 pointer-events-none"></div>
-          <Gift class="w-7 h-7 text-amber-400 relative z-10 transition-transform duration-300 drop-shadow-[0_0_6px_rgba(217,70,239,0.5)]" :class="{ 'group-hover:-rotate-12': rouletteStore.dailyCanSpin }" />
-          <div v-if="rouletteStore.dailyCanSpin" class="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-gradient-to-br from-amber-400 to-fuchsia-500 rounded-full ring-2 ring-background"></div>
+          class="os-float-btn" :class="rouletteStore.dailyCanSpin ? 'os-float-btn--ready active:scale-95' : 'opacity-50 cursor-not-allowed'">
+          <Gift class="w-6 h-6 text-amber-400" />
+          <i v-if="rouletteStore.dailyCanSpin" class="os-float-btn__dot" aria-hidden="true"></i>
         </button>
       </div>
 
       <!-- 4h wheel -->
       <div v-if="rouletteStore.canSpin || quickCooldown" class="flex flex-col items-end gap-2 group">
-        <div v-if="rouletteStore.canSpin"
-          class="hidden group-hover:block bg-primary-500 text-white text-xs font-bold px-4 py-2 rounded-full shadow-xl whitespace-nowrap">
+        <div v-if="rouletteStore.canSpin" class="os-float-tip hidden group-hover:block">
           {{ i18n.t('roulette_exe_available') }}
         </div>
-        <div v-else
-          class="hidden group-hover:block bg-surface border border-border text-muted text-xs font-bold px-4 py-2 rounded-full shadow-xl whitespace-nowrap">
+        <div v-else class="os-float-tip os-float-tip--muted hidden group-hover:block os-num">
           {{ i18n.t('wheel_cooldown', { time: quickCooldown }) }}
         </div>
         <button @click="rouletteStore.openModal()" :disabled="!rouletteStore.canSpin"
-          :class="rouletteStore.canSpin ? 'rgb-roulette-button border-border hover:border-primary-500/40 active:scale-95' : 'border-border opacity-50 grayscale cursor-not-allowed'"
-          class="relative bg-surface/80 backdrop-blur-md p-5 rounded-2xl shadow-xl transition-all border group overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-transparent pointer-events-none"></div>
-          <Dices class="w-7 h-7 text-foreground relative z-10 transition-transform duration-300" :class="{ 'group-hover:rotate-180': rouletteStore.canSpin }" />
-          <div v-if="rouletteStore.canSpin" class="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-primary-500 rounded-full ring-2 ring-background"></div>
+          class="os-float-btn" :class="rouletteStore.canSpin ? 'os-float-btn--ready active:scale-95' : 'opacity-50 cursor-not-allowed'">
+          <Dices class="w-6 h-6" style="color: var(--os-cyan)" />
+          <i v-if="rouletteStore.canSpin" class="os-float-btn__dot" aria-hidden="true"></i>
         </button>
       </div>
     </div>
@@ -390,21 +386,18 @@
       <!-- Daily chip -->
       <button v-if="rouletteStore.dailyCanSpin || dailyCooldown"
         @click="rouletteStore.openModal('daily')" :disabled="!rouletteStore.dailyCanSpin"
-        :class="rouletteStore.dailyCanSpin ? 'border-fuchsia-500/40 active:scale-95' : 'border-border opacity-60 grayscale cursor-not-allowed'"
-        class="relative flex items-center gap-2 bg-surface/90 backdrop-blur-md border rounded-xl px-3 py-2 shadow-lg transition-all overflow-hidden">
-        <div v-if="rouletteStore.dailyCanSpin" class="absolute inset-0 bg-gradient-to-r from-amber-500/15 to-fuchsia-500/15 pointer-events-none"></div>
-        <Gift class="w-4 h-4 text-amber-400 relative z-10" />
-        <span v-if="rouletteStore.dailyCanSpin" class="relative z-10 text-xs font-bold bg-gradient-to-r from-amber-400 to-fuchsia-500 bg-clip-text text-transparent">{{ i18n.t('wheel_daily_cta') }}</span>
-        <div v-if="rouletteStore.dailyCanSpin" class="relative z-10 w-2 h-2 bg-gradient-to-br from-amber-400 to-fuchsia-500 rounded-full"></div>
+        class="os-float-chip" :class="rouletteStore.dailyCanSpin ? 'os-float-btn--ready active:scale-95' : 'opacity-60 cursor-not-allowed'">
+        <Gift class="w-4 h-4 text-amber-400" />
+        <span v-if="rouletteStore.dailyCanSpin">{{ i18n.t('wheel_daily_cta') }}</span>
+        <i v-if="rouletteStore.dailyCanSpin" class="os-float-btn__dot os-float-btn__dot--inline" aria-hidden="true"></i>
       </button>
       <!-- 4h chip -->
       <button v-if="rouletteStore.canSpin || quickCooldown"
         @click="rouletteStore.openModal()" :disabled="!rouletteStore.canSpin"
-        :class="rouletteStore.canSpin ? 'rgb-roulette-button rgb-roulette-button-mobile border-primary-500/30 active:scale-95' : 'border-border opacity-60 grayscale cursor-not-allowed'"
-        class="flex items-center gap-2 bg-surface/90 backdrop-blur-md border rounded-xl px-3 py-2 shadow-lg transition-all overflow-hidden">
-        <Dices class="w-4 h-4 text-primary-500" />
-        <span v-if="rouletteStore.canSpin" class="text-xs font-bold text-primary-500">{{ i18n.locale === 'es' ? 'Ruleta' : 'Spin' }}</span>
-        <div v-if="rouletteStore.canSpin" class="w-2 h-2 bg-primary-500 rounded-full"></div>
+        class="os-float-chip" :class="rouletteStore.canSpin ? 'os-float-btn--ready active:scale-95' : 'opacity-60 cursor-not-allowed'">
+        <Dices class="w-4 h-4" style="color: var(--os-cyan)" />
+        <span v-if="rouletteStore.canSpin">{{ i18n.locale === 'es' ? 'Ruleta' : 'Spin' }}</span>
+        <i v-if="rouletteStore.canSpin" class="os-float-btn__dot os-float-btn__dot--inline" aria-hidden="true"></i>
       </button>
     </div>
 
@@ -417,7 +410,7 @@
 import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
-import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Gem, Bell, User, Dices, Gift, Volume2, VolumeX, Book, ShoppingBag, Target, LogIn, Plus, Tent, Flame } from 'lucide-vue-next';
+import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Gem, Bell, User, Dices, Gift, Volume2, VolumeX, Book, ShoppingBag, Target, LogIn, Plus, Shield } from 'lucide-vue-next';
 import { useAuthStore } from './stores/auth';
 import { useI18nStore } from './stores/i18n';
 import { useNotificationsStore } from './stores/notifications';
@@ -430,7 +423,6 @@ import { useFeatureSeenStore } from './stores/featureSeen';
 import AvatarFrame from '@/components/ui/AvatarFrame.vue';
 import BackgroundEffect from '@/components/system/BackgroundEffect.vue';
 import LuckyWheel from '@/components/shop/LuckyWheel.vue';
-import LevelBar from '@/components/ui/LevelBar.vue';
 import NotificationToast from '@/components/system/NotificationToast.vue';
 import ConfirmDialog from '@/components/modals/ConfirmDialog.vue';
 import DamageNumbers from '@/components/system/DamageNumbers.vue';
@@ -454,6 +446,33 @@ const showCoinsInfo = ref(false);
 const showNotifications = ref(false);
 const showQuickLog = ref(false);
 
+// Operative OS shell: rails visibles solo en vistas autenticadas no inmersivas.
+const showChrome = computed(() =>
+  authStore.isAuthenticated && route.name !== 'pvp' && !route.meta.immersive
+);
+
+const shellXpPct = computed(() => {
+  const into = authStore.user?.xp_into_level || 0;
+  const next = authStore.user?.xp_for_next_level || 1000;
+  return Math.min(100, Math.round((into / Math.max(1, next)) * 100));
+});
+
+// Racha para el rail de telemetría (misma fuente que el dashboard).
+const shellStreak = ref(0);
+const fetchShellStreak = async () => {
+  try {
+    const res = await axios.get('/api/streak/status');
+    shellStreak.value = res.data?.streak || 0;
+  } catch (_) { /* non-critical */ }
+};
+
+// Operativos conectados ahora (presencia realtime), sin uno mismo.
+const squadActive = computed(() =>
+  (socketStore.activeOperatives || [])
+    .filter((op) => op.id !== authStore.user?.id)
+    .slice(0, 4)
+);
+
 // Global Scroll Lock for App-level modals
 watch([() => rouletteStore.showModal, showCoinsInfo], ([roulette, coins]) => {
   if (!import.meta.env.SSR) {
@@ -475,13 +494,14 @@ const handleBellClick = () => {
   }
 };
 
-const navLinks = computed(() => [
-  { id: 'social', label: 'nav_social', fallback: 'RANKINGS', icon: Users },
-  { id: 'dashboard', label: 'nav_dashboard', fallback: 'DASHBOARD', icon: LayoutDashboard },
-  { id: 'missions', label: 'nav_missions', fallback: 'MISSIONS', icon: Target },
-  { id: 'inventory', label: 'nav_inventory', fallback: 'GEAR', icon: Package },
-  { id: 'shop', label: 'nav_shop', fallback: 'ARMORY', icon: ShoppingBag },
-  { id: 'profile', label: 'nav_profile', fallback: 'PROFILE', icon: User },
+// Rail izquierdo: destinos núcleo con tag de telemetría (icono + label, nunca icono solo).
+const railLinks = computed(() => [
+  { id: 'dashboard', label: 'nav_dashboard', tag: 'CTRL', icon: LayoutDashboard },
+  { id: 'battle', label: 'nav_train', tag: 'COMBAT', icon: Swords },
+  { id: 'social', label: 'nav_social', tag: 'SQUAD', icon: Users },
+  { id: 'missions', label: 'nav_missions', tag: 'QUESTS', icon: Target },
+  { id: 'inventory', label: 'nav_inventory', tag: 'GEAR', icon: Package },
+  { id: 'shop', label: 'nav_shop', tag: 'ARMORY', icon: ShoppingBag },
 ]);
 
 const publicNavLinks = computed(() => [
@@ -492,12 +512,12 @@ const publicNavLinks = computed(() => [
 // Mobile dock (RPG): Entrenar (battle) · Campamento (dashboard) · [center quick-log]
 // · Inventario · Tienda. The elevated center button opens the quick-log sheet.
 const mobileNavLeft = computed(() => [
-  { id: 'social', icon: Users, label: 'nav_social', short: i18n.locale === 'es' ? 'Comunidad' : 'Community' },
-  { id: 'dashboard', icon: Tent, label: 'nav_camp', short: i18n.locale === 'es' ? 'Campamento' : 'Camp' },
+  { id: 'dashboard', icon: LayoutDashboard, label: 'nav_camp', tag: 'CTRL' },
+  { id: 'social', icon: Users, label: 'nav_social', tag: 'SQUAD' },
 ]);
 const mobileNavRight = computed(() => [
-  { id: 'inventory', icon: Package, label: 'nav_inventory', short: i18n.locale === 'es' ? 'Inventario' : 'Inventory' },
-  { id: 'shop', icon: ShoppingBag, label: 'nav_shop', short: i18n.locale === 'es' ? 'Tienda' : 'Shop' },
+  { id: 'inventory', icon: Package, label: 'nav_inventory', tag: 'GEAR' },
+  { id: 'shop', icon: ShoppingBag, label: 'nav_shop', tag: 'ARMORY' },
 ]);
 
 const getMobileNavTo = (nav) => {
@@ -592,6 +612,7 @@ const initializeApp = async () => {
   notifStore.fetchNotifications();
   badgesStore.fetchBadges();
   featureSeenStore.load();
+  fetchShellStreak();
 
   // Periodic presence ping for Pusher/Backend tracking
   const pingInterval = setInterval(() => {
@@ -652,39 +673,310 @@ onUnmounted(() => {
   animation: spin 8s linear infinite;
 }
 
-.rgb-roulette-button::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  z-index: 0;
-  border-radius: inherit;
-  background: conic-gradient(from 0deg, #ff004c, #ffb300, #44ff00, #00e5ff, #7c3cff, #ff004c);
-  animation: roulette-rgb-spin 2.6s linear infinite;
+/* ═══ Operative OS shell ═══ */
+
+/* Breakpoints propios: las clases scoped ganan a las utilidades
+   hidden/lg:hidden de Tailwind por orden de cascada, así que la
+   visibilidad responsive se resuelve aquí y no con utilidades. */
+@media (max-width: 1023.98px) {
+  .os-rail { display: none !important; }
+}
+@media (max-width: 1279.98px) {
+  .os-telemetry { display: none !important; }
+}
+@media (min-width: 1024px) {
+  .os-topstrip { display: none !important; }
 }
 
-.rgb-roulette-button::after {
-  content: "";
+/* Rail izquierdo */
+.os-rail {
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  width: 76px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 18px 0;
+  background: rgba(8, 12, 19, 0.94);
+  border-right: 1px solid var(--os-line);
+  backdrop-filter: blur(10px);
+}
+.os-rail__logo {
+  font: 800 1.5rem / 1 var(--os-font-display);
+  color: var(--os-blue);
+  margin-bottom: 14px;
+  text-decoration: none;
+}
+.os-rail__item {
+  position: relative;
+  width: 100%;
+  min-height: 56px;
+  display: grid;
+  place-items: center;
+  gap: 3px;
+  padding: 7px 0;
+  color: var(--os-muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  font: 500 8px var(--os-font-mono);
+  letter-spacing: 0.8px;
+  transition: color 0.15s var(--os-ease), background 0.15s var(--os-ease);
+}
+.os-rail__item:hover { color: var(--os-text); }
+.os-rail__item--active {
+  color: #fff;
+  background: #12274d;
+  border-left-color: var(--os-cyan);
+}
+.os-rail__dot {
   position: absolute;
-  inset: 2px;
-  z-index: 0;
-  border-radius: calc(1rem - 2px);
-  background: hsl(var(--surface) / 0.9);
+  top: 8px; right: 16px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--os-cyan);
+  box-shadow: 0 0 8px var(--os-cyan);
+}
+.os-rail__spacer { flex: 1; }
+
+/* Rail de telemetría */
+.os-telemetry {
+  position: fixed;
+  right: 0; top: 0; bottom: 0;
+  width: 276px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px 18px;
+  background: rgba(8, 12, 19, 0.94);
+  border-left: 1px solid var(--os-line);
+  backdrop-filter: blur(10px);
+  overflow-y: auto;
+}
+.os-telemetry__pilot {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  border-bottom: 1px solid #233147;
+  padding-bottom: 16px;
+  text-decoration: none;
+  color: var(--os-text);
+}
+.os-telemetry__pilot strong { font-size: 0.78rem; letter-spacing: 0.4px; }
+.os-telemetry__pilot small {
+  font: 500 9px var(--os-font-mono);
+  letter-spacing: 0.8px;
+  color: var(--os-cyan);
+}
+.os-telemetry__streak {
+  padding: 12px 14px;
+  background: #1a1410;
+  border-left: 3px solid var(--os-orange);
+  border-radius: 2px;
+}
+.os-telemetry__streak b {
+  font: 700 1.7rem / 0.85 var(--os-font-display);
+  color: #ff8a4d;
+  display: block;
+}
+.os-telemetry__streak span {
+  display: block;
+  font: 500 9px var(--os-font-mono);
+  letter-spacing: 1px;
+  color: #d9ae97;
+  margin-top: 6px;
+}
+.os-telemetry__strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 0 10px;
+  border: 1px solid var(--os-line);
+  border-radius: 2px;
+  background: var(--os-panel);
+  color: var(--os-muted);
+  font: 500 10px var(--os-font-mono);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.15s var(--os-ease);
+}
+.os-telemetry__strip:hover { border-color: var(--os-line-strong); color: var(--os-text); }
+.os-telemetry__strip b { color: var(--os-text); font-weight: 500; }
+.os-telemetry__count {
+  background: var(--os-danger);
+  color: #fff;
+  border-radius: 2px;
+  padding: 2px 6px;
+  font-weight: 700;
+}
+.os-telemetry__member {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 38px;
+  border-top: 1px solid #202c3e;
+  font-size: 0.72rem;
+  color: var(--os-text);
+  text-decoration: none;
+}
+.os-telemetry__member small {
+  margin-left: auto;
+  font: 400 9px var(--os-font-mono);
+  letter-spacing: 0.8px;
+  color: var(--os-muted);
+}
+.os-telemetry__presence {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--os-success);
+  box-shadow: 0 0 8px var(--os-success);
+  flex: none;
+}
+
+/* Top strip móvil */
+.os-topstrip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(8, 12, 19, 0.94);
+  border-bottom: 1px solid var(--os-line);
+  backdrop-filter: blur(10px);
+}
+.os-topstrip__logo {
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  background: var(--os-blue);
+  color: #fff;
+  border-radius: 2px;
+  font: 800 1.1rem var(--os-font-display);
+  text-decoration: none;
+}
+.os-topstrip__word {
+  font: 800 1rem var(--os-font-display);
+  letter-spacing: 2.5px;
+  color: var(--os-text);
+}
+.os-topstrip__chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 36px;
+  padding: 0 9px;
+  border: 1px solid var(--os-line);
+  border-radius: 2px;
+  background: var(--os-panel);
+  color: var(--os-text);
+  font: 500 11px var(--os-font-mono);
+}
+.os-topstrip__count {
+  position: absolute;
+  top: -4px; right: -4px;
+  background: var(--os-danger);
+  color: #fff;
+  border-radius: 2px;
+  padding: 1px 4px;
+  font: 700 9px var(--os-font-mono);
+}
+
+/* Dock inferior móvil */
+.os-dock {
+  background: rgba(8, 12, 19, 0.96);
+  border-top: 1px solid var(--os-line);
   backdrop-filter: blur(12px);
 }
+.os-dock__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 100%;
+  color: var(--os-muted);
+  text-decoration: none;
+  font: 500 8.5px var(--os-font-mono);
+  letter-spacing: 1px;
+  transition: color 0.15s var(--os-ease);
+}
+.os-dock__item--active {
+  color: var(--os-cyan);
+  box-shadow: inset 0 2px 0 var(--os-cyan);
+  background: #0e1a30;
+}
+.os-dock__dot {
+  position: absolute;
+  top: 8px; right: calc(50% - 18px);
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--os-cyan);
+  box-shadow: 0 0 8px var(--os-cyan);
+}
+.os-dock__combat {
+  width: 54px; height: 54px;
+  display: grid; place-items: center;
+  background: var(--os-blue);
+  color: #fff;
+  border-radius: 2px;
+  border: 1px solid #4a8aff;
+  box-shadow: 0 8px 24px rgba(22, 79, 199, 0.5), 0 0 0 4px var(--os-void);
+}
+.os-dock__combat-tag {
+  font: 700 9px var(--os-font-mono);
+  letter-spacing: 1.2px;
+  color: var(--os-cyan);
+}
 
-.rgb-roulette-button > * {
+/* Flotantes (ruletas) */
+.os-float-tip {
+  background: var(--os-panel-raised);
+  border: 1px solid var(--os-line-strong);
+  border-radius: 2px;
+  color: var(--os-text);
+  font: 500 11px var(--os-font-mono);
+  letter-spacing: 0.5px;
+  padding: 7px 12px;
+  white-space: nowrap;
+}
+.os-float-tip--muted { color: var(--os-muted); }
+.os-float-btn {
   position: relative;
-  z-index: 1;
+  padding: 16px;
+  background: rgba(8, 13, 21, 0.92);
+  border: 1px solid var(--os-line);
+  border-radius: 2px;
+  transition: border-color 0.15s var(--os-ease), transform 0.15s var(--os-ease);
 }
-
-.rgb-roulette-button-mobile::after {
-  border-radius: calc(0.75rem - 2px);
+.os-float-btn--ready { border-color: var(--os-line-strong); }
+.os-float-btn--ready:hover { border-color: var(--os-cyan); }
+.os-float-btn__dot {
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--os-orange);
+  box-shadow: 0 0 8px var(--os-orange);
+  animation: os-breathe 2.6s var(--os-ease) infinite;
 }
-
-@keyframes roulette-rgb-spin {
-  to {
-    transform: rotate(360deg);
-  }
+.os-float-btn__dot--inline {
+  position: static;
+  display: inline-block;
+}
+.os-float-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 11px;
+  background: rgba(8, 13, 21, 0.94);
+  border: 1px solid var(--os-line);
+  border-radius: 2px;
+  color: var(--os-text);
+  font: 500 11px var(--os-font-mono);
+  letter-spacing: 0.5px;
 }
 
 @keyframes spin {

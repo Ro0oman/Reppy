@@ -1,18 +1,13 @@
 <template>
   <div class="max-w-5xl mx-auto w-full px-4 pb-24 space-y-2 relative">
-    <!-- Animated Environment Blobs -->
-    <div class="bg-glow">
-      <div class="blob" style="top: 10%; left: -5%;"></div>
-      <div class="blob" style="bottom: 20%; right: -5%; animation-delay: -10s; background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, transparent 70%);"></div>
-    </div>
-    
     <div class="space-y-4 relative z-10">
       <!-- Community header: the daily "lobby" — see who trained, then go log -->
       <div class="flex flex-col gap-3 pt-2 relative">
           <div class="flex items-start justify-between gap-3">
             <div class="min-w-0">
-              <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">{{ i18n.t('community') }}</h1>
-              <p class="text-sm text-muted mt-0.5">{{ i18n.t('community_subtitle') }}</p>
+              <span class="os-label">{{ i18n.locale === 'es' ? 'Registro de la escuadra' : 'Squad activity log' }}</span>
+              <h1 class="os-display mt-1 text-3xl sm:text-4xl">{{ i18n.t('community') }}</h1>
+              <p class="text-sm text-muted mt-1.5">{{ i18n.t('community_subtitle') }}</p>
             </div>
             <router-link
               v-if="authStore.isAuthenticated"

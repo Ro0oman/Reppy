@@ -35,6 +35,61 @@
   --os-type-display: clamp(2.75rem, 6vw, 5.5rem);
 }
 
+/* ── Shell autenticado: remap del tema viejo ─────────────────
+   .os-shell se aplica al root de App.vue cuando hay sesión.
+   Redefine los tokens HSL que consumen Tailwind y athletic-tech
+   para que TODAS las vistas autenticadas rendericen en Operative
+   OS sin reescribir cada utilidad:
+   - fondo/superficies → obsidiana (void/ink/panel)
+   - --neon (teal) → cian de telemetría
+   - --neon-violet (morado gaming) → azul de sistema (mata los
+     degradados arcoíris: de morado→azul pasan a azul→azul/cian)
+   - heatmap → escala azul/cian sobre obsidiana
+   ──────────────────────────────────────────────────────────── */
+
+.os-shell {
+  color-scheme: dark;
+  --background: 222 38% 3%;        /* --os-void */
+  --surface: 219 40% 8%;           /* --os-panel */
+  --card: 219 40% 8%;
+  --card-alpha: 0.92;
+  --foreground: 217 50% 97%;       /* --os-text */
+  --muted: 218 16% 60%;            /* --os-muted */
+  --border: 216 33% 23%;           /* --os-line */
+  --border-alpha: 1;
+  --primary: 220 100% 55%;         /* --os-blue */
+  --accent: 145 79% 59%;           /* --os-success */
+  --ring: 220 100% 55% / 0.4;
+  --white-to-gray: 217 50% 97%;
+  --neon: 194 100% 69%;            /* --os-cyan */
+  --neon-violet: 220 100% 55%;     /* violeta → azul de sistema */
+  --heatmap-bg: 222 38% 3%;
+  --heatmap-l0: 219 40% 10%;
+  --heatmap-l1: 219 63% 28%;
+  --heatmap-l2: 220 100% 45%;
+  --heatmap-l3: 220 100% 55%;
+  --heatmap-l4: 194 100% 69%;
+  color: var(--os-text);
+  /* Obsidiana + retícula tenue en un solo fondo (sin pseudo-elementos,
+     para no interferir con los rails fixed ni los modales). */
+  background-color: var(--os-void);
+  background-image:
+    linear-gradient(rgba(16, 28, 48, 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 28, 48, 0.35) 1px, transparent 1px),
+    radial-gradient(ellipse at 50% 0%, rgba(20, 38, 74, 0.5) 0%, transparent 55%);
+  background-size: 88px 88px, 88px 88px, 100% 900px;
+  background-attachment: fixed, fixed, scroll;
+  background-repeat: repeat, repeat, no-repeat;
+}
+
+/* Geometría técnica global: radios 0-4px en vistas autenticadas.
+   rounded-full se conserva (avatares, puntos de presencia). */
+.os-shell .rounded-3xl,
+.os-shell .rounded-2xl,
+.os-shell .rounded-xl,
+.os-shell .rounded-lg { border-radius: 2px; }
+.os-shell .rounded-md, .os-shell .rounded { border-radius: 2px; }
+
 /* ── Superficies ─────────────────────────────────────────── */
 
 .os-ground {
