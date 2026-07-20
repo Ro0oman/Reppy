@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen selection:bg-primary-500/30 relative text-foreground transition-colors duration-500 overflow-x-hidden" :class="[
+  <div class="os-shell min-h-screen selection:bg-primary-500/30 relative text-foreground transition-colors duration-500 overflow-x-hidden" :class="[
     authStore.user?.background_css ? 'bg-transparent' : 'bg-background',
-    { 'has-custom-bg': authStore.user?.background_css, 'os-shell': authStore.isAuthenticated }
+    { 'has-custom-bg': authStore.user?.background_css }
   ]">
 
     <!-- Background System -->

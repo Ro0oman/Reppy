@@ -12,7 +12,7 @@
         
         <!-- Aurora Blobs -->
         <div class="absolute top-[-10%] left-[-10%] w-[1000px] h-[1000px] bg-primary-500/20 rounded-full blur-[180px] animate-pulse duration-[10s]"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[800px] h-[800px] bg-indigo-500/10 rounded-full blur-[180px] animate-pulse duration-[8s] delay-1000"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[800px] h-[800px] bg-blue-500/10 rounded-full blur-[180px] animate-pulse duration-[8s] delay-1000"></div>
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-rose-500/5 rounded-full blur-[200px] animate-pulse duration-[12s]"></div>
       </div>
       
@@ -34,7 +34,7 @@
 
           <div class="space-y-6">
             <h1 class="text-6xl md:text-8xl font-black tracking-tighter text-foreground leading-[0.9] uppercase italic animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
-              {{ i18n.t('landing_hero_title') }} <br/> <span class="bg-gradient-to-r from-primary-500 to-rose-500 bg-clip-text text-transparent drop-shadow-[0_0_30px_hsl(var(--primary) / 0.2)]">{{ i18n.t('landing_hero_span') }}</span>
+              {{ i18n.t('landing_hero_title') }} <br/> <span class="bg-gradient-to-r from-primary-500 to-cyan-400 bg-clip-text text-transparent drop-shadow-[0_0_30px_hsl(var(--primary) / 0.2)]">{{ i18n.t('landing_hero_span') }}</span>
             </h1>
             
             <p class="max-w-xl text-xl md:text-2xl text-muted font-medium tracking-tight leading-relaxed animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-400">
@@ -382,8 +382,8 @@
 
             <div class="card-stats p-8 space-y-4 border-border/40 hover:bg-surface/60 transition-colors">
               <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center">
-                  <Brain class="w-6 h-6 text-purple-500" />
+                <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
+                  <Brain class="w-6 h-6 text-blue-400" />
                 </div>
                 <h3 class="text-xl font-bold text-foreground">INT (Intelligence)</h3>
               </div>

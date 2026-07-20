@@ -8,7 +8,7 @@
            <div class="absolute inset-0 bg-background/60 backdrop-blur-[1px]"></div>
            
            <!-- Overlay effects for specific presets -->
-           <div v-if="fight.battlefield === 'Neon Gym'" class="absolute inset-0 opacity-20 bg-gradient-to-tr from-pink-500/20 via-purple-500/20 to-cyan-500/20 animate-pulse"></div>
+           <div v-if="fight.battlefield === 'Neon Gym'" class="absolute inset-0 opacity-20 bg-gradient-to-tr from-cyan-500/20 via-purple-500/20 to-cyan-500/20 animate-pulse"></div>
            <div v-if="fight.battlefield === 'Dark Arena'" class="absolute inset-0 opacity-40 shadow-[inset_0_0_200px_rgba(255,0,0,0.2)]"></div>
         </div>
         
