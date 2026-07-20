@@ -713,6 +713,67 @@ export default {
       <p>Reppy convierte cada fondo en XP, monedas y progreso de nivel. Además, los fondos contribuyen al jefe comunitario junto con dominadas y flexiones, haciendo que cada repetición tenga un impacto colectivo real.</p>
     `,
 
+    // Landing contador de muscle ups
+    chinups: 'Dominadas Supinas',
+    el_muscleup_eyebrow: 'Contador de Muscle Ups Gratis',
+    el_muscleup_subtext: 'Registra cada muscle up, sigue tu progreso hacia el dominio de la barra y compite en el ranking global de calistenia.',
+    el_muscleup_card_label: 'STAT MUSCLE UP',
+    el_muscleup_card_title: 'Volumen Mensual',
+    el_muscleup_section1_h2: '¿Por qué contar tus muscle ups?',
+    el_muscleup_section1_body: '<p>El muscle up es la habilidad de entrada del street workout: una repetición limpia demuestra que dominas la dominada, el fondo y la transición entre ambos. Como el volumen es bajo, cada repetición cuenta — y merece quedar registrada.</p><p>Con Reppy cada muscle up se convierte en XP que sube tus atributos de Fuerza y Poder, y tu historial muestra exactamente cómo pasaste de 1 rep temblorosa a series limpias.</p>',
+    el_muscleup_section2_h2: 'Cómo conseguir más muscle ups',
+    el_muscleup_tip1_title: 'Domina la Base Primero',
+    el_muscleup_tip1_body: 'Con 10+ dominadas y 15+ fondos limpios, el muscle up se convierte en un problema de técnica, no de fuerza.',
+    el_muscleup_tip2_title: 'Tirón Explosivo',
+    el_muscleup_tip2_body: 'Tira de la barra hasta el esternón, no hasta la barbilla. Las dominadas altas y chest-to-bar construyen la velocidad que pide la transición.',
+    el_muscleup_tip3_title: 'Entrena la Transición',
+    el_muscleup_tip3_body: 'Negativas lentas por encima de la barra y reps con banda enseñan el giro de muñeca y la inclinación que desbloquean tu primera rep limpia.',
+    el_muscleup_guide_h2: 'Guía Completa del Muscle Up',
+    el_muscleup_article: `
+      <h3>El muscle up: tirón y empuje en una sola rep</h3>
+      <p>El <strong>muscle up</strong> encadena una dominada explosiva, una transición por encima de la barra y un fondo en barra recta en un solo movimiento. Trabaja dorsales, bíceps, pecho, tríceps y core — ningún otro ejercicio de peso corporal cubre tanto en una repetición.</p>
+
+      <h3>Por qué contar importa aún más aquí</h3>
+      <p>El volumen de muscle ups es naturalmente bajo: sesiones de 5-15 reps totales son normales. Eso hace que un <strong>contador de muscle ups</strong> sea aún más valioso — cada rep registrada es un dato real, y pasar de 3 a 6 reps limpias es un salto de fuerza enorme que quieres tener registrado.</p>
+
+      <h3>¿Por qué Reppy para tus muscle ups?</h3>
+      <p>Reppy registra los muscle ups como ejercicio propio con su propio ranking. Cada rep genera XP para tus atributos RPG y cuenta en los boss fights comunitarios, así que hasta las sesiones cortas de skill hacen avanzar tu progresión.</p>
+    `,
+
+    // Landing contador de dominadas supinas (chin-ups)
+    el_chinup_eyebrow: 'Contador de Dominadas Supinas Gratis',
+    el_chinup_subtext: 'Cuenta tus dominadas supinas, gana fuerza de bíceps y espalda, y compite en el ranking global de calistenia.',
+    el_chinup_card_label: 'STAT CHIN-UP',
+    el_chinup_card_title: 'Volumen Mensual',
+    el_chinup_section1_h2: '¿Por qué registrar tus dominadas supinas?',
+    el_chinup_section1_body: '<p>Las dominadas supinas o chin-ups (agarre con palmas hacia ti) son el tirón vertical más dominante de bíceps y normalmente el primero que desbloquean los principiantes. Registrarlas por separado de las dominadas pronas te muestra si tu fuerza de agarre está equilibrada o cojea.</p><p>Con Reppy cada dominada supina se convierte en XP que sube tus atributos de Fuerza y Resistencia, y el heatmap de racha te mantiene constante semana tras semana.</p>',
+    el_chinup_section2_h2: 'Cómo mejorar tus dominadas supinas',
+    el_chinup_tip1_title: 'Rango Completo',
+    el_chinup_tip1_body: 'Empieza desde cuelgue muerto y termina con la barbilla claramente por encima de la barra. Las reps parciales construyen fuerza parcial.',
+    el_chinup_tip2_title: 'Grease the Groove',
+    el_chinup_tip2_body: 'Series fáciles y frecuentes a lo largo del día acumulan volumen sin quemarte — perfecto para una barra de puerta.',
+    el_chinup_tip3_title: 'Varía el Agarre',
+    el_chinup_tip3_body: 'Alterna supinas con pronas y agarre neutro. Un tirón equilibrado protege tus codos y desarrolla la espalda de forma uniforme.',
+    el_chinup_guide_h2: 'Guía Completa de Dominadas Supinas',
+    el_chinup_article: `
+      <h3>Chin-ups vs dominadas pronas: qué cambia</h3>
+      <p>La <strong>dominada supina</strong> usa agarre con palmas hacia ti, lo que coloca al bíceps en su línea de tirón más fuerte. La mayoría de atletas saca 1-2 reps más en supino que en prono, lo que la convierte en la puerta de entrada ideal al tirón vertical — y en un constructor de bíceps legítimo sin mancuernas.</p>
+
+      <h3>Cómo programar tus dominadas supinas</h3>
+      <p>Como las supinas permiten más volumen que las pronas, responden de maravilla a la frecuencia. Registrar cada serie en un <strong>contador de dominadas supinas</strong> muestra tu tendencia de volumen semanal y te dice cuándo añadir lastre o pasar a variantes más duras.</p>
+
+      <h3>¿Por qué Reppy para tus dominadas supinas?</h3>
+      <p>Reppy registra tus dominadas supinas junto con pronas y fondos, convirtiendo cada rep en XP, monedas y progreso de nivel. Compárate en el ranking global y deja que tus reps hagan daño en los boss fights comunitarios.</p>
+    `,
+
+    // SEO meta keys para landings de contadores
+    contador_fondos_seo_title: 'Contador de Fondos Online',
+    contador_fondos_seo_desc: 'Contador de fondos gratis con progresion RPG, ranking global y racha.',
+    contador_muscleups_seo_title: 'Contador de Muscle Ups Online',
+    contador_muscleups_seo_desc: 'Registra tus muscle ups con progresion RPG, ranking global y racha.',
+    contador_chinups_seo_title: 'Contador de Dominadas Supinas',
+    contador_chinups_seo_desc: 'Cuenta tus dominadas supinas con progresion RPG, ranking global y racha.',
+
     // SEO meta keys for new landing pages
     app_dominadas_seo_title: 'App de Dominadas Android e iPhone',
     app_dominadas_seo_desc: 'La mejor app de dominadas gratuita para Android e iPhone con progresion RPG.',

@@ -27,6 +27,9 @@ const SLUG_MAP = {
   '/es/app-dominadas':               '/en/pull-up-app',
   '/es/app-flexiones':               '/en/push-up-app',
   '/es/app-fondos':                  '/en/dips-app',
+  '/es/contador-fondos':             '/en/dips-counter',
+  '/es/contador-muscle-ups':         '/en/muscle-up-counter',
+  '/es/contador-dominadas-supinas':  '/en/chin-up-counter',
   '/es/app-calistenia':              '/en/calisthenics-app',
   '/es/reto-calistenia-30-dias':     '/en/30-day-calisthenics-challenge',
   '/es/reppy-vs-otras-apps-calistenia': '/en/reppy-vs-calisthenics-apps',
@@ -210,6 +213,57 @@ const jsonLdForRoute = (route, lang, canonicalUrl) => {
       ['¿El tracker de fondos es gratuito?', 'Sí, Reppy es 100% gratuito sin anuncios ni suscripción.'],
       ['¿Reppy cuenta los fondos por separado de otros ejercicios?', 'Sí. Los fondos tienen su propio tracking, ranking y contribuyen a los atributos STR y PWR.'],
       ['¿Puedo registrar fondos en anillas o con lastre?', 'Sí. Reppy permite añadir peso extra y cuenta todas las variantes de fondos en el volumen total.']
+    ];
+    return JSON.stringify({ '@context': 'https://schema.org', '@graph': [softwareAppSchema(lang, canonicalUrl, 'Reppy', desc), faqSchema(faqs)] });
+  }
+
+  // contador-fondos / dips-counter
+  if (route.endsWith('/contador-fondos') || route.endsWith('/dips-counter')) {
+    const desc = isEn
+      ? 'Reppy is a free online dips counter with RPG progression, global ranking and streak tracking.'
+      : 'Reppy es un contador de fondos en paralelas online gratuito con progresión RPG, ranking global y racha.';
+    const faqs = isEn ? [
+      ['Is this dips counter free?', 'Yes, Reppy is 100% free with no ads and no subscription required.'],
+      ['Does Reppy count dips separately from other exercises?', 'Yes. Dips have their own tracking and leaderboard, and contribute to your STR and PWR attributes.'],
+      ['Can I track ring dips or weighted dips?', 'Yes. Reppy lets you add extra weight and counts all dip variations toward your total volume.']
+    ] : [
+      ['¿El contador de fondos es gratuito?', 'Sí, Reppy es 100% gratuito, sin anuncios y sin suscripción.'],
+      ['¿Reppy cuenta los fondos por separado de otros ejercicios?', 'Sí. Los fondos tienen su propio tracking y ranking, y contribuyen a tus atributos STR y PWR.'],
+      ['¿Puedo registrar fondos en anillas o con lastre?', 'Sí. Reppy permite añadir peso extra y cuenta todas las variantes de fondos en tu volumen total.']
+    ];
+    return JSON.stringify({ '@context': 'https://schema.org', '@graph': [softwareAppSchema(lang, canonicalUrl, 'Reppy', desc), faqSchema(faqs)] });
+  }
+
+  // contador-muscle-ups / muscle-up-counter
+  if (route.endsWith('/contador-muscle-ups') || route.endsWith('/muscle-up-counter')) {
+    const desc = isEn
+      ? 'Reppy is a free muscle up counter with RPG progression, global ranking and streak tracking.'
+      : 'Reppy es un contador de muscle ups gratuito con progresión RPG, ranking global y racha.';
+    const faqs = isEn ? [
+      ['Is this muscle up counter free?', 'Yes, Reppy is 100% free with no ads and no subscription required.'],
+      ['Does Reppy track muscle ups as their own exercise?', 'Yes. Muscle ups have their own tracking and leaderboard, and every rep earns XP toward your RPG attributes.'],
+      ['How many pull-ups do I need before training muscle ups?', 'A common baseline is 10+ clean pull-ups and 15+ dips — from there the muscle up becomes mostly a technique problem.']
+    ] : [
+      ['¿El contador de muscle ups es gratuito?', 'Sí, Reppy es 100% gratuito, sin anuncios y sin suscripción.'],
+      ['¿Reppy registra los muscle ups como ejercicio propio?', 'Sí. Los muscle ups tienen su propio tracking y ranking, y cada rep genera XP para tus atributos RPG.'],
+      ['¿Cuántas dominadas necesito antes de entrenar el muscle up?', 'Una base habitual son 10+ dominadas y 15+ fondos limpios — a partir de ahí el muscle up es sobre todo un problema de técnica.']
+    ];
+    return JSON.stringify({ '@context': 'https://schema.org', '@graph': [softwareAppSchema(lang, canonicalUrl, 'Reppy', desc), faqSchema(faqs)] });
+  }
+
+  // contador-dominadas-supinas / chin-up-counter
+  if (route.endsWith('/contador-dominadas-supinas') || route.endsWith('/chin-up-counter')) {
+    const desc = isEn
+      ? 'Reppy is a free chin-up counter with RPG progression, global leaderboard and streak tracking.'
+      : 'Reppy es un contador de dominadas supinas (chin-ups) gratuito con progresión RPG, ranking global y racha.';
+    const faqs = isEn ? [
+      ['Is this chin-up counter free?', 'Yes, Reppy is 100% free with no ads and no subscription required.'],
+      ['What is the difference between chin-ups and pull-ups?', 'Chin-ups use a supinated grip (palms facing you), which involves more biceps; pull-ups use a pronated grip and hit the lats harder. Reppy lets you log both.'],
+      ['Can I track weighted chin-ups?', 'Yes. Reppy supports added weight and counts it toward your total training volume.']
+    ] : [
+      ['¿El contador de dominadas supinas es gratuito?', 'Sí, Reppy es 100% gratuito, sin anuncios y sin suscripción.'],
+      ['¿Qué diferencia hay entre dominadas supinas y pronas?', 'Las supinas (chin-ups, palmas hacia ti) implican más bíceps; las pronas cargan más el dorsal. En Reppy puedes registrar ambas.'],
+      ['¿Puedo registrar dominadas supinas con lastre?', 'Sí. Reppy permite añadir peso extra y lo contabiliza en tu volumen total de entrenamiento.']
     ];
     return JSON.stringify({ '@context': 'https://schema.org', '@graph': [softwareAppSchema(lang, canonicalUrl, 'Reppy', desc), faqSchema(faqs)] });
   }
@@ -403,6 +457,42 @@ const metaForRoute = (route, lang) => {
       keywords: isEnglish
         ? 'dips app, dips tracker, dips counter app, tricep dips app, calisthenics dips tracker'
         : 'app fondos paralelas, contador fondos, app fondos gratis, seguimiento fondos calistenia, tracker fondos'
+    };
+  }
+
+  if (route.endsWith('/contador-fondos') || route.endsWith('/dips-counter')) {
+    return {
+      title: isEnglish ? 'Free Online Dips Counter | Reppy' : 'Contador de Fondos Online | Reppy',
+      description: isEnglish
+        ? 'Track your dips and level up tricep and chest strength. Free dips counter with RPG progression, global ranking, and community boss fights.'
+        : 'Registra tus fondos y sube de nivel tu fuerza de triceps y pecho. Contador de fondos gratis con progresion RPG, ranking global y boss fights comunitarios.',
+      keywords: isEnglish
+        ? 'dips counter, dip counter, online dips counter, free dips tracker, parallel bar dips counter, calisthenics dips tracker'
+        : 'contador fondos, contador de fondos en paralelas, contador fondos online, tracker fondos gratis, dips counter'
+    };
+  }
+
+  if (route.endsWith('/contador-muscle-ups') || route.endsWith('/muscle-up-counter')) {
+    return {
+      title: isEnglish ? 'Free Muscle Up Counter | Reppy' : 'Contador de Muscle Ups Online | Reppy',
+      description: isEnglish
+        ? 'Log your muscle ups and track your progress toward bar mastery. Free muscle up counter with RPG progression, global ranking, and community boss fights.'
+        : 'Registra tus muscle ups y sigue tu progreso hacia la maestria en la barra. Contador de muscle ups gratis con progresion RPG, ranking global y boss fights comunitarios.',
+      keywords: isEnglish
+        ? 'muscle up counter, muscle up tracker, muscle up progress tracker, free muscle up counter, street workout tracker'
+        : 'contador muscle ups, contador de muscle up, tracker muscle up, registro muscle ups, street workout tracker'
+    };
+  }
+
+  if (route.endsWith('/contador-dominadas-supinas') || route.endsWith('/chin-up-counter')) {
+    return {
+      title: isEnglish ? 'Free Chin-up Counter | Reppy' : 'Contador de Dominadas Supinas | Reppy',
+      description: isEnglish
+        ? 'Count your chin-ups and build bicep and back strength. Free chin-up counter with RPG progression, streak tracking, and global leaderboard.'
+        : 'Cuenta tus dominadas supinas y gana fuerza de biceps y espalda. Contador de chin-ups gratis con progresion RPG, racha de entrenamiento y ranking global.',
+      keywords: isEnglish
+        ? 'chin-up counter, chin up counter, chin-up tracker, online chin-up counter, free chin-up tracker, chinup counter'
+        : 'contador dominadas supinas, dominadas supinas, chin up counter, contador chin-ups, tracker dominadas supinas'
     };
   }
 

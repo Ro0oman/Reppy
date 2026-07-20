@@ -235,6 +235,17 @@ const currentPost = computed(() => {
   return found || blogPosts[0];
 });
 
+// Slug inexistente → al índice del blog. Antes se renderizaba blogPosts[0]
+// como fallback silencioso y Google llegó a indexar URLs huérfanas
+// (p. ej. /en/blog/Manual) con contenido duplicado.
+const redirectIfUnknownSlug = () => {
+  if (!blogPosts.some(p => p.slug === route.params.slug)) {
+    router.replace(`/${i18n.locale}/blog`);
+    return true;
+  }
+  return false;
+};
+
 const post = computed(() => {
   return currentPost.value.locales[i18n.locale] || currentPost.value.locales.en;
 });
@@ -473,6 +484,7 @@ const recordBlogRead = async () => {
 };
 
 onMounted(() => {
+  if (redirectIfUnknownSlug()) return;
   window.addEventListener('scroll', updateScroll);
   recordBlogRead();
   updateSEOMeta();
@@ -480,6 +492,8 @@ onMounted(() => {
 });
 
 watch(() => route.params.slug, () => {
+  if (!route.params.slug || route.name !== 'blog-post') return;
+  if (redirectIfUnknownSlug()) return;
   recordBlogRead();
   updateSEOMeta();
   window.scrollTo(0, 0);

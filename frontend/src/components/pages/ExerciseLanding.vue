@@ -14,7 +14,7 @@
       </div>
 
       <h1 class="text-5xl md:text-8xl font-bold tracking-tight text-foreground leading-tight mb-8">
-        {{ content.h1_start }} <span class="text-primary-500 capitalize">{{ i18n.t(type === 'dominadas' ? 'pullups' : type === 'flexiones' ? 'pushups' : 'dips') }}</span> {{ content.h1_end }}
+        {{ content.h1_start }} <span class="text-primary-500 capitalize">{{ i18n.t(EXERCISE_NAME_KEY[type] || 'dips') }}</span> {{ content.h1_end }}
       </h1>
       
       <p class="max-w-2xl text-xl md:text-2xl text-muted font-medium mb-12 leading-relaxed">
@@ -46,7 +46,7 @@
           <div class="relative bg-deep-abyss/80 border border-border/40 p-8 rounded-3xl overflow-hidden shadow-2xl">
             <div class="flex items-center gap-4 mb-8">
               <div class="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center text-primary-500">
-                <component :is="type === 'dominadas' ? ArrowUp : ArrowDown" class="w-6 h-6" />
+                <component :is="['dominadas', 'muscleups', 'chinups'].includes(type) ? ArrowUp : ArrowDown" class="w-6 h-6" />
               </div>
               <div>
                 <p class="text-xs font-black text-muted uppercase tracking-widest">{{ content.card_label }}</p>
@@ -134,6 +134,24 @@ const route = useRoute();
 const authStore = useAuthStore();
 const i18n = useI18nStore();
 
+// type → clave i18n del nombre del ejercicio (para el H1)
+const EXERCISE_NAME_KEY = {
+  dominadas: 'pullups',
+  flexiones: 'pushups',
+  fondos: 'dips',
+  muscleups: 'muscleups',
+  chinups: 'chinups'
+};
+
+// type → prefijo de las claves i18n de contenido (el_<prefijo>_*)
+const CONTENT_PREFIX = {
+  dominadas: 'el_pullup',
+  flexiones: 'el_pushup',
+  fondos: 'el_dip',
+  muscleups: 'el_muscleup',
+  chinups: 'el_chinup'
+};
+
 const updateMeta = () => {
   const isEn = i18n.locale === 'en';
   const metaMap = {
@@ -146,8 +164,16 @@ const updateMeta = () => {
       description: isEn ? 'Keep track of your push-ups and level up your attributes. Free push-up counter with RPG progression, leaderboard, and community events.' : 'Lleva la cuenta de tus push-ups y sube de nivel tus atributos. Contador de flexiones gratis con progresion RPG, ranking global y eventos comunitarios.'
     },
     fondos: {
-      title: isEn ? 'Dips Tracker App | Reppy' : 'App de Fondos en Paralelas | Reppy',
-      description: isEn ? 'Track your dips and level up tricep and chest strength. Free dips counter with RPG progression, global ranking, and community boss fights.' : 'Registra tus fondos y sube de nivel tu fuerza de triceps y pecho. App de fondos gratis con progresion RPG, ranking global y boss fights comunitarios.'
+      title: isEn ? (props.appFocus ? 'Dips Tracker App | Reppy' : 'Free Online Dips Counter | Reppy') : (props.appFocus ? 'App de Fondos en Paralelas | Reppy' : 'Contador de Fondos Online | Reppy'),
+      description: isEn ? 'Track your dips and level up tricep and chest strength. Free dips counter with RPG progression, global ranking, and community boss fights.' : 'Registra tus fondos y sube de nivel tu fuerza de triceps y pecho. Contador de fondos gratis con progresion RPG, ranking global y boss fights comunitarios.'
+    },
+    muscleups: {
+      title: isEn ? 'Free Muscle Up Counter | Reppy' : 'Contador de Muscle Ups Online | Reppy',
+      description: isEn ? 'Log your muscle ups and track your progress toward mastery. Free muscle up counter with RPG progression, global ranking, and community boss fights.' : 'Registra tus muscle ups y sigue tu progreso hacia la maestria. Contador de muscle ups gratis con progresion RPG, ranking global y boss fights comunitarios.'
+    },
+    chinups: {
+      title: isEn ? 'Free Chin-up Counter | Reppy' : 'Contador de Dominadas Supinas | Reppy',
+      description: isEn ? 'Count your chin-ups and build bicep and back strength. Free chin-up counter with RPG progression, streak tracking, and global leaderboard.' : 'Cuenta tus dominadas supinas y gana fuerza de biceps y espalda. Contador de chin-ups gratis con progresion RPG, racha y ranking global.'
     }
   };
   const { title, description } = metaMap[props.type] || metaMap.dominadas;
@@ -176,7 +202,7 @@ const start = () => {
 };
 
 const content = computed(() => {
-  const prefix = props.type === 'dominadas' ? 'el_pullup' : props.type === 'flexiones' ? 'el_pushup' : 'el_dip';
+  const prefix = CONTENT_PREFIX[props.type] || 'el_dip';
   const isEs = i18n.locale === 'es';
 
   return {

@@ -180,8 +180,32 @@ export const routes = [
         alias: 'dips-app',
         component: ExerciseLanding,
         name: 'seo-app-fondos',
-        props: { type: 'fondos' },
+        props: { type: 'fondos', appFocus: true },
         meta: { titleKey: 'app_fondos_seo_title', descriptionKey: 'app_fondos_seo_desc' }
+      },
+      {
+        path: 'contador-fondos',
+        alias: 'dips-counter',
+        component: ExerciseLanding,
+        name: 'seo-contador-fondos',
+        props: { type: 'fondos' },
+        meta: { titleKey: 'contador_fondos_seo_title', descriptionKey: 'contador_fondos_seo_desc' }
+      },
+      {
+        path: 'contador-muscle-ups',
+        alias: 'muscle-up-counter',
+        component: ExerciseLanding,
+        name: 'seo-contador-muscleups',
+        props: { type: 'muscleups' },
+        meta: { titleKey: 'contador_muscleups_seo_title', descriptionKey: 'contador_muscleups_seo_desc' }
+      },
+      {
+        path: 'contador-dominadas-supinas',
+        alias: 'chin-up-counter',
+        component: ExerciseLanding,
+        name: 'seo-contador-chinups',
+        props: { type: 'chinups' },
+        meta: { titleKey: 'contador_chinups_seo_title', descriptionKey: 'contador_chinups_seo_desc' }
       },
       {
         path: 'reto-calistenia-30-dias',
@@ -221,6 +245,11 @@ export const routes = [
         redirect: to => `/${to.params.lang || 'es'}/blog/pike-push-ups-guia-definitiva`
       },
       {
+        // URL huérfana indexada por Google (/en/blog/Manual) → guía real
+        path: 'blog/Manual',
+        redirect: to => `/${to.params.lang || 'es'}/blog/manual-inicio-calistenia`
+      },
+      {
         path: 'blog/:slug',
         component: () => import('./components/pages/BlogView.vue'),
         name: 'blog-post',
@@ -258,7 +287,8 @@ export function setupRouterGuards(router) {
         'dashboard', 'social', 'shop', 'codex', 'inventory', 
         'profile', 'admin', 'notifications', 'blog', 'login', 'missions',
         'contador-dominadas', 'contador-flexiones', 'app-calistenia',
-        'app-dominadas', 'app-flexiones', 'app-fondos',
+        'app-dominadas', 'app-flexiones', 'app-fondos', 'contador-fondos',
+        'contador-muscle-ups', 'contador-dominadas-supinas',
         'reto-calistenia-30-dias', 'reppy-vs-otras-apps-calistenia',
         'free-rpg-pull-up-counter'
       ];

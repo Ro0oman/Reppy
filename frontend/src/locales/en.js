@@ -699,6 +699,67 @@ export default {
       <p>Reppy converts every dip into XP, coins, and level progress. Dips also contribute to the community boss fight alongside pull-ups and push-ups, making every rep have real collective impact.</p>
     `,
 
+    // Muscle up counter landing
+    chinups: 'Chin-ups',
+    el_muscleup_eyebrow: 'Free Muscle Up Counter',
+    el_muscleup_subtext: 'Log every muscle up, track your progress toward bar mastery, and compete in the global calisthenics ranking.',
+    el_muscleup_card_label: 'MUSCLE UP STAT',
+    el_muscleup_card_title: 'Monthly Volume',
+    el_muscleup_section1_h2: 'Why count your muscle ups?',
+    el_muscleup_section1_body: '<p>The muscle up is the gateway skill of street workout: one clean rep proves you own the pull-up, the dip, and the transition between them. Because volume is low, every single rep matters — and deserves to be recorded.</p><p>With Reppy each muscle up converts into XP that levels up your Strength and Power attributes, and your history shows exactly how you went from 1 shaky rep to clean sets.</p>',
+    el_muscleup_section2_h2: 'How to get more muscle ups',
+    el_muscleup_tip1_title: 'Own the Basics First',
+    el_muscleup_tip1_body: 'A solid base of 10+ clean pull-ups and 15+ dips makes the muscle up a technique problem, not a strength problem.',
+    el_muscleup_tip2_title: 'Explosive Pull',
+    el_muscleup_tip2_body: 'Pull the bar to your sternum, not your chin. High pull-ups and chest-to-bar reps build the speed the transition needs.',
+    el_muscleup_tip3_title: 'Drill the Transition',
+    el_muscleup_tip3_body: 'Slow negatives over the bar and band-assisted reps teach the wrist roll and lean that unlock your first clean rep.',
+    el_muscleup_guide_h2: 'Complete Muscle Up Guide',
+    el_muscleup_article: `
+      <h3>The muscle up: pull and push in one rep</h3>
+      <p>The <strong>muscle up</strong> chains an explosive pull-up, a transition over the bar, and a straight bar dip into a single movement. It works the lats, biceps, chest, triceps, and core — no other bodyweight exercise covers so much in one rep.</p>
+
+      <h3>Why counting matters more here</h3>
+      <p>Muscle up volume is naturally low: sessions of 5–15 total reps are normal. That makes a <strong>muscle up counter</strong> even more valuable — each logged rep is a real data point, and doubling from 3 to 6 clean reps is a massive strength jump you want on record.</p>
+
+      <h3>Why Reppy for your muscle ups?</h3>
+      <p>Reppy tracks muscle ups as their own exercise with their own ranking. Every rep earns XP toward your RPG attributes and counts in community boss fights, so even short skill sessions move your progression forward.</p>
+    `,
+
+    // Chin-up counter landing
+    el_chinup_eyebrow: 'Free Chin-up Counter',
+    el_chinup_subtext: 'Count your chin-ups, build bicep and back strength, and compete in the global calisthenics ranking.',
+    el_chinup_card_label: 'CHIN-UP STAT',
+    el_chinup_card_title: 'Monthly Volume',
+    el_chinup_section1_h2: 'Why track your chin-ups?',
+    el_chinup_section1_body: '<p>Chin-ups (supinated grip, palms facing you) are the most bicep-dominant pull on the bar and usually the first vertical pull beginners unlock. Tracking them separately from pull-ups shows you whether your grip strength is balanced or lagging.</p><p>With Reppy every chin-up converts into XP that levels up your Strength and Endurance attributes, and the streak heatmap keeps you honest week after week.</p>',
+    el_chinup_section2_h2: 'How to improve your chin-ups',
+    el_chinup_tip1_title: 'Full Range of Motion',
+    el_chinup_tip1_body: 'Start from a dead hang and finish with your chin clearly over the bar. Partial reps build partial strength.',
+    el_chinup_tip2_title: 'Grease the Groove',
+    el_chinup_tip2_body: 'Frequent easy sets through the day build volume without burnout — perfect for a doorway bar.',
+    el_chinup_tip3_title: 'Mix Your Grips',
+    el_chinup_tip3_body: 'Alternate chin-ups with pull-ups and neutral grip. Balanced pulling protects your elbows and grows your back evenly.',
+    el_chinup_guide_h2: 'Complete Chin-up Guide',
+    el_chinup_article: `
+      <h3>Chin-ups vs pull-ups: what changes</h3>
+      <p>The <strong>chin-up</strong> uses a supinated grip (palms toward you), which puts the biceps in their strongest line of pull. Most athletes get 1–2 more reps with chin-ups than pull-ups, making them the ideal entry point to vertical pulling — and a legitimate bicep builder without dumbbells.</p>
+
+      <h3>Programming your chin-ups</h3>
+      <p>Because chin-ups allow more volume than pull-ups, they respond brilliantly to frequency. Logging every set in a <strong>chin-up counter</strong> shows your weekly volume trend and tells you when to add weight or move to harder variations.</p>
+
+      <h3>Why Reppy for your chin-ups?</h3>
+      <p>Reppy logs your chin-ups alongside pull-ups and dips, turning every rep into XP, coins, and level progress. Compare yourself on the global leaderboard and let your reps deal damage in community boss fights.</p>
+    `,
+
+    // SEO meta keys for counter landings
+    contador_fondos_seo_title: 'Free Online Dips Counter',
+    contador_fondos_seo_desc: 'Free dips counter with RPG progression, global ranking, and streak tracking.',
+    contador_muscleups_seo_title: 'Free Muscle Up Counter',
+    contador_muscleups_seo_desc: 'Log your muscle ups with RPG progression, global ranking, and streak tracking.',
+    contador_chinups_seo_title: 'Free Chin-up Counter',
+    contador_chinups_seo_desc: 'Count your chin-ups with RPG progression, global ranking, and streak tracking.',
+
     // SEO meta keys for new landing pages
     app_dominadas_seo_title: 'Pull-up App for Android & iPhone',
     app_dominadas_seo_desc: 'The best free pull-up app for Android and iPhone with RPG progression.',
