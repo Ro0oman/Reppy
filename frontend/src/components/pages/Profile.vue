@@ -432,7 +432,7 @@ const attributes = computed(() => [
   { key: 'VIG',  icon: '❤️', lvl: user.value.vig_lvl || 1, labelColor: 'text-red-500',    barColor: 'bg-red-500',    tileBg: 'bg-red-500/8 border-red-500/20',    bonus: itemBonuses.value.VIG, xpIntoLevel: user.value.vig_xp_into_level || 0, xpForNext: user.value.vig_xp_for_next_level || 100 },
   { key: 'INT',  icon: '🧠', lvl: user.value.int_lvl || 1, labelColor: 'text-blue-400',   barColor: 'bg-blue-400',   tileBg: 'bg-blue-500/8 border-blue-500/20',   bonus: itemBonuses.value.INT, xpIntoLevel: user.value.int_xp_into_level || 0, xpForNext: user.value.int_xp_for_next_level || 100 },
   { key: 'FTH',  icon: '✨', lvl: user.value.fth_lvl || 1, labelColor: 'text-yellow-400', barColor: 'bg-yellow-400', tileBg: 'bg-yellow-500/8 border-yellow-500/20', bonus: itemBonuses.value.FTH, xpIntoLevel: user.value.fth_xp_into_level || 0, xpForNext: user.value.fth_xp_for_next_level || 100 },
-  { key: 'CHA',  icon: '👑', lvl: user.value.cha_lvl || 1, labelColor: 'text-pink-400',   barColor: 'bg-pink-400',   tileBg: 'bg-pink-500/8 border-pink-500/20',   bonus: itemBonuses.value.CHA, xpIntoLevel: user.value.cha_xp_into_level || 0, xpForNext: user.value.cha_xp_for_next_level || 100 },
+  { key: 'CHA',  icon: '👑', lvl: user.value.cha_lvl || 1, labelColor: 'text-cyan-400',   barColor: 'bg-cyan-400',   tileBg: 'bg-cyan-500/8 border-cyan-500/20',   bonus: itemBonuses.value.CHA, xpIntoLevel: user.value.cha_xp_into_level || 0, xpForNext: user.value.cha_xp_for_next_level || 100 },
 ]);
 
 const getAttrColor = (lvl) => {

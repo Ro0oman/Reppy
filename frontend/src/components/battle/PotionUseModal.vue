@@ -82,7 +82,7 @@ const rarityColor = computed(() => {
   const map = {
     common: 'text-zinc-400',
     rare: 'text-blue-400',
-    especial: 'text-fuchsia-400',
+    especial: 'text-cyan-400',
     legendary: 'text-amber-400',
     calistenico: 'text-cyan-300',
   };

@@ -389,7 +389,7 @@ const attributeDescriptions = [
   { 
     key: 'CHA', 
     icon: Heart, 
-    iconColor: 'text-pink-400', 
+    iconColor: 'text-cyan-400', 
     hex: '#f472b6'
   }
 ];

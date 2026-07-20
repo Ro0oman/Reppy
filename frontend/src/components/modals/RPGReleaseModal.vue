@@ -51,8 +51,8 @@
 
           <!-- Missions -->
           <div class="bg-white/5 border border-white/5 rounded-3xl p-6 flex gap-4 hover:bg-white/10 transition-colors">
-            <div class="w-12 h-12 bg-indigo-500/20 rounded-2xl flex items-center justify-center shrink-0">
-              <Target class="w-6 h-6 text-indigo-500" />
+            <div class="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center shrink-0">
+              <Target class="w-6 h-6 text-blue-500" />
             </div>
             <div>
               <h3 class="text-xs font-black text-white uppercase tracking-wider mb-1">{{ i18n.locale === 'es' ? 'MISIONES DIARIAS' : 'DAILY MISSIONS' }}</h3>

@@ -342,7 +342,7 @@ const theme = computed(() => {
       border: 'border-purple-500/30',
       aura: 'bg-gradient-to-br from-purple-500/20 to-transparent',
       badge: 'bg-purple-500/15 border-purple-500/30 text-purple-400',
-      progress: 'bg-gradient-to-r from-purple-600 via-purple-500 to-pink-400',
+      progress: 'bg-gradient-to-r from-purple-600 via-purple-500 to-cyan-400',
       claimButton: 'bg-purple-500 hover:bg-purple-400 text-black border-purple-400',
       rewardCopy: `${i18nStore.t('ui_guaranteed')} (${i18nStore.t('ui_special')})`,
       rewardRates: [
@@ -356,7 +356,7 @@ const theme = computed(() => {
     border: 'border-primary-500/20',
     aura: 'bg-gradient-to-br from-primary-500/20 to-transparent',
     badge: 'bg-primary-500/15 border-primary-500/30 text-primary-400',
-    progress: 'bg-gradient-to-r from-primary-600 via-primary-500 to-sky-400',
+    progress: 'bg-gradient-to-r from-primary-600 via-primary-500 to-cyan-400',
     claimButton: 'bg-emerald-500 hover:bg-emerald-400 text-black border-emerald-400',
     rewardCopy: `${i18nStore.t('ui_guaranteed')} (${i18nStore.t('ui_rare')})`,
     rewardRates: [

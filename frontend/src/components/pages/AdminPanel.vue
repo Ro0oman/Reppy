@@ -151,7 +151,7 @@
           </div>
           <div class="glass p-8 rounded-[2.5rem] border-white/10 space-y-4">
             <h3 class="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
-              <TrendingUp class="w-4 h-4 text-indigo-400" />
+              <TrendingUp class="w-4 h-4 text-blue-400" />
               Retención D7
             </h3>
             <p class="text-5xl font-black tabular-nums" :class="analytics.retention.d7_rate >= 20 ? 'text-emerald-400' : analytics.retention.d7_rate >= 10 ? 'text-amber-400' : 'text-red-400'">
@@ -159,7 +159,7 @@
             </p>
             <p class="text-xs text-muted">{{ analytics.retention.d7_retained }} / {{ analytics.retention.d7_cohort }} usuarios activos en primeros 7 días</p>
             <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-              <div class="h-full bg-indigo-500 rounded-full" :style="{ width: analytics.retention.d7_rate + '%' }"></div>
+              <div class="h-full bg-blue-500 rounded-full" :style="{ width: analytics.retention.d7_rate + '%' }"></div>
             </div>
           </div>
         </div>
@@ -205,7 +205,7 @@
               <div
                 v-for="d in normalizedChart(analytics.charts.daily_active)"
                 :key="d.day"
-                class="flex-1 bg-indigo-500/70 rounded-t hover:bg-indigo-500 transition-colors group relative"
+                class="flex-1 bg-blue-500/70 rounded-t hover:bg-blue-500 transition-colors group relative"
                 :style="{ height: d.height + '%', minHeight: '4px' }"
               >
                 <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] text-white bg-zinc-800 px-1 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap">{{ d.day.slice(5) }}: {{ d.count }}</div>
@@ -250,7 +250,7 @@
             <input v-model="newBoss.image_url" type="text" class="input-tactical" placeholder="https://...">
           </div>
         </div>
-        <button @click="createBoss" class="mt-8 bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest px-8 py-4 rounded-2xl w-full md:w-auto transition-all shadow-xl shadow-indigo-600/20">
+        <button @click="createBoss" class="mt-8 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest px-8 py-4 rounded-2xl w-full md:w-auto transition-all shadow-xl shadow-blue-600/20">
           {{ i18n.t('admin_schedule_event') }}
         </button>
       </div>
@@ -324,7 +324,7 @@ const funnelSteps = computed(() => {
   const f = analytics.value.funnel;
   return [
     { label: 'Signups totales', value: f.signups, pct: 100, color: 'bg-primary-500' },
-    { label: 'Primera rep', value: f.activated, pct: f.activated_pct, color: 'bg-indigo-500' },
+    { label: 'Primera rep', value: f.activated, pct: f.activated_pct, color: 'bg-blue-500' },
     { label: 'Misión reclamada', value: f.mission_claimed, pct: f.mission_pct, color: 'bg-amber-500' },
     { label: 'Vuelta D1', value: f.d1_returned, pct: f.d1_pct, color: 'bg-emerald-500' },
   ];
@@ -475,7 +475,7 @@ const getBossStatus = (boss) => {
 const getBossStatusClass = (boss) => {
   const status = getBossStatus(boss);
   if (status === 'Activo') return 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20';
-  if (status === 'Próximamente') return 'bg-indigo-500/10 text-indigo-500 border border-indigo-500/20';
+  if (status === 'Próximamente') return 'bg-blue-500/10 text-blue-500 border border-blue-500/20';
   return 'bg-zinc-500/10 text-zinc-500 border border-zinc-500/20';
 };
 

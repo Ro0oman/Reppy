@@ -84,7 +84,7 @@
                     item.rarity === 'epic' || item.rarity === 'especial' ? 'bg-purple-500' :
                       item.rarity === 'legendary' ? 'bg-yellow-500' :
                         item.rarity === 'calistenico' ? 'bg-red-600' :
-                          item.rarity === 'cosmico' ? 'bg-violet-400' : 'bg-primary-500'
+                          item.rarity === 'cosmico' ? 'bg-blue-400' : 'bg-primary-500'
               ]"></div>
 
               <div class="p-2 flex-1 flex flex-col items-center relative z-10">
@@ -986,7 +986,7 @@ const getRarityBadge = (item) => {
   if (!item) return { label: i18n.t('rarity_common'), classes: 'text-muted border-white/10' };
   const rarity = item.rarity?.toLowerCase() || 'common';
   switch (rarity) {
-    case 'cosmico': return { label: i18n.t('rarity_cosmico'), classes: 'text-violet-300 bg-violet-500/10 border-violet-400/50 shadow-violet-500/30 animate-pulse' };
+    case 'cosmico': return { label: i18n.t('rarity_cosmico'), classes: 'text-blue-300 bg-blue-500/10 border-blue-400/50 shadow-blue-500/30 animate-pulse' };
     case 'calistenico': return { label: i18n.t('rarity_calisthenic'), classes: 'text-red-500 bg-red-500/10 border-red-500/40 shadow-red-500/20' };
     case 'legendary': return { label: i18n.t('rarity_legendary'), classes: 'text-yellow-500 bg-yellow-500/10 border-yellow-500/40 shadow-yellow-500/20' };
     case 'especial':

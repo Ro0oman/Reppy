@@ -90,7 +90,7 @@
                     <div>
                       <h4 class="font-bold text-white group-hover:text-emerald-400 transition-colors flex items-center gap-1.5">
                         {{ user.name }}
-                        <span v-if="isDeveloper(user.id)" class="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-400 border border-violet-500/30">DEV</span>
+                        <span v-if="isDeveloper(user.id)" class="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-400 border border-blue-500/30">DEV</span>
                       </h4>
                       <div class="flex items-center gap-2 mt-1">
                         <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>

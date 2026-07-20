@@ -4,13 +4,13 @@
     
     <div class="relative bg-white dark:bg-zinc-900 w-full max-w-sm rounded-2xl shadow-2xl border border-white/10 overflow-hidden transform transition-all animate-in fade-in duration-300 my-auto">
       <!-- Daily wheel gets a distinctive gold→magenta gradient strip at the top -->
-      <div v-if="isDaily" class="h-1.5 w-full bg-gradient-to-r from-amber-400 via-orange-500 to-fuchsia-500"></div>
+      <div v-if="isDaily" class="h-1.5 w-full bg-gradient-to-r from-amber-400 via-orange-500 to-cyan-500"></div>
       <div class="px-8 pt-8 text-center">
         <div class="inline-flex p-3 rounded-2xl mb-4" :class="theme.iconWrap">
           <component :is="headerIcon" class="w-6 h-6" :class="theme.icon" />
         </div>
-        <div v-if="isDaily" class="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 rounded-full bg-gradient-to-r from-amber-500/15 to-fuchsia-500/15 border border-fuchsia-500/30">
-          <span class="text-[9px] font-black uppercase tracking-[0.2em] bg-gradient-to-r from-amber-400 to-fuchsia-500 bg-clip-text text-transparent">{{ i18n.t('wheel_daily_badge') }}</span>
+        <div v-if="isDaily" class="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 rounded-full bg-gradient-to-r from-amber-500/15 to-cyan-500/15 border border-cyan-500/30">
+          <span class="text-[9px] font-black uppercase tracking-[0.2em] bg-gradient-to-r from-amber-400 to-cyan-500 bg-clip-text text-transparent">{{ i18n.t('wheel_daily_badge') }}</span>
         </div>
         <h2 class="text-3xl font-bold text-zinc-900 dark:text-white  tracking-tighter  leading-none">
           {{ isDaily ? i18n.t('wheel_daily_title_start') : i18n.t('wheel_title_start') }}
@@ -233,18 +233,18 @@ const canSpin = computed(() => isDaily.value ? rouletteStore.dailyCanSpin : roul
 // wheel. Class strings are full literals so Tailwind's purge keeps them.
 const headerIcon = computed(() => isDaily.value ? Gift : Sparkles);
 const theme = computed(() => isDaily.value ? {
-  iconWrap: 'bg-gradient-to-br from-amber-400 to-fuchsia-500 shadow-lg shadow-fuchsia-500/30',
+  iconWrap: 'bg-gradient-to-br from-amber-400 to-cyan-500 shadow-lg shadow-cyan-500/30',
   icon: 'text-white',
-  accent: 'bg-gradient-to-r from-amber-400 via-orange-400 to-fuchsia-500 bg-clip-text text-transparent',
+  accent: 'bg-gradient-to-r from-amber-400 via-orange-400 to-cyan-500 bg-clip-text text-transparent',
   centerBorder: 'border-amber-400',
   centerText: 'text-amber-500',
-  resultBg: 'bg-gradient-to-r from-amber-500/10 to-fuchsia-500/10',
+  resultBg: 'bg-gradient-to-r from-amber-500/10 to-cyan-500/10',
   resultBorder: 'border-amber-400/30',
   resultText: 'text-amber-500',
   victoryCard: 'shadow-[0_0_120px_rgba(217,70,239,0.35)] border-amber-400/40',
-  victoryIcon: 'bg-gradient-to-br from-amber-400 via-orange-500 to-fuchsia-600',
-  victoryGlow: 'bg-gradient-to-br from-amber-500/10 to-fuchsia-500/10',
-  congrats: 'bg-gradient-to-r from-amber-400 to-fuchsia-500 bg-clip-text text-transparent'
+  victoryIcon: 'bg-gradient-to-br from-amber-400 via-orange-500 to-cyan-600',
+  victoryGlow: 'bg-gradient-to-br from-amber-500/10 to-cyan-500/10',
+  congrats: 'bg-gradient-to-r from-amber-400 to-cyan-500 bg-clip-text text-transparent'
 } : {
   iconWrap: 'bg-primary-500/10',
   icon: 'text-primary-600',

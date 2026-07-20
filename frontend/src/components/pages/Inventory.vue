@@ -224,7 +224,7 @@
            <div class="p-5 md:p-8 rounded-xl md:rounded-2xl bg-surface/10 border border-white/5 backdrop-blur-xl text-center space-y-5 md:space-y-6">
                <div class="relative inline-block isolate z-[1]">
                 <AvatarFrame :src="authStore.user?.avatar_url" :border-css="authStore.user?.border_css" :size="120" />
-                <div class="absolute -bottom-2 inset-x-0 rounded-full bg-sky-100/95 ">
+                <div class="absolute -bottom-2 inset-x-0 rounded-full bg-cyan-100/95 ">
                   <span v-if="authStore.user?.title_name" class=" mt-[10px] px-4 py-1.5 rounded-full   text-[10px] font-black uppercase italic tracking-tighter shadow-lg" :class="authStore.user?.title_css">
                     {{ authStore.user?.title_name }}
                   </span>
@@ -766,7 +766,7 @@ const rarities = [
   { id: 'especial', label: 'rarity_special', activeClass: 'bg-purple-600 text-white border-purple-500 shadow-lg shadow-purple-500/20' },
   { id: 'legendary', label: 'rarity_legendary', activeClass: 'bg-orange-600 text-white border-orange-500 shadow-lg shadow-orange-500/20' },
   { id: 'calistenico', label: 'rarity_calisthenic', activeClass: 'bg-[#ccff00] text-black border-[#ccff00] shadow-lg shadow-[#ccff00]/20' },
-  { id: 'cosmico', label: 'rarity_cosmico', activeClass: 'bg-violet-500 text-white border-violet-400 shadow-lg shadow-violet-500/30' }
+  { id: 'cosmico', label: 'rarity_cosmico', activeClass: 'bg-blue-500 text-white border-blue-400 shadow-lg shadow-blue-500/30' }
 ];
 
 const selectedStat = ref(null);
@@ -1009,7 +1009,7 @@ const rpgStats = computed(() => [
     color: 'text-red-500',
     borderColor: 'border-red-500',
     bgLight: 'bg-red-500/10',
-    gradient: 'from-red-500 to-pink-600',
+    gradient: 'from-red-500 to-cyan-600',
     effectLabel: i18n.t('battle_overhaul_vig_desc'),
     links: [{ label: i18n.locale === 'es' ? 'MANTENER RACHA' : 'KEEP STREAK', to: '/', icon: Flame }]
   },
@@ -1027,7 +1027,7 @@ const rpgStats = computed(() => [
     color: 'text-blue-400',
     borderColor: 'border-blue-400',
     bgLight: 'bg-blue-400/10',
-    gradient: 'from-blue-400 to-indigo-600',
+    gradient: 'from-blue-400 to-blue-600',
     effectLabel: i18n.t('battle_overhaul_int_desc'),
     links: [{ label: i18n.locale === 'es' ? 'GANAR CONOCIMIENTO' : 'ACQUIRE KNOWLEDGE', to: '/blog', icon: BookOpen }]
   },
@@ -1060,10 +1060,10 @@ const rpgStats = computed(() => [
     xpIntoKey: 'cha_xp_into_level',
     xpForKey: 'cha_xp_for_next_level',
     icon: Sparkles,
-    color: 'text-pink-400',
-    borderColor: 'border-pink-400',
-    bgLight: 'bg-pink-400/10',
-    gradient: 'from-pink-400 to-fuchsia-600',
+    color: 'text-cyan-400',
+    borderColor: 'border-cyan-400',
+    bgLight: 'bg-cyan-400/10',
+    gradient: 'from-cyan-400 to-cyan-600',
     effectLabel: i18n.t('battle_overhaul_cha_desc'),
     links: [{ label: i18n.locale === 'es' ? 'CONECTAR' : 'CONNECT', to: '/social', icon: Users }]
   }
@@ -1239,7 +1239,7 @@ const isDraggableItem = (item) => !!item && !isConsumableItem(item) && item.type
 
 const rarityBorder = (rarity) => {
   switch ((rarity || '').toLowerCase()) {
-    case 'cosmico': return 'border-violet-400/80 shadow-violet-400/30';
+    case 'cosmico': return 'border-blue-400/80 shadow-blue-400/30';
     case 'legendary': return 'border-yellow-400/70 shadow-yellow-400/20';
     case 'epic':
     case 'especial': return 'border-purple-500/70 shadow-purple-500/20';

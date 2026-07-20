@@ -130,16 +130,16 @@
             <!-- Active buff -->
             <div
               v-if="weeklyData.activeBuff"
-              class="rounded-xl border border-violet-500/30 bg-violet-500/[0.08] px-4 py-2.5 flex items-center gap-3"
+              class="rounded-xl border border-blue-500/30 bg-blue-500/[0.08] px-4 py-2.5 flex items-center gap-3"
             >
               <span class="text-xl">⚗️</span>
               <div>
-                <p class="text-[9px] font-bold tracking-widest text-violet-400/70 uppercase">
+                <p class="text-[9px] font-bold tracking-widest text-blue-400/70 uppercase">
                   {{ i18n.locale === 'es' ? 'Buff activo' : 'Active buff' }}
                 </p>
-                <p class="text-sm font-bold text-violet-300">
+                <p class="text-sm font-bold text-blue-300">
                   ×{{ weeklyData.activeBuff.multiplier }}
-                  <span class="font-normal text-violet-400/60 text-xs">
+                  <span class="font-normal text-blue-400/60 text-xs">
                     {{ i18n.locale === 'es' ? 'daño' : 'damage' }}
                   </span>
                 </p>

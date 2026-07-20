@@ -235,7 +235,7 @@ const attributeDescriptions = [
     borderLeft: 'border-blue-400',
     bgAccent: 'bg-blue-400',
     buttonIconBg: 'shadow-[0_0_15px_rgba(96,165,250,0.4)]',
-    gradient: 'from-blue-400 to-indigo-600',
+    gradient: 'from-blue-400 to-blue-600',
     actionRoute: '/blog',
     earnings: [{ label: 'codex_earn_knowledge', value: 100 }, { label: 'codex_earn_analysis', value: 50 }]
   },
@@ -256,14 +256,14 @@ const attributeDescriptions = [
   { 
     key: 'CHA', 
     icon: Heart, 
-    iconColor: 'text-pink-400', 
+    iconColor: 'text-cyan-400', 
     hex: '#f472b6',
-    bgActive: 'bg-pink-400/10',
-    borderActive: 'border-pink-400/30',
-    borderLeft: 'border-pink-400',
-    bgAccent: 'bg-pink-400',
+    bgActive: 'bg-cyan-400/10',
+    borderActive: 'border-cyan-400/30',
+    borderLeft: 'border-cyan-400',
+    bgAccent: 'bg-cyan-400',
     buttonIconBg: 'shadow-[0_0_15px_rgba(244,114,182,0.4)]',
-    gradient: 'from-pink-400 to-fuchsia-600',
+    gradient: 'from-cyan-400 to-cyan-600',
     actionRoute: '/social',
     earnings: [{ label: 'codex_earn_social', value: 10 }, { label: 'codex_earn_cheer', value: 5 }]
   }

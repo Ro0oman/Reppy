@@ -59,7 +59,7 @@
               <!-- Content -->
               <div class="space-y-1.5 flex-1">
                 <div class="flex items-center gap-3">
-                  <span v-if="mission.is_daily" class="px-2 py-0.5 bg-indigo-500/10 border border-indigo-500/20 rounded text-[10px] font-black text-indigo-400 uppercase tracking-widest">DAILY</span>
+                  <span v-if="mission.is_daily" class="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 rounded text-[10px] font-black text-blue-400 uppercase tracking-widest">DAILY</span>
                   <span v-else class="px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded text-[10px] font-black text-amber-400 uppercase tracking-widest">SPECIAL</span>
                   <h3 class="text-sm font-black text-foreground uppercase italic tracking-tight">{{ i18n.t(mission.title_key) }}</h3>
                 </div>
@@ -90,7 +90,7 @@
                   <span class="text-xs font-black text-foreground">{{ mission.reward_coins }}</span>
                 </div>
                 <div v-if="mission.reward_gems > 0" class="flex items-center gap-1.5">
-                  <Gem class="w-3.5 h-3.5 text-indigo-400" />
+                  <Gem class="w-3.5 h-3.5 text-blue-400" />
                   <span class="text-xs font-black text-foreground">{{ mission.reward_gems }}</span>
                 </div>
                 <div v-if="mission.reward_xp > 0" class="flex items-center gap-1.5">
@@ -122,17 +122,17 @@
         </div>
 
         <!-- Empty Daily State -->
-        <div v-if="!missions.some(m => m.is_daily)" class="bg-indigo-500/5 border border-indigo-500/10 rounded-xl p-10 text-center space-y-4">
-          <div class="w-16 h-16 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-2">
-            <CheckCircle2 class="w-8 h-8 text-indigo-400" />
+        <div v-if="!missions.some(m => m.is_daily)" class="bg-blue-500/5 border border-blue-500/10 rounded-xl p-10 text-center space-y-4">
+          <div class="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-2">
+            <CheckCircle2 class="w-8 h-8 text-blue-400" />
           </div>
           <div class="space-y-1">
             <h3 class="text-lg font-black text-foreground uppercase italic tracking-tight">{{ i18n.t('missions_daily_done_title') || 'OPERATIVAS DIARIAS COMPLETADAS' }}</h3>
             <p class="text-xs text-muted font-bold uppercase tracking-widest">{{ i18n.t('missions_daily_done_subtitle') || 'Vuelve mañana para nuevos objetivos' }}</p>
           </div>
           <div class="inline-flex items-center gap-3 bg-foreground/5 px-6 py-3 rounded-xl border border-border">
-             <Clock class="w-4 h-4 text-indigo-400" />
-             <span class="text-xl font-black text-indigo-400 font-mono tracking-tighter">{{ countdown }}</span>
+             <Clock class="w-4 h-4 text-blue-400" />
+             <span class="text-xl font-black text-blue-400 font-mono tracking-tighter">{{ countdown }}</span>
           </div>
         </div>
       </div>

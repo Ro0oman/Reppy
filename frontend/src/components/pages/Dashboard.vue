@@ -588,11 +588,11 @@
          <button
           type="button"
           @click="router.push({ name: 'missions', params: { lang: i18n.locale } })"
-          class="card-stats w-full text-left !bg-indigo-500/10 hover:!border-indigo-500/40 transition-all active:scale-[0.99]"
+          class="card-stats w-full text-left !bg-blue-500/10 hover:!border-blue-500/40 transition-all active:scale-[0.99]"
          >
             <div class="flex items-center justify-between">
-              <Target aria-hidden="true" class="w-4 h-4 text-indigo-400" />
-              <span v-if="unclaimedMissions > 0" class="px-2 py-0.5 bg-indigo-500 text-[10px] font-bold text-white uppercase rounded-full animate-pulse">
+              <Target aria-hidden="true" class="w-4 h-4 text-blue-400" />
+              <span v-if="unclaimedMissions > 0" class="px-2 py-0.5 bg-blue-500 text-[10px] font-bold text-white uppercase rounded-full animate-pulse">
                 {{ unclaimedMissions }} {{ i18n.t('missions_available') || 'READY' }}
               </span>
             </div>

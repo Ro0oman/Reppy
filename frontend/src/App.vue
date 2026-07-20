@@ -274,9 +274,9 @@
                 <p class="text-xs text-muted/80 leading-relaxed">{{ i18n.t('economy_coins_for') }}</p>
               </div>
               <!-- Reppy Gems -->
-              <div class="flex flex-col gap-2 p-4 bg-indigo-500/[0.06] border border-indigo-500/20 rounded-2xl">
+              <div class="flex flex-col gap-2 p-4 bg-blue-500/[0.06] border border-blue-500/20 rounded-2xl">
                 <div class="flex items-center gap-2">
-                  <Gem class="w-4 h-4 text-indigo-500 shrink-0" />
+                  <Gem class="w-4 h-4 text-blue-500 shrink-0" />
                   <span class="text-xs font-black text-foreground uppercase tracking-wide">{{ i18n.t('economy_gems_name') }}</span>
                 </div>
                 <p class="text-xs text-muted/80 leading-relaxed">{{ i18n.t('economy_gems_for') }}</p>
