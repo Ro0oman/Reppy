@@ -5,16 +5,19 @@
       <!-- DYNAMIC HEADER -->
       <div class="mb-4 space-y-3">
         <div class="flex items-center justify-between gap-3">
-          <h1 class="text-2xl md:text-4xl font-bold tracking-tighter text-foreground leading-none flex items-center">
-            {{ i18n.t('shop_armory_title') }}<span class="text-primary-500">.</span>
-          </h1>
+          <div class="min-w-0">
+            <span class="os-label">ARMORY / {{ i18n.locale === 'es' ? 'SUMINISTROS DE COMBATE' : 'COMBAT SUPPLY' }}</span>
+            <h1 class="os-display mt-1 text-3xl md:text-5xl leading-none">
+              {{ i18n.t('shop_armory_title') }}
+            </h1>
+          </div>
 
           <!-- Legendary info chip (informational only) -->
           <Transition name="fade-down">
             <div v-if="hasLegendaryDaily"
-              class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/30">
-              <Trophy class="w-3.5 h-3.5 text-yellow-500" />
-              <span class="text-[9px] font-black text-yellow-500 uppercase tracking-widest">{{ i18n.t('shop_legendary_appeared') }}</span>
+              class="flex items-center gap-1.5 px-2.5 py-1.5 border border-amber-500/40 bg-amber-500/10" style="border-radius: 2px;">
+              <Trophy class="w-3.5 h-3.5 text-amber-400" />
+              <span class="os-label os-label--orange">{{ i18n.t('shop_legendary_appeared') }}</span>
             </div>
           </Transition>
         </div>
@@ -24,9 +27,10 @@
           <button
             v-for="tab in [{ id: 'combat', label: 'inv_tab_combat' }, { id: 'customization', label: 'inv_tab_customization' }]"
             :key="tab.id" @click="activeTab = tab.id; selectedCategory = 'all'; currentPage = 1"
-            class="flex-1 sm:flex-none px-6 sm:px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all border whitespace-nowrap active:scale-95"
+            class="flex-1 sm:flex-none px-6 sm:px-8 py-3 text-[10px] font-black uppercase tracking-[0.2em] transition-all border whitespace-nowrap active:scale-95"
+            style="border-radius: 2px; font-family: var(--os-font-mono);"
             :class="activeTab === tab.id
-              ? (tab.id === 'combat' ? 'bg-primary-500 text-white border-primary-400 shadow-lg shadow-primary-500/20' : 'bg-purple-600 text-white border-purple-500 shadow-lg shadow-purple-500/20')
+              ? 'bg-primary-500 text-white border-primary-400 shadow-lg shadow-primary-500/20'
               : 'bg-white/5 text-muted/60 border-white/5 hover:border-white/10 hover:text-foreground'">
             {{ i18n.t(tab.label) }}
           </button>
@@ -54,7 +58,7 @@
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2 min-w-0">
               <Flame class="w-4 h-4 text-primary-500 animate-pulse shrink-0" />
-              <h2 class="text-sm font-black text-foreground uppercase tracking-widest truncate">
+              <h2 class="os-label truncate">
                 {{ i18n.t('shop_daily_merchant') }}
               </h2>
               <span class="flex items-center gap-1 text-[10px] font-black text-muted/70 tabular-nums shrink-0">
@@ -170,7 +174,7 @@
           class="animate-in">
           <div class="flex items-center gap-2 mb-3">
             <ChestIcon variant="normal" class-name="w-4 h-4" />
-            <h2 class="text-sm font-black text-foreground uppercase tracking-widest">
+            <h2 class="os-label">
               {{ i18n.t('shop_premium_chests') }}
             </h2>
           </div>
@@ -237,7 +241,7 @@
           class="animate-in">
           <div class="flex items-center gap-2 mb-3">
             <Trophy class="w-4 h-4 text-yellow-500" />
-            <h2 class="text-sm font-black text-foreground uppercase tracking-widest">
+            <h2 class="os-label">
               {{ i18n.t('shop_limited_offers') }}
             </h2>
           </div>
@@ -288,7 +292,7 @@
           class="animate-in">
           <div class="flex items-center gap-2 mb-3">
             <Zap class="w-4 h-4 text-purple-500" />
-            <h2 class="text-sm font-black text-foreground uppercase tracking-widest">
+            <h2 class="os-label">
               {{ i18n.t('shop_consumables') }}
             </h2>
           </div>
@@ -330,7 +334,7 @@
           <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
             <div class="flex items-center gap-2">
               <component :is="activeTab === 'combat' ? Swords : Sparkles" class="w-4 h-4 text-foreground/60" />
-              <h2 class="text-sm font-black text-foreground uppercase tracking-widest">
+              <h2 class="os-label">
                 {{ activeTab === 'combat' ? i18n.t('shop_gear_title') : i18n.t('shop_custom_title') }}
               </h2>
             </div>

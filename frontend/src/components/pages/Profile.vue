@@ -25,17 +25,15 @@
 
         <!-- Identity -->
         <div class="flex-1 min-w-0 pt-0.5">
-          <h1 class="text-xl font-bold text-foreground tracking-tight leading-tight truncate">{{ user.name }}</h1>
-          <p class="text-xs text-muted mt-0.5 truncate">{{ user.title_name || i18nStore.t('profile_recruit') }}</p>
+          <span class="os-label os-label--muted">{{ (user.title_name || i18nStore.t('profile_recruit')).toUpperCase() }} // LV.{{ user.current_level || 1 }}</span>
+          <h1 class="os-display text-2xl sm:text-3xl leading-none truncate mt-0.5">{{ user.name }}</h1>
           <!-- XP bar -->
-          <div class="mt-2 flex items-center gap-2">
-            <span class="text-[10px] font-bold text-primary-500 shrink-0">Lv {{ user.current_level || 1 }}</span>
-            <div class="flex-1 h-1.5 bg-foreground/10 rounded-full overflow-hidden">
-              <div class="h-full bg-primary-500 transition-all duration-700 rounded-full"
-                   :style="{ width: `${((user.xp_into_level||0)/(user.xp_for_next_level||1000))*100}%` }" />
+          <div class="mt-2.5 flex items-center gap-2">
+            <div class="os-minibar flex-1" style="height: 5px;">
+              <i :style="{ width: `${((user.xp_into_level||0)/(user.xp_for_next_level||1000))*100}%` }" />
             </div>
-            <span class="text-[10px] text-muted shrink-0 tabular-nums">
-              {{ (user.xp_for_next_level||1000)-(user.xp_into_level||0) }} XP
+            <span class="os-label shrink-0 os-num">
+              {{ (user.xp_for_next_level||1000)-(user.xp_into_level||0) }} XP → LV.{{ (user.current_level || 1) + 1 }}
             </span>
           </div>
         </div>
@@ -58,18 +56,18 @@
       <!-- ── STATS ROW: 3 números clave ── -->
       <div class="grid grid-cols-3 gap-3">
         <div class="rounded-2xl border border-border bg-foreground/[0.02] px-4 py-3 text-center">
-          <p class="text-2xl font-bold text-foreground tabular-nums">{{ stats.totalReps || 0 }}</p>
+          <p class="text-2xl font-bold text-foreground tabular-nums" style="font-family: var(--os-font-display); letter-spacing: 0.02em;">{{ stats.totalReps || 0 }}</p>
           <p class="text-[10px] text-muted mt-0.5 uppercase tracking-wide">{{ i18nStore.t('stats_reps') }}</p>
         </div>
         <div class="rounded-2xl border border-border bg-foreground/[0.02] px-4 py-3 text-center">
           <div class="flex items-center justify-center gap-1">
-            <p class="text-2xl font-bold text-orange-500 tabular-nums">{{ stats.streak || 0 }}</p>
+            <p class="text-2xl font-bold text-orange-500 tabular-nums" style="font-family: var(--os-font-display); letter-spacing: 0.02em;">{{ stats.streak || 0 }}</p>
             <Flame class="w-4 h-4 text-orange-500" />
           </div>
           <p class="text-[10px] text-muted mt-0.5 uppercase tracking-wide">{{ i18nStore.locale === 'es' ? 'Racha' : 'Streak' }}</p>
         </div>
         <div class="rounded-2xl border border-border bg-foreground/[0.02] px-4 py-3 text-center">
-          <p class="text-2xl font-bold text-foreground tabular-nums">{{ ((stats.totalVolume||0)/1000).toFixed(1) }}T</p>
+          <p class="text-2xl font-bold text-foreground tabular-nums" style="font-family: var(--os-font-display); letter-spacing: 0.02em;">{{ ((stats.totalVolume||0)/1000).toFixed(1) }}T</p>
           <p class="text-[10px] text-muted mt-0.5 uppercase tracking-wide">{{ i18nStore.locale === 'es' ? 'Tonelaje' : 'Volume' }}</p>
         </div>
       </div>
@@ -92,7 +90,7 @@
 
       <!-- ── ATRIBUTOS RPG ── -->
       <div v-if="attributes?.length" class="rounded-2xl border border-border bg-foreground/[0.02] p-4">
-        <p class="text-[10px] font-black text-muted uppercase tracking-[0.3em] mb-4">
+        <p class="os-label mb-4">
           {{ i18nStore.locale === 'es' ? 'Atributos RPG' : 'RPG Attributes' }}
         </p>
         <div class="space-y-3">
