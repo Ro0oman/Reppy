@@ -11,6 +11,7 @@ const KNOWN_FEATURE_KEYS = new Set([
   'battle_view',
   'camp_redesign',
   'quick_potions',
+  'campaign_v1',
 ]);
 
 function isAllowedKey(key) {

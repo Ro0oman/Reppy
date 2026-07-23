@@ -6,6 +6,9 @@ import { useI18nStore } from './stores/i18n'
 const Landing = () => import('./components/pages/Landing.vue')
 const Dashboard = () => import('./components/pages/Dashboard.vue')
 const BattleView = () => import('./components/pages/BattleView.vue')
+const CampaignMapView = () => import('./components/pages/CampaignMapView.vue')
+const NodeBattleView = () => import('./components/pages/NodeBattleView.vue')
+const BestiaryView = () => import('./components/pages/BestiaryView.vue')
 const Social = () => import('./components/pages/Social.vue')
 const Shop = () => import('./components/pages/Shop.vue')
 const Inventory = () => import('./components/pages/Inventory.vue')
@@ -70,6 +73,24 @@ export const routes = [
         component: BattleView,
         name: 'battle',
         meta: { requiresAuth: true, titleKey: 'nav_train', immersive: true }
+      },
+      {
+        path: 'campana',
+        component: CampaignMapView,
+        name: 'campaign-map',
+        meta: { requiresAuth: true, titleKey: 'campaign_title', immersive: true }
+      },
+      {
+        path: 'campana/batalla',
+        component: NodeBattleView,
+        name: 'campaign-battle',
+        meta: { requiresAuth: true, titleKey: 'campaign_title', immersive: true }
+      },
+      {
+        path: 'campana/bestiario',
+        component: BestiaryView,
+        name: 'campaign-bestiary',
+        meta: { requiresAuth: true, titleKey: 'bestiary_title', immersive: true }
       },
       { 
         path: 'social', 

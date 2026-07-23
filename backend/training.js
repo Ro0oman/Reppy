@@ -3,12 +3,12 @@ import pool, { query } from './db.js';
 import { authenticate } from './middleware.js';
 import { getExerciseRewards } from './utils/rewards.js';
 import { recalculateUserStats, augmentUserWithLevels } from './utils/stats.js';
-import { syncBossHealth } from './utils/boss.js';
 import { getLocalDateString } from './utils/date.js';
 import { calculateDamage } from './utils/damage.js';
-import { updateMissionProgress } from './utils/missions.js';
+import { emitProgress } from './utils/progressEvents.js';
 import { broadcastDamage } from './socketManager.js';
-import { grantLastHitBonus } from './utils/bossRewards.js';
+import { applyBossDamage } from './utils/combat.js';
+import { applyCampaignDamage } from './utils/campaignEngine.js';
 import { getEffectiveExerciseCount, getRewardExerciseCount, isTimedExerciseUnit } from './utils/exerciseUnits.js';
 
 const router = express.Router();
@@ -222,66 +222,25 @@ async function applyGuidedRepLog(client, userId, exerciseType, count) {
     [earnedCoins, userId]
   );
 
-  const bossRes = await client.query(
-    `SELECT id, name, current_hp, total_hp
-     FROM boss_fights
-     WHERE status != 'defeated'
-     ORDER BY order_index ASC
-     LIMIT 1`
-  );
+  // Boss routing — shared with reps.js (see utils/combat.js). The guided-training
+  // path historically does NOT emit a community createBossKillEvent; that is
+  // preserved here by ignoring the returned `killed`/`boss`.
+  const { bossId, actualDamageDealt } = await applyBossDamage(client, {
+    user: augmentedUser,
+    effectiveCount,
+    exerciseType,
+    diffMult,
+    addedWeight: 0,
+  });
 
-  let actualDamageDealt = 0;
-  let bossId = null;
-
-  if (bossRes.rows.length > 0) {
-    const boss = bossRes.rows[0];
-    bossId = boss.id;
-    const bossDmgResult = calculateDamage(augmentedUser, effectiveCount, exerciseType, boss, false, false, diffMult);
-    actualDamageDealt = bossDmgResult.totalDamage;
-
-    const updateBossRes = await client.query(
-      `UPDATE boss_fights
-       SET current_hp = GREATEST(0, current_hp - $1),
-           status = CASE WHEN current_hp - $1 <= 0 THEN 'defeated' ELSE status END
-       WHERE id = $2
-       RETURNING current_hp`,
-      [actualDamageDealt, bossId]
-    );
-
-    await client.query(
-      `INSERT INTO event_participants (boss_fight_id, user_id, damage_dealt)
-       VALUES ($1, $2, $3)
-       ON CONFLICT (boss_fight_id, user_id)
-       DO UPDATE SET damage_dealt = event_participants.damage_dealt + EXCLUDED.damage_dealt`,
-      [bossId, userId, actualDamageDealt]
-    );
-
-    await client.query(
-      `UPDATE users
-       SET daily_boss_damage = CASE
-         WHEN last_boss_damage_date = CURRENT_DATE THEN daily_boss_damage + $1
-         ELSE $1
-       END,
-       last_boss_damage_date = CURRENT_DATE
-       WHERE id = $2`,
-      [actualDamageDealt, userId]
-    );
-
-    if (updateBossRes.rows[0]?.current_hp === 0) {
-      syncBossHealth().catch(e => console.error('Boss sync error:', e));
-      await updateMissionProgress(userId, 'boss_last_hit', 1);
-      const lastHitReward = await grantLastHitBonus(userId, bossId, client);
-      if (lastHitReward) {
-        broadcastDamage({
-          type: 'LAST_HIT',
-          userId,
-          userName: augmentedUser.name,
-          bossName: boss.name,
-          reward: lastHitReward,
-        });
-      }
-    }
-  }
+  // Campaign routing (individual progression). See utils/campaignEngine.js.
+  const campaignResult = await applyCampaignDamage(client, {
+    user: augmentedUser,
+    effectiveCount,
+    exerciseType,
+    diffMult,
+    addedWeight: 0,
+  });
 
   await client.query(
     `UPDATE reps
@@ -296,15 +255,15 @@ async function applyGuidedRepLog(client, userId, exerciseType, count) {
   );
 
   if (!isTimedExerciseUnit(unit)) {
-    await updateMissionProgress(userId, 'reps', count);
+    await emitProgress(userId, 'reps', count, { exercise_type: exerciseType });
   }
   if (actualDamageDealt > 0) {
-    await updateMissionProgress(userId, 'damage', actualDamageDealt);
+    await emitProgress(userId, 'damage', actualDamageDealt, { exercise_type: exerciseType });
   }
 
   const currentHour = new Date().getHours();
   if (currentHour >= 22 || currentHour < 5) {
-    await updateMissionProgress(userId, 'night_owl', 1);
+    await emitProgress(userId, 'night_owl', 1);
   }
 
   const prRes = await client.query(`
@@ -326,7 +285,7 @@ async function applyGuidedRepLog(client, userId, exerciseType, count) {
   `, [userId, date]);
 
   if (prRes.rows.length > 0) {
-    await updateMissionProgress(userId, 'personal_record', 1);
+    await emitProgress(userId, 'personal_record', 1);
   }
 
   if (actualDamageDealt > 0) {
@@ -339,7 +298,7 @@ async function applyGuidedRepLog(client, userId, exerciseType, count) {
     });
   }
 
-  return { damage: actualDamageDealt, coins: earnedCoins };
+  return { damage: actualDamageDealt, coins: earnedCoins, campaign: campaignResult };
 }
 
 router.get('/plans', authenticate, async (req, res) => {

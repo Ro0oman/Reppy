@@ -1,0 +1,422 @@
+{
+  "slug": "main-campaign",
+  "version": 5,
+  "status": "draft",
+  "name": { "es": "La Senda del Guerrero", "en": "The Warrior's Path" },
+  "description": {
+    "es": "Cruza el bosque, la cripta y el dominio de tu senda para forjarte como leyenda.",
+    "en": "Cross the forest, the crypt and the domain of your path to forge a legend."
+  },
+  "config": {
+    "hp": { "base_per_level": 0.06, "tier_mult": [1, 1.8, 3, 6, 12], "prestige_mult": 1.5 },
+    "rewards": { "prestige_mult": 1.25 },
+    "path": {
+      "dark": { "reward_variance": "high", "curse_damage_multiplier": 0.75 },
+      "light": { "reward_variance": "low", "blessing_hours": 24 }
+    }
+  },
+
+  "enemy_types": [
+    { "slug": "forest-goblin", "family": "goblin", "tier": 1, "base_hp": 1200,
+      "name": { "es": "Duende del Bosque", "en": "Forest Goblin" },
+      "description": { "es": "Pequeño, ruin y numeroso.", "en": "Small, wicked and numerous." },
+      "weakness_stat": "str", "resist_stat": null,
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [40, 90], "xp": 20, "chest_chance": 0.05, "drop_table": { "common": 70, "rare": 25, "especial": 5 } },
+      "art": { "image": null, "idle_video": null, "damaged_video": null } },
+
+    { "slug": "dire-wolf", "family": "minion", "tier": 1, "base_hp": 1100,
+      "name": { "es": "Lobo Feroz", "en": "Dire Wolf" },
+      "description": { "es": "Caza en manada al caer la noche.", "en": "Hunts in packs at nightfall." },
+      "weakness_stat": "str", "resist_stat": null,
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [45, 95], "xp": 22, "chest_chance": 0.05, "drop_table": { "common": 68, "rare": 27, "especial": 5 } },
+      "art": {} },
+
+    { "slug": "giant-spider", "family": "spider", "tier": 2, "base_hp": 1200,
+      "name": { "es": "Araña Gigante", "en": "Giant Spider" },
+      "description": { "es": "Teje trampas entre los árboles.", "en": "Weaves traps between the trees." },
+      "weakness_stat": "dex", "resist_stat": "str",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [90, 180], "xp": 45, "chest_chance": 0.10, "drop_table": { "common": 55, "rare": 35, "especial": 10 } },
+      "art": {} },
+
+    { "slug": "bandit-raider", "family": "bandit", "tier": 2, "base_hp": 1250,
+      "name": { "es": "Bandido Saqueador", "en": "Bandit Raider" },
+      "description": { "es": "Ataca en grupo, nunca solo.", "en": "Attacks in packs, never alone." },
+      "weakness_stat": "fth", "resist_stat": "dex",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [90, 180], "xp": 45, "chest_chance": 0.10, "drop_table": { "common": 55, "rare": 35, "especial": 10 } },
+      "art": {} },
+
+    { "slug": "goblin-shaman", "family": "goblin", "tier": 2, "base_hp": 1150,
+      "name": { "es": "Chamán Duende", "en": "Goblin Shaman" },
+      "description": { "es": "Invoca fuegos fatuos y maldiciones.", "en": "Summons wisps and curses." },
+      "weakness_stat": "int", "resist_stat": "fth",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [100, 190], "xp": 48, "chest_chance": 0.11, "drop_table": { "common": 50, "rare": 38, "especial": 12 } },
+      "art": {} },
+
+    { "slug": "forest-troll", "family": "minion", "tier": 3, "base_hp": 1400,
+      "name": { "es": "Troll del Bosque", "en": "Forest Troll" },
+      "description": { "es": "Regenera heridas si le das tregua.", "en": "Regenerates if you give it respite." },
+      "weakness_stat": "fth", "resist_stat": "str",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [180, 320], "xp": 80, "chest_chance": 0.15, "drop_table": { "common": 45, "rare": 35, "especial": 18, "legendary": 2 } },
+      "art": {} },
+
+    { "slug": "warlord-grimtusk", "family": "goblin", "tier": 4, "base_hp": 2500,
+      "name": { "es": "Señor de Guerra Colmillo Gris", "en": "Warlord Grimtusk" },
+      "description": { "es": "El caudillo que unió a las tribus del bosque.", "en": "The chieftain who united the forest tribes." },
+      "weakness_stat": "dex", "resist_stat": "str",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [350, 600], "xp": 150, "chest_chance": 0.30, "drop_table": { "rare": 40, "especial": 40, "legendary": 18, "calistenico": 2 } },
+      "art": {} },
+
+    { "slug": "skeleton-warrior", "family": "skeleton", "tier": 2, "base_hp": 1250,
+      "name": { "es": "Esqueleto Guerrero", "en": "Skeleton Warrior" },
+      "description": { "es": "Se levanta una y otra vez.", "en": "Rises again and again." },
+      "weakness_stat": "str", "resist_stat": "dex",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [95, 185], "xp": 46, "chest_chance": 0.10, "drop_table": { "common": 55, "rare": 35, "especial": 10 } },
+      "art": {} },
+
+    { "slug": "skeleton-archer", "family": "skeleton", "tier": 2, "base_hp": 1100,
+      "name": { "es": "Esqueleto Arquero", "en": "Skeleton Archer" },
+      "description": { "es": "Dispara desde las sombras de la cripta.", "en": "Fires from the crypt's shadows." },
+      "weakness_stat": "dex", "resist_stat": null,
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [95, 185], "xp": 46, "chest_chance": 0.10, "drop_table": { "common": 55, "rare": 35, "especial": 10 } },
+      "art": {} },
+
+    { "slug": "rotting-zombie", "family": "zombie", "tier": 2, "base_hp": 1350,
+      "name": { "es": "Zombi Putrefacto", "en": "Rotting Zombie" },
+      "description": { "es": "Lento pero implacable.", "en": "Slow but relentless." },
+      "weakness_stat": "fth", "resist_stat": "str",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [90, 175], "xp": 44, "chest_chance": 0.10, "drop_table": { "common": 58, "rare": 33, "especial": 9 } },
+      "art": {} },
+
+    { "slug": "plague-zombie", "family": "zombie", "tier": 3, "base_hp": 1450,
+      "name": { "es": "Zombi Pestilente", "en": "Plague Zombie" },
+      "description": { "es": "Su hedor corrompe el aire de la ciénaga.", "en": "Its stench corrupts the swamp air." },
+      "weakness_stat": "int", "resist_stat": "str",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [185, 330], "xp": 82, "chest_chance": 0.15, "drop_table": { "common": 44, "rare": 36, "especial": 18, "legendary": 2 } },
+      "art": {} },
+
+    { "slug": "crypt-spider", "family": "spider", "tier": 3, "base_hp": 1350,
+      "name": { "es": "Araña de Cripta", "en": "Crypt Spider" },
+      "description": { "es": "Anida entre los huesos de los caídos.", "en": "Nests among the bones of the fallen." },
+      "weakness_stat": "dex", "resist_stat": "str",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [185, 330], "xp": 82, "chest_chance": 0.15, "drop_table": { "common": 44, "rare": 36, "especial": 18, "legendary": 2 } },
+      "art": {} },
+
+    { "slug": "bog-bandit", "family": "bandit", "tier": 3, "base_hp": 1400,
+      "name": { "es": "Bandido de la Ciénaga", "en": "Bog Bandit" },
+      "description": { "es": "Emboscador entre juncos y niebla.", "en": "Ambusher among reeds and mist." },
+      "weakness_stat": "str", "resist_stat": "dex",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [185, 330], "xp": 80, "chest_chance": 0.14, "drop_table": { "common": 46, "rare": 35, "especial": 17, "legendary": 2 } },
+      "art": {} },
+
+    { "slug": "necromancer", "family": "skeleton", "tier": 3, "base_hp": 1500,
+      "name": { "es": "Nigromante", "en": "Necromancer" },
+      "description": { "es": "Levanta a los muertos para servirle.", "en": "Raises the dead to serve him." },
+      "weakness_stat": "fth", "resist_stat": "int",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [200, 360], "xp": 90, "chest_chance": 0.18, "drop_table": { "common": 40, "rare": 36, "especial": 20, "legendary": 4 } },
+      "art": {} },
+
+    { "slug": "lich-mortuus", "family": "skeleton", "tier": 4, "base_hp": 2600,
+      "name": { "es": "Liche Mortuus", "en": "Lich Mortuus" },
+      "description": { "es": "El guardián no-muerto de la cripta.", "en": "The undead guardian of the crypt." },
+      "weakness_stat": "fth", "resist_stat": "int",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [380, 650], "xp": 160, "chest_chance": 0.32, "drop_table": { "rare": 38, "especial": 42, "legendary": 18, "calistenico": 2 } },
+      "art": {} },
+
+    { "slug": "fallen-knight", "family": "knight", "tier": 3, "base_hp": 1500,
+      "name": { "es": "Caballero Caído", "en": "Fallen Knight" },
+      "description": { "es": "Su honor se rompió; su acero, no.", "en": "His honor broke; his steel did not." },
+      "weakness_stat": "int", "resist_stat": "str",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [200, 360], "xp": 90, "chest_chance": 0.18, "drop_table": { "common": 40, "rare": 36, "especial": 20, "legendary": 4 } },
+      "art": {} },
+
+    { "slug": "holy-inquisitor", "family": "knight", "tier": 4, "base_hp": 2400,
+      "name": { "es": "Inquisidor Sagrado", "en": "Holy Inquisitor" },
+      "description": { "es": "Juzga a quienes flaquean en la senda.", "en": "Judges those who falter on the path." },
+      "weakness_stat": "dex", "resist_stat": "fth",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [380, 650], "xp": 160, "chest_chance": 0.32, "drop_table": { "rare": 38, "especial": 42, "legendary": 18, "calistenico": 2 } },
+      "art": {} },
+
+    { "slug": "seraph-guardian", "family": "knight", "tier": 5, "base_hp": 3000,
+      "name": { "es": "Guardián Serafín", "en": "Seraph Guardian" },
+      "description": { "es": "La prueba final de la Senda Luminosa.", "en": "The final trial of the Path of Light." },
+      "weakness_stat": "str", "resist_stat": "fth",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [700, 1200], "xp": 300, "chest_chance": 0.50, "drop_table": { "especial": 45, "legendary": 45, "calistenico": 10 } },
+      "art": {} },
+
+    { "slug": "imp-swarm", "family": "demon", "tier": 3, "base_hp": 1300,
+      "name": { "es": "Enjambre de Diablillos", "en": "Imp Swarm" },
+      "description": { "es": "Pequeños, veloces y crueles.", "en": "Small, fast and cruel." },
+      "weakness_stat": "fth", "resist_stat": "int",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [190, 340], "xp": 84, "chest_chance": 0.16, "drop_table": { "common": 42, "rare": 36, "especial": 19, "legendary": 3 } },
+      "art": {} },
+
+    { "slug": "hell-hound", "family": "demon", "tier": 4, "base_hp": 2300,
+      "name": { "es": "Sabueso Infernal", "en": "Hell Hound" },
+      "description": { "es": "Rastrea el alma de sus presas.", "en": "Tracks the soul of its prey." },
+      "weakness_stat": "dex", "resist_stat": "fth",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [380, 650], "xp": 160, "chest_chance": 0.32, "drop_table": { "rare": 38, "especial": 42, "legendary": 18, "calistenico": 2 } },
+      "art": {} },
+
+    { "slug": "demon-lord-malphas", "family": "demon", "tier": 4, "base_hp": 2400,
+      "name": { "es": "Señor Demonio Malphas", "en": "Demon Lord Malphas" },
+      "description": { "es": "El heraldo del abismo.", "en": "The herald of the abyss." },
+      "weakness_stat": "fth", "resist_stat": "int",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [380, 650], "xp": 160, "chest_chance": 0.32, "drop_table": { "rare": 38, "especial": 42, "legendary": 18, "calistenico": 2 } },
+      "art": {} },
+
+    { "slug": "boss-arthas", "family": "knight", "tier": 4, "base_hp": 2800,
+      "name": { "es": "Arthas, El Rey Exánime", "en": "Arthas, the Lich King" },
+      "description": { "es": "El jefe que corona el bosque. Su helada guadaña no perdona.", "en": "The lord who crowns the forest. His frozen scythe spares none." },
+      "weakness_stat": "vig", "resist_stat": "str",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [400, 700], "xp": 180, "chest_chance": 0.35, "drop_table": { "rare": 38, "especial": 40, "legendary": 20, "calistenico": 2 } },
+      "art": { "image": "/images/bosses/arthas__el_rey_ex_nime.webp", "idle_video": "arthasVideo.mp4", "damaged_video": null } },
+
+    { "slug": "boss-malenia", "family": "knight", "tier": 4, "base_hp": 2900,
+      "name": { "es": "Malenia, Espada de Miquella", "en": "Malenia, Blade of Miquella" },
+      "description": { "es": "La guardiana de la cripta y la ciénaga. Nunca conoció la derrota.", "en": "Guardian of the crypt and swamp. She has never known defeat." },
+      "weakness_stat": "str", "resist_stat": "dex",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [420, 720], "xp": 190, "chest_chance": 0.36, "drop_table": { "rare": 36, "especial": 42, "legendary": 20, "calistenico": 2 } },
+      "art": { "image": "/images/bosses/malenia__espada_de_miquella.webp", "idle_video": "maleniaIdle.mp4", "damaged_video": "maleniaDaño.mp4" } },
+
+    { "slug": "boss-coloso", "family": "demon", "tier": 5, "base_hp": 3200,
+      "name": { "es": "Coloso Volcánico", "en": "Volcanic Colossus" },
+      "description": { "es": "La prueba final de la Senda Luminosa: fuego y roca vivientes.", "en": "The final trial of the Path of Light: living fire and rock." },
+      "weakness_stat": "fth", "resist_stat": "str",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [700, 1200], "xp": 300, "chest_chance": 0.50, "drop_table": { "especial": 45, "legendary": 45, "calistenico": 10 } },
+      "art": { "image": "/images/bosses/coloso_volcanico.png", "idle_video": "boss-idle.mp4", "damaged_video": "bossDamaged.mp4" } },
+
+    { "slug": "boss-ender-dragon", "family": "demon", "tier": 5, "base_hp": 3400,
+      "name": { "es": "El Dragón del Fin", "en": "The Ender Dragon" },
+      "description": { "es": "La prueba final de la Senda Oscura: alas de vacío y aliento devastador.", "en": "The final trial of the Path of Darkness: wings of void and devastating breath." },
+      "weakness_stat": "end", "resist_stat": "int",
+      "scaling": { "hp_per_level": 0.06 },
+      "loot": { "coins": [700, 1200], "xp": 300, "chest_chance": 0.50, "drop_table": { "especial": 45, "legendary": 45, "calistenico": 10 } },
+      "art": { "image": "/images/bosses/the_ender_dragon.webp", "idle_video": "dragonIdle.mp4", "damaged_video": "dragonDamage.mp4" } }
+  ],
+
+  "npcs": [
+    { "slug": "hunter-elara", "faction": "neutral",
+      "name": { "es": "Élara, la Cazadora", "en": "Elara the Hunter" }, "art": {},
+      "dialogue": { "es": "El bosque ya no es seguro. Los bandidos han tomado el camino del norte.", "en": "The forest is no longer safe. Bandits have taken the north road." } },
+
+    { "slug": "old-sage", "faction": "neutral",
+      "name": { "es": "El Viejo Sabio", "en": "The Old Sage" }, "art": {},
+      "dialogue": { "es": "Más allá de la cripta deberás elegir. Ninguna senda es gratuita.", "en": "Beyond the crypt you must choose. No path is free." } },
+
+    { "slug": "sir-aldric", "faction": "light",
+      "name": { "es": "Sir Aldric", "en": "Sir Aldric" }, "art": {},
+      "dialogue": { "es": "El honor se demuestra con constancia, no con palabras.", "en": "Honor is proven through constancy, not words." } },
+
+    { "slug": "mephisto", "faction": "dark",
+      "name": { "es": "Mephisto", "en": "Mephisto" }, "art": {},
+      "dialogue": { "es": "Te ofrezco poder. Solo debes cumplir... a tiempo.", "en": "I offer you power. You need only deliver... in time." } }
+  ],
+
+  "zones": [
+    {
+      "slug": "act1-forest", "act": 1, "order_index": 0, "theme": "forest", "path_required": null,
+      "name": { "es": "El Bosque de los Susurros", "en": "The Whispering Forest" }, "art": {}, "config": {},
+      "nodes": [
+        { "slug": "forest-entrance", "type": "combat", "enemy": "forest-goblin", "map_x": 12, "map_y": 58, "requires": {}, "rewards": { "coins": 100 } },
+        { "slug": "wolf-den", "type": "combat", "enemy": "dire-wolf", "pack": { "count": 2 }, "map_x": 28, "map_y": 38, "requires": {}, "rewards": {} },
+        { "slug": "spider-nest", "type": "elite", "enemy": "giant-spider", "map_x": 40, "map_y": 60, "requires": { "min_level": 3 }, "rewards": {} },
+        { "slug": "elara-camp", "type": "npc", "npc": "hunter-elara", "map_x": 52, "map_y": 40, "requires": {}, "rewards": {} },
+        { "slug": "bandit-ambush", "type": "combat", "enemy": "bandit-raider", "pack": { "count": 3 }, "map_x": 68, "map_y": 55, "requires": { "nodes": ["elara-camp"] }, "rewards": { "coins": 300 } }
+      ],
+      "edges": [
+        { "from": "forest-entrance", "to": "wolf-den", "kind": "main" },
+        { "from": "wolf-den", "to": "spider-nest", "kind": "side" },
+        { "from": "wolf-den", "to": "elara-camp", "kind": "main" },
+        { "from": "spider-nest", "to": "elara-camp", "kind": "side" },
+        { "from": "elara-camp", "to": "bandit-ambush", "kind": "main" }
+      ]
+    },
+    {
+      "slug": "act1-deepwood", "act": 1, "order_index": 1, "theme": "forest", "path_required": null,
+      "name": { "es": "La Espesura Profunda", "en": "The Deepwood" }, "art": {}, "config": {},
+      "nodes": [
+        { "slug": "shaman-grove", "type": "combat", "enemy": "goblin-shaman", "map_x": 14, "map_y": 52, "requires": { "nodes": ["bandit-ambush"] }, "rewards": {} },
+        { "slug": "troll-bridge", "type": "elite", "enemy": "forest-troll", "map_x": 36, "map_y": 36, "requires": { "min_level": 6 }, "rewards": { "coins": 400 } },
+        { "slug": "warlord-camp", "type": "elite", "enemy": "warlord-grimtusk", "map_x": 58, "map_y": 52, "requires": { "nodes": ["troll-bridge"], "min_level": 8 }, "rewards": { "coins": 600 } },
+        { "slug": "arthas-throne", "type": "boss", "enemy": "boss-arthas", "map_x": 84, "map_y": 46, "requires": { "nodes": ["warlord-camp"], "min_level": 9 }, "rewards": { "coins": 1000 } }
+      ],
+      "edges": [
+        { "from": "shaman-grove", "to": "troll-bridge", "kind": "main" },
+        { "from": "troll-bridge", "to": "warlord-camp", "kind": "main" },
+        { "from": "warlord-camp", "to": "arthas-throne", "kind": "main" }
+      ]
+    },
+    {
+      "slug": "act2-crypt", "act": 2, "order_index": 2, "theme": "crypt", "path_required": null,
+      "name": { "es": "La Cripta Olvidada", "en": "The Forgotten Crypt" }, "art": {}, "config": {},
+      "nodes": [
+        { "slug": "crypt-gate", "type": "combat", "enemy": "skeleton-warrior", "pack": { "count": 2 }, "map_x": 14, "map_y": 55, "requires": { "nodes": ["arthas-throne"] }, "rewards": {} },
+        { "slug": "archer-halls", "type": "combat", "enemy": "skeleton-archer", "pack": { "count": 3 }, "map_x": 34, "map_y": 38, "requires": {}, "rewards": {} },
+        { "slug": "crypt-spiders", "type": "elite", "enemy": "crypt-spider", "map_x": 34, "map_y": 66, "requires": { "min_level": 10 }, "rewards": {} },
+        { "slug": "necromancer-lair", "type": "elite", "enemy": "necromancer", "map_x": 56, "map_y": 48, "requires": { "nodes": ["archer-halls"] }, "rewards": { "coins": 500 } },
+        { "slug": "lich-tomb", "type": "elite", "enemy": "lich-mortuus", "map_x": 82, "map_y": 50, "requires": { "nodes": ["necromancer-lair"], "min_level": 12 }, "rewards": { "coins": 700 } }
+      ],
+      "edges": [
+        { "from": "crypt-gate", "to": "archer-halls", "kind": "main" },
+        { "from": "crypt-gate", "to": "crypt-spiders", "kind": "side" },
+        { "from": "archer-halls", "to": "necromancer-lair", "kind": "main" },
+        { "from": "crypt-spiders", "to": "necromancer-lair", "kind": "side" },
+        { "from": "necromancer-lair", "to": "lich-tomb", "kind": "main" }
+      ]
+    },
+    {
+      "slug": "act2-swamp", "act": 2, "order_index": 3, "theme": "swamp", "path_required": null,
+      "name": { "es": "La Ciénaga Corrupta", "en": "The Corrupted Swamp" }, "art": {}, "config": {},
+      "nodes": [
+        { "slug": "bog-approach", "type": "combat", "enemy": "rotting-zombie", "pack": { "count": 2 }, "map_x": 16, "map_y": 52, "requires": { "nodes": ["lich-tomb"] }, "rewards": {} },
+        { "slug": "bog-ambush", "type": "combat", "enemy": "bog-bandit", "pack": { "count": 2 }, "map_x": 36, "map_y": 36, "requires": {}, "rewards": {} },
+        { "slug": "plague-pit", "type": "elite", "enemy": "plague-zombie", "map_x": 40, "map_y": 64, "requires": { "min_level": 13 }, "rewards": {} },
+        { "slug": "sage-hut", "type": "npc", "npc": "old-sage", "map_x": 54, "map_y": 46, "requires": { "nodes": ["bog-ambush"] }, "rewards": {} },
+        { "slug": "malenia-marsh", "type": "boss", "enemy": "boss-malenia", "map_x": 72, "map_y": 56, "requires": { "nodes": ["sage-hut"], "min_level": 13 }, "rewards": { "coins": 1200 } },
+        { "slug": "the-crossroads", "type": "crossroads", "map_x": 88, "map_y": 46, "requires": { "nodes": ["malenia-marsh"], "min_level": 14 }, "rewards": {} }
+      ],
+      "edges": [
+        { "from": "bog-approach", "to": "bog-ambush", "kind": "main" },
+        { "from": "bog-approach", "to": "plague-pit", "kind": "side" },
+        { "from": "bog-ambush", "to": "sage-hut", "kind": "main" },
+        { "from": "plague-pit", "to": "sage-hut", "kind": "side" },
+        { "from": "sage-hut", "to": "malenia-marsh", "kind": "main" },
+        { "from": "malenia-marsh", "to": "the-crossroads", "kind": "main" }
+      ]
+    },
+    {
+      "slug": "act3-citadel", "act": 3, "order_index": 4, "theme": "citadel", "path_required": "light",
+      "name": { "es": "La Ciudadela de la Orden", "en": "The Citadel of the Order" }, "art": {}, "config": {},
+      "nodes": [
+        { "slug": "aldric-gate", "type": "npc", "npc": "sir-aldric", "map_x": 12, "map_y": 52, "requires": { "path": "light" }, "rewards": {} },
+        { "slug": "fallen-hall", "type": "combat", "enemy": "fallen-knight", "pack": { "count": 2 }, "map_x": 32, "map_y": 40, "requires": { "path": "light" }, "rewards": {} },
+        { "slug": "inquisitor-trial", "type": "elite", "enemy": "holy-inquisitor", "map_x": 52, "map_y": 56, "requires": { "path": "light", "min_level": 16 }, "rewards": { "coins": 700 } },
+        { "slug": "seraph-trial", "type": "elite", "enemy": "seraph-guardian", "map_x": 70, "map_y": 40, "requires": { "path": "light", "nodes": ["inquisitor-trial"], "min_level": 17 }, "rewards": { "coins": 900 } },
+        { "slug": "coloso-sanctum", "type": "boss", "enemy": "boss-coloso", "map_x": 88, "map_y": 50, "requires": { "path": "light", "nodes": ["seraph-trial"], "min_level": 18 }, "rewards": { "coins": 2500 } }
+      ],
+      "edges": [
+        { "from": "aldric-gate", "to": "fallen-hall", "kind": "main" },
+        { "from": "fallen-hall", "to": "inquisitor-trial", "kind": "main" },
+        { "from": "inquisitor-trial", "to": "seraph-trial", "kind": "main" },
+        { "from": "seraph-trial", "to": "coloso-sanctum", "kind": "main" }
+      ]
+    },
+    {
+      "slug": "act3-abyss", "act": 3, "order_index": 5, "theme": "abyss", "path_required": "dark",
+      "name": { "es": "El Abismo Ardiente", "en": "The Burning Abyss" }, "art": {}, "config": {},
+      "nodes": [
+        { "slug": "mephisto-gate", "type": "npc", "npc": "mephisto", "map_x": 12, "map_y": 52, "requires": { "path": "dark" }, "rewards": {} },
+        { "slug": "imp-warrens", "type": "combat", "enemy": "imp-swarm", "pack": { "count": 3 }, "map_x": 32, "map_y": 40, "requires": { "path": "dark" }, "rewards": {} },
+        { "slug": "hound-pit", "type": "elite", "enemy": "hell-hound", "map_x": 52, "map_y": 56, "requires": { "path": "dark", "min_level": 16 }, "rewards": { "coins": 700 } },
+        { "slug": "malphas-lair", "type": "elite", "enemy": "demon-lord-malphas", "map_x": 70, "map_y": 40, "requires": { "path": "dark", "nodes": ["hound-pit"], "min_level": 17 }, "rewards": { "coins": 900 } },
+        { "slug": "dragon-throne", "type": "boss", "enemy": "boss-ender-dragon", "map_x": 88, "map_y": 50, "requires": { "path": "dark", "nodes": ["malphas-lair"], "min_level": 18 }, "rewards": { "coins": 2500 } }
+      ],
+      "edges": [
+        { "from": "mephisto-gate", "to": "imp-warrens", "kind": "main" },
+        { "from": "imp-warrens", "to": "hound-pit", "kind": "main" },
+        { "from": "hound-pit", "to": "malphas-lair", "kind": "main" },
+        { "from": "malphas-lair", "to": "dragon-throne", "kind": "main" }
+      ]
+    }
+  ],
+
+  "quests": [
+    {
+      "slug": "elara-clear-bandits", "npc": "hunter-elara", "chain_slug": "elara-main", "chain_step": 1, "path_required": null,
+      "name": { "es": "Limpia el camino del norte", "en": "Clear the North Road" },
+      "description": { "es": "Derrota a 3 bandidos que acechan la emboscada del bosque.", "en": "Defeat 3 bandits lurking in the forest ambush." },
+      "objective": { "type": "kill", "family": "bandit", "zone": "act1-forest", "count": 3 },
+      "rewards": { "coins": 500, "gems": 5, "xp": 120 }, "penalty": {}, "requires_quest_slug": null
+    },
+    {
+      "slug": "elara-wolf-cull", "npc": "hunter-elara", "chain_slug": "elara-main", "chain_step": 2, "path_required": null,
+      "name": { "es": "La manada del claro", "en": "The Clearing's Pack" },
+      "description": { "es": "Los lobos acosan a los viajeros. Abate 2 en el bosque.", "en": "Wolves harry travelers. Cull 2 in the forest." },
+      "objective": { "type": "kill", "family": "minion", "zone": "act1-forest", "count": 2 },
+      "rewards": { "coins": 450, "gems": 4, "xp": 110 }, "penalty": {}, "requires_quest_slug": "elara-clear-bandits"
+    },
+    {
+      "slug": "sage-endurance", "npc": "old-sage", "chain_slug": "sage-main", "chain_step": 1, "path_required": null,
+      "name": { "es": "La prueba de la constancia", "en": "The Trial of Constancy" },
+      "description": { "es": "El poder nace de la repetición. Registra 150 repeticiones.", "en": "Power is born of repetition. Log 150 reps." },
+      "objective": { "type": "reps", "count": 150 },
+      "rewards": { "coins": 600, "gems": 5, "xp": 140 }, "penalty": {}, "requires_quest_slug": null
+    },
+    {
+      "slug": "sage-crypt-purge", "npc": "old-sage", "chain_slug": "sage-main", "chain_step": 2, "path_required": null,
+      "name": { "es": "Purga la cripta", "en": "Purge the Crypt" },
+      "description": { "es": "Los muertos no descansan. Destruye 5 esqueletos en la cripta.", "en": "The dead do not rest. Destroy 5 skeletons in the crypt." },
+      "objective": { "type": "kill", "family": "skeleton", "zone": "act2-crypt", "count": 5 },
+      "rewards": { "coins": 800, "gems": 8, "xp": 200 }, "penalty": {}, "requires_quest_slug": "sage-endurance"
+    },
+    {
+      "slug": "sage-proof-of-might", "npc": "old-sage", "chain_slug": "sage-might", "chain_step": 1, "path_required": null,
+      "name": { "es": "Prueba de fuerza", "en": "Proof of Might" },
+      "description": { "es": "Solo los verdaderamente fuertes pueden continuar. Requiere FUERZA nivel 15.", "en": "Only the truly strong may proceed. Requires STRENGTH level 15." },
+      "objective": { "type": "stat_check", "stat": "str", "min_level": 15 },
+      "rewards": { "coins": 700, "gems": 6, "xp": 150 }, "penalty": {}, "requires_quest_slug": null
+    },
+
+    {
+      "slug": "aldric-vigil", "npc": "sir-aldric", "chain_slug": "aldric-honor", "chain_step": 1, "path_required": "light",
+      "name": { "es": "La vigilia del caballero", "en": "The Knight's Vigil" },
+      "description": { "es": "El honor se forja con constancia. Registra 250 repeticiones.", "en": "Honor is forged through constancy. Log 250 reps." },
+      "objective": { "type": "reps", "count": 250 },
+      "rewards": { "coins": 1000, "gems": 8, "xp": 200, "buff": { "multiplier": 1.25, "hours": 24 } },
+      "penalty": {}, "requires_quest_slug": null
+    },
+    {
+      "slug": "aldric-valor", "npc": "sir-aldric", "chain_slug": "aldric-honor", "chain_step": 2, "path_required": "light",
+      "name": { "es": "Valor ante la caída", "en": "Valor Against the Fallen" },
+      "description": { "es": "Derrota a 5 caballeros corruptos en la Ciudadela.", "en": "Defeat 5 corrupted knights in the Citadel." },
+      "objective": { "type": "kill", "family": "knight", "zone": "act3-citadel", "count": 5 },
+      "rewards": { "coins": 1300, "gems": 10, "xp": 260, "buff": { "multiplier": 1.3, "hours": 24 } },
+      "penalty": {}, "requires_quest_slug": "aldric-vigil"
+    },
+
+    {
+      "slug": "mephisto-blood-pact", "npc": "mephisto", "chain_slug": "mephisto-pacts", "chain_step": 1, "path_required": "dark",
+      "time_limit_hours": 48,
+      "name": { "es": "Pacto de sangre", "en": "Blood Pact" },
+      "description": { "es": "Ofréceme 5 demonios del Abismo en 48h. Falla y pagarás con oro y una maldición.", "en": "Offer me 5 demons of the Abyss within 48h. Fail and you pay in gold and a curse." },
+      "objective": { "type": "kill", "family": "demon", "zone": "act3-abyss", "count": 5 },
+      "rewards": { "coins": 1500, "gems": 15, "xp": 260 },
+      "penalty": { "coins": 800, "curse_hours": 12, "curse_multiplier": 0.7 },
+      "requires_quest_slug": null
+    },
+    {
+      "slug": "mephisto-soul-harvest", "npc": "mephisto", "chain_slug": "mephisto-pacts", "chain_step": 2, "path_required": "dark",
+      "time_limit_hours": 72,
+      "name": { "es": "Cosecha de almas", "en": "Soul Harvest" },
+      "description": { "es": "Inflige 80.000 de daño en 72h. El abismo cobra sus deudas.", "en": "Deal 80,000 damage within 72h. The abyss collects its debts." },
+      "objective": { "type": "damage", "amount": 80000 },
+      "rewards": { "coins": 1200, "gems": 12, "xp": 240 },
+      "penalty": { "coins": 600, "curse_hours": 8, "curse_multiplier": 0.75 },
+      "requires_quest_slug": "mephisto-blood-pact"
+    }
+  ]
+}

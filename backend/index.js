@@ -13,6 +13,7 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 
 import authRoutes from './auth.js';
 import repsRoutes from './reps.js';
+import campaignRoutes from './campaign.js';
 import socialRoutes from './social.js';
 import leaderboardRoutes from './leaderboard.js';
 import usersRoutes from './users.js';
@@ -45,6 +46,7 @@ import cron from 'node-cron';
 import { runStreakReminders } from './utils/streakReminders.js';
 import { runReferralReminders } from './utils/referralReminders.js';
 import { autoFinishExpiredFights } from './utils/pvp_cleanup.js';
+import { sweepExpiredPacts } from './utils/campaignQuests.js';
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -72,6 +74,12 @@ if (process.env.VERCEL !== '1') {
   // paths) covers this instead. See issue #263.
   cron.schedule('*/2 * * * *', () => {
     autoFinishExpiredFights().catch(err => console.error('[CRON] Error finishing expired fights:', err));
+  });
+  // Sweep expired dark-path pacts (fail + penalty) every 5 minutes.
+  cron.schedule('*/5 * * * *', () => {
+    sweepExpiredPacts()
+      .then(n => { if (n > 0) console.log(`[CRON] Pactos expirados penalizados: ${n}`); })
+      .catch(err => console.error('[CRON] Error sweeping pacts:', err));
   });
 }
 // -----------------------
@@ -155,6 +163,7 @@ apiRouter.use('/streak', streakRoutes);
 apiRouter.use('/referral', referralRoutes);
 apiRouter.use('/hevy', hevyRoutes);
 apiRouter.use('/features', featuresRoutes);
+apiRouter.use('/campaign', campaignRoutes);
 
 // Pusher Auth Endpoint — en apiRouter para que funcione con y sin prefijo /api
 // (Coolify/Traefik quita el prefijo /api; apiRouter está montado en '/api' y en '/').

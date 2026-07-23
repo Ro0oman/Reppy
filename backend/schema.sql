@@ -351,3 +351,174 @@ CREATE TABLE IF NOT EXISTS user_feature_seen (
     seen_at     TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, feature_key)
 );
+
+-- ============================================================================
+-- CAMPAIGN ENGINE (RPG campaign redesign — see docs/combat-campaign-redesign.md)
+--
+-- Engine vs content split: the tables below are GENERIC. All actual enemies,
+-- zones, nodes, NPCs and quests are CONTENT, seeded from
+-- backend/data/campaigns/<slug>.json by scripts/seed_campaign.js (upsert by
+-- slug). User-facing text lives in JSONB {"es": "...", "en": "..."} so adding a
+-- monster or a whole new themed campaign requires no code and no locale edits.
+-- ============================================================================
+
+-- ── Content (populated by the seed) ────────────────────────────────────────
+
+-- A campaign = one themed playthrough (the launch one, plus future expansions).
+CREATE TABLE IF NOT EXISTS campaigns (
+    id          SERIAL PRIMARY KEY,
+    slug        VARCHAR(80) UNIQUE NOT NULL,
+    name        JSONB NOT NULL DEFAULT '{}'::jsonb,   -- {"es":..,"en":..}
+    description JSONB NOT NULL DEFAULT '{}'::jsonb,
+    status      VARCHAR(20) DEFAULT 'draft',          -- draft | active | archived
+    config      JSONB NOT NULL DEFAULT '{}'::jsonb,   -- scaling/prestige/path/map params
+    version     INTEGER DEFAULT 1,
+    created_at  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Enemy templates. campaign_id NULL = shared across campaigns.
+CREATE TABLE IF NOT EXISTS enemy_types (
+    id            SERIAL PRIMARY KEY,
+    campaign_id   INTEGER REFERENCES campaigns(id) ON DELETE CASCADE,
+    slug          VARCHAR(80) UNIQUE NOT NULL,
+    family        VARCHAR(50) NOT NULL,               -- minion|goblin|skeleton|zombie|spider|bandit|demon|knight...
+    tier          SMALLINT DEFAULT 1,                 -- 1 grunt .. 5 act boss
+    name          JSONB NOT NULL DEFAULT '{}'::jsonb,
+    description   JSONB NOT NULL DEFAULT '{}'::jsonb,
+    base_hp       INTEGER NOT NULL DEFAULT 1000,
+    weakness_stat VARCHAR(10),                        -- reuses calculateDamage weakness
+    resist_stat   VARCHAR(10),                        -- mirror: dampens that stat's damage
+    scaling       JSONB NOT NULL DEFAULT '{}'::jsonb, -- {hp_per_level, hp_tier_mult, ...}
+    loot          JSONB NOT NULL DEFAULT '{}'::jsonb, -- {coins:[min,max], xp, chest_chance, drop_table}
+    art           JSONB NOT NULL DEFAULT '{}'::jsonb, -- {image, idle_video, damaged_video} (filenames)
+    created_at    TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- NPCs that hand out quest chains.
+CREATE TABLE IF NOT EXISTS npcs (
+    id          SERIAL PRIMARY KEY,
+    campaign_id INTEGER REFERENCES campaigns(id) ON DELETE CASCADE,
+    slug        VARCHAR(80) UNIQUE NOT NULL,
+    name        JSONB NOT NULL DEFAULT '{}'::jsonb,
+    faction     VARCHAR(20) DEFAULT 'neutral',        -- light | dark | neutral
+    art         JSONB NOT NULL DEFAULT '{}'::jsonb,
+    dialogue    JSONB NOT NULL DEFAULT '{}'::jsonb,
+    created_at  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Zones group nodes into acts; path_required gates a zone behind a chosen path.
+CREATE TABLE IF NOT EXISTS campaign_zones (
+    id            SERIAL PRIMARY KEY,
+    campaign_id   INTEGER REFERENCES campaigns(id) ON DELETE CASCADE,
+    slug          VARCHAR(80) NOT NULL,
+    act           SMALLINT DEFAULT 1,
+    name          JSONB NOT NULL DEFAULT '{}'::jsonb,
+    theme         VARCHAR(50),
+    order_index   INTEGER DEFAULT 0,
+    path_required VARCHAR(10),                         -- NULL | light | dark
+    art           JSONB NOT NULL DEFAULT '{}'::jsonb,
+    config        JSONB NOT NULL DEFAULT '{}'::jsonb,
+    UNIQUE(campaign_id, slug)
+);
+
+-- Nodes are the graph vertices the player fights/interacts with.
+CREATE TABLE IF NOT EXISTS campaign_nodes (
+    id            SERIAL PRIMARY KEY,
+    zone_id       INTEGER REFERENCES campaign_zones(id) ON DELETE CASCADE,
+    slug          VARCHAR(80) NOT NULL,
+    type          VARCHAR(20) NOT NULL DEFAULT 'combat', -- combat|elite|boss|raid|npc|crossroads|treasure
+    enemy_type_id INTEGER REFERENCES enemy_types(id) ON DELETE SET NULL,
+    pack          JSONB NOT NULL DEFAULT '{}'::jsonb,    -- {count:3} for enemy groups
+    npc_id        INTEGER REFERENCES npcs(id) ON DELETE SET NULL,
+    map_x         REAL DEFAULT 0,
+    map_y         REAL DEFAULT 0,
+    requires      JSONB NOT NULL DEFAULT '{}'::jsonb,    -- {min_level, path, stat:{str:15}, nodes:[slugs]}
+    rewards       JSONB NOT NULL DEFAULT '{}'::jsonb,    -- first-clear bonus on top of enemy loot
+    UNIQUE(zone_id, slug)
+);
+
+-- Directed edges: the map is a graph (main path + optional side paths).
+CREATE TABLE IF NOT EXISTS campaign_edges (
+    id           SERIAL PRIMARY KEY,
+    from_node_id INTEGER REFERENCES campaign_nodes(id) ON DELETE CASCADE,
+    to_node_id   INTEGER REFERENCES campaign_nodes(id) ON DELETE CASCADE,
+    kind         VARCHAR(10) DEFAULT 'main',            -- main | side
+    UNIQUE(from_node_id, to_node_id)
+);
+
+-- Quest templates, chainable per NPC.
+CREATE TABLE IF NOT EXISTS npc_quests (
+    id                  SERIAL PRIMARY KEY,
+    npc_id              INTEGER REFERENCES npcs(id) ON DELETE CASCADE,
+    slug                VARCHAR(80) UNIQUE NOT NULL,
+    chain_slug          VARCHAR(80),
+    chain_step          SMALLINT DEFAULT 1,
+    name                JSONB NOT NULL DEFAULT '{}'::jsonb,
+    description         JSONB NOT NULL DEFAULT '{}'::jsonb,
+    objective           JSONB NOT NULL DEFAULT '{}'::jsonb, -- {type:'kill',family,zone,count} | reps | damage | clear_node | stat_check | streak
+    time_limit_hours    INTEGER,                            -- dark-path pacts only
+    path_required       VARCHAR(10),                        -- NULL | light | dark
+    rewards             JSONB NOT NULL DEFAULT '{}'::jsonb,
+    penalty             JSONB NOT NULL DEFAULT '{}'::jsonb, -- pacts: coin loss / curse on expiry
+    requires_quest_slug VARCHAR(80)
+);
+
+-- ── Player state ───────────────────────────────────────────────────────────
+
+-- One run per (user, campaign, prestige). A partial unique index enforces at
+-- most one ACTIVE run per user+campaign.
+CREATE TABLE IF NOT EXISTS campaign_runs (
+    id             SERIAL PRIMARY KEY,
+    user_id        VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    campaign_id    INTEGER REFERENCES campaigns(id) ON DELETE CASCADE,
+    prestige_level INTEGER DEFAULT 0,
+    path           VARCHAR(10),                         -- NULL | light | dark
+    status         VARCHAR(20) DEFAULT 'active',        -- active | completed | abandoned
+    started_at     TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    completed_at   TIMESTAMP WITH TIME ZONE
+);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_campaign_runs_active
+    ON campaign_runs(user_id, campaign_id) WHERE status = 'active';
+
+-- Per-node progress within a run; enemy HP is snapshotted on engage so it stays
+-- stable mid-fight even if the player levels up.
+CREATE TABLE IF NOT EXISTS user_node_progress (
+    id               SERIAL PRIMARY KEY,
+    run_id           INTEGER REFERENCES campaign_runs(id) ON DELETE CASCADE,
+    node_id          INTEGER REFERENCES campaign_nodes(id) ON DELETE CASCADE,
+    status           VARCHAR(20) DEFAULT 'available',   -- available | engaged | cleared
+    enemy_current_hp INTEGER,
+    enemy_total_hp   INTEGER,
+    kills            INTEGER DEFAULT 0,
+    cleared_at       TIMESTAMP WITH TIME ZONE,
+    UNIQUE(run_id, node_id)
+);
+
+-- Per-run quest state.
+CREATE TABLE IF NOT EXISTS user_npc_quests (
+    id            SERIAL PRIMARY KEY,
+    run_id        INTEGER REFERENCES campaign_runs(id) ON DELETE CASCADE,
+    quest_id      INTEGER REFERENCES npc_quests(id) ON DELETE CASCADE,
+    status        VARCHAR(20) DEFAULT 'offered',        -- offered | accepted | completed | claimed | failed
+    current_value INTEGER DEFAULT 0,
+    deadline_at   TIMESTAMP WITH TIME ZONE,
+    UNIQUE(run_id, quest_id)
+);
+
+-- Persistent codex across prestiges.
+CREATE TABLE IF NOT EXISTS user_bestiary (
+    user_id       VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    enemy_type_id INTEGER REFERENCES enemy_types(id) ON DELETE CASCADE,
+    kills         INTEGER DEFAULT 0,
+    first_kill_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, enemy_type_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_campaign_nodes_zone ON campaign_nodes(zone_id);
+CREATE INDEX IF NOT EXISTS idx_campaign_edges_from ON campaign_edges(from_node_id);
+CREATE INDEX IF NOT EXISTS idx_user_node_progress_run ON user_node_progress(run_id);
+CREATE INDEX IF NOT EXISTS idx_user_npc_quests_run ON user_npc_quests(run_id);
+
+-- Raid nodes reuse the existing community boss system: a boss_fight can be
+-- pinned to a campaign node so clearing your part of the raid clears the node.
+ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS campaign_node_id INTEGER REFERENCES campaign_nodes(id) ON DELETE SET NULL;

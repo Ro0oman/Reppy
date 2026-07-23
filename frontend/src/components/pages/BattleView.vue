@@ -6,8 +6,22 @@
     </div>
 
     <div class="mx-auto w-full max-w-md space-y-1.5 px-3 pb-20 pt-1.5 md:max-w-lg lg:max-w-5xl lg:space-y-3 lg:px-6 lg:pt-3">
-      <!-- Top bar (full width) -->
-      <RpgTopBar />
+      <!-- Top bar propio SOLO en estilo clásico: en Operative OS el shell de
+           App.vue ya aporta identidad, monedas y navegación (evita doble header). -->
+      <RpgTopBar v-if="themeStore.uiStyle !== 'operative'" />
+
+      <!-- Campaign entry (NEW). Links to the data-driven RPG campaign map. -->
+      <button type="button" @click="goCampaign"
+        class="relative flex w-full items-center justify-between gap-2 rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-900/40 to-orange-900/30 px-4 py-2.5 text-left transition-all active:scale-[0.99] hover:border-amber-400/50">
+        <span class="flex items-center gap-2">
+          <Map class="h-4 w-4 text-amber-300" />
+          <span class="text-sm font-black uppercase tracking-wide text-amber-100">{{ i18n.t('campaign_title') }}</span>
+        </span>
+        <span class="flex items-center gap-2">
+          <NewBadge feature-key="campaign_v1" />
+          <ChevronRight class="h-4 w-4 text-white/40" />
+        </span>
+      </button>
 
       <!-- Loading / no boss -->
       <div v-if="loadingBoss && !boss" class="flex flex-col items-center justify-center gap-3 py-16 text-white/60">
@@ -45,8 +59,11 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { Map, ChevronRight } from 'lucide-vue-next';
 import axios from 'axios';
 import RpgTopBar from '@/components/battle/RpgTopBar.vue';
+import NewBadge from '@/components/battle/NewBadge.vue';
 import PlayerCard from '@/components/battle/PlayerCard.vue';
 import BossArena from '@/components/battle/BossArena.vue';
 import QuickPotions from '@/components/battle/QuickPotions.vue';
@@ -60,6 +77,7 @@ import { useAuthStore } from '@/stores/auth';
 import { useBadgesStore } from '@/stores/badges';
 import { useFeatureSeenStore } from '@/stores/featureSeen';
 import { useI18nStore } from '@/stores/i18n';
+import { useThemeStore } from '@/stores/theme';
 import { useRepLogger } from '@/composables/useRepLogger';
 
 const bossStore = useBossStore();
@@ -69,7 +87,14 @@ const authStore = useAuthStore();
 const badges = useBadgesStore();
 const featureSeen = useFeatureSeenStore();
 const i18n = useI18nStore();
+const themeStore = useThemeStore();
 const { loading: logging, logReps } = useRepLogger();
+const router = useRouter();
+
+const goCampaign = () => {
+  featureSeen.markSeen('campaign_v1');
+  router.push({ name: 'campaign-map', params: { lang: i18n.locale } });
+};
 
 const arenaRef = ref(null);
 const liveRef = ref(null);
@@ -140,17 +165,19 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Arena Operative OS: obsidiana con foco frío arriba y rescoldo naranja
+   contenido abajo (naranja = urgencia de combate, no fondo dominante). */
 .bg-dungeon {
   background:
-    radial-gradient(120% 80% at 50% 0%, rgba(124, 45, 18, 0.55), transparent 60%),
-    radial-gradient(90% 60% at 50% 100%, rgba(190, 50, 20, 0.35), transparent 70%),
-    linear-gradient(180deg, #1a0d09 0%, #0c0705 55%, #050303 100%);
+    radial-gradient(120% 80% at 50% 0%, rgba(22, 48, 94, 0.6), transparent 60%),
+    radial-gradient(70% 40% at 50% 100%, rgba(255, 106, 50, 0.12), transparent 70%),
+    linear-gradient(180deg, #0a1220 0%, #070b12 55%, #05070b 100%);
 }
 .ember {
   position: absolute;
   bottom: -10px;
   border-radius: 9999px;
-  background: radial-gradient(circle, rgba(255, 170, 80, 0.9), rgba(255, 90, 20, 0.2));
+  background: radial-gradient(circle, rgba(97, 217, 255, 0.9), rgba(27, 104, 255, 0.2));
   filter: blur(0.5px);
   opacity: 0;
   animation-name: ember-rise;

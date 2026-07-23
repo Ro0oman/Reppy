@@ -9,10 +9,11 @@ import { getLocalDateString } from './utils/date.js';
 import { calculateDamage } from './utils/damage.js';
 import { getPerkBonuses } from './utils/perks.js';
 import { getUserWithGear } from './utils/user.js';
-import { updateMissionProgress } from './utils/missions.js';
+import { emitProgress } from './utils/progressEvents.js';
 import { updateChallengeScores } from './utils/challenges.js';
 import { broadcastDamage } from './socketManager.js';
-import { grantLastHitBonus } from './utils/bossRewards.js';
+import { applyBossDamage } from './utils/combat.js';
+import { applyCampaignDamage } from './utils/campaignEngine.js';
 import { getEffectiveExerciseCount, getRewardExerciseCount, isTimedExerciseUnit } from './utils/exerciseUnits.js';
 import { getStreakStatus, JACKPOT_REWARD_COINS, JACKPOT_DAYS_REQUIRED } from './utils/streak.js';
 import { createBossKillEvent } from './utils/bossKillEvent.js';
@@ -124,74 +125,32 @@ router.post('/', authenticate, async (req, res) => {
       );
     }
 
-    // 3. Boss Interaction
-    const bossRes = await client.query(
-      `SELECT id, current_hp, total_hp, name, image_url FROM boss_fights
-       WHERE status != 'defeated'
-       ORDER BY order_index ASC LIMIT 1`
-    );
+    // 3. Boss Interaction (shared routing — see utils/combat.js)
+    const { bossId, actualDamageDealt, killed, boss } = await applyBossDamage(client, {
+      user: augmentedUser,
+      effectiveCount,
+      exerciseType: exercise_type,
+      diffMult,
+      addedWeight: added_weight,
+    });
 
-    let actualDamageDealt = 0;
-    let bossId = null;
-
-    if (bossRes.rows.length > 0) {
-      const boss = bossRes.rows[0];
-      bossId = boss.id;
-      const bossDmgResult = calculateDamage(augmentedUser, effectiveCount, exercise_type, boss, false, false, diffMult, added_weight);
-      actualDamageDealt = bossDmgResult.totalDamage;
-      
-      // Atomic health deduction
-      const updateBossRes = await client.query(
-          `UPDATE boss_fights 
-           SET current_hp = GREATEST(0, current_hp - $1),
-               status = CASE WHEN current_hp - $1 <= 0 THEN 'defeated' ELSE status END
-           WHERE id = $2 RETURNING current_hp`, 
-          [actualDamageDealt, bossId]
-      );
-      
-      const newHp = updateBossRes.rows[0].current_hp;
-
-      await client.query(
-        `INSERT INTO event_participants (boss_fight_id, user_id, damage_dealt) 
-         VALUES ($1, $2, $3)
-         ON CONFLICT (boss_fight_id, user_id) 
-         DO UPDATE SET damage_dealt = event_participants.damage_dealt + EXCLUDED.damage_dealt`,
-        [bossId, userId, actualDamageDealt]
-      );
-
-      await client.query(
-        `UPDATE users 
-         SET daily_boss_damage = CASE 
-           WHEN last_boss_damage_date = CURRENT_DATE THEN daily_boss_damage + $1 
-           ELSE $1 
-         END, 
-         last_boss_damage_date = CURRENT_DATE 
-         WHERE id = $2`,
-        [actualDamageDealt, userId]
-      );
-      
-      if (newHp === 0) {
-        syncBossHealth().catch(e => console.error('Boss sync error:', e));
-
-        await updateMissionProgress(userId, 'boss_last_hit', 1);
-
-        const lastHitReward = await grantLastHitBonus(userId, bossId, client);
-        if (lastHitReward) {
-          broadcastDamage({
-            type: 'LAST_HIT',
-            userId: userId,
-            userName: augmentedUser.name,
-            bossName: boss.name,
-            reward: lastHitReward
-          });
-        }
-
-        // Community boss kill event (fire-and-forget, runs after TX commits)
-        createBossKillEvent(
-          bossId, boss.name, boss.image_url, userId, augmentedUser.name
-        ).catch(e => console.error('Boss kill event error:', e));
-      }
+    if (killed) {
+      // Community boss kill event (fire-and-forget, runs after TX commits)
+      createBossKillEvent(
+        bossId, boss.name, boss.image_url, userId, augmentedUser.name
+      ).catch(e => console.error('Boss kill event error:', e));
     }
+
+    // 3b. Campaign routing (individual progression, opt-in via an engaged node).
+    // Independent of the community boss: one set can damage both. Rule R4:
+    // campaign damage is FINAL — it is not reverted when a rep is edited/deleted.
+    const campaignResult = await applyCampaignDamage(client, {
+      user: augmentedUser,
+      effectiveCount,
+      exerciseType: exercise_type,
+      diffMult,
+      addedWeight: added_weight,
+    });
 
     // Update metadata in reps record
     await client.query(
@@ -206,12 +165,12 @@ router.post('/', authenticate, async (req, res) => {
       [actualDamageDealt, dmgResult.activeMultiplier, dmgResult.baseDamage, dmgResult.gearBonus, dmgResult.buffBonus, bossId, repResult.rows[0].id]
     );
 
-    // 4. Update Missions
+    // 4. Update Missions (via the progress bus)
     if (!isTimedExerciseUnit(exerciseUnit)) {
-      await updateMissionProgress(userId, 'reps', rawCount);
+      await emitProgress(userId, 'reps', rawCount, { exercise_type });
     }
     if (actualDamageDealt > 0) {
-      await updateMissionProgress(userId, 'damage', actualDamageDealt);
+      await emitProgress(userId, 'damage', actualDamageDealt, { exercise_type });
     }
 
     // Async challenge scores
@@ -220,7 +179,7 @@ router.post('/', authenticate, async (req, res) => {
     // Mission: Night Owl (Reps after 22:00)
     const currentHour = new Date().getHours();
     if (currentHour >= 22 || currentHour < 5) {
-      await updateMissionProgress(userId, 'night_owl', 1);
+      await emitProgress(userId, 'night_owl', 1);
     }
 
     // Mission: Personal Record
@@ -243,7 +202,7 @@ router.post('/', authenticate, async (req, res) => {
     `, [userId, date || getLocalDateString()]);
 
     if (prRes.rows.length > 0) {
-      await updateMissionProgress(userId, 'personal_record', 1);
+      await emitProgress(userId, 'personal_record', 1);
     }
 
     await client.query('COMMIT');
@@ -319,6 +278,7 @@ router.post('/', authenticate, async (req, res) => {
       jackpot_awarded: jackpotAwarded,
       jackpot_coins: jackpotAwarded ? JACKPOT_REWARD_COINS : 0,
       gem_dropped: gemDropped,
+      campaign: campaignResult,
     });
 
     // Broadcast damage event for real-time visualization
