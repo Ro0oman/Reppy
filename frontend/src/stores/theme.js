@@ -14,13 +14,31 @@ export const useThemeStore = defineStore('theme', () => {
   const theme = ref((!import.meta.env.SSR && localStorage.getItem('reppy_theme')) || 'dark');
 
   // Estilo de interfaz (skin estructural, independiente de dark/light).
+  // localStorage responde al instante; la BD (users.ui_style) lo sigue para
+  // que la preferencia viaje entre dispositivos.
   const storedStyle = !import.meta.env.SSR && localStorage.getItem('reppy_ui_style');
   const uiStyle = ref(UI_STYLES.includes(storedStyle) ? storedStyle : 'operative');
 
-  const setUiStyle = (style) => {
+  // Al llegar el perfil (login / otro dispositivo), la BD manda.
+  watch(() => authStore.user?.ui_style, (dbStyle) => {
+    if (dbStyle && UI_STYLES.includes(dbStyle) && uiStyle.value !== dbStyle) {
+      uiStyle.value = dbStyle;
+      if (!import.meta.env.SSR) localStorage.setItem('reppy_ui_style', dbStyle);
+    }
+  });
+
+  const setUiStyle = async (style) => {
     if (!UI_STYLES.includes(style)) return;
     uiStyle.value = style;
     if (!import.meta.env.SSR) localStorage.setItem('reppy_ui_style', style);
+    if (authStore.isAuthenticated) {
+      try {
+        await axios.patch('/api/users/profile', { ui_style: style });
+        if (authStore.user) authStore.user.ui_style = style;
+      } catch (error) {
+        console.error('Failed to sync ui_style to DB:', error);
+      }
+    }
   };
 
   // Sync with DB if user theme changes (e.g., on login)

@@ -61,7 +61,7 @@ router.get('/me', authenticate, async (req, res) => {
 
 // Update user profile
 router.patch('/profile', authenticate, async (req, res) => {
-  const { is_private, name, daily_goal, body_weight, theme } = req.body;
+  const { is_private, name, daily_goal, body_weight, theme, ui_style } = req.body;
   
   try {
     // Dynamically build the update query
@@ -88,6 +88,10 @@ router.patch('/profile', authenticate, async (req, res) => {
     if (theme) {
       updateFields.push(`theme = $${i++}`);
       params.push(theme);
+    }
+    if (ui_style && ['operative', 'classic'].includes(ui_style)) {
+      updateFields.push(`ui_style = $${i++}`);
+      params.push(ui_style);
     }
 
     if (updateFields.length === 0) return res.json({ message: 'No changes provided' });

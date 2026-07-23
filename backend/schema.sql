@@ -522,3 +522,7 @@ CREATE INDEX IF NOT EXISTS idx_user_npc_quests_run ON user_npc_quests(run_id);
 -- Raid nodes reuse the existing community boss system: a boss_fight can be
 -- pinned to a campaign node so clearing your part of the raid clears the node.
 ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS campaign_node_id INTEGER REFERENCES campaign_nodes(id) ON DELETE SET NULL;
+
+-- Estilo de interfaz elegido por el usuario ('operative' | 'classic').
+-- Se sincroniza con localStorage (reppy_ui_style) vía PATCH /users/profile.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS ui_style VARCHAR(20) DEFAULT 'operative';

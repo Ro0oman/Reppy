@@ -260,36 +260,38 @@ const theme = computed(() => isDaily.value ? {
   congrats: 'text-primary-500'
 });
 const confettiColors = computed(() => isDaily.value
-  ? ['#FBBF24', '#F59E0B', '#D946EF', '#9333EA', '#FFFFFF']
-  : ['#4F46E5', '#8B5CF6', '#F59E0B']);
+  ? ['#FFB020', '#FF6A32', '#61D9FF', '#1B68FF', '#FFFFFF']
+  : ['#1B68FF', '#61D9FF', '#FFB020']);
 
 // Keep in sync with ROULETTE_PRIZES / DAILY_PRIZES in backend/roulette.js — `size`
 // is the prize weight × 3.6 so the slices fill 360°. For the quick wheel the `id`
 // must match the backend id; the daily wheel uses id === array index.
+// Paleta Operative OS: azul→cian escala con el valor de monedas, naranja/rojo =
+// premios raros (urgencia), verde = gemas, ámbar = cofres, morado = épico.
 const quickRewards = [
-  { id: 0, name: '40 🪙', bgColor: '#FBBF24', size: 153 }, // 42.5 * 3.6
-  { id: 1, name: '75 🪙', bgColor: '#F59E0B', size: 64.8 }, // 18 * 3.6
-  { id: 2, name: '120 🪙', bgColor: '#D97706', size: 36 }, // 10 * 3.6
-  { id: 3, name: '200 🪙', bgColor: '#B45309', size: 21.6 }, // 6 * 3.6
-  { id: 4, name: '350 🪙', bgColor: '#4F46E5', size: 10.8 }, // 3 * 3.6
-  { id: 5, name: '600 🪙', bgColor: '#EF4444', size: 3.6 }, // 1 * 3.6
-  { id: 10, name: '2 💎', bgColor: '#10B981', size: 36 }, // 10 * 3.6
-  { id: 6, name: '🧪', bgColor: '#6366F1', size: 21.6 }, // 6 * 3.6
-  { id: 7, name: '🎁 L', bgColor: '#8B5CF6', size: 7.2 }, // 2 * 3.6
-  { id: 8, name: '🎁 B', bgColor: '#EC4899', size: 3.6 }, // 1 * 3.6
-  { id: 9, name: '🎁 E', bgColor: '#F43F5E', size: 1.8 } // 0.5 * 3.6
+  { id: 0, name: '40 🪙', bgColor: '#1B68FF', size: 153 }, // 42.5 * 3.6
+  { id: 1, name: '75 🪙', bgColor: '#0E2452', size: 64.8 }, // 18 * 3.6
+  { id: 2, name: '120 🪙', bgColor: '#2F8CFF', size: 36 }, // 10 * 3.6
+  { id: 3, name: '200 🪙', bgColor: '#123A8F', size: 21.6 }, // 6 * 3.6
+  { id: 4, name: '350 🪙', bgColor: '#61D9FF', size: 10.8 }, // 3 * 3.6
+  { id: 5, name: '600 🪙', bgColor: '#FF4D61', size: 3.6 }, // 1 * 3.6
+  { id: 10, name: '2 💎', bgColor: '#45E991', size: 36 }, // 10 * 3.6
+  { id: 6, name: '🧪', bgColor: '#8B5CF6', size: 21.6 }, // 6 * 3.6
+  { id: 7, name: '🎁 L', bgColor: '#FFB020', size: 7.2 }, // 2 * 3.6
+  { id: 8, name: '🎁 B', bgColor: '#FF6A32', size: 3.6 }, // 1 * 3.6
+  { id: 9, name: '🎁 E', bgColor: '#9333EA', size: 1.8 } // 0.5 * 3.6
 ];
-// Premium gold→magenta→violet "jewel" palette, deliberately distinct from the
-// 4h wheel's amber/orange/blue mix so the daily wheel reads as special.
+// La rueda diaria mantiene su lectura "premium" pero dentro del sistema:
+// ámbar para lo común/monedas, azules para pociones, naranja→rojo para lo raro.
 const dailyRewards = [
-  { id: 0, name: '🧪', bgColor: '#FBBF24', size: 144 }, // 40 * 3.6  Poción Común (oro)
-  { id: 1, name: '250 🪙', bgColor: '#F59E0B', size: 79.2 }, // 22 * 3.6  (ámbar)
-  { id: 2, name: '🧪 R', bgColor: '#D946EF', size: 54 }, // 15 * 3.6  Poción Rara (fucsia)
-  { id: 3, name: '5 💎', bgColor: '#2DD4BF', size: 36 }, // 10 * 3.6  (turquesa)
-  { id: 4, name: '🎁 L', bgColor: '#7C3AED', size: 21.6 }, // 6 * 3.6  Cofre Nivel (violeta)
-  { id: 5, name: '🧪 E', bgColor: '#9333EA', size: 14.4 }, // 4 * 3.6  Poción Especial (púrpura)
-  { id: 6, name: '🎁 B', bgColor: '#DB2777', size: 7.2 }, // 2 * 3.6  Cofre Boss (rosa)
-  { id: 7, name: '🧪 L', bgColor: '#E11D48', size: 3.6 } // 1 * 3.6  Poción Legendaria (carmesí)
+  { id: 0, name: '🧪', bgColor: '#1B68FF', size: 144 }, // 40 * 3.6  Poción Común (azul)
+  { id: 1, name: '250 🪙', bgColor: '#FFB020', size: 79.2 }, // 22 * 3.6  (ámbar monedas)
+  { id: 2, name: '🧪 R', bgColor: '#2F8CFF', size: 54 }, // 15 * 3.6  Poción Rara (azul claro)
+  { id: 3, name: '5 💎', bgColor: '#45E991', size: 36 }, // 10 * 3.6  (verde gemas)
+  { id: 4, name: '🎁 L', bgColor: '#61D9FF', size: 21.6 }, // 6 * 3.6  Cofre Nivel (cian)
+  { id: 5, name: '🧪 E', bgColor: '#9333EA', size: 14.4 }, // 4 * 3.6  Poción Especial (morado épico)
+  { id: 6, name: '🎁 B', bgColor: '#FF6A32', size: 7.2 }, // 2 * 3.6  Cofre Boss (naranja)
+  { id: 7, name: '🧪 L', bgColor: '#FF4D61', size: 3.6 } // 1 * 3.6  Poción Legendaria (rojo)
 ];
 const rewards = computed(() => isDaily.value ? dailyRewards : quickRewards);
 
