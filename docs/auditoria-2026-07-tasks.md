@@ -34,8 +34,9 @@ Protocolo de cada run:
    - **`👤` o `⏸️`** → saltar.
    - Push temprano y frecuente, WIP incluido: si la sesión muere a medias, lo pusheado lo retoma el siguiente run.
 4. **A `main` solo se commitea este fichero (estado). Código, SIEMPRE por PR. Nunca mergear PRs** — las revisa y mergea Roman.
-5. **Convenciones**: manda `CLAUDE.md` (i18n en ambos locales es/en, rarezas en español, `withTransaction` + `FOR UPDATE` en economía). Sin BD de producción ni entorno desplegado: verificar con build + lógica y decirlo honestamente en la PR.
-6. 🧊 Nada fuera de la lista: ni rediseños, ni refactors oportunistas, ni features nuevas.
+5. **Convenciones**: manda `CLAUDE.md` (i18n en ambos locales es/en, rarezas en español, `withTransaction` + `FOR UPDATE` en economía).
+6. **Verificación — intentar SIEMPRE el test de integración local en el sandbox**: instalar/arrancar PostgreSQL efímero (`apt-get install postgresql` o Docker, lo que el entorno permita), cargar `backend/schema.sql`, arrancar el backend con env dummy (`DATABASE_URL` al Postgres local, `JWT_SECRET=test`, resto de claves con valores falsos — si algún módulo revienta por claves falsas, comentarlo en la PR) y probar con `curl` los endpoints tocados (crear usuario de prueba vía `/api/auth`, generar JWT, ejercitar el flujo). Si el entorno no permite levantar Postgres → degradar a `npm run build` (frontend), `node --check` (backend) y revisión lógica. En la PR, decir SIEMPRE qué nivel de verificación se consiguió: `integración local` / `solo build+sintaxis`. PROHIBIDO testear contra https://reppy.romandev.app o la BD de producción: ese entorno corre el código viejo de main y tiene datos y usuarios reales.
+7. 🧊 Nada fuera de la lista: ni rediseños, ni refactors oportunistas, ni features nuevas.
 
 **Flujo de mañana (Roman)**: revisar/mergear PRs `night/*`, marcar `[x]` las mergeadas, responder las `⏸️` (editando aquí o diciéndoselo a Claude en sesión local, que quitará el emoji) → la noche siguiente se implementan.
 
