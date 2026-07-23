@@ -12,35 +12,49 @@ Resultado de una auditoría de 5 ejes: ingeniería, game design, engagement, SEO
 
 ---
 
-## 🌙 Protocolo de routines nocturnas (agentes cloud programados)
+## 🤖 Protocolo de agentes autónomos (routines nocturnas)
 
-Las tasks marcadas con 🌙 son aptas para agentes nocturnos autónomos: acotadas (15-45 min), verificables sin BD de producción y sin decisiones de producto pendientes. Las tasks SIN 🌙 requieren criterio de Roman — un agente nocturno NUNCA debe cogerlas.
+**Este fichero en `origin/main` es la memoria compartida entre runs** (cada run es una sesión nueva sin memoria de las anteriores). Los agentes procesan las tasks de arriba a abajo — el orden del fichero es la prioridad.
 
-Protocolo de cada run nocturno:
+Estados de una task:
 
-1. **Verificar antes de crear**: buscar ramas `night/*` y PRs abiertas de runs anteriores. Si hay trabajo a medias → retomarlo y terminarlo. Si hay trabajo terminado sin verificar → revisarlo (build de frontend, sintaxis backend, lógica) y anotar el veredicto como comentario en la PR.
-2. **Solo si no hay nada pendiente** → coger la PRIMERA task 🌙 sin marcar de este fichero (orden del fichero = prioridad), implementarla en una rama `night/<slug-corto>`, marcar su checkbox en el mismo commit y abrir PR contra `main` explicando qué se hizo y cómo se verificó.
-3. **Push temprano y frecuente**: commitear y pushear en cuanto haya algo coherente, aunque sea WIP (si el run muere por límite de sesión, lo pusheado sobrevive y el siguiente run lo continúa). Si una task resulta más grande de lo esperado: partir, dejar lo hecho pusheado y anotar en la PR "continúa por aquí".
-4. **Una task nueva por run como máximo.** Mejor una terminada y verificada que dos a medias.
-5. **No mergear nunca**: las PRs las revisa y mergea Roman.
-6. Si una task 🌙 resulta ambigua al empezarla → saltarla, quitarle el 🌙 en un commit con nota del porqué, y pasar a la siguiente.
+- `- [ ]` — pendiente: cualquier agente puede cogerla.
+- `- [ ] 🔨 PR #N` — implementada en una PR abierta pendiente de review de Roman. Los agentes NO la reimplementan; solo verifican o continúan esa PR.
+- `- [ ] ⏸️ PREGUNTA: ...` — bloqueada esperando decisión de Roman (la pregunta, 2-3 opciones y una recomendación van escritas inline). Los agentes la saltan sin repetir la pregunta.
+- `- [x]` — hecha y mergeada.
+- `👤` — acción personal de Roman (compras, cuentas, grabar contenido, enviar emails). Los agentes nunca la ejecutan; como mucho preparan material de apoyo en una PR si es trivial hacerlo.
+
+Protocolo de cada run:
+
+1. **Sincronizar**: leer este fichero en `origin/main` + `gh pr list --state open` + ramas `night/*` remotas.
+2. **Verificar antes de crear**: PRs `night/*` a medias → retomarlas y terminarlas. Terminadas sin verificar → verificar (build de frontend si se tocó frontend, `node --check` en backend, revisión lógica del diff) y dejar veredicto como comentario en la PR.
+3. **Bucle hasta que muera la sesión** — para cada task pendiente, en orden:
+   - **Implementable sin decisiones** → rama `night/<slug-corto>` desde `origin/main`, implementar, verificar, abrir PR contra `main`, y actualizar ESTE fichero en `main` con `🔨 PR #N` (commit directo a main SOLO de este fichero).
+   - **Requiere decisión de producto** → NO implementar a ciegas: escribir el `⏸️ PREGUNTA: ...` en este fichero (commit a main) y pasar a la siguiente.
+   - **`👤` o `⏸️`** → saltar.
+   - Push temprano y frecuente, WIP incluido: si la sesión muere a medias, lo pusheado lo retoma el siguiente run.
+4. **A `main` solo se commitea este fichero (estado). Código, SIEMPRE por PR. Nunca mergear PRs** — las revisa y mergea Roman.
+5. **Convenciones**: manda `CLAUDE.md` (i18n en ambos locales es/en, rarezas en español, `withTransaction` + `FOR UPDATE` en economía). Sin BD de producción ni entorno desplegado: verificar con build + lógica y decirlo honestamente en la PR.
+6. 🧊 Nada fuera de la lista: ni rediseños, ni refactors oportunistas, ni features nuevas.
+
+**Flujo de mañana (Roman)**: revisar/mergear PRs `night/*`, marcar `[x]` las mergeadas, responder las `⏸️` (editando aquí o diciéndoselo a Claude en sesión local, que quitará el emoji) → la noche siguiente se implementan.
 
 ---
 
 ## P0 — Seguridad (esta semana, explotable HOY en producción)
 
-- [ ] 🌙 **Matar `/api/test/*` en producción** — `backend/test.js:9` (`isTestAllowed = true` incondicional) + montaje en `backend/index.js:157`. Cualquier usuario autenticado puede darse coins/gems/cofres/items/stats infinitos. *Esfuerzo: 10 líneas.*
-- [ ] 🌙 **Autenticar `/pusher/auth`** — `backend/index.js:170-197` acepta `user_id`/`user_name` arbitrarios y autoriza canales private-/presence-. Suplantación de usuarios en realtime. Eliminar también el shim legacy `api/pusher-auth.js` (CORS `*`). *Esfuerzo: 10 líneas.*
-- [ ] 🌙 **Rate limiting** — no existe en ningún endpoint. Mínimo: `express-rate-limit` en `POST /auth/login` (brute-force) y `POST /reps` (spam). *Esfuerzo: 1-2 h.*
-- [ ] 🌙 **Tope a `count` y validar `date` en `POST /reps`** — `backend/reps.js:49-103`: hoy acepta `count: 99999999` (monedas/XP/daño infinito) y fechas arbitrarias (rachas retroactivas). Sanity cap + `date` solo hoy/ayer. *Esfuerzo: 1 h.*
-- [ ] 🌙 **Quitar CORS `*.vercel.app`** — `backend/index.js:92`: cualquiera puede desplegar gratis en vercel.app y pasar el allowlist con `credentials: true`. Ya no estáis en Vercel. *Esfuerzo: 5 min.*
+- [ ] **Matar `/api/test/*` en producción** — `backend/test.js:9` (`isTestAllowed = true` incondicional) + montaje en `backend/index.js:157`. Cualquier usuario autenticado puede darse coins/gems/cofres/items/stats infinitos. *Esfuerzo: 10 líneas.*
+- [ ] **Autenticar `/pusher/auth`** — `backend/index.js:170-197` acepta `user_id`/`user_name` arbitrarios y autoriza canales private-/presence-. Suplantación de usuarios en realtime. Eliminar también el shim legacy `api/pusher-auth.js` (CORS `*`). *Esfuerzo: 10 líneas.*
+- [ ] **Rate limiting** — no existe en ningún endpoint. Mínimo: `express-rate-limit` en `POST /auth/login` (brute-force) y `POST /reps` (spam). *Esfuerzo: 1-2 h.*
+- [ ] **Tope a `count` y validar `date` en `POST /reps`** — `backend/reps.js:49-103`: hoy acepta `count: 99999999` (monedas/XP/daño infinito) y fechas arbitrarias (rachas retroactivas). Sanity cap + `date` solo hoy/ayer. *Esfuerzo: 1 h.*
+- [ ] **Quitar CORS `*.vercel.app`** — `backend/index.js:92`: cualquiera puede desplegar gratis en vercel.app y pasar el allowlist con `credentials: true`. Ya no estáis en Vercel. *Esfuerzo: 5 min.*
 
 ## P0 — Promesas rotas al jugador (bugs de diseño, ~2-4 h en total)
 
-- [ ] 🌙 **Pagar los `rewards` de nodos de campaña** — `backend/data/campaigns/main-campaign.json` promete 1.000/2.500 coins por trono/finale; `applyCampaignDamage` (campaignEngine) nunca los otorga.
-- [ ] 🌙 **XP de quests de NPC ignorado** — `backend/utils/campaignQuests.js` `claimQuest` paga coins/gems/buff pero el campo `xp` del JSON es letra muerta. Pagarlo o quitarlo del JSON.
-- [ ] 🌙 **Misión `buy_legendary` incompletable** — `backend/shop.js:530` compara `'Legendary'`/`'Calisthenics'` contra rarezas reales `legendary`/`calistenico`. Nunca matchea.
-- [ ] 🌙 **`scripts/seed_rpg_items.js` con rarezas en inglés** (`special`, `calisthenic`) que las queries de cofres (`WHERE rarity = 'especial'`) no encuentran → items huérfanos.
+- [ ] **Pagar los `rewards` de nodos de campaña** — `backend/data/campaigns/main-campaign.json` promete 1.000/2.500 coins por trono/finale; `applyCampaignDamage` (campaignEngine) nunca los otorga.
+- [ ] **XP de quests de NPC ignorado** — `backend/utils/campaignQuests.js` `claimQuest` paga coins/gems/buff pero el campo `xp` del JSON es letra muerta. Pagarlo o quitarlo del JSON.
+- [ ] **Misión `buy_legendary` incompletable** — `backend/shop.js:530` compara `'Legendary'`/`'Calisthenics'` contra rarezas reales `legendary`/`calistenico`. Nunca matchea.
+- [ ] **`scripts/seed_rpg_items.js` con rarezas en inglés** (`special`, `calisthenic`) que las queries de cofres (`WHERE rarity = 'especial'`) no encuentran → items huérfanos.
 - [ ] **Cofres de nivel incoherentes** — `backend/utils/stats.js:252` (`additionalChests = 0`): ya no se ganan subiendo de nivel pero la ruleta los regala. Decidir: restaurar o renombrar.
 
 ## P1 — Rebalance económico (mes 1, empieza por una hoja de cálculo)
@@ -53,18 +67,18 @@ Protocolo de cada run nocturno:
 - [ ] **Nerfear pociones DEX de crit** — la poción calisténica `+100 dex` → 80% crit ×12 ≈ ×9.8 daño, el doble que la de ×3.5 que cuesta 12.000.
 - [ ] **Arreglar la curva de dificultad** — el daño del jugador escala superlineal, el HP enemigo 6%/nivel lineal: los enemigos se derriten más rápido cuanto más avanzas. HP debe escalar con el daño esperado.
 - [ ] **Prestigio con ROI positivo** — HP ×1.5/vuelta pero rewards ×1.25: cada NG+ paga peor. `rewards_mult ≥ hp_mult` o exclusivos (cosméticos/títulos).
-- [ ] 🌙 **Hoja de cálculo de curvas** (daño/HP/monedas por nivel y día) antes de tocar números — es una tarde y evita rebalancear a ciegas.
+- [ ] **Hoja de cálculo de curvas** (daño/HP/monedas por nivel y día) antes de tocar números — es una tarde y evita rebalancear a ciegas.
 
 ## P1 — Retención (mes 1, el mayor ROI de toda la auditoría)
 
 > Winback actual = cero: un usuario que falla UN día no recibe nada nunca más. D30 estimado hoy: 3-8%. Con estos dos primeros puntos: 10-15%.
 
-- [ ] 🌙 **Winback cron D3/D7/D14** — reutilizar la infra de `backend/utils/streakReminders.js` con query de usuarios sin reps en N días y su dato real ("tenías racha de 12"). *~1 día.*
+- [ ] **Winback cron D3/D7/D14** — reutilizar la infra de `backend/utils/streakReminders.js` con query de usuarios sin reps en N días y su dato real ("tenías racha de 12"). *~1 día.*
 - [ ] **"Día de descanso activo"** — la racha castiga descansar (obligatorio en fitness 2-3 días/semana). Botón diario que preserva racha 1×/semana gratis, o convertir el freeze de 250 monedas en descanso programado.
-- [ ] 🌙 **Matar/segmentar el blast de referral** — `backend/utils/referralReminders.js` (días 1 y 16 a TODOS): spam que quema el canal push. Solo activos >7 días que nunca refirieron, máx 1 vez.
-- [ ] 🌙 **Push "tu rival te adelantó"** — la query ya existe en `backend/social_feed.js` `/stats`; dispararla 1×/día. Reutilización pura.
+- [ ] **Matar/segmentar el blast de referral** — `backend/utils/referralReminders.js` (días 1 y 16 a TODOS): spam que quema el canal push. Solo activos >7 días que nunca refirieron, máx 1 vez.
+- [ ] **Push "tu rival te adelantó"** — la query ya existe en `backend/social_feed.js` `/stats`; dispararla 1×/día. Reutilización pura.
 - [ ] **Reto vs tu semana pasada** — fallback para el cold start social (PvP/retos mueren sin masa crítica); la tabla `reps` ya tiene los datos.
-- [ ] 🌙 **Eventos GA4 de funnel** — hoy solo pageviews: añadir `signup`, `first_log`, `push_enabled`, `spin`, `day2_return`. *Una tarde.* Quitar `@vercel/analytics` de `frontend/src/main.js` (muerto tras Coolify).
+- [ ] **Eventos GA4 de funnel** — hoy solo pageviews: añadir `signup`, `first_log`, `push_enabled`, `spin`, `day2_return`. *Una tarde.* Quitar `@vercel/analytics` de `frontend/src/main.js` (muerto tras Coolify).
 
 ## P1 — Legal / tema
 
@@ -78,32 +92,32 @@ Protocolo de cada run nocturno:
 
 ## P2 — Distribución (mes 2-6, el experimento que decide todo)
 
-- [ ] **Comprar dominio propio** (`reppy.app` / `reppy.fit`, ~10-40 €/año) + 301 desde `reppy.romandev.app`. Con ~0 tráfico la migración es una tarde; nunca será más barata que ahora.
+- [ ] 👤 **Comprar dominio propio** (`reppy.app` / `reppy.fit`, ~10-40 €/año) + 301 desde `reppy.romandev.app`. Con ~0 tráfico la migración es una tarde; nunca será más barata que ahora.
 - [ ] **Play Store vía TWA/Capacitor** (Bubblewrap, $25 una vez) — quien busca "app dominadas" espera acabar en una store. Android primero (calistenia hispana).
-- [ ] **TikTok/Shorts 2-3/semana** — el canal principal. Formatos: "mis dominadas dañan al boss", boss comunitario en vivo ("muere cuando la comunidad haga 10.000 flexiones"), progresos de usuarios.
-- [ ] **Product Hunt + Show HN** — gratis, pico de un día y backlinks DR alto (lo que le falta al dominio).
-- [ ] **Outreach mensual a listículos** — FitCraft, Bitletics, RazFit, MainQuest, AlternativeTo, listas "Habitica alternatives". Un email por sitio = backlink + tráfico de intención perfecta.
+- [ ] 👤 **TikTok/Shorts 2-3/semana** — el canal principal. Formatos: "mis dominadas dañan al boss", boss comunitario en vivo ("muere cuando la comunidad haga 10.000 flexiones"), progresos de usuarios.
+- [ ] 👤 **Product Hunt + Show HN** — gratis, pico de un día y backlinks DR alto (lo que le falta al dominio).
+- [ ] 👤 **Outreach mensual a listículos** — FitCraft, Bitletics, RazFit, MainQuest, AlternativeTo, listas "Habitica alternatives". Un email por sitio = backlink + tráfico de intención perfecta.
 - [ ] **Suscripción mínima (~€3-4/mes)** — cofres/giros extra, cosméticos, stats avanzadas. Aunque la compren 3 personas: se necesita el dato de conversión. NUNCA vender poder (mata el PvP/rankings). Hoy no hay ni Stripe.
 
 ## P2 — SEO fixes (mantenimiento, no canal principal)
 
-- [ ] 🌙 **Soft-404 global** — cualquier URL inventada devuelve 200 con la home (canonical a `/es`). Fallback 404 real o `noindex` en el catch-all del router + config Traefik/Coolify.
-- [ ] 🌙 **`/` → 301 a `/es`** (hoy 200 con canonical).
-- [ ] 🌙 **`llms.txt` con slugs ES bajo `/en/blog/`** — `frontend/public/llms.txt:29-38`.
-- [ ] 🌙 **Limpiar `frontend/index.html`** — meta keywords con ~45 términos (línea 14) y bloque `<noscript>` keyword-stuffed (178-230), redundante con SSG.
-- [ ] 🌙 **Sitemap de atletas** — 200 URLs thin casi idénticas; incluir solo perfiles con actividad mínima.
+- [ ] **Soft-404 global** — cualquier URL inventada devuelve 200 con la home (canonical a `/es`). Fallback 404 real o `noindex` en el catch-all del router + config Traefik/Coolify.
+- [ ] **`/` → 301 a `/es`** (hoy 200 con canonical).
+- [ ] **`llms.txt` con slugs ES bajo `/en/blog/`** — `frontend/public/llms.txt:29-38`.
+- [ ] **Limpiar `frontend/index.html`** — meta keywords con ~45 términos (línea 14) y bloque `<noscript>` keyword-stuffed (178-230), redundante con SSG.
+- [ ] **Sitemap de atletas** — 200 URLs thin casi idénticas; incluir solo perfiles con actividad mínima.
 - [ ] **Engordar los 10 mejores posts a 1.500-2.500 palabras** (empezar por clúster dominadas ES) y **dejar de producir posts de 300 palabras** — el 80% del blog actual es thin content que no rankea.
 
 ## P3 — Deuda técnica (a medida que se toque, no big-bang)
 
-- [ ] 🌙 **Tests + CI mínimo sobre flujos de economía** — hoy `"test": "exit 1"` y cero CI para una app con dinero virtual.
-- [ ] 🌙 **Race conditions restantes**: `backend/shop.js:255-282` (`/daily/refresh` sin transacción ni guard de gemas) y `backend/reps.js:213-230` (referral pagable 2 veces). El patrón correcto está en `roulette.js`.
+- [ ] **Tests + CI mínimo sobre flujos de economía** — hoy `"test": "exit 1"` y cero CI para una app con dinero virtual.
+- [ ] **Race conditions restantes**: `backend/shop.js:255-282` (`/daily/refresh` sin transacción ni guard de gemas) y `backend/reps.js:213-230` (referral pagable 2 veces). El patrón correcto está en `roulette.js`.
 - [ ] **Unificar las 3 fuentes de esquema** — `/db/init` (index.js:314-640, usa rareza `epic` inexistente), `schema.sql` y `ensureSchemaMigrations()`. Drift garantizado.
 - [ ] **Trocear archivos monstruo al tocarlos** — `Dashboard.vue` (1.829), `Inventory.vue` (1.587), `Shop.vue` (1.317), `backend/training.js` (1.147), handler `POST /reps` (~10 responsabilidades).
 - [ ] **JWT**: 30 días con `is_admin` embebido y sin revocación — refresh tokens o TTL corto.
-- [ ] 🌙 **`backend/db.js:14`** `ssl: { rejectUnauthorized: false }` (MITM) · **`backend/hevy.js:66`** verificar si la API key se guarda en claro.
-- [ ] 🌙 **Borrar `api/`** (shim Vercel muerto) y el doble montaje de `apiRouter` en `/api` y `/` (index.js:228-229).
-- [ ] 🌙 **`social_feed.js:318`** — `page` no numérico → 500 en vez de 400.
+- [ ] **`backend/db.js:14`** `ssl: { rejectUnauthorized: false }` (MITM) · **`backend/hevy.js:66`** verificar si la API key se guarda en claro.
+- [ ] **Borrar `api/`** (shim Vercel muerto) y el doble montaje de `apiRouter` en `/api` y `/` (index.js:228-229).
+- [ ] **`social_feed.js:318`** — `page` no numérico → 500 en vez de 400.
 - [ ] **`config.path` de campaña sin consumir** — `curse_damage_multiplier`/`blessing_hours` no afectan al gameplay; implementarlo o quitarlo.
 
 ---
