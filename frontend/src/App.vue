@@ -106,6 +106,10 @@
         <Bell class="w-4 h-4" />
         <b v-if="notifStore.unreadCount > 0" class="os-topstrip__count os-num">{{ notifStore.unreadCount }}</b>
       </button>
+      <router-link :to="{ name: 'profile', params: { lang: i18n.locale, userId: authStore.user?.id } }"
+        class="os-topstrip__chip" :title="i18n.t('nav_profile')">
+        <AvatarFrame :src="authStore.user?.avatar_url" :size="24" />
+      </router-link>
     </nav>
 
     <!-- Classic Navigation Bar (estilo original, pre-Operative OS) -->
@@ -634,9 +638,11 @@ const mobileNavLeft = computed(() => [
   { id: 'dashboard', icon: LayoutDashboard, label: 'nav_camp', tag: 'CTRL' },
   { id: 'social', icon: Users, label: 'nav_social', tag: 'SQUAD' },
 ]);
+// Derecha: GEAR + YOU (perfil). La tienda se alcanza desde las estaciones
+// del dashboard y el rail desktop; la guía fija 4 destinos núcleo en móvil.
 const mobileNavRight = computed(() => [
   { id: 'inventory', icon: Package, label: 'nav_inventory', tag: 'GEAR' },
-  { id: 'shop', icon: ShoppingBag, label: 'nav_shop', tag: 'ARMORY' },
+  { id: 'profile', icon: User, label: 'nav_profile', tag: 'YOU' },
 ]);
 
 const getMobileNavTo = (nav) => {
