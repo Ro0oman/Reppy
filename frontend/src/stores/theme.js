@@ -3,10 +3,25 @@ import { ref, watch } from 'vue';
 import { useAuthStore } from './auth';
 import axios from 'axios';
 
+// Estilos de interfaz disponibles. 'operative' = Operative OS (rail +
+// telemetría + obsidiana); 'classic' = la vista previa al rediseño.
+// Añadir aquí futuros estilos (p. ej. 'ascend') y su etiqueta en el selector.
+export const UI_STYLES = ['operative', 'classic'];
+
 export const useThemeStore = defineStore('theme', () => {
   const authStore = useAuthStore();
   // Default to 'dark' if no preference is found
   const theme = ref((!import.meta.env.SSR && localStorage.getItem('reppy_theme')) || 'dark');
+
+  // Estilo de interfaz (skin estructural, independiente de dark/light).
+  const storedStyle = !import.meta.env.SSR && localStorage.getItem('reppy_ui_style');
+  const uiStyle = ref(UI_STYLES.includes(storedStyle) ? storedStyle : 'operative');
+
+  const setUiStyle = (style) => {
+    if (!UI_STYLES.includes(style)) return;
+    uiStyle.value = style;
+    if (!import.meta.env.SSR) localStorage.setItem('reppy_ui_style', style);
+  };
 
   // Sync with DB if user theme changes (e.g., on login)
   watch(() => authStore.user?.theme, (newDbTheme) => {
@@ -73,6 +88,8 @@ export const useThemeStore = defineStore('theme', () => {
   return {
     theme,
     setTheme,
+    uiStyle,
+    setUiStyle,
     init
   };
 });

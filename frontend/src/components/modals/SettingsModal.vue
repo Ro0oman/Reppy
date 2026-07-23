@@ -59,13 +59,33 @@
                 <div class="space-y-3">
                   <label class="text-[10px] font-black uppercase text-muted tracking-widest px-1">LANGUAGE_PACK</label>
                   <div class="flex items-center bg-surface/40 border border-border rounded-xl p-1 h-12">
-                     <button @click="i18n.setLocale('en')" 
+                     <button @click="i18n.setLocale('en')"
                              class="flex-1 h-full rounded-lg text-[10px] font-black transition-all"
                              :class="i18n.locale === 'en' ? 'bg-primary-500 text-white' : 'text-muted'">EN</button>
-                     <button @click="i18n.setLocale('es')" 
+                     <button @click="i18n.setLocale('es')"
                              class="flex-1 h-full rounded-lg text-[10px] font-black transition-all"
                              :class="i18n.locale === 'es' ? 'bg-primary-500 text-white' : 'text-muted'">ES</button>
                   </div>
+                </div>
+              </div>
+
+              <!-- UI style: skin estructural (Operative OS / clásica / futuras) -->
+              <div class="space-y-3 text-left">
+                <label class="text-[10px] font-black uppercase text-muted tracking-widest px-1">UI_STYLE</label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button v-for="style in uiStyles" :key="style.id" @click="themeStore.setUiStyle(style.id)"
+                    class="flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all active:scale-[0.98]"
+                    :class="themeStore.uiStyle === style.id
+                      ? 'border-primary-500/60 bg-primary-500/10'
+                      : 'border-border bg-surface/40 hover:border-primary-500/30'">
+                    <component :is="style.icon" class="w-4 h-4 mt-0.5 shrink-0"
+                      :class="themeStore.uiStyle === style.id ? 'text-primary-500' : 'text-muted'" />
+                    <span class="min-w-0">
+                      <span class="block text-xs font-black uppercase tracking-wide"
+                        :class="themeStore.uiStyle === style.id ? 'text-primary-500' : 'text-foreground'">{{ style.name }}</span>
+                      <span class="block text-[11px] text-muted mt-0.5 leading-snug">{{ style.desc }}</span>
+                    </span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -147,7 +167,7 @@
 
 <script setup>
 import { ref, watch, onUnmounted } from 'vue';
-import { X, Sun, Moon, Monitor, LogOut, ChevronRight, Link2 } from 'lucide-vue-next';
+import { X, Sun, Moon, Monitor, LogOut, ChevronRight, Link2, Crosshair, LayoutTemplate } from 'lucide-vue-next';
 import { useI18nStore } from '@/stores/i18n';
 import { useThemeStore } from '@/stores/theme';
 import { useAuthStore } from '@/stores/auth';
@@ -168,6 +188,27 @@ const notificationStore = useNotificationStore();
 
 const form = ref({ ...props.initialData });
 const saving = ref(false);
+
+// Estilos de interfaz seleccionables. Para añadir uno futuro: entrada aquí
+// + su id en UI_STYLES (stores/theme.js) + su chrome en App.vue.
+const uiStyles = [
+  {
+    id: 'operative',
+    icon: Crosshair,
+    name: 'Operative OS',
+    desc: i18n.locale === 'es'
+      ? 'Consola de misión: rails, telemetría y obsidiana.'
+      : 'Mission console: rails, telemetry and obsidian.',
+  },
+  {
+    id: 'classic',
+    icon: LayoutTemplate,
+    name: i18n.locale === 'es' ? 'Original' : 'Classic',
+    desc: i18n.locale === 'es'
+      ? 'La vista clásica previa al rediseño.'
+      : 'The classic pre-redesign look.',
+  },
+];
 
 // ── Hevy integration ──────────────────────────────────────────────
 const hevy = ref({ connected: false, lastSync: null, volumeKg: 0, apiKey: '', busy: false });
