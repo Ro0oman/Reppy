@@ -110,7 +110,7 @@ Protocolo de cada run:
 - [ ] **Soft-404 global** — cualquier URL inventada devuelve 200 con la home (canonical a `/es`). Fallback 404 real o `noindex` en el catch-all del router + config Traefik/Coolify.
 - [ ] **`/` → 301 a `/es`** (hoy 200 con canonical).
 - [ ] **`llms.txt` con slugs ES bajo `/en/blog/`** — `frontend/public/llms.txt:29-38`.
-- [ ] **Limpiar `frontend/index.html`** — meta keywords con ~45 términos (línea 14) y bloque `<noscript>` keyword-stuffed (178-230), redundante con SSG.
+- [ ] 🔨 PR #320 **Limpiar `frontend/index.html`** — meta keywords con ~45 términos (línea 14) y bloque `<noscript>` keyword-stuffed (178-230), redundante con SSG.
 - [ ] **Sitemap de atletas** — 200 URLs thin casi idénticas; incluir solo perfiles con actividad mínima.
 - [ ] **Engordar los 10 mejores posts a 1.500-2.500 palabras** (empezar por clúster dominadas ES) y **dejar de producir posts de 300 palabras** — el 80% del blog actual es thin content que no rankea.
 
