@@ -176,14 +176,30 @@ apiRouter.use('/campaign', campaignRoutes);
 
 // Pusher Auth Endpoint — en apiRouter para que funcione con y sin prefijo /api
 // (Coolify/Traefik quita el prefijo /api; apiRouter está montado en '/api' y en '/').
-apiRouter.post('/pusher/auth', async (req, res) => {
-  console.log('[PUSHER AUTH REQUEST RECEIVED] Body:', req.body);
+//
+// SECURITY: the identity used to authorize private-/presence- channels is
+// derived exclusively from the JWT (via `authenticate`) and the DB — never from
+// the request body. Previously the endpoint trusted `user_id`/`user_name` from
+// the body, letting anyone impersonate any user on realtime channels.
+apiRouter.post('/pusher/auth', authenticate, async (req, res) => {
   const socketId = req.body.socket_id;
   const channel = req.body.channel_name;
-  
-  const userId = String(req.body.user_id || req.query.user_id || 'anonymous-' + Math.random().toString(36).substr(2, 9));
-  const userName = req.body.user_name || req.query.user_name || 'Anonymous';
-  const avatarUrl = req.body.avatar_url || req.query.avatar_url || '';
+
+  if (!socketId || !channel) {
+    return res.status(400).json({ error: 'Missing socket_id or channel_name' });
+  }
+
+  const userId = String(req.user.id);
+
+  // A user may only authorize their OWN private-user channel. Other channels
+  // (presence-global, presence-pvp-*, other private-*) require authentication
+  // but are not tied to a specific user id.
+  if (channel.startsWith('private-user-')) {
+    const owner = channel.slice('private-user-'.length);
+    if (owner !== userId) {
+      return res.status(403).json({ error: 'Forbidden channel' });
+    }
+  }
 
   try {
     const getPusher = (await import('./pusher.js')).default;
@@ -191,15 +207,31 @@ apiRouter.post('/pusher/auth', async (req, res) => {
     if (!pusher) {
       throw new Error('Pusher not initialized. Check environment variables.');
     }
+
+    // Identity for presence channels comes from the DB, not the client.
+    let userName = 'Atleta';
+    let avatarUrl = '';
+    let level = 1;
+    try {
+      const uRes = await query('SELECT name, avatar_url, current_level FROM users WHERE id = $1', [userId]);
+      if (uRes.rows.length > 0) {
+        userName = uRes.rows[0].name || userName;
+        avatarUrl = uRes.rows[0].avatar_url || '';
+        level = uRes.rows[0].current_level || 1;
+      }
+    } catch (dbErr) {
+      console.error('[PUSHER AUTH] Could not load user info, using defaults:', dbErr.message);
+    }
+
     const auth = pusher.authorizeChannel(socketId, channel, {
       user_id: userId,
-      user_info: { name: userName, avatar_url: avatarUrl }
+      user_info: { name: userName, avatar_url: avatarUrl, level }
     });
     res.send(auth);
   } catch (error) {
     console.error(`[PUSHER AUTH ERROR]`, error);
-    res.status(500).json({ 
-      error: error.message, 
+    res.status(500).json({
+      error: error.message,
       details: 'Error during authorizeChannel'
     });
   }
