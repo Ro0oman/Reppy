@@ -79,11 +79,11 @@ Protocolo de cada run:
 
 > Winback actual = cero: un usuario que falla UN día no recibe nada nunca más. D30 estimado hoy: 3-8%. Con estos dos primeros puntos: 10-15%.
 
-- [ ] **Winback cron D3/D7/D14** — reutilizar la infra de `backend/utils/streakReminders.js` con query de usuarios sin reps en N días y su dato real ("tenías racha de 12"). *~1 día.*
-- [ ] **"Día de descanso activo"** — la racha castiga descansar (obligatorio en fitness 2-3 días/semana). Botón diario que preserva racha 1×/semana gratis, o convertir el freeze de 250 monedas en descanso programado.
+- [ ] 🔨 PR #317 **Winback cron D3/D7/D14** — reutilizar la infra de `backend/utils/streakReminders.js` con query de usuarios sin reps en N días y su dato real ("tenías racha de 12"). *~1 día.*
+- [ ] ⏸️ PREGUNTA **"Día de descanso activo"** — la racha castiga descansar (obligatorio en fitness 2-3 días/semana). **Opciones**: (A) botón diario que preserva la racha 1×/semana gratis (nuevo mecanismo + tabla de uso semanal). (B) reconvertir el freeze de 250 monedas en "descanso programado" gratuito 1×/semana. (C) que la racha cuente "días activos de 7" en vez de días consecutivos. *Recomiendo (A)*: claro y generoso, sin tocar la economía del freeze. Cambia la mecánica core de racha → decisión de Roman (y define cuántos descansos/semana).
 - [ ] 🔨 PR #315 **Matar/segmentar el blast de referral** — `backend/utils/referralReminders.js` (días 1 y 16 a TODOS): spam que quema el canal push. Solo activos >7 días que nunca refirieron, máx 1 vez.
 - [ ] 🔨 PR #316 **Push "tu rival te adelantó"** — la query ya existe en `backend/social_feed.js` `/stats`; dispararla 1×/día. Reutilización pura.
-- [ ] **Reto vs tu semana pasada** — fallback para el cold start social (PvP/retos mueren sin masa crítica); la tabla `reps` ya tiene los datos.
+- [ ] ⏸️ PREGUNTA **Reto vs tu semana pasada** — fallback para el cold start social (PvP/retos mueren sin masa crítica); la tabla `reps` ya tiene los datos. **Falta definir producto**: ¿qué es el "reto" mecánicamente? (a) meta = reps de tu semana pasada, con recompensa (¿coins/gems/cofre?) al superarla; (b) ¿semanal con reset los lunes?; (c) ¿UI nueva en Dashboard/Social o solo un push? Los datos existen (query semanal ya usada en `/social-feed/stats`), pero el diseño (recompensa + framing + dónde vive) es decisión de Roman. *Recomiendo*: meta = reps semana previa, recompensa pequeña fija (p. ej. 1 cofre común) al igualar/superar, card en Dashboard.
 - [ ] **Eventos GA4 de funnel** — hoy solo pageviews: añadir `signup`, `first_log`, `push_enabled`, `spin`, `day2_return`. *Una tarde.* Quitar `@vercel/analytics` de `frontend/src/main.js` (muerto tras Coolify).
 
 ## P1 — Legal / tema
