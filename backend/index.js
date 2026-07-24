@@ -51,6 +51,11 @@ import { sweepExpiredPacts } from './utils/campaignQuests.js';
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+// Behind Coolify/Traefik (single reverse-proxy hop). Lets express-rate-limit
+// and any IP-based logic read the real client IP from X-Forwarded-For instead
+// of treating every request as coming from the proxy.
+app.set('trust proxy', 1);
+
 // --- SCHEDULED TASKS ---
 // Cron jobs are only useful on long-running Node processes. In serverless
 // deployments, module startup can happen on normal visits and must not send push.

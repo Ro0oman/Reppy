@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { query } from './db.js';
 import { ensureUsername } from './utils/username.js';
+import { loginLimiter } from './utils/rateLimiters.js';
 
 const router = express.Router();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -150,7 +151,7 @@ router.post('/signup', async (req, res) => {
 });
 
 // Manual Login
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
   const { email, password } = req.body;
 
   try {
