@@ -45,6 +45,7 @@ import { authenticate } from './middleware.js';
 import cron from 'node-cron';
 import { runStreakReminders } from './utils/streakReminders.js';
 import { runReferralReminders } from './utils/referralReminders.js';
+import { runWinbackReminders } from './utils/winbackReminders.js';
 import { autoFinishExpiredFights } from './utils/pvp_cleanup.js';
 import { sweepExpiredPacts } from './utils/campaignQuests.js';
 
@@ -61,6 +62,13 @@ if (process.env.VERCEL !== '1') {
     runStreakReminders()
       .then(count => console.log(`[CRON] Recordatorios enviados: ${count}`))
       .catch(err => console.error('[CRON] Error en recordatorios:', err));
+  });
+  // Winback pushes for lapsed users at day 3/7/14 of inactivity, daily at 17:00.
+  cron.schedule('0 17 * * *', () => {
+    console.log('[CRON] Iniciando winback D3/D7/D14...');
+    runWinbackReminders()
+      .then(count => console.log(`[CRON] Winback enviados: ${count}`))
+      .catch(err => console.error('[CRON] Error en winback:', err));
   });
   // Referral reminder every 15 days at 12:00 (days 1 and 16 of each month)
   cron.schedule('0 12 1,16 * *', () => {
