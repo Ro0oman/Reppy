@@ -728,6 +728,8 @@ async function ensureAllTrainingExercisesExist() {
 async function ensureSchemaMigrations() {
   try {
     await query('ALTER TABLE users ADD COLUMN IF NOT EXISTS last_daily_spin_at TIMESTAMP WITH TIME ZONE');
+    // Referral-invite push is sent at most once per user (see referralReminders.js).
+    await query('ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_reminder_sent BOOLEAN DEFAULT FALSE');
     // Per-user "feature seen" flags that drive the NEW badges/dots.
     await query(`CREATE TABLE IF NOT EXISTS user_feature_seen (
         user_id     VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,

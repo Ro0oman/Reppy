@@ -317,6 +317,8 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS skill_perks JSONB DEFAULT '{}'::jsonb
 ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_code VARCHAR(20) UNIQUE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS referred_by VARCHAR(255) REFERENCES users(id);
 ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_reward_given BOOLEAN DEFAULT FALSE;
+-- Ensures the referral-invite push is sent at most once per user (see referralReminders.js).
+ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_reminder_sent BOOLEAN DEFAULT FALSE;
 CREATE INDEX IF NOT EXISTS idx_users_referral_code ON users(referral_code);
 CREATE INDEX IF NOT EXISTS idx_users_referred_by ON users(referred_by);
 
