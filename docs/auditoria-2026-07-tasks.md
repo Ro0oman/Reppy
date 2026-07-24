@@ -123,7 +123,7 @@ Protocolo de cada run:
 - [ ] **JWT**: 30 días con `is_admin` embebido y sin revocación — refresh tokens o TTL corto.
 - [ ] **`backend/db.js:14`** `ssl: { rejectUnauthorized: false }` (MITM) · **`backend/hevy.js:66`** verificar si la API key se guarda en claro.
 - [ ] **Borrar `api/`** (shim Vercel muerto) y el doble montaje de `apiRouter` en `/api` y `/` (index.js:228-229).
-- [ ] **`social_feed.js:318`** — `page` no numérico → 500 en vez de 400.
+- [ ] 🔨 PR #319 **`social_feed.js:318`** — `page` no numérico → 500 en vez de 400.
 - [ ] **`config.path` de campaña sin consumir** — `curse_damage_multiplier`/`blessing_hours` no afectan al gameplay; implementarlo o quitarlo.
 
 ---
