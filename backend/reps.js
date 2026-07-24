@@ -1,6 +1,7 @@
 import express from 'express';
 import pool, { query } from './db.js';
 import { authenticate } from './middleware.js';
+import { repsLimiter } from './utils/rateLimiters.js';
 import { getExerciseRewards, getBossDamageMultiplier } from './utils/rewards.js';
 import { recalculateUserStats, augmentUserWithLevels } from './utils/stats.js';
 
@@ -45,7 +46,7 @@ router.get('/', authenticate, async (req, res) => {
 });
 
 // Add or update reps for a date
-router.post('/', authenticate, async (req, res) => {
+router.post('/', authenticate, repsLimiter, async (req, res) => {
   const { count, date, exercise_type = 'pullups', added_weight = 0 } = req.body;
   const userId = req.user.id;
 
