@@ -315,7 +315,13 @@ router.get('/personal-insight', authenticate, async (req, res) => {
 router.get('/feed', optionalAuthenticate, async (req, res) => {
   const { filter = 'global', page = 1 } = req.query;
   const limit = 10;
-  const offset = (page - 1) * limit;
+  // A non-numeric/invalid `page` used to produce OFFSET NaN and a 500. Validate
+  // to a positive integer and return 400 for bad input instead.
+  const pageNum = Number(page);
+  if (!Number.isInteger(pageNum) || pageNum < 1) {
+    return res.status(400).json({ message: 'Invalid page' });
+  }
+  const offset = (pageNum - 1) * limit;
   const userId = req.user?.id || null;
   
   // Kick off expired-fight cleanup in the background (throttled, never awaited)
