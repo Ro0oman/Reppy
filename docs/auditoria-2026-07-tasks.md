@@ -65,13 +65,15 @@ Protocolo de cada run:
 
 > Hoy entrenar aporta solo el ~10-15% del ingreso diario de un jugador con racha. La app premia abrir, no entrenar.
 
-- [ ] **Cap a la recompensa de racha** — `backend/utils/stats.js:300`: `streak × 50` sin tope (día 100 = 5.000 monedas/día por 1 rep). Propuesta: `50 + 5×min(streak,30)` o hitos discretos 7/30/100.
-- [ ] **Bajar el EV de la ruleta 4h** (~430 monedas/día por hacer clic) — `backend/roulette.js` + sincronizar `frontend/src/components/shop/LuckyWheel.vue`.
-- [ ] **Domar la bola de nieve de FE** — `backend/utils/damage.js:73` (`fthLvl × 25` plano por rep) + `backend/utils/stats.js:193` (XP de FE viene del daño → feedback positivo puro). Hacer el bono % pequeño y que FE suba por otra vía (raids, quests).
-- [ ] **Nerfear pociones DEX de crit** — la poción calisténica `+100 dex` → 80% crit ×12 ≈ ×9.8 daño, el doble que la de ×3.5 que cuesta 12.000.
-- [ ] **Arreglar la curva de dificultad** — el daño del jugador escala superlineal, el HP enemigo 6%/nivel lineal: los enemigos se derriten más rápido cuanto más avanzas. HP debe escalar con el daño esperado.
-- [ ] **Prestigio con ROI positivo** — HP ×1.5/vuelta pero rewards ×1.25: cada NG+ paga peor. `rewards_mult ≥ hp_mult` o exclusivos (cosméticos/títulos).
-- [ ] **Hoja de cálculo de curvas** (daño/HP/monedas por nivel y día) antes de tocar números — es una tarde y evita rebalancear a ciegas.
+> **Base de datos para decidir**: PR #314 añade `docs/economy-curves-2026-07.md` + `backend/scripts/analyze_economy_curves.js` (curvas reales). Los ⏸️ de abajo referencian esos números. Todos son decisiones de balance — no se implementan hasta que Roman elija.
+
+- [ ] ⏸️ PREGUNTA **Cap a la recompensa de racha** — `backend/utils/stats.js:300`: `streak × 50` sin tope (día 100 = 5.000 monedas/día por 1 rep; ver §4 del informe). **Opciones**: (A) `50 + 5×min(streak,30)` → cap 200/día. (B) hitos discretos 7/30/100 → 150/400/1000. (C) otro número. *Recomiendo (A)*: suave, acotado, fácil. Solo falta que Roman fije la curva.
+- [ ] ⏸️ PREGUNTA **Bajar el EV de la ruleta 4h** — `backend/roulette.js` (EV real = 426 monedas/día pasivas, §3) + sincronizar `frontend/src/components/shop/LuckyWheel.vue`. **Opciones**: (A) subir cooldown 4h→6/8h. (B) recortar pesos de premios altos (id 4/5 = 350/600). (C) ambas. *Recomiendo (B)* para no castigar el hábito de abrir, solo el EV. Roman decide el objetivo de monedas/día.
+- [ ] ⏸️ PREGUNTA **Domar la bola de nieve de FE** — `backend/utils/damage.js` (`divineBonus = fthLvl × 25` plano/rep, es >80% del daño temprano, §2) + `stats.js:193` (XP de FE = daño → feedback positivo). **Opciones**: (A) bajar el flat (25→~5) y compensar. (B) convertir el flat en un bono %. (C) que FE suba por raids/quests, no por daño. *Recomiendo (A)+(C)*. Cambia el feel del combate → decisión de Roman.
+- [ ] ⏸️ PREGUNTA **Nerfear pociones DEX de crit** — poción calisténica `+100 dex` → ~80% crit ×~12 ≈ ×9.8 daño (el crit esperado a nivel alto ya multiplica ×~10, §1), doble que la de ×3.5 que cuesta 12.000. **Opciones**: (A) bajar el `dex_bonus` de la poción. (B) bajar el cap de crit (80%) o la escala `dex×2.5`. (C) subir su precio. *Recomiendo (A)*: es un outlier puntual. Roman fija el número.
+- [ ] ⏸️ PREGUNTA **Arreglar la curva de dificultad** — HP enemigo `1+0.05·L` lineal vs daño superlineal → reps-para-matar cae 41→0.01 (§1). **Opciones**: (A) HP escala con el daño esperado del jugador (cuadrático en L). (B) subir mucho `hp_per_level`/`prestige_mult`. *Recomiendo (A)* pero requiere re-derivar la fórmula de HP contra la de daño → decisión + diseño de Roman.
+- [ ] ⏸️ PREGUNTA **Prestigio con ROI positivo** — HP ×1.5/vuelta (`config.hp.prestige_mult`) pero rewards ×1.25 (`config.rewards.prestige_mult`): cada NG+ paga peor. **Opciones**: (A) `rewards_mult ≥ hp_mult`. (B) recompensas exclusivas (cosméticos/títulos) en vez de más coins. *Recomiendo (B)* (evita inflación) o (A) como mínimo. Decisión de diseño de Roman.
+- [ ] 🔨 PR #314 **Hoja de cálculo de curvas** (daño/HP/monedas por nivel y día) antes de tocar números — hecho: `docs/economy-curves-2026-07.md` + `backend/scripts/analyze_economy_curves.js`.
 
 ## P1 — Retención (mes 1, el mayor ROI de toda la auditoría)
 
