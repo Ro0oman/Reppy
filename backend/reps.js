@@ -45,9 +45,36 @@ router.get('/', authenticate, async (req, res) => {
 });
 
 // Add or update reps for a date
+// Sanity cap for a single logging event. Without it `count: 99999999` grants
+// effectively unbounded coins/XP/boss damage. The `count` field also carries
+// seconds for timed exercises, so the cap is generous (100k = ~27h if seconds)
+// yet still blocks absurd values.
+const MAX_REP_COUNT = 100000;
+
 router.post('/', authenticate, async (req, res) => {
   const { count, date, exercise_type = 'pullups', added_weight = 0 } = req.body;
   const userId = req.user.id;
+
+  // --- Input validation (P0 security) ---
+  const numericCount = Number(count);
+  if (!Number.isFinite(numericCount) || numericCount < 0) {
+    return res.status(400).json({ message: 'count inválido' });
+  }
+  if (numericCount > MAX_REP_COUNT) {
+    return res.status(400).json({ message: `count fuera de rango (máximo ${MAX_REP_COUNT})` });
+  }
+
+  // A provided date may only be today or yesterday (server local time). This
+  // blocks backfilling arbitrary dates to forge retroactive streaks. When
+  // omitted, the handler defaults to today below.
+  if (date !== undefined && date !== null && date !== '') {
+    const validFormat = typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date);
+    const today = getLocalDateString();
+    const yesterday = getLocalDateString(new Date(Date.now() - 24 * 60 * 60 * 1000));
+    if (!validFormat || (date !== today && date !== yesterday)) {
+      return res.status(400).json({ message: 'date solo puede ser hoy o ayer' });
+    }
+  }
 
   const client = await pool.connect();
   try {
