@@ -352,7 +352,7 @@ export async function applyCampaignDamage(client, { user, effectiveCount, exerci
   // Find the engaged node + its enemy for the user's active run.
   const engRes = await client.query(
     `SELECT unp.id AS progress_id, unp.node_id, unp.enemy_current_hp, unp.enemy_total_hp, unp.kills,
-            n.slug AS node_slug, n.type AS node_type, n.pack, z.slug AS zone_slug, cr.id AS run_id,
+            n.slug AS node_slug, n.type AS node_type, n.pack, n.rewards AS node_rewards, z.slug AS zone_slug, cr.id AS run_id,
             cr.campaign_id, cr.prestige_level, c.config AS campaign_config,
             e.id AS enemy_id, e.slug AS enemy_slug, e.family AS enemy_family, e.tier AS enemy_tier,
             e.base_hp, e.weakness_stat, e.resist_stat, e.scaling AS enemy_scaling, e.loot AS enemy_loot
@@ -391,6 +391,7 @@ export async function applyCampaignDamage(client, { user, effectiveCount, exerci
   let killed = false;
   let cleared = false;
   let loot = null;
+  let nodeReward = null;
 
   if (newHp > 0) {
     await client.query(
@@ -421,6 +422,28 @@ export async function applyCampaignDamage(client, { user, effectiveCount, exerci
          WHERE id = $2`,
         [newKills, row.progress_id]
       );
+
+      // Node-completion reward promised by the campaign JSON (e.g. 1000/2500
+      // coins for a throne/finale). Previously the `rewards` column was never
+      // paid out. Granted exactly once: clearing flips the node to 'cleared',
+      // so the engaged-node query above can never match this node again — no
+      // double-pay even across many rep-logging events. Prestige scales it the
+      // same way enemy loot is scaled, for consistency.
+      const nodeRewards = row.node_rewards || {};
+      let rewardCoins = Math.max(0, Math.floor(Number(nodeRewards.coins) || 0));
+      if (rewardCoins > 0) {
+        const cfg = row.campaign_config;
+        const prestigeMult = Math.pow(
+          (cfg && cfg.rewards && cfg.rewards.prestige_mult) || 1.25,
+          row.prestige_level || 0
+        );
+        rewardCoins = Math.round(rewardCoins * prestigeMult);
+        await client.query(
+          'UPDATE users SET reppy_coins = reppy_coins + $1 WHERE id = $2',
+          [rewardCoins, userId]
+        );
+        nodeReward = { coins: rewardCoins };
+      }
 
       // Campaign completion: clearing the FINALE flags the run as finished so the
       // player can prestige. The finale is a 'boss' node that nothing depends on —
@@ -475,7 +498,7 @@ export async function applyCampaignDamage(client, { user, effectiveCount, exerci
     killed, cleared, isCrit: dmg.isCrit,
   });
 
-  return { nodeId: row.node_id, damage, killed, cleared, loot };
+  return { nodeId: row.node_id, damage, killed, cleared, loot, nodeReward };
 }
 
 /**
