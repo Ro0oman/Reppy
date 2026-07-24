@@ -84,12 +84,15 @@ if (process.env.VERCEL !== '1') {
 }
 // -----------------------
 
-// CORS allowlist: prod origin, Vercel preview deploys, and localhost dev.
-// In prod the SPA is same-origin with the API, so requests usually carry no
-// Origin header (allowed below); the allowlist guards genuine cross-origin calls.
+// CORS allowlist: prod origin and localhost dev. In prod the SPA is same-origin
+// with the API, so requests usually carry no Origin header (allowed below); the
+// allowlist guards genuine cross-origin calls.
+//
+// NOTE: the previous `/\.vercel\.app$/` entry was a hole — anyone can deploy for
+// free on a *.vercel.app subdomain and would then pass the allowlist with
+// credentials. The app runs on Coolify now, so all Vercel origins are removed.
 const allowedOrigins = [
-  'https://reppy-weld.vercel.app',
-  /\.vercel\.app$/, // preview deployments
+  'https://reppy.romandev.app',
   'http://localhost:5173',
   'http://localhost:5174',
   'http://localhost:5001',
