@@ -5,12 +5,23 @@ import { recalculateUserStats } from './utils/stats.js';
 
 const router = express.Router();
 
-// ALWAYS ALLOW FOR PLAYWRIGHT E2E TESTING
-const isTestAllowed = true;
+// These endpoints hand out coins/gems/items/stats/chests with no cost and MUST
+// NEVER be reachable in production — any authenticated user could self-grant
+// infinite currency. They exist only for local dev and Playwright E2E runs.
+//
+// Enabled outside production, or with an explicit ENABLE_TEST_ENDPOINTS=1
+// opt-in (e.g. a Playwright run against a staging build that sets
+// NODE_ENV=production). In production without that flag they are unmounted.
+export const testEndpointsEnabled =
+  process.env.NODE_ENV !== 'production' || process.env.ENABLE_TEST_ENDPOINTS === '1';
 
-if (!isTestAllowed) {
-  router.use((req, res) => res.status(403).json({ message: 'Test endpoints disabled' }));
-}
+// Defensive guard: even if this router is ever mounted while disabled, refuse
+// every request under it. `/test/ping` (presence) lives outside this router, so
+// it is unaffected. 404 rather than 403 to avoid advertising the endpoints.
+router.use((req, res, next) => {
+  if (!testEndpointsEnabled) return res.status(404).json({ message: 'Not found' });
+  next();
+});
 
 // Give coins to a user
 router.post('/add-coins', authenticate, async (req, res) => {

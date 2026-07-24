@@ -30,7 +30,7 @@ import adminRoutes from './admin.js';
 import blogRoutes from './blog.js';
 import pvpRoutes from './pvp.js';
 import challengeRoutes from './async_challenges.js';
-import testRoutes from './test.js';
+import testRoutes, { testEndpointsEnabled } from './test.js';
 import missionsRoutes from './missions.js';
 import pushRoutes from './push.js';
 import trainingRoutes from './training.js';
@@ -154,7 +154,16 @@ apiRouter.use('/admin', adminRoutes);
 apiRouter.use('/blog-tracking', blogRoutes);
 apiRouter.use('/pvp', pvpRoutes);
 apiRouter.use('/challenges', challengeRoutes);
-apiRouter.use('/test', testRoutes);
+// Test/E2E-only endpoints (coins/gems/items/stats cheats). Mounted only when
+// explicitly enabled — see testEndpointsEnabled in test.js. In production they
+// are absent entirely. NOTE: the presence `/test/ping` handler below is
+// defined directly on apiRouter and is intentionally always available.
+if (testEndpointsEnabled) {
+  apiRouter.use('/test', testRoutes);
+  console.log('[BOOT] Test/E2E endpoints ENABLED under /test (non-production).');
+} else {
+  console.log('[BOOT] Test/E2E endpoints disabled (production).');
+}
 apiRouter.use('/missions', missionsRoutes);
 apiRouter.use('/push', pushRoutes);
 apiRouter.use('/training', trainingRoutes);
