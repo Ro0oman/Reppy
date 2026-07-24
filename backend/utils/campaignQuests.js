@@ -242,11 +242,20 @@ export async function claimQuest(client, run, questId, userId) {
   const rewards = qRes.rows[0]?.rewards || {};
   const coins = Number(rewards.coins) || 0;
   const gems = Number(rewards.gems) || 0;
+  // The JSON promised `xp` but it was never granted. XP is paid into cha_xp —
+  // the persistent, additive XP bucket that feeds total_xp/current_level and is
+  // NOT recomputed by recalculateUserStats. This mirrors how training-plan XP
+  // rewards are granted (see training.js).
+  const xp = Math.max(0, Math.floor(Number(rewards.xp) || 0));
 
-  if (coins || gems) {
+  if (coins || gems || xp) {
     await client.query(
-      'UPDATE users SET reppy_coins = reppy_coins + $1, reppy_gems = reppy_gems + $2 WHERE id = $3',
-      [coins, gems, userId]
+      `UPDATE users
+       SET reppy_coins = reppy_coins + $1,
+           reppy_gems = reppy_gems + $2,
+           cha_xp = COALESCE(cha_xp, 0) + $3
+       WHERE id = $4`,
+      [coins, gems, xp, userId]
     );
     if (gems > 0) {
       await client.query(
@@ -271,7 +280,7 @@ export async function claimQuest(client, run, questId, userId) {
     blessing = { multiplier: Number(buff.multiplier), hours: Number(buff.hours) };
   }
 
-  return { status: 200, body: { message: 'Recompensa reclamada', reward_coins: coins, reward_gems: gems, blessing } };
+  return { status: 200, body: { message: 'Recompensa reclamada', reward_coins: coins, reward_gems: gems, reward_xp: xp, blessing } };
 }
 
 /**
