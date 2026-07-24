@@ -45,6 +45,7 @@ import { authenticate } from './middleware.js';
 import cron from 'node-cron';
 import { runStreakReminders } from './utils/streakReminders.js';
 import { runReferralReminders } from './utils/referralReminders.js';
+import { runRivalReminders } from './utils/rivalReminders.js';
 import { autoFinishExpiredFights } from './utils/pvp_cleanup.js';
 import { sweepExpiredPacts } from './utils/campaignQuests.js';
 
@@ -66,6 +67,13 @@ if (process.env.VERCEL !== '1') {
     runStreakReminders()
       .then(count => console.log(`[CRON] Recordatorios enviados: ${count}`))
       .catch(err => console.error('[CRON] Error en recordatorios:', err));
+  });
+  // "Your rival overtook you" push, once a day at 19:00 (after streak reminders).
+  cron.schedule('0 19 * * *', () => {
+    console.log('[CRON] Iniciando recordatorios de rival...');
+    runRivalReminders()
+      .then(count => console.log(`[CRON] Rival reminders enviados: ${count}`))
+      .catch(err => console.error('[CRON] Error en rival reminders:', err));
   });
   // Referral reminder every 15 days at 12:00 (days 1 and 16 of each month)
   cron.schedule('0 12 1,16 * *', () => {
