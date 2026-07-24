@@ -527,7 +527,10 @@ router.post('/buy/:id', authenticate, async (req, res) => {
       // Mission Triggers (separate rows; run after commit)
       await updateMissionProgress(userId, 'buy_any', 1);
       await updateMissionProgress(userId, 'spend_coins', finalDeduction);
-      if (item.rarity === 'Legendary' || item.rarity === 'Calisthenics') {
+      // Real rarities are lowercase Spanish: legendary / calistenico (the two
+      // top tiers). The previous 'Legendary'/'Calisthenics' comparison never
+      // matched, so the buy_legendary mission was uncompletable.
+      if (item.rarity === 'legendary' || item.rarity === 'calistenico') {
         await updateMissionProgress(userId, 'buy_legendary', 1);
       }
 
