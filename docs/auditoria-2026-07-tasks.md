@@ -47,11 +47,11 @@ Protocolo de cada run:
 
 ## P0 — Seguridad (esta semana, explotable HOY en producción)
 
-- [ ] 🔨 PR #305 **Matar `/api/test/*` en producción** — `backend/test.js:9` (`isTestAllowed = true` incondicional) + montaje en `backend/index.js:157`. Cualquier usuario autenticado puede darse coins/gems/cofres/items/stats infinitos. *Esfuerzo: 10 líneas.*
-- [ ] 🔨 PR #306 **Autenticar `/pusher/auth`** — `backend/index.js:170-197` acepta `user_id`/`user_name` arbitrarios y autoriza canales private-/presence-. Suplantación de usuarios en realtime. Eliminar también el shim legacy `api/pusher-auth.js` (CORS `*`). *Esfuerzo: 10 líneas.*
-- [ ] 🔨 PR #307 **Rate limiting** — no existe en ningún endpoint. Mínimo: `express-rate-limit` en `POST /auth/login` (brute-force) y `POST /reps` (spam). *Esfuerzo: 1-2 h.*
-- [ ] 🔨 PR #308 **Tope a `count` y validar `date` en `POST /reps`** — `backend/reps.js:49-103`: hoy acepta `count: 99999999` (monedas/XP/daño infinito) y fechas arbitrarias (rachas retroactivas). Sanity cap + `date` solo hoy/ayer. *Esfuerzo: 1 h.*
-- [ ] 🔨 PR #309 **Quitar CORS `*.vercel.app`** — `backend/index.js:92`: cualquiera puede desplegar gratis en vercel.app y pasar el allowlist con `credentials: true`. Ya no estáis en Vercel. *Esfuerzo: 5 min.*
+- [x] **Matar `/api/test/*` en producción** (PR #305 mergeada) — `backend/test.js:9` (`isTestAllowed = true` incondicional) + montaje en `backend/index.js:157`. Cualquier usuario autenticado puede darse coins/gems/cofres/items/stats infinitos. *Esfuerzo: 10 líneas.*
+- [x] **Autenticar `/pusher/auth`** (PR #306 mergeada) — `backend/index.js:170-197` acepta `user_id`/`user_name` arbitrarios y autoriza canales private-/presence-. Suplantación de usuarios en realtime. Eliminar también el shim legacy `api/pusher-auth.js` (CORS `*`). *Esfuerzo: 10 líneas.*
+- [x] **Rate limiting** (PR #307 mergeada) — no existe en ningún endpoint. Mínimo: `express-rate-limit` en `POST /auth/login` (brute-force) y `POST /reps` (spam). *Esfuerzo: 1-2 h.*
+- [x] **Tope a `count` y validar `date` en `POST /reps`** (PR #308 mergeada) — `backend/reps.js:49-103`: hoy acepta `count: 99999999` (monedas/XP/daño infinito) y fechas arbitrarias (rachas retroactivas). Sanity cap + `date` solo hoy/ayer. *Esfuerzo: 1 h.*
+- [x] **Quitar CORS `*.vercel.app`** (PR #309 mergeada) — `backend/index.js:92`: cualquiera puede desplegar gratis en vercel.app y pasar el allowlist con `credentials: true`. Ya no estáis en Vercel. *Esfuerzo: 5 min.*
 
 ## P0 — Promesas rotas al jugador (bugs de diseño, ~2-4 h en total)
 
