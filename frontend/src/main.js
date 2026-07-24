@@ -9,7 +9,7 @@ import { useAuthStore } from './stores/auth'
 import { useThemeStore } from './stores/theme'
 import { useNotificationStore } from './stores/notification'
 import { initLogger } from './utils/logger'
-import { inject as injectVercelAnalytics } from '@vercel/analytics'
+import { initFunnelTracking, trackDay2Return } from './utils/analytics'
 
 export const createApp = ViteSSG(
   App,
@@ -44,8 +44,10 @@ export const createApp = ViteSSG(
       // Initialize logger
       initLogger(notificationStore)
 
-      // Vercel Web Analytics (client-only; auto-tracks SPA navigation)
-      injectVercelAnalytics({ mode: import.meta.env.PROD ? 'production' : 'development' })
+      // GA4 funnel tracking (gtag loaded in index.html). Central axios
+      // interceptor for signup/first_log/spin/push_enabled + day2_return.
+      initFunnelTracking()
+      trackDay2Return()
 
       // Initialize all on client
       await Promise.all([
