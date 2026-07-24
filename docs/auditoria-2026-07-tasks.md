@@ -55,10 +55,10 @@ Protocolo de cada run:
 
 ## P0 — Promesas rotas al jugador (bugs de diseño, ~2-4 h en total)
 
-- [ ] 🔨 PR #312 **Pagar los `rewards` de nodos de campaña** — `backend/data/campaigns/main-campaign.json` promete 1.000/2.500 coins por trono/finale; `applyCampaignDamage` (campaignEngine) nunca los otorga.
-- [ ] 🔨 PR #313 **XP de quests de NPC ignorado** — `backend/utils/campaignQuests.js` `claimQuest` paga coins/gems/buff pero el campo `xp` del JSON es letra muerta. Pagarlo o quitarlo del JSON. *(Se optó por pagarlo en `cha_xp`, la bolsa de XP persistente que ya usa training.js.)*
-- [ ] 🔨 PR #310 **Misión `buy_legendary` incompletable** — `backend/shop.js:530` compara `'Legendary'`/`'Calisthenics'` contra rarezas reales `legendary`/`calistenico`. Nunca matchea.
-- [ ] 🔨 PR #311 **`scripts/seed_rpg_items.js` con rarezas en inglés** (`special`, `calisthenic`) que las queries de cofres (`WHERE rarity = 'especial'`) no encuentran → items huérfanos.
+- [x] **Pagar los `rewards` de nodos de campaña** (PR #312 mergeada) — `backend/data/campaigns/main-campaign.json` promete 1.000/2.500 coins por trono/finale; `applyCampaignDamage` (campaignEngine) nunca los otorga.
+- [x] **XP de quests de NPC ignorado** (PR #313 mergeada) — `backend/utils/campaignQuests.js` `claimQuest` paga coins/gems/buff pero el campo `xp` del JSON es letra muerta. Pagarlo o quitarlo del JSON. *(Se optó por pagarlo en `cha_xp`, la bolsa de XP persistente que ya usa training.js.)*
+- [x] **Misión `buy_legendary` incompletable** (PR #310 mergeada) — `backend/shop.js:530` compara `'Legendary'`/`'Calisthenics'` contra rarezas reales `legendary`/`calistenico`. Nunca matchea.
+- [x] **`scripts/seed_rpg_items.js` con rarezas en inglés** (PR #311 mergeada) (`special`, `calisthenic`) que las queries de cofres (`WHERE rarity = 'especial'`) no encuentran → items huérfanos.
 - [ ] ⏸️ PREGUNTA **Cofres de nivel incoherentes** — `backend/utils/stats.js:252` (`additionalChests = 0`): ya no se ganan subiendo de nivel pero la ruleta los regala. Decidir: restaurar o renombrar. **Contexto**: el cambio a "1 skill point por nivel" en vez de cofre fue intencional (comentario en `stats.js:249-252`), pero `level_chests` sigue siendo moneda viva (la da la ruleta en `roulette.js`, se abre en `shop.js` `/buy-chest/:type`, la UI lo llama "Cofre de Nivel") → el nombre miente. Opciones: **(A) Renombrar** el cofre a algo genérico ("Cofre de Batalla"/"Cofre Común") en DB + i18n (es/en) + premio de ruleta + UI, manteniéndolo como recompensa de ruleta/tienda [*recomendado*: el cambio a skill points fue deliberado, renombrar es bajo riesgo y no re-infla la recompensa por nivel]. **(B) Restaurar** que subir de nivel otorgue 1 cofre (revertir `additionalChests`), aceptando doble recompensa por nivel (skill point + cofre). **(C)** Quitar el cofre de nivel del todo (de la ruleta y la tienda) si ya no encaja. Recomiendo **(A)**.
 
 ## P1 — Rebalance económico (mes 1, empieza por una hoja de cálculo)
@@ -73,18 +73,18 @@ Protocolo de cada run:
 - [ ] ⏸️ PREGUNTA **Nerfear pociones DEX de crit** — poción calisténica `+100 dex` → ~80% crit ×~12 ≈ ×9.8 daño (el crit esperado a nivel alto ya multiplica ×~10, §1), doble que la de ×3.5 que cuesta 12.000. **Opciones**: (A) bajar el `dex_bonus` de la poción. (B) bajar el cap de crit (80%) o la escala `dex×2.5`. (C) subir su precio. *Recomiendo (A)*: es un outlier puntual. Roman fija el número.
 - [ ] ⏸️ PREGUNTA **Arreglar la curva de dificultad** — HP enemigo `1+0.05·L` lineal vs daño superlineal → reps-para-matar cae 41→0.01 (§1). **Opciones**: (A) HP escala con el daño esperado del jugador (cuadrático en L). (B) subir mucho `hp_per_level`/`prestige_mult`. *Recomiendo (A)* pero requiere re-derivar la fórmula de HP contra la de daño → decisión + diseño de Roman.
 - [ ] ⏸️ PREGUNTA **Prestigio con ROI positivo** — HP ×1.5/vuelta (`config.hp.prestige_mult`) pero rewards ×1.25 (`config.rewards.prestige_mult`): cada NG+ paga peor. **Opciones**: (A) `rewards_mult ≥ hp_mult`. (B) recompensas exclusivas (cosméticos/títulos) en vez de más coins. *Recomiendo (B)* (evita inflación) o (A) como mínimo. Decisión de diseño de Roman.
-- [ ] 🔨 PR #314 **Hoja de cálculo de curvas** (daño/HP/monedas por nivel y día) antes de tocar números — hecho: `docs/economy-curves-2026-07.md` + `backend/scripts/analyze_economy_curves.js`.
+- [x] **Hoja de cálculo de curvas** (PR #314 mergeada) (daño/HP/monedas por nivel y día) antes de tocar números — hecho: `docs/economy-curves-2026-07.md` + `backend/scripts/analyze_economy_curves.js`.
 
 ## P1 — Retención (mes 1, el mayor ROI de toda la auditoría)
 
 > Winback actual = cero: un usuario que falla UN día no recibe nada nunca más. D30 estimado hoy: 3-8%. Con estos dos primeros puntos: 10-15%.
 
-- [ ] 🔨 PR #317 **Winback cron D3/D7/D14** — reutilizar la infra de `backend/utils/streakReminders.js` con query de usuarios sin reps en N días y su dato real ("tenías racha de 12"). *~1 día.*
+- [x] **Winback cron D3/D7/D14** (PR #317 mergeada) — reutilizar la infra de `backend/utils/streakReminders.js` con query de usuarios sin reps en N días y su dato real ("tenías racha de 12"). *~1 día.*
 - [ ] ⏸️ PREGUNTA **"Día de descanso activo"** — la racha castiga descansar (obligatorio en fitness 2-3 días/semana). **Opciones**: (A) botón diario que preserva la racha 1×/semana gratis (nuevo mecanismo + tabla de uso semanal). (B) reconvertir el freeze de 250 monedas en "descanso programado" gratuito 1×/semana. (C) que la racha cuente "días activos de 7" en vez de días consecutivos. *Recomiendo (A)*: claro y generoso, sin tocar la economía del freeze. Cambia la mecánica core de racha → decisión de Roman (y define cuántos descansos/semana).
-- [ ] 🔨 PR #315 **Matar/segmentar el blast de referral** — `backend/utils/referralReminders.js` (días 1 y 16 a TODOS): spam que quema el canal push. Solo activos >7 días que nunca refirieron, máx 1 vez.
-- [ ] 🔨 PR #316 **Push "tu rival te adelantó"** — la query ya existe en `backend/social_feed.js` `/stats`; dispararla 1×/día. Reutilización pura.
+- [x] **Matar/segmentar el blast de referral** (PR #315 mergeada) — `backend/utils/referralReminders.js` (días 1 y 16 a TODOS): spam que quema el canal push. Solo activos >7 días que nunca refirieron, máx 1 vez.
+- [x] **Push "tu rival te adelantó"** (PR #316 mergeada) — la query ya existe en `backend/social_feed.js` `/stats`; dispararla 1×/día. Reutilización pura.
 - [ ] ⏸️ PREGUNTA **Reto vs tu semana pasada** — fallback para el cold start social (PvP/retos mueren sin masa crítica); la tabla `reps` ya tiene los datos. **Falta definir producto**: ¿qué es el "reto" mecánicamente? (a) meta = reps de tu semana pasada, con recompensa (¿coins/gems/cofre?) al superarla; (b) ¿semanal con reset los lunes?; (c) ¿UI nueva en Dashboard/Social o solo un push? Los datos existen (query semanal ya usada en `/social-feed/stats`), pero el diseño (recompensa + framing + dónde vive) es decisión de Roman. *Recomiendo*: meta = reps semana previa, recompensa pequeña fija (p. ej. 1 cofre común) al igualar/superar, card en Dashboard.
-- [ ] 🔨 PR #318 **Eventos GA4 de funnel** — hoy solo pageviews: añadir `signup`, `first_log`, `push_enabled`, `spin`, `day2_return`. *Una tarde.* Quitar `@vercel/analytics` de `frontend/src/main.js` (muerto tras Coolify).
+- [x] **Eventos GA4 de funnel** (PR #318 mergeada) — hoy solo pageviews: añadir `signup`, `first_log`, `push_enabled`, `spin`, `day2_return`. *Una tarde.* Quitar `@vercel/analytics` de `frontend/src/main.js` (muerto tras Coolify).
 
 ## P1 — Legal / tema
 
@@ -123,7 +123,7 @@ Protocolo de cada run:
 - [ ] **JWT**: 30 días con `is_admin` embebido y sin revocación — refresh tokens o TTL corto.
 - [ ] **`backend/db.js:14`** `ssl: { rejectUnauthorized: false }` (MITM) · **`backend/hevy.js:66`** verificar si la API key se guarda en claro.
 - [ ] **Borrar `api/`** (shim Vercel muerto) y el doble montaje de `apiRouter` en `/api` y `/` (index.js:228-229).
-- [ ] 🔨 PR #319 **`social_feed.js:318`** — `page` no numérico → 500 en vez de 400.
+- [x] **`social_feed.js:318`** (PR #319 mergeada) — `page` no numérico → 500 en vez de 400.
 - [ ] **`config.path` de campaña sin consumir** — `curse_damage_multiplier`/`blessing_hours` no afectan al gameplay; implementarlo o quitarlo.
 
 ---
