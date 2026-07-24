@@ -56,10 +56,10 @@ Protocolo de cada run:
 ## P0 — Promesas rotas al jugador (bugs de diseño, ~2-4 h en total)
 
 - [ ] 🔨 PR #312 **Pagar los `rewards` de nodos de campaña** — `backend/data/campaigns/main-campaign.json` promete 1.000/2.500 coins por trono/finale; `applyCampaignDamage` (campaignEngine) nunca los otorga.
-- [ ] **XP de quests de NPC ignorado** — `backend/utils/campaignQuests.js` `claimQuest` paga coins/gems/buff pero el campo `xp` del JSON es letra muerta. Pagarlo o quitarlo del JSON.
+- [ ] 🔨 PR #313 **XP de quests de NPC ignorado** — `backend/utils/campaignQuests.js` `claimQuest` paga coins/gems/buff pero el campo `xp` del JSON es letra muerta. Pagarlo o quitarlo del JSON. *(Se optó por pagarlo en `cha_xp`, la bolsa de XP persistente que ya usa training.js.)*
 - [ ] 🔨 PR #310 **Misión `buy_legendary` incompletable** — `backend/shop.js:530` compara `'Legendary'`/`'Calisthenics'` contra rarezas reales `legendary`/`calistenico`. Nunca matchea.
 - [ ] 🔨 PR #311 **`scripts/seed_rpg_items.js` con rarezas en inglés** (`special`, `calisthenic`) que las queries de cofres (`WHERE rarity = 'especial'`) no encuentran → items huérfanos.
-- [ ] **Cofres de nivel incoherentes** — `backend/utils/stats.js:252` (`additionalChests = 0`): ya no se ganan subiendo de nivel pero la ruleta los regala. Decidir: restaurar o renombrar.
+- [ ] ⏸️ PREGUNTA **Cofres de nivel incoherentes** — `backend/utils/stats.js:252` (`additionalChests = 0`): ya no se ganan subiendo de nivel pero la ruleta los regala. Decidir: restaurar o renombrar. **Contexto**: el cambio a "1 skill point por nivel" en vez de cofre fue intencional (comentario en `stats.js:249-252`), pero `level_chests` sigue siendo moneda viva (la da la ruleta en `roulette.js`, se abre en `shop.js` `/buy-chest/:type`, la UI lo llama "Cofre de Nivel") → el nombre miente. Opciones: **(A) Renombrar** el cofre a algo genérico ("Cofre de Batalla"/"Cofre Común") en DB + i18n (es/en) + premio de ruleta + UI, manteniéndolo como recompensa de ruleta/tienda [*recomendado*: el cambio a skill points fue deliberado, renombrar es bajo riesgo y no re-infla la recompensa por nivel]. **(B) Restaurar** que subir de nivel otorgue 1 cofre (revertir `additionalChests`), aceptando doble recompensa por nivel (skill point + cofre). **(C)** Quitar el cofre de nivel del todo (de la ruleta y la tienda) si ya no encaja. Recomiendo **(A)**.
 
 ## P1 — Rebalance económico (mes 1, empieza por una hoja de cálculo)
 
