@@ -12,8 +12,8 @@ async function seed() {
     // WEAPON
     { name: 'Espada de Madera', type: 'weapon', rarity: 'common', stats: { dex: 1, str: 1 }, description: 'Ideal para practicar.' },
     { name: 'Hacha de Guerra', type: 'weapon', rarity: 'rare', stats: { str: 5 }, description: 'Pesada y letal.' },
-    { name: 'Katana de Electrum', type: 'weapon', rarity: 'special', stats: { dex: 8, str: 2 }, description: 'Corta el aire mismo.' },
-    { name: 'Maza Calisténica', type: 'weapon', rarity: 'calisthenic', stats: { str: 15, end: 5 }, description: 'Forjada en el fuego de mil dominadas.' },
+    { name: 'Katana de Electrum', type: 'weapon', rarity: 'especial', stats: { dex: 8, str: 2 }, description: 'Corta el aire mismo.' },
+    { name: 'Maza Calisténica', type: 'weapon', rarity: 'calistenico', stats: { str: 15, end: 5 }, description: 'Forjada en el fuego de mil dominadas.' },
     
     // ARMOR
     { name: 'Túnica de Tela', type: 'armor', rarity: 'common', stats: { end: 1 }, description: 'Ligera y cómoda.' },
