@@ -1,0 +1,73 @@
+name: CI
+
+# Minimal CI for an app with a virtual economy: syntax-checks the backend,
+# runs the economy test suite against a real Postgres, and confirms the
+# frontend SSG build still produces output. See docs/auditoria-2026-07-tasks.md
+# (P3 — Deuda técnica: "Tests + CI mínimo sobre flujos de economía").
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    name: Backend syntax + economy tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: reppy_test
+          # trust auth: no password anywhere (this is an ephemeral CI DB).
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install
+      - name: Backend syntax check (node --check)
+        working-directory: backend
+        # Fail the job if any backend .js fails to parse. Skips node_modules.
+        run: |
+          find . -name '*.js' -not -path './node_modules/*' -print0 \
+            | xargs -0 -n1 node --check
+      - name: Economy tests
+        working-directory: backend
+        # localhost in the URL makes db.js disable SSL (see db.js:13), which the
+        # Postgres service container expects. The concurrency suite loads
+        # schema.sql itself in a before() hook.
+        env:
+          DATABASE_URL: postgres://postgres@localhost:5432/reppy_test
+        run: npm test
+
+  frontend:
+    name: Frontend i18n + SSG build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install
+      - name: i18n duplicate-key check
+        working-directory: frontend
+        run: npm run check:i18n
+      - name: SSG build
+        working-directory: frontend
+        # Run the build pieces that don't need network (skip indexnow ping) or
+        # native canvas (skip og-images): sync blog data, then vite-ssg build.
+        run: |
+          npm run sync-blog
+          npx vite-ssg build
