@@ -116,7 +116,7 @@ Protocolo de cada run:
 
 ## P3 — Deuda técnica (a medida que se toque, no big-bang)
 
-- [ ] **Tests + CI mínimo sobre flujos de economía** — hoy `"test": "exit 1"` y cero CI para una app con dinero virtual.
+- [ ] 🔨 PR #323 **Tests + CI mínimo sobre flujos de economía** — hoy `"test": "exit 1"` y cero CI para una app con dinero virtual. *(Fix: suite `node:test` — math de recompensas + invariantes de concurrencia de las races de #321 contra Postgres — y workflow CI GitHub Actions con servicio `postgres:16`, `node --check` sweep y build SSG. Los tests legacy `tests/*.test.js` quedan fuera del scope, necesitan DB migrada.)*
 - [ ] 🔨 PR #321 **Race conditions restantes**: `backend/shop.js:255-282` (`/daily/refresh` sin transacción ni guard de gemas) y `backend/reps.js:213-230` (referral pagable 2 veces). El patrón correcto está en `roulette.js`. *(Fix: `withTransaction`+`FOR UPDATE` en el refresh, claim gate atómica en el referral; verificado con Postgres efímero local, 6/6 tests de concurrencia.)*
 - [ ] **Unificar las 3 fuentes de esquema** — `/db/init` (index.js:314-640, usa rareza `epic` inexistente), `schema.sql` y `ensureSchemaMigrations()`. Drift garantizado.
 - [ ] **Trocear archivos monstruo al tocarlos** — `Dashboard.vue` (1.829), `Inventory.vue` (1.587), `Shop.vue` (1.317), `backend/training.js` (1.147), handler `POST /reps` (~10 responsabilidades).
