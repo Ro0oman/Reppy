@@ -255,27 +255,53 @@ router.get('/daily', authenticate, async (req, res) => {
 router.post('/daily/refresh', authenticate, async (req, res) => {
   try {
     const userId = req.user.id;
-    const userRes = await query('SELECT reppy_gems, daily_refreshes, last_refresh_at FROM users WHERE id = $1', [userId]);
-    const user = userRes.rows[0];
-    
-    let currentRefreshes = user.daily_refreshes || 0;
-    const lastRefresh = new Date(user.last_refresh_at);
-    const today = new Date();
-    
-    if (lastRefresh.toDateString() !== today.toDateString()) {
-      currentRefreshes = 0;
+
+    // Lock the user row so the gem check, the escalating-cost calc and the
+    // deduction all happen atomically. The previous version read gems with a
+    // bare query(), checked, then deducted on a *different* pooled connection,
+    // so two concurrent refreshes could both pass the check, both refresh at the
+    // same (un-escalated) cost, and drive reppy_gems negative. Same pattern as
+    // roulette.js /buy-and-spin.
+    const result = await withTransaction(async (client) => {
+      const lockRes = await client.query(
+        'SELECT reppy_gems, daily_refreshes, last_refresh_at FROM users WHERE id = $1 FOR UPDATE',
+        [userId]
+      );
+      if (lockRes.rowCount === 0) return { status: 404, body: { message: 'User not found' } };
+      const user = lockRes.rows[0];
+
+      // Refresh counter resets on a new calendar day (same rule as before).
+      let currentRefreshes = user.daily_refreshes || 0;
+      if (user.last_refresh_at) {
+        const lastRefresh = new Date(user.last_refresh_at).toDateString();
+        if (lastRefresh !== new Date().toDateString()) currentRefreshes = 0;
+      }
+
+      const cost = currentRefreshes + 1;
+
+      if (user.reppy_gems < cost) {
+        return { status: 400, body: { message: 'INSUFFICIENT GEMS FOR REFRESH' } };
+      }
+
+      // Guarded deduction — cannot drive gems negative even under a race.
+      const deductRes = await client.query(
+        'UPDATE users SET reppy_gems = reppy_gems - $1, daily_refreshes = $2, last_refresh_at = CURRENT_TIMESTAMP WHERE id = $3 AND reppy_gems >= $1 RETURNING reppy_gems',
+        [cost, currentRefreshes + 1, userId]
+      );
+      if (deductRes.rowCount === 0) throw new Error('Insufficient gems at deduction time');
+
+      return { status: 200, body: { message: 'Shop refreshed', remaining_gems: deductRes.rows[0].reppy_gems } };
+    });
+
+    if (result.status !== 200) {
+      return res.status(result.status).json(result.body);
     }
 
-    const cost = currentRefreshes + 1;
-    
-    if (user.reppy_gems < cost) {
-      return res.status(400).json({ message: 'INSUFFICIENT GEMS FOR REFRESH' });
-    }
-
-    await query('UPDATE users SET reppy_gems = reppy_gems - $1, daily_refreshes = $2, last_refresh_at = CURRENT_TIMESTAMP WHERE id = $3', [cost, currentRefreshes + 1, userId]);
+    // Rotate outside the money transaction — it manages its own writes and is
+    // not part of the atomic gem deduction.
     await rotateDailyShop(userId);
 
-    res.json({ message: 'Shop refreshed', remaining_gems: user.reppy_gems - cost });
+    res.json(result.body);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
