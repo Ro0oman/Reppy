@@ -3,6 +3,9 @@ import { getLocalDateString } from './date.js';
 
 export const STREAK_FREEZE_COST = 250;
 export const STREAK_FREEZE_WEEKLY_LIMIT = 1;
+// "Día de descanso activo": 1 free streak-preserving rest per week, tracked
+// apart from the paid freeze so it never consumes the 250-coin freeze allowance.
+export const REST_DAY_WEEKLY_LIMIT = 1;
 export const STREAK_RISK_HOUR_THRESHOLD = 6;
 export const JACKPOT_DAYS_REQUIRED = 5;   // days/7 needed to trigger jackpot
 export const JACKPOT_REWARD_COINS = 75;   // RC bonus
@@ -19,6 +22,8 @@ export const ensureStreakFreezeTable = async (q = defaultQuery) => {
     )
   `);
   await q('CREATE INDEX IF NOT EXISTS idx_streak_freezes_user_date ON streak_freezes(user_id, freeze_date)');
+  // Distinguishes the free weekly rest day from the paid 250-coin freeze.
+  await q('ALTER TABLE streak_freezes ADD COLUMN IF NOT EXISTS is_rest_day BOOLEAN DEFAULT FALSE');
 };
 
 const addDays = (date, amount) => {
@@ -67,10 +72,13 @@ export const getStreakStatus = async (userId, q = defaultQuery) => {
   const yesterday = getLocalDateString(addDays(new Date(), -1));
   const weekStart = getLocalDateString(getStartOfWeek());
 
-  const [activityRes, freezeRes, weekFreezeRes, userRes, weeklyProgressRes] = await Promise.all([
+  const [activityRes, freezeRes, weekFreezeRes, restWeekRes, userRes, weeklyProgressRes] = await Promise.all([
     q('SELECT DISTINCT date FROM reps WHERE user_id = $1 AND count > 0', [userId]),
     q('SELECT freeze_date FROM streak_freezes WHERE user_id = $1', [userId]),
-    q('SELECT COUNT(*)::int AS count FROM streak_freezes WHERE user_id = $1 AND freeze_date >= $2', [userId, weekStart]),
+    // Paid freezes only — rest days must NOT consume the paid-freeze weekly allowance.
+    q('SELECT COUNT(*)::int AS count FROM streak_freezes WHERE user_id = $1 AND freeze_date >= $2 AND is_rest_day = FALSE', [userId, weekStart]),
+    // Free rest days used this week (separate weekly limit).
+    q('SELECT COUNT(*)::int AS count FROM streak_freezes WHERE user_id = $1 AND freeze_date >= $2 AND is_rest_day = TRUE', [userId, weekStart]),
     q('SELECT reppy_coins, last_jackpot_week FROM users WHERE id = $1', [userId]),
     // Count unique active days this week (reps OR freezes)
     q(`SELECT COUNT(DISTINCT active_date)::int AS count FROM (
@@ -92,6 +100,7 @@ export const getStreakStatus = async (userId, q = defaultQuery) => {
   const streak = countCurrentStreak(activeDates);
   const hoursLeftToday = getHoursLeftToday();
   const freezesThisWeek = Number(weekFreezeRes.rows[0]?.count || 0);
+  const restDaysThisWeek = Number(restWeekRes.rows[0]?.count || 0);
   const coins = Number(userRes.rows[0]?.reppy_coins || 0);
   const isAtRisk = !activeToday && activeDates.has(yesterday);
 
@@ -119,6 +128,10 @@ export const getStreakStatus = async (userId, q = defaultQuery) => {
     freezesThisWeek,
     weeklyFreezeLimit: STREAK_FREEZE_WEEKLY_LIMIT,
     canFreeze: isAtRisk && freezesThisWeek < STREAK_FREEZE_WEEKLY_LIMIT && coins >= STREAK_FREEZE_COST,
+    // Free weekly rest day: preserves the streak at no coin cost, 1×/week.
+    restDaysThisWeek,
+    restDayWeeklyLimit: REST_DAY_WEEKLY_LIMIT,
+    canUseRestDay: isAtRisk && restDaysThisWeek < REST_DAY_WEEKLY_LIMIT,
     coins,
     weeklyProgress,
     jackpotDaysRequired: JACKPOT_DAYS_REQUIRED,
@@ -176,4 +189,51 @@ export const freezeStreakForToday = async (userId) => {
   } finally {
     client.release();
   }
+};
+
+/**
+ * "Día de descanso activo": preserve today's streak for free, once per week.
+ * Costs no coins and draws from a separate weekly allowance
+ * (REST_DAY_WEEKLY_LIMIT), so it never touches the paid-freeze economy. Only
+ * usable when the streak is actually at risk (didn't train today).
+ *
+ * Unlike freezeStreakForToday there is no coin deduction, so no multi-statement
+ * transaction is needed: the single guarded INSERT is atomic on its own and the
+ * UNIQUE(user_id, freeze_date) constraint makes concurrent same-day requests
+ * race-safe (the loser hits ON CONFLICT and gets rowCount 0). This deliberately
+ * avoids opening a FOR UPDATE transaction around getStreakStatus, which would
+ * dead-lock: getStreakStatus issues an `ALTER TABLE users ... IF NOT EXISTS` on
+ * a separate pooled connection, and that ALTER takes ACCESS EXCLUSIVE even as a
+ * no-op — conflicting with a held FOR UPDATE row lock.
+ */
+export const useRestDayForToday = async (userId) => {
+  // Read-only status check, outside any transaction.
+  const status = await getStreakStatus(userId);
+  if (!status.isAtRisk) {
+    const error = new Error('Tu racha no está en riesgo ahora mismo.');
+    error.status = 400;
+    throw error;
+  }
+  if (status.restDaysThisWeek >= REST_DAY_WEEKLY_LIMIT) {
+    const error = new Error('Ya has usado tu día de descanso de esta semana.');
+    error.status = 400;
+    throw error;
+  }
+
+  // Free rest day: spent_coins = 0, is_rest_day = TRUE. The UNIQUE constraint on
+  // (user_id, freeze_date) means a concurrent duplicate (or an already-protected
+  // day) hits ON CONFLICT and returns 0 rows.
+  const insertRes = await defaultQuery(
+    `INSERT INTO streak_freezes (user_id, freeze_date, spent_coins, is_rest_day)
+     VALUES ($1, CURRENT_DATE, 0, TRUE)
+     ON CONFLICT (user_id, freeze_date) DO NOTHING`,
+    [userId]
+  );
+  if (insertRes.rowCount === 0) {
+    const error = new Error('Tu racha ya está protegida hoy.');
+    error.status = 400;
+    throw error;
+  }
+
+  return getStreakStatus(userId);
 };

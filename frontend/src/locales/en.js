@@ -1352,6 +1352,10 @@ export default {
     streak_save_today: 'Save today',
     streak_frozen_notify: 'Streak frozen until tomorrow',
     streak_freeze_error: 'Could not freeze streak',
+    streak_rest_day: 'Free rest day',
+    streak_resting: 'Resting…',
+    streak_rest_notify: 'Streak protected with your weekly rest day',
+    streak_rest_error: 'Could not use rest day',
 
     // Companion (mobile/desktop overview)
     comp_level_short: 'Lv.',

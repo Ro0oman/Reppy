@@ -1431,6 +1431,10 @@ export default {
     streak_save_today: 'Salvar hoy',
     streak_frozen_notify: 'Racha congelada hasta mañana',
     streak_freeze_error: 'No se pudo congelar la racha',
+    streak_rest_day: 'Descanso gratis',
+    streak_resting: 'Descansando…',
+    streak_rest_notify: 'Racha protegida con tu día de descanso semanal',
+    streak_rest_error: 'No se pudo usar el día de descanso',
 
     // Companion (resumen móvil/escritorio)
     comp_level_short: 'Nv.',
