@@ -290,6 +290,8 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS last_daily_spin_at TIMESTAMP WITH TIM
 ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_avatar_overhaul BOOLEAN DEFAULT FALSE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS last_streak_reward_date DATE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS push_disabled BOOLEAN DEFAULT FALSE;
+-- "Reto vs tu semana pasada": Monday-anchored week key of the last claimed weekly challenge.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS last_weekly_reto_week TEXT;
 ALTER TABLE user_active_plans ADD COLUMN IF NOT EXISTS last_completed_date DATE;
 ALTER TABLE user_active_plans ADD COLUMN IF NOT EXISTS last_completed_day INTEGER;
 ALTER TABLE training_plans ADD COLUMN IF NOT EXISTS owner_user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE;

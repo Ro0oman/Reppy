@@ -1431,6 +1431,13 @@ export default {
     streak_save_today: 'Salvar hoy',
     streak_frozen_notify: 'Racha congelada hasta mañana',
     streak_freeze_error: 'No se pudo congelar la racha',
+    weekly_reto_title: 'Reto: supera tu semana pasada',
+    weekly_reto_reps: 'reps',
+    weekly_reto_claim: 'Reclamar cofre',
+    weekly_reto_claiming: 'Reclamando…',
+    weekly_reto_done: '¡Reclamado! ✅',
+    weekly_reto_claimed: '¡Reto semanal superado! Cofre de Batalla conseguido 🎁',
+    weekly_reto_error: 'No se pudo reclamar el reto',
 
     // Companion (resumen móvil/escritorio)
     comp_level_short: 'Nv.',

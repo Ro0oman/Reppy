@@ -1352,6 +1352,13 @@ export default {
     streak_save_today: 'Save today',
     streak_frozen_notify: 'Streak frozen until tomorrow',
     streak_freeze_error: 'Could not freeze streak',
+    weekly_reto_title: 'Challenge: beat last week',
+    weekly_reto_reps: 'reps',
+    weekly_reto_claim: 'Claim chest',
+    weekly_reto_claiming: 'Claiming…',
+    weekly_reto_done: 'Claimed! ✅',
+    weekly_reto_claimed: 'Weekly challenge beaten! Battle Chest earned 🎁',
+    weekly_reto_error: 'Could not claim the challenge',
 
     // Companion (mobile/desktop overview)
     comp_level_short: 'Lv.',
