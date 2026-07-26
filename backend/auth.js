@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { query } from './db.js';
 import { ensureUsername } from './utils/username.js';
-import { loginLimiter } from './utils/rateLimiters.js';
+import { loginLimiter, signupLimiter, oauthLimiter } from './utils/rateLimiters.js';
 
 const router = express.Router();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -37,7 +37,7 @@ const applyReferral = async (newUserId, referralCode) => {
 };
 
 // Google Login
-router.post('/google', async (req, res) => {
+router.post('/google', oauthLimiter, async (req, res) => {
   const { token } = req.body;
 
   if (!process.env.GOOGLE_CLIENT_ID) {
@@ -102,7 +102,7 @@ router.post('/google', async (req, res) => {
 });
 
 // Manual Signup
-router.post('/signup', async (req, res) => {
+router.post('/signup', signupLimiter, async (req, res) => {
   const { name, email, password, referral_code: incomingRef } = req.body;
 
   try {
