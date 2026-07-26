@@ -70,7 +70,11 @@ export const calculateDamage = (user, reps, type, boss = null, skipBuffs = false
 
   // Divine Scaling (FTH)
   const fthScale = 1 + (fthLvl / 40);
-  const divineBonus = fthLvl * 25; // FLAT bonus, applied per rep
+  // Flat divine bonus, applied per rep. Nerfed 25 -> 5 (auditoría 2026-07) to
+  // tame the damage->FTH->damage snowball: FTH XP comes from boss damage dealt,
+  // so a big flat FTH bonus fed back into ever-larger hits. `fthScale` (the
+  // multiplicative part) is untouched.
+  const divineBonus = fthLvl * 5;
 
   // --- BASE DAMAGE per rep (No gear, no buffs) ---
   const baseStatStr = parseInt(user.base_str_lvl) || strLvl;
@@ -78,7 +82,7 @@ export const calculateDamage = (user, reps, type, boss = null, skipBuffs = false
   const baseStatFth = parseInt(user.base_fth_lvl) || fthLvl;
 
   const baseScale = (1 + (baseStatStr / 25)) * (1 + (baseStatEnd / 50)) * (1 + (baseStatFth / 40));
-  const baseDivine = baseStatFth * 25; // FLAT bonus, applied per rep
+  const baseDivine = baseStatFth * 5; // FLAT bonus, applied per rep (nerfed 25 -> 5, see above)
   const perRepBaseNoCrit = (perRepDamageValue * levelMult * intBonus * chaBonus * baseScale) + baseDivine;
 
   // --- DAMAGE WITH GEAR per rep (No potions) ---
