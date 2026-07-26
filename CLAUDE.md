@@ -11,7 +11,6 @@ Monorepo con npm workspaces (`package.json` raíz → `frontend`, `backend`).
   Build con `vite-ssg` (SSR estático para SEO). i18n propio (no vue-i18n).
 - **`backend/`** — Express 5 (ESM, `"type": "module"`) + PostgreSQL (`pg`, SQL crudo, sin ORM).
   Auth JWT. Realtime con Pusher. Push con `web-push`. Cron con `node-cron`.
-- **`api/`** — shim para el despliegue serverless en Vercel (`vercel.json`).
 - **`docs/`** — roadmap de rediseño y notas.
 
 ### Arrancar en local
