@@ -10,8 +10,16 @@ types.setTypeParser(1082, (val) => val);
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+  // SSL: for non-local hosts we connect over TLS but with `rejectUnauthorized:
+  // false`, i.e. the transport IS encrypted but the server certificate's CA is
+  // NOT validated (accepts self-signed / unknown-CA certs). This is a deliberate,
+  // low-risk trade-off for the managed Postgres (Supabase) which already enforces
+  // TLS: traffic is not in the clear, we just don't pin/verify the CA chain, so
+  // the residual exposure is a MITM that can present a valid-looking cert — low
+  // for a single trusted managed provider. Local dev (localhost/127.0.0.1) uses
+  // plain TCP, no SSL. (auditoría 2026-07, deuda técnica: decisión B — dejar así.)
   ssl: process.env.DATABASE_URL && !process.env.DATABASE_URL.includes('localhost') && !process.env.DATABASE_URL.includes('127.0.0.1')
-    ? { rejectUnauthorized: false } 
+    ? { rejectUnauthorized: false }
     : false
 });
 
