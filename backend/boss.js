@@ -626,7 +626,7 @@ router.post('/open-level-chest', authenticate, async (req, res) => {
     });
   } catch (error) {
     console.error('Error opening level-up chest:', error);
-    res.status(500).json({ message: 'Error al abrir el cofre de nivel' });
+    res.status(500).json({ message: 'Error al abrir el cofre de batalla' });
   }
 });
 
