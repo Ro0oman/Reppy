@@ -297,7 +297,12 @@ export const recalculateUserStats = async (userId, force = false) => {
     const lastRewardDate = user.last_streak_reward_date ? getLocalDateString(user.last_streak_reward_date) : null;
     
     if (streak > 0 && lastRewardDate !== todayStr) {
-      additionalCoins = streak * 50;
+      // Streak reward capped at 200 coins/day. Previously `streak * 50` grew
+      // unbounded, making "just keep the streak alive" dwarf actually training
+      // (auditoría 2026-07: ~85-90% del ingreso diario venía de abrir, no de
+      // entrenar). Base 50 + 5 por día de racha hasta un tope de 30 días:
+      //   streak 1 -> 55 · 10 -> 100 · 30+ -> 200 (cap).
+      additionalCoins = 50 + 5 * Math.min(streak, 30);
       newLastStreakRewardDate = todayStr;
 
       await createNotification(
