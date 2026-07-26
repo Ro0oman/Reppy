@@ -116,7 +116,7 @@ Protocolo de cada run:
 - [ ] **`/` → 301 a `/es`** (hoy 200 con canonical).
 - [x] **`llms.txt` con slugs ES bajo `/en/blog/`** — `frontend/public/llms.txt:29-38`. *(Fix: los 10 enlaces EN ahora usan el `slugEn` real de `blogPosts.json`, coincidiendo con las rutas SSG de `vite.config.js:110`.)*
 - [x] **Limpiar `frontend/index.html`** (PR #320 mergeada) — meta keywords con ~45 términos (línea 14) y bloque `<noscript>` keyword-stuffed (178-230), redundante con SSG.
-- [ ] **Sitemap de atletas: umbral ≥50 reps** ✅DECIDIDO (2026-07-25: opción A) — subir el filtro de `top-public` a `total_reps >= 50` en `backend/profile.js:106` (un WHERE). Solo perfiles con actividad real se exponen a Google. Bajo riesgo, accionable ya.
+- [ ] 🔨 PR #329 **Sitemap de atletas: umbral ≥50 reps** ✅DECIDIDO (2026-07-25: opción A) — subir el filtro de `top-public` a `total_reps >= 50` en `backend/profile.js:106` (un WHERE). Solo perfiles con actividad real se exponen a Google. Bajo riesgo, accionable ya.
 - [ ] **Engordar los 10 mejores posts a 1.500-2.500 palabras** (empezar por clúster dominadas ES) y **dejar de producir posts de 300 palabras** — el 80% del blog actual es thin content que no rankea.
 
 ## P3 — Deuda técnica (a medida que se toque, no big-bang)
