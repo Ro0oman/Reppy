@@ -1,6 +1,7 @@
 import express from 'express';
 import { query, withTransaction } from './db.js';
 import { authenticate, optionalAuthenticate } from './middleware.js';
+import { economyLimiter } from './utils/rateLimiters.js';
 
 // How often the free spin recharges. Used by /status and /spin so they can
 // never disagree on whether the user is still on cooldown.
@@ -168,7 +169,7 @@ router.get('/status', optionalAuthenticate, async (req, res) => {
 });
 
 // Spin the wheel
-router.post('/spin', authenticate, async (req, res) => {
+router.post('/spin', authenticate, economyLimiter, async (req, res) => {
   const userId = req.user.id;
 
   try {
@@ -245,7 +246,7 @@ router.post('/spin', authenticate, async (req, res) => {
 });
 
 // Buy ticket and spin (all-in-one for UI convenience)
-router.post('/buy-and-spin', authenticate, async (req, res) => {
+router.post('/buy-and-spin', authenticate, economyLimiter, async (req, res) => {
   const userId = req.user.id;
 
   try {
@@ -352,7 +353,7 @@ router.get('/daily-status', optionalAuthenticate, async (req, res) => {
   }
 });
 
-router.post('/daily-spin', authenticate, async (req, res) => {
+router.post('/daily-spin', authenticate, economyLimiter, async (req, res) => {
   const userId = req.user.id;
 
   try {
