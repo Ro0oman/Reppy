@@ -298,7 +298,41 @@ export async function choosePath(client, userId, path, augmentedUser) {
     [run.id, cross.id]
   );
 
-  return { status: 200, body: { message: 'Senda elegida', path } };
+  // Light-path blessing: the temporal mirror of the dark-path curse. Whereas the
+  // dark curse dampens every campaign hit (config.path.dark.curse_damage_multiplier),
+  // choosing light grants a one-off +X% damage buff for N hours via the existing
+  // global damage_multiplier mechanism (same as potions). Values are data-driven
+  // (config.path.light.blessing_damage_mult / blessing_hours). We only apply it
+  // when it wouldn't shrink a stronger buff the player already has active, so the
+  // reward never backfires (NOTE: the mechanism is global, so the +X% also boosts
+  // community-boss damage for the window, not only campaign).
+  let blessing = null;
+  if (path === 'light') {
+    const mult = Number(run.campaign_config?.path?.light?.blessing_damage_mult);
+    const hours = Number(run.campaign_config?.path?.light?.blessing_hours) || 24;
+    if (Number.isFinite(mult) && mult > 1 && Number.isFinite(hours) && hours > 0) {
+      const updBlessing = await client.query(
+        `UPDATE users
+            SET damage_multiplier = $1,
+                damage_multiplier_expiry = NOW() + ($2 || ' hours')::interval
+          WHERE id = $3
+            AND (damage_multiplier_expiry IS NULL
+                 OR damage_multiplier_expiry <= NOW()
+                 OR COALESCE(damage_multiplier, 1.0) <= $1)
+          RETURNING damage_multiplier, damage_multiplier_expiry`,
+        [mult, String(hours), userId]
+      );
+      if (updBlessing.rowCount > 0) {
+        blessing = {
+          damage_multiplier: Number(updBlessing.rows[0].damage_multiplier),
+          expiry: updBlessing.rows[0].damage_multiplier_expiry,
+          hours,
+        };
+      }
+    }
+  }
+
+  return { status: 200, body: { message: 'Senda elegida', path, blessing } };
 }
 
 /**
