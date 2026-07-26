@@ -52,3 +52,17 @@ export const repsLimiter = rateLimit({
   keyGenerator: (req) => req.user?.id || req.ip,
   message: { code: 'ERR_RATE_LIMIT', message: 'Demasiadas peticiones. Espera un momento.' },
 });
+
+// Soft guard on economy-mutating endpoints (roulette spins, shop buys, daily
+// refresh). These already have economic guards (cooldowns, balance checks with
+// FOR UPDATE), so this is DB-load protection, not correctness: a legit user
+// never spins/buys dozens of times per minute, but a script could hammer them.
+// Keyed by authenticated user id (mounted AFTER `authenticate`), IP fallback.
+export const economyLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 min
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => req.user?.id || req.ip,
+  message: { code: 'ERR_RATE_LIMIT', message: 'Demasiadas peticiones. Espera un momento.' },
+});

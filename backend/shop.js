@@ -5,6 +5,7 @@ import { recalculateUserStats } from './utils/stats.js';
 import { updateMissionProgress } from './utils/missions.js';
 import { rotateDailyShop } from './utils/shop_rotation.js';
 import { getPerkBonuses } from './utils/perks.js';
+import { economyLimiter } from './utils/rateLimiters.js';
 
 
 const router = express.Router();
@@ -252,7 +253,7 @@ router.get('/daily', authenticate, async (req, res) => {
 });
 
 // Refresh daily shop
-router.post('/daily/refresh', authenticate, async (req, res) => {
+router.post('/daily/refresh', authenticate, economyLimiter, async (req, res) => {
   try {
     const userId = req.user.id;
 
@@ -384,7 +385,7 @@ router.post('/mark-seen/:id', authenticate, async (req, res) => {
 });
 
 // Buy item
-router.post('/buy/:id', authenticate, async (req, res) => {
+router.post('/buy/:id', authenticate, economyLimiter, async (req, res) => {
   const itemId = parseInt(req.params.id);
   const userId = req.user.id;
 
@@ -795,7 +796,7 @@ router.post('/activate/:id', authenticate, async (req, res) => {
 });
 
 // Buy chest (coins or gems depending on chest type)
-router.post('/buy-chest/:type', authenticate, async (req, res) => {
+router.post('/buy-chest/:type', authenticate, economyLimiter, async (req, res) => {
   const type = req.params.type; // normal, epic, legendary
   const userId = req.user.id;
 
