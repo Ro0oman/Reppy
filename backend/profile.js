@@ -101,9 +101,12 @@ router.get('/top-public', async (req, res) => {
   try {
     const limit = Math.min(parseInt(req.query.limit) || 100, 200);
     const result = await query(
+      // total_reps >= 50: only expose athletes with real activity to Google's
+      // index (SSG athlete sitemap). Below this the profile is near-empty and is
+      // thin content that shouldn't be crawled. (auditoría 2026-07, SEO)
       `SELECT id, name, username, avatar_url, current_level, total_reps
        FROM users
-       WHERE is_private = false AND username IS NOT NULL AND total_reps > 0
+       WHERE is_private = false AND username IS NOT NULL AND total_reps >= 50
        ORDER BY total_reps DESC
        LIMIT $1`,
       [limit]
