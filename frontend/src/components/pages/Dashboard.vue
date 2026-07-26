@@ -174,6 +174,16 @@
     >
       <Snowflake class="h-5 w-5 text-amber-400 shrink-0" aria-hidden="true" />
       <p class="flex-1 min-w-0 text-xs font-medium text-amber-300">{{ streakStateLabel }}</p>
+      <!-- Free weekly rest day: preferred CTA when still available this week. -->
+      <button
+        v-if="streakStatus.restDayWeeklyLimit && streakStatus.restDaysThisWeek < streakStatus.restDayWeeklyLimit"
+        type="button"
+        class="shrink-0 rounded-xl border border-emerald-500/50 bg-emerald-500/15 text-emerald-200 px-3 py-2 text-xs font-semibold disabled:opacity-40 active:scale-95 transition-transform"
+        :disabled="!streakStatus.canUseRestDay || usingRestDay"
+        @click="useRestDay"
+      >
+        {{ restDayButtonLabel }}
+      </button>
       <button
         type="button"
         class="shrink-0 rounded-xl border border-amber-500/50 bg-amber-500/15 text-amber-200 px-3 py-2 text-xs font-semibold disabled:opacity-40 active:scale-95 transition-transform"
@@ -836,6 +846,7 @@ const guidedTrainingStateLoaded = ref(false);
 const planPromoDismissed = ref(false);
 const streakStatus = ref(null);
 const freezingStreak = ref(false);
+const usingRestDay = ref(false);
 const QUICKSTART_SEEN_PREFIX = 'reppy_quickstart_seen_v1';
 const GOAL_ONBOARDING_DISMISSED_PREFIX = 'reppy_goal_onboarding_dismissed_v1';
 const PLAN_PROMO_DISMISSED_PREFIX = 'reppy_plan_promo_dismissed_v1';
@@ -1006,6 +1017,11 @@ const freezeButtonLabel = computed(() => {
   return i18n.t('streak_freeze_for', { cost });
 });
 
+const restDayButtonLabel = computed(() => {
+  if (usingRestDay.value) return i18n.t('streak_resting');
+  return i18n.t('streak_rest_day');
+});
+
 const maybeCelebrateStreak = async (status) => {
   if (typeof window === 'undefined' || !status?.trainedToday) return;
   const today = getLocalDateString();
@@ -1047,6 +1063,20 @@ const freezeStreak = async () => {
     notificationStore.notify(error.response?.data?.message || i18n.t('streak_freeze_error'), 'error');
   } finally {
     freezingStreak.value = false;
+  }
+};
+
+const useRestDay = async () => {
+  if (!streakStatus.value?.canUseRestDay || usingRestDay.value) return;
+  usingRestDay.value = true;
+  try {
+    const res = await axios.post('/api/streak/rest-day');
+    streakStatus.value = res.data;
+    notificationStore.notify(i18n.t('streak_rest_notify'), 'success');
+  } catch (error) {
+    notificationStore.notify(error.response?.data?.message || i18n.t('streak_rest_error'), 'error');
+  } finally {
+    usingRestDay.value = false;
   }
 };
 

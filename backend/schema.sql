@@ -239,9 +239,14 @@ CREATE TABLE IF NOT EXISTS streak_freezes (
     user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
     freeze_date DATE NOT NULL,
     spent_coins INTEGER NOT NULL DEFAULT 250,
+    -- TRUE = free weekly "rest day" (día de descanso activo); FALSE = paid 250-coin freeze.
+    -- Tracked apart so the rest-day weekly limit never touches the paid-freeze economy.
+    is_rest_day BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(user_id, freeze_date)
 );
+-- Idempotent migration for existing DBs (the CREATE above only helps fresh ones).
+ALTER TABLE streak_freezes ADD COLUMN IF NOT EXISTS is_rest_day BOOLEAN DEFAULT FALSE;
 
 -- Index for better performance
 CREATE INDEX IF NOT EXISTS idx_reps_user_date ON reps(user_id, date);
