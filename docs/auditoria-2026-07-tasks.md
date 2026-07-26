@@ -115,7 +115,7 @@ Protocolo de cada run:
 
 ## P2 — SEO fixes (mantenimiento, no canal principal)
 
-- [ ] **Soft-404 global** — cualquier URL inventada devuelve 200 con la home (canonical a `/es`). Fallback 404 real o `noindex` en el catch-all del router + config Traefik/Coolify.
+- [ ] 🔨 PR #338 (parcial) **Soft-404 global** — cualquier URL inventada devuelve 200 con la home (canonical a `/es`). Fallback 404 real o `noindex` en el catch-all del router + config Traefik/Coolify. **PR #338 hace la parte code-side (`noindex` en la ruta `not-found` del router)**; queda 👤/infra el **404 real por status HTTP** (config Traefik/Coolify), que no es implementable desde el código.
 - [ ] **`/` → 301 a `/es`** (hoy 200 con canonical).
 - [x] **`llms.txt` con slugs ES bajo `/en/blog/`** — `frontend/public/llms.txt:29-38`. *(Fix: los 10 enlaces EN ahora usan el `slugEn` real de `blogPosts.json`, coincidiendo con las rutas SSG de `vite.config.js:110`.)*
 - [x] **Limpiar `frontend/index.html`** (PR #320 mergeada) — meta keywords con ~45 términos (línea 14) y bloque `<noscript>` keyword-stuffed (178-230), redundante con SSG.
