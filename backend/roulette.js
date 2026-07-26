@@ -25,7 +25,7 @@ const ROULETTE_PRIZES = [
   { id: 5, value: 600, weight: 1, type: 'coins' },
   { id: 10, value: 2, weight: 10, type: 'gems', label: '2 Gemas' },
   { id: 6, rarity: 'common', weight: 6, type: 'consumable', label: 'Consumible Común' },
-  { id: 7, type: 'chest', rarity: 'level', weight: 2, label: 'Cofre de Nivel' },
+  { id: 7, type: 'chest', rarity: 'level', weight: 2, label: 'Cofre de Batalla' },
   { id: 8, type: 'chest', rarity: 'boss', weight: 1, label: 'Cofre de Boss' },
   { id: 9, type: 'chest', rarity: 'epic', weight: 0.5, label: 'Cofre Épico' }
 ];
@@ -41,7 +41,7 @@ const DAILY_PRIZES = [
   { id: 1, value: 250, weight: 22, type: 'coins' },
   { id: 2, rarity: 'rare', weight: 15, type: 'consumable', label: 'Poción Rara' },
   { id: 3, value: 5, weight: 10, type: 'gems', label: '5 Gemas' },
-  { id: 4, type: 'chest', rarity: 'level', weight: 6, label: 'Cofre de Nivel' },
+  { id: 4, type: 'chest', rarity: 'level', weight: 6, label: 'Cofre de Batalla' },
   { id: 5, rarity: 'especial', weight: 4, type: 'consumable', label: 'Poción Especial' },
   { id: 6, type: 'chest', rarity: 'boss', weight: 2, label: 'Cofre de Boss' },
   { id: 7, rarity: 'legendary', weight: 1, type: 'consumable', label: 'Poción Legendaria' }
