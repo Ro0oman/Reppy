@@ -1,4 +1,4 @@
-import pool, { query as defaultQuery } from '../db.js';
+import { query as defaultQuery, withTransaction } from '../db.js';
 import { getLocalDateString } from './date.js';
 
 export const STREAK_FREEZE_COST = 250;
@@ -25,6 +25,25 @@ export const ensureStreakFreezeTable = async (q = defaultQuery) => {
   // Distinguishes the free weekly rest day from the paid 250-coin freeze.
   await q('ALTER TABLE streak_freezes ADD COLUMN IF NOT EXISTS is_rest_day BOOLEAN DEFAULT FALSE');
 };
+
+// Full streak schema bootstrap: the streak_freezes table + the users columns
+// getStreakStatus reads. Runs ONCE at module load (import = app startup) on a
+// normal pooled connection — NEVER inside a caller's transaction. This is what
+// lets the hot paths below stop running DDL per request, and avoids the
+// deadlock that DDL-inside-a-FOR-UPDATE-txn caused (an `ALTER TABLE users …
+// IF NOT EXISTS` takes ACCESS EXCLUSIVE even as a no-op; run on a separate
+// connection while a txn held a FOR UPDATE row lock on users, it blocked
+// forever and PG's deadlock detector never saw it — the txn sat idle-in-
+// transaction). Idempotent; schema.sql covers fresh DBs.
+export const ensureStreakSchema = async (q = defaultQuery) => {
+  await ensureStreakFreezeTable(q);
+  await q('ALTER TABLE users ADD COLUMN IF NOT EXISTS last_jackpot_week TEXT');
+};
+
+// Fired at import; the hot paths `await` it (instant once resolved).
+const schemaReady = ensureStreakSchema().catch((err) => {
+  console.error('[streak] schema bootstrap failed:', err);
+});
 
 const addDays = (date, amount) => {
   const next = new Date(date);
@@ -64,9 +83,9 @@ const countCurrentStreak = (activeDates) => {
 };
 
 export const getStreakStatus = async (userId, q = defaultQuery) => {
-  await ensureStreakFreezeTable(q);
-  // Ensure jackpot tracking column exists (idempotent)
-  await defaultQuery('ALTER TABLE users ADD COLUMN IF NOT EXISTS last_jackpot_week TEXT').catch(() => {});
+  // Schema is bootstrapped once at import (see schemaReady) — no DDL on the hot
+  // path, so this is safe to call from anywhere, including inside a transaction.
+  await schemaReady;
 
   const today = getLocalDateString();
   const yesterday = getLocalDateString(addDays(new Date(), -1));
@@ -142,53 +161,59 @@ export const getStreakStatus = async (userId, q = defaultQuery) => {
 };
 
 export const freezeStreakForToday = async (userId) => {
-  const client = await pool.connect();
-  try {
-    await client.query('BEGIN');
-    const q = (text, params) => client.query(text, params);
-    await ensureStreakFreezeTable(q);
+  await schemaReady;
 
-    const userRes = await client.query('SELECT reppy_coins FROM users WHERE id = $1 FOR UPDATE', [userId]);
-    if (userRes.rowCount === 0) {
-      const error = new Error('User not found');
-      error.status = 404;
-      throw error;
-    }
+  // Eligibility read OUTSIDE any transaction. getStreakStatus no longer runs
+  // DDL, but keeping it off the locked path is what kills the old deadlock
+  // (freeze used to hold FOR UPDATE on users while getStreakStatus ran an
+  // ALTER on a second connection → indefinite block).
+  const status = await getStreakStatus(userId);
+  if (!status.isAtRisk) {
+    const error = new Error('Tu racha no esta en riesgo ahora mismo.');
+    error.status = 400;
+    throw error;
+  }
+  if (status.freezesThisWeek >= STREAK_FREEZE_WEEKLY_LIMIT) {
+    const error = new Error('Ya has usado tu congelacion semanal.');
+    error.status = 400;
+    throw error;
+  }
+  if (status.coins < STREAK_FREEZE_COST) {
+    const error = new Error('No tienes monedas suficientes para congelar la racha.');
+    error.status = 400;
+    throw error;
+  }
 
-    const status = await getStreakStatus(userId, q);
-    if (!status.isAtRisk) {
-      const error = new Error('Tu racha no esta en riesgo ahora mismo.');
+  await withTransaction(async (client) => {
+    // Insert first, guarded by UNIQUE(user_id, freeze_date): if today already
+    // has a freeze/rest row, nothing is inserted and we bail WITHOUT charging.
+    const ins = await client.query(
+      `INSERT INTO streak_freezes (user_id, freeze_date, spent_coins, is_rest_day)
+       VALUES ($1, CURRENT_DATE, $2, FALSE)
+       ON CONFLICT (user_id, freeze_date) DO NOTHING`,
+      [userId, STREAK_FREEZE_COST]
+    );
+    if (ins.rowCount === 0) {
+      const error = new Error('Tu racha ya esta protegida hoy.');
       error.status = 400;
       throw error;
     }
-    if (status.freezesThisWeek >= STREAK_FREEZE_WEEKLY_LIMIT) {
-      const error = new Error('Ya has usado tu congelacion semanal.');
-      error.status = 400;
-      throw error;
-    }
-    if (Number(userRes.rows[0].reppy_coins || 0) < STREAK_FREEZE_COST) {
+    // Atomic coin gate: only charge if the balance still covers it. If not, the
+    // whole transaction (including the insert above) rolls back — no free freeze.
+    const upd = await client.query(
+      `UPDATE users SET reppy_coins = reppy_coins - $1
+       WHERE id = $2 AND COALESCE(reppy_coins, 0) >= $1
+       RETURNING reppy_coins`,
+      [STREAK_FREEZE_COST, userId]
+    );
+    if (upd.rowCount === 0) {
       const error = new Error('No tienes monedas suficientes para congelar la racha.');
       error.status = 400;
       throw error;
     }
+  });
 
-    await client.query(
-      'INSERT INTO streak_freezes (user_id, freeze_date, spent_coins) VALUES ($1, CURRENT_DATE, $2)',
-      [userId, STREAK_FREEZE_COST]
-    );
-    await client.query(
-      'UPDATE users SET reppy_coins = GREATEST(0, COALESCE(reppy_coins, 0) - $1) WHERE id = $2',
-      [STREAK_FREEZE_COST, userId]
-    );
-
-    await client.query('COMMIT');
-    return getStreakStatus(userId);
-  } catch (error) {
-    await client.query('ROLLBACK');
-    throw error;
-  } finally {
-    client.release();
-  }
+  return getStreakStatus(userId);
 };
 
 /**
