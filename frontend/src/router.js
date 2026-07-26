@@ -392,6 +392,18 @@ export function setupRouterGuards(router) {
         let el = document.querySelector(`meta[name="${name}"]`) || document.querySelector(`meta[property="${name}"]`);
         if (el) el.setAttribute('content', content);
       });
+
+      // Soft-404 fix (auditoría 2026-07, SEO): la ruta catch-all (`not-found`)
+      // se sirve con HTTP 200 vía el fallback SPA, así que sin esto Google podría
+      // indexar URLs inventadas. Marcamos la not-found como `noindex` y
+      // restauramos el `index` por defecto en cualquier otra ruta. (El 404 real
+      // por status HTTP sigue necesitando la config de Traefik/Coolify.)
+      const robotsEl = document.querySelector('meta[name="robots"]');
+      if (robotsEl) {
+        robotsEl.setAttribute('content', to.name === 'not-found'
+          ? 'noindex, follow'
+          : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
+      }
     }
 
     const isAuthenticated = authStore.isAuthenticated
