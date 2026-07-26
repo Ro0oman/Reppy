@@ -59,7 +59,7 @@ Protocolo de cada run:
 - [x] **XP de quests de NPC ignorado** (PR #313 mergeada) — `backend/utils/campaignQuests.js` `claimQuest` paga coins/gems/buff pero el campo `xp` del JSON es letra muerta. Pagarlo o quitarlo del JSON. *(Se optó por pagarlo en `cha_xp`, la bolsa de XP persistente que ya usa training.js.)*
 - [x] **Misión `buy_legendary` incompletable** (PR #310 mergeada) — `backend/shop.js:530` compara `'Legendary'`/`'Calisthenics'` contra rarezas reales `legendary`/`calistenico`. Nunca matchea.
 - [x] **`scripts/seed_rpg_items.js` con rarezas en inglés** (PR #311 mergeada) (`special`, `calisthenic`) que las queries de cofres (`WHERE rarity = 'especial'`) no encuentran → items huérfanos.
-- [ ] **Cofres de nivel: renombrar a genérico** ✅DECIDIDO (2026-07-25: opción A) — renombrar "Cofre de Nivel" → nombre genérico ("Cofre de Batalla") en DB + i18n (es/en) + premio de ruleta (`roulette.js`) + UI. Se mantiene como recompensa de ruleta/tienda; NO se restaura el cofre por subir de nivel (`additionalChests` sigue en 0). Coherencia i18n en ambos locales.
+- [ ] 🔨 PR #324 **Cofres de nivel: renombrar a genérico** ✅DECIDIDO (2026-07-25: opción A) — renombrar "Cofre de Nivel" → nombre genérico ("Cofre de Batalla") en DB + i18n (es/en) + premio de ruleta (`roulette.js`) + UI. Se mantiene como recompensa de ruleta/tienda; NO se restaura el cofre por subir de nivel (`additionalChests` sigue en 0). Coherencia i18n en ambos locales.
 
 ## P1 — Rebalance económico (mes 1, empieza por una hoja de cálculo)
 
