@@ -1356,6 +1356,13 @@ export default {
     streak_resting: 'Resting…',
     streak_rest_notify: 'Streak protected with your weekly rest day',
     streak_rest_error: 'Could not use rest day',
+    weekly_reto_title: 'Challenge: beat last week',
+    weekly_reto_reps: 'reps',
+    weekly_reto_claim: 'Claim chest',
+    weekly_reto_claiming: 'Claiming…',
+    weekly_reto_done: 'Claimed! ✅',
+    weekly_reto_claimed: 'Weekly challenge beaten! Battle Chest earned 🎁',
+    weekly_reto_error: 'Could not claim the challenge',
 
     // Companion (mobile/desktop overview)
     comp_level_short: 'Lv.',

@@ -1435,6 +1435,13 @@ export default {
     streak_resting: 'Descansando…',
     streak_rest_notify: 'Racha protegida con tu día de descanso semanal',
     streak_rest_error: 'No se pudo usar el día de descanso',
+    weekly_reto_title: 'Reto: supera tu semana pasada',
+    weekly_reto_reps: 'reps',
+    weekly_reto_claim: 'Reclamar cofre',
+    weekly_reto_claiming: 'Reclamando…',
+    weekly_reto_done: '¡Reclamado! ✅',
+    weekly_reto_claimed: '¡Reto semanal superado! Cofre de Batalla conseguido 🎁',
+    weekly_reto_error: 'No se pudo reclamar el reto',
 
     // Companion (resumen móvil/escritorio)
     comp_level_short: 'Nv.',

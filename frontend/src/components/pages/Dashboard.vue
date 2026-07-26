@@ -194,6 +194,34 @@
       </button>
     </div>
 
+    <!-- Weekly challenge: beat last week's reps (retention) -->
+    <div
+      v-if="weeklyChallenge && weeklyChallenge.eligible"
+      class="rounded-2xl border border-blue-500/30 bg-blue-500/[0.06] px-4 py-3"
+    >
+      <div class="flex items-center gap-3">
+        <Target class="h-5 w-5 text-blue-400 shrink-0" aria-hidden="true" />
+        <div class="flex-1 min-w-0">
+          <p class="text-xs font-semibold text-blue-300">{{ i18n.t('weekly_reto_title') }}</p>
+          <p class="text-[11px] text-zinc-400 tabular-nums">{{ weeklyChallenge.progress }} / {{ weeklyChallenge.goal }} {{ i18n.t('weekly_reto_reps') }}</p>
+        </div>
+        <button
+          v-if="weeklyChallenge.canClaim"
+          type="button"
+          class="shrink-0 rounded-xl border border-emerald-500/50 bg-emerald-500/15 text-emerald-200 px-3 py-2 text-xs font-semibold disabled:opacity-40 active:scale-95 transition-transform"
+          :disabled="claimingWeekly"
+          @click="claimWeeklyChallenge"
+        >
+          {{ claimingWeekly ? i18n.t('weekly_reto_claiming') : i18n.t('weekly_reto_claim') }}
+        </button>
+        <span v-else-if="weeklyChallenge.alreadyClaimed" class="shrink-0 text-[11px] font-semibold text-emerald-400">{{ i18n.t('weekly_reto_done') }}</span>
+        <span v-else class="shrink-0 text-[11px] font-semibold text-blue-300 tabular-nums">{{ weeklyChallengePct }}%</span>
+      </div>
+      <div class="mt-2 h-1.5 w-full rounded-full bg-zinc-700/40 overflow-hidden">
+        <div class="h-full rounded-full bg-blue-500 transition-all" :style="{ width: weeklyChallengePct + '%' }"></div>
+      </div>
+    </div>
+
     <!-- Quick log (mobile): register on entry — exercise pre-selected, no scroll -->
     <div
       v-if="isMobile"
@@ -847,6 +875,8 @@ const planPromoDismissed = ref(false);
 const streakStatus = ref(null);
 const freezingStreak = ref(false);
 const usingRestDay = ref(false);
+const weeklyChallenge = ref(null);
+const claimingWeekly = ref(false);
 const QUICKSTART_SEEN_PREFIX = 'reppy_quickstart_seen_v1';
 const GOAL_ONBOARDING_DISMISSED_PREFIX = 'reppy_goal_onboarding_dismissed_v1';
 const PLAN_PROMO_DISMISSED_PREFIX = 'reppy_plan_promo_dismissed_v1';
@@ -1048,6 +1078,36 @@ const fetchStreakStatus = async () => {
     await maybeCelebrateStreak(res.data);
   } catch (error) {
     console.error('Error fetching streak status:', error);
+  }
+};
+
+const fetchWeeklyChallenge = async () => {
+  try {
+    const res = await axios.get('/api/weekly-challenge/status', { params: { t: Date.now() } });
+    weeklyChallenge.value = res.data;
+  } catch (error) {
+    console.error('Error fetching weekly challenge:', error);
+  }
+};
+
+// Progress toward beating last week's reps, clamped 0-100 for the bar width.
+const weeklyChallengePct = computed(() => {
+  const w = weeklyChallenge.value;
+  if (!w || !w.goal) return 0;
+  return Math.min(100, Math.round((w.progress / w.goal) * 100));
+});
+
+const claimWeeklyChallenge = async () => {
+  if (!weeklyChallenge.value?.canClaim || claimingWeekly.value) return;
+  claimingWeekly.value = true;
+  try {
+    await axios.post('/api/weekly-challenge/claim');
+    await Promise.all([fetchWeeklyChallenge(), authStore.fetchProfile(true)]);
+    notificationStore.notify(i18n.t('weekly_reto_claimed'), 'success');
+  } catch (error) {
+    notificationStore.notify(error.response?.data?.message || i18n.t('weekly_reto_error'), 'error');
+  } finally {
+    claimingWeekly.value = false;
   }
 };
 
@@ -1465,6 +1525,7 @@ const refreshAfterLog = async () => {
     await fetchExerciseData({ silent: true });
     await Promise.all([
       fetchStreakStatus(),
+      fetchWeeklyChallenge(),
       fetchGlobalData(),
       trainingStore.fetchMine()
     ]);
@@ -1491,6 +1552,7 @@ const fetchData = async ({ skipFetchMine = false } = {}) => {
     const statsRes = await fetchExerciseData();
     await Promise.all([
       fetchStreakStatus(),
+      fetchWeeklyChallenge(),
       fetchGlobalData(),
       ...(skipFetchMine ? [] : [trainingStore.fetchMine()])
     ]);
