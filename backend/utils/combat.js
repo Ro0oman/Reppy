@@ -26,9 +26,13 @@ import { emitProgress } from './progressEvents.js';
  * @param {string} params.exerciseType    exercise slug
  * @param {number|null} params.diffMult    difficulty multiplier override
  * @param {number} params.addedWeight     added weight in kg (0 for guided logs)
+ * @param {string|null} params.exerciseStat combat stat of the logged exercise
+ *        (str/vig/end) for the exercise-match multiplier; inert here because the
+ *        community boss SELECT below doesn't carry weakness_stat/resist_stat, but
+ *        threaded for a single consistent damage contract.
  * @returns {Promise<{bossId:number|null, actualDamageDealt:number, killed:boolean, boss:object|null}>}
  */
-export async function applyBossDamage(client, { user, effectiveCount, exerciseType, diffMult = null, addedWeight = 0 }) {
+export async function applyBossDamage(client, { user, effectiveCount, exerciseType, diffMult = null, addedWeight = 0, exerciseStat = null }) {
   const userId = user.id;
 
   const bossRes = await client.query(
@@ -42,7 +46,7 @@ export async function applyBossDamage(client, { user, effectiveCount, exerciseTy
   }
 
   const boss = bossRes.rows[0];
-  const bossDmgResult = calculateDamage(user, effectiveCount, exerciseType, boss, false, false, diffMult, addedWeight);
+  const bossDmgResult = calculateDamage(user, effectiveCount, exerciseType, boss, false, false, diffMult, addedWeight, exerciseStat);
   const actualDamageDealt = bossDmgResult.totalDamage;
 
   // Atomic health deduction — flips to 'defeated' the instant HP hits 0.

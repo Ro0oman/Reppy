@@ -5,6 +5,7 @@ import { getExerciseRewards } from './utils/rewards.js';
 import { recalculateUserStats, augmentUserWithLevels } from './utils/stats.js';
 import { getLocalDateString } from './utils/date.js';
 import { calculateDamage } from './utils/damage.js';
+import { getExerciseCombatStat } from './utils/exerciseCombat.js';
 import { emitProgress } from './utils/progressEvents.js';
 import { broadcastDamage } from './socketManager.js';
 import { applyBossDamage } from './utils/combat.js';
@@ -169,14 +170,16 @@ async function getActivePlanBundle(userId) {
 async function applyGuidedRepLog(client, userId, exerciseType, count) {
   if (!count || count <= 0) return { damage: 0, coins: 0 };
 
-  const exRes = await client.query('SELECT difficulty_multiplier, coin_multiplier, unit FROM exercises WHERE slug = $1', [exerciseType]);
+  const exRes = await client.query('SELECT difficulty_multiplier, coin_multiplier, unit, stat_type, primary_muscle_group FROM exercises WHERE slug = $1', [exerciseType]);
   let diffMult = null;
   let coinMult = null;
   let unit = 'reps';
+  let exerciseStat = null;
   if (exRes.rows.length > 0) {
     diffMult = Number(exRes.rows[0].difficulty_multiplier);
     coinMult = Number(exRes.rows[0].coin_multiplier);
     unit = exRes.rows[0].unit || 'reps';
+    exerciseStat = getExerciseCombatStat(exRes.rows[0]);
   }
   const effectiveCount = getEffectiveExerciseCount(count, unit);
   const rewardCount = getRewardExerciseCount(count, unit);
@@ -231,6 +234,7 @@ async function applyGuidedRepLog(client, userId, exerciseType, count) {
     exerciseType,
     diffMult,
     addedWeight: 0,
+    exerciseStat,
   });
 
   // Campaign routing (individual progression). See utils/campaignEngine.js.
@@ -240,6 +244,7 @@ async function applyGuidedRepLog(client, userId, exerciseType, count) {
     exerciseType,
     diffMult,
     addedWeight: 0,
+    exerciseStat,
   });
 
   await client.query(

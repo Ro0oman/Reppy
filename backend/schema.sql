@@ -537,3 +537,10 @@ ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS campaign_node_id INTEGER REFERE
 -- Estilo de interfaz elegido por el usuario ('operative' | 'classic').
 -- Se sincroniza con localStorage (reppy_ui_style) vía PATCH /users/profile.
 ALTER TABLE users ADD COLUMN IF NOT EXISTS ui_style VARCHAR(20) DEFAULT 'operative';
+
+-- Grupo muscular principal del ejercicio (Hevy `primary_muscle_group`: chest,
+-- quadriceps, abdominals…). Alimenta el multiplicador de combate ejercicio→daño
+-- (auditoría 2026-07, opción B): el grupo mapea a un stat de combate (str/vig/end)
+-- que se compara con weakness_stat/resist_stat del enemigo. NULL para los
+-- ejercicios built-in de Reppy, que resuelven vía `stat_type`.
+ALTER TABLE exercises ADD COLUMN IF NOT EXISTS primary_muscle_group VARCHAR(50);

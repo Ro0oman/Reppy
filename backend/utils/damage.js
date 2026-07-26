@@ -19,9 +19,12 @@ import { getPerkBonuses } from './perks.js';
  * @param {number} reps Number of repetitions
  * @param {string} type Exercise type (pullups, pushups, etc.)
  * @param {Object} boss Optional boss object to check for weaknesses
- * @returns {Object} { totalDamage, isCrit, magicBonus, baseDamage, weaknessBonus }
+ * @param {string|null} exerciseStat Optional combat stat of the logged exercise
+ *        ('str'|'vig'|'end'); when it matches the boss weakness_stat/resist_stat
+ *        it applies a ×1.4/×0.7 multiplier (auditoría 2026-07, opción B).
+ * @returns {Object} { totalDamage, isCrit, magicBonus, baseDamage, weaknessBonus, exerciseMatchMult }
  */
-export const calculateDamage = (user, reps, type, boss = null, skipBuffs = false, deterministic = false, exerciseMultiplierOverride = null, addedWeightKg = 0) => {
+export const calculateDamage = (user, reps, type, boss = null, skipBuffs = false, deterministic = false, exerciseMultiplierOverride = null, addedWeightKg = 0, exerciseStat = null) => {
   // 1. Determine Exercise Multiplier
   const weight = Math.max(0, Number(addedWeightKg) || 0);
   // Weight bonus: +1 multiplier per 20 kg, capped at +5x (100 kg)
@@ -142,6 +145,22 @@ export const calculateDamage = (user, reps, type, boss = null, skipBuffs = false
     }
   }
 
+  // 5b. Exercise-match multiplier (auditoría 2026-07, opción B). The muscle group
+  // of the *logged exercise* maps to a combat stat (str/vig/end); hitting the
+  // enemy's weakness amplifies, hitting its resist dampens. This is layered ON TOP
+  // of the per-level weakness bonus above — training the right lift, not just
+  // having the right stat leveled, now pays off. Only enemies whose object carries
+  // weakness_stat/resist_stat (campaign enemies) are affected; a null exerciseStat
+  // (unmapped/legacy exercise) stays neutral.
+  let exerciseMatchMult = 1.0;
+  if (boss && exerciseStat) {
+    const es = String(exerciseStat).toLowerCase();
+    const weak = boss.weakness_stat ? String(boss.weakness_stat).toLowerCase() : null;
+    const resist = boss.resist_stat ? String(boss.resist_stat).toLowerCase() : null;
+    if (weak && es === weak) exerciseMatchMult = 1.4;
+    else if (resist && es === resist) exerciseMatchMult = 0.7;
+  }
+
   // execution perk: bonus damage to a boss that's below 25% HP (the finishing blow).
   let executionMult = 1.0;
   if (boss && perks.executionPct > 0 && Number(boss.total_hp) > 0) {
@@ -150,14 +169,14 @@ export const calculateDamage = (user, reps, type, boss = null, skipBuffs = false
   }
 
   // --- FINAL CALCULATIONS (sum across reps via critWeightedReps) ---
-  const totalBase = perRepBaseNoCrit * critWeightedReps * weaknessBonus;
-  const totalWithGear = perRepGearNoCrit * critWeightedReps * weaknessBonus;
+  const totalBase = perRepBaseNoCrit * critWeightedReps * weaknessBonus * exerciseMatchMult;
+  const totalWithGear = perRepGearNoCrit * critWeightedReps * weaknessBonus * exerciseMatchMult;
   const finalDamage = totalWithGear * activeMultiplier * executionMult;
   const gearBonus = Math.max(0, totalWithGear - totalBase);
   const buffBonus = Math.max(0, finalDamage - totalWithGear);
 
   // Theoretical bounds for the whole set: no rep crits ↔ every rep crits.
-  const setNoCrit = perRepGearNoCrit * repsValue * weaknessBonus;
+  const setNoCrit = perRepGearNoCrit * repsValue * weaknessBonus * exerciseMatchMult;
   const setAllCrit = setNoCrit * critMult;
 
   return {
@@ -170,6 +189,7 @@ export const calculateDamage = (user, reps, type, boss = null, skipBuffs = false
     buffBonus: Math.round(buffBonus),
     critMultiplier: parseFloat(critMult.toFixed(2)),
     weaknessBonus: parseFloat(weaknessBonus.toFixed(2)),
+    exerciseMatchMult: parseFloat(exerciseMatchMult.toFixed(2)),
     activeMultiplier: parseFloat(activeMultiplier.toFixed(2)),
     critChance: Math.round(critChance)
   };
