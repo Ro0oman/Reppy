@@ -6,7 +6,9 @@ Resultado de una auditoría de 5 ejes: ingeniería, game design, engagement, SEO
 
 **Veredicto**: la app NO es cutre — el cuello de botella no es el código, es distribución + balance económico + retención de caídos. Plan: apuesta acotada de 6 meses.
 
-**Kill criterion (revisar ~2027-01-23)**: ~1.000 MAU, D30 > 10%, alguna conversión de pago. Si no → hobby sin mala conciencia.
+**Kill criterion (revisar ~2027-01-23)**: ~1.000 MAU y D30 > 10%. Si no → hobby sin mala conciencia.
+
+**❌ MONETIZACIÓN DESCARTADA (decisión de Roman, 2026-07-26)**: Reppy NO se monetiza de ninguna forma — ni suscripción, ni compras, ni cosméticos de pago, ni ads. No proponer monetización en futuras auditorías; ignorar cualquier recomendación de los informes originales en esa dirección. La conversión de pago YA NO es parte del kill criterion.
 
 **Regla de oro durante el plan**: 🧊 congelar rediseños visuales y features nuevas. El producto ya sobra para validar.
 
@@ -108,7 +110,6 @@ Protocolo de cada run:
 - [ ] 👤 **TikTok/Shorts 2-3/semana** — el canal principal. Formatos: "mis dominadas dañan al boss", boss comunitario en vivo ("muere cuando la comunidad haga 10.000 flexiones"), progresos de usuarios.
 - [ ] 👤 **Product Hunt + Show HN** — gratis, pico de un día y backlinks DR alto (lo que le falta al dominio).
 - [ ] 👤 **Outreach mensual a listículos** — FitCraft, Bitletics, RazFit, MainQuest, AlternativeTo, listas "Habitica alternatives". Un email por sitio = backlink + tráfico de intención perfecta.
-- [ ] **Suscripción mínima (~€3-4/mes)** — cofres/giros extra, cosméticos, stats avanzadas. Aunque la compren 3 personas: se necesita el dato de conversión. NUNCA vender poder (mata el PvP/rankings). Hoy no hay ni Stripe.
 
 ## P2 — SEO fixes (mantenimiento, no canal principal)
 
@@ -141,11 +142,35 @@ Protocolo de cada run:
 |---|---|
 | **Semana 1** | Todo P0 (seguridad + promesas rotas) |
 | **Semanas 2-4** | Rebalance económico + winback + día de descanso + GA4 + renombrar bosses |
-| **Mes 2** | Dominio + TWA Play Store + suscripción mínima + primeros TikToks |
+| **Mes 2** | Dominio + TWA Play Store + primeros TikToks |
 | **Mes 2-6** | Cadencia de contenido + Product Hunt/HN + outreach + combate con decisiones |
 | **Mes 6** | Revisar kill criterion con los datos del funnel |
 
 ---
+
+## 🗄️ P1 — Migrar la BD de Supabase a self-hosted (decisión de Roman, 2026-07-26)
+
+> **Objetivo**: dejar de depender de Supabase. La BD pasa a estar autoalojada (misma máquina/red que Coolify, `192.168.18.175`). Roman lo quiere como plan a futuro, con discovery previo — NO empezar a migrar sin completar la fase 1 y que él apruebe el plan.
+
+- [ ] **Fase 1 — DISCOVERY (hacer primero, es solo lectura + documento)** — inventariar antes de tocar nada, y volcarlo en `docs/db-migration-discovery.md`: (a) tamaño real de la BD por tabla + nº de filas + crecimiento mensual; (b) TODO lo que hoy se usa de Supabase más allá de Postgres puro (¿Storage para avatares?, ¿Auth?, ¿RLS?, ¿realtime?, ¿extensiones como `pgcrypto`/`uuid-ossp`?) — esto es lo que decide si la migración es trivial o no; (c) versión exacta de Postgres en Supabase; (d) dónde se referencia Supabase en el código (grep `supabase`) y en env vars; (e) qué se rompe si desaparece (avatares subidos, `avatar_url` apuntando a Supabase Storage…). **Entregable: el documento + un veredicto de complejidad (baja/media/alta).**
+- [ ] **Fase 2 — Plan de migración (documento, tras aprobar fase 1)** — elegir topología (Postgres en contenedor de Coolify vs servicio aparte en la misma LAN), definir: backups automáticos (pg_dump programado + retención + prueba de restore, ESTO ES OBLIGATORIO antes de migrar), estrategia de secretos, y el plan de cutover con ventana y rollback. Incluir cómo se sustituye Supabase Storage si se usa (p. ej. MinIO o disco local servido por el backend).
+- [ ] **Fase 3 — Postgres local en paralelo (sin cortar nada)** — levantar el Postgres self-hosted, cargar `schema.sql`, restaurar un dump reciente, y validar contra él: arrancar el backend apuntando a la BD local en un entorno de staging + pasar la suite de tests de economía (`npm test` con `DATABASE_URL` local). Producción sigue en Supabase.
+- [ ] **Fase 4 — Cutover** 👤 (requiere Roman: ventana de mantenimiento + cambiar env vars en Coolify) — dump final, restore, cambiar `DATABASE_URL`, verificar, y mantener Supabase intacto ~2 semanas como rollback antes de dar de baja.
+- [ ] **Al migrar, revisar el SSL de `db.js`** — hoy `rejectUnauthorized:false` está justificado por ser Supabase externo (decisión B ya documentada). Con Postgres en la red interna, reevaluar: o red privada sin TLS, o TLS con CA propio y `rejectUnauthorized:true`. Enlaza con la task de SSL ya cerrada.
+
+## 🩸 P1 — Curva de daño: progresión exponencial + ruido por boss (investigado 2026-07-26)
+
+> **Investigación hecha con datos reales de producción (solo-lectura)** sobre `LilAlexandru` (glvl 12, 7.332 reps), aislando el MISMO ejercicio (dips, ~45 reps por sesión) a lo largo de 3 meses. Datos de `reps.boss_damage_dealt` / `base_damage` / `gear_bonus` / `is_crit` / `boss_fight_id`.
+>
+> **Hallazgo 1 — la progresión NO es lineal, es explosiva**: `base_damage` por sesión de dips pasó de **3.122 (29-abr) → 13.299 (19-jun) → 101.207 (24-jun) → 223.720 (17-jul)**: ×72 en 3 meses, con un salto ×7,6 en 5 días entre el 19 y el 24 de junio. Compatible con el bucle de feedback ya identificado: la XP de FTH viene del daño infligido → más FTH → más daño → más FTH. El nerf del bono plano (#326, ×25→×5) ataca solo una parte; **el bucle (`stats.js:193`, "Parte C") sigue vivo** y es la causa de la explosión.
+>
+> **Hallazgo 2 — ruido de ±4× por la lotería de `weakness_stat` del boss**: el bono de debilidad compara contra el NIVEL de stat del usuario, y sus stats están muy desiguales (`str_xp` 27.495 · `end_xp` 36.660 · pero `vig_xp` 450 · `int_xp` 0 · `fth_xp` 2.287). Resultado: pelear contra Baldur (weakness `int`, stat 0) o Arthas (weakness `vig`, stat ~0) da un daño mucho menor que contra Malenia/Ornstein (weakness `str`, su stat fuerte). Sesiones consecutivas del mismo ejercicio dan 1.451 → 3.232 → 6.094 → 3.915 dmg/rep según qué boss toque. **Esto es lo que hace que "parezca que no hay progresión" y que a veces "el daño parezca bajo".**
+>
+> **Hallazgo 3 — `is_crit` NO explica el swing** (15-jun con crit dio 173/rep y 10-jun sin crit dio 208/rep), así que el crítico es un factor menor frente a los dos de arriba. Descartado también que sea el nerf de FE de #326: el último dato es del 25-jul y #326 se mergeó el 26-jul.
+
+- [ ] **Romper el bucle daño→FTH→daño (Parte C del nerf de FE)** — es la causa raíz de la progresión explosiva. Que la XP de FTH NO venga del daño infligido (`backend/utils/stats.js:193`) sino de otra fuente (participación en raids/quests, como ya se decidió). ⚠️ Ojo: desnivela a todos los usuarios existentes → pensar si hace falta recalcular/normalizar stats ya acumulados. PR revisable.
+- [ ] **Suavizar la lotería de weakness del boss** — que el daño no varíe ×4 según qué boss esté activo. Opciones a evaluar al implementar: (a) que el bono de debilidad tenga un suelo (nunca reducir por debajo de X% del daño base), (b) que la debilidad mire el ejercicio logueado y no solo el nivel de stat (enlaza con la task de combate ejercicio→daño ya decidida, que precisamente arregla esto), (c) rotar bosses cuyas debilidades cubran stats que los jugadores realmente entrenan (hoy hay bosses con weakness `int`, stat que nadie sube). **Recomendado: (b) + (a)**, porque (b) ya está aprobado.
+- [ ] **Exponer al jugador de qué depende su daño** — parte de la percepción de "daño bajo" es falta de feedback: no se ve por qué un día pegas 6.094/rep y otro 1.451. Mostrar en la UI de batalla el desglose (base · gear · debilidad del boss · crítico) para que la progresión se sienta.
 
 ## 🔍 Backlog propuesto (auditoría ingeniería/seguridad 2026-07-26)
 
