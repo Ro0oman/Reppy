@@ -353,7 +353,7 @@ export async function applyCampaignDamage(client, { user, effectiveCount, exerci
   const engRes = await client.query(
     `SELECT unp.id AS progress_id, unp.node_id, unp.enemy_current_hp, unp.enemy_total_hp, unp.kills,
             n.slug AS node_slug, n.type AS node_type, n.pack, n.rewards AS node_rewards, z.slug AS zone_slug, cr.id AS run_id,
-            cr.campaign_id, cr.prestige_level, c.config AS campaign_config,
+            cr.campaign_id, cr.prestige_level, cr.path, c.config AS campaign_config,
             e.id AS enemy_id, e.slug AS enemy_slug, e.family AS enemy_family, e.tier AS enemy_tier,
             e.base_hp, e.weakness_stat, e.resist_stat, e.scaling AS enemy_scaling, e.loot AS enemy_loot
      FROM campaign_runs cr
@@ -384,6 +384,18 @@ export async function applyCampaignDamage(client, { user, effectiveCount, exerci
     const rLvl = Number(user[`${row.resist_stat}_lvl`]) || 1;
     if (rLvl > 1) damage = Math.round(damage / (1 + Math.min(0.5, rLvl * 0.01)));
   }
+
+  // Dark-path curse: the Senda Oscura trades raw power (−25% campaign damage by
+  // default) for higher reward variance. The multiplier lives in the campaign
+  // config (`config.path.dark.curse_damage_multiplier`) so balance stays data-
+  // driven; only applied on the dark path and when the value is a sane fraction.
+  if (row.path === 'dark') {
+    const curse = Number(row.campaign_config?.path?.dark?.curse_damage_multiplier);
+    if (Number.isFinite(curse) && curse > 0 && curse !== 1) {
+      damage = Math.round(damage * curse);
+    }
+  }
+
   damage = Math.max(0, damage);
 
   const packCount = (row.pack && row.pack.count) || 1;
