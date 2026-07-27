@@ -116,7 +116,7 @@ Protocolo de cada run:
 ## P2 — SEO fixes (mantenimiento, no canal principal)
 
 - [ ] 🔨 PR #338 (parcial) **Soft-404 global** — cualquier URL inventada devuelve 200 con la home (canonical a `/es`). Fallback 404 real o `noindex` en el catch-all del router + config Traefik/Coolify. **PR #338 hace la parte code-side (`noindex` en la ruta `not-found` del router)**; queda 👤/infra el **404 real por status HTTP** (config Traefik/Coolify), que no es implementable desde el código.
-- [ ] **`/` → 301 a `/es`** (hoy 200 con canonical).
+- [ ] 🔨 PR #342 **`/` → 301 a `/es`** (hoy 200 con canonical). **Sí era implementable por código**: `frontend/nginx.conf` está versionado y es el que sirve el frontend (`frontend/Dockerfile:26`), no hacía falta tocar Traefik. La PR hace el 301 con un `map` sobre `Accept-Language` (navegador en inglés → `/en`, todo lo demás **incluidos los crawlers** → `/es`) para no romper la detección de idioma que hoy hace el router (`router.js:33` + `i18n.js:16`, que manda a `/en` a cualquier navegador no-español). Verificado con nginx real en local.
 - [x] **`llms.txt` con slugs ES bajo `/en/blog/`** — `frontend/public/llms.txt:29-38`. *(Fix: los 10 enlaces EN ahora usan el `slugEn` real de `blogPosts.json`, coincidiendo con las rutas SSG de `vite.config.js:110`.)*
 - [x] **Limpiar `frontend/index.html`** (PR #320 mergeada) — meta keywords con ~45 términos (línea 14) y bloque `<noscript>` keyword-stuffed (178-230), redundante con SSG.
 - [x] **Sitemap de atletas: umbral ≥50 reps** ✅DECIDIDO (2026-07-25: opción A) — subir el filtro de `top-public` a `total_reps >= 50` en `backend/profile.js:106` (un WHERE). Solo perfiles con actividad real se exponen a Google. Bajo riesgo, accionable ya.
