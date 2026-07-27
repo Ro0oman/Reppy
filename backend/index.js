@@ -627,7 +627,6 @@ apiRouter.get('/db/init', async (req, res) => {
       `CREATE INDEX IF NOT EXISTS idx_summaries_user_date ON daily_summaries(user_id, date)`,
       `CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(user_id_1, user_id_2)`,
       `CREATE INDEX IF NOT EXISTS idx_inventory_user ON user_inventory(user_id)`,
-      `CREATE INDEX IF NOT EXISTS idx_notifications_user_created ON notifications(user_id, created_at DESC)`,
       `CREATE INDEX IF NOT EXISTS idx_users_total_reps ON users(total_reps DESC) WHERE is_private = false`,
       `CREATE TABLE IF NOT EXISTS notifications (
         id SERIAL PRIMARY KEY,
@@ -640,6 +639,10 @@ apiRouter.get('/db/init', async (req, res) => {
         is_read BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )`,
+      // Va DESPUÉS de crear la tabla: este array se ejecuta en orden y un fallo
+      // aborta el resto de /db/init, así que un índice por delante de su tabla
+      // reventaría la inicialización de una BD limpia.
+      `CREATE INDEX IF NOT EXISTS idx_notifications_user_created ON notifications(user_id, created_at DESC)`,
       // Per-user "feature seen" flags (NEW badges/dots)
       `CREATE TABLE IF NOT EXISTS user_feature_seen (
         user_id     VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,

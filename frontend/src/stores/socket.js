@@ -3,33 +3,49 @@ import { useAuthStore } from './auth';
 import { useDamageStore } from './damage';
 import { useNotificationStore } from './notification';
 
+// Conexión en curso, compartida entre llamadas. `init()` dejó de ser síncrona al
+// pasar pusher-js a import diferido, así que un simple flag booleano no bastaba:
+// quien llama mientras la conexión está en vuelo tiene que poder esperarla (es lo
+// que hace `subscribeToPvp`, que si no se encontraba `pusher` todavía a null).
+let connectPromise = null;
+
+// Cada `disconnect()` invalida las conexiones en vuelo. Sin esto, un logout
+// ocurrido mientras se resuelve el import dejaría montada la conexión anterior
+// (autenticada con el token viejo) al terminar `connect()`.
+let generation = 0;
+
 export const useSocketStore = defineStore('socket', {
   state: () => ({
     pusher: null,
     connected: false,
     activeOperatives: [],
-    channels: {},
-    // Evita que dos init() concurrentes creen dos instancias de Pusher mientras
-    // se resuelve el import dinámico (antes el guard `if (this.pusher)` bastaba
-    // porque la construcción era síncrona).
-    initializing: false
+    channels: {}
   }),
   actions: {
-    async init() {
-      if (this.pusher || this.initializing) return;
-      this.initializing = true;
+    // Devuelve siempre una promesa que resuelve cuando `this.pusher` está listo
+    // (o cuando se sabe que no va a estarlo). Es idempotente y seguro en paralelo.
+    init() {
+      if (this.pusher) return Promise.resolve();
+      if (!connectPromise) {
+        connectPromise = this.connect().finally(() => { connectPromise = null; });
+      }
+      return connectPromise;
+    },
 
-      // pusher-js (~100 KB) se carga bajo demanda: si estuviera en el import
+    async connect() {
+      // pusher-js (~60 KB) se carga bajo demanda: si estuviera en el import
       // estático entraría en el chunk `vendor` que precargan TODAS las páginas,
       // incluidas la landing y el blog públicos. Aquí sale del camino crítico.
+      const myGeneration = generation;
       let Pusher;
       try {
         ({ default: Pusher } = await import('pusher-js'));
       } catch (err) {
-        this.initializing = false;
         console.error('[PUSHER] No se pudo cargar pusher-js:', err);
         return;
       }
+      // Hubo un disconnect() mientras cargaba el módulo: esta conexión ya no vale.
+      if (myGeneration !== generation) return;
 
       const authStore = useAuthStore();
       // Use relative path in production, or the env var in development
@@ -53,7 +69,6 @@ export const useSocketStore = defineStore('socket', {
       });
 
 
-      this.initializing = false;
       console.log('[PUSHER] Instance created, auth endpoint:', `${apiURL}/api/pusher/auth`);
 
       this.pusher.connection.bind('connected', () => {
@@ -160,8 +175,14 @@ export const useSocketStore = defineStore('socket', {
       }
     },
 
-    subscribeToPvp(fightId, onEvent) {
-      if (!this.pusher) this.init();
+    // async porque `init()` ahora carga pusher-js en diferido: sin el await,
+    // `this.pusher` seguiría a null aquí y el subscribe reventaría.
+    async subscribeToPvp(fightId, onEvent) {
+      if (!this.pusher) await this.init();
+      if (!this.pusher) {
+        console.error('[PVP] Sin conexión de Pusher, no se puede suscribir al combate');
+        return null;
+      }
       const channelName = `presence-pvp-${fightId}`;
       const channel = this.pusher.subscribe(channelName);
       channel.bind('pvp_event', onEvent);
@@ -205,6 +226,7 @@ export const useSocketStore = defineStore('socket', {
     },
 
     disconnect() {
+      generation += 1;
       if (this.pusher) {
         Object.keys(this.channels).forEach(name => {
           this.pusher.unsubscribe(name);
@@ -214,7 +236,6 @@ export const useSocketStore = defineStore('socket', {
         this.connected = false;
         this.channels = {};
       }
-      this.initializing = false;
     }
   }
 });
