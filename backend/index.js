@@ -751,6 +751,12 @@ async function ensureAllTrainingExercisesExist() {
 async function ensureSchemaMigrations() {
   try {
     await query('ALTER TABLE users ADD COLUMN IF NOT EXISTS last_daily_spin_at TIMESTAMP WITH TIME ZONE');
+    // Grupo muscular del ejercicio (PR #336, combate ejercicio→daño). Lo lee el
+    // SELECT de POST /reps y el de training.js, pero solo estaba declarado en
+    // schema.sql, que NO se aplica en arranque: al desplegar #336 sin haber
+    // corrido schema.sql a mano, cada POST /reps moria con "column
+    // primary_muscle_group does not exist" y la app no dejaba registrar reps.
+    await query('ALTER TABLE exercises ADD COLUMN IF NOT EXISTS primary_muscle_group VARCHAR(50)');
     // Referral-invite push is sent at most once per user (see referralReminders.js).
     await query('ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_reminder_sent BOOLEAN DEFAULT FALSE');
     // Per-user "feature seen" flags that drive the NEW badges/dots.
