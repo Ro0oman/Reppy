@@ -627,6 +627,8 @@ apiRouter.get('/db/init', async (req, res) => {
       `CREATE INDEX IF NOT EXISTS idx_summaries_user_date ON daily_summaries(user_id, date)`,
       `CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(user_id_1, user_id_2)`,
       `CREATE INDEX IF NOT EXISTS idx_inventory_user ON user_inventory(user_id)`,
+      `CREATE INDEX IF NOT EXISTS idx_notifications_user_created ON notifications(user_id, created_at DESC)`,
+      `CREATE INDEX IF NOT EXISTS idx_users_total_reps ON users(total_reps DESC) WHERE is_private = false`,
       `CREATE TABLE IF NOT EXISTS notifications (
         id SERIAL PRIMARY KEY,
         user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
@@ -759,6 +761,22 @@ async function ensureSchemaMigrations() {
     await query("CREATE INDEX IF NOT EXISTS idx_summary_interactions_summary_type ON summary_interactions(summary_id, type)");
     await query("CREATE INDEX IF NOT EXISTS idx_pvp_fights_status ON pvp_fights(status)");
     await query("CREATE INDEX IF NOT EXISTS idx_async_challenges_status ON async_challenges(status)");
+    // Índices calientes que faltaban. Se aplican uno a uno: `notifications` solo
+    // se crea en /db/init (no está en schema.sql), así que si la tabla no existe
+    // todavía no debe impedir que se cree el resto.
+    for (const [label, sql] of [
+      // El centro de notificaciones pagina por usuario y fecha en cada poll; sin
+      // este índice era seq scan + sort de toda la tabla (que crece sin cota).
+      ['notifications(user_id, created_at)', "CREATE INDEX IF NOT EXISTS idx_notifications_user_created ON notifications(user_id, created_at DESC)"],
+      // Ranking global: subqueries correlacionadas por cada fila del feed social.
+      ['users(total_reps)', "CREATE INDEX IF NOT EXISTS idx_users_total_reps ON users(total_reps DESC) WHERE is_private = false"],
+    ]) {
+      try {
+        await query(sql);
+      } catch (indexErr) {
+        console.error(`[Startup migration] Índice ${label} no aplicado:`, indexErr.message);
+      }
+    }
     console.log('[Startup migration] Schema migrations applied.');
   } catch (err) {
     console.error('[Startup migration] Failed to apply schema migrations:', err);

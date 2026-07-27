@@ -53,7 +53,9 @@ router.post('/', authenticate, async (req, res) => {
   const challengerId = req.user.id;
   const { challengedId, goalType = 'reps', goalValue = 100 } = req.body;
 
-  if (!challengedId || challengerId === Number(challengedId)) {
+  // IDs de usuario son VARCHAR: comparar como strings. Un `id === Number(id)`
+  // es siempre false y dejaba pasar los auto-retos (grifo de monedas + gemas).
+  if (!challengedId || String(challengerId) === String(challengedId)) {
     return res.status(400).json({ message: 'Invalid opponent' });
   }
   if (!VALID_GOAL_TYPES.includes(goalType)) {

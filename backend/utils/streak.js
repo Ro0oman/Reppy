@@ -60,6 +60,12 @@ const getStartOfWeek = (date = new Date()) => {
   return d;
 };
 
+// Clave anti-duplicado del jackpot 5/7: el LUNES de la semana en curso, la misma
+// frontera que usa `weekStart` para contar el progreso semanal. La fórmula casera
+// de nº de semana que había antes cortaba en sábado, así que el jackpot se pagaba
+// dos veces (vie + sáb/dom) y luego quedaba bloqueado de lunes a viernes.
+export const getJackpotWeekKey = (date = new Date()) => getLocalDateString(getStartOfWeek(date));
+
 const getHoursLeftToday = () => {
   const end = new Date();
   end.setHours(23, 59, 59, 999);
@@ -124,15 +130,8 @@ export const getStreakStatus = async (userId, q = defaultQuery) => {
   const isAtRisk = !activeToday && activeDates.has(yesterday);
 
   const weeklyProgress = Number(weeklyProgressRes.rows[0]?.count || 0);
-  // ISO week string e.g. "2026-W22"
-  const currentISOWeek = (() => {
-    const d = new Date();
-    const startOfYear = new Date(d.getFullYear(), 0, 1);
-    const week = Math.ceil(((d - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);
-    return `${d.getFullYear()}-W${String(week).padStart(2, '0')}`;
-  })();
   const lastJackpotWeek = userRes.rows[0]?.last_jackpot_week || null;
-  const jackpotAlreadyAwarded = lastJackpotWeek === currentISOWeek;
+  const jackpotAlreadyAwarded = lastJackpotWeek === getJackpotWeekKey();
   const jackpotEligible = weeklyProgress >= JACKPOT_DAYS_REQUIRED && !jackpotAlreadyAwarded;
 
   return {

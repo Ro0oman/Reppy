@@ -253,6 +253,11 @@ CREATE INDEX IF NOT EXISTS idx_reps_user_date ON reps(user_id, date);
 CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(user_id_1, user_id_2);
 CREATE INDEX IF NOT EXISTS idx_inventory_user ON user_inventory(user_id);
 CREATE INDEX IF NOT EXISTS idx_streak_freezes_user_date ON streak_freezes(user_id, freeze_date);
+-- Ranking global (feed social, weekly-summary, sitemap de atletas): se consultaba
+-- con seq scan de `users` en subqueries correlacionadas por cada fila del feed.
+-- El índice de notifications(user_id, created_at) vive en index.js: esa tabla solo
+-- se crea en /db/init, no aquí (ver task de unificar las 3 fuentes de esquema).
+CREATE INDEX IF NOT EXISTS idx_users_total_reps ON users(total_reps DESC) WHERE is_private = false;
 
 -- Migraciones seguras para tablas que ya existan
 ALTER TABLE users ADD COLUMN IF NOT EXISTS reppy_coins INTEGER DEFAULT 0;

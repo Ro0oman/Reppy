@@ -17,7 +17,7 @@ import { broadcastDamage } from './socketManager.js';
 import { applyBossDamage } from './utils/combat.js';
 import { applyCampaignDamage } from './utils/campaignEngine.js';
 import { getEffectiveExerciseCount, getRewardExerciseCount, isTimedExerciseUnit } from './utils/exerciseUnits.js';
-import { getStreakStatus, JACKPOT_REWARD_COINS, JACKPOT_DAYS_REQUIRED } from './utils/streak.js';
+import { getStreakStatus, getJackpotWeekKey, JACKPOT_REWARD_COINS, JACKPOT_DAYS_REQUIRED } from './utils/streak.js';
 import { createBossKillEvent } from './utils/bossKillEvent.js';
 
 
@@ -284,12 +284,7 @@ router.post('/', authenticate, repsLimiter, async (req, res) => {
     try {
       const streakStatus = await getStreakStatus(userId);
       if (streakStatus.jackpotEligible) {
-        const isoWeek = (() => {
-          const d = new Date();
-          const startOfYear = new Date(d.getFullYear(), 0, 1);
-          const week = Math.ceil(((d - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);
-          return `${d.getFullYear()}-W${String(week).padStart(2, '0')}`;
-        })();
+        const isoWeek = getJackpotWeekKey();
         // Atomic: only award if last_jackpot_week still doesn't match (race-safe)
         const jackpotRes = await query(
           `UPDATE users
