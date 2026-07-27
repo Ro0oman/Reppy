@@ -16,13 +16,17 @@ export const useNotificationStore = defineStore('notification', {
     onCancel: null
   }),
   actions: {
-    notify(message, type = 'error', duration = 5000, showCopyLogs = false) {
+    // `showCopyLogs` por defecto se activa en CUALQUIER error: antes era opt-in
+    // (cuarto argumento) y casi ningún sitio lo pasaba, así que el botón de
+    // copiar logs no aparecía justo cuando hacía falta. Se puede forzar a false
+    // explícitamente para errores triviales donde el log no aporte nada.
+    notify(message, type = 'error', duration = 5000, showCopyLogs = null) {
       if (this.timeout) clearTimeout(this.timeout);
-      
+
       this.message = message;
       this.type = type;
       this.visible = true;
-      this.showCopyLogs = showCopyLogs;
+      this.showCopyLogs = showCopyLogs === null ? type === 'error' : showCopyLogs;
       
       if (duration !== Infinity) {
         this.timeout = setTimeout(() => {

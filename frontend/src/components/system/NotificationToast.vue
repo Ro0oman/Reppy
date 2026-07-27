@@ -38,16 +38,16 @@
               >
                 <Copy v-if="!copied" class="w-3 h-3" />
                 <Check v-else class="w-3 h-3 text-green-400" />
-                {{ copied ? 'Copied!' : 'Copy Logs' }}
+                {{ copyLabel }}
               </button>
 
-              <button 
-                v-if="store.showCopyLogs" 
+              <button
+                v-if="store.showCopyLogs"
                 @click="sendLogsViaEmail"
                 class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-[11px] font-bold transition-all border border-white/10 active:scale-95 text-blue-200"
               >
                 <Mail class="w-3 h-3" />
-                Email Developer
+                {{ i18n.t('notif_email_logs') }}
               </button>
             </div>
           </div>
@@ -67,7 +67,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useNotificationStore } from '@/stores/notification';
 import { useI18nStore } from '@/stores/i18n';
 import { AlertCircle, CheckCircle, Info, X, Copy, Check, Mail } from 'lucide-vue-next';
@@ -76,15 +76,24 @@ import { copyLogsToClipboard, sendLogsViaEmail } from '@/utils/logger';
 const store = useNotificationStore();
 const i18n = useI18nStore();
 const copied = ref(false);
+const copyFailed = ref(false);
+
+const copyLabel = computed(() => {
+  if (copied.value) return i18n.t('notif_logs_copied');
+  if (copyFailed.value) return i18n.t('notif_logs_copy_failed');
+  return i18n.t('notif_copy_logs');
+});
 
 const handleCopyLogs = async () => {
   const success = await copyLogsToClipboard();
-  if (success) {
-    copied.value = true;
-    setTimeout(() => {
-      copied.value = false;
-    }, 2000);
-  }
+  // Sin este else el botón no daba ninguna señal cuando el portapapeles fallaba
+  // (típico en iOS fuera de HTTPS): parecía que no hacía nada.
+  copied.value = success;
+  copyFailed.value = !success;
+  setTimeout(() => {
+    copied.value = false;
+    copyFailed.value = false;
+  }, 2000);
 };
 </script>
 

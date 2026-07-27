@@ -8,6 +8,7 @@ import { useI18nStore } from './stores/i18n'
 import { useAuthStore } from './stores/auth'
 import { useThemeStore } from './stores/theme'
 import { useNotificationStore } from './stores/notification'
+import axios from 'axios'
 import { initLogger } from './utils/logger'
 import { initFunnelTracking, trackDay2Return } from './utils/analytics'
 
@@ -41,8 +42,10 @@ export const createApp = ViteSSG(
       const authStore = useAuthStore(pinia)
       const themeStore = useThemeStore(pinia)
 
-      // Initialize logger
-      initLogger(notificationStore)
+      // Logger de diagnóstico. Se le pasa axios para que su interceptor registre
+      // status y cuerpo de cada respuesta HTTP fallida: el console.error de los
+      // catch solo deja el Error genérico, sin el mensaje real del backend.
+      initLogger(notificationStore, axios)
 
       // GA4 funnel tracking (gtag loaded in index.html). Central axios
       // interceptor for signup/first_log/spin/push_enabled + day2_return.

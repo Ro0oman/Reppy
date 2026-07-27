@@ -392,6 +392,10 @@ export default {
     // Notifications
     notif_anomalies: 'ANOMALÍAS DETECTADAS',
     notif_close: 'Cerrar Notificación',
+    notif_copy_logs: 'Copiar logs',
+    notif_logs_copied: '¡Copiado!',
+    notif_logs_copy_failed: 'No se pudo copiar',
+    notif_email_logs: 'Enviar por email',
 
     // Lucky Wheel
     wheel_title_start: 'Ruleta',

@@ -7,6 +7,7 @@ import { useDamageStore } from '@/stores/damage';
 import { getLocalDateString } from '@/utils/dateUtils.js';
 import { markPushPromptEligible } from '@/utils/pushEligibility.js';
 import { useAudio } from '@/composables/useAudio';
+import { logError } from '@/utils/logger';
 
 // Shared rep-logging flow used by RepsInput, the Battle reps panel and the
 // quick-log FAB sheet. POST /api/reps → flying damage → SFX → toasts/jackpot →
@@ -69,7 +70,11 @@ export function useRepLogger() {
       return res.data;
     } catch (error) {
       console.error('Error logging reps:', error);
-      notificationStore.notify('Failed to log reps', 'error');
+      // Deja en el log QUÉ se intentaba registrar; el status y el cuerpo de la
+      // respuesta los añade aparte el interceptor de axios del logger.
+      logError('logReps falló', { exerciseType, count: repsToSubmit, addedWeight }, error);
+      const msg = i18n.locale === 'es' ? 'No se pudieron registrar las reps' : 'Failed to log reps';
+      notificationStore.notify(msg, 'error');
       return null;
     } finally {
       loading.value = false;
