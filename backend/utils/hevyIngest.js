@@ -21,6 +21,8 @@ import { getExerciseRewards } from './rewards.js';
 import { updateMissionProgress } from './missions.js';
 import { getEffectiveExerciseCount, getRewardExerciseCount, isTimedExerciseUnit } from './exerciseUnits.js';
 import { getExerciseTemplate } from './hevyClient.js';
+import { getMuscleGroupForTemplate } from './hevyMuscleGroups.js';
+import { getExerciseCombatStat } from './exerciseCombat.js';
 
 /**
  * Warmup sets must not count toward reps/damage/coins. Hevy marks them with
@@ -73,15 +75,21 @@ async function resolveExerciseType(client, hevyExercise, apiKey = null) {
 
   const title = await resolveExerciseTitle(hevyExercise, templateId, apiKey, slug);
   const statType = isWeighted ? 'str_xp' : 'end_xp';
+  // Muscle group for the combat exercise-match multiplier (opción B). Prefer the
+  // value on the workout payload, fall back to the bundled template snapshot.
+  const muscleGroup = (hevyExercise.primary_muscle_group
+    ? String(hevyExercise.primary_muscle_group).toLowerCase()
+    : null) || getMuscleGroupForTemplate(templateId);
   await client.query(
-    `INSERT INTO exercises (slug, title_key, description_key, unit, difficulty_multiplier, coin_multiplier, is_active, stat_type)
-     VALUES ($1, $2, $3, $4, 1.0, 1.0, TRUE, $5)
+    `INSERT INTO exercises (slug, title_key, description_key, unit, difficulty_multiplier, coin_multiplier, is_active, stat_type, primary_muscle_group)
+     VALUES ($1, $2, $3, $4, 1.0, 1.0, TRUE, $5, $6)
      ON CONFLICT (slug) DO UPDATE
        SET title_key = EXCLUDED.title_key,
            description_key = EXCLUDED.description_key,
-           unit = EXCLUDED.unit
+           unit = EXCLUDED.unit,
+           primary_muscle_group = COALESCE(exercises.primary_muscle_group, EXCLUDED.primary_muscle_group)
        WHERE exercises.title_key LIKE 'hevy\\_%'`,
-    [slug, title, `Importado de Hevy: ${title}`, unit, statType]
+    [slug, title, `Importado de Hevy: ${title}`, unit, statType, muscleGroup]
   );
   await client.query(
     `INSERT INTO hevy_exercise_map (hevy_template_id, reppy_exercise_type, is_weighted)
@@ -148,17 +156,18 @@ export async function ingestHevyWorkout(userId, workout, { apiKey = null } = {})
       const { type } = await resolveExerciseType(client, ex, apiKey);
       // Pull exercise meta to know how to count.
       const metaRes = await client.query(
-        'SELECT unit, difficulty_multiplier, coin_multiplier FROM exercises WHERE slug = $1',
+        'SELECT unit, difficulty_multiplier, coin_multiplier, stat_type, primary_muscle_group FROM exercises WHERE slug = $1',
         [type]
       );
       const meta = metaRes.rows[0] || {};
       const unit = meta.unit || 'reps';
       const diffMult = meta.difficulty_multiplier != null ? Number(meta.difficulty_multiplier) : null;
       const coinMult = meta.coin_multiplier != null ? Number(meta.coin_multiplier) : null;
+      const exerciseStat = getExerciseCombatStat(meta);
 
       let bucket = agg.get(type);
       if (!bucket) {
-        bucket = { reps: 0, volumeKg: 0, wRepSum: 0, wWeightSum: 0, unit, diffMult, coinMult };
+        bucket = { reps: 0, volumeKg: 0, wRepSum: 0, wWeightSum: 0, unit, diffMult, coinMult, exerciseStat };
         agg.set(type, bucket);
       }
       for (const s of workingSets(ex)) {
@@ -229,7 +238,7 @@ export async function ingestHevyWorkout(userId, workout, { apiKey = null } = {})
       // Boss damage (x1).
       let dmg = 0;
       if (boss && !bossKilled) {
-        const dmgResult = calculateDamage(augmentedUser, effectiveCount, type, boss, false, false, b.diffMult);
+        const dmgResult = calculateDamage(augmentedUser, effectiveCount, type, boss, false, false, b.diffMult, 0, b.exerciseStat);
         dmg = dmgResult.totalDamage;
         const upd = await client.query(
           `UPDATE boss_fights

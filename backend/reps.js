@@ -8,6 +8,7 @@ import { recalculateUserStats, augmentUserWithLevels } from './utils/stats.js';
 import { syncBossHealth } from './utils/boss.js';
 import { getLocalDateString } from './utils/date.js';
 import { calculateDamage } from './utils/damage.js';
+import { getExerciseCombatStat } from './utils/exerciseCombat.js';
 import { getPerkBonuses } from './utils/perks.js';
 import { getUserWithGear } from './utils/user.js';
 import { emitProgress } from './utils/progressEvents.js';
@@ -82,7 +83,7 @@ router.post('/', authenticate, repsLimiter, async (req, res) => {
     await client.query('BEGIN');
     const rawCount = Math.max(0, Number(count) || 0);
     const exerciseMetaRes = await client.query(
-      'SELECT difficulty_multiplier, coin_multiplier, unit, stat_type FROM exercises WHERE slug = $1',
+      'SELECT difficulty_multiplier, coin_multiplier, unit, stat_type, primary_muscle_group FROM exercises WHERE slug = $1',
       [exercise_type]
     );
     const exerciseMeta = exerciseMetaRes.rows[0] || {};
@@ -90,6 +91,7 @@ router.post('/', authenticate, repsLimiter, async (req, res) => {
     const diffMult = exerciseMeta.difficulty_multiplier != null ? Number(exerciseMeta.difficulty_multiplier) : null;
     const coinMult = exerciseMeta.coin_multiplier != null ? Number(exerciseMeta.coin_multiplier) : null;
     const statTypeOverride = exerciseMeta.stat_type || null;
+    const exerciseStat = getExerciseCombatStat(exerciseMeta);
     const effectiveCount = getEffectiveExerciseCount(rawCount, exerciseUnit);
     const rewardCount = getRewardExerciseCount(rawCount, exerciseUnit);
 
@@ -160,6 +162,7 @@ router.post('/', authenticate, repsLimiter, async (req, res) => {
       exerciseType: exercise_type,
       diffMult,
       addedWeight: added_weight,
+      exerciseStat,
     });
 
     if (killed) {
@@ -178,6 +181,7 @@ router.post('/', authenticate, repsLimiter, async (req, res) => {
       exerciseType: exercise_type,
       diffMult,
       addedWeight: added_weight,
+      exerciseStat,
     });
 
     // Update metadata in reps record

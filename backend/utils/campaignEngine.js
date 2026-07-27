@@ -380,7 +380,7 @@ export async function prestige(client, userId) {
  *
  * @returns {Promise<null | {nodeId:number, damage:number, killed:boolean, cleared:boolean, loot:object|null}>}
  */
-export async function applyCampaignDamage(client, { user, effectiveCount, exerciseType, diffMult = null, addedWeight = 0 }) {
+export async function applyCampaignDamage(client, { user, effectiveCount, exerciseType, diffMult = null, addedWeight = 0, exerciseStat = null }) {
   const userId = user.id;
 
   // Find the engaged node + its enemy for the user's active run.
@@ -404,12 +404,15 @@ export async function applyCampaignDamage(client, { user, effectiveCount, exerci
   const row = engRes.rows[0];
 
   // Shape the enemy like a boss for calculateDamage (weakness + execution use it).
+  // resist_stat is included so the exercise-match multiplier (opción B) can read
+  // it; the separate per-level resist below is unchanged.
   const enemyAsBoss = {
     weakness_stat: row.weakness_stat,
+    resist_stat: row.resist_stat,
     current_hp: row.enemy_current_hp,
     total_hp: row.enemy_total_hp,
   };
-  const dmg = calculateDamage(user, effectiveCount, exerciseType, enemyAsBoss, false, false, diffMult, addedWeight);
+  const dmg = calculateDamage(user, effectiveCount, exerciseType, enemyAsBoss, false, false, diffMult, addedWeight, exerciseStat);
   let damage = dmg.totalDamage;
 
   // resist_stat: dampen damage if the player leans on the resisted stat. Small,
