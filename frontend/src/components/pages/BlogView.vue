@@ -210,8 +210,8 @@ import {
   Loader2, BookOpenCheck, Sparkles
 } from 'lucide-vue-next';
 import { marked } from 'marked';
-import { blogPosts } from '@/blogPosts';
-import { findPostBySlug, postSlugFor } from '@/blogSlugs';
+import { blogPosts, findPostBySlug } from '@/blogPosts';
+import { postSlugFor } from '@/blogSlugs';
 import { useI18nStore } from '@/stores/i18n';
 import { useAuthStore } from '@/stores/auth';
 import { useNotificationStore } from '@/stores/notification';

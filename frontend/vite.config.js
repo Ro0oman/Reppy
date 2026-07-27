@@ -27,6 +27,10 @@ export default defineConfig({
           if (id.includes('node_modules')) {
             if (id.includes('vue') || id.includes('pinia')) return 'vendor-vue';
             if (id.includes('lucide') || id.includes('confetti')) return 'vendor-ui';
+            // pusher-js aparte: `stores/socket.js` lo importa en diferido, pero si
+            // cae en `vendor` (que precargan todas las páginas) el split no sirve
+            // de nada y la landing pública se baja el realtime igualmente.
+            if (id.includes('pusher-js')) return 'vendor-pusher';
             return 'vendor';
           }
         }

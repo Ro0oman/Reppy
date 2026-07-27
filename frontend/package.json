@@ -8,9 +8,10 @@
     "sitemap": "node scripts/generate-sitemap.js",
     "og-images": "node scripts/generate-og-images.js",
     "sync-blog": "node -e \"const fs = require('fs'); fs.copyFileSync('../backend/blogData.json', './src/blogPosts.json')\"",
+    "blog-index": "node scripts/generate-blog-index.js",
     "check:i18n": "node scripts/check-i18n-duplicates.mjs",
     "indexnow": "node scripts/indexnow-ping.js",
-    "build": "npm run check:i18n && npm run sync-blog && npm run sitemap && vite-ssg build && npm run og-images && node scripts/fix-ssg-seo.js && npm run indexnow",
+    "build": "npm run check:i18n && npm run sync-blog && npm run blog-index && npm run sitemap && vite-ssg build && npm run og-images && node scripts/fix-ssg-seo.js && npm run indexnow",
     "preview": "vite preview"
   },
   "dependencies": {

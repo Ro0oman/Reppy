@@ -687,7 +687,7 @@ import { useI18nStore } from '@/stores/i18n';
 import { useAuthStore } from '@/stores/auth';
 import BossHealth from '@/components/boss/BossHealth.vue';
 import BossBanner from '@/components/boss/BossBanner.vue';
-import { blogPosts } from '@/blogPosts';
+import { blogPosts } from '@/blogIndex';
 import { postSlugFor } from '@/blogSlugs';
 
 const Leaderboard = defineAsyncComponent(() => import('@/components/social/Leaderboard.vue'));

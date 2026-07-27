@@ -337,9 +337,11 @@
     <!-- Global Interface Components -->
     <NotificationToast />
     <ConfirmDialog />
-    <LuckyWheel :show="rouletteStore.showModal" @close="rouletteStore.closeModal()" @spun="onSpun" />
-    <DamageNumbers />
-    <QuickLogSheet :show="showQuickLog" @close="showQuickLog = false" />
+    <template v-if="authStore.isAuthenticated">
+      <LuckyWheel :show="rouletteStore.showModal" @close="rouletteStore.closeModal()" @spun="onSpun" />
+      <DamageNumbers />
+      <QuickLogSheet :show="showQuickLog" @close="showQuickLog = false" />
+    </template>
 
     <Teleport to="body">
       <div v-if="showCoinsInfo"
@@ -505,13 +507,13 @@
       </button>
     </div>
 
-    <PushPrompt />
+    <PushPrompt v-if="authStore.isAuthenticated" />
 
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
+import { ref, onMounted, onUnmounted, watch, computed, defineAsyncComponent } from 'vue';
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
 import { Github, Star, LayoutDashboard, Users, Swords, Package, X, Coins, Gem, Bell, User, Dices, Gift, Volume2, VolumeX, Book, ShoppingBag, Target, LogIn, Plus, Shield } from 'lucide-vue-next';
@@ -527,13 +529,18 @@ import { useFeatureSeenStore } from './stores/featureSeen';
 import { useThemeStore } from './stores/theme';
 import AvatarFrame from '@/components/ui/AvatarFrame.vue';
 import BackgroundEffect from '@/components/system/BackgroundEffect.vue';
-import LuckyWheel from '@/components/shop/LuckyWheel.vue';
 import NotificationToast from '@/components/system/NotificationToast.vue';
 import ConfirmDialog from '@/components/modals/ConfirmDialog.vue';
-import DamageNumbers from '@/components/system/DamageNumbers.vue';
-import NotificationsDropdown from '@/components/system/NotificationsDropdown.vue';
-import PushPrompt from '@/components/system/PushPrompt.vue';
-import QuickLogSheet from '@/components/battle/QuickLogSheet.vue';
+
+// Runtime solo-app: ruleta, números de daño, log rápido, avisos y prompt de push.
+// Nada de esto sirve a un visitante deslogueado que llega por SEO a la landing o
+// al blog, así que se carga en diferido y solo cuando hay sesión (los que se
+// renderizaban siempre van además detrás de `v-if="authStore.isAuthenticated"`).
+const LuckyWheel = defineAsyncComponent(() => import('@/components/shop/LuckyWheel.vue'));
+const DamageNumbers = defineAsyncComponent(() => import('@/components/system/DamageNumbers.vue'));
+const NotificationsDropdown = defineAsyncComponent(() => import('@/components/system/NotificationsDropdown.vue'));
+const PushPrompt = defineAsyncComponent(() => import('@/components/system/PushPrompt.vue'));
+const QuickLogSheet = defineAsyncComponent(() => import('@/components/battle/QuickLogSheet.vue'));
 
 const socketStore = useSocketStore();
 const rouletteStore = useRouletteStore();

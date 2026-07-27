@@ -339,7 +339,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';
-import blogPosts from '@/blogPosts.json';
+import blogPosts from '@/blogIndex';
 import { postSlugFor } from '@/blogSlugs';
 
 const authStore = useAuthStore();

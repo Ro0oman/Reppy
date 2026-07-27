@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import Pusher from 'pusher-js';
 import { useAuthStore } from './auth';
 import { useDamageStore } from './damage';
 import { useNotificationStore } from './notification';
@@ -9,11 +8,28 @@ export const useSocketStore = defineStore('socket', {
     pusher: null,
     connected: false,
     activeOperatives: [],
-    channels: {}
+    channels: {},
+    // Evita que dos init() concurrentes creen dos instancias de Pusher mientras
+    // se resuelve el import dinámico (antes el guard `if (this.pusher)` bastaba
+    // porque la construcción era síncrona).
+    initializing: false
   }),
   actions: {
-    init() {
-      if (this.pusher) return;
+    async init() {
+      if (this.pusher || this.initializing) return;
+      this.initializing = true;
+
+      // pusher-js (~100 KB) se carga bajo demanda: si estuviera en el import
+      // estático entraría en el chunk `vendor` que precargan TODAS las páginas,
+      // incluidas la landing y el blog públicos. Aquí sale del camino crítico.
+      let Pusher;
+      try {
+        ({ default: Pusher } = await import('pusher-js'));
+      } catch (err) {
+        this.initializing = false;
+        console.error('[PUSHER] No se pudo cargar pusher-js:', err);
+        return;
+      }
 
       const authStore = useAuthStore();
       // Use relative path in production, or the env var in development
@@ -37,6 +53,7 @@ export const useSocketStore = defineStore('socket', {
       });
 
 
+      this.initializing = false;
       console.log('[PUSHER] Instance created, auth endpoint:', `${apiURL}/api/pusher/auth`);
 
       this.pusher.connection.bind('connected', () => {
@@ -197,6 +214,7 @@ export const useSocketStore = defineStore('socket', {
         this.connected = false;
         this.channels = {};
       }
+      this.initializing = false;
     }
   }
 });

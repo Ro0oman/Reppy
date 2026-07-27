@@ -170,7 +170,7 @@
 <script setup>
 import { ref, computed, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { blogPosts } from '@/blogPosts';
+import { blogPosts } from '@/blogIndex';
 import { postSlugFor } from '@/blogSlugs';
 import { useI18nStore } from '@/stores/i18n';
 import { useAuthStore } from '@/stores/auth';
