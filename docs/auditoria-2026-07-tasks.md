@@ -120,7 +120,7 @@ Protocolo de cada run:
 - [x] **`llms.txt` con slugs ES bajo `/en/blog/`** — `frontend/public/llms.txt:29-38`. *(Fix: los 10 enlaces EN ahora usan el `slugEn` real de `blogPosts.json`, coincidiendo con las rutas SSG de `vite.config.js:110`.)*
 - [x] **Limpiar `frontend/index.html`** (PR #320 mergeada) — meta keywords con ~45 términos (línea 14) y bloque `<noscript>` keyword-stuffed (178-230), redundante con SSG.
 - [x] **Sitemap de atletas: umbral ≥50 reps** ✅DECIDIDO (2026-07-25: opción A) — subir el filtro de `top-public` a `total_reps >= 50` en `backend/profile.js:106` (un WHERE). Solo perfiles con actividad real se exponen a Google. Bajo riesgo, accionable ya.
-- [ ] 🔨 PR #340 (parcial: 1/10) **Engordar los 10 mejores posts a 1.500-2.500 palabras** (empezar por clúster dominadas ES) y **dejar de producir posts de 300 palabras** — el 80% del blog actual es thin content que no rankea. **PR #340 engorda el pilar `guia-definitiva-dominadas` (272 → ~1.7k palabras es/en)**; quedan ~9 posts (resto del clúster dominadas + otros pilares) para futuras noches.
+- [ ] 🔨 PR #340 + #341 (parcial: 2/10) **Engordar los 10 mejores posts a 1.500-2.500 palabras** (empezar por clúster dominadas ES) y **dejar de producir posts de 300 palabras** — el 80% del blog actual es thin content que no rankea. **#340** engorda el pilar `guia-definitiva-dominadas` (272 → ~1.7k, intención "primera dominada"); **#341** engorda el pilar `error-mas-dominadas` (247 → ~1.5k, intención "hacer más dominadas"). Quedan ~8 posts (resto del clúster dominadas: `programa-dominadas-8-semanas`, `grease-the-groove`, `dolor-codo`/`dolor-antebrazo`; luego otros pilares) para futuras noches.
 
 ## P3 — Deuda técnica (a medida que se toque, no big-bang)
 
