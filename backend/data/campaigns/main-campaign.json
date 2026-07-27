@@ -12,7 +12,7 @@
     "rewards": { "prestige_mult": 1.25 },
     "path": {
       "dark": { "reward_variance": "high", "curse_damage_multiplier": 0.75 },
-      "light": { "reward_variance": "low", "blessing_hours": 24 }
+      "light": { "reward_variance": "low", "blessing_hours": 24, "blessing_damage_mult": 1.20 }
     }
   },
 
