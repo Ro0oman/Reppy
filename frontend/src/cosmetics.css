@@ -374,3 +374,85 @@
   text-shadow: none;
   filter: drop-shadow(0 0 8px rgba(167, 139, 250, 0.6));
 }
+
+/* ========================================
+   TÍTULOS EXCLUSIVOS DE PRESTIGIO (Renacido I…V)
+   Uno por vuelta de prestigio; no se compran ni caen de cofres.
+   La escala es bronce → plata → oro → carmesí → prismático.
+   ======================================== */
+.title-renacido-i {
+  background: linear-gradient(to right, #7c4a20, #cd7f32, #7c4a20);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px rgba(205, 127, 50, 0.35);
+  animation: title-renacido-flow 4s linear infinite;
+}
+
+.title-renacido-ii {
+  background: linear-gradient(to right, #8a9199, #e8eef4, #8a9199);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(232, 238, 244, 0.4);
+  animation: title-renacido-flow 3.5s linear infinite;
+}
+
+.title-renacido-iii {
+  background: linear-gradient(to right, #b8860b, #ffd700, #fff3b0, #ffd700, #b8860b);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+  animation: title-renacido-flow 3s linear infinite;
+}
+
+.title-renacido-iv {
+  background: linear-gradient(to right, #6b0f1a, #dc143c, #ff6b81, #dc143c, #6b0f1a);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-style: italic;
+  text-shadow: 0 0 14px rgba(220, 20, 60, 0.55);
+  animation: title-renacido-flow 2.5s linear infinite;
+}
+
+.title-renacido-v {
+  background: linear-gradient(to right, #ff0080, #ff8c00, #ffed00, #00e5a0, #00b3ff, #a855f7, #ff0080);
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-style: italic;
+  filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.6));
+  animation: title-renacido-flow 2s linear infinite;
+}
+
+@keyframes title-renacido-flow {
+  to { background-position: 200% center; }
+}
+
+/* Respetar a quien pide menos movimiento: el degradado se queda quieto. */
+@media (prefers-reduced-motion: reduce) {
+  .title-renacido-i,
+  .title-renacido-ii,
+  .title-renacido-iii,
+  .title-renacido-iv,
+  .title-renacido-v {
+    animation: none;
+  }
+}

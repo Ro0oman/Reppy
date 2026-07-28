@@ -11,6 +11,7 @@ import { calculateDamage } from './damage.js';
 import { sendToUser } from '../socketManager.js';
 import { emitProgress } from './progressEvents.js';
 import { getPerkBonuses } from './perks.js';
+import { titleForPrestigeLevel } from '../data/prestigeTitles.js';
 
 /**
  * Scale an enemy's HP for a given player. Prefers per-enemy `scaling`, falling
@@ -378,7 +379,43 @@ export async function prestige(client, userId) {
     [userId, run.campaign_id, newLevel]
   );
 
-  return { status: 200, body: { message: '¡Prestigio alcanzado!', prestige_level: newLevel } };
+  const title = await grantPrestigeTitle(client, userId, newLevel);
+
+  return { status: 200, body: { message: '¡Prestigio alcanzado!', prestige_level: newLevel, title } };
+}
+
+/**
+ * Grant the exclusive title for a prestige turn (NG+1 → Renacido I … NG+5 → V).
+ * Beyond the 5th turn there is no new cosmetic, by design.
+ *
+ * Best-effort, behind a SAVEPOINT: losing a whole New Game+ because a cosmetic
+ * failed to grant would be far worse than not getting the cosmetic. The savepoint
+ * matters — a plain try/catch would not help, since any failed statement leaves the
+ * surrounding transaction aborted and the COMMIT would roll the prestige back too.
+ * Returns the granted title (or null), so the caller can show it.
+ */
+async function grantPrestigeTitle(client, userId, prestigeLevel) {
+  const def = titleForPrestigeLevel(prestigeLevel);
+  if (!def) return null;
+
+  await client.query('SAVEPOINT prestige_title');
+  try {
+    const granted = await client.query(
+      `INSERT INTO user_items (user_id, item_id, is_new)
+       SELECT $1, id, TRUE FROM items WHERE name = $2 AND is_exclusive = TRUE
+       ON CONFLICT (user_id, item_id) DO NOTHING
+       RETURNING item_id`,
+      [userId, def.name]
+    );
+    await client.query('RELEASE SAVEPOINT prestige_title');
+    // rowCount 0 = el título aún no está sembrado, o el usuario ya lo tenía.
+    if (granted.rowCount === 0) return null;
+    return { id: granted.rows[0].item_id, name: def.name, css_value: def.cssValue, rarity: def.rarity };
+  } catch (err) {
+    await client.query('ROLLBACK TO SAVEPOINT prestige_title');
+    console.error('[prestige] No se pudo otorgar el título exclusivo:', err.message);
+    return null;
+  }
 }
 
 /**
@@ -586,7 +623,7 @@ async function grantEnemyLoot(client, userId, enemyLoot, prestige, campaignConfi
   if (rarity) {
     const itemRes = await client.query(
       `SELECT * FROM items
-       WHERE rarity = $1 AND type != 'bundle'
+       WHERE rarity = $1 AND type != 'bundle' AND is_exclusive IS NOT TRUE
        AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $2 AND item_id = items.id)
        ORDER BY RANDOM() LIMIT 1`,
       [rarity, userId]

@@ -128,7 +128,7 @@ export async function grantLastHitBonus(userId, bossId, client = null) {
       const itemRes = await q(`
         SELECT * FROM items 
         WHERE rarity IN ('rare', 'especial') 
-        AND type != 'bundle'
+        AND type != 'bundle' AND is_exclusive IS NOT TRUE
         AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = items.id)
         ORDER BY RANDOM() LIMIT 1
       `, [userId]);

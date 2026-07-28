@@ -763,6 +763,10 @@ async function ensureSchemaMigrations() {
     // Revocación de JWT: subir `token_version` invalida todos los tokens vivos de
     // ese usuario (logout global, ban, cambio de rol). Lo compara middleware.js.
     await query('ALTER TABLE users ADD COLUMN IF NOT EXISTS token_version INTEGER DEFAULT 0');
+    // Cosméticos exclusivos (títulos de prestigio): no se compran, no se venden y
+    // no pueden salir de un cofre — solo se otorgan al prestigiar. Lo consultan la
+    // tienda, la rotación diaria y TODAS las queries de loot por rareza.
+    await query('ALTER TABLE items ADD COLUMN IF NOT EXISTS is_exclusive BOOLEAN DEFAULT FALSE');
     // Per-user "feature seen" flags that drive the NEW badges/dots.
     await query(`CREATE TABLE IF NOT EXISTS user_feature_seen (
         user_id     VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,

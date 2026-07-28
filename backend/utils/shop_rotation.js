@@ -20,7 +20,7 @@ export const rotateDailyShop = async (userId = null) => {
     console.log('Rotating Daily Shop...');
     
     // 1. Fetch eligible items (exclude bundles and customizable)
-    const itemsRes = await query('SELECT id, price, price_gems, rarity, is_seasonal FROM items WHERE type != \'bundle\' AND is_customizable = false');
+    const itemsRes = await query('SELECT id, price, price_gems, rarity, is_seasonal FROM items WHERE type != \'bundle\' AND is_customizable = false AND is_exclusive IS NOT TRUE');
     const allItems = itemsRes.rows;
     
     if (allItems.length === 0) {
