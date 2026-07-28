@@ -556,3 +556,304 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS ui_style VARCHAR(20) DEFAULT 'operati
 -- que se compara con weakness_stat/resist_stat del enemigo. NULL para los
 -- ejercicios built-in de Reppy, que resuelven vía `stat_type`.
 ALTER TABLE exercises ADD COLUMN IF NOT EXISTS primary_muscle_group VARCHAR(50);
+
+-- =====================================================================
+-- Absorbido de las otras fuentes de esquema (auditoría 2026-07, opción A)
+-- =====================================================================
+-- Hasta ahora el esquema vivía repartido en CUATRO sitios: este fichero,
+-- el DDL de `GET /db/init`, `ensureSchemaMigrations()` y —el más sorprendente—
+-- `ensureProfileSchema()` en profile.js, que creaba `items` y `user_items`
+-- (las tablas de las que cuelga toda la economía) en la PRIMERA petición a
+-- /profile. Esto es lo que faltaba aquí; ahora `schema.sql` es la fuente única
+-- y el arranque lo aplica entero.
+
+-- Tienda / inventario. `equipped_*_id` de users referencia items(id), así que
+-- esta tabla tiene que existir antes que esas columnas.
+CREATE TABLE IF NOT EXISTS items (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    type VARCHAR(50) NOT NULL,
+    rarity VARCHAR(50) DEFAULT 'common', -- common | rare | especial | legendary | calistenico | cosmico
+    stats JSONB DEFAULT '{}',
+    image_url TEXT,
+    css_value TEXT,
+    price INTEGER DEFAULT 0,
+    price_gems INTEGER DEFAULT 0,
+    svg_key TEXT,
+    is_seasonal BOOLEAN DEFAULT FALSE,
+    bundle_items TEXT,
+    original_price INTEGER,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(name)
+);
+ALTER TABLE items ADD COLUMN IF NOT EXISTS price INTEGER DEFAULT 0;
+ALTER TABLE items ADD COLUMN IF NOT EXISTS price_gems INTEGER DEFAULT 0;
+ALTER TABLE items ADD COLUMN IF NOT EXISTS svg_key TEXT;
+ALTER TABLE items ADD COLUMN IF NOT EXISTS is_seasonal BOOLEAN DEFAULT FALSE;
+ALTER TABLE items ADD COLUMN IF NOT EXISTS bundle_items TEXT;
+ALTER TABLE items ADD COLUMN IF NOT EXISTS original_price INTEGER;
+ALTER TABLE items ADD COLUMN IF NOT EXISTS is_customizable BOOLEAN DEFAULT FALSE;
+-- Cosméticos exclusivos (títulos de prestigio «Renacido I…V»): no se compran, no
+-- se venden y no pueden salir de un cofre — solo se otorgan al prestigiar. Lo
+-- consultan la tienda, la rotación diaria y TODAS las queries de loot por rareza.
+ALTER TABLE items ADD COLUMN IF NOT EXISTS is_exclusive BOOLEAN DEFAULT FALSE;
+
+CREATE TABLE IF NOT EXISTS user_items (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    item_id INTEGER REFERENCES items(id) ON DELETE CASCADE,
+    is_equipped BOOLEAN DEFAULT FALSE,
+    is_new BOOLEAN DEFAULT TRUE,
+    quantity INTEGER DEFAULT 1,
+    acquired_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, item_id)
+);
+
+-- Columnas de users que sólo declaraban /db/init o ensureProfileSchema.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS username VARCHAR(50);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS daily_boss_damage INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS last_boss_damage_date DATE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS total_xp INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS current_level INTEGER DEFAULT 1;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS level_chests_claimed INTEGER DEFAULT 1;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS level_chests INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS stat_buffs JSONB DEFAULT '{}'::jsonb;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS last_daily_spin_at TIMESTAMP WITH TIME ZONE;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_username_unique ON users(LOWER(username)) WHERE username IS NOT NULL;
+
+-- Equipo y cosméticos equipados (FK a items, no a la tabla legacy `cosmetics`).
+ALTER TABLE users ADD COLUMN IF NOT EXISTS equipped_title_id INTEGER REFERENCES items(id) ON DELETE SET NULL;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS equipped_border_id INTEGER REFERENCES items(id) ON DELETE SET NULL;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS equipped_avatar_id INTEGER REFERENCES items(id) ON DELETE SET NULL;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS equipped_background_id INTEGER REFERENCES items(id) ON DELETE SET NULL;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS equipped_post_background_id INTEGER REFERENCES items(id) ON DELETE SET NULL;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS equipped_head_id INTEGER REFERENCES items(id) ON DELETE SET NULL;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS equipped_weapon_id INTEGER REFERENCES items(id) ON DELETE SET NULL;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS equipped_armor_id INTEGER REFERENCES items(id) ON DELETE SET NULL;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS equipped_boots_id INTEGER REFERENCES items(id) ON DELETE SET NULL;
+
+-- Cosméticos legacy: columnas que sólo declaraba /db/init.
+ALTER TABLE cosmetics ADD COLUMN IF NOT EXISTS is_seasonal BOOLEAN DEFAULT FALSE;
+ALTER TABLE cosmetics ADD COLUMN IF NOT EXISTS rarity VARCHAR(50) DEFAULT 'common';
+
+-- Feed social: resumen diario + likes/comentarios.
+CREATE TABLE IF NOT EXISTS daily_summaries (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    date DATE NOT NULL DEFAULT CURRENT_DATE,
+    title VARCHAR(255),
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, date)
+);
+CREATE INDEX IF NOT EXISTS idx_summaries_user_date ON daily_summaries(user_id, date);
+
+CREATE TABLE IF NOT EXISTS summary_interactions (
+    id SERIAL PRIMARY KEY,
+    summary_id INTEGER REFERENCES daily_summaries(id) ON DELETE CASCADE,
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    type VARCHAR(50) NOT NULL,
+    content TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_summary_interactions_summary_type ON summary_interactions(summary_id, type);
+
+CREATE TABLE IF NOT EXISTS boss_kill_posts (
+    id SERIAL PRIMARY KEY,
+    boss_fight_id INTEGER REFERENCES boss_fights(id) ON DELETE CASCADE,
+    boss_name VARCHAR(255),
+    boss_image TEXT,
+    killer_user_id VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
+    killer_name VARCHAR(255),
+    top3 JSONB DEFAULT '[]',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(boss_fight_id)
+);
+CREATE INDEX IF NOT EXISTS idx_boss_kill_posts_created ON boss_kill_posts(created_at DESC);
+
+CREATE TABLE IF NOT EXISTS notifications (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    type VARCHAR(50) NOT NULL,
+    actor_id VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
+    content TEXT,
+    target_id VARCHAR(255),
+    target_user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_notifications_user_created ON notifications(user_id, created_at DESC);
+
+-- Boss comunitario: tiers que multiplican el HP (×8 legendario, ×3 épico).
+ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS is_legendary BOOLEAN DEFAULT FALSE;
+ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS is_epic BOOLEAN DEFAULT FALSE;
+
+-- Índices calientes (antes sólo en ensureSchemaMigrations o en scripts de archive/).
+CREATE INDEX IF NOT EXISTS idx_users_total_reps ON users(total_reps DESC) WHERE is_private = false;
+CREATE TABLE IF NOT EXISTS user_feature_seen (
+    user_id     VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    feature_key VARCHAR(64) NOT NULL,
+    seen_at     TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, feature_key)
+);
+
+-- --- PvP y retos asíncronos ---------------------------------------------
+-- Estas dos features vivas existían en producción SÓLO porque alguien ejecutó
+-- una vez `archive/migrate_pvp_tables.js` y `archive/apply_async_challenges_migration.js`;
+-- ninguna fuente canónica las declaraba. Absorbidas desde ahí.
+CREATE TABLE IF NOT EXISTS pvp_fights (
+    id SERIAL PRIMARY KEY,
+    challenger_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    challenged_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    status VARCHAR(50) DEFAULT 'pending',
+    hp1 INTEGER,
+    hp2 INTEGER,
+    max_hp INTEGER DEFAULT 5000,
+    time_limit INTEGER DEFAULT 60,
+    battlefield VARCHAR(50) DEFAULT 'default',
+    allowed_exercises JSONB DEFAULT '["pullups", "pushups", "dips"]'::jsonb,
+    winner_id VARCHAR(255) REFERENCES users(id),
+    damage1 INTEGER DEFAULT 0,
+    damage2 INTEGER DEFAULT 0,
+    anticheat_enabled BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    started_at TIMESTAMP WITH TIME ZONE,
+    ended_at TIMESTAMP WITH TIME ZONE,
+    state JSONB DEFAULT '{}'::jsonb
+);
+ALTER TABLE pvp_fights ADD COLUMN IF NOT EXISTS state JSONB DEFAULT '{}'::jsonb;
+ALTER TABLE pvp_fights ADD COLUMN IF NOT EXISTS seed VARCHAR(64);
+CREATE INDEX IF NOT EXISTS idx_pvp_fights_active ON pvp_fights(status) WHERE status = 'active';
+CREATE INDEX IF NOT EXISTS idx_pvp_fights_status ON pvp_fights(status);
+
+CREATE TABLE IF NOT EXISTS pvp_events (
+    id SERIAL PRIMARY KEY,
+    fight_id INTEGER REFERENCES pvp_fights(id) ON DELETE CASCADE,
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
+    type VARCHAR(50) NOT NULL,
+    payload JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_pvp_events_fight ON pvp_events(fight_id, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS async_challenges (
+    id SERIAL PRIMARY KEY,
+    challenger_id VARCHAR NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    challenged_id VARCHAR NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    goal_type VARCHAR(20) NOT NULL DEFAULT 'reps',
+    goal_value INT NOT NULL DEFAULT 100,
+    challenger_score INT NOT NULL DEFAULT 0,
+    challenged_score INT NOT NULL DEFAULT 0,
+    status VARCHAR(20) NOT NULL DEFAULT 'pending',
+    winner_id VARCHAR REFERENCES users(id),
+    reward_coins INT NOT NULL DEFAULT 75,
+    reward_gems INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    expires_at TIMESTAMPTZ,
+    resolved_at TIMESTAMPTZ,
+    CONSTRAINT no_self_challenge CHECK (challenger_id != challenged_id)
+);
+ALTER TABLE async_challenges ADD COLUMN IF NOT EXISTS reward_gems INT NOT NULL DEFAULT 0;
+CREATE INDEX IF NOT EXISTS idx_async_challenges_challenger ON async_challenges(challenger_id);
+CREATE INDEX IF NOT EXISTS idx_async_challenges_challenged ON async_challenges(challenged_id);
+CREATE INDEX IF NOT EXISTS idx_async_challenges_status ON async_challenges(status);
+
+-- --- Columnas de `reps` que NINGUNA fuente declaraba ---------------------
+-- Sólo existían en producción por migraciones manuales. Sin ellas, `POST /reps`
+-- devuelve 500 en una BD recién creada (verificado en el test de arranque virgen).
+ALTER TABLE reps ADD COLUMN IF NOT EXISTS is_crit BOOLEAN DEFAULT FALSE;
+ALTER TABLE reps ADD COLUMN IF NOT EXISTS base_damage INTEGER DEFAULT 0;
+ALTER TABLE reps ADD COLUMN IF NOT EXISTS gear_bonus INTEGER DEFAULT 0;
+ALTER TABLE reps ADD COLUMN IF NOT EXISTS boss_fight_id INTEGER REFERENCES boss_fights(id) ON DELETE SET NULL;
+
+-- Columnas legacy de `cosmetics` que sólo aparecían en scripts sueltos.
+ALTER TABLE cosmetics ADD COLUMN IF NOT EXISTS price_gems INTEGER DEFAULT 0;
+ALTER TABLE cosmetics ADD COLUMN IF NOT EXISTS bundle_items TEXT;
+ALTER TABLE cosmetics ADD COLUMN IF NOT EXISTS original_price INTEGER;
+
+-- --- Columnas de `users` que sólo declaraban módulos sueltos o scripts ----
+-- Detectadas ejercitando la app contra una BD recién creada: sin ellas fallan
+-- POST /reps, /shop/daily, /missions y /roulette/status.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS buff_bonus INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS daily_refreshes INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS last_refresh_at TIMESTAMPTZ;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS last_daily_missions_refill TIMESTAMP WITH TIME ZONE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS roulette_tickets_bought_today INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS last_roulette_ticket_bought_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS last_spin_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS last_jackpot_week TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS push_disabled BOOLEAN DEFAULT FALSE;
+-- Integración con Hevy (la API key va cifrada AES-256-GCM, ver utils/hevyCrypto.js).
+ALTER TABLE users ADD COLUMN IF NOT EXISTS hevy_api_key TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS hevy_webhook_token TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS hevy_volume_kg BIGINT DEFAULT 0;
+
+-- --- Misiones e integración Hevy ----------------------------------------
+-- Absorbido de `archive/apply_missions_migration.js` y `archive/apply_hevy_migration.js`,
+-- que eran su única declaración (scripts de un solo uso que NO corren en runtime).
+CREATE TABLE IF NOT EXISTS missions (
+    id SERIAL PRIMARY KEY,
+    title_key VARCHAR(100) NOT NULL,
+    description_key VARCHAR(100),
+    goal_type VARCHAR(50) NOT NULL, -- 'reps' | 'streak' | 'damage'
+    goal_value INTEGER NOT NULL,
+    reward_xp INTEGER DEFAULT 0,
+    reward_gems INTEGER DEFAULT 0,
+    reward_coins INTEGER DEFAULT 0,
+    is_daily BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(title_key)
+);
+
+CREATE TABLE IF NOT EXISTS user_missions (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    mission_id INTEGER REFERENCES missions(id) ON DELETE CASCADE,
+    current_value INTEGER DEFAULT 0,
+    is_active BOOLEAN DEFAULT TRUE,
+    is_completed BOOLEAN DEFAULT FALSE,
+    is_claimed BOOLEAN DEFAULT FALSE,
+    last_updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, mission_id)
+);
+ALTER TABLE user_missions ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;
+CREATE INDEX IF NOT EXISTS idx_user_missions_user ON user_missions(user_id);
+
+CREATE TABLE IF NOT EXISTS hevy_exercise_map (
+    hevy_template_id    VARCHAR(64) PRIMARY KEY,
+    reppy_exercise_type VARCHAR(80) NOT NULL,
+    is_weighted         BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE IF NOT EXISTS hevy_imported_workouts (
+    hevy_workout_id VARCHAR(64) PRIMARY KEY,
+    user_id         VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    imported_at     TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    workout_date    DATE,
+    volume_kg       BIGINT DEFAULT 0,
+    counts          JSONB
+);
+CREATE INDEX IF NOT EXISTS idx_hevy_imported_user ON hevy_imported_workouts(user_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_hevy_token ON users(hevy_webhook_token) WHERE hevy_webhook_token IS NOT NULL;
+
+-- `buff_bonus` va en `reps` (desglose del daño), no en `users`.
+ALTER TABLE reps ADD COLUMN IF NOT EXISTS buff_bonus INTEGER DEFAULT 0;
+
+-- =====================================================================
+-- PENDIENTE: tablas que NO se pueden reconstruir desde el repositorio
+-- =====================================================================
+-- Estas cuatro tablas existen en producción pero su `CREATE TABLE` no está en
+-- NINGÚN sitio del repo (ni aquí, ni en /db/init, ni en archive/, ni en scripts/).
+-- Se crearon a mano en algún momento y nunca se versionaron:
+--
+--   · daily_shop_items      (rotación diaria de la tienda — GET /shop/daily)
+--   · boss_participants     (daño por usuario en el boss comunitario)
+--   · weekly_challenges     (reto semanal)
+--   · user_skills           (árbol de habilidades)
+--
+-- Consecuencia: `schema.sql` todavía NO levanta una BD 100% funcional desde
+-- cero; `GET /shop/daily` falla en una base recién creada. Cerrar esto exige un
+-- `pg_dump --schema-only` de producción y pegar aquí su DDL — trabajo que encaja
+-- con la Fase 2/3 de la migración de BD, no con este PR.

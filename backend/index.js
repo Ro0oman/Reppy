@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { readFile } from 'fs/promises';
 
 // 1. Initialize environment variables first (works from repo root and backend cwd)
 const __filename = fileURLToPath(import.meta.url);
@@ -476,27 +477,16 @@ apiRouter.get('/db/init', async (req, res) => {
       `ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS boss_gif TEXT`,
       `ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS boss_damaged TEXT`,
       `ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS order_index INTEGER DEFAULT 0`,
-      `ALTER TABLE cosmetics ADD COLUMN IF NOT EXISTS is_seasonal BOOLEAN DEFAULT FALSE`,
+      // Sólo SEEDS. El DDL vive en schema.sql, que se aplica en el arranque
+      // (ensureSchemaMigrations). Antes estaba duplicado aquí y divergía.
+      // NOTA: para dar admin, ejecutar fuera de banda `node backend/scripts/grant_admin.js <email>`.
+      // No es SQL, así que NO puede ir en este array: el loop de abajo se lo pasaría
+      // a query() y reventaría /db/init entero.
       `UPDATE cosmetics SET is_seasonal = TRUE WHERE name IN ('Aura de Pascua', 'Rabbit Slayer', 'Easter Celebration')`,
-      `ALTER TABLE cosmetics ADD COLUMN IF NOT EXISTS rarity VARCHAR(50) DEFAULT 'common'`,
       `UPDATE cosmetics SET rarity = 'legendary' WHERE price >= 1200`,
-      `UPDATE cosmetics SET rarity = 'epic' WHERE price < 1200 AND price >= 600`,
+      `UPDATE cosmetics SET rarity = 'especial' WHERE price < 1200 AND price >= 600`,
       `UPDATE cosmetics SET rarity = 'rare' WHERE price < 600 AND price >= 200`,
-      `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_spin_at TIMESTAMP WITH TIME ZONE`,
-      // Daily Roulette cooldown (24h wheel), separate from the 4h last_spin_at.
-      `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_daily_spin_at TIMESTAMP WITH TIME ZONE`,
-      // Temporary per-stat consumable buffs: { "str": { "value": 3, "expiry": "<iso>" }, ... }
-      `ALTER TABLE users ADD COLUMN IF NOT EXISTS stat_buffs JSONB DEFAULT '{}'::jsonb`,
-      `ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_avatar_overhaul BOOLEAN DEFAULT FALSE`,
-      `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_streak_reward_date DATE`,
-      `ALTER TABLE users ADD COLUMN IF NOT EXISTS push_disabled BOOLEAN DEFAULT FALSE`,
-      `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_jackpot_week TEXT`,
-      `ALTER TABLE users ADD COLUMN IF NOT EXISTS username VARCHAR(50)`,
-      `CREATE UNIQUE INDEX IF NOT EXISTS idx_users_username ON users(username) WHERE username IS NOT NULL`,
-      // Mark old bosses as inactive to avoid overlapping
       `UPDATE boss_fights SET status = 'defeated' WHERE order_index = 0 AND status = 'active'`,
-      
-      // Boss Backlog
       `INSERT INTO boss_fights (name, description, total_hp, current_hp, start_date, end_date, status, image_url, order_index) 
        SELECT 'Artorias the Abysswalker', 'Se saltó tantos "días de pierna" que acabó caminando por el abismo. Su brazo izquierdo está roto de intentar muscle-ups sin calentar.', GREATEST(10000, (SELECT COUNT(*) * 25 FROM users)), GREATEST(10000, (SELECT COUNT(*) * 25 FROM users)), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '100 years', 'active', 'https://static.wikia.nocookie.net/darksouls/images/4/45/Artorias_the_Abysswalker_Render.png', 1
        WHERE NOT EXISTS (SELECT 1 FROM boss_fights WHERE name = 'Artorias the Abysswalker')`,
@@ -527,8 +517,6 @@ apiRouter.get('/db/init', async (req, res) => {
       `INSERT INTO boss_fights (name, description, total_hp, current_hp, start_date, end_date, status, image_url, order_index) 
        SELECT 'The Nameless King', 'Perdió su nombre en una apuesta sobre quién aguantaba más en plancha isométrica sobre un dragón de tormenta.', GREATEST(10000, (SELECT COUNT(*) * 25 FROM users)), GREATEST(10000, (SELECT COUNT(*) * 25 FROM users)), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '100 years', 'active', 'https://static.wikia.nocookie.net/darksouls/images/d/d4/The_Nameless_King_Render.png', 10
        WHERE NOT EXISTS (SELECT 1 FROM boss_fights WHERE name = 'The Nameless King')`,
-      
-      // Update descriptions in case they already exist
       `UPDATE boss_fights SET description = 'Se saltó tantos "días de pierna" que acabó caminando por el abismo. Su brazo izquierdo está roto de intentar muscle-ups sin calentar.' WHERE name = 'Artorias the Abysswalker'`,
       `UPDATE boss_fights SET description = 'Soberana del Fin y de las dominadas con lastre. Si no haces el rango completo, te lanza un aliento que huele a batido de proteínas caducado.' WHERE name = 'The Ender Dragon'`,
       `UPDATE boss_fights SET description = 'El Rey de los Cielos... y de las dominadas explosivas. Vuela porque no aguanta el peso de su propio ego en la barra.' WHERE name = 'Rathalos'`,
@@ -539,17 +527,12 @@ apiRouter.get('/db/init', async (req, res) => {
       `UPDATE boss_fights SET description = 'La maldad pura que asoló Hyrule porque alguien usó su rack de potencia para hacer curls de bíceps.' WHERE name = 'Calamity Ganon'`,
       `UPDATE boss_fights SET description = 'Viene a contar tus repeticiones en el gimnasio del infierno. Si no tocas la barbilla en la barra, tu serie no cuenta para el ranking.' WHERE name = 'Diablo'`,
       `UPDATE boss_fights SET description = 'Perdió su nombre en una apuesta sobre quién aguantaba más en plancha isométrica sobre un dragón de tormenta.' WHERE name = 'The Nameless King'`,
-      
-      // CS2 Titles
       `INSERT INTO cosmetics (name, description, type, price, css_value) 
        SELECT 'Plata 2', 'El inicio de un largo camino. Al menos no estás en Plata 1.', 'title', 150, 'color: #a0a0a0; font-weight: bold;'
        WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Plata 2')`,
       `INSERT INTO cosmetics (name, description, type, price, css_value) 
        SELECT 'Nova de Oro 4', 'Ya empiezas a entender cómo funciona esto. Un rango con prestigio.', 'title', 450, 'color: #ffd700; font-weight: bold; text-shadow: 0 0 5px rgba(255,215,0,0.5);'
        WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Nova de Oro 4')`,
-      
-      // SEASONAL LEGENDARY SETS
-      // 1. Void Mana
       `INSERT INTO cosmetics (name, description, type, price, css_value, is_seasonal, rarity) 
        SELECT 'Arcane Master', 'Portador del flujo eterno del mana.', 'title', 2500, 'title-mana', true, 'legendary'
        WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Arcane Master')`,
@@ -559,8 +542,6 @@ apiRouter.get('/db/init', async (req, res) => {
       `INSERT INTO cosmetics (name, description, type, price, css_value, is_seasonal, rarity) 
        SELECT 'Abyssal Portal', 'Un vistazo al abismo infinito.', 'background', 2500, 'bg-mana', true, 'legendary'
        WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Abyssal Portal')`,
-
-      // 2. Infernal Soul
       `INSERT INTO cosmetics (name, description, type, price, css_value, is_seasonal, rarity) 
        SELECT 'Dragonborn', 'Sangre de dragón corre por tus venas.', 'title', 2500, 'title-lava', true, 'legendary'
        WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Dragonborn')`,
@@ -570,8 +551,6 @@ apiRouter.get('/db/init', async (req, res) => {
       `INSERT INTO cosmetics (name, description, type, price, css_value, is_seasonal, rarity) 
        SELECT 'Inferno', 'El mundo arde a tu alrededor.', 'background', 2500, 'bg-lava', true, 'legendary'
        WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Inferno')`,
-
-      // 3. Chronos Glitch
       `INSERT INTO cosmetics (name, description, type, price, css_value, is_seasonal, rarity) 
        SELECT 'Synthetix', 'Tu realidad se está fragmentando.', 'title', 2500, 'title-glitch', true, 'legendary'
        WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Synthetix')`,
@@ -581,77 +560,6 @@ apiRouter.get('/db/init', async (req, res) => {
       `INSERT INTO cosmetics (name, description, type, price, css_value, is_seasonal, rarity) 
        SELECT 'Digital Storm', 'Tormenta de datos encriptados.', 'background', 2500, 'bg-glitch', true, 'legendary'
        WHERE NOT EXISTS (SELECT 1 FROM cosmetics WHERE name = 'Digital Storm')`,
-      
-      `CREATE TABLE IF NOT EXISTS daily_summaries (
-          id SERIAL PRIMARY KEY,
-          user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-          date DATE NOT NULL DEFAULT CURRENT_DATE,
-          title VARCHAR(255),
-          description TEXT,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-          UNIQUE(user_id, date)
-      )`,
-      `CREATE TABLE IF NOT EXISTS streak_freezes (
-          id SERIAL PRIMARY KEY,
-          user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-          freeze_date DATE NOT NULL,
-          spent_coins INTEGER NOT NULL DEFAULT 250,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-          UNIQUE(user_id, freeze_date)
-      )`,
-      `CREATE INDEX IF NOT EXISTS idx_streak_freezes_user_date ON streak_freezes(user_id, freeze_date)`,
-      `CREATE TABLE IF NOT EXISTS summary_interactions (
-          id SERIAL PRIMARY KEY,
-          summary_id INTEGER REFERENCES daily_summaries(id) ON DELETE CASCADE,
-          user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-          type VARCHAR(50) NOT NULL,
-          content TEXT,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      )`,
-      `CREATE TABLE IF NOT EXISTS boss_kill_posts (
-          id SERIAL PRIMARY KEY,
-          boss_fight_id INTEGER REFERENCES boss_fights(id) ON DELETE CASCADE,
-          boss_name VARCHAR(255),
-          boss_image TEXT,
-          killer_user_id VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
-          killer_name VARCHAR(255),
-          top3 JSONB DEFAULT '[]',
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-          UNIQUE(boss_fight_id)
-      )`,
-      `CREATE INDEX IF NOT EXISTS idx_boss_kill_posts_created ON boss_kill_posts(created_at DESC)`,
-      // Hot status/interaction scans (issue #265).
-      `CREATE INDEX IF NOT EXISTS idx_summary_interactions_summary_type ON summary_interactions(summary_id, type)`,
-      `CREATE INDEX IF NOT EXISTS idx_pvp_fights_status ON pvp_fights(status)`,
-      `CREATE INDEX IF NOT EXISTS idx_async_challenges_status ON async_challenges(status)`,
-      `CREATE INDEX IF NOT EXISTS idx_reps_user_date ON reps(user_id, date)`,
-      `CREATE INDEX IF NOT EXISTS idx_summaries_user_date ON daily_summaries(user_id, date)`,
-      `CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(user_id_1, user_id_2)`,
-      `CREATE INDEX IF NOT EXISTS idx_inventory_user ON user_inventory(user_id)`,
-      `CREATE INDEX IF NOT EXISTS idx_users_total_reps ON users(total_reps DESC) WHERE is_private = false`,
-      `CREATE TABLE IF NOT EXISTS notifications (
-        id SERIAL PRIMARY KEY,
-        user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-        type VARCHAR(50) NOT NULL,
-        actor_id VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
-        content TEXT,
-        target_id VARCHAR(255),
-        target_user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-        is_read BOOLEAN DEFAULT FALSE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )`,
-      // Va DESPUÉS de crear la tabla: este array se ejecuta en orden y un fallo
-      // aborta el resto de /db/init, así que un índice por delante de su tabla
-      // reventaría la inicialización de una BD limpia.
-      `CREATE INDEX IF NOT EXISTS idx_notifications_user_created ON notifications(user_id, created_at DESC)`,
-      // Per-user "feature seen" flags (NEW badges/dots)
-      `CREATE TABLE IF NOT EXISTS user_feature_seen (
-        user_id     VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-        feature_key VARCHAR(64) NOT NULL,
-        seen_at     TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (user_id, feature_key)
-      )`,
-      // Post Backgrounds Sync
       `INSERT INTO items (name, description, type, price, css_value, rarity) 
        VALUES ('Carbon Scan', 'Textura de carbono oscuro con línea de escaneo láser.', 'post_background', 1111, 'post-bg-carbon', 'rare')
        ON CONFLICT (name) DO UPDATE SET rarity = EXCLUDED.rarity`,
@@ -670,8 +578,6 @@ apiRouter.get('/db/init', async (req, res) => {
       `INSERT INTO items (name, description, type, price, css_value, rarity) 
        VALUES ('Calisthenics Legend', 'El rango máximo de la disciplina pura.', 'title', 9999, 'title-calistenico', 'calistenico')
        ON CONFLICT (name) DO UPDATE SET rarity = EXCLUDED.rarity`,
-       
-      // RPG ITEMS SEEDING (One per rarity)
       `INSERT INTO items (name, description, type, rarity, stats) 
        VALUES ('Harrapos de Entrenamiento', 'Ropa vieja pero funcional para empezar.', 'armor', 'common', '{"end": 1}')
        ON CONFLICT (name) DO UPDATE SET rarity = EXCLUDED.rarity, stats = EXCLUDED.stats`,
@@ -687,18 +593,6 @@ apiRouter.get('/db/init', async (req, res) => {
       `INSERT INTO items (name, description, type, rarity, stats)
        VALUES ('Armadura del Dios Calisténico', 'La culminación del entrenamiento físico.', 'armor', 'calistenico', '{"str": 20, "end": 20, "vig": 20}')
        ON CONFLICT (name) DO UPDATE SET rarity = EXCLUDED.rarity, stats = EXCLUDED.stats`,
-
-      // Referral system
-      `ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_code VARCHAR(20)`,
-      `ALTER TABLE users ADD COLUMN IF NOT EXISTS referred_by VARCHAR(255) REFERENCES users(id)`,
-      `ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_reward_given BOOLEAN DEFAULT FALSE`,
-      `CREATE UNIQUE INDEX IF NOT EXISTS idx_users_referral_code ON users(referral_code) WHERE referral_code IS NOT NULL`,
-      `CREATE INDEX IF NOT EXISTS idx_users_referred_by ON users(referred_by)`,
-
-      // Custom (user-created) training plans: NULL owner = predefined/global plan
-      `ALTER TABLE training_plans ADD COLUMN IF NOT EXISTS owner_user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE`,
-      `ALTER TABLE training_plans ADD COLUMN IF NOT EXISTS is_custom BOOLEAN DEFAULT FALSE`,
-      `CREATE INDEX IF NOT EXISTS idx_training_plans_owner ON training_plans(owner_user_id)`
     ];
     
     for (const q of queries) {
@@ -746,57 +640,26 @@ async function ensureAllTrainingExercisesExist() {
   }
 }
 
-// Lightweight, idempotent schema migrations run on every startup. Unlike the
-// heavy /db/init endpoint, this only ensures columns that newer code depends on
-// exist, so the app never queries a column that isn't there yet.
+// Aplica `schema.sql` en cada arranque. Es la ÚNICA fuente de verdad del
+// esquema (auditoría 2026-07, opción A): antes el esquema vivía repartido en
+// cuatro sitios —este arranque, el DDL de `GET /db/init`, `schema.sql` y
+// `ensureProfileSchema()` en profile.js— y el drift estaba garantizado.
+//
+// El fichero es idempotente de principio a fin (`CREATE TABLE IF NOT EXISTS`,
+// `ADD COLUMN IF NOT EXISTS`, `CREATE INDEX IF NOT EXISTS`), así que re-aplicarlo
+// en cada boot no cambia nada en una BD ya migrada. Va en una sola llamada sin
+// parámetros a propósito: `pg` usa entonces el protocolo simple, que admite
+// varias sentencias, y así se respeta el orden de dependencias del fichero.
 async function ensureSchemaMigrations() {
   try {
-    await query('ALTER TABLE users ADD COLUMN IF NOT EXISTS last_daily_spin_at TIMESTAMP WITH TIME ZONE');
-    // Grupo muscular del ejercicio (PR #336, combate ejercicio→daño). Lo lee el
-    // SELECT de POST /reps y el de training.js, pero solo estaba declarado en
-    // schema.sql, que NO se aplica en arranque: al desplegar #336 sin haber
-    // corrido schema.sql a mano, cada POST /reps moria con "column
-    // primary_muscle_group does not exist" y la app no dejaba registrar reps.
-    await query('ALTER TABLE exercises ADD COLUMN IF NOT EXISTS primary_muscle_group VARCHAR(50)');
-    // Referral-invite push is sent at most once per user (see referralReminders.js).
-    await query('ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_reminder_sent BOOLEAN DEFAULT FALSE');
-    // Revocación de JWT: subir `token_version` invalida todos los tokens vivos de
-    // ese usuario (logout global, ban, cambio de rol). Lo compara middleware.js.
-    await query('ALTER TABLE users ADD COLUMN IF NOT EXISTS token_version INTEGER DEFAULT 0');
-    // Cosméticos exclusivos (títulos de prestigio): no se compran, no se venden y
-    // no pueden salir de un cofre — solo se otorgan al prestigiar. Lo consultan la
-    // tienda, la rotación diaria y TODAS las queries de loot por rareza.
-    await query('ALTER TABLE items ADD COLUMN IF NOT EXISTS is_exclusive BOOLEAN DEFAULT FALSE');
-    // Per-user "feature seen" flags that drive the NEW badges/dots.
-    await query(`CREATE TABLE IF NOT EXISTS user_feature_seen (
-        user_id     VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-        feature_key VARCHAR(64) NOT NULL,
-        seen_at     TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (user_id, feature_key)
-    )`);
-    // Indexes for hot status/interaction scans (issue #265).
-    await query("CREATE INDEX IF NOT EXISTS idx_summary_interactions_summary_type ON summary_interactions(summary_id, type)");
-    await query("CREATE INDEX IF NOT EXISTS idx_pvp_fights_status ON pvp_fights(status)");
-    await query("CREATE INDEX IF NOT EXISTS idx_async_challenges_status ON async_challenges(status)");
-    // Índices calientes que faltaban. Se aplican uno a uno: `notifications` solo
-    // se crea en /db/init (no está en schema.sql), así que si la tabla no existe
-    // todavía no debe impedir que se cree el resto.
-    for (const [label, sql] of [
-      // El centro de notificaciones pagina por usuario y fecha en cada poll; sin
-      // este índice era seq scan + sort de toda la tabla (que crece sin cota).
-      ['notifications(user_id, created_at)', "CREATE INDEX IF NOT EXISTS idx_notifications_user_created ON notifications(user_id, created_at DESC)"],
-      // Ranking global: subqueries correlacionadas por cada fila del feed social.
-      ['users(total_reps)', "CREATE INDEX IF NOT EXISTS idx_users_total_reps ON users(total_reps DESC) WHERE is_private = false"],
-    ]) {
-      try {
-        await query(sql);
-      } catch (indexErr) {
-        console.error(`[Startup migration] Índice ${label} no aplicado:`, indexErr.message);
-      }
-    }
-    console.log('[Startup migration] Schema migrations applied.');
+    const schemaPath = path.join(__dirname, 'schema.sql');
+    const sql = await readFile(schemaPath, 'utf8');
+    await query(sql);
+    console.log('[Startup migration] schema.sql aplicado.');
   } catch (err) {
-    console.error('[Startup migration] Failed to apply schema migrations:', err);
+    // No se tumba el proceso: una BD ya migrada funciona igual, y caerse aquí
+    // dejaría la app entera abajo por un fallo de migración.
+    console.error('[Startup migration] Failed to apply schema.sql:', err);
   }
 }
 
