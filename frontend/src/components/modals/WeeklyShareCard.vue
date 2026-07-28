@@ -223,6 +223,7 @@ import { computed, watch } from 'vue';
 import { X, Download, Share2 } from 'lucide-vue-next';
 import { useWeeklyShare } from '@/composables/useWeeklyShare';
 import { useI18nStore } from '@/stores/i18n';
+import { rarityColor } from '@/utils/rarity';
 
 const props = defineProps({ open: Boolean });
 defineEmits(['close']);
@@ -252,20 +253,8 @@ function exerciseLabel(slug) {
   return map[slug] || (slug ? slug.charAt(0).toUpperCase() + slug.slice(1) : '—');
 }
 
-const RARITY_COLORS = {
-  common:      '#9ca3af',
-  rare:        '#60a5fa',
-  especial:    '#a78bfa',
-  legendary:   '#f59e0b',
-  calistenico: '#34d399',
-  cosmico:     '#f472b6',
-};
-
-function rarityColor(r) { return RARITY_COLORS[r] || '#9ca3af'; }
-function rarityBorder(r) {
-  const c = RARITY_COLORS[r] || '#9ca3af';
-  return c + '40';
-}
+// Esta tarjeta se rasteriza a imagen, así que necesita hex, no clases.
+function rarityBorder(r) { return rarityColor(r) + '40'; }
 
 const statCards = computed(() => {
   if (!weeklyData.value) return [];

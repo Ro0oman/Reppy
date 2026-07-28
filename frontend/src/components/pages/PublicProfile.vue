@@ -174,6 +174,7 @@ import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';
 import Heatmap from '@/components/training/Heatmap.vue';
+import { rarityColor, rarityLabel } from '@/utils/rarity';
 
 const props = defineProps({ username: { type: String, required: true } });
 
@@ -189,15 +190,7 @@ const loading = ref(true);
 const notFound = ref(false);
 const globalRank = ref(null);
 
-const RARITY_COLORS = {
-  common: '#9ca3af', rare: '#60a5fa', especial: '#a78bfa',
-  legendary: '#f59e0b', calistenico: '#34d399', cosmico: '#f472b6',
-};
-// Single source of truth: the shared rarity_* i18n keys (same as Shop/Inventory).
-const RARITY_KEYS = { common: 'rarity_common', rare: 'rarity_rare', especial: 'rarity_special', legendary: 'rarity_legendary', calistenico: 'rarity_calisthenic', cosmico: 'rarity_cosmico' };
-
-function rarityColor(r) { return RARITY_COLORS[r] || '#9ca3af'; }
-function rarityLabel(r) { return RARITY_KEYS[r] ? i18n.t(RARITY_KEYS[r]) : (r || ''); }
+// Color y etiqueta salen de @/utils/rarity (importados abajo).
 
 const EXERCISE_NAMES = {
   es: { pullups: 'Dominadas', pushups: 'Flexiones', dips: 'Fondos', muscleups: 'Muscle-Ups', weighted_pullups: 'Dom. con Lastre', squats: 'Sentadillas', situps: 'Abdominales' },

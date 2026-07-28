@@ -293,10 +293,12 @@ const hpPercentage = computed(() => {
 
 const isEs = computed(() => i18nStore.locale !== 'en');
 
+// Tier del boss (no es la rareza de un item): legendario ×8 HP / épico ×3 / normal.
+// Los textos eran ternarios es/en a mano; ahora salen de i18n como manda la convención.
 const rarityLabel = computed(() => {
-  if (boss.value?.is_legendary) return isEs.value ? 'Legendario' : 'Legendary';
-  if (boss.value?.is_epic) return isEs.value ? 'Épico' : 'Epic';
-  return isEs.value ? 'Activo' : 'Active';
+  if (boss.value?.is_legendary) return i18nStore.t('rarity_legendary');
+  if (boss.value?.is_epic) return i18nStore.t('boss_tier_epic');
+  return i18nStore.t('boss_tier_active');
 });
 
 const weaknessDisplay = computed(() => {

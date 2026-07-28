@@ -292,6 +292,7 @@ import axios from 'axios';
 import { Sparkles, Target, Trash2, Edit2, Calendar, BarChart2, TrendingUp } from 'lucide-vue-next';
 import { useNotificationStore } from '@/stores/notification';
 import { useI18nStore } from '@/stores/i18n';
+import { rarityBadgeClass } from '@/utils/rarity';
 
 const i18n = useI18nStore();
 
@@ -400,14 +401,7 @@ const deleteCosmetic = async (id) => {
   } catch (e) {}
 };
 
-const getRarityBadgeClass = (rarity) => {
-  switch (rarity) {
-    case 'legendary': return 'text-orange-400 bg-orange-500/10 border-orange-500/30';
-    case 'epic': return 'text-purple-400 bg-purple-500/10 border-purple-500/30';
-    case 'rare': return 'text-blue-400 bg-blue-500/10 border-blue-500/30';
-    default: return 'text-zinc-400 bg-zinc-500/10 border-zinc-500/30';
-  }
-};
+const getRarityBadgeClass = (rarity) => rarityBadgeClass(rarity);
 
 // Boss Logic
 const fetchBosses = async () => {

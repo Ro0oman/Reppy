@@ -56,6 +56,7 @@ import { useShopStore } from '@/stores/shop';
 import { useI18nStore } from '@/stores/i18n';
 import { useNotificationStore } from '@/stores/notification';
 import { useRepLogger } from '@/composables/useRepLogger';
+import { normalizeRarity } from '@/utils/rarity';
 
 const router = useRouter();
 const campaign = useCampaignStore();
@@ -68,7 +69,9 @@ const arenaRef = ref(null);
 const loading = computed(() => campaign.loadingStatus);
 const engaged = computed(() => campaign.engaged);
 
-const rarityLabel = (r) => ({ common: '', rare: '⭐', especial: '✨', legendary: '🌟', calistenico: '💎' }[r] || '');
+// Emoji por rareza (no es etiqueta de texto): sólo hace falta normalizar los
+// alias para que un 'epic' de datos viejos no se quede sin icono.
+const rarityLabel = (r) => ({ rare: '⭐', especial: '✨', legendary: '🌟', calistenico: '💎', cosmico: '🌌' }[normalizeRarity(r)] || '');
 
 const onTrain = async ({ exerciseType, count }) => {
   const origin = arenaRef.value?.getOrigin?.() || null;
