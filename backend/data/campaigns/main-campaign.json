@@ -8,7 +8,7 @@
     "en": "Cross the forest, the crypt and the domain of your path to forge a legend."
   },
   "config": {
-    "hp": { "base_per_level": 0.06, "tier_mult": [1, 1.8, 3, 6, 12], "prestige_mult": 1.5 },
+    "hp": { "base_per_level": 0.06, "quad_per_level": 0.03, "tier_mult": [1, 1.8, 3, 6, 12], "prestige_mult": 1.5 },
     "rewards": { "prestige_mult": 1.25 },
     "path": {
       "dark": { "reward_variance": "high", "curse_damage_multiplier": 0.75 },

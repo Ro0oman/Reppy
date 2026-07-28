@@ -15,17 +15,29 @@ import { getPerkBonuses } from './perks.js';
 /**
  * Scale an enemy's HP for a given player. Prefers per-enemy `scaling`, falling
  * back to the campaign-wide `config.hp`.
+ *
+ * The level term is QUADRATIC (`1 + a·L + b·L²`, audit 2026-07): player damage is
+ * superlinear (levelMult, fthScale, and an uncapped `critMult = 2 + dex·0.1`), so a
+ * linear HP curve made enemies melt faster the further you got. `b` is tunable per
+ * campaign (`config.hp.quad_per_level`) or per enemy (`scaling.hp_quad_per_level`)
+ * so rebalancing is a data change, not a deploy. HP is snapshotted on engage, so
+ * changing these numbers never affects a battle already in progress.
  */
 export function scaleEnemyHp(enemy, campaignConfig, playerLevel, prestige = 0) {
   const base = Number(enemy.base_hp) || 1000;
   const sc = enemy.scaling || {};
   const cfg = (campaignConfig && campaignConfig.hp) || {};
   const perLevel = sc.hp_per_level ?? cfg.base_per_level ?? 0.05;
+  // Default matches config.hp.quad_per_level in main-campaign.json on purpose: the
+  // campaign row in an already-seeded DB may predate that key, and falling back to a
+  // different number would make the shipped curve depend on whether the seed was re-run.
+  const quadPerLevel = sc.hp_quad_per_level ?? cfg.quad_per_level ?? 0.03;
   const tierArr = Array.isArray(cfg.tier_mult) ? cfg.tier_mult : null;
   const tierMult = sc.hp_tier_mult ?? (tierArr ? (tierArr[(enemy.tier || 1) - 1] ?? 1) : 1);
   const prestigeMult = Math.pow(cfg.prestige_mult ?? 1.5, prestige || 0);
   const lvl = Math.max(1, Number(playerLevel) || 1);
-  return Math.max(1, Math.round(base * (1 + lvl * perLevel) * tierMult * prestigeMult));
+  const levelScale = 1 + lvl * perLevel + lvl * lvl * quadPerLevel;
+  return Math.max(1, Math.round(base * levelScale * tierMult * prestigeMult));
 }
 
 /** The player's current active run (joined with its campaign), or null. */
