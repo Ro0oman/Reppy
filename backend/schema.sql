@@ -327,6 +327,13 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS skill_points INTEGER DEFAULT 0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS skill_points_claimed INTEGER DEFAULT 1;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS skill_perks JSONB DEFAULT '{}'::jsonb;
 
+-- Revocación de JWT. Los tokens duran 30 días y no había forma de invalidarlos:
+-- subir `token_version` invalida de golpe TODOS los tokens vivos de ese usuario
+-- (logout global, ban, cambio de rol). El claim `tv` del token se compara contra
+-- esta columna en cada petición (backend/middleware.js). Default 0 = los tokens
+-- ya emitidos, que no llevan `tv`, siguen siendo válidos tras desplegar.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS token_version INTEGER DEFAULT 0;
+
 -- Referral System
 ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_code VARCHAR(20) UNIQUE;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS referred_by VARCHAR(255) REFERENCES users(id);

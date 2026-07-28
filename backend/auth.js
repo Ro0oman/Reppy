@@ -10,8 +10,21 @@ import { loginLimiter, signupLimiter, oauthLimiter } from './utils/rateLimiters.
 const router = express.Router();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-const generateToken = (userId, isAdmin) => {
-  return jwt.sign({ id: userId, is_admin: isAdmin }, process.env.JWT_SECRET, { expiresIn: '30d' });
+// El TTL sigue siendo de 30 días; la revocación la da `token_version` (claim `tv`),
+// que el middleware compara contra `users.token_version` en cada petición: subirla
+// invalida de golpe todos los tokens vivos de ese usuario.
+//
+// `token_version` se lee aquí y no se pide al llamante a propósito: los tres sitios
+// que emiten token traen el `user` de SELECTs distintos, y que uno se dejara la
+// columna produciría silenciosamente tokens con `tv: 0` — es decir, tokens que
+// sobreviven a una revocación. Es una query extra sólo en el login.
+//
+// `is_admin` sigue en el payload por compatibilidad con lo que ya lo lee, pero YA NO
+// es la fuente de verdad: el middleware lo sobrescribe con el valor de la BD.
+const generateToken = async (userId, isAdmin) => {
+  const res = await query('SELECT token_version FROM users WHERE id = $1', [userId]);
+  const tv = Number(res.rows[0]?.token_version) || 0;
+  return jwt.sign({ id: userId, is_admin: isAdmin, tv }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
 const generateReferralCode = () => {
@@ -70,7 +83,7 @@ router.post('/google', oauthLimiter, async (req, res) => {
       ensureUsername(user.id, user.name).catch(() => {});
     }
 
-    const sessionToken = generateToken(user.id, user.is_admin);
+    const sessionToken = await generateToken(user.id, user.is_admin);
 
     // Get read blogs list
     const readBlogsRes = await query(
@@ -126,7 +139,7 @@ router.post('/signup', signupLimiter, async (req, res) => {
     const user = result.rows[0];
     await applyReferral(user.id, incomingRef);
     ensureUsername(user.id, user.name).catch(() => {});
-    const token = generateToken(user.id, user.is_admin);
+    const token = await generateToken(user.id, user.is_admin);
 
     res.json({
       token,
@@ -171,7 +184,7 @@ router.post('/login', loginLimiter, async (req, res) => {
       return res.status(401).json({ code: 'ERR_WRONG_PASSWORD', message: 'Incorrect password' });
     }
 
-    const token = generateToken(user.id, user.is_admin);
+    const token = await generateToken(user.id, user.is_admin);
 
     // Get read blogs list
     const readBlogsRes = await query(
