@@ -74,7 +74,9 @@ const consumables = [
         description: 'La sangre de la bestia fluye por tus venas, otorgándote una Destreza (DEX) legendaria.',
         type: 'consumable',
         rarity: 'legendary',
-        price: 6000,
+        // Rebalance 2026-07-27: 6.000 → 13.000. Sube con "Maestría del Cuerpo" para no
+        // quedarse como el nuevo outlier de ratio daño/coste un escalón por debajo.
+        price: 13000,
         stats: { duration: 21600, dex_bonus: 50 }
     },
     // Rarity: calistenico (24h = 86400s)
@@ -91,7 +93,9 @@ const consumables = [
         description: 'La culminación del control físico. Tu Destreza (DEX) es inigualable.',
         type: 'consumable',
         rarity: 'calistenico',
-        price: 18000,
+        // Rebalance 2026-07-27: 18.000 → 40.000. Era el outlier de ratio daño/coste del
+        // juego (el crítico escala con DEX). Ver backend/scripts/update_dex_potion_prices.js.
+        price: 40000,
         stats: { duration: 86400, dex_bonus: 100 }
     }
 ];
