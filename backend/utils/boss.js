@@ -1,8 +1,25 @@
 import { query } from '../db.js';
 
+/** Suelo de HP del boss comunitario: lo que valía antes de escalar por comunidad. */
+export const BASE_BOSS_HP = 50000;
+/** HP que aporta cada usuario activo (reps en los últimos 7 días). */
+export const HP_PER_ACTIVE_USER = 400;
+
+/** HP base del boss comunitario para un número dado de usuarios activos. */
+export function bossHpForActiveUsers(activeUsers) {
+  const n = Number(activeUsers);
+  const safe = Number.isFinite(n) && n > 0 ? n : 0;
+  return Math.max(BASE_BOSS_HP, Math.round(safe * HP_PER_ACTIVE_USER));
+}
+
 /**
- * Recalculates the total HP for all bosses based on the number of active users in the last 7 days.
- * Formula: ActiveUsers * 350 (Min: 350)
+ * Recalculates the total HP for all bosses from the number of active users in the
+ * last 7 days: `max(50.000, activos × 400)`, then ×8 for legendary / ×3 for epic.
+ *
+ * El boss sigue SIEMPRE activo — sin ventanas programadas ni cron (decidido
+ * 2026-07-27). Sólo se recalcula el HP; `start_date`/`end_date` siguen sin uso.
+ * Un boss ya dañado conserva su `current_hp`: subir el techo no le devuelve vida,
+ * para no invalidar el daño que la comunidad ya le hizo.
  */
 export async function syncBossHealth() {
   try {
@@ -16,30 +33,41 @@ export async function syncBossHealth() {
     `);
     
     const activeUsers = parseInt(activeUsersRes.rows[0]?.count) || 0;
-    const newTotalHp = 50000;
-    
-    console.log(`[BOSS_SYNC] Manual override: ${newTotalHp} HP.`);
+
+    // El HP escala con la comunidad para que un veterano no funda el boss solo
+    // (decidido 2026-07-27). El suelo de 50.000 mantiene el valor histórico
+    // mientras la base sea pequeña: sólo empieza a subir por encima de ~125
+    // activos semanales. Los multiplicadores is_legendary (×8) / is_epic (×3)
+    // se aplican encima, en el UPDATE de abajo.
+    const newTotalHp = bossHpForActiveUsers(activeUsers);
+
+    console.log(`[BOSS_SYNC] ${activeUsers} usuarios activos (7d) → ${newTotalHp} HP base.`);
 
     // 2. Update bosses total_hp and current_hp with rarity-based scaling
     // We apply scaling if the boss hasn't been defeated yet
+    // `current_hp` sólo se rellena a tope si el boss estaba intacto; uno ya dañado
+    // conserva su vida para no invalidar el daño que la comunidad ya le hizo.
+    // El LEAST es necesario ahora que el techo es dinámico: si la base de activos
+    // baja, el nuevo total puede quedar por debajo del current_hp de un boss a
+    // medias y la barra se pintaría por encima del 100%.
     await query(`
-      UPDATE boss_fights 
-      SET total_hp = CASE 
-            WHEN is_legendary THEN $1 * 8 
-            WHEN is_epic THEN $1 * 3
-            ELSE $1 
-          END,
-          current_hp = CASE 
-            WHEN current_hp >= total_hp THEN (
-              CASE 
-                WHEN is_legendary THEN $1 * 8 
-                WHEN is_epic THEN $1 * 3
-                ELSE $1 
-              END
-            )
-            ELSE current_hp 
+      UPDATE boss_fights
+      SET total_hp = scaled.hp,
+          current_hp = CASE
+            WHEN boss_fights.current_hp >= boss_fights.total_hp THEN scaled.hp
+            ELSE LEAST(boss_fights.current_hp, scaled.hp)
           END
-      WHERE status != 'defeated'
+      FROM (
+        SELECT id,
+               CASE
+                 WHEN is_legendary THEN $1 * 8
+                 WHEN is_epic THEN $1 * 3
+                 ELSE $1
+               END AS hp
+        FROM boss_fights
+        WHERE status != 'defeated'
+      ) AS scaled
+      WHERE boss_fights.id = scaled.id
     `, [newTotalHp]);
 
     console.log('[BOSS_SYNC] Successfully updated boss health templates.');
