@@ -624,6 +624,7 @@ import { useAudio } from '@/composables/useAudio';
 import { isItemUpgrade, normalizeStats } from '@/composables/useItemUpgrade';
 import ItemIcon from '@/components/ui/ItemIcon.vue';
 import { buildActiveBoosts } from '@/utils/activeBuffs';
+import { normalizeRarity, rarityBadgeClass, rarityBorderClass, rarityCssClass, rarityLabel as rarityLabelUtil } from '@/utils/rarity';
 
 const { playZip, playEquipBlip, playClickBlip } = useAudio();
 const authStore = useAuthStore();
@@ -825,18 +826,10 @@ const openItemDetails = (item) => {
   showItemModal.value = true;
 };
 
-const getRarityBadge = (item) => {
-  if (!item) return { label: i18n.t('rarity_common'), classes: 'text-muted bg-foreground/5 border-border' };
-  const rarity = item.rarity?.toLowerCase() || 'common';
-  switch (rarity) {
-    case 'calistenico': return { label: i18n.t('rarity_calisthenic'), classes: 'text-[#ccff00] bg-[#ccff00]/10 border-[#ccff00]/30 shadow-[0_0_10px_rgba(204,255,0,0.2)]' };
-    case 'legendary': return { label: i18n.t('rarity_legendary'), classes: 'text-primary-500 bg-primary-500/10 border-primary-500/30 shadow-[0_0_10px_hsl(var(--primary) / 0.2)]' };
-    case 'epic':
-    case 'especial': return { label: i18n.t('rarity_special'), classes: 'text-purple-400 bg-purple-500/10 border-purple-500/30' };
-    case 'rare': return { label: i18n.t('rarity_rare'), classes: 'text-blue-400 bg-blue-500/10 border-blue-500/30' };
-    default: return { label: i18n.t('rarity_common'), classes: 'text-muted bg-foreground/5 border-border' };
-  }
-};
+const getRarityBadge = (item) => ({
+  label: rarityLabelUtil(item?.rarity),
+  classes: rarityBadgeClass(item?.rarity),
+});
 
 const startComparison = (item) => {
   comparisonState.value = {
@@ -1171,12 +1164,8 @@ const groupedItems = computed(() => {
 
   // Rarity filter
   if (selectedRarity.value !== 'all') {
-    filtered = filtered.filter(i => {
-      const r = i.rarity?.toLowerCase() || 'common';
-      const target = selectedRarity.value;
-      if (target === 'especial') return r === 'especial' || r === 'epic';
-      return r === target;
-    });
+    // normalizeRarity absorbe los alias (epic→especial, cosmic→cosmico, …).
+    filtered = filtered.filter(i => normalizeRarity(i.rarity) === normalizeRarity(selectedRarity.value));
   }
 
   filtered.forEach(item => {
@@ -1237,17 +1226,7 @@ const toggleEquip = async (item) => {
 const COMBAT_SLOT_TYPES = ['head', 'weapon', 'armor', 'boots'];
 const isDraggableItem = (item) => !!item && !isConsumableItem(item) && item.type !== 'bundle';
 
-const rarityBorder = (rarity) => {
-  switch ((rarity || '').toLowerCase()) {
-    case 'cosmico': return 'border-blue-400/80 shadow-blue-400/30';
-    case 'legendary': return 'border-yellow-400/70 shadow-yellow-400/20';
-    case 'epic':
-    case 'especial': return 'border-purple-500/70 shadow-purple-500/20';
-    case 'rare': return 'border-blue-500/70 shadow-blue-500/20';
-    case 'calistenico': return 'border-[#ccff00]/70 shadow-[#ccff00]/20';
-    default: return 'border-white/15 shadow-black/30';
-  }
-};
+const rarityBorder = (rarity) => rarityBorderClass(rarity);
 
 const dragState = ref({ active: false, item: null, x: 0, y: 0, hoverType: null });
 const justDragged = ref(false);
@@ -1358,38 +1337,18 @@ const markCategorySeen = async (type) => {
 };
 
 const getCardClass = (item) => {
-  const r = item.rarity?.toLowerCase();
   if (isEquipped(item)) return 'ring-2 ring-blue-500 border-transparent bg-blue-500/5 cursor-pointer';
   // If not owned or not unlocked, show gray - but be sure it's not from the user inventory
   if (!item.owned && !item.is_unlocked) return 'opacity-60 grayscale';
-
-  if (r === 'legendary') return 'border-yellow-400 bg-yellow-400/5 cursor-pointer';
-  if (r === 'epic' || r === 'especial') return 'border-purple-500/50 bg-purple-500/5 cursor-pointer';
-  if (r === 'rare') return 'border-blue-500/50 bg-blue-500/5 cursor-pointer';
-  if (r === 'calistenico') return 'border-[#ccff00]/50 bg-[#ccff00]/5 cursor-pointer';
-  return 'border-gray-700 opacity-80 bg-background/20 cursor-pointer';
+  // `cosmico` caía en el gris del default por no estar contemplado aquí.
+  if (normalizeRarity(item.rarity) === 'common') return 'border-gray-700 opacity-80 bg-background/20 cursor-pointer';
+  return `${rarityBorderClass(item.rarity)} cursor-pointer`;
 };
 
-const getRarityClass = (rarity) => {
-  const r = rarity?.toLowerCase() || 'common';
-  let finalR = r;
-  if (r === 'epic') finalR = 'especial';
-  return `rarity-${finalR}`;
-};
+const getRarityClass = (rarity) => rarityCssClass(rarity);
 
-const getRarityLabel = (rarity) => {
-  const r = rarity?.toLowerCase() || 'common';
-  switch (r) {
-    case 'common': return i18n.t('rarity_common');
-    case 'rare': return i18n.t('rarity_rare');
-    case 'epic':
-    case 'especial': return i18n.t('rarity_special');
-    case 'legendary': return i18n.t('rarity_legendary');
-    case 'calistenico': return i18n.t('rarity_calisthenic');
-    case 'cosmico': return 'CÓSMICO';
-    default: return i18n.t('rarity_common');
-  }
-};
+// `cosmico` devolvía 'CÓSMICO' fijo en español pese a existir `rarity_cosmico`.
+const getRarityLabel = (rarity) => rarityLabelUtil(rarity);
 
 const markSeen = async (item) => {
   if (!item.is_new) return;

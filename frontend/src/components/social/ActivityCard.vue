@@ -409,6 +409,7 @@ import BodyMuscleMap from '@/components/training/BodyMuscleMap.vue';
 import { isDeveloper } from '@/utils/developers';
 import { aggregateMuscleActivation } from '@/utils/muscleMap';
 import { buildMuscleShareImage } from '@/composables/useMuscleShare';
+import { rarityBorderClass, rarityCssClass, rarityLabel as rarityLabelUtil } from '@/utils/rarity';
 
 const props = defineProps({
     activity: { type: Object, required: true },
@@ -485,17 +486,7 @@ const openItemDetails = async (item) => {
   }
 };
 
-const getRarityLabel = (rarity) => {
-  const r = rarity?.toLowerCase();
-  switch (r) {
-    case 'calistenico': return i18n.t('rarity_calisthenic');
-    case 'legendary': return i18n.t('rarity_legendary');
-    case 'epic':
-    case 'especial': return i18n.t('rarity_special');
-    case 'rare': return i18n.t('rarity_rare');
-    default: return i18n.t('rarity_common');
-  }
-};
+const getRarityLabel = (rarity) => rarityLabelUtil(rarity);
 
 const timeAgo = computed(() => {
     try {
@@ -695,19 +686,10 @@ const getSlotIcon = (slot) => {
     }
 };
 
-const getRarityClass = (rarity, part = 'text') => {
-    const r = rarity?.toLowerCase();
-    if (part === 'border') {
-        if (r === 'legendary') return 'border-amber-500/50 shadow-[0_0_10px_rgba(245,158,11,0.2)]';
-        if (r === 'epic') return 'border-purple-500/50';
-        if (r === 'rare') return 'border-blue-500/50';
-        return 'border-border/20';
-    }
-    if (r === 'legendary') return 'text-amber-500';
-    if (r === 'epic') return 'text-purple-500';
-    if (r === 'rare') return 'text-blue-500';
-    return 'text-muted/60';
-};
+// Antes sólo miraba 'epic' (nunca 'especial'), así que la mayoría de los items
+// especiales del feed se pintaban con el estilo de común.
+const getRarityClass = (rarity, part = 'text') =>
+    part === 'border' ? rarityBorderClass(rarity) : rarityCssClass(rarity);
 
 const hasActiveBuffs = (exercises) => {
     if (!exercises) return false;

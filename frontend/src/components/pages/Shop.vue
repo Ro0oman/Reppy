@@ -83,12 +83,7 @@
               @click="item.reward_type ? claimReward(item) : openItemDetails(item)">
               <!-- Rarity Aura Overlay -->
               <div class="absolute inset-0 opacity-10 pointer-events-none rounded-[22px]" :class="[
-                item.rarity === 'common' ? 'bg-slate-500' :
-                  item.rarity === 'rare' ? 'bg-blue-500' :
-                    item.rarity === 'epic' || item.rarity === 'especial' ? 'bg-purple-500' :
-                      item.rarity === 'legendary' ? 'bg-yellow-500' :
-                        item.rarity === 'calistenico' ? 'bg-red-600' :
-                          item.rarity === 'cosmico' ? 'bg-blue-400' : 'bg-primary-500'
+                rarityGlowClass(item.rarity)
               ]"></div>
 
               <div class="p-2 flex-1 flex flex-col items-center relative z-10">
@@ -109,11 +104,7 @@
 
                   <!-- Rarity tint -->
                   <div class="absolute inset-0 opacity-10 pointer-events-none" :class="[
-                    item.rarity === 'common' ? 'bg-slate-500' :
-                      item.rarity === 'rare' ? 'bg-blue-500' :
-                        item.rarity === 'epic' || item.rarity === 'especial' ? 'bg-purple-500' :
-                          item.rarity === 'legendary' ? 'bg-yellow-500' :
-                            item.rarity === 'calistenico' ? 'bg-red-600' : 'bg-primary-500'
+rarityGlowClass(item.rarity)
                   ]"></div>
 
                   <div v-if="item.reward_type"
@@ -558,11 +549,7 @@
             <!-- Rarity Aura -->
             <div class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 opacity-10 pointer-events-none"
               :class="[
-                selectedItem.rarity === 'common' ? 'bg-slate-500' :
-                  selectedItem.rarity === 'rare' ? 'bg-blue-500' :
-                    selectedItem.rarity === 'epic' || selectedItem.rarity === 'especial' ? 'bg-purple-500' :
-                      selectedItem.rarity === 'legendary' ? 'bg-yellow-500' :
-                        selectedItem.rarity === 'calistenico' ? 'bg-red-600' : 'bg-primary-500'
+rarityGlowClass(selectedItem.rarity)
               ]"></div>
 
             <div class="flex flex-col items-center mb-10 relative z-10">
@@ -716,6 +703,7 @@ import ItemIcon from '@/components/ui/ItemIcon.vue';
 import ChestIcon from '@/components/ui/ChestIcon.vue';
 import ChestOpening from '@/components/shop/ChestOpening.vue';
 import { getCombatScore, isItemUpgrade, normalizeStats } from '@/composables/useItemUpgrade';
+import { rarityBadgeClass, rarityGlowClass, rarityLabel as rarityLabelUtil, rarityRank } from '@/utils/rarity';
 
 const emit = defineEmits(['start', 'viewProfile']);
 const authStore = useAuthStore();
@@ -894,7 +882,7 @@ const filteredItems = computed(() => {
 const rouletteTicketItem = computed(() => items.value.find(item => item.name === 'Ticket de Ruleta'));
 const bundleItems = computed(() => filteredItems.value.filter(item => item.type === 'bundle' && item.name !== 'Ticket de Ruleta'));
 const consumableItems = computed(() => items.value.filter(item => item.type === 'consumable'));
-const hasLegendaryDaily = computed(() => shopStore.dailyItems.some(item => item.rarity === 'legendary' || item.rarity === 'calistenico' || item.rarity === 'cosmico'));
+const hasLegendaryDaily = computed(() => shopStore.dailyItems.some(item => rarityRank(item.rarity) >= rarityRank('legendary')));
 
 const getBundlePreviewItems = (bundle) => {
   const ids = extractBundleItemIds(bundle);
@@ -984,24 +972,12 @@ const isEquipped = (item) => {
   return false;
 };
 
-const getRarityBadge = (item) => {
-  // Labels come from the shared rarity_* i18n keys (single source of truth,
-  // same as Inventory/Profile); only the colours are shop-specific.
-  if (!item) return { label: i18n.t('rarity_common'), classes: 'text-muted border-white/10' };
-  const rarity = item.rarity?.toLowerCase() || 'common';
-  switch (rarity) {
-    case 'cosmico': return { label: i18n.t('rarity_cosmico'), classes: 'text-blue-300 bg-blue-500/10 border-blue-400/50 shadow-blue-500/30 animate-pulse' };
-    case 'calistenico': return { label: i18n.t('rarity_calisthenic'), classes: 'text-red-500 bg-red-500/10 border-red-500/40 shadow-red-500/20' };
-    case 'legendary': return { label: i18n.t('rarity_legendary'), classes: 'text-yellow-500 bg-yellow-500/10 border-yellow-500/40 shadow-yellow-500/20' };
-    case 'especial':
-    case 'epic': return { label: i18n.t('rarity_special'), classes: 'text-purple-400 bg-purple-500/10 border-purple-500/30 shadow-purple-500/20' };
-    case 'rare': return { label: i18n.t('rarity_rare'), classes: 'text-blue-400 bg-blue-500/10 border-blue-500/30 shadow-blue-500/20' };
-    default: return { label: i18n.t('rarity_common'), classes: 'text-slate-400 bg-white/5 border-white/10' };
-  }
-};
+const getRarityBadge = (item) => ({
+  label: rarityLabelUtil(item?.rarity),
+  classes: rarityBadgeClass(item?.rarity),
+});
 
 const getCardClass = (item) => {
-  const r = item.rarity?.toLowerCase();
   if (isEquipped(item)) return 'ring-2 ring-blue-500 border-transparent bg-blue-500/5';
   if (item.owned) return 'opacity-80';
   return '';

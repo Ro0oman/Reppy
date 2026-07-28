@@ -66,7 +66,7 @@
               <!-- Card Header -->
               <div class="mb-8 text-center">
                  <div class="inline-block px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.3em] mb-4" :class="getRarityClasses(activeReward)">
-                    {{ activeReward.type === 'coins' ? 'RECURSOS' : getRarityLabel(activeReward.data.rarity) }}
+                    {{ activeReward.type === 'coins' ? i18n.t('rarity_resources') : getRarityLabel(activeReward.data.rarity) }}
                  </div>
               </div>
 
@@ -219,7 +219,10 @@ import ItemIcon from '@/components/ui/ItemIcon.vue';
 import ChestIcon from '@/components/ui/ChestIcon.vue';
 import confetti from 'canvas-confetti';
 import { useAudio } from '@/composables/useAudio';
+import { normalizeRarity, rarityBadgeClass, rarityGlowClass, rarityLabel as rarityLabelUtil } from '@/utils/rarity';
+import { useI18nStore } from '@/stores/i18n';
 
+const i18n = useI18nStore();
 const { playChest, playClickBlip, playLevelUp } = useAudio();
 const props = defineProps({
   show: Boolean,
@@ -246,7 +249,7 @@ const isEpicChest = computed(() => {
 const isLegendaryReward = computed(() => {
   if (currentRevealIndex.value < 0 || currentRevealIndex.value >= props.reward.rewards.length) return false;
   const r = props.reward.rewards[currentRevealIndex.value];
-  return r.type === 'item' && r.data.rarity?.toLowerCase() === 'legendary';
+  return r.type === 'item' && normalizeRarity(r.data.rarity) === 'legendary';
 });
 
 const clickedFlash = ref(false);
@@ -299,8 +302,8 @@ const revealNext = () => {
 
     // High rarity effect on reveal
     if (activeReward.value?.type === 'item') {
-      const r = activeReward.value.data.rarity?.toLowerCase();
-      if (['legendary', 'calistenico'].includes(r)) {
+      const r = normalizeRarity(activeReward.value.data.rarity);
+      if (['legendary', 'calistenico', 'cosmico'].includes(r)) {
         playLevelUp();
         confetti({
           particleCount: r === 'legendary' ? 250 : 150,
@@ -363,41 +366,18 @@ const startLegacyAnimation = async () => {
   }, 100);
 };
 
+// Las monedas no son un item y no tienen rareza: conservan su amarillo propio.
 const getRarityGlow = (r) => {
   if (!r || r.type === 'coins') return 'bg-yellow-500';
-  const rarity = r.data.rarity?.toLowerCase();
-  switch (rarity) {
-    case 'calistenico': return 'bg-[#ccff00]';
-    case 'legendary': return 'bg-primary-500';
-    case 'especial': case 'epic': return 'bg-purple-500';
-    case 'rare': return 'bg-blue-500';
-    default: return 'bg-zinc-500';
-  }
+  return rarityGlowClass(r.data.rarity);
 };
 
 const getRarityClasses = (r) => {
   if (!r || r.type === 'coins') return 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20';
-  const rarity = r.data.rarity?.toLowerCase();
-  switch (rarity) {
-    case 'calistenico': return 'bg-[#ccff00]/10 text-[#ccff00] border border-[#ccff00]/20';
-    case 'legendary': return 'bg-primary-500/10 text-primary-500 border border-primary-500/20';
-    case 'especial': case 'epic': return 'bg-purple-500/10 text-purple-400 border border-purple-500/20';
-    case 'rare': return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
-    default: return 'bg-zinc-800 text-zinc-400 border border-white/5';
-  }
+  return rarityBadgeClass(r.data.rarity);
 };
 
-const getRarityLabel = (rarity) => {
-  const r = rarity?.toLowerCase();
-  switch (r) {
-    case 'common': return 'COMÚN';
-    case 'rare': return 'RARO';
-    case 'especial': case 'epic': return 'ESPECIAL';
-    case 'legendary': return 'LEGENDARIO';
-    case 'calistenico': return 'CALISTÉNICO';
-    default: return 'COMÚN';
-  }
-};
+const getRarityLabel = (rarity) => rarityLabelUtil(rarity);
 
 const close = () => { emit('close'); };
 </script>

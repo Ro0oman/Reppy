@@ -21,7 +21,7 @@
           <!-- Title + rarity -->
           <h3 class="mt-4 text-center text-lg font-black text-foreground">{{ item.name }}</h3>
           <p v-if="item.rarity" class="mt-0.5 text-center text-[10px] font-black uppercase tracking-[0.25em]"
-            :class="rarityColor">{{ item.rarity }}</p>
+            :class="rarityColor">{{ rarityText }}</p>
 
           <!-- Effect + duration chips -->
           <div class="mt-4 flex items-center justify-center gap-2">
@@ -60,6 +60,7 @@ import { ref, computed } from 'vue';
 import { X, FlaskConical, Clock, Sparkles } from 'lucide-vue-next';
 import { useI18nStore } from '@/stores/i18n';
 import { usePotions } from '@/composables/usePotions';
+import { rarityCssClass, rarityLabel } from '@/utils/rarity';
 
 const props = defineProps({
   item: { type: Object, default: null },
@@ -78,16 +79,9 @@ const accentClasses = computed(() => {
   return { box: 'border-emerald-500/30 bg-emerald-500/10', icon: 'text-emerald-300' };
 });
 
-const rarityColor = computed(() => {
-  const map = {
-    common: 'text-zinc-400',
-    rare: 'text-blue-400',
-    especial: 'text-cyan-400',
-    legendary: 'text-amber-400',
-    calistenico: 'text-cyan-300',
-  };
-  return map[props.item?.rarity] || 'text-zinc-400';
-});
+const rarityColor = computed(() => rarityCssClass(props.item?.rarity));
+// Antes se pintaba `item.rarity` crudo ("calistenico") en vez de la etiqueta traducida.
+const rarityText = computed(() => rarityLabel(props.item?.rarity));
 
 const onActivate = async () => {
   if (busy.value || !props.item) return;
