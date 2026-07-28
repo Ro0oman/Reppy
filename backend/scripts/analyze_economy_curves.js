@@ -44,6 +44,12 @@ function expectedCritMultiplier(L) {
   return (1 - p) + p * mult;
 }
 
+// Mirrors config.hp of backend/data/campaigns/main-campaign.json, so the table shows
+// the curve that actually ships (the code defaults differ only in base_per_level).
+const CAMPAIGN_CONFIG = {
+  hp: { base_per_level: 0.06, quad_per_level: 0.03, tier_mult: [1, 1.8, 3, 6, 12], prestige_mult: 1.5 },
+};
+
 console.log('=== 1) PLAYER DAMAGE vs ENEMY HP by level ===');
 console.log('(model: every stat level = global level; 1 pull-up rep; campaign enemy base_hp=1200 tier1)');
 console.log('lvl | dmg/rep(noCrit) | dmg/rep(expCrit) | enemyHP | reps-to-kill(expCrit) | dmg growth×  | HP growth×');
@@ -51,7 +57,7 @@ let prevDmg = null, prevHp = null;
 for (const L of [1, 5, 10, 20, 30, 50, 75, 100]) {
   const d = damagePerRep(L);
   const dCrit = d * expectedCritMultiplier(L);
-  const hp = scaleEnemyHp({ base_hp: 1200, tier: 1, scaling: {} }, null, L, 0);
+  const hp = scaleEnemyHp({ base_hp: 1200, tier: 1, scaling: {} }, CAMPAIGN_CONFIG, L, 0);
   const rtk = (hp / dCrit);
   const dg = prevDmg ? (dCrit / prevDmg) : 1;
   const hg = prevHp ? (hp / prevHp) : 1;
@@ -60,7 +66,7 @@ for (const L of [1, 5, 10, 20, 30, 50, 75, 100]) {
   );
   prevDmg = dCrit; prevHp = hp;
 }
-console.log('→ reps-to-kill FALLS as level rises: player damage is superlinear (levelMult=1+L/2, fthScale, flat divineBonus=fth*25), enemy HP is ~linear (1+0.05·L). Enemies melt faster the further you get.\n');
+console.log('→ reps-to-kill still FALLS as level rises, but far more slowly since the HP curve went quadratic (1+0.06·L+0.03·L²). The residual slide is structural: expected damage grows ~L⁴ because critMult = 2+dex·0.1 is UNCAPPED (deliberately left alone, 2026-07-27), and no polynomial HP term can track that. The quadratic is tuned to land the 25-40 reps-to-kill band on L8-L15, where the playerbase actually is; beyond ~L30 enemies still melt.\n');
 
 console.log('=== 2) FLAT DIVINE BONUS (FE snowball) share of per-rep damage ===');
 console.log('(divineBonus = fth_lvl * 25, added flat per rep BEFORE multipliers stack)');
