@@ -387,101 +387,10 @@ apiRouter.get('/db/init', async (req, res) => {
   }
   try {
     const queries = [
-      `CREATE TABLE IF NOT EXISTS users (
-          id VARCHAR(255) PRIMARY KEY,
-          name VARCHAR(255) NOT NULL,
-          email VARCHAR(255) UNIQUE NOT NULL,
-          password_hash VARCHAR(255),
-          avatar_url TEXT,
-          total_reps INTEGER DEFAULT 0,
-          is_private BOOLEAN DEFAULT FALSE,
-          daily_goal INTEGER DEFAULT 50,
-          body_weight DECIMAL DEFAULT 75.0,
-          last_streak_reward_date DATE,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      )`,
-      `CREATE TABLE IF NOT EXISTS reps (
-          id SERIAL PRIMARY KEY,
-          user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-          count INTEGER NOT NULL DEFAULT 0,
-          date DATE NOT NULL DEFAULT CURRENT_DATE,
-          exercise_type VARCHAR(50) DEFAULT 'pullups',
-          added_weight DECIMAL DEFAULT 0.0,
-          boss_damage_dealt INTEGER DEFAULT 0,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-          UNIQUE(user_id, date, exercise_type)
-      )`,
-      `ALTER TABLE reps ADD COLUMN IF NOT EXISTS boss_damage_dealt INTEGER DEFAULT 0`,
-      `ALTER TABLE reps ADD COLUMN IF NOT EXISTS active_multiplier DECIMAL DEFAULT 1.0`,
-      `CREATE TABLE IF NOT EXISTS cosmetics (
-          id SERIAL PRIMARY KEY,
-          name VARCHAR(255) UNIQUE NOT NULL,
-          description TEXT,
-          type VARCHAR(50) NOT NULL,
-          price INTEGER NOT NULL,
-          css_value TEXT,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      )`,
-      `CREATE TABLE IF NOT EXISTS user_inventory (
-          id SERIAL PRIMARY KEY,
-          user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-          cosmetic_id INTEGER REFERENCES cosmetics(id) ON DELETE CASCADE,
-          is_new BOOLEAN DEFAULT TRUE,
-          acquired_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-          UNIQUE(user_id, cosmetic_id)
-      )`,
-      `ALTER TABLE user_inventory ADD COLUMN IF NOT EXISTS is_new BOOLEAN DEFAULT TRUE`,
-      `CREATE TABLE IF NOT EXISTS boss_fights (
-          id SERIAL PRIMARY KEY,
-          name VARCHAR(255) NOT NULL,
-          description TEXT,
-          total_hp INTEGER NOT NULL,
-          current_hp INTEGER NOT NULL,
-          start_date TIMESTAMP WITH TIME ZONE NOT NULL,
-          end_date TIMESTAMP WITH TIME ZONE NOT NULL,
-          status VARCHAR(50) DEFAULT 'active'
-      )`,
-      `CREATE TABLE IF NOT EXISTS event_participants (
-          id SERIAL PRIMARY KEY,
-          boss_fight_id INTEGER REFERENCES boss_fights(id) ON DELETE CASCADE,
-          user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-          damage_dealt INTEGER DEFAULT 0,
-          chests_claimed INTEGER DEFAULT 0,
-          UNIQUE(boss_fight_id, user_id)
-      )`,
-      `CREATE TABLE IF NOT EXISTS friendships (
-          id SERIAL PRIMARY KEY,
-          user_id_1 VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-          user_id_2 VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-          status VARCHAR(50) DEFAULT 'accepted',
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-          UNIQUE(user_id_1, user_id_2)
-      )`,
-      `CREATE TABLE IF NOT EXISTS user_read_blogs (
-          id SERIAL PRIMARY KEY,
-          user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-          post_slug VARCHAR(255) NOT NULL,
-          read_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-          UNIQUE(user_id, post_slug)
-      )`,
-      `ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE`,
-      `ALTER TABLE users ADD COLUMN IF NOT EXISTS token_version INTEGER DEFAULT 0`,
-      // Admin grant is intentionally NOT performed here. Bootstrap an admin with
-      // `node backend/scripts/grant_admin.js <email>` instead of via HTTP.
-      `ALTER TABLE users ADD COLUMN IF NOT EXISTS daily_boss_damage INTEGER DEFAULT 0`,
-      `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_boss_damage_date DATE DEFAULT CURRENT_DATE`,
-      `ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS image_url TEXT`,
-      // Animated boss clips, stored as *filenames* of locally-hosted videos
-      // (served from /public/video): boss_gif = idle loop, boss_damaged = hit
-      // reaction. Both optional; the UI falls back to image_url when missing.
-      `ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS boss_gif TEXT`,
-      `ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS boss_damaged TEXT`,
-      `ALTER TABLE boss_fights ADD COLUMN IF NOT EXISTS order_index INTEGER DEFAULT 0`,
       // Sólo SEEDS. El DDL vive en schema.sql, que se aplica en el arranque
       // (ensureSchemaMigrations). Antes estaba duplicado aquí y divergía.
-      // NOTA: para dar admin, ejecutar fuera de banda `node backend/scripts/grant_admin.js <email>`.
-      // No es SQL, así que NO puede ir en este array: el loop de abajo se lo pasaría
-      // a query() y reventaría /db/init entero.
+      // NOTA: para dar admin, ejecutar fuera de banda `node backend/scripts/grant_admin.js <email>`
+      // (NO es SQL; no debe ir en este array o el loop de abajo lo pasa a query() y revienta /db/init).
       `UPDATE cosmetics SET is_seasonal = TRUE WHERE name IN ('Aura de Pascua', 'Rabbit Slayer', 'Easter Celebration')`,
       `UPDATE cosmetics SET rarity = 'legendary' WHERE price >= 1200`,
       `UPDATE cosmetics SET rarity = 'especial' WHERE price < 1200 AND price >= 600`,
