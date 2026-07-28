@@ -271,6 +271,30 @@ router.get('/analytics', authenticate, isAdmin, async (req, res) => {
   }
 });
 
+// Revoke every live session of a user: sube `users.token_version`, que el
+// middleware compara contra el claim `tv` del token. Es la palanca de la
+// revocación de JWT — sin esto la columna no sirve de nada. Úsalo para logout
+// global, al banear, o al quitarle admin a alguien (el rol ya se lee de la BD,
+// pero esto además le tira la sesión).
+router.post('/revoke-sessions', authenticate, isAdmin, async (req, res) => {
+  const { user_id } = req.body;
+  if (!user_id) return res.status(400).json({ message: 'user_id required' });
+  try {
+    const result = await query(
+      'UPDATE users SET token_version = COALESCE(token_version, 0) + 1 WHERE id = $1 RETURNING id, token_version',
+      [user_id]
+    );
+    if (result.rowCount === 0) return res.status(404).json({ message: 'User not found' });
+    res.json({
+      message: `Sesiones revocadas para ${result.rows[0].id}`,
+      token_version: result.rows[0].token_version,
+    });
+  } catch (error) {
+    console.error('Error revoking sessions:', error);
+    res.status(500).json({ message: 'Error revoking sessions' });
+  }
+});
+
 // Give an item to a user by name — creates it if it doesn't exist yet
 router.post('/give-item', authenticate, isAdmin, async (req, res) => {
   const { user_id, item_name } = req.body;

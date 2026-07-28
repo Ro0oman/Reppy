@@ -464,6 +464,7 @@ apiRouter.get('/db/init', async (req, res) => {
           UNIQUE(user_id, post_slug)
       )`,
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE`,
+      `ALTER TABLE users ADD COLUMN IF NOT EXISTS token_version INTEGER DEFAULT 0`,
       // Admin grant is intentionally NOT performed here. Bootstrap an admin with
       // `node backend/scripts/grant_admin.js <email>` instead of via HTTP.
       `ALTER TABLE users ADD COLUMN IF NOT EXISTS daily_boss_damage INTEGER DEFAULT 0`,
@@ -759,6 +760,9 @@ async function ensureSchemaMigrations() {
     await query('ALTER TABLE exercises ADD COLUMN IF NOT EXISTS primary_muscle_group VARCHAR(50)');
     // Referral-invite push is sent at most once per user (see referralReminders.js).
     await query('ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_reminder_sent BOOLEAN DEFAULT FALSE');
+    // Revocación de JWT: subir `token_version` invalida todos los tokens vivos de
+    // ese usuario (logout global, ban, cambio de rol). Lo compara middleware.js.
+    await query('ALTER TABLE users ADD COLUMN IF NOT EXISTS token_version INTEGER DEFAULT 0');
     // Per-user "feature seen" flags that drive the NEW badges/dots.
     await query(`CREATE TABLE IF NOT EXISTS user_feature_seen (
         user_id     VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
