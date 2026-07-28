@@ -41,6 +41,7 @@ router.get('/cosmetics', authenticate, async (req, res) => {
       FROM items i
       LEFT JOIN user_items ui ON i.id = ui.item_id AND ui.user_id = $1
       WHERE (i.is_customizable = true OR i.type IN ('bundle', 'consumable'))
+        AND i.is_exclusive IS NOT TRUE
       ORDER BY i.type ASC, i.id ASC
     `, [req.user.id]);
     const inventoryRes = await query('SELECT item_id, is_new, quantity FROM user_items WHERE user_id = $1', [req.user.id]);
@@ -394,6 +395,13 @@ router.post('/buy/:id', authenticate, economyLimiter, async (req, res) => {
     const itemRes = await query('SELECT * FROM items WHERE id = $1', [itemId]);
     if (itemRes.rows.length === 0) return res.status(404).json({ message: 'Item not found' });
     const item = itemRes.rows[0];
+
+    // Guard: exclusive cosmetics (títulos de prestigio) never go through the shop,
+    // whatever price they happen to carry. Explicit so it doesn't silently depend on
+    // the 0/0 price check below.
+    if (item.is_exclusive) {
+      return res.status(400).json({ message: 'ERROR: UNIT EXCLUSIVE - NOT FOR SALE' });
+    }
 
     // Guard: an item with no price in either currency is not for sale.
     // (Bundles you already own can still net to 0 via the refund logic below,

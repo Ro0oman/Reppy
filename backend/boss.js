@@ -280,7 +280,7 @@ router.post('/open-chest', authenticate, async (req, res) => {
         let itemRes = await client.query(`
             SELECT * FROM items
             WHERE rarity = $1
-            AND type != 'bundle'
+            AND type != 'bundle' AND is_exclusive IS NOT TRUE
             AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $2 AND item_id = items.id)
             ORDER BY RANDOM() LIMIT 1
         `, [targetRarity, userId]);
@@ -297,7 +297,7 @@ router.post('/open-chest', authenticate, async (req, res) => {
             // User owns all items of this rarity. Try to find ANY unowned item.
             let fallbackRes = await client.query(`
                 SELECT * FROM items
-                WHERE type != 'bundle'
+                WHERE type != 'bundle' AND is_exclusive IS NOT TRUE
                 AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = items.id)
                 ORDER BY RANDOM() LIMIT 1
             `, [userId]);
@@ -314,7 +314,7 @@ router.post('/open-chest', authenticate, async (req, res) => {
                 // User owns EVERYTHING? Give gold compensation proportional to price of a random item of targetRarity
                 const priceRes = await client.query(`
                     SELECT price FROM items
-                    WHERE rarity = $1 AND type != 'bundle'
+                    WHERE rarity = $1 AND type != 'bundle' AND is_exclusive IS NOT TRUE
                     ORDER BY RANDOM() LIMIT 1
                 `, [targetRarity]);
 
@@ -335,7 +335,7 @@ router.post('/open-chest', authenticate, async (req, res) => {
       await client.query('UPDATE users SET reppy_coins = reppy_coins + $1 WHERE id = $2', [totalCoins, userId]);
 
       // Reel items for legacy animation support
-      const dummiesRes = await client.query(`SELECT name, type, rarity FROM items WHERE type != 'bundle' ORDER BY RANDOM() LIMIT 40`);
+      const dummiesRes = await client.query(`SELECT name, type, rarity FROM items WHERE type != 'bundle' AND is_exclusive IS NOT TRUE ORDER BY RANDOM() LIMIT 40`);
 
       return { status: 200, rewards, totalCoins, reelItems: dummiesRes.rows };
     });
@@ -389,7 +389,7 @@ router.post('/open-legendary-chest', authenticate, async (req, res) => {
       // 2. GUARANTEED LEGENDARY ITEM
       let legItemRes = await client.query(`
         SELECT * FROM items
-        WHERE rarity = 'legendary' AND type != 'bundle'
+        WHERE rarity = 'legendary' AND type != 'bundle' AND is_exclusive IS NOT TRUE
         AND is_seasonal = TRUE
         AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = items.id)
         ORDER BY RANDOM() LIMIT 1
@@ -417,7 +417,7 @@ router.post('/open-legendary-chest', authenticate, async (req, res) => {
 
           let itemRes = await client.query(`
               SELECT * FROM items
-              WHERE rarity = $1 AND type != 'bundle'
+              WHERE rarity = $1 AND type != 'bundle' AND is_exclusive IS NOT TRUE
               AND is_seasonal = TRUE
               AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $2 AND item_id = items.id)
               ORDER BY RANDOM() LIMIT 1
@@ -436,7 +436,7 @@ router.post('/open-legendary-chest', authenticate, async (req, res) => {
 
       await client.query('UPDATE users SET reppy_coins = reppy_coins + $1 WHERE id = $2', [totalCoins, userId]);
 
-      const dummiesRes = await client.query(`SELECT name, type, rarity FROM items WHERE type != 'bundle' ORDER BY RANDOM() LIMIT 40`);
+      const dummiesRes = await client.query(`SELECT name, type, rarity FROM items WHERE type != 'bundle' AND is_exclusive IS NOT TRUE ORDER BY RANDOM() LIMIT 40`);
 
       return { status: 200, rewards, totalCoins, reelItems: dummiesRes.rows };
     });
@@ -488,7 +488,7 @@ router.post('/open-epic-chest', authenticate, async (req, res) => {
       // 2. GUARANTEED SPECIAL ITEM
       let epicItemRes = await client.query(`
         SELECT * FROM items
-        WHERE rarity = 'especial' AND type != 'bundle'
+        WHERE rarity = 'especial' AND type != 'bundle' AND is_exclusive IS NOT TRUE
         AND is_seasonal = TRUE
         AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = items.id)
         ORDER BY RANDOM() LIMIT 1
@@ -515,7 +515,7 @@ router.post('/open-epic-chest', authenticate, async (req, res) => {
 
           let itemRes = await client.query(`
               SELECT * FROM items
-              WHERE rarity = $1 AND type != 'bundle'
+              WHERE rarity = $1 AND type != 'bundle' AND is_exclusive IS NOT TRUE
               AND is_seasonal = TRUE
               AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $2 AND item_id = items.id)
               ORDER BY RANDOM() LIMIT 1
@@ -533,7 +533,7 @@ router.post('/open-epic-chest', authenticate, async (req, res) => {
 
       await client.query('UPDATE users SET reppy_coins = reppy_coins + $1 WHERE id = $2', [totalCoins, userId]);
 
-      const dummiesRes = await client.query(`SELECT name, type, rarity FROM items WHERE type != 'bundle' ORDER BY RANDOM() LIMIT 40`);
+      const dummiesRes = await client.query(`SELECT name, type, rarity FROM items WHERE type != 'bundle' AND is_exclusive IS NOT TRUE ORDER BY RANDOM() LIMIT 40`);
 
       return { status: 200, rewards, totalCoins, reelItems: dummiesRes.rows };
     });
@@ -583,7 +583,7 @@ router.post('/open-level-chest', authenticate, async (req, res) => {
       const itemRes = await client.query(`
         SELECT * FROM items
         WHERE rarity IN ('common', 'rare')
-        AND type != 'bundle'
+        AND type != 'bundle' AND is_exclusive IS NOT TRUE
         AND NOT EXISTS (SELECT 1 FROM user_items WHERE user_id = $1 AND item_id = items.id)
         ORDER BY RANDOM() LIMIT 1
       `, [userId]);
