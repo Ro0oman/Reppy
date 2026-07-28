@@ -5,96 +5,11 @@ import { optionalAuthenticate } from './middleware.js';
 
 const router = express.Router();
 
-let profileSchemaPromise = null;
-
-function ensureProfileSchema() {
-  if (!profileSchemaPromise) {
-    profileSchemaPromise = (async () => {
-      await query(`
-        CREATE TABLE IF NOT EXISTS items (
-          id SERIAL PRIMARY KEY,
-          name VARCHAR(255) NOT NULL,
-          description TEXT,
-          type VARCHAR(50) NOT NULL,
-          rarity VARCHAR(50) DEFAULT 'common',
-          stats JSONB DEFAULT '{}',
-          image_url TEXT,
-          css_value TEXT,
-          price INTEGER DEFAULT 0,
-          price_gems INTEGER DEFAULT 0,
-          svg_key TEXT,
-          is_seasonal BOOLEAN DEFAULT FALSE,
-          bundle_items TEXT,
-          original_price INTEGER,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-          UNIQUE(name)
-        )
-      `);
-
-      await query(`
-        ALTER TABLE items
-        ADD COLUMN IF NOT EXISTS price INTEGER DEFAULT 0,
-        ADD COLUMN IF NOT EXISTS price_gems INTEGER DEFAULT 0,
-        ADD COLUMN IF NOT EXISTS svg_key TEXT,
-        ADD COLUMN IF NOT EXISTS is_seasonal BOOLEAN DEFAULT FALSE,
-        ADD COLUMN IF NOT EXISTS bundle_items TEXT,
-        ADD COLUMN IF NOT EXISTS original_price INTEGER
-      `);
-
-      await query(`
-        ALTER TABLE users
-        ADD COLUMN IF NOT EXISTS reppy_coins INTEGER DEFAULT 0,
-        ADD COLUMN IF NOT EXISTS reppy_gems INTEGER DEFAULT 0,
-        ADD COLUMN IF NOT EXISTS daily_goal INTEGER DEFAULT 50,
-        ADD COLUMN IF NOT EXISTS str_xp INTEGER DEFAULT 0,
-        ADD COLUMN IF NOT EXISTS dex_xp INTEGER DEFAULT 0,
-        ADD COLUMN IF NOT EXISTS end_xp INTEGER DEFAULT 0,
-        ADD COLUMN IF NOT EXISTS vig_xp INTEGER DEFAULT 0,
-        ADD COLUMN IF NOT EXISTS int_xp INTEGER DEFAULT 0,
-        ADD COLUMN IF NOT EXISTS fth_xp INTEGER DEFAULT 0,
-        ADD COLUMN IF NOT EXISTS total_xp INTEGER DEFAULT 0,
-        ADD COLUMN IF NOT EXISTS body_weight DECIMAL DEFAULT 75.0,
-        ADD COLUMN IF NOT EXISTS is_private BOOLEAN DEFAULT FALSE,
-        ADD COLUMN IF NOT EXISTS current_level INTEGER DEFAULT 1,
-        ADD COLUMN IF NOT EXISTS level_chests_claimed INTEGER DEFAULT 1,
-        ADD COLUMN IF NOT EXISTS level_chests INTEGER DEFAULT 0,
-        ADD COLUMN IF NOT EXISTS damage_multiplier DECIMAL DEFAULT 1.0,
-        ADD COLUMN IF NOT EXISTS damage_multiplier_expiry TIMESTAMP WITH TIME ZONE,
-        ADD COLUMN IF NOT EXISTS stat_buffs JSONB DEFAULT '{}'::jsonb,
-        ADD COLUMN IF NOT EXISTS equipped_title_id INTEGER REFERENCES items(id) ON DELETE SET NULL,
-        ADD COLUMN IF NOT EXISTS equipped_border_id INTEGER REFERENCES items(id) ON DELETE SET NULL,
-        ADD COLUMN IF NOT EXISTS equipped_avatar_id INTEGER REFERENCES items(id) ON DELETE SET NULL,
-        ADD COLUMN IF NOT EXISTS equipped_background_id INTEGER REFERENCES items(id) ON DELETE SET NULL,
-        ADD COLUMN IF NOT EXISTS equipped_post_background_id INTEGER REFERENCES items(id) ON DELETE SET NULL,
-        ADD COLUMN IF NOT EXISTS equipped_head_id INTEGER REFERENCES items(id) ON DELETE SET NULL,
-        ADD COLUMN IF NOT EXISTS equipped_weapon_id INTEGER REFERENCES items(id) ON DELETE SET NULL,
-        ADD COLUMN IF NOT EXISTS equipped_armor_id INTEGER REFERENCES items(id) ON DELETE SET NULL,
-        ADD COLUMN IF NOT EXISTS equipped_boots_id INTEGER REFERENCES items(id) ON DELETE SET NULL
-      `);
-
-      await query(`
-        CREATE TABLE IF NOT EXISTS user_items (
-          id SERIAL PRIMARY KEY,
-          user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-          item_id INTEGER REFERENCES items(id) ON DELETE CASCADE,
-          is_equipped BOOLEAN DEFAULT FALSE,
-          is_new BOOLEAN DEFAULT TRUE,
-          quantity INTEGER DEFAULT 1,
-          acquired_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-          UNIQUE(user_id, item_id)
-        )
-      `);
-
-      await query('ALTER TABLE user_items ADD COLUMN IF NOT EXISTS quantity INTEGER DEFAULT 1');
-      await query('ALTER TABLE user_items ADD COLUMN IF NOT EXISTS is_new BOOLEAN DEFAULT TRUE');
-    })().catch((error) => {
-      profileSchemaPromise = null;
-      throw error;
-    });
-  }
-
-  return profileSchemaPromise;
-}
+// El esquema de `items`/`user_items` y las columnas de `users` que esta ruta
+// necesita vivían aquí, creándose en la PRIMERA petición a /profile. Eso era
+// DDL en el hot path (locks de tabla por request) y una cuarta fuente de
+// esquema divergente. Todo eso está ahora en `schema.sql`, que se aplica al
+// arrancar el backend (auditoría 2026-07, opción A).
 
 // Top public users for SSG prerendering
 router.get('/top-public', async (req, res) => {
@@ -137,8 +52,6 @@ router.get('/:id', optionalAuthenticate, async (req, res) => {
   console.log(`[PROFILE_API] INCOMING - ID: ${rawId}, TYPE: ${type}`);
 
   try {
-    await ensureProfileSchema();
-
     // Try to find the user. If they have a 'user_' prefix or not, we want to be robust.
     let userResult = await query(`
         SELECT u.id, u.name, u.avatar_url, u.reppy_coins, u.reppy_gems, u.daily_goal,
