@@ -116,6 +116,31 @@ router.patch('/profile', authenticate, async (req, res) => {
   }
 });
 
+// Estado del onboarding guardado en el servidor (antes vivía en localStorage y se
+// perdía al cambiar de dispositivo o limpiar datos). Lista blanca de claves: el
+// cliente no puede meter JSON arbitrario en la columna.
+const ONBOARDING_FLAGS = ['quickstart_seen', 'goal_dismissed', 'plan_promo_dismissed'];
+
+router.patch('/onboarding', authenticate, async (req, res) => {
+  const { key, value = true } = req.body || {};
+  if (!ONBOARDING_FLAGS.includes(key) || typeof value !== 'boolean') {
+    return res.status(400).json({ message: 'Invalid onboarding flag' });
+  }
+  try {
+    const result = await query(
+      `UPDATE users
+          SET onboarding_flags = COALESCE(onboarding_flags, '{}'::jsonb) || jsonb_build_object($1::text, $2::boolean)
+        WHERE id = $3
+        RETURNING onboarding_flags`,
+      [key, value, req.user.id]
+    );
+    res.json({ onboarding_flags: result.rows[0].onboarding_flags });
+  } catch (error) {
+    console.error('Error saving onboarding flag:', error);
+    res.status(500).json({ message: 'Error saving onboarding flag' });
+  }
+});
+
 // Update avatar (specifically) - Supporting both PATCH and POST
 const updateAvatar = async (req, res) => {
   let { avatar_url, is_custom } = req.body;
