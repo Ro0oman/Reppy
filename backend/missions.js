@@ -44,7 +44,11 @@ router.get('/', authenticate, async (req, res) => {
         // Bloquea al usuario y vuelve a comprobar: dos GET simultáneos no deben rellenar dos veces.
         const lock = await client.query('SELECT last_daily_missions_refill FROM users WHERE id = $1 FOR UPDATE', [userId]);
         const locked = lock.rows[0]?.last_daily_missions_refill;
-        if (locked && new Date(locked) >= today) return;
+        if (locked && new Date(locked) >= today) {
+          // Otra petición ya rellenó: solo hay que releer la lista que ella dejó.
+          missionsWereAdded = true;
+          return;
+        }
 
         // Rotate out uncompleted daily missions so they don't get stuck
         await client.query(`
