@@ -267,9 +267,16 @@
                     </div>
                   </div>
                 </div>
-                <div
-                  class="h-10 w-10 bg-foreground/5 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
-                  <ChevronRight class="w-5 h-5 text-primary-500" />
+                <div class="flex items-center gap-2 shrink-0">
+                  <button type="button" @click.stop="confirmRemoveFriend(friend)"
+                    :aria-label="i18n.t('friend_remove')" :title="i18n.t('friend_remove')"
+                    class="h-10 w-10 bg-foreground/5 hover:bg-red-500/10 rounded-2xl flex items-center justify-center text-muted hover:text-red-500 transition-all">
+                    <UserMinus class="w-4 h-4" />
+                  </button>
+                  <div
+                    class="h-10 w-10 bg-foreground/5 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
+                    <ChevronRight class="w-5 h-5 text-primary-500" />
+                  </div>
                 </div>
               </div>
             </TransitionGroup>
@@ -300,7 +307,7 @@ import { useRoute } from 'vue-router';
 import axios from 'axios';
 import {
   Users, Search, SearchX, UserPlus, Heart, Check,
-  Trophy, ChevronRight, Users2, BarChart3, Activity, Plus, Flame, ChevronDown, SlidersHorizontal
+  Trophy, ChevronRight, UserMinus, Users2, BarChart3, Activity, Plus, Flame, ChevronDown, SlidersHorizontal
 } from 'lucide-vue-next';
 import { Swords, Target } from 'lucide-vue-next';
 import { useI18nStore } from '@/stores/i18n';
@@ -352,7 +359,7 @@ const searchUsers = async () => {
   }
   loadingSearch.value = true;
   try {
-    const response = await axios.get(`/api/social/search?q=${searchQuery.value}`);
+    const response = await axios.get(`/api/social/search?q=${encodeURIComponent(searchQuery.value)}`);
     searchResults.value = response.data;
   } catch (error) {
     console.error('Error searching users:', error);
@@ -372,6 +379,23 @@ const addFriend = async (friendId) => {
     console.error('Error adding friend:', error);
     notificationStore.notify(i18n.t('friend_add_failed'), 'error');
   }
+};
+
+const confirmRemoveFriend = (friend) => {
+  notificationStore.confirm(
+    i18n.t('friend_remove'),
+    i18n.t('friend_remove_confirm', { name: friend.name }),
+    async () => {
+      try {
+        await axios.delete(`/api/social/remove/${encodeURIComponent(friend.id)}`);
+        friends.value = friends.value.filter(f => f.id !== friend.id);
+        notificationStore.notify(i18n.t('friend_removed'), 'success');
+      } catch (error) {
+        console.error('Error removing friend:', error);
+        notificationStore.notify(i18n.t('friend_remove_failed'), 'error');
+      }
+    }
+  );
 };
 
 const fetchFriends = async () => {

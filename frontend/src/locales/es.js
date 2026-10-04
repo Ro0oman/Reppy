@@ -1678,6 +1678,10 @@ export default {
     landing_badge_top_name: 'Shadow · Rango 1',
     landing_badge_difficulty: 'Dificultad: élite',
     landing_badge_boss: 'Combate: Lady Maria',
+    friend_remove: 'Eliminar amigo',
+    friend_remove_confirm: '¿Dejar de ser amigo de {name}?',
+    friend_removed: 'Amigo eliminado',
+    friend_remove_failed: 'No se pudo eliminar al amigo',
     dash_week_progress: 'esta semana',
 };
 
