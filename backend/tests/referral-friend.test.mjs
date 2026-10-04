@@ -6,6 +6,7 @@ import http from 'node:http';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { randomUUID } from 'node:crypto';
 import express from 'express';
 
 const URL_DB = process.env.DATABASE_URL || '';
@@ -13,12 +14,14 @@ const HAS_DB = /@(localhost|127\.0\.0\.1)[:/]/.test(URL_DB);
 const __dirname = dirname(fileURLToPath(import.meta.url));
 process.env.JWT_SECRET ||= 'test-secret';
 
+// Contraseña de prueba generada en cada ejecución (no hay secretos en el repo).
+const TEST_PASSWORD = `pw-${randomUUID()}`;
 let query, pool, server, base;
 const stamp = Date.now();
 const emails = [`ref_a_${stamp}@test.local`, `ref_b_${stamp}@test.local`];
 const signup = (name, email, extra = {}) => fetch(`${base}/auth/signup`, {
   method: 'POST', headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ name, email, password: 'longenough1', ...extra }),
+  body: JSON.stringify({ name, email, password: TEST_PASSWORD, ...extra }),
 });
 
 before(async () => {
