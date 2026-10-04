@@ -1,6 +1,6 @@
 <template>
   <div class="os-dashboard max-w-7xl mx-auto w-full px-4 space-y-4 sm:space-y-6 pt-2 sm:pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700"
-    :class="hasFloatingActions ? 'pb-40 lg:pb-52' : 'pb-24'">
+    :class="'pb-24'">
 
     <!-- ✦ MISSION FRAME — el boss/batalla actual es la misión dominante ✦ -->
     <OsMissionFrame
@@ -56,115 +56,22 @@
       </template>
     </OsMissionFrame>
 
-    <!-- ✦ ESTACIONES DEL CAMPAMENTO — gestión entre batallas (rutas existentes) ✦ -->
-    <div class="grid grid-cols-4 gap-2 sm:gap-3">
-      <router-link v-for="st in campStations" :key="st.id" :to="st.to"
-        class="group os-station relative flex flex-col items-center justify-center gap-1.5 py-3 transition-all active:scale-[0.97]">
-        <span class="os-station__icon flex h-9 w-9 items-center justify-center transition-transform group-hover:scale-105">
-          <component :is="st.icon" class="h-[18px] w-[18px]" />
-        </span>
-        <span class="os-station__label">{{ st.label }}</span>
-        <span v-if="st.count > 0"
-          class="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-xs font-black text-white ring-2 ring-background">
-          {{ st.count }}
-        </span>
-        <span v-else-if="st.dot"
-          class="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-background"></span>
-      </router-link>
-    </div>
-
-
-    <!-- ✦ BOSS LEVEL — tap to open the skill tree (Senda del Boss) ✦ -->
+    <!-- Quick log (mobile): register on entry — exercise pre-selected, no scroll -->
     <div
-      class="tap-card relative overflow-hidden rounded-3xl border border-border/60 bg-foreground/[0.03] p-4 sm:p-5"
-      role="button"
-      tabindex="0"
-      @click="skillTreeStore.openModal()"
-      @keydown.enter="skillTreeStore.openModal()"
+      v-if="isMobile"
+      ref="repsInputSectionMobile"
+      class="rounded-2xl border border-[hsl(var(--neon))]/30 bg-[hsl(var(--neon))]/[0.05] p-3.5 transition-all duration-500"
+      :class="highlightRepsInput ? 'ring-2 ring-[hsl(var(--neon))]/60' : ''"
     >
-      <ChevronRight class="absolute right-3 top-3 h-4 w-4 text-muted/40" aria-hidden="true" />
-      <div class="flex items-center gap-4">
-        <div class="min-w-0 flex-1">
-          <div class="flex items-center gap-2">
-            <p class="text-xs font-semibold text-muted">{{ i18n.t('dash_boss_level') }}</p>
-            <span
-              v-if="skillTreeStore.skillPoints > 0"
-              class="rounded-full bg-[hsl(var(--neon))]/15 px-2 py-0.5 text-[10px] font-bold text-[hsl(var(--neon))] glow-neon"
-            >{{ i18n.t('skilltree_points_available', { n: skillTreeStore.skillPoints }) }}</span>
-          </div>
-          <p class="mt-0.5 text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground leading-none">
-            {{ i18n.t('comp_level_short') }} {{ userLevel }}
-          </p>
-          <div class="mt-3 h-2 rounded-full bg-foreground/10 overflow-hidden">
-            <div
-              class="h-full rounded-full transition-all duration-700"
-              :style="{ width: bossXpPercent + '%', background: 'linear-gradient(90deg, hsl(var(--neon)), hsl(var(--neon-violet)))' }"
-            ></div>
-          </div>
-          <p class="mt-1.5 text-[11px] text-muted/70 tabular-nums">{{ fmtNum(bossXpInto) }} / {{ fmtNum(bossXpFor) }} XP</p>
+      <div class="mb-3 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <Zap class="h-4 w-4 text-[hsl(var(--neon))]" aria-hidden="true" />
+          <h2 class="os-label os-label--muted">{{ i18n.t('dash_quick_log') }}</h2>
         </div>
-        <div class="relative shrink-0 grid place-items-center">
-          <div class="absolute inset-0 rounded-2xl glow-neon"></div>
-          <AvatarFrame
-            :src="authStore.user?.avatar_url"
-            :border-css="authStore.user?.border_css"
-            :size="isMobile ? 58 : 68"
-            class="relative rounded-2xl"
-          />
-        </div>
+        <span class="text-xs text-muted/70 tabular-nums"><b class="text-[hsl(var(--neon))] font-bold">{{ animatedTodayProgress }}</b> / {{ stats.dailyGoal }} {{ i18n.t('comp_today') }}</span>
       </div>
-    </div>
-
-    <!-- ✦ TODAY'S PROGRESS — twin neon rings ✦ -->
-    <section>
-      <h2 class="mb-3 os-label os-label--muted">{{ i18n.t('dash_today_progress') }}</h2>
-      <div class="grid grid-cols-2 gap-3 sm:gap-4">
-        <!-- Daily goal ring (teal) -->
-        <div class="rounded-3xl border border-border/60 bg-foreground/[0.02] p-4 flex flex-col items-center">
-          <div class="w-full flex items-center justify-between">
-            <span class="text-xs font-semibold text-muted">{{ i18n.t('dash_daily_goal') }}</span>
-          </div>
-          <RadialProgress :progress="dayRingPercent" :size="ringSize" :stroke-width="9" color="neon" glow gradient class="my-2">
-            <Zap class="w-4 h-4 text-[hsl(var(--neon))] mb-0.5" aria-hidden="true" />
-            <span class="text-xl font-extrabold tabular-nums leading-none text-foreground">{{ animatedTodayProgress }}</span>
-            <span class="mt-0.5 text-[10px] text-muted/70">/ {{ stats.dailyGoal }} {{ i18n.t('dash_pts_short') }}</span>
-          </RadialProgress>
-          <span class="text-sm font-bold text-[hsl(var(--neon))] tabular-nums">{{ dayRingPercent }}%</span>
-        </div>
-
-        <!-- Day streak ring (violet) -->
-        <div class="rounded-3xl border border-border/60 bg-foreground/[0.02] p-4 flex flex-col items-center">
-          <div class="w-full flex items-center justify-between">
-            <span class="text-xs font-semibold text-muted">{{ i18n.t('dash_day_streak') }}</span>
-            <span
-              v-if="streakTier.label"
-              class="text-xs font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-md bg-foreground/[0.06] text-muted"
-            >{{ streakTier.label }}</span>
-          </div>
-          <RadialProgress :progress="streakRingPercent" :size="ringSize" :stroke-width="9" color="violet" glow gradient class="my-2">
-            <Flame class="w-4 h-4 text-[hsl(var(--neon-violet))] mb-0.5" aria-hidden="true" />
-            <span class="text-xl font-extrabold tabular-nums leading-none text-foreground">{{ streakStatus?.streak || 0 }}</span>
-            <span class="mt-0.5 text-[10px] text-muted/70">{{ i18n.t('streak_days_unit') }}</span>
-          </RadialProgress>
-          <span class="text-sm font-bold text-[hsl(var(--neon-violet))] tabular-nums">{{ weeklyBonusProgress }}/{{ weeklyBonusTarget }} {{ i18n.t('dash_week_progress') }}</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- ✦ NEXT MILESTONE — XP to the next level + glowing gem ✦ -->
-    <div class="relative overflow-hidden rounded-3xl border border-[hsl(var(--neon-violet))]/25 bg-[hsl(var(--neon-violet))]/[0.06] p-4 flex items-center gap-4">
-      <div class="min-w-0 flex-1">
-        <p class="text-xs font-semibold text-muted">{{ i18n.t('dash_next_milestone') }}</p>
-        <p class="mt-0.5 text-base sm:text-lg font-bold text-foreground truncate">{{ i18n.t('dash_reach_level', { n: nextLevel }) }}</p>
-        <p class="text-[11px] text-muted/70 tabular-nums">{{ i18n.t('dash_xp_to_go', { n: fmtNum(xpToGo) }) }}</p>
-        <div class="mt-2 h-2 rounded-full bg-foreground/10 overflow-hidden">
-          <div
-            class="h-full rounded-full transition-all duration-700"
-            :style="{ width: bossXpPercent + '%', background: 'linear-gradient(90deg, hsl(var(--neon-violet)), hsl(var(--neon)))' }"
-          ></div>
-        </div>
-      </div>
-      <Gem class="h-11 w-11 sm:h-12 sm:w-12 shrink-0 text-[hsl(var(--neon-violet))]" aria-hidden="true" style="filter: drop-shadow(0 0 10px hsl(var(--neon-violet) / 0.6))" />
+      <ExerciseSelector v-model="activeExercise" compact hide-overview class="w-full" />
+      <RepsInput :exercise-type="logExercise" @updated="refreshAfterLog" class="mt-3" />
     </div>
 
     <!-- Streak at-risk alert (retention: keep the freeze CTA prominent) -->
@@ -193,117 +100,6 @@
         {{ freezeButtonLabel }}
       </button>
     </div>
-
-    <!-- Weekly challenge: beat last week's reps (retention) -->
-    <div
-      v-if="weeklyChallenge && weeklyChallenge.eligible"
-      class="rounded-2xl border border-blue-500/30 bg-blue-500/[0.06] px-4 py-3"
-    >
-      <div class="flex items-center gap-3">
-        <Target class="h-5 w-5 text-blue-400 shrink-0" aria-hidden="true" />
-        <div class="flex-1 min-w-0">
-          <p class="text-xs font-semibold text-blue-300">{{ i18n.t('weekly_reto_title') }}</p>
-          <p class="text-[11px] text-zinc-400 tabular-nums">{{ weeklyChallenge.progress }} / {{ weeklyChallenge.goal }} {{ i18n.t('weekly_reto_reps') }}</p>
-        </div>
-        <button
-          v-if="weeklyChallenge.canClaim"
-          type="button"
-          class="shrink-0 rounded-xl border border-emerald-500/50 bg-emerald-500/15 text-emerald-200 px-3 py-2 text-xs font-semibold disabled:opacity-40 active:scale-95 transition-transform"
-          :disabled="claimingWeekly"
-          @click="claimWeeklyChallenge"
-        >
-          {{ claimingWeekly ? i18n.t('weekly_reto_claiming') : i18n.t('weekly_reto_claim') }}
-        </button>
-        <span v-else-if="weeklyChallenge.alreadyClaimed" class="shrink-0 text-[11px] font-semibold text-emerald-400">{{ i18n.t('weekly_reto_done') }}</span>
-        <span v-else class="shrink-0 text-[11px] font-semibold text-blue-300 tabular-nums">{{ weeklyChallengePct }}%</span>
-      </div>
-      <div class="mt-2 h-1.5 w-full rounded-full bg-zinc-700/40 overflow-hidden">
-        <div class="h-full rounded-full bg-blue-500 transition-all" :style="{ width: weeklyChallengePct + '%' }"></div>
-      </div>
-    </div>
-
-    <!-- Quick log (mobile): register on entry — exercise pre-selected, no scroll -->
-    <div
-      v-if="isMobile"
-      ref="repsInputSectionMobile"
-      class="rounded-2xl border border-[hsl(var(--neon))]/30 bg-[hsl(var(--neon))]/[0.05] p-3.5 transition-all duration-500"
-      :class="highlightRepsInput ? 'ring-2 ring-[hsl(var(--neon))]/60' : ''"
-    >
-      <div class="mb-3 flex items-center justify-between gap-2">
-        <div class="flex items-center gap-2">
-          <Zap class="h-4 w-4 text-[hsl(var(--neon))]" aria-hidden="true" />
-          <h2 class="os-label os-label--muted">{{ i18n.t('dash_quick_log') }}</h2>
-        </div>
-        <span class="text-xs text-muted/70 tabular-nums"><b class="text-[hsl(var(--neon))] font-bold">{{ animatedTodayProgress }}</b> / {{ stats.dailyGoal }} {{ i18n.t('comp_today') }}</span>
-      </div>
-      <ExerciseSelector v-model="activeExercise" compact hide-overview class="w-full" />
-      <RepsInput :exercise-type="logExercise" @updated="refreshAfterLog" class="mt-3" />
-    </div>
-
-    <!-- ✦ TODAY'S CHALLENGES — daily missions overview (mockup) ✦ -->
-    <section v-if="dailyChallenges.length">
-      <div class="mb-3 flex items-center justify-between">
-        <h2 class="os-label os-label--muted">{{ i18n.t('dash_today_challenges') }}</h2>
-        <button type="button" class="flex items-center gap-0.5 text-xs font-semibold text-[hsl(var(--neon))]" @click="router.push({ name: 'missions', params: { lang: i18n.locale } })">
-          {{ i18n.t('dash_view_all') }}
-          <ChevronRight class="h-3.5 w-3.5" aria-hidden="true" />
-        </button>
-      </div>
-      <div class="space-y-2.5">
-        <button
-          v-for="m in dailyChallenges.slice(0, 3)"
-          :key="m.id"
-          type="button"
-          class="tap-card w-full flex items-center gap-3 rounded-2xl border border-border/60 bg-foreground/[0.02] p-3 text-left"
-          @click="router.push({ name: 'missions', params: { lang: i18n.locale }, query: { missionId: String(m.id) } })"
-        >
-          <div
-            class="grid place-items-center h-10 w-10 shrink-0 rounded-xl"
-            :class="m.is_completed && !m.is_claimed ? 'bg-[hsl(var(--neon))]/15' : 'bg-foreground/[0.05]'"
-          >
-            <component :is="challengeIcon(m)" class="h-5 w-5" :class="m.is_completed && !m.is_claimed ? 'text-[hsl(var(--neon))]' : 'text-muted'" aria-hidden="true" />
-          </div>
-          <div class="min-w-0 flex-1">
-            <div class="flex items-center justify-between gap-2">
-              <p class="text-sm font-semibold text-foreground truncate">{{ challengeTitle(m) }}</p>
-              <span v-if="challengeReward(m)" class="shrink-0 rounded-full bg-[hsl(var(--neon-violet))]/15 px-2 py-0.5 text-[10px] font-bold text-[hsl(var(--neon-violet))] whitespace-nowrap">{{ challengeReward(m) }}</span>
-            </div>
-            <p class="text-[11px] text-muted/70 truncate">{{ challengeDesc(m) }}</p>
-            <div class="mt-1.5 flex items-center gap-2">
-              <div class="h-1.5 flex-1 rounded-full bg-foreground/10 overflow-hidden">
-                <div
-                  class="h-full rounded-full transition-all duration-500"
-                  :style="{ width: challengePct(m) + '%', background: m.is_completed ? 'hsl(var(--neon))' : 'linear-gradient(90deg, hsl(var(--neon)), hsl(var(--neon-violet)))' }"
-                ></div>
-              </div>
-              <span class="shrink-0 text-[10px] tabular-nums text-muted/70">{{ m.current_value || (m.is_completed ? m.goal_value : 0) }}/{{ m.goal_value }}</span>
-            </div>
-          </div>
-        </button>
-      </div>
-    </section>
-
-    <!-- Boss board (mobile): a friendly challenge, not a war room -->
-    <button
-      v-if="isMobile && bossData"
-      type="button"
-      class="w-full flex items-center gap-3 rounded-2xl border border-border/60 bg-foreground/[0.02] px-4 py-3 text-left hover:border-[hsl(var(--neon))]/30 transition-colors active:scale-[0.99]"
-      @click="showBossHealth"
-    >
-      <div class="grid place-items-center h-10 w-10 shrink-0 rounded-xl bg-red-500/10">
-        <Sword class="w-5 h-5 text-red-400" aria-hidden="true" />
-      </div>
-      <div class="flex-1 min-w-0">
-        <p class="text-sm font-semibold text-foreground truncate">{{ i18n.t('comp_boss_taunt', { boss: bossData.name }) }}</p>
-        <div class="mt-1.5 h-1.5 rounded-full bg-red-950/40 overflow-hidden">
-          <div class="h-full bg-red-500 rounded-full" :style="{ width: `${bossHpPercent}%` }"></div>
-        </div>
-      </div>
-      <ChevronRight class="w-5 h-5 text-muted/50 shrink-0" aria-hidden="true" />
-    </button>
-
-    <!-- ✦ SKILL TREE modal (opened from the "Tu nivel" card) ✦ -->
-    <SkillTreeModal />
 
     <!-- Routines / quick-log placeholder: reserves the space of the guided-plan
          area on first load so the real content fills in WITHOUT pushing the rest
@@ -426,68 +222,6 @@
       </button>
     </div>
 
-    <!-- ===== REGISTRO RÁPIDO (desktop) — en móvil se muestra bajo el héroe ===== -->
-    <section
-      v-if="!isMobile && guidedTrainingStateLoaded && (!trainingStore.todayWorkout || showFreeLog)"
-      class="space-y-4"
-    >
-      <div class="flex items-center gap-2">
-        <Zap class="h-4 w-4 text-primary-500" aria-hidden="true" />
-        <h2 class="os-label os-label--muted">
-          {{ i18n.locale === 'es' ? 'Registro rápido' : 'Quick log' }}
-        </h2>
-      </div>
-
-      <!-- Desktop/tablet: ring/overview + glanceable stats fill the row -->
-      <div class="w-full space-y-4">
-        <ExerciseSelector v-model="activeExercise" compact hide-overview class="w-full" />
-
-        <!-- Overview mode: no single exercise picked yet -->
-        <div v-if="activeExercise === 'all'" class="bg-surface/5 border border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-center p-8 sm:p-10">
-          <Globe aria-hidden="true" class="w-10 h-10 text-muted/50 mb-3" />
-          <h3 class="text-lg font-bold tracking-tight text-foreground">{{ i18n.t('dash_overview_mode') }}</h3>
-          <p class="text-xs text-muted/60 max-w-[320px] mx-auto mt-1.5">{{ i18n.t('dash_overview_hint') }}</p>
-          <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md">
-            <button
-              v-for="option in quickLogOptions"
-              :key="option.id"
-              @click="activeExercise = option.id"
-              class="h-10 rounded-xl border border-border bg-foreground/[0.03] hover:bg-primary-500/10 hover:border-primary-500/30 text-xs font-semibold text-foreground/90 transition-all active:scale-[0.98]"
-            >
-              {{ option.label }}
-            </button>
-          </div>
-        </div>
-
-        <!-- Day ring + glanceable stats (left) and the log counter (fills the row) -->
-        <div
-          v-else
-          ref="repsInputSectionDesktop"
-          class="grid gap-6 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center transition-all duration-500 rounded-3xl border border-border/60 bg-foreground/[0.02] p-6"
-          :class="highlightRepsInput ? 'ring-2 ring-primary-500/60' : ''"
-        >
-          <div class="flex flex-col items-center gap-4">
-            <RadialProgress :progress="dayRingPercent" :size="184" :stroke-width="12">
-              <div class="flex flex-col items-center">
-                <span class="text-4xl font-bold tabular-nums leading-none text-foreground">{{ animatedTodayProgress }}</span>
-                <span class="mt-2 text-xs text-muted/80">{{ i18n.t('dash_ring_of') }} {{ stats.dailyGoal }} · {{ activeExerciseLabel }}</span>
-              </div>
-            </RadialProgress>
-            <div class="flex items-center gap-2">
-              <div class="flex items-center gap-1.5 rounded-xl border border-border/60 bg-foreground/[0.03] px-3 py-2">
-                <Sword class="w-3.5 h-3.5 text-primary-500 shrink-0" aria-hidden="true" />
-                <span class="text-sm font-bold text-foreground tabular-nums">{{ stats.combatPower.total }}</span>
-                <span class="text-[10px] text-muted/80">{{ i18n.t('comp_stat_power') }}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Inline counter: fills the remaining width, no dead space -->
-          <RepsInput :exercise-type="activeExercise" @updated="refreshAfterLog" class="w-full" />
-        </div>
-      </div>
-    </section>
-
     <!-- Mission card skeleton: only while the mission slot is the one that will
          render (no guided workout for today) — avoids a placeholder that pops in
          then vanishes once the data says there's no mission card to show. -->
@@ -551,6 +285,256 @@
         </div>
       </div>
     </section>
+
+    <!-- ===== REGISTRO RÁPIDO (desktop) — en móvil se muestra bajo el héroe ===== -->
+    <section
+      v-if="!isMobile && guidedTrainingStateLoaded && (!trainingStore.todayWorkout || showFreeLog)"
+      class="space-y-4"
+    >
+      <div class="flex items-center gap-2">
+        <Zap class="h-4 w-4 text-primary-500" aria-hidden="true" />
+        <h2 class="os-label os-label--muted">
+          {{ i18n.locale === 'es' ? 'Registro rápido' : 'Quick log' }}
+        </h2>
+      </div>
+
+      <!-- Desktop/tablet: ring/overview + glanceable stats fill the row -->
+      <div class="w-full space-y-4">
+        <ExerciseSelector v-model="activeExercise" compact hide-overview class="w-full" />
+
+        <!-- Overview mode: no single exercise picked yet -->
+        <div v-if="activeExercise === 'all'" class="bg-surface/5 border border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-center p-8 sm:p-10">
+          <Globe aria-hidden="true" class="w-10 h-10 text-muted/50 mb-3" />
+          <h3 class="text-lg font-bold tracking-tight text-foreground">{{ i18n.t('dash_overview_mode') }}</h3>
+          <p class="text-xs text-muted/60 max-w-[320px] mx-auto mt-1.5">{{ i18n.t('dash_overview_hint') }}</p>
+          <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md">
+            <button
+              v-for="option in quickLogOptions"
+              :key="option.id"
+              @click="activeExercise = option.id"
+              class="h-10 rounded-xl border border-border bg-foreground/[0.03] hover:bg-primary-500/10 hover:border-primary-500/30 text-xs font-semibold text-foreground/90 transition-all active:scale-[0.98]"
+            >
+              {{ option.label }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Day ring + glanceable stats (left) and the log counter (fills the row) -->
+        <div
+          v-else
+          ref="repsInputSectionDesktop"
+          class="grid gap-6 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center transition-all duration-500 rounded-3xl border border-border/60 bg-foreground/[0.02] p-6"
+          :class="highlightRepsInput ? 'ring-2 ring-primary-500/60' : ''"
+        >
+          <div class="flex flex-col items-center gap-4">
+            <RadialProgress :progress="dayRingPercent" :size="184" :stroke-width="12">
+              <div class="flex flex-col items-center">
+                <span class="text-4xl font-bold tabular-nums leading-none text-foreground">{{ animatedTodayProgress }}</span>
+                <span class="mt-2 text-xs text-muted/80">{{ i18n.t('dash_ring_of') }} {{ stats.dailyGoal }} · {{ activeExerciseLabel }}</span>
+              </div>
+            </RadialProgress>
+            <div class="flex items-center gap-2">
+              <div class="flex items-center gap-1.5 rounded-xl border border-border/60 bg-foreground/[0.03] px-3 py-2">
+                <Sword class="w-3.5 h-3.5 text-primary-500 shrink-0" aria-hidden="true" />
+                <span class="text-sm font-bold text-foreground tabular-nums">{{ stats.combatPower.total }}</span>
+                <span class="text-[10px] text-muted/80">{{ i18n.t('comp_stat_power') }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Inline counter: fills the remaining width, no dead space -->
+          <RepsInput :exercise-type="activeExercise" @updated="refreshAfterLog" class="w-full" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ✦ TODAY'S PROGRESS — twin neon rings ✦ -->
+    <section>
+      <h2 class="mb-3 os-label os-label--muted">{{ i18n.t('dash_today_progress') }}</h2>
+      <div class="grid grid-cols-2 gap-3 sm:gap-4">
+        <!-- Daily goal ring (teal) -->
+        <div class="rounded-3xl border border-border/60 bg-foreground/[0.02] p-4 flex flex-col items-center">
+          <div class="w-full flex items-center justify-between">
+            <span class="text-xs font-semibold text-muted">{{ i18n.t('dash_daily_goal') }}</span>
+          </div>
+          <RadialProgress :progress="dayRingPercent" :size="ringSize" :stroke-width="9" color="neon" glow gradient class="my-2">
+            <Zap class="w-4 h-4 text-[hsl(var(--neon))] mb-0.5" aria-hidden="true" />
+            <span class="text-xl font-extrabold tabular-nums leading-none text-foreground">{{ animatedTodayProgress }}</span>
+            <span class="mt-0.5 text-[10px] text-muted/70">/ {{ stats.dailyGoal }} {{ i18n.t('dash_pts_short') }}</span>
+          </RadialProgress>
+          <span class="text-sm font-bold text-[hsl(var(--neon))] tabular-nums">{{ dayRingPercent }}%</span>
+        </div>
+
+        <!-- Day streak ring (violet) -->
+        <div class="rounded-3xl border border-border/60 bg-foreground/[0.02] p-4 flex flex-col items-center">
+          <div class="w-full flex items-center justify-between">
+            <span class="text-xs font-semibold text-muted">{{ i18n.t('dash_day_streak') }}</span>
+            <span
+              v-if="streakTier.label"
+              class="text-xs font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-md bg-foreground/[0.06] text-muted"
+            >{{ streakTier.label }}</span>
+          </div>
+          <RadialProgress :progress="streakRingPercent" :size="ringSize" :stroke-width="9" color="violet" glow gradient class="my-2">
+            <Flame class="w-4 h-4 text-[hsl(var(--neon-violet))] mb-0.5" aria-hidden="true" />
+            <span class="text-xl font-extrabold tabular-nums leading-none text-foreground">{{ streakStatus?.streak || 0 }}</span>
+            <span class="mt-0.5 text-[10px] text-muted/70">{{ i18n.t('streak_days_unit') }}</span>
+          </RadialProgress>
+          <span class="text-sm font-bold text-[hsl(var(--neon-violet))] tabular-nums">{{ weeklyBonusProgress }}/{{ weeklyBonusTarget }} {{ i18n.t('dash_week_progress') }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ✦ TODAY'S CHALLENGES — daily missions overview (mockup) ✦ -->
+    <section v-if="dailyChallenges.length">
+      <div class="mb-3 flex items-center justify-between">
+        <h2 class="os-label os-label--muted">{{ i18n.t('dash_today_challenges') }}</h2>
+        <button type="button" class="flex items-center gap-0.5 text-xs font-semibold text-[hsl(var(--neon))]" @click="router.push({ name: 'missions', params: { lang: i18n.locale } })">
+          {{ i18n.t('dash_view_all') }}
+          <ChevronRight class="h-3.5 w-3.5" aria-hidden="true" />
+        </button>
+      </div>
+      <div class="space-y-2.5">
+        <button
+          v-for="m in dailyChallenges.slice(0, 3)"
+          :key="m.id"
+          type="button"
+          class="tap-card w-full flex items-center gap-3 rounded-2xl border border-border/60 bg-foreground/[0.02] p-3 text-left"
+          @click="router.push({ name: 'missions', params: { lang: i18n.locale }, query: { missionId: String(m.id) } })"
+        >
+          <div
+            class="grid place-items-center h-10 w-10 shrink-0 rounded-xl"
+            :class="m.is_completed && !m.is_claimed ? 'bg-[hsl(var(--neon))]/15' : 'bg-foreground/[0.05]'"
+          >
+            <component :is="challengeIcon(m)" class="h-5 w-5" :class="m.is_completed && !m.is_claimed ? 'text-[hsl(var(--neon))]' : 'text-muted'" aria-hidden="true" />
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center justify-between gap-2">
+              <p class="text-sm font-semibold text-foreground truncate">{{ challengeTitle(m) }}</p>
+              <span v-if="challengeReward(m)" class="shrink-0 rounded-full bg-[hsl(var(--neon-violet))]/15 px-2 py-0.5 text-[10px] font-bold text-[hsl(var(--neon-violet))] whitespace-nowrap">{{ challengeReward(m) }}</span>
+            </div>
+            <p class="text-[11px] text-muted/70 truncate">{{ challengeDesc(m) }}</p>
+            <div class="mt-1.5 flex items-center gap-2">
+              <div class="h-1.5 flex-1 rounded-full bg-foreground/10 overflow-hidden">
+                <div
+                  class="h-full rounded-full transition-all duration-500"
+                  :style="{ width: challengePct(m) + '%', background: m.is_completed ? 'hsl(var(--neon))' : 'linear-gradient(90deg, hsl(var(--neon)), hsl(var(--neon-violet)))' }"
+                ></div>
+              </div>
+              <span class="shrink-0 text-[10px] tabular-nums text-muted/70">{{ m.current_value || (m.is_completed ? m.goal_value : 0) }}/{{ m.goal_value }}</span>
+            </div>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- Boss board (mobile): a friendly challenge, not a war room -->
+    <button
+      v-if="isMobile && bossData"
+      type="button"
+      class="w-full flex items-center gap-3 rounded-2xl border border-border/60 bg-foreground/[0.02] px-4 py-3 text-left hover:border-[hsl(var(--neon))]/30 transition-colors active:scale-[0.99]"
+      @click="showBossHealth"
+    >
+      <div class="grid place-items-center h-10 w-10 shrink-0 rounded-xl bg-red-500/10">
+        <Sword class="w-5 h-5 text-red-400" aria-hidden="true" />
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-semibold text-foreground truncate">{{ i18n.t('comp_boss_taunt', { boss: bossData.name }) }}</p>
+        <div class="mt-1.5 h-1.5 rounded-full bg-red-950/40 overflow-hidden">
+          <div class="h-full bg-red-500 rounded-full" :style="{ width: `${bossHpPercent}%` }"></div>
+        </div>
+      </div>
+      <ChevronRight class="w-5 h-5 text-muted/50 shrink-0" aria-hidden="true" />
+    </button>
+
+    <!-- ✦ ESTACIONES DEL CAMPAMENTO — gestión entre batallas (rutas existentes) ✦ -->
+    <div class="grid grid-cols-4 gap-2 sm:gap-3">
+      <router-link v-for="st in campStations" :key="st.id" :to="st.to"
+        class="group os-station relative flex flex-col items-center justify-center gap-1.5 py-3 transition-all active:scale-[0.97]">
+        <span class="os-station__icon flex h-9 w-9 items-center justify-center transition-transform group-hover:scale-105">
+          <component :is="st.icon" class="h-[18px] w-[18px]" />
+        </span>
+        <span class="os-station__label">{{ st.label }}</span>
+        <span v-if="st.count > 0"
+          class="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-xs font-black text-white ring-2 ring-background">
+          {{ st.count }}
+        </span>
+        <span v-else-if="st.dot"
+          class="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-background"></span>
+      </router-link>
+    </div>
+
+
+    <!-- ✦ BOSS LEVEL — tap to open the skill tree (Senda del Boss) ✦ -->
+    <div
+      class="tap-card relative overflow-hidden rounded-3xl border border-border/60 bg-foreground/[0.03] p-4 sm:p-5"
+      role="button"
+      tabindex="0"
+      @click="skillTreeStore.openModal()"
+      @keydown.enter="skillTreeStore.openModal()"
+    >
+      <ChevronRight class="absolute right-3 top-3 h-4 w-4 text-muted/40" aria-hidden="true" />
+      <div class="flex items-center gap-4">
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-2">
+            <p class="text-xs font-semibold text-muted">{{ i18n.t('dash_boss_level') }}</p>
+            <span
+              v-if="skillTreeStore.skillPoints > 0"
+              class="rounded-full bg-[hsl(var(--neon))]/15 px-2 py-0.5 text-[10px] font-bold text-[hsl(var(--neon))] glow-neon"
+            >{{ i18n.t('skilltree_points_available', { n: skillTreeStore.skillPoints }) }}</span>
+          </div>
+          <p class="mt-0.5 text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground leading-none">
+            {{ i18n.t('comp_level_short') }} {{ userLevel }}
+          </p>
+          <div class="mt-3 h-2 rounded-full bg-foreground/10 overflow-hidden">
+            <div
+              class="h-full rounded-full transition-all duration-700"
+              :style="{ width: bossXpPercent + '%', background: 'linear-gradient(90deg, hsl(var(--neon)), hsl(var(--neon-violet)))' }"
+            ></div>
+          </div>
+          <p class="mt-1.5 text-[11px] text-muted/70 tabular-nums">{{ fmtNum(bossXpInto) }} / {{ fmtNum(bossXpFor) }} XP</p>
+        </div>
+        <div class="relative shrink-0 grid place-items-center">
+          <div class="absolute inset-0 rounded-2xl glow-neon"></div>
+          <AvatarFrame
+            :src="authStore.user?.avatar_url"
+            :border-css="authStore.user?.border_css"
+            :size="isMobile ? 58 : 68"
+            class="relative rounded-2xl"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- ✦ SKILL TREE modal (opened from the "Tu nivel" card) ✦ -->
+    <SkillTreeModal />
+
+    <!-- Weekly challenge: beat last week's reps (retention) -->
+    <div
+      v-if="weeklyChallenge && weeklyChallenge.eligible"
+      class="rounded-2xl border border-blue-500/30 bg-blue-500/[0.06] px-4 py-3"
+    >
+      <div class="flex items-center gap-3">
+        <Target class="h-5 w-5 text-blue-400 shrink-0" aria-hidden="true" />
+        <div class="flex-1 min-w-0">
+          <p class="text-xs font-semibold text-blue-300">{{ i18n.t('weekly_reto_title') }}</p>
+          <p class="text-[11px] text-zinc-400 tabular-nums">{{ weeklyChallenge.progress }} / {{ weeklyChallenge.goal }} {{ i18n.t('weekly_reto_reps') }}</p>
+        </div>
+        <button
+          v-if="weeklyChallenge.canClaim"
+          type="button"
+          class="shrink-0 rounded-xl border border-emerald-500/50 bg-emerald-500/15 text-emerald-200 px-3 py-2 text-xs font-semibold disabled:opacity-40 active:scale-95 transition-transform"
+          :disabled="claimingWeekly"
+          @click="claimWeeklyChallenge"
+        >
+          {{ claimingWeekly ? i18n.t('weekly_reto_claiming') : i18n.t('weekly_reto_claim') }}
+        </button>
+        <span v-else-if="weeklyChallenge.alreadyClaimed" class="shrink-0 text-[11px] font-semibold text-emerald-400">{{ i18n.t('weekly_reto_done') }}</span>
+        <span v-else class="shrink-0 text-[11px] font-semibold text-blue-300 tabular-nums">{{ weeklyChallengePct }}%</span>
+      </div>
+      <div class="mt-2 h-1.5 w-full rounded-full bg-zinc-700/40 overflow-hidden">
+        <div class="h-full rounded-full bg-blue-500 transition-all" :style="{ width: weeklyChallengePct + '%' }"></div>
+      </div>
+    </div>
 
     <!-- Stats & boss (always visible) -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
@@ -784,7 +768,6 @@ import { useI18nStore } from '@/stores/i18n';
 import { useNotificationStore } from '@/stores/notification';
 import { useTrainingStore } from '@/stores/training';
 import { useBossStore } from '@/stores/boss';
-import { useRouletteStore } from '@/stores/roulette';
 import { useSkillTreeStore } from '@/stores/skilltree';
 import { useBadgesStore } from '@/stores/badges';
 import Heatmap from '@/components/training/Heatmap.vue';
@@ -811,7 +794,6 @@ const i18n = useI18nStore();
 const notificationStore = useNotificationStore();
 const trainingStore = useTrainingStore();
 const bossStore = useBossStore();
-const rouletteStore = useRouletteStore();
 const skillTreeStore = useSkillTreeStore();
 const badgesStore = useBadgesStore();
 
@@ -828,15 +810,6 @@ const campStations = computed(() => [
     to: { name: 'shop', params: { lang: i18n.locale } } },
 ]);
 
-// Mirrors App.vue's floating-roulette visibility: when a wheel button (available
-// or on cooldown) is shown bottom-right, reserve bottom space so it never traps
-// the last metrics cards under it (issue #278).
-const hasFloatingActions = computed(() =>
-  authStore.isAuthenticated && (
-    rouletteStore.canSpin || rouletteStore.dailyCanSpin ||
-    !!rouletteStore.nextSpinAt || !!rouletteStore.dailyNextSpinAt
-  )
-);
 const router = useRouter();
 const route = useRoute();
 
