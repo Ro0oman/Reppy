@@ -235,6 +235,64 @@
 .os-minibar { height: 4px; background: #27364b; border-radius: 1px; }
 .os-minibar > i { display: block; height: 100%; background: #2780ff; border-radius: 1px; transition: width 0.35s var(--os-ease); }
 
+/* ── Sistema único (fase 4 del rediseño, oct 2026) ───────────
+   Una sola superficie, un solo borde, un solo radio y un suelo de
+   tamaño de texto para TODAS las vistas autenticadas. Se aplica como
+   remapeo sobre .os-shell (igual que los tokens de arriba) para no
+   reescribir cientos de utilidades de Tailwind de golpe.
+   Límite conocido: los modales y sheets que se teletransportan al
+   <body> quedan fuera de .os-shell y conservan su estilo.
+   ──────────────────────────────────────────────────────────── */
+
+:root {
+  --os-radius: 2px;          /* tarjetas, botones, campos */
+  --os-radius-sheet: 8px;    /* sheets y modales (los define cada componente) */
+  --os-touch: 44px;          /* alto táctil mínimo */
+  --os-pad-card: 16px;
+}
+
+/* Tarjetas: misma superficie y mismo borde que .os-panel */
+.os-shell .card-stats {
+  background: var(--os-panel);
+  border: 1px solid var(--os-line);
+  border-radius: var(--os-radius);
+  padding: var(--os-pad-card);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.os-shell .card-stats:hover {
+  border-color: var(--os-line-strong);
+  box-shadow: none;
+}
+.os-shell .tap-card:hover { border-color: var(--os-line-strong) !important; }
+
+/* Botón principal y campos: radio recto y alto táctil */
+.os-shell .btn-reppy {
+  border-radius: var(--os-radius);
+  min-height: var(--os-touch);
+  box-shadow: none;
+  border-color: var(--os-line-strong);
+}
+.os-shell .input-tactical { border-radius: var(--os-radius); }
+
+/* Un solo color de borde: los blancos translúcidos y los border-border
+   conviven con los azules de señal; aquí pasan a la línea del sistema. */
+.os-shell .border-white\/5,
+.os-shell .border-white\/10,
+.os-shell .border-white\/15,
+.os-shell .border-white\/20,
+.os-shell .border-border,
+.os-shell .border-border\/40,
+.os-shell .border-border\/60 {
+  border-color: var(--os-line);
+}
+
+/* Suelo tipográfico: las etiquetas de 8–10 px suben al tamaño «kicker» (11 px).
+   El texto informativo de 12 px o más no se toca. */
+.os-shell .text-\[8px\],
+.os-shell .text-\[9px\],
+.os-shell .text-\[10px\] { font-size: var(--os-type-kicker); line-height: 1.35; }
+
 /* ── Animaciones ─────────────────────────────────────────── */
 
 @keyframes os-breathe {

@@ -413,9 +413,8 @@ export function setupRouterGuards(router) {
     } else if (to.meta.requiresAuth && !isAuthenticated) {
       next({ name: 'login', params: { lang: currentLang } })
     } else if (to.name === 'landing' && isAuthenticated) {
-      // Daily open (existing session hitting root/landing) → Community feed first.
-      // This is the returning-user "lobby": see what others did, then go log.
-      next({ name: 'social', params: { lang: currentLang } })
+      // Con sesión, la raíz abre Entrenar (decisión de producto, oct 2026): lo primero es registrar.
+      next({ name: 'dashboard', params: { lang: currentLang } })
     } else if (to.name === 'login' && isAuthenticated) {
       // Fresh login / signup → Dashboard, where logging + onboarding live (activation).
       next({ name: 'dashboard', params: { lang: currentLang } })
