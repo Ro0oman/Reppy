@@ -10,6 +10,14 @@
       :class="theme.border"
     >
       <div class="absolute inset-0 pointer-events-none opacity-30" :class="theme.aura"></div>
+      <img
+        v-if="boss.image_url"
+        :src="boss.image_url"
+        alt=""
+        aria-hidden="true"
+        class="absolute -right-10 -top-10 w-72 h-72 object-cover opacity-[0.14] blur-2xl pointer-events-none select-none"
+        :class="isDefeated ? 'grayscale' : ''"
+      />
 
       <header class="relative z-10 flex flex-wrap items-start justify-between gap-3">
         <div class="space-y-2">
@@ -69,7 +77,7 @@
 
       <div class="relative z-10 mt-4 grid items-start grid-cols-[86px_minmax(0,1fr)] sm:grid-cols-[120px_minmax(0,1fr)] lg:grid-cols-[220px_minmax(0,1fr)] gap-3 sm:gap-4">
         <div class="self-start h-fit">
-          <div class="w-full aspect-square rounded-xl sm:rounded-2xl overflow-hidden border border-border bg-black/30">
+          <div class="w-full aspect-square rounded-xl sm:rounded-2xl overflow-hidden border border-border bg-black/30 ring-2 ring-offset-2 ring-offset-transparent" :class="theme.ring">
             <img
               v-if="boss.image_url"
               :src="boss.image_url"
@@ -85,7 +93,7 @@
           <div class="flex items-start justify-between gap-3">
             <div>
               <p class="text-[10px] font-semibold uppercase tracking-wide text-muted/60">
-                {{ i18nStore.t('boss_target_integrity') }}
+                {{ i18nStore.t('boss_hp_label') }}
               </p>
               <p class="text-xl sm:text-3xl font-bold tracking-tight text-foreground">
                 {{ formatNumber(boss.current_hp) }}
@@ -98,15 +106,17 @@
             </div>
           </div>
 
-          <div class="h-4 rounded-full border border-border bg-black/40 overflow-hidden">
-            <div
-              class="h-full transition-all duration-700 relative"
-              :style="{ width: `${hpPercentage}%` }"
-              :class="theme.progress"
-            >
-              <div class="absolute inset-0 boss-shimmer"></div>
-            </div>
-          </div>
+          <BossPhases
+            :current-hp="Number(boss.current_hp) || 0"
+            :total-hp="Number(boss.total_hp) || 1"
+            :defeated="isDefeated"
+            :tone="theme.phaseTone"
+          />
+
+          <p v-if="authStore.isAuthenticated" class="text-xs font-medium text-muted">
+            <template v-if="personalDamage > 0">{{ i18nStore.t('boss_share', { pct: personalSharePct }) }}</template>
+            <template v-else>{{ i18nStore.t('boss_share_none') }}</template>
+          </p>
 
           <div class="grid grid-cols-3 gap-2" v-if="authStore.isAuthenticated">
             <div class="rounded-xl border border-border bg-foreground/[0.02] p-2.5">
@@ -185,12 +195,13 @@
       class="rounded-2xl border border-dashed border-border bg-surface/10 p-4 flex items-center justify-between gap-3"
     >
       <div class="flex items-center gap-3 min-w-0">
-        <div class="w-12 h-12 rounded-xl border border-border bg-black/30 overflow-hidden shrink-0">
-          <img v-if="nextBoss.image_url" :src="nextBoss.image_url" :alt="nextBoss.name" class="w-full h-full object-cover opacity-70" />
+        <div class="w-14 h-14 rounded-xl border border-border bg-black/30 overflow-hidden shrink-0">
+          <img v-if="nextBoss.image_url" :src="nextBoss.image_url" alt="" aria-hidden="true" class="w-full h-full object-cover boss-silhouette" />
         </div>
         <div class="min-w-0">
-          <p class="text-xs font-semibold uppercase tracking-wide text-muted/60">{{ i18nStore.t('boss_next_protocol') }}</p>
+          <p class="text-xs font-semibold text-muted">{{ i18nStore.t('boss_next_title') }}</p>
           <p class="text-sm font-bold text-foreground truncate">{{ nextBoss.name }}</p>
+          <p class="text-xs text-muted/80">{{ i18nStore.t('boss_next_hint') }}</p>
         </div>
       </div>
       <div class="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted/70">
@@ -260,6 +271,7 @@ import { formatNumber } from '@/utils/numberUtils';
 import confetti from 'canvas-confetti';
 import BossHistoryModal from '@/components/boss/BossHistoryModal.vue';
 import CodexModal from '@/components/modals/CodexModal.vue';
+import BossPhases from '@/components/boss/BossPhases.vue';
 
 const authStore = useAuthStore();
 const bossStore = useBossStore();
@@ -329,6 +341,8 @@ const theme = computed(() => {
       aura: 'bg-gradient-to-br from-amber-500/20 to-transparent',
       badge: 'bg-amber-500/15 border-amber-500/30 text-amber-400',
       progress: 'bg-gradient-to-r from-amber-600 via-amber-400 to-yellow-200',
+      phaseTone: 'boss-phases__fill--legendary',
+      ring: 'ring-amber-400/60',
       claimButton: 'bg-amber-500 hover:bg-amber-400 text-black border-amber-400',
       rewardCopy: `${i18nStore.t('ui_guaranteed')} (${i18nStore.t('ui_legendary')})`,
       rewardRates: [
@@ -345,6 +359,8 @@ const theme = computed(() => {
       aura: 'bg-gradient-to-br from-purple-500/20 to-transparent',
       badge: 'bg-purple-500/15 border-purple-500/30 text-purple-400',
       progress: 'bg-gradient-to-r from-purple-600 via-purple-500 to-cyan-400',
+      phaseTone: 'boss-phases__fill--epic',
+      ring: 'ring-purple-400/60',
       claimButton: 'bg-purple-500 hover:bg-purple-400 text-black border-purple-400',
       rewardCopy: `${i18nStore.t('ui_guaranteed')} (${i18nStore.t('ui_special')})`,
       rewardRates: [
@@ -359,6 +375,8 @@ const theme = computed(() => {
     aura: 'bg-gradient-to-br from-primary-500/20 to-transparent',
     badge: 'bg-primary-500/15 border-primary-500/30 text-primary-400',
     progress: 'bg-gradient-to-r from-primary-600 via-primary-500 to-cyan-400',
+    phaseTone: 'boss-phases__fill--rare',
+    ring: 'ring-primary-400/50',
     claimButton: 'bg-emerald-500 hover:bg-emerald-400 text-black border-emerald-400',
     rewardCopy: `${i18nStore.t('ui_guaranteed')} (${i18nStore.t('ui_rare')})`,
     rewardRates: [
@@ -368,6 +386,15 @@ const theme = computed(() => {
       { name: i18nStore.t('ui_legendary'), value: '5%' },
     ],
   };
+});
+
+// Qué parte del daño total del jefe has puesto tú (0,1 de precisión por debajo del 10 %).
+const personalSharePct = computed(() => {
+  const total = Number(boss.value?.total_hp) || 0;
+  if (!total || !personalDamage.value) return '0';
+  const pct = (personalDamage.value / total) * 100;
+  const text = pct < 10 ? pct.toFixed(1) : String(Math.round(pct));
+  return text.replace('.', i18nStore.locale === 'es' ? ',' : '.');
 });
 
 const canClaim = computed(() => isDefeated.value && authStore.isAuthenticated && chestsClaimed.value < 1);
@@ -419,6 +446,11 @@ defineExpose({ refresh: () => fetchBoss() });
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+.boss-silhouette {
+  filter: brightness(0.12) saturate(0) contrast(1.2);
+  opacity: 0.9;
 }
 
 .boss-shimmer {
