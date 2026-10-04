@@ -118,6 +118,16 @@ router.post('/google', oauthLimiter, async (req, res) => {
 router.post('/signup', signupLimiter, async (req, res) => {
   const { name, email, password, referral_code: incomingRef } = req.body;
 
+  if (typeof name !== 'string' || !name.trim() || name.trim().length > 50) {
+    return res.status(400).json({ code: 'ERR_INVALID_NAME', message: 'Invalid name' });
+  }
+  if (typeof email !== 'string' || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ code: 'ERR_INVALID_EMAIL', message: 'Invalid email' });
+  }
+  if (typeof password !== 'string' || password.length < 8 || password.length > 200) {
+    return res.status(400).json({ code: 'ERR_WEAK_PASSWORD', message: 'Password must be at least 8 characters' });
+  }
+
   try {
     const existingUser = await query('SELECT * FROM users WHERE email = $1', [email]);
     if (existingUser.rows.length > 0) {

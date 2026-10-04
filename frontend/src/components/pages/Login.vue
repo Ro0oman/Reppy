@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center justify-center min-h-[90vh] px-4 relative pb-10 bg-deep-abyss">
     <!-- Back Button -->
-    <button @click="$emit('back')" class="absolute top-8 left-8 flex items-center gap-2.5 text-muted hover:text-primary-500 transition-colors z-50 group">
+    <button @click="goBack" class="absolute top-8 left-8 flex items-center gap-2.5 text-muted hover:text-primary-500 transition-colors z-50 group">
       <ChevronLeft class="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
       <span class="text-[11px] font-bold tracking-tight">{{ i18n.t('login_btn_back') }}</span>
     </button>
@@ -47,7 +47,7 @@
         <div v-if="errorMessage" class="mb-8 p-5 bg-red-500/5 border border-red-500/20 rounded-2xl flex items-center gap-4 animate-shake">
           <AlertCircle class="w-6 h-6 text-red-500 shrink-0" />
           <p class="text-[10px] font-black text-red-500 uppercase tracking-widest leading-relaxed">
-            CRITICAL ERROR: {{ i18n.t(errorMessage) }}
+            {{ i18n.t(errorMessage) }}
           </p>
         </div>
 
@@ -110,17 +110,7 @@
             @error="handleLoginError"
           />
         </div>
-        
-        <p class="mt-10 text-xs text-center text-zinc-700 font-black uppercase tracking-[0.2em] leading-relaxed italic">
-          BY PROCEEDING, YOU AGREE TO OUR <br/>
-          <span class="text-zinc-500">TACTICAL TERMS</span> & <span class="text-zinc-500">DATA CRYPT CODES</span>
-        </p>
-      </div>
 
-      <div class="text-center opacity-20">
-        <p class="text-xs font-black text-white uppercase tracking-[0.6em] font-tight">
-          REPPY CORE SECURITY SYSTEM ONLINE
-        </p>
       </div>
     </div>
   </div>
@@ -194,10 +184,18 @@ const handleLoginSuccess = async (response) => {
     await authStore.loginWithGoogle(response.credential);
     router.push(`/${i18n.locale}/dashboard`);
   }
-  catch (error) { console.error('Google link failed:', error); }
+  catch (error) {
+    console.error('Google link failed:', error);
+    errorMessage.value = 'login_google_error';
+  }
 };
 
-const handleLoginError = () => { console.error('Google Auth Nullified'); };
+const handleLoginError = () => {
+  console.error('Google Auth failed');
+  errorMessage.value = 'login_google_error';
+};
+
+const goBack = () => router.push(`/${i18n.locale}`);
 </script>
 
 <style scoped>

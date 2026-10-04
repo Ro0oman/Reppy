@@ -527,6 +527,11 @@ export default {
     ERR_USER_NOT_FOUND: 'No se encontró ninguna cuenta con este correo.',
     ERR_WRONG_PASSWORD: 'Contraseña incorrecta. Inténtalo de nuevo.',
     ERR_SERVER: 'Ocurrió un error del sistema. Reinténtalo más tarde.',
+    ERR_RATE_LIMIT: 'Demasiados intentos. Espera unos minutos y vuelve a probar.',
+    ERR_INVALID_NAME: 'Escribe un nombre (entre 1 y 50 caracteres).',
+    ERR_INVALID_EMAIL: 'El correo no es válido.',
+    ERR_WEAK_PASSWORD: 'La contraseña debe tener al menos 8 caracteres.',
+    login_google_error: 'No se pudo iniciar sesión con Google. Inténtalo de nuevo.',
 
     // Onboarding
     onboarding_title: 'Bienvenido a Reppy',

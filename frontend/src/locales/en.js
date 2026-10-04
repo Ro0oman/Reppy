@@ -512,6 +512,11 @@ export default {
     ERR_USER_NOT_FOUND: 'No account found with this email.',
     ERR_WRONG_PASSWORD: 'Incorrect password. Please try again.',
     ERR_SERVER: 'A system error occurred. Please try again later.',
+    ERR_RATE_LIMIT: 'Too many attempts. Wait a few minutes and try again.',
+    ERR_INVALID_NAME: 'Enter a name (1 to 50 characters).',
+    ERR_INVALID_EMAIL: 'The email is not valid.',
+    ERR_WEAK_PASSWORD: 'Password must be at least 8 characters.',
+    login_google_error: 'Google sign-in failed. Please try again.',
 
     // Onboarding
     onboarding_title: 'Welcome to Reppy',
