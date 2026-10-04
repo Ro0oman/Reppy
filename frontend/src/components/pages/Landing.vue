@@ -28,7 +28,7 @@
 
             <div class="inline-flex items-center gap-3 px-4 py-2 bg-foreground/5 border border-white/10 rounded-full backdrop-blur-md">
               <span class="flex h-2 w-2 rounded-full bg-primary-500 animate-ping"></span>
-              <span class="text-[9px] font-black uppercase tracking-[0.3em] text-foreground/60">{{ authStore.isAuthenticated ? 'REPPY_ACTIVE' : 'READY_TO_TRAIN' }}</span>
+              <span class="text-[9px] font-black uppercase tracking-[0.3em] text-foreground/60">{{ authStore.isAuthenticated ? i18n.t('landing_badge_active') : i18n.t('landing_badge_ready') }}</span>
             </div>
           </div>
 
@@ -101,8 +101,8 @@
                  <Trophy class="w-4 h-4 text-neon-lime" />
                </div>
                <div>
-                 <span class="text-[8px] font-black text-muted uppercase block">TOP_PLAYER</span>
-                 <span class="text-xs font-black text-foreground uppercase tracking-tight">RANK_SHADOW</span>
+                 <span class="text-[8px] font-black text-muted uppercase block">{{ i18n.t('landing_badge_top') }}</span>
+                 <span class="text-xs font-black text-foreground uppercase tracking-tight">{{ i18n.t('landing_badge_top_name') }}</span>
                </div>
              </div>
           </div>
@@ -113,8 +113,8 @@
                  <Activity class="w-4 h-4" />
                </div>
                <div>
-                 <span class="text-[8px] font-black text-muted uppercase block">DIFFICULTY: ELITE</span>
-                 <span class="text-xs font-black text-foreground uppercase tracking-tight italic">BOSS_BATTLE_LADY_MARIA</span>
+                 <span class="text-[8px] font-black text-muted uppercase block">{{ i18n.t('landing_badge_difficulty') }}</span>
+                 <span class="text-xs font-black text-foreground uppercase tracking-tight italic">{{ i18n.t('landing_badge_boss') }}</span>
                </div>
              </div>
           </div>
