@@ -20,7 +20,10 @@ build/
 scratch/
 network/
 brain/
+tmp/
 *.har
+*.log
+build_output*.txt
 
 # Environment
 .env

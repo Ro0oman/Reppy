@@ -3,7 +3,6 @@ export default {
     dash_active_effects: 'Efectos Activos',
     landing_title: 'Plataforma de Entrenamiento de Élite',
     hero_eyebrow: 'Plataforma de Entrenamiento de Élite',
-    hero_subtitle: 'La plataforma premium para entusiastas de las dominadas. Registra repeticiones, visualiza tu progreso y domina los rankings.',
     btn_start: 'Comenzar Ahora',
     rpg_version_tag: 'VERSIÓN RPG 1.0',
     rpg_version_title: 'EL DESPERTAR RPG',
@@ -20,8 +19,6 @@ export default {
     feat_social_desc: 'Añade amigos, sigue su progreso y construye tu propio círculo interno de alto rendimiento.',
     
     // Auth / Login
-    login_back: 'Volver al Inicio',
-    login_google: 'Iniciar sesión con Google',
     session_expired: 'Tu sesión ha caducado. Por favor, identifícate de nuevo.',
     
     // Dashboard
@@ -29,18 +26,13 @@ export default {
     nav_dashboard: 'Panel',
     nav_social: 'Comunidad',
     nav_inventory: 'Inventario',
-    nav_armory: 'Armería',
-    nav_gear: 'Equipo',
     nav_profile: 'Perfil',
     nav_codex: 'Códice',
     nav_blog: 'Blog',
-    audio_mute: 'Silenciar',
-    audio_unmute: 'Activar Sonido',
     back_to_codex: 'Volver al Stats RPG',
     nav_go_dashboard: 'Ir al Panel',
     ui_level: 'Nivel',
     CODEX_DASHBOARD:'ESTADISTICAS',
-    CODEX_TITLE:"EL STATS RPG",
     ui_gems: 'Gemas',
     ui_coins: 'Monedas',
     
@@ -474,7 +466,6 @@ export default {
 
     // Privacy
     privacy_settings: 'Ajustes de Privacidad',
-    private_profile: 'Perfil Privado',
     private_desc: 'Oculta tu perfil de los rankings globales.',
 
     // Account Management
@@ -485,7 +476,6 @@ export default {
     email: 'Email',
     password: 'Contraseña',
     name_placeholder: 'Nombre y Apellidos',
-    delete_account: 'Borrar Cuenta',
     delete_confirm_title: '¿Borrado Irreversible?',
     delete_confirm: '¿Estás seguro? Esta acción es permanente.',
     change_avatar: 'Actualizar Avatar',
@@ -568,7 +558,6 @@ export default {
     exercise_mastery_desc: 'REPOSITORIO HISTÓRICO DE MAGNITUD POR EJERCICIO',
 
     // Codex
-    codex_title: 'El Códex',
     codex_subtitle: 'Guía para subir de nivel',
     codex_next_lv: 'PRÓXIMO NIVEL: +100 XP REQUERIDOS',
     codex_lv_up: 'Mejora:',
@@ -806,8 +795,6 @@ export default {
     // Blog List & 404
     blog_list_title: 'Guías y Noticias de Entrenamiento',
     blog_list_subtitle: 'Las últimas guías de calistenia, consejos mentales y actualizaciones de la comunidad Reppy.',
-    pagination_next: 'Página Siguiente',
-    pagination_prev: 'Página Anterior',
     not_found_title: 'ÁREA RESTRINGIDA (404)',
     not_found_desc: 'Lo que buscas ha sido movido o eliminado del mainframe.',
     not_found_btn: 'VOLVER A ZONA SEGURA',
@@ -880,7 +867,6 @@ export default {
     shop_premium_chests: 'COFRES PREMIUM',
     shop_limited_offers: 'OFERTAS LIMITADAS',
     shop_consumables: 'CONSUMIBLES',
-    shop_refresh_market: 'REFRESCAR MERCADO',
     shop_legendary_appeared: '!OBJETO LEGENDARIO!',
     shop_free_reward: 'RECOMPENSA GRATUITA',
     shop_elite_pack: 'PACK ÉLITE',
