@@ -14,7 +14,7 @@
           {{ i18n.t('live_operatives') }}
         </h3>
       </div>
-      <span class="text-[9px] font-bold text-white/40 group-hover/title:text-emerald-400 transition-colors uppercase tracking-widest flex items-center gap-1">
+      <span class="text-xs font-bold text-white/40 group-hover/title:text-emerald-400 transition-colors uppercase tracking-widest flex items-center gap-1">
         {{ displayOperatives.length }} <Users class="w-3 h-3" />
       </span>
     </div>
@@ -84,17 +84,17 @@
                         <img :src="user.avatar_url || `https://ui-avatars.com/api/?name=${user.name}&background=random`" :alt="user.name" class="w-full h-full object-cover" />
                       </div>
                       <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center border-2 border-[#0a0a0a] shadow-lg">
-                        <span class="text-[8px] font-black text-white">{{ user.level || 1 }}</span>
+                        <span class="text-xs font-black text-white">{{ user.level || 1 }}</span>
                       </div>
                     </div>
                     <div>
                       <h4 class="font-bold text-white group-hover:text-emerald-400 transition-colors flex items-center gap-1.5">
                         {{ user.name }}
-                        <span v-if="isDeveloper(user.id)" class="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-400 border border-blue-500/30">DEV</span>
+                        <span v-if="isDeveloper(user.id)" class="text-xs font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-400 border border-blue-500/30">DEV</span>
                       </h4>
                       <div class="flex items-center gap-2 mt-1">
                         <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
-                        <span class="text-[9px] font-black text-white/40 uppercase tracking-widest">Active Now</span>
+                        <span class="text-xs font-black text-white/40 uppercase tracking-widest">Active Now</span>
                       </div>
                     </div>
                   </div>
@@ -102,7 +102,7 @@
                   <button
                     v-if="!user.anonymous"
                     @click="goToProfile(user.id)"
-                    class="px-3 py-1.5 bg-white/5 hover:bg-emerald-500/20 rounded-lg border border-white/10 hover:border-emerald-500/40 text-[9px] font-black text-white/60 hover:text-emerald-400 transition-all uppercase tracking-widest"
+                    class="px-3 py-1.5 bg-white/5 hover:bg-emerald-500/20 rounded-lg border border-white/10 hover:border-emerald-500/40 text-xs font-black text-white/60 hover:text-emerald-400 transition-all uppercase tracking-widest"
                   >
                     View Profile
                   </button>
@@ -112,7 +112,7 @@
 
             <!-- Footer -->
             <div class="p-4 bg-black/40 border-t border-white/5 text-center">
-              <p class="text-[9px] font-bold text-white/20 uppercase tracking-[0.3em]">
+              <p class="text-xs font-bold text-white/20 uppercase tracking-[0.3em]">
                 REPPY LIVE SYNCHRONIZATION v1.0
               </p>
             </div>

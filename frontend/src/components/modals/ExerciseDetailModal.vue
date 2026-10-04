@@ -36,7 +36,7 @@
         <!-- Description & Multipliers -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div class="p-3 rounded-xl border border-white/5 bg-white/[0.02]">
-            <p class="text-[9px] font-black uppercase tracking-wider text-muted mb-1">
+            <p class="text-xs font-black uppercase tracking-wider text-muted mb-1">
               {{ i18n.locale === 'es' ? 'Descripcion' : 'Description' }}
             </p>
             <p class="text-xs font-semibold leading-relaxed text-foreground/80">
@@ -45,7 +45,7 @@
           </div>
 
           <div class="p-3 rounded-xl border border-white/5 bg-white/[0.02]">
-            <p class="text-[9px] font-black uppercase tracking-wider text-muted mb-1">
+            <p class="text-xs font-black uppercase tracking-wider text-muted mb-1">
               {{ i18n.locale === 'es' ? 'Tecnica correcta' : 'Correct technique' }}
             </p>
             <p class="text-xs font-semibold leading-relaxed text-foreground/80">
@@ -56,13 +56,13 @@
 
         <div class="grid grid-cols-2 gap-3 p-3 rounded-xl border border-white/5 bg-white/[0.02] text-center">
           <div>
-            <p class="text-[8px] font-black uppercase tracking-wider text-muted">
+            <p class="text-xs font-black uppercase tracking-wider text-muted">
               {{ i18n.locale === 'es' ? 'Dificultad' : 'Difficulty' }}
             </p>
             <p class="text-lg font-black tracking-tight text-amber-500">x{{ exercise.difficulty_multiplier || 1 }}</p>
           </div>
           <div>
-            <p class="text-[8px] font-black uppercase tracking-wider text-muted">
+            <p class="text-xs font-black uppercase tracking-wider text-muted">
               {{ i18n.locale === 'es' ? 'Multiplicador monedas' : 'Coin multiplier' }}
             </p>
             <p class="text-lg font-black tracking-tight text-emerald-500">x{{ exercise.coin_multiplier || 1 }}</p>
@@ -86,11 +86,11 @@
             <div v-for="log in exercise.progress" :key="log.date" class="flex items-center justify-between p-2.5 rounded-xl border border-white/[0.03] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/10 transition">
               <div>
                 <p class="text-xs font-black uppercase tracking-wider text-foreground">{{ formatLocalDate(log.date) }}</p>
-                <p class="text-[9px] font-bold text-muted mt-0.5">Volumen diario registrado</p>
+                <p class="text-xs font-bold text-muted mt-0.5">Volumen diario registrado</p>
               </div>
               <span class="text-base font-black italic tracking-tight text-primary-500">
                 +{{ log.total }}
-                <span class="text-[8px] not-italic uppercase font-black text-muted ml-0.5">
+                <span class="text-xs not-italic uppercase font-black text-muted ml-0.5">
                   {{ exercise.unit === 'seconds' ? 's' : 'reps' }}
                 </span>
               </span>

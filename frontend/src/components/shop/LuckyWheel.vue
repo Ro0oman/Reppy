@@ -10,7 +10,7 @@
           <component :is="headerIcon" class="w-6 h-6" :class="theme.icon" />
         </div>
         <div v-if="isDaily" class="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 rounded-full bg-gradient-to-r from-amber-500/15 to-cyan-500/15 border border-cyan-500/30">
-          <span class="text-[9px] font-black uppercase tracking-[0.2em] bg-gradient-to-r from-amber-400 to-cyan-500 bg-clip-text text-transparent">{{ i18n.t('wheel_daily_badge') }}</span>
+          <span class="text-xs font-black uppercase tracking-[0.2em] bg-gradient-to-r from-amber-400 to-cyan-500 bg-clip-text text-transparent">{{ i18n.t('wheel_daily_badge') }}</span>
         </div>
         <h2 class="text-3xl font-bold text-zinc-900 dark:text-white  tracking-tighter  leading-none">
           {{ isDaily ? i18n.t('wheel_daily_title_start') : i18n.t('wheel_title_start') }}

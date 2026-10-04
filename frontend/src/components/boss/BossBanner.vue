@@ -16,7 +16,7 @@
       <div class="flex-1 text-center md:text-left space-y-4">
         <div class="inline-flex items-center gap-2 px-3 py-1 bg-primary-500/10 border border-primary-500/20 rounded-full">
           <div class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></div>
-          <span class="text-[9px] font-black uppercase tracking-[0.3em] text-primary-500">{{ i18n.t('boss_active_now') }}</span>
+          <span class="text-xs font-black uppercase tracking-[0.3em] text-primary-500">{{ i18n.t('boss_active_now') }}</span>
         </div>
         
         <div class="text-xl md:text-4xl font-black italic tracking-tighter text-foreground uppercase italic leading-none drop-shadow-sm group-hover:text-primary-400 transition-colors duration-500">
@@ -32,7 +32,7 @@
         </p>
 
         <!-- Discrete Refresh Hint -->
-        <p class="text-[9px] font-black text-muted/20 uppercase tracking-[0.2em] pt-2">
+        <p class="text-xs font-black text-muted/20 uppercase tracking-[0.2em] pt-2">
           {{ i18n.t('boss_refresh_hint') }}
         </p>
       </div>

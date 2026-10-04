@@ -33,7 +33,7 @@
       <div class="rounded-xl border border-amber-500/25 bg-amber-500/[0.08] px-4 py-3 flex items-center gap-3">
         <span class="text-2xl">⚔️</span>
         <div>
-          <p class="text-[9px] font-bold tracking-widest uppercase text-amber-400/60">
+          <p class="text-xs font-bold tracking-widest uppercase text-amber-400/60">
             {{ i18n.locale === 'es' ? 'Último golpe' : 'Last hit' }}
           </p>
           <p class="text-sm font-black text-amber-300">{{ d.killer_name }}</p>
@@ -43,7 +43,7 @@
 
       <!-- Top 3 -->
       <div v-if="top3.length" class="space-y-2">
-        <p class="text-[9px] font-bold tracking-widest uppercase text-white/30 px-1">
+        <p class="text-xs font-bold tracking-widest uppercase text-white/30 px-1">
           {{ i18n.locale === 'es' ? 'Top daño infligido' : 'Top damage dealers' }}
         </p>
         <div class="space-y-1.5">
@@ -68,7 +68,7 @@
             <span class="text-sm font-black tabular-nums" :class="idx === 0 ? 'text-amber-400' : 'text-white/60'">
               {{ Number(player.damage_dealt).toLocaleString() }}
             </span>
-            <span class="text-[9px] text-white/30 uppercase font-bold">dmg</span>
+            <span class="text-xs text-white/30 uppercase font-bold">dmg</span>
           </div>
         </div>
       </div>

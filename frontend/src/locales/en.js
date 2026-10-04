@@ -1618,5 +1618,6 @@ export default {
     friend_remove_confirm: 'Stop being friends with {name}?',
     friend_removed: 'Friend removed',
     friend_remove_failed: 'Could not remove the friend',
+    dash_week_progress: 'this week',
 };
 
