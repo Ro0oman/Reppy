@@ -474,10 +474,10 @@ router.get('/feed', optionalAuthenticate, async (req, res) => {
         JOIN users u ON r.user_id = u.id
         JOIN feed_keys fk ON fk.post_type = 'reps' AND fk.user_id = u.id AND fk.post_date = r.date
         LEFT JOIN daily_summaries ds ON ds.user_id = r.user_id AND ds.date::date = r.date::date
-        LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
-        LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
-        LEFT JOIN cosmetics pb ON u.equipped_post_background_id = pb.id
-        LEFT JOIN cosmetics t ON u.equipped_title_id = t.id
+        LEFT JOIN items b ON u.equipped_border_id = b.id
+        LEFT JOIN items a ON u.equipped_avatar_id = a.id
+        LEFT JOIN items pb ON u.equipped_post_background_id = pb.id
+        LEFT JOIN items t ON u.equipped_title_id = t.id
         LEFT JOIN items iHead ON u.equipped_head_id = iHead.id
         LEFT JOIN items iWeapon ON u.equipped_weapon_id = iWeapon.id
         LEFT JOIN items iArmor ON u.equipped_armor_id = iArmor.id
@@ -535,8 +535,8 @@ router.get('/feed', optionalAuthenticate, async (req, res) => {
         JOIN feed_keys fk ON fk.post_type = 'pvp' AND fk.ref_id = f.id
         JOIN users u1 ON f.challenger_id = u1.id
         JOIN users u2 ON f.challenged_id = u2.id
-        LEFT JOIN cosmetics b ON u1.equipped_border_id = b.id
-        LEFT JOIN cosmetics t ON u1.equipped_title_id = t.id
+        LEFT JOIN items b ON u1.equipped_border_id = b.id
+        LEFT JOIN items t ON u1.equipped_title_id = t.id
         WHERE f.status != 'pending'
           AND u1.is_private = false
           AND u2.is_private = false
@@ -592,8 +592,8 @@ router.get('/feed', optionalAuthenticate, async (req, res) => {
         JOIN feed_keys fk ON fk.post_type = 'challenge' AND fk.ref_id = ac.id
         JOIN users u1 ON u1.id = ac.challenger_id
         JOIN users u2 ON u2.id = ac.challenged_id
-        LEFT JOIN cosmetics b  ON u1.equipped_border_id = b.id
-        LEFT JOIN cosmetics ti ON u1.equipped_title_id  = ti.id
+        LEFT JOIN items b  ON u1.equipped_border_id = b.id
+        LEFT JOIN items ti ON u1.equipped_title_id  = ti.id
         WHERE ac.status IN ('active', 'finished')
           AND u1.is_private = false
           AND u2.is_private = false
@@ -980,7 +980,7 @@ router.get('/comments/:summaryId', optionalAuthenticate, async (req, res) => {
        JOIN daily_summaries ds ON c.summary_id = ds.id
        JOIN users owner ON ds.user_id = owner.id
        JOIN users u ON c.user_id = u.id
-       LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
+       LEFT JOIN items b ON u.equipped_border_id = b.id
        WHERE c.summary_id = $1
          AND c.type = 'COMMENT'
          AND owner.is_private = false

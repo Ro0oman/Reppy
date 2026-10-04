@@ -33,10 +33,10 @@ router.get('/me', authenticate, async (req, res) => {
               iArmor.stats as armor_stats,
               iBoots.stats as boots_stats
        FROM users u
-       LEFT JOIN cosmetics t ON u.equipped_title_id = t.id
-       LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
-       LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
-       LEFT JOIN cosmetics bg ON u.equipped_background_id = bg.id
+       LEFT JOIN items t ON u.equipped_title_id = t.id
+       LEFT JOIN items b ON u.equipped_border_id = b.id
+       LEFT JOIN items a ON u.equipped_avatar_id = a.id
+       LEFT JOIN items bg ON u.equipped_background_id = bg.id
        LEFT JOIN items iHead ON u.equipped_head_id = iHead.id
        LEFT JOIN items iWeapon ON u.equipped_weapon_id = iWeapon.id
        LEFT JOIN items iArmor ON u.equipped_armor_id = iArmor.id

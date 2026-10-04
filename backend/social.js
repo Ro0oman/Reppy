@@ -17,8 +17,8 @@ router.get('/search', optionalAuthenticate, async (req, res) => {
               b.css_value as border_css,
               a.css_value as avatar_css
        FROM users u
-       LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
-       LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
+       LEFT JOIN items b ON u.equipped_border_id = b.id
+       LEFT JOIN items a ON u.equipped_avatar_id = a.id
        WHERE u.name ILIKE $1
          AND u.is_private = false
          AND ($2::varchar IS NULL OR u.id != $2)
@@ -79,8 +79,8 @@ router.get('/list', authenticate, async (req, res) => {
               a.css_value as avatar_css
        FROM users u
        JOIN friendships f ON (f.user_id_1 = u.id OR f.user_id_2 = u.id)
-       LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
-       LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
+       LEFT JOIN items b ON u.equipped_border_id = b.id
+       LEFT JOIN items a ON u.equipped_avatar_id = a.id
        WHERE (f.user_id_1 = $1 OR f.user_id_2 = $1) AND u.id != $1`,
       [req.user.id]
     );
