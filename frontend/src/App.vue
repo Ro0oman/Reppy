@@ -26,7 +26,7 @@
         class="os-rail__item" :class="{ 'os-rail__item--active': $route.name === nav.id }"
         :title="i18n.t(nav.label) || nav.tag">
         <component :is="nav.icon" class="w-5 h-5" />
-        <span>{{ nav.tag }}</span>
+        <span>{{ i18n.t(nav.label) }}</span>
         <i v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory)"
           class="os-rail__dot" aria-hidden="true"></i>
       </router-link>
@@ -34,13 +34,13 @@
       <router-link v-if="authStore.user?.is_admin" :to="`/${i18n.locale}/admin`"
         class="os-rail__item" title="Admin">
         <Shield class="w-5 h-5" />
-        <span>ADMIN</span>
+        <span>{{ i18n.t('dock_admin') }}</span>
       </router-link>
       <router-link
         :to="{ name: 'profile', params: { lang: i18n.locale, userId: authStore.user?.id } }"
         class="os-rail__item" :class="{ 'os-rail__item--active': $route.name === 'profile' }" :title="i18n.t('nav_profile')">
         <User class="w-5 h-5" />
-        <span>YOU</span>
+        <span>{{ i18n.t('dock_profile') }}</span>
       </router-link>
     </nav>
 
@@ -70,6 +70,8 @@
         <span class="flex items-center gap-2"><Gem class="w-3.5 h-3.5" style="color: var(--os-cyan)" />GEMS</span>
         <b class="os-num">{{ authStore.user?.reppy_gems || 0 }}</b>
       </button>
+      <WheelsMenu v-if="authStore.isAuthenticated" :quick-cooldown="quickCooldown" :daily-cooldown="dailyCooldown"
+        variant="strip" button-class="os-telemetry__strip w-full relative" />
       <div class="relative">
         <button @click="handleBellClick" class="os-telemetry__strip w-full">
           <span class="flex items-center gap-2"><Bell class="w-3.5 h-3.5" />{{ i18n.locale === 'es' ? 'AVISOS' : 'ALERTS' }}</span>
@@ -102,6 +104,8 @@
       <button @click="showCoinsInfo = true" class="os-topstrip__chip os-num">
         <Gem class="w-3.5 h-3.5" style="color: var(--os-cyan)" />{{ authStore.user?.reppy_gems || 0 }}
       </button>
+      <WheelsMenu v-if="authStore.isAuthenticated" :quick-cooldown="quickCooldown" :daily-cooldown="dailyCooldown"
+        button-class="os-topstrip__chip relative" />
       <button @click="handleBellClick" class="os-topstrip__chip relative">
         <Bell class="w-4 h-4" />
         <b v-if="notifStore.unreadCount > 0" class="os-topstrip__count os-num">{{ notifStore.unreadCount }}</b>
@@ -276,17 +280,17 @@
           :to="getMobileNavTo(nav)"
           class="os-dock__item group" :class="{ 'os-dock__item--active': $route.name === nav.id }">
           <component :is="nav.icon" class="w-[20px] h-[20px] transition-transform group-active:scale-90" />
-          <span>{{ nav.tag }}</span>
+          <span>{{ i18n.t(nav.label) }}</span>
         </router-link>
 
         <!-- Center: COMBAT, la acción persistente -->
         <div class="flex justify-center">
-          <router-link :to="{ name: 'battle', params: { lang: i18n.locale } }"
-            class="-mt-7 flex flex-col items-center gap-1 group" :title="i18n.t('nav_train')">
+          <router-link :to="{ name: 'dashboard', params: { lang: i18n.locale } }"
+            class="-mt-7 flex flex-col items-center gap-1 group" :title="i18n.t('dock_train')">
             <span class="os-dock__combat transition-transform group-active:scale-95">
               <Swords class="w-6 h-6" stroke-width="2.2" />
             </span>
-            <span class="os-dock__combat-tag">COMBAT</span>
+            <span class="os-dock__combat-tag">{{ i18n.t('dock_train') }}</span>
           </router-link>
         </div>
 
@@ -297,7 +301,7 @@
           <component :is="nav.icon" class="w-[20px] h-[20px] transition-transform group-active:scale-90" />
           <span v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory || badgesStore.inventory_new || badgesStore.chests_total > 0)"
             class="os-dock__dot" aria-hidden="true"></span>
-          <span>{{ nav.tag }}</span>
+          <span>{{ i18n.t(nav.label) }}</span>
         </router-link>
       </div>
     </nav>
@@ -450,63 +454,6 @@
       </div>
     </Teleport>
 
-    <!-- Floating Roulettes (desktop) — daily on top, 4h below, in one column so
-         their cooldown chips never overlap. -->
-    <div v-if="authStore.isAuthenticated && !$route.meta.immersive && (rouletteStore.canSpin || quickCooldown || rouletteStore.dailyCanSpin || dailyCooldown)"
-      class="hidden lg:flex fixed bottom-12 right-12 z-[70] flex-col items-end gap-4">
-
-      <!-- Daily wheel -->
-      <div v-if="rouletteStore.dailyCanSpin || dailyCooldown" class="flex flex-col items-end gap-2 group">
-        <div v-if="rouletteStore.dailyCanSpin" class="os-float-tip hidden group-hover:block">
-          {{ i18n.t('wheel_daily_cta') }}
-        </div>
-        <div v-else class="os-float-tip os-float-tip--muted hidden group-hover:block os-num">
-          {{ i18n.t('wheel_cooldown', { time: dailyCooldown }) }}
-        </div>
-        <button @click="rouletteStore.openModal('daily')" :disabled="!rouletteStore.dailyCanSpin"
-          class="os-float-btn" :class="rouletteStore.dailyCanSpin ? 'os-float-btn--ready active:scale-95' : 'opacity-50 cursor-not-allowed'">
-          <Gift class="w-6 h-6 text-amber-400" />
-          <i v-if="rouletteStore.dailyCanSpin" class="os-float-btn__dot" aria-hidden="true"></i>
-        </button>
-      </div>
-
-      <!-- 4h wheel -->
-      <div v-if="rouletteStore.canSpin || quickCooldown" class="flex flex-col items-end gap-2 group">
-        <div v-if="rouletteStore.canSpin" class="os-float-tip hidden group-hover:block">
-          {{ i18n.t('roulette_exe_available') }}
-        </div>
-        <div v-else class="os-float-tip os-float-tip--muted hidden group-hover:block os-num">
-          {{ i18n.t('wheel_cooldown', { time: quickCooldown }) }}
-        </div>
-        <button @click="rouletteStore.openModal()" :disabled="!rouletteStore.canSpin"
-          class="os-float-btn" :class="rouletteStore.canSpin ? 'os-float-btn--ready active:scale-95' : 'opacity-50 cursor-not-allowed'">
-          <Dices class="w-6 h-6" style="color: var(--os-cyan)" />
-          <i v-if="rouletteStore.canSpin" class="os-float-btn__dot" aria-hidden="true"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Floating Roulettes (mobile) — compact chips above the dock, daily on top. -->
-    <div v-if="authStore.isAuthenticated && !$route.meta.immersive && (rouletteStore.canSpin || quickCooldown || rouletteStore.dailyCanSpin || dailyCooldown)"
-      class="lg:hidden fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom)+0.5rem)] right-3 z-[65] flex flex-col items-end gap-2">
-      <!-- Daily chip -->
-      <button v-if="rouletteStore.dailyCanSpin || dailyCooldown"
-        @click="rouletteStore.openModal('daily')" :disabled="!rouletteStore.dailyCanSpin"
-        class="os-float-chip" :class="rouletteStore.dailyCanSpin ? 'os-float-btn--ready active:scale-95' : 'opacity-60 cursor-not-allowed'">
-        <Gift class="w-4 h-4 text-amber-400" />
-        <span v-if="rouletteStore.dailyCanSpin">{{ i18n.t('wheel_daily_cta') }}</span>
-        <i v-if="rouletteStore.dailyCanSpin" class="os-float-btn__dot os-float-btn__dot--inline" aria-hidden="true"></i>
-      </button>
-      <!-- 4h chip -->
-      <button v-if="rouletteStore.canSpin || quickCooldown"
-        @click="rouletteStore.openModal()" :disabled="!rouletteStore.canSpin"
-        class="os-float-chip" :class="rouletteStore.canSpin ? 'os-float-btn--ready active:scale-95' : 'opacity-60 cursor-not-allowed'">
-        <Dices class="w-4 h-4" style="color: var(--os-cyan)" />
-        <span v-if="rouletteStore.canSpin">{{ i18n.locale === 'es' ? 'Ruleta' : 'Spin' }}</span>
-        <i v-if="rouletteStore.canSpin" class="os-float-btn__dot os-float-btn__dot--inline" aria-hidden="true"></i>
-      </button>
-    </div>
-
     <PushPrompt v-if="authStore.isAuthenticated" />
 
   </div>
@@ -530,6 +477,7 @@ import { useThemeStore } from './stores/theme';
 import AvatarFrame from '@/components/ui/AvatarFrame.vue';
 import BackgroundEffect from '@/components/system/BackgroundEffect.vue';
 import NotificationToast from '@/components/system/NotificationToast.vue';
+import WheelsMenu from '@/components/system/WheelsMenu.vue';
 import ConfirmDialog from '@/components/modals/ConfirmDialog.vue';
 
 // Runtime solo-app: ruleta, números de daño, log rápido, avisos y prompt de push.
@@ -626,12 +574,10 @@ const classicNavLinks = computed(() => [
 
 // Rail izquierdo: destinos núcleo con tag de telemetría (icono + label, nunca icono solo).
 const railLinks = computed(() => [
-  { id: 'dashboard', label: 'nav_dashboard', tag: 'CTRL', icon: LayoutDashboard },
-  { id: 'battle', label: 'nav_train', tag: 'COMBAT', icon: Swords },
-  { id: 'social', label: 'nav_social', tag: 'SQUAD', icon: Users },
-  { id: 'missions', label: 'nav_missions', tag: 'QUESTS', icon: Target },
-  { id: 'inventory', label: 'nav_inventory', tag: 'GEAR', icon: Package },
-  { id: 'shop', label: 'nav_shop', tag: 'ARMORY', icon: ShoppingBag },
+  { id: 'dashboard', label: 'dock_train', icon: LayoutDashboard },
+  { id: 'shop', label: 'dock_shop', icon: ShoppingBag },
+  { id: 'inventory', label: 'dock_inventory', icon: Package },
+  { id: 'social', label: 'dock_social', icon: Users },
 ]);
 
 const publicNavLinks = computed(() => [
@@ -642,14 +588,12 @@ const publicNavLinks = computed(() => [
 // Mobile dock (RPG): Entrenar (battle) · Campamento (dashboard) · [center quick-log]
 // · Inventario · Tienda. The elevated center button opens the quick-log sheet.
 const mobileNavLeft = computed(() => [
-  { id: 'dashboard', icon: LayoutDashboard, label: 'nav_camp', tag: 'CTRL' },
-  { id: 'social', icon: Users, label: 'nav_social', tag: 'SQUAD' },
+  { id: 'shop', icon: ShoppingBag, label: 'dock_shop' },
+  { id: 'inventory', icon: Package, label: 'dock_inventory' },
 ]);
-// Derecha: GEAR + YOU (perfil). La tienda se alcanza desde las estaciones
-// del dashboard y el rail desktop; la guía fija 4 destinos núcleo en móvil.
 const mobileNavRight = computed(() => [
-  { id: 'inventory', icon: Package, label: 'nav_inventory', tag: 'GEAR' },
-  { id: 'profile', icon: User, label: 'nav_profile', tag: 'YOU' },
+  { id: 'social', icon: Users, label: 'dock_social' },
+  { id: 'profile', icon: User, label: 'dock_profile' },
 ]);
 
 const getMobileNavTo = (nav) => {
