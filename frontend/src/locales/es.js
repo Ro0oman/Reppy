@@ -1674,5 +1674,8 @@ export default {
     friend_removed: 'Amigo eliminado',
     friend_remove_failed: 'No se pudo eliminar al amigo',
     dash_week_progress: 'esta semana',
+    replog_reps: '+{n} reps',
+    replog_coins: '+{n} RC',
+    replog_damage: '{n} de daño',
 };
 

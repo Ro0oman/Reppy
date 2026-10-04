@@ -1613,5 +1613,8 @@ export default {
     friend_removed: 'Friend removed',
     friend_remove_failed: 'Could not remove the friend',
     dash_week_progress: 'this week',
+    replog_reps: '+{n} reps',
+    replog_coins: '+{n} RC',
+    replog_damage: '{n} damage',
 };
 
