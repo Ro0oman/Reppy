@@ -318,3 +318,21 @@ El orden de adopción recomendado es: **dashboard → battle/PvP → misión/cam
 - [ ] ¿El contraste, el foco y reduced motion están resueltos?
 
 Si una pantalla cumple estos ocho puntos, se sentirá como Reppy Operative OS aunque su función sea nueva.
+
+
+## 11. Sistema único (fase 4 del rediseño, oct 2026)
+
+Resumen de lo que ya rige en todas las vistas autenticadas (`.os-shell`, en `frontend/src/operative-os.css`):
+
+| Elemento | Regla |
+|---|---|
+| Superficie | `--os-panel` (también en `.card-stats`) |
+| Borde | `--os-line`; `--os-line-strong` al pasar el ratón. Los `border-white/*` y `border-border*` se remapean a `--os-line` |
+| Radio | `--os-radius` = 2 px en tarjetas, botones y campos; `--os-radius-sheet` = 8 px solo en sheets y modales; `rounded-full` solo en avatares y puntos de presencia |
+| Táctil | mínimo `--os-touch` = 44 px (botón principal y elementos interactivos nuevos) |
+| Texto | etiquetas 11–12 px (`--os-type-kicker`, `--os-type-meta`), cuerpo 14 px, títulos 20/28 px. Las clases `text-[8px]`, `text-[9px]` y `text-[10px]` se remapean a 11 px |
+| Relleno de tarjeta | `--os-pad-card` = 16 px |
+
+**Al escribir componentes nuevos:** usar `.os-panel`/`.card-stats` y las variables, no `rounded-2xl`, `border-white/10` ni tamaños de texto arbitrarios.
+
+**Límite conocido:** los modales y sheets que se teletransportan a `<body>` (`<Teleport to="body">`) quedan fuera de `.os-shell`; hay que migrarlos uno a uno. Pendiente de decisión: si se mantiene el estilo clásico (`ui_style = classic`) o se retira.
