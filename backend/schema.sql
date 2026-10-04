@@ -871,3 +871,16 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_rpg_release BOOLEAN DEFAULT 
 
 -- Estado del onboarding en servidor: { quickstart_seen, goal_dismissed, plan_promo_dismissed }.
 ALTER TABLE users ADD COLUMN IF NOT EXISTS onboarding_flags JSONB DEFAULT '{}'::jsonb;
+
+-- Columnas de `users` que existían en producción (volcado del 2026-10-04) pero no
+-- se creaban aquí: en una base nueva fallaban, p. ej., GET /boss/active
+-- ("column epic_chests does not exist"). Tipos y valores por defecto, del volcado.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS legendary_chests INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS epic_chests INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS rusty_chests INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS dex_bonus INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS dex_bonus_expiry TIMESTAMP WITH TIME ZONE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS hevy_last_sync TIMESTAMP WITH TIME ZONE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS xp_into_level INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_damage_overhaul BOOLEAN DEFAULT false;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_armory_update BOOLEAN DEFAULT false;
