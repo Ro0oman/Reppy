@@ -31,7 +31,7 @@
           class="os-rail__dot" aria-hidden="true"></i>
       </router-link>
       <div class="os-rail__spacer"></div>
-      <router-link v-if="authStore.user?.role === 'admin'" :to="`/${i18n.locale}/admin`"
+      <router-link v-if="authStore.user?.is_admin" :to="`/${i18n.locale}/admin`"
         class="os-rail__item" title="Admin">
         <Shield class="w-5 h-5" />
         <span>ADMIN</span>
@@ -137,7 +137,7 @@
               class="absolute top-1.5 right-2 w-2 h-2 bg-primary-500 rounded-full border-2 border-surface shadow-[0_0_10px_hsl(var(--primary) / 0.5)]">
             </div>
           </router-link>
-          <router-link v-if="authStore.user?.role === 'admin'" :to="`/${i18n.locale}/admin`"
+          <router-link v-if="authStore.user?.is_admin" :to="`/${i18n.locale}/admin`"
             class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-blue-500 hover:bg-blue-500/10 transition-all font-industrial">
             {{ i18n.t('economy_admin') }}
           </router-link>
@@ -731,10 +731,12 @@ const onStartAction = () => {
 const initializeApp = async () => {
   if (import.meta.env.SSR) return;
 
-  // Always init socket so anonymous users appear in presence-global too
-  socketStore.init();
-
   if (!authStore.isAuthenticated) return;
+
+  // Presence channels require an authenticated Pusher authorization request.
+  // Starting them for visitors sends `Bearer null`, which produces a 401 and
+  // used to surface as a technical error over the public landing.
+  socketStore.init();
 
   // These are throttled at the store level, but calling them here ensures initial load
   authStore.fetchProfile();
@@ -762,8 +764,6 @@ watch(() => authStore.isAuthenticated, (val) => {
     initializeApp();
   } else {
     socketStore.disconnect();
-    // Re-init as anonymous so they still see presence
-    socketStore.init();
   }
 }, { immediate: true });
 
@@ -1121,4 +1121,3 @@ onUnmounted(() => {
   }
 }
 </style>
->

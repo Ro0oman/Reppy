@@ -842,18 +842,29 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_users_hevy_token ON users(hevy_webhook_tok
 ALTER TABLE reps ADD COLUMN IF NOT EXISTS buff_bonus INTEGER DEFAULT 0;
 
 -- =====================================================================
--- PENDIENTE: tablas que NO se pueden reconstruir desde el repositorio
+-- daily_shop_items — rotación diaria de la tienda (GET /shop/daily)
 -- =====================================================================
--- Estas cuatro tablas existen en producción pero su `CREATE TABLE` no está en
--- NINGÚN sitio del repo (ni aquí, ni en /db/init, ni en archive/, ni en scripts/).
--- Se crearon a mano en algún momento y nunca se versionaron:
---
---   · daily_shop_items      (rotación diaria de la tienda — GET /shop/daily)
---   · boss_participants     (daño por usuario en el boss comunitario)
---   · weekly_challenges     (reto semanal)
---   · user_skills           (árbol de habilidades)
---
--- Consecuencia: `schema.sql` todavía NO levanta una BD 100% funcional desde
--- cero; `GET /shop/daily` falla en una base recién creada. Cerrar esto exige un
--- `pg_dump --schema-only` de producción y pegar aquí su DDL — trabajo que encaja
--- con la Fase 2/3 de la migración de BD, no con este PR.
+-- Reconstruida a partir del `_schema.json` del volcado de producción del
+-- 2026-10-04 (columnas, FKs e índice). Existía en producción sin `CREATE TABLE`
+-- versionado.
+CREATE TABLE IF NOT EXISTS daily_shop_items (
+    id SERIAL PRIMARY KEY,
+    item_id INTEGER REFERENCES items(id) ON DELETE CASCADE,
+    discounted_price INTEGER,
+    discounted_gems INTEGER,
+    is_seasonal_deal BOOLEAN DEFAULT false,
+    rotated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    user_id VARCHAR REFERENCES users(id) ON DELETE CASCADE,
+    reward_type VARCHAR(50),
+    reward_amount INTEGER,
+    is_claimed BOOLEAN DEFAULT false
+);
+CREATE INDEX IF NOT EXISTS idx_daily_shop_rotated_at ON daily_shop_items(rotated_at);
+
+-- Nota: `boss_participants`, `weekly_challenges` y `user_skills` figuraban aquí
+-- como pendientes, pero NO existen en producción (volcado 2026-10-04) ni las usa
+-- ningún código vivo; no hay nada que reconstruir.
+
+-- Modal «VERSION 1.0.0 — RPG UPDATE»: existía en producción pero no en este esquema.
+-- Las cuentas nuevas nacen con true (auth.js) para no verlo.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_rpg_release BOOLEAN DEFAULT false;

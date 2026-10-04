@@ -25,7 +25,7 @@
           </div>
           <!-- Last Hit Info -->
           <div v-if="boss?.last_hit_user_name" class="mt-2 flex items-center gap-2 px-3 py-1 bg-primary-500/10 border border-primary-500/20 rounded-full w-fit">
-              <span class="text-[9px] font-black text-primary-500 uppercase tracking-widest italic">Golpe de Gracia: {{ boss.last_hit_user_name }}</span>
+              <span class="text-xs font-black text-primary-500 uppercase tracking-widest italic">Golpe de Gracia: {{ boss.last_hit_user_name }}</span>
           </div>
         </div>
       </div>
@@ -62,7 +62,7 @@
                       {{ user.name }}
                       <span v-if="user.id === boss?.last_hit_user_id" class="ml-2 text-[10px] px-2 py-0.5 bg-primary-500 text-white rounded-full italic font-black tracking-tighter">LAST HIT</span>
                     </p>
-                    <p class="text-[9px] font-black text-muted uppercase tracking-widest">{{ getPercentage(user.damage_dealt) }}% DEL TOTAL</p>
+                    <p class="text-xs font-black text-muted uppercase tracking-widest">{{ getPercentage(user.damage_dealt) }}% DEL TOTAL</p>
                   </div>
               </div>
             </div>
@@ -72,7 +72,7 @@
                 <div class="text-lg font-black italic tracking-tighter text-foreground tabular-nums">
                     -{{ user.damage_dealt.toLocaleString() }}
                 </div>
-                <div class="text-[8px] font-black text-muted uppercase tracking-widest">CRITICAL REPS</div>
+                <div class="text-xs font-black text-muted uppercase tracking-widest">CRITICAL REPS</div>
             </div>
           </div>
         </div>

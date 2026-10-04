@@ -2,24 +2,26 @@ import express from 'express';
 import { query } from './db.js';
 import { authenticate, optionalAuthenticate } from './middleware.js';
 import { updateMissionProgress } from './utils/missions.js';
+import { createNotification } from './utils/notifications.js';
 
 const router = express.Router();
 
-// Search public users by name.
+// Search public users by name or @username.
 router.get('/search', optionalAuthenticate, async (req, res) => {
-  const { q } = req.query;
+  // Sin «@» inicial y con los comodines de LIKE escapados: lo escrito se busca literal.
+  const q = String(req.query.q || '').trim().replace(/^@/, '').replace(/[\\%_]/g, (c) => '\\' + c);
   if (!q) return res.json([]);
 
   try {
     const viewerId = req.user?.id || null;
     const result = await query(
-      `SELECT u.id, u.name, u.avatar_url, u.total_reps, u.current_level,
+      `SELECT u.id, u.name, u.username, u.avatar_url, u.total_reps, u.current_level,
               b.css_value as border_css,
               a.css_value as avatar_css
        FROM users u
-       LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
-       LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
-       WHERE u.name ILIKE $1
+       LEFT JOIN items b ON u.equipped_border_id = b.id
+       LEFT JOIN items a ON u.equipped_avatar_id = a.id
+       WHERE (u.name ILIKE $1 OR u.username ILIKE $1)
          AND u.is_private = false
          AND ($2::varchar IS NULL OR u.id != $2)
        ORDER BY u.total_reps DESC
@@ -56,6 +58,9 @@ router.post('/add', authenticate, async (req, res) => {
       [userId, friendId]
     );
 
+    // Avisa a la otra persona (no crítico: createNotification ya captura sus errores).
+    await createNotification(friendId, 'FRIEND_ADDED', userId, 'te ha añadido como amigo');
+
     // Mission: Social Friends (Absolute count)
     const friendCountRes = await query(
       'SELECT COUNT(*) as count FROM friendships WHERE user_id_1 = $1 OR user_id_2 = $1',
@@ -70,6 +75,21 @@ router.post('/add', authenticate, async (req, res) => {
   }
 });
 
+// Remove a friend
+router.delete('/remove/:friendId', authenticate, async (req, res) => {
+  try {
+    const result = await query(
+      'DELETE FROM friendships WHERE (user_id_1 = $1 AND user_id_2 = $2) OR (user_id_1 = $2 AND user_id_2 = $1)',
+      [req.user.id, req.params.friendId]
+    );
+    if (result.rowCount === 0) return res.status(404).json({ message: 'Not friends' });
+    res.json({ message: 'Friend removed' });
+  } catch (error) {
+    console.error('Error removing friend:', error);
+    res.status(500).json({ message: 'Error removing friend' });
+  }
+});
+
 // Get friends list
 router.get('/list', authenticate, async (req, res) => {
   try {
@@ -79,8 +99,8 @@ router.get('/list', authenticate, async (req, res) => {
               a.css_value as avatar_css
        FROM users u
        JOIN friendships f ON (f.user_id_1 = u.id OR f.user_id_2 = u.id)
-       LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
-       LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
+       LEFT JOIN items b ON u.equipped_border_id = b.id
+       LEFT JOIN items a ON u.equipped_avatar_id = a.id
        WHERE (f.user_id_1 = $1 OR f.user_id_2 = $1) AND u.id != $1`,
       [req.user.id]
     );

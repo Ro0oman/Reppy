@@ -26,7 +26,7 @@
           class="os-player-shortcut relative flex h-11 w-11 flex-col items-center justify-center gap-0.5 transition-all active:scale-95"
           :title="s.label">
           <component :is="s.icon" class="h-4 w-4" />
-          <span class="text-[8px] font-bold uppercase tracking-tight">{{ s.label }}</span>
+          <span class="text-xs font-bold uppercase tracking-tight">{{ s.label }}</span>
           <span v-if="s.count > 0"
             class="os-player-badge os-num absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center px-1">
             {{ s.count }}

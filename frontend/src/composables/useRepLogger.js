@@ -55,8 +55,11 @@ export function useRepLogger() {
           confetti({ particleCount: 120, spread: 90, origin: { y: 0.6 }, colors: ['#3b82f6', '#60a5fa', '#34d399', '#fbbf24'] });
         } catch (_) {}
       } else {
-        const msg = i18n.locale === 'es' ? `+${repsToSubmit} reps registradas` : `+${repsToSubmit} reps logged`;
-        notificationStore.notify(msg, 'success');
+        // «+10 reps · +10 RC · 1.240 de daño»: lo que acaba de ganar, de un vistazo.
+        const parts = [i18n.t('replog_reps', { n: repsToSubmit })];
+        if (res.data.earnedCoins > 0) parts.push(i18n.t('replog_coins', { n: res.data.earnedCoins }));
+        if (damageToAnimate > 0) parts.push(i18n.t('replog_damage', { n: Math.round(damageToAnimate).toLocaleString(i18n.locale) }));
+        notificationStore.notify(parts.join(' · '), 'success');
       }
 
       // gem_vein skill perk: celebrate a lucky gem drop.
@@ -73,8 +76,8 @@ export function useRepLogger() {
       // Deja en el log QUÉ se intentaba registrar; el status y el cuerpo de la
       // respuesta los añade aparte el interceptor de axios del logger.
       logError('logReps falló', { exerciseType, count: repsToSubmit, addedWeight }, error);
-      const msg = i18n.locale === 'es' ? 'No se pudieron registrar las reps' : 'Failed to log reps';
-      notificationStore.notify(msg, 'error');
+      const fallback = i18n.locale === 'es' ? 'No se pudieron registrar las reps' : 'Failed to log reps';
+      notificationStore.notify(error.response?.data?.message || fallback, 'error');
       return null;
     } finally {
       loading.value = false;

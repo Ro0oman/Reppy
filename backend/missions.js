@@ -40,73 +40,87 @@ router.get('/', authenticate, async (req, res) => {
 
     // 3. Refill Daily IF needed AND it's a new day
     if (lastRefill < today) {
-      // Rotate out uncompleted daily missions so they don't get stuck
-      await query(`
-        UPDATE user_missions um
-        SET is_active = false, last_updated = CURRENT_TIMESTAMP
-        FROM missions m
-        WHERE um.mission_id = m.id
-          AND um.user_id = $1
-          AND um.is_active = true
-          AND m.is_daily = true
-          AND um.is_completed = false
-      `, [userId]);
-
-      // Only keep completed-but-unclaimed dailies as still active
-      dailyActive = dailyActive.filter(m => m.is_completed && !m.is_claimed);
-
-      if (dailyActive.length < 2) {
-        const needed = 2 - dailyActive.length;
-        const newDailies = await query(`
-          SELECT id FROM missions
-          WHERE is_daily = true
-          AND id NOT IN (
-            SELECT mission_id FROM user_missions
-            WHERE user_id = $1 AND (is_active = true OR is_claimed = true)
-          )
-          ORDER BY RANDOM()
-          LIMIT $2
-        `, [userId, needed]);
-
-        for (const m of newDailies.rows) {
-          await query(`
-            INSERT INTO user_missions (user_id, mission_id, is_active, is_completed, is_claimed, current_value)
-            VALUES ($1, $2, true, false, false, 0)
-            ON CONFLICT (user_id, mission_id) DO NOTHING
-          `, [userId, m.id]);
+      await withTransaction(async (client) => {
+        // Bloquea al usuario y vuelve a comprobar: dos GET simultáneos no deben rellenar dos veces.
+        const lock = await client.query('SELECT last_daily_missions_refill FROM users WHERE id = $1 FOR UPDATE', [userId]);
+        const locked = lock.rows[0]?.last_daily_missions_refill;
+        if (locked && new Date(locked) >= today) {
+          // Otra petición ya rellenó: solo hay que releer la lista que ella dejó.
+          missionsWereAdded = true;
+          return;
         }
-        missionsWereAdded = true;
-      }
 
-      // 4. Refill Special if needed (Special doesn't necessarily need the daily restriction, but we can do it here too if preferred)
-      // For now, let's keep special missions refilling normally or also once a day?
-      // The user only complained about daily. Let's keep special as is or also limit it.
-      if (specialActive.length < 1) {
-        const newSpecial = await query(`
-          SELECT id FROM missions
-          WHERE is_daily = false
-          AND id NOT IN (
-            SELECT mission_id FROM user_missions
-            WHERE user_id = $1 AND (is_active = true OR is_claimed = true)
-          )
-          ORDER BY RANDOM()
-          LIMIT 1
+        // Rotate out uncompleted daily missions so they don't get stuck
+        await client.query(`
+          UPDATE user_missions um
+          SET is_active = false, last_updated = CURRENT_TIMESTAMP
+          FROM missions m
+          WHERE um.mission_id = m.id
+            AND um.user_id = $1
+            AND um.is_active = true
+            AND m.is_daily = true
+            AND um.is_completed = false
         `, [userId]);
 
-        if (newSpecial.rows.length > 0) {
-          const m = newSpecial.rows[0];
-          await query(`
-            INSERT INTO user_missions (user_id, mission_id, is_active, is_completed, is_claimed, current_value)
-            VALUES ($1, $2, true, false, false, 0)
-            ON CONFLICT (user_id, mission_id) DO NOTHING
-          `, [userId, m.id]);
+        // Only keep completed-but-unclaimed dailies as still active
+        dailyActive = dailyActive.filter(m => m.is_completed && !m.is_claimed);
+
+        if (dailyActive.length < 2) {
+          const needed = 2 - dailyActive.length;
+          const newDailies = await client.query(`
+            SELECT id FROM missions
+            WHERE is_daily = true
+            AND id NOT IN (
+              SELECT mission_id FROM user_missions
+              WHERE user_id = $1 AND is_active = true
+            )
+            ORDER BY RANDOM()
+            LIMIT $2
+          `, [userId, needed]);
+
+          for (const m of newDailies.rows) {
+            await client.query(`
+              INSERT INTO user_missions (user_id, mission_id, is_active, is_completed, is_claimed, current_value)
+              VALUES ($1, $2, true, false, false, 0)
+              ON CONFLICT (user_id, mission_id) DO UPDATE
+                SET is_active = true, is_completed = false, is_claimed = false,
+                    current_value = 0, last_updated = CURRENT_TIMESTAMP
+            `, [userId, m.id]);
+          }
           missionsWereAdded = true;
         }
-      }
 
-      // Update the refill timestamp to today to prevent multiple refills today
-      await query('UPDATE users SET last_daily_missions_refill = CURRENT_TIMESTAMP WHERE id = $1', [userId]);
+        // 4. Refill Special if needed (Special doesn't necessarily need the daily restriction, but we can do it here too if preferred)
+        // For now, let's keep special missions refilling normally or also once a day?
+        // The user only complained about daily. Let's keep special as is or also limit it.
+        if (specialActive.length < 1) {
+          const newSpecial = await client.query(`
+            SELECT id FROM missions
+            WHERE is_daily = false
+            AND id NOT IN (
+              SELECT mission_id FROM user_missions
+              WHERE user_id = $1 AND (is_active = true OR is_claimed = true)
+            )
+            ORDER BY RANDOM()
+            LIMIT 1
+          `, [userId]);
+
+          if (newSpecial.rows.length > 0) {
+            const m = newSpecial.rows[0];
+            await client.query(`
+              INSERT INTO user_missions (user_id, mission_id, is_active, is_completed, is_claimed, current_value)
+              VALUES ($1, $2, true, false, false, 0)
+              ON CONFLICT (user_id, mission_id) DO NOTHING
+            `, [userId, m.id]);
+            missionsWereAdded = true;
+          }
+        }
+
+        // Update the refill timestamp to today to prevent multiple refills today
+        await client.query('UPDATE users SET last_daily_missions_refill = CURRENT_TIMESTAMP WHERE id = $1', [userId]);
       
+      });
+
       // If we added missions, re-fetch the list
       if (missionsWereAdded) {
         const finalMissions = await query(`

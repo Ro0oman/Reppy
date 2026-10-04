@@ -23,12 +23,12 @@
             <!-- RPG Version Tag -->
             <div class="inline-flex items-center gap-2 px-3 py-1 bg-primary-500/10 border border-primary-500/30 rounded-full">
               <div class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></div>
-              <span class="text-[8px] font-black text-primary-500 uppercase tracking-[0.3em]">{{ i18n.t('rpg_version_tag') }}</span>
+              <span class="text-xs font-black text-primary-500 uppercase tracking-[0.3em]">{{ i18n.t('rpg_version_tag') }}</span>
             </div>
 
             <div class="inline-flex items-center gap-3 px-4 py-2 bg-foreground/5 border border-white/10 rounded-full backdrop-blur-md">
               <span class="flex h-2 w-2 rounded-full bg-primary-500 animate-ping"></span>
-              <span class="text-[9px] font-black uppercase tracking-[0.3em] text-foreground/60">{{ authStore.isAuthenticated ? 'REPPY_ACTIVE' : 'READY_TO_TRAIN' }}</span>
+              <span class="text-xs font-black uppercase tracking-[0.3em] text-foreground/60">{{ authStore.isAuthenticated ? i18n.t('landing_badge_active') : i18n.t('landing_badge_ready') }}</span>
             </div>
           </div>
 
@@ -52,7 +52,7 @@
                class="flex items-center gap-4 px-8 py-6 rounded-[2rem] bg-surface/30 hover:bg-surface/50 border border-white/5 backdrop-blur-2xl transition-all group">
               <Github class="w-6 h-6 text-muted group-hover:text-primary-500 transition-all group-hover:rotate-12" />
               <div class="flex flex-col items-start gap-0.5">
-                <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest leading-none">OPEN SOURCE</span>
+                <span class="text-xs font-black text-primary-500 uppercase tracking-widest leading-none">OPEN SOURCE</span>
                 <span class="text-sm font-black text-foreground uppercase tracking-tight">GITHUB REPPY</span>
               </div>
             </a>
@@ -62,19 +62,19 @@
           <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 pt-6 animate-in fade-in duration-1000 delay-1000">
             <div class="flex flex-col gap-1">
               <span class="text-3xl font-black text-foreground tracking-tighter italic">1.2M+</span>
-              <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_reps') }}</span>
+              <span class="text-xs font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_reps') }}</span>
             </div>
             <div class="flex flex-col gap-1">
               <span class="text-3xl font-black text-foreground tracking-tighter italic">450+</span>
-              <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_bosses') }}</span>
+              <span class="text-xs font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_bosses') }}</span>
             </div>
             <div class="flex flex-col hidden lg:flex flex-col gap-1">
                <span class="text-3xl font-black text-foreground tracking-tighter italic">100%</span>
-               <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_cost') }}</span>
+               <span class="text-xs font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_cost') }}</span>
             </div>
             <div class="flex flex-col hidden lg:flex flex-col gap-1">
                <span class="text-3xl font-black text-foreground tracking-tighter italic">4.9/5</span>
-               <span class="text-[8px] font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_score') }}</span>
+               <span class="text-xs font-black text-muted uppercase tracking-[0.3em]">{{ i18n.t('landing_stats_score') }}</span>
             </div>
           </div>
         </div>
@@ -101,8 +101,8 @@
                  <Trophy class="w-4 h-4 text-neon-lime" />
                </div>
                <div>
-                 <span class="text-[8px] font-black text-muted uppercase block">TOP_PLAYER</span>
-                 <span class="text-xs font-black text-foreground uppercase tracking-tight">RANK_SHADOW</span>
+                 <span class="text-xs font-black text-muted uppercase block">{{ i18n.t('landing_badge_top') }}</span>
+                 <span class="text-xs font-black text-foreground uppercase tracking-tight">{{ i18n.t('landing_badge_top_name') }}</span>
                </div>
              </div>
           </div>
@@ -113,8 +113,8 @@
                  <Activity class="w-4 h-4" />
                </div>
                <div>
-                 <span class="text-[8px] font-black text-muted uppercase block">DIFFICULTY: ELITE</span>
-                 <span class="text-xs font-black text-foreground uppercase tracking-tight italic">BOSS_BATTLE_LADY_MARIA</span>
+                 <span class="text-xs font-black text-muted uppercase block">{{ i18n.t('landing_badge_difficulty') }}</span>
+                 <span class="text-xs font-black text-foreground uppercase tracking-tight italic">{{ i18n.t('landing_badge_boss') }}</span>
                </div>
              </div>
           </div>
@@ -193,7 +193,7 @@
               <h3 class="text-lg font-black text-foreground uppercase italic tracking-tight">{{ i18n.t('landing_bento_community_title') }}</h3>
            </div>
            <div class="flex -space-x-3">
-              <div v-for="i in 4" :key="i" class="w-8 h-8 rounded-full border-2 border-background bg-surface flex items-center justify-center text-[8px] font-black">U{{i}}</div>
+              <div v-for="i in 4" :key="i" class="w-8 h-8 rounded-full border-2 border-background bg-surface flex items-center justify-center text-xs font-black">U{{i}}</div>
            </div>
         </div>
 
@@ -474,7 +474,7 @@
               @error="(e) => e.target.src = 'https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?auto=format&fit=crop&w=800&q=60'"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent"></div>
-            <span class="absolute bottom-4 left-4 px-3 py-1 bg-primary-500 text-[9px] font-black text-white uppercase tracking-widest rounded-lg">{{ i18n.t('trending') }}</span>
+            <span class="absolute bottom-4 left-4 px-3 py-1 bg-primary-500 text-xs font-black text-white uppercase tracking-widest rounded-lg">{{ i18n.t('trending') }}</span>
 
             <!-- Prominent Image Checkmark -->
             <div 
@@ -494,7 +494,7 @@
             </p>
             <div v-if="isRead(p.slug)" class="pt-2 mt-auto border-t border-primary-500/10 flex items-center gap-2">
               <CheckCircle2 class="w-3 h-3 text-primary-500" />
-              <span class="text-[8px] font-black text-primary-500 uppercase tracking-widest italic leading-none">
+              <span class="text-xs font-black text-primary-500 uppercase tracking-widest italic leading-none">
                 {{ i18n.t('intelecto_adquirido') }}
               </span>
             </div>

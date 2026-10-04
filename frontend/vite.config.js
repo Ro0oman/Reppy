@@ -13,9 +13,6 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  optimizeDeps: {
-    include: ['socket.io-client'],
-  },
   css: {
     postcss: './postcss.config.cjs',
     transformer: 'postcss',

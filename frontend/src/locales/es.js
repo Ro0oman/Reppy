@@ -3,7 +3,6 @@ export default {
     dash_active_effects: 'Efectos Activos',
     landing_title: 'Plataforma de Entrenamiento de Élite',
     hero_eyebrow: 'Plataforma de Entrenamiento de Élite',
-    hero_subtitle: 'La plataforma premium para entusiastas de las dominadas. Registra repeticiones, visualiza tu progreso y domina los rankings.',
     btn_start: 'Comenzar Ahora',
     rpg_version_tag: 'VERSIÓN RPG 1.0',
     rpg_version_title: 'EL DESPERTAR RPG',
@@ -20,8 +19,6 @@ export default {
     feat_social_desc: 'Añade amigos, sigue su progreso y construye tu propio círculo interno de alto rendimiento.',
     
     // Auth / Login
-    login_back: 'Volver al Inicio',
-    login_google: 'Iniciar sesión con Google',
     session_expired: 'Tu sesión ha caducado. Por favor, identifícate de nuevo.',
     
     // Dashboard
@@ -29,18 +26,13 @@ export default {
     nav_dashboard: 'Panel',
     nav_social: 'Comunidad',
     nav_inventory: 'Inventario',
-    nav_armory: 'Armería',
-    nav_gear: 'Equipo',
     nav_profile: 'Perfil',
     nav_codex: 'Códice',
     nav_blog: 'Blog',
-    audio_mute: 'Silenciar',
-    audio_unmute: 'Activar Sonido',
     back_to_codex: 'Volver al Stats RPG',
     nav_go_dashboard: 'Ir al Panel',
     ui_level: 'Nivel',
     CODEX_DASHBOARD:'ESTADISTICAS',
-    CODEX_TITLE:"EL STATS RPG",
     ui_gems: 'Gemas',
     ui_coins: 'Monedas',
     
@@ -392,6 +384,8 @@ export default {
     // Notifications
     notif_anomalies: 'ANOMALÍAS DETECTADAS',
     notif_close: 'Cerrar Notificación',
+    notif_title_error: 'Error',
+    notif_title_ok: 'Hecho',
     notif_copy_logs: 'Copiar logs',
     notif_logs_copied: '¡Copiado!',
     notif_logs_copy_failed: 'No se pudo copiar',
@@ -472,7 +466,6 @@ export default {
 
     // Privacy
     privacy_settings: 'Ajustes de Privacidad',
-    private_profile: 'Perfil Privado',
     private_desc: 'Oculta tu perfil de los rankings globales.',
 
     // Account Management
@@ -483,7 +476,6 @@ export default {
     email: 'Email',
     password: 'Contraseña',
     name_placeholder: 'Nombre y Apellidos',
-    delete_account: 'Borrar Cuenta',
     delete_confirm_title: '¿Borrado Irreversible?',
     delete_confirm: '¿Estás seguro? Esta acción es permanente.',
     change_avatar: 'Actualizar Avatar',
@@ -527,6 +519,11 @@ export default {
     ERR_USER_NOT_FOUND: 'No se encontró ninguna cuenta con este correo.',
     ERR_WRONG_PASSWORD: 'Contraseña incorrecta. Inténtalo de nuevo.',
     ERR_SERVER: 'Ocurrió un error del sistema. Reinténtalo más tarde.',
+    ERR_RATE_LIMIT: 'Demasiados intentos. Espera unos minutos y vuelve a probar.',
+    ERR_INVALID_NAME: 'Escribe un nombre (entre 1 y 50 caracteres).',
+    ERR_INVALID_EMAIL: 'El correo no es válido.',
+    ERR_WEAK_PASSWORD: 'La contraseña debe tener al menos 8 caracteres.',
+    login_google_error: 'No se pudo iniciar sesión con Google. Inténtalo de nuevo.',
 
     // Onboarding
     onboarding_title: 'Bienvenido a Reppy',
@@ -561,7 +558,6 @@ export default {
     exercise_mastery_desc: 'REPOSITORIO HISTÓRICO DE MAGNITUD POR EJERCICIO',
 
     // Codex
-    codex_title: 'El Códex',
     codex_subtitle: 'Guía para subir de nivel',
     codex_next_lv: 'PRÓXIMO NIVEL: +100 XP REQUERIDOS',
     codex_lv_up: 'Mejora:',
@@ -799,8 +795,6 @@ export default {
     // Blog List & 404
     blog_list_title: 'Guías y Noticias de Entrenamiento',
     blog_list_subtitle: 'Las últimas guías de calistenia, consejos mentales y actualizaciones de la comunidad Reppy.',
-    pagination_next: 'Página Siguiente',
-    pagination_prev: 'Página Anterior',
     not_found_title: 'ÁREA RESTRINGIDA (404)',
     not_found_desc: 'Lo que buscas ha sido movido o eliminado del mainframe.',
     not_found_btn: 'VOLVER A ZONA SEGURA',
@@ -873,7 +867,6 @@ export default {
     shop_premium_chests: 'COFRES PREMIUM',
     shop_limited_offers: 'OFERTAS LIMITADAS',
     shop_consumables: 'CONSUMIBLES',
-    shop_refresh_market: 'REFRESCAR MERCADO',
     shop_legendary_appeared: '!OBJETO LEGENDARIO!',
     shop_free_reward: 'RECOMPENSA GRATUITA',
     shop_elite_pack: 'PACK ÉLITE',
@@ -1645,5 +1638,41 @@ export default {
     quicklog_title: 'Registro rápido',
     quicklog_exercise: 'Ejercicio',
     badge_new: 'NUEVO',
+    // Claves añadidas (B10)
+    admin_title_start: 'Panel de',
+    admin_title_end: 'administración',
+    admin_subtitle: 'Gestiona cosméticos, bosses y eventos.',
+    admin_edit_cosmetic: 'Editar cosmético',
+    admin_new_cosmetic: 'Nuevo cosmético',
+    admin_update_cosmetic: 'Actualizar',
+    admin_create_cosmetic: 'Crear',
+    admin_save_cosmetic: 'Guardar cosmético',
+    admin_cancel: 'Cancelar',
+    admin_new_boss: 'Nuevo boss',
+    admin_schedule_event: 'Programar evento',
+    admin_status_upcoming: 'Próximo',
+    admin_status_finished: 'Finalizado',
+    admin_status_active: 'Activo',
+    master_guide: 'Guía maestra',
+    inv_vault_epic: 'Cofres especiales',
+    feat_evolution_title: 'Evolución',
+    login: 'Iniciar sesión',
+    ui_link_copied: 'Enlace copiado',
+    landing_badge_active: 'Reppy activo',
+    landing_badge_ready: 'Listo para entrenar',
+    landing_badge_top: 'Mejor del día',
+    landing_badge_top_name: 'Shadow · Rango 1',
+    landing_badge_difficulty: 'Dificultad: élite',
+    landing_badge_boss: 'Combate: Lady Maria',
+    onb_level_label: '¿Qué nivel tienes? (opcional, fija tu meta diaria)',
+    onb_level_beginner: 'Principiante',
+    onb_level_intermediate: 'Intermedio',
+    onb_level_advanced: 'Avanzado',
+    onb_level_goal: 'meta {n}',
+    friend_remove: 'Eliminar amigo',
+    friend_remove_confirm: '¿Dejar de ser amigo de {name}?',
+    friend_removed: 'Amigo eliminado',
+    friend_remove_failed: 'No se pudo eliminar al amigo',
+    dash_week_progress: 'esta semana',
 };
 

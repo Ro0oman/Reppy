@@ -20,7 +20,10 @@ build/
 scratch/
 network/
 brain/
+tmp/
 *.har
+*.log
+build_output*.txt
 
 # Environment
 .env
@@ -37,3 +40,6 @@ brain/
 
 # Vercel
 .vercel
+
+# Backups de BD (contienen datos de usuarios)
+backend/backups/

@@ -43,7 +43,7 @@
             {{ timeLeft > 0 ? timeLeft : (fight?.time_limit || '--') }}
           </span>
         </div>
-        <span class="text-[8px] font-black text-primary-500 uppercase tracking-[0.2em]">{{ i18n.t('pvp_seconds') }}</span>
+        <span class="text-xs font-black text-primary-500 uppercase tracking-[0.2em]">{{ i18n.t('pvp_seconds') }}</span>
       </div>
 
       <!-- Player 2 HP -->
@@ -83,7 +83,7 @@
            <span class="text-3xl font-black italic text-primary-500 z-10">VS</span>
         </div>
         <div class="flex flex-col items-center">
-           <span class="text-[8px] font-black text-muted uppercase tracking-[0.4em]">{{ fight.battlefield }}</span>
+           <span class="text-xs font-black text-muted uppercase tracking-[0.4em]">{{ fight.battlefield }}</span>
            <div class="flex items-center gap-2 mt-2">
               <div v-for="ex in allowedExercises" :key="ex" class="px-2 py-0.5 bg-foreground/[0.06] border border-border rounded text-[10px] font-bold text-muted uppercase">
                  {{ i18n.t(ex) }}
@@ -118,7 +118,7 @@
                class="shrink-0 px-6 py-4 bg-surface border border-border rounded-2xl flex flex-col items-center gap-1 transition-all hover:border-primary-500/50 hover:bg-primary-500/5 active:scale-95 disabled:opacity-30"
              >
                 <span class="text-lg font-black text-foreground italic tracking-tighter">{{ btn.label }}</span>
-                <span class="text-[8px] font-bold text-muted uppercase tracking-widest">{{ i18n.t(btn.exercise) }}</span>
+                <span class="text-xs font-bold text-muted uppercase tracking-widest">{{ i18n.t(btn.exercise) }}</span>
              </button>
           </div>
 
@@ -163,8 +163,8 @@
        <div v-else-if="fight.status === 'pending' && isChallenger" class="bg-foreground/[0.03] border border-border rounded-[2rem] p-6 md:p-8 text-center space-y-4">
           <Loader2 class="w-8 h-8 md:w-10 md:h-10 text-primary-500 animate-spin mx-auto" />
           <h2 class="text-lg md:text-xl font-black text-foreground italic uppercase tracking-tighter">{{ i18n.t('pvp_waiting') }}</h2>
-          <p class="text-[9px] md:text-[10px] text-muted font-bold uppercase">{{ i18n.t('pvp_waiting_desc') }}</p>
-          <button @click="router.push('/social')" class="mt-4 px-6 py-2 bg-foreground/[0.05] hover:bg-foreground/[0.1] text-muted rounded-xl text-[9px] font-black uppercase tracking-widest transition-all">
+          <p class="text-xs md:text-[10px] text-muted font-bold uppercase">{{ i18n.t('pvp_waiting_desc') }}</p>
+          <button @click="router.push('/social')" class="mt-4 px-6 py-2 bg-foreground/[0.05] hover:bg-foreground/[0.1] text-muted rounded-xl text-xs font-black uppercase tracking-widest transition-all">
              SALIR DEL COMBATE
           </button>
        </div>
@@ -186,11 +186,11 @@
 
            <div class="grid grid-cols-2 gap-4 py-6 border-y border-border">
               <div class="text-center">
-                 <p class="text-[8px] font-bold text-muted uppercase tracking-widest mb-1">{{ i18n.t('pvp_total_dmg') }}</p>
+                 <p class="text-xs font-bold text-muted uppercase tracking-widest mb-1">{{ i18n.t('pvp_total_dmg') }}</p>
                  <p class="text-xl font-black text-foreground">{{ winnerDamage }}</p>
               </div>
               <div class="text-center">
-                 <p class="text-[8px] font-bold text-muted uppercase tracking-widest mb-1">{{ i18n.t('pvp_hp_remaining') }}</p>
+                 <p class="text-xs font-bold text-muted uppercase tracking-widest mb-1">{{ i18n.t('pvp_hp_remaining') }}</p>
                  <p class="text-xl font-black text-foreground">{{ winnerHp }}</p>
               </div>
            </div>

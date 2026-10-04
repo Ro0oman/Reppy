@@ -73,7 +73,10 @@ router.post('/', authenticate, repsLimiter, async (req, res) => {
     const validFormat = typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date);
     const today = getLocalDateString();
     const yesterday = getLocalDateString(new Date(Date.now() - 24 * 60 * 60 * 1000));
-    if (!validFormat || (date !== today && date !== yesterday)) {
+    // Tolerancia de +1 día: el cliente envía su fecha local y el servidor puede
+    // ir una zona por detrás (p. ej. UTC) entre las 00:00 y las 02:00 en España.
+    const tomorrow = getLocalDateString(new Date(Date.now() + 24 * 60 * 60 * 1000));
+    if (!validFormat || (date !== today && date !== yesterday && date !== tomorrow)) {
       return res.status(400).json({ message: 'date solo puede ser hoy o ayer' });
     }
   }
@@ -450,6 +453,23 @@ router.get('/stats', authenticate, async (req, res) => {
     const volumeRes = await query(volumeQuery, volumeParams);
     const totalVolume = parseFloat(volumeRes.rows[0]?.volume) || 0;
 
+    // 5b. Totales de TODOS los ejercicios, vengan o no filtradas las cifras de arriba:
+    // el anillo del día y las tarjetas del panel son globales, no del ejercicio elegido.
+    // `today` lo manda el cliente (su fecha local); sin él, la del servidor.
+    const todayParam = /^\d{4}-\d{2}-\d{2}$/.test(req.query.today || '') ? req.query.today : getLocalDateString();
+    const overallRes = await query(
+      `SELECT COALESCE(SUM(count), 0)::int AS total_reps,
+              COALESCE(SUM(count * (COALESCE($2, 75.0) + added_weight)), 0)::float AS volume,
+              COALESCE(SUM(count) FILTER (WHERE date = $3::date), 0)::int AS today_reps
+       FROM reps WHERE user_id = $1`,
+      [userId, body_weight, todayParam]
+    );
+    const overall = {
+      totalReps: overallRes.rows[0].total_reps,
+      totalVolume: overallRes.rows[0].volume,
+      todayReps: overallRes.rows[0].today_reps,
+    };
+
     // 6. Combat Power (Damage per Rep)
     const user = await getUserWithGear(userId);
     const dmgPerRep = calculateDamage(user, 1, isGlobal ? 'pullups' : type, null, false, true);
@@ -462,6 +482,7 @@ router.get('/stats', authenticate, async (req, res) => {
       dailyGoal: daily_goal,
       bodyWeight: body_weight,
       totalVolume,
+      overall,
       combatPower: {
         total: dmgPerRep.totalDamage,
         base: dmgPerRep.baseDamage,

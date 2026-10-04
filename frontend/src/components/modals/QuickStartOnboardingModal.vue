@@ -159,6 +159,25 @@
               </div>
 
               <div class="space-y-2">
+                <p class="text-xs font-bold text-muted/80">
+                  {{ i18n.t('onb_level_label') }}
+                </p>
+                <div class="grid grid-cols-3 gap-2">
+                  <button
+                    v-for="level in levelOptions"
+                    :key="level.id"
+                    @click="selectLevel(level)"
+                    :disabled="submitting"
+                    class="rounded-xl border px-1 py-2 text-center transition-all"
+                    :class="selectedLevel === level.id ? 'bg-primary-500 text-white border-primary-400' : 'bg-white/[0.03] border-white/10 text-foreground'"
+                  >
+                    <span class="block text-xs font-black">{{ i18n.t(level.key) }}</span>
+                    <span class="block text-xs opacity-70">{{ i18n.t('onb_level_goal', { n: level.goal }) }}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="space-y-2">
                 <p class="text-[10px] font-black uppercase tracking-widest text-muted/70">
                   {{ isEs ? 'Reps' : 'Reps' }}
                 </p>
@@ -225,6 +244,7 @@ import axios from 'axios';
 import { Dumbbell, Flame, MessageCircle, Sword, Trophy, Users, X } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useNotificationStore } from '@/stores/notification';
+import { useI18nStore } from '@/stores/i18n';
 import { getLocalDateString } from '@/utils/dateUtils.js';
 import { markPushPromptEligible } from '@/utils/pushEligibility.js';
 
@@ -242,12 +262,26 @@ const props = defineProps({
 const emit = defineEmits(['close', 'start']);
 const authStore = useAuthStore();
 const notificationStore = useNotificationStore();
+const i18n = useI18nStore();
 
 const step = ref(0);
 const submitting = ref(false);
 const selectedExercise = ref('pullups');
 const selectedReps = ref(10);
 const repOptions = [5, 10, 20];
+
+// Nivel declarado (opcional): fija la meta diaria en vez de dejar los 50 por defecto
+// del esquema para todo el mundo, y propone un tamaño de primera serie.
+const levelOptions = [
+  { id: 'beginner', key: 'onb_level_beginner', goal: 20, reps: 5 },
+  { id: 'intermediate', key: 'onb_level_intermediate', goal: 50, reps: 10 },
+  { id: 'advanced', key: 'onb_level_advanced', goal: 100, reps: 20 },
+];
+const selectedLevel = ref(null);
+const selectLevel = (level) => {
+  selectedLevel.value = level.id;
+  selectedReps.value = level.reps;
+};
 
 const isEs = computed(() => props.locale !== 'en');
 
@@ -309,6 +343,7 @@ watch(
       step.value = 3;
       selectedExercise.value = 'pullups';
       selectedReps.value = 10;
+      selectedLevel.value = null;
       submitting.value = false;
     }
   }
@@ -326,6 +361,11 @@ const submitFirstReps = async () => {
       exercise_type: selectedExercise.value,
       added_weight: 0,
     });
+    const level = levelOptions.find(l => l.id === selectedLevel.value);
+    if (level) {
+      // No crítico: si falla, el usuario conserva la meta por defecto.
+      try { await axios.patch('/api/users/profile', { daily_goal: level.goal }); } catch (_) {}
+    }
     await authStore.fetchProfile();
     markPushPromptEligible();
     notificationStore.notify(

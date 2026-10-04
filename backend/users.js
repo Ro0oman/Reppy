@@ -8,6 +8,14 @@ import { recalculateUserStats, getXPForLevel, augmentUserWithLevels } from './ut
 
 const router = express.Router();
 
+// Campos que nunca deben salir hacia el cliente (se guardan en localStorage).
+const SENSITIVE_USER_FIELDS = ['password_hash', 'hevy_api_key', 'hevy_webhook_token', 'token_version'];
+const toSafeUser = (row) => {
+  const safe = { ...row };
+  for (const f of SENSITIVE_USER_FIELDS) delete safe[f];
+  return safe;
+};
+
 // Get current user profile
 router.get('/me', authenticate, async (req, res) => {
   try {
@@ -25,10 +33,10 @@ router.get('/me', authenticate, async (req, res) => {
               iArmor.stats as armor_stats,
               iBoots.stats as boots_stats
        FROM users u
-       LEFT JOIN cosmetics t ON u.equipped_title_id = t.id
-       LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
-       LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
-       LEFT JOIN cosmetics bg ON u.equipped_background_id = bg.id
+       LEFT JOIN items t ON u.equipped_title_id = t.id
+       LEFT JOIN items b ON u.equipped_border_id = b.id
+       LEFT JOIN items a ON u.equipped_avatar_id = a.id
+       LEFT JOIN items bg ON u.equipped_background_id = bg.id
        LEFT JOIN items iHead ON u.equipped_head_id = iHead.id
        LEFT JOIN items iWeapon ON u.equipped_weapon_id = iWeapon.id
        LEFT JOIN items iArmor ON u.equipped_armor_id = iArmor.id
@@ -48,7 +56,7 @@ router.get('/me', authenticate, async (req, res) => {
 
     // Calculate derived stats using augmented logic
     const user = {
-      ...augmentUserWithLevels(result.rows[0]),
+      ...augmentUserWithLevels(toSafeUser(result.rows[0])),
       read_blogs: readBlogs
     };
     
@@ -101,7 +109,7 @@ router.patch('/profile', authenticate, async (req, res) => {
       `UPDATE users SET ${updateFields.join(', ')} WHERE id = $${i} RETURNING *`,
       params
     );
-    res.json({ user: result.rows[0] });
+    res.json({ user: toSafeUser(result.rows[0]) });
   } catch (error) {
     console.error('Error updating profile:', error);
     res.status(500).json({ message: 'Error updating profile' });
@@ -149,7 +157,7 @@ const updateAvatar = async (req, res) => {
       'UPDATE users SET avatar_url = $1 WHERE id = $2 RETURNING *',
       [avatar_url, req.user.id]
     );
-    res.json({ user: result.rows[0] });
+    res.json({ user: toSafeUser(result.rows[0]) });
   } catch (error) {
     console.error('Error updating avatar:', error);
     res.status(500).json({ message: 'Error updating avatar' });

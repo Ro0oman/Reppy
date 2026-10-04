@@ -2,7 +2,6 @@ export default {
     // Landing
     landing_title: 'Elite Training Platform',
     hero_eyebrow: 'Elite Training Platform',
-    hero_subtitle: 'The premium tracking platform for pull-up enthusiasts. Record reps, visualize progress, and dominate the rankings.',
     btn_start: 'Get Started',
     rpg_version_tag: 'RPG VERSION 1.0',
     rpg_version_title: 'THE RPG AWAKENING',
@@ -20,8 +19,6 @@ export default {
     feat_social_desc: 'Add friends, track their progress, and build your own inner circle of performance.',
     
     // Auth / Login
-    login_back: 'Back to Home',
-    login_google: 'Sign in with Google',
     session_expired: 'Your session has expired. Please log in again.',
     
     // Dashboard
@@ -32,8 +29,6 @@ export default {
     nav_profile: 'Profile',
     nav_codex: 'Codex',
     nav_blog: 'Blog',
-    audio_mute: 'Mute',
-    audio_unmute: 'Unmute',
     back_to_codex: 'Back to RPG Stats',
     nav_go_dashboard: 'Go to Dashboard',
 
@@ -379,6 +374,8 @@ export default {
     // Notifications
     notif_anomalies: 'ANOMALIES DETECTED',
     notif_close: 'Close Notification',
+    notif_title_error: 'Error',
+    notif_title_ok: 'Done',
     notif_copy_logs: 'Copy logs',
     notif_logs_copied: 'Copied!',
     notif_logs_copy_failed: 'Copy failed',
@@ -471,7 +468,6 @@ export default {
     
     // Privacy
     privacy_settings: 'Privacy Settings',
-    private_profile: 'Private Profile',
     private_desc: 'Hide your profile from global rankings.',
     
     // Account Management
@@ -482,7 +478,6 @@ export default {
     email: 'Email',
     password: 'Password',
     name_placeholder: 'Full Name',
-    delete_account: 'Delete Account',
     delete_confirm_title: 'Unstoppable Deletion?',
     delete_confirm: 'Are you sure? This action is permanent.',
     change_avatar: 'Update Avatar',
@@ -512,6 +507,11 @@ export default {
     ERR_USER_NOT_FOUND: 'No account found with this email.',
     ERR_WRONG_PASSWORD: 'Incorrect password. Please try again.',
     ERR_SERVER: 'A system error occurred. Please try again later.',
+    ERR_RATE_LIMIT: 'Too many attempts. Wait a few minutes and try again.',
+    ERR_INVALID_NAME: 'Enter a name (1 to 50 characters).',
+    ERR_INVALID_EMAIL: 'The email is not valid.',
+    ERR_WEAK_PASSWORD: 'Password must be at least 8 characters.',
+    login_google_error: 'Google sign-in failed. Please try again.',
 
     // Onboarding
     onboarding_title: 'Welcome to Reppy',
@@ -542,7 +542,6 @@ export default {
     exercise_mastery_desc: 'HISTORICAL REPOSITORY OF EFFORT BY EXERCISE',
 
     // RPG Stats
-    codex_title: 'The Codex',
     codex_subtitle: 'Level up guide',
     codex_next_lv: 'NEXT LEVEL: +100 XP POINTS REQUIRED',
     codex_lv_up: 'Level Up:',
@@ -785,8 +784,6 @@ export default {
     // Blog List & 404
     blog_list_title: 'Guides & Training News',
     blog_list_subtitle: 'The latest calisthenics guides, mental routines, and Reppy community updates.',
-    pagination_next: 'Next Page',
-    pagination_prev: 'Previous Page',
     not_found_title: 'AREA RESTRICTED (404)',
     not_found_desc: 'The information you are looking for has been moved or deleted from the mainframe.',
     not_found_btn: 'RETURN TO SAFE ZONE',
@@ -858,7 +855,6 @@ export default {
     shop_premium_chests: 'PREMIUM CHESTS',
     shop_limited_offers: 'LIMITED OFFERS',
     shop_consumables: 'CONSUMABLES',
-    shop_refresh_market: 'REFRESH MARKET',
     shop_legendary_appeared: 'LEGENDARY ITEM APPEARED TODAY!',
     shop_free_reward: 'FREE REWARD',
     shop_elite_pack: 'ELITE_PACK',
@@ -1568,5 +1564,54 @@ export default {
     quicklog_title: 'Quick log',
     quicklog_exercise: 'Exercise',
     badge_new: 'NEW',
+    // Claves añadidas (B10)
+    admin_title_start: 'Admin',
+    admin_title_end: 'panel',
+    admin_subtitle: 'Manage cosmetics, bosses and events.',
+    admin_edit_cosmetic: 'Edit cosmetic',
+    admin_new_cosmetic: 'New cosmetic',
+    admin_update_cosmetic: 'Update',
+    admin_create_cosmetic: 'Create',
+    admin_save_cosmetic: 'Save cosmetic',
+    admin_cancel: 'Cancel',
+    admin_new_boss: 'New boss',
+    admin_schedule_event: 'Schedule event',
+    admin_status_upcoming: 'Upcoming',
+    admin_status_finished: 'Finished',
+    admin_status_active: 'Active',
+    master_guide: 'Master guide',
+    inv_vault_epic: 'Special chests',
+    feat_evolution_title: 'Evolution',
+    login: 'Log in',
+    ui_link_copied: 'Link copied',
+    dash_active_effects: 'Active Effects',
+    CODEX_DASHBOARD: 'STATS',
+    ui_level: 'Level',
+    shop_upgrade_badge: 'UPGRADE',
+    inv_already_active: 'ALREADY_ACTIVE',
+    latest_news: 'LATEST NEWS',
+    landing_lb_live: 'LIVE RANKING',
+    landing_lb_preparing: 'Preparing leaderboard...',
+    faq_q7: 'Does it work on mobile?',
+    faq_a7: 'Yes. Reppy is optimized for mobile, with a responsive interface and a bottom navigation bar for quick access.',
+    find_operatives: 'Find athletes',
+    ui_reward_unlocked: 'REWARD UNLOCKED!',
+    ui_share: 'Share',
+    landing_badge_active: 'Reppy active',
+    landing_badge_ready: 'Ready to train',
+    landing_badge_top: 'Top of the day',
+    landing_badge_top_name: 'Shadow · Rank 1',
+    landing_badge_difficulty: 'Difficulty: elite',
+    landing_badge_boss: 'Battle: Lady Maria',
+    onb_level_label: 'What is your level? (optional, sets your daily goal)',
+    onb_level_beginner: 'Beginner',
+    onb_level_intermediate: 'Intermediate',
+    onb_level_advanced: 'Advanced',
+    onb_level_goal: 'goal {n}',
+    friend_remove: 'Remove friend',
+    friend_remove_confirm: 'Stop being friends with {name}?',
+    friend_removed: 'Friend removed',
+    friend_remove_failed: 'Could not remove the friend',
+    dash_week_progress: 'this week',
 };
 

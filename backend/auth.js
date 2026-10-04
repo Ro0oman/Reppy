@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { query } from './db.js';
 import { ensureUsername } from './utils/username.js';
+import { createNotification } from './utils/notifications.js';
 import { loginLimiter, signupLimiter, oauthLimiter } from './utils/rateLimiters.js';
 
 const router = express.Router();
@@ -47,6 +48,25 @@ const applyReferral = async (newUserId, referralCode) => {
     "INSERT INTO gem_transactions (user_id, amount, source, description) VALUES ($1, 50, 'referral_welcome', 'Bono de bienvenida por referral')",
     [newUserId]
   );
+  try {
+    // Quien invita y quien llega pasan a ser amigos, y el invitador se entera.
+    const friendRes = await query(
+      `INSERT INTO friendships (user_id_1, user_id_2)
+       SELECT $1::varchar, $2::varchar
+       WHERE NOT EXISTS (
+         SELECT 1 FROM friendships
+         WHERE (user_id_1 = $1 AND user_id_2 = $2) OR (user_id_1 = $2 AND user_id_2 = $1)
+       )
+       RETURNING id`,
+      [referrerId, newUserId]
+    );
+    if (friendRes.rowCount > 0) {
+      await createNotification(referrerId, 'FRIEND_ADDED', newUserId, 'se ha unido con tu invitación y ya sois amigos');
+    }
+  } catch (err) {
+    // La amistad es un extra: no debe tumbar el alta.
+    console.error('[referral] no se pudo crear la amistad:', err.message);
+  }
 };
 
 // Google Login
@@ -68,12 +88,13 @@ router.post('/google', oauthLimiter, async (req, res) => {
 
     let userResult = await query('SELECT * FROM users WHERE id = $1', [sub]);
     let user = userResult.rows[0];
+    const isNewUser = !user;
 
     if (!user) {
       const refCode = generateReferralCode();
       userResult = await query(
-        'INSERT INTO users (id, name, email, avatar_url, theme, referral_code) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-        [sub, name, email, '/img/avatars/avatar_1.webp', 'dark', refCode]
+        'INSERT INTO users (id, name, email, avatar_url, theme, referral_code, has_seen_rpg_release) VALUES ($1, $2, $3, $4, $5, $6, true) RETURNING *',
+        [sub, name, email, '/img/avatars/avatar_1.png', 'dark', refCode]
       );
       user = userResult.rows[0];
       const { referral_code: incomingRef } = req.body;
@@ -94,6 +115,8 @@ router.post('/google', oauthLimiter, async (req, res) => {
 
     res.json({
       token: sessionToken,
+      // Lo usa el cliente para medir el alta (evento `signup` de GA4) también con Google.
+      is_new_user: isNewUser,
       user: {
         id: user.id,
         name: user.name,
@@ -118,6 +141,16 @@ router.post('/google', oauthLimiter, async (req, res) => {
 router.post('/signup', signupLimiter, async (req, res) => {
   const { name, email, password, referral_code: incomingRef } = req.body;
 
+  if (typeof name !== 'string' || !name.trim() || name.trim().length > 50) {
+    return res.status(400).json({ code: 'ERR_INVALID_NAME', message: 'Invalid name' });
+  }
+  if (typeof email !== 'string' || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ code: 'ERR_INVALID_EMAIL', message: 'Invalid email' });
+  }
+  if (typeof password !== 'string' || password.length < 8 || password.length > 200) {
+    return res.status(400).json({ code: 'ERR_WEAK_PASSWORD', message: 'Password must be at least 8 characters' });
+  }
+
   try {
     const existingUser = await query('SELECT * FROM users WHERE email = $1', [email]);
     if (existingUser.rows.length > 0) {
@@ -132,7 +165,7 @@ router.post('/signup', signupLimiter, async (req, res) => {
     const passwordHash = await bcrypt.hash(password, 10);
     const refCode = generateReferralCode();
     const result = await query(
-      'INSERT INTO users (id, name, email, password_hash, avatar_url, theme, referral_code) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      'INSERT INTO users (id, name, email, password_hash, avatar_url, theme, referral_code, has_seen_rpg_release) VALUES ($1, $2, $3, $4, $5, $6, $7, true) RETURNING *',
       [id, name, email, passwordHash, '/img/avatars/avatar_1.webp', 'dark', refCode]
     );
 
