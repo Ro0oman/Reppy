@@ -884,3 +884,42 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS hevy_last_sync TIMESTAMP WITH TIME ZO
 ALTER TABLE users ADD COLUMN IF NOT EXISTS xp_into_level INTEGER DEFAULT 0;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_damage_overhaul BOOLEAN DEFAULT false;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_armory_update BOOLEAN DEFAULT false;
+
+-- =====================================================================
+-- Tablas de la comunidad que antes solo se creaban en tiempo de ejecución desde
+-- social_feed.js (CREATE TABLE IF NOT EXISTS al importar el módulo). En una base
+-- nueva ese código corre en paralelo con este esquema y falla ("relation users
+-- does not exist"); declararlas aquí las deja disponibles en el primer arranque.
+-- Idénticas a las de social_feed.js, que se mantienen (son idempotentes).
+-- =====================================================================
+CREATE TABLE IF NOT EXISTS social_xp_rewards (
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    summary_id INTEGER REFERENCES daily_summaries(id) ON DELETE CASCADE,
+    action_type VARCHAR(50), -- 'LIKE', 'COMMENT'
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, summary_id, action_type)
+);
+
+CREATE TABLE IF NOT EXISTS boss_kill_posts (
+    id SERIAL PRIMARY KEY,
+    boss_fight_id INTEGER REFERENCES boss_fights(id) ON DELETE CASCADE,
+    boss_name VARCHAR(255),
+    boss_image TEXT,
+    killer_user_id VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
+    killer_name VARCHAR(255),
+    top3 JSONB DEFAULT '[]',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(boss_fight_id)
+);
+
+CREATE TABLE IF NOT EXISTS summary_comment_subscribers (
+    summary_id INTEGER REFERENCES daily_summaries(id) ON DELETE CASCADE,
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (summary_id, user_id)
+);
+
+-- El resto de tablas del volcado de producción sin CREATE aquí (coin_transactions,
+-- cosmeticos, user_cosmeticos, routines, routine_exercises, workouts, workout_sets,
+-- user_metrics) no las consulta ningún código vivo (comprobado con grep del 2026-10-05):
+-- son legado y no se reconstruyen.
