@@ -1678,5 +1678,8 @@ export default {
     landing_badge_top_name: 'Shadow · Rango 1',
     landing_badge_difficulty: 'Dificultad: élite',
     landing_badge_boss: 'Combate: Lady Maria',
+    replog_reps: '+{n} reps',
+    replog_coins: '+{n} RC',
+    replog_damage: '{n} de daño',
 };
 
