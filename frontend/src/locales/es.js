@@ -1088,7 +1088,11 @@ export default {
     dash_streak: 'Racha',
     dash_peak_volume: 'Volumen Pico',
     dash_total_tonnage: 'Tonelaje Total',
-    dash_history_title: 'Historial de actividad',
+    dash_history_title: 'Historial de actividad',
+    hist_title: 'Historial de entradas',
+    hist_hint: 'Cada fila es el total de un ejercicio en un día. Si te equivocaste, corrige la cifra o bórrala.',
+    hist_edit_label: 'Repeticiones de esa entrada',
+    hist_show_more: 'Ver {n} más',
     dash_tons_moved: 'TONS MOVIMIENTOS',
     dash_protocol_null: 'Registro Nulo',
 

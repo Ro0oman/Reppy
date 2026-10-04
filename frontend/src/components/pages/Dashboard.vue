@@ -584,147 +584,7 @@
               <span class="text-[10px] font-semibold text-foreground tabular-nums shrink-0">{{ boost.timeLeft }}</span>
             </div>
          </div>
-
-         <div class="grid grid-cols-2 gap-4">
-            <!-- Total reps -->
-            <div class="card-stats">
-              <Activity aria-hidden="true" class="w-4 h-4 text-primary-500" />
-              <div class="mt-3">
-                <div v-if="isLoading" class="h-7 w-16 bg-foreground/10 rounded-lg animate-pulse"></div>
-                <span v-else class="text-2xl font-bold text-foreground tabular-nums">{{ overall ? overall.totalReps : totalReps }}</span>
-                <p class="text-xs text-muted/80 mt-0.5">{{ i18n.t('dash_total_reps') }}</p>
-              </div>
-            </div>
-            <!-- Tonnage -->
-            <div class="card-stats">
-              <Trophy aria-hidden="true" class="w-4 h-4 text-primary-500" />
-              <div class="mt-3">
-                <div v-if="isLoading" class="h-7 w-16 bg-foreground/10 rounded-lg animate-pulse"></div>
-                <span v-else class="text-2xl font-bold text-foreground tabular-nums">{{ (((overall ? overall.totalVolume : stats.totalVolume) || 0) / 1000).toFixed(1) }}</span>
-                <p class="text-xs text-muted/80 mt-0.5">{{ i18n.t('dash_tons_moved') }}</p>
-              </div>
-            </div>
-         </div>
-
-         <!-- Missions Entry Point -->
-         <button
-          type="button"
-          @click="router.push({ name: 'missions', params: { lang: i18n.locale } })"
-          class="card-stats w-full text-left !bg-blue-500/10 hover:!border-blue-500/40 transition-all active:scale-[0.99]"
-         >
-            <div class="flex items-center justify-between">
-              <Target aria-hidden="true" class="w-4 h-4 text-blue-400" />
-              <span v-if="unclaimedMissions > 0" class="px-2 py-0.5 bg-blue-500 text-[10px] font-bold text-white uppercase rounded-full animate-pulse">
-                {{ unclaimedMissions }} {{ i18n.t('missions_available') || 'READY' }}
-              </span>
-            </div>
-            <div class="mt-3">
-              <span class="text-lg font-bold tracking-tight text-foreground">{{ i18n.t('nav_missions') }}</span>
-              <p class="text-xs text-muted/80 mt-0.5">{{ i18n.t('missions_subtitle') }}</p>
-            </div>
-         </button>
       </div>
-    </section>
-
-    <!-- Analytics: activity heatmap / history -->
-    <section class="space-y-4">
-      <div class="flex items-center gap-1 p-1 bg-foreground/[0.04] border border-border/60 rounded-xl w-fit mx-auto">
-        <button
-          @click="activeTab = 'heatmap'"
-          class="px-5 py-2 rounded-lg text-xs font-semibold transition-all"
-          :class="activeTab === 'heatmap' ? 'bg-primary-500 text-white shadow-sm' : 'text-muted hover:text-foreground'"
-        >
-          {{ i18n.t('activity_stream') }}
-        </button>
-        <button
-          @click="activeTab = 'history'"
-          class="px-5 py-2 rounded-lg text-xs font-semibold transition-all"
-          :class="activeTab === 'history' ? 'bg-primary-500 text-white shadow-sm' : 'text-muted hover:text-foreground'"
-        >
-          {{ i18n.t('dash_history_title') }}
-        </button>
-      </div>
-
-      <transition name="fade" mode="out-in">
-        <div v-if="activeTab === 'heatmap'" key="heatmap" class="bg-surface/5 border border-border/60 rounded-2xl p-4 sm:p-6">
-          <!-- Cold start: a new user sees guidance instead of an empty grid -->
-          <div v-if="!isLoading && !totalReps && !heatmapData.length" class="py-10 px-6 text-center">
-            <Flame aria-hidden="true" class="w-10 h-10 mx-auto mb-3 text-muted/30" />
-            <p class="text-sm font-semibold text-foreground">{{ i18n.t('dash_heatmap_empty_title') }}</p>
-            <p class="text-xs text-muted/80 mt-1 max-w-[280px] mx-auto">
-              {{ i18n.t('dash_heatmap_empty_desc') }}
-            </p>
-            <button
-              type="button"
-              @click="scrollToRepsInput"
-              class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-primary-500 hover:bg-primary-400 px-4 py-2 text-xs font-semibold text-white active:scale-95 transition-all"
-            >
-              {{ i18n.t('dash_log_reps_cta') }}
-            </button>
-          </div>
-          <Heatmap
-            v-else
-            :data="heatmapData"
-            :key="`${activeExercise}-${activeYear}`"
-            :loading="isLoading"
-            :selected-year="activeYear"
-            :exercise-label="activeExerciseLabel"
-            class="transition-opacity duration-300"
-            :class="isLoading ? 'opacity-50' : 'opacity-100'"
-          />
-        </div>
-
-        <div v-else key="history" class="bg-surface/5 border border-border/60 rounded-2xl overflow-hidden">
-          <ul v-if="reps.length" class="divide-y divide-border/40">
-            <li
-              v-for="rep in reps"
-              :key="rep.id"
-              class="flex items-center justify-between gap-3 px-4 py-3 sm:px-5 hover:bg-foreground/[0.02] transition-colors"
-            >
-              <div class="min-w-0">
-                <p class="text-sm font-semibold text-foreground tabular-nums">{{ rep.count }} {{ i18n.t('ui_reps') }}</p>
-                <p class="text-xs text-muted/80 mt-0.5">{{ formatDate(rep.date) }}</p>
-              </div>
-              <div v-if="editingId === rep.id" class="flex items-center gap-2 shrink-0">
-                <input v-model.number="editValue" type="number"
-                  class="w-20 bg-surface/60 border border-primary-500/40 rounded-lg px-2 py-1.5 text-right font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary-500/20"
-                  @keyup.enter="saveEdit(rep.id)" />
-                <button
-                  @click="saveEdit(rep.id)"
-                  class="grid place-items-center h-9 w-9 rounded-lg bg-primary-500/15 text-primary-500 active:scale-95 transition-transform"
-                  :aria-label="i18n.t('dash_save')"
-                ><Check aria-hidden="true" class="w-4 h-4" /></button>
-              </div>
-              <div v-else class="flex items-center gap-1 shrink-0">
-                <button
-                  @click="startEdit(rep)"
-                  class="grid place-items-center h-9 w-9 rounded-lg text-muted/60 hover:text-primary-500 hover:bg-foreground/[0.04] active:scale-95 transition-colors"
-                  :aria-label="i18n.t('dash_edit_entry')"
-                ><Pencil aria-hidden="true" class="w-4 h-4" /></button>
-                <button
-                  @click="confirmDelete(rep.id)"
-                  class="grid place-items-center h-9 w-9 rounded-lg text-muted/60 hover:text-red-500 hover:bg-foreground/[0.04] active:scale-95 transition-colors"
-                  :aria-label="i18n.t('dash_delete_entry')"
-                ><Trash2 aria-hidden="true" class="w-4 h-4" /></button>
-              </div>
-            </li>
-          </ul>
-          <div v-else class="py-16 px-6 text-center">
-            <Inbox aria-hidden="true" class="w-10 h-10 mx-auto mb-3 text-muted/30" />
-            <p class="text-sm font-semibold text-foreground">{{ i18n.t('dash_history_empty_title') }}</p>
-            <p class="text-xs text-muted/80 mt-1 max-w-[260px] mx-auto">
-              {{ i18n.t('dash_history_empty_desc') }}
-            </p>
-            <button
-              type="button"
-              @click="scrollToRepsInput"
-              class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-primary-500 hover:bg-primary-400 px-4 py-2 text-xs font-semibold text-white active:scale-95 transition-all"
-            >
-              {{ i18n.t('dash_log_reps_cta') }}
-            </button>
-          </div>
-        </div>
-      </transition>
     </section>
 
     <!-- RPG Release Welcome Modal -->
@@ -770,7 +630,6 @@ import { useTrainingStore } from '@/stores/training';
 import { useBossStore } from '@/stores/boss';
 import { useSkillTreeStore } from '@/stores/skilltree';
 import { useBadgesStore } from '@/stores/badges';
-import Heatmap from '@/components/training/Heatmap.vue';
 import RadialProgress from '@/components/ui/RadialProgress.vue';
 import AvatarFrame from '@/components/ui/AvatarFrame.vue';
 import RepsInput from '@/components/training/RepsInput.vue';
@@ -814,24 +673,18 @@ const router = useRouter();
 const route = useRoute();
 
 const reps = ref([]);
-const heatmapData = ref([]);
 const totalReps = ref(0);
 // Totales de todos los ejercicios (stats.overall); null hasta que llegan.
 const overall = ref(null);
 const activeExercise = ref('pullups');
-const editingId = ref(null);
-const editValue = ref(0);
-const deletingRepIds = ref(new Set());
 const bossHealthRef = ref(null);
 const bossHealthSection = ref(null);
 const isLoading = ref(false);
-const activeYear = ref(new Date().getFullYear());
 const showRPGModal = ref(false);
 const showQuickStartModal = ref(false);
 const showGoalOnboarding = ref(false);
 const showRoutineCarousel = ref(false);
 const showFreeLog = ref(false);
-const activeTab = ref('heatmap');
 const unclaimedMissions = ref(0);
 const highlightRepsInput = ref(false);
 const repsInputSectionMobile = ref(null);
@@ -1493,16 +1346,14 @@ const fetchGlobalData = async () => {
 const fetchExerciseData = async ({ silent = false } = {}) => {
   if (!silent) isLoading.value = true;
   try {
-    const params = { type: activeExercise.value, year: activeYear.value };
+    const params = { type: activeExercise.value };
     const t = Date.now();
-    const [repsRes, heatmapRes, statsRes] = await Promise.all([
+    const [repsRes, statsRes] = await Promise.all([
       axios.get('/api/reps', { params: { ...params, t } }),
-      axios.get('/api/reps/heatmap', { params: { ...params, t } }),
       axios.get('/api/reps/stats', { params: { ...params, today: getLocalDateString(), t } }),
     ]);
 
     reps.value = repsRes.data;
-    heatmapData.value = heatmapRes.data;
     totalReps.value = statsRes.data.totalReps;
     stats.streak = statsRes.data.streak;
     stats.dailyGoal = statsRes.data.dailyGoal || 50;
@@ -1585,30 +1436,6 @@ const fetchData = async ({ skipFetchMine = false } = {}) => {
   }
 };
 
-const formatDate = (dateStr) => {
-  // Use '/' instead of '-' to force local timezone parsing if it's a YYYY-MM-DD string
-  const normalizedDate = typeof dateStr === 'string' ? dateStr.replace(/-/g, '/') : dateStr;
-  return new Date(normalizedDate).toLocaleDateString(undefined, {
-    weekday: 'short', month: 'short', day: 'numeric'
-  });
-};
-
-const startEdit = (rep) => {
-  editingId.value = rep.id;
-  editValue.value = rep.count;
-};
-
-const saveEdit = async (id) => {
-  try {
-    await axios.put(`/api/reps/${id}`, { count: editValue.value });
-    editingId.value = null;
-    notificationStore.notify(i18n.t('dash_entry_updated'), 'success');
-    refreshAfterLog();
-  } catch (err) {
-    notificationStore.notify(i18n.t('dash_update_failed'), 'error');
-  }
-};
-
 // Switching exercise only refetches exercise-scoped data — missions, the guided
 // plan and the streak stay put (they don't depend on the selected exercise).
 watch(activeExercise, () => {
@@ -1621,32 +1448,6 @@ watch(
     handleLogQueryIntent();
   }
 );
-
-const confirmDelete = (id) => {
-  if (deletingRepIds.value.has(id)) return;
-  notificationStore.confirm(
-    i18n.t('dash_delete_title'),
-    i18n.t('dash_delete_confirm'),
-    async () => {
-      try {
-        deletingRepIds.value.add(id);
-        await axios.delete(`/api/reps/${id}`);
-        notificationStore.notify(i18n.t('dash_entry_deleted'), 'success');
-        refreshAfterLog();
-      } catch (err) {
-        if (err?.response?.status === 404) {
-          // Already deleted or stale client state: update UI silently
-          reps.value = reps.value.filter(r => r.id !== id);
-          notificationStore.notify(i18n.t('dash_entry_already_removed'), 'info');
-          return;
-        }
-        notificationStore.notify(i18n.t('dash_delete_failed'), 'error');
-      } finally {
-        deletingRepIds.value.delete(id);
-      }
-    }
-  );
-};
 
 const handleCloseRPGModal = () => {
   showRPGModal.value = false;

@@ -160,6 +160,9 @@
         </div>
       </div>
 
+      <!-- ── HISTORIAL (solo el propio: corregir o borrar el total de un día) ── -->
+      <ActivityHistory v-if="isOwnProfile" />
+
       <!-- ── REFERRAL ── -->
       <div v-if="isOwnProfile" class="rounded-2xl border border-border bg-foreground/[0.02] p-4 space-y-3">
         <p class="text-xs font-semibold text-muted">Invita amigos</p>
@@ -292,6 +295,7 @@ import { useI18nStore } from '@/stores/i18n';
 import { useThemeStore } from '@/stores/theme';
 import { useRouter } from 'vue-router';
 import Heatmap from '@/components/training/Heatmap.vue';
+import ActivityHistory from '@/components/training/ActivityHistory.vue';
 import AvatarFrame from '@/components/ui/AvatarFrame.vue';
 import ExerciseSelector from '@/components/training/ExerciseSelector.vue';
 import CodexModal from '@/components/modals/CodexModal.vue';
