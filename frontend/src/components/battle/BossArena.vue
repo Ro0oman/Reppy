@@ -45,15 +45,22 @@
         <span class="os-label os-label--muted">{{ i18n.t('battle_boss_active') }}</span>
         <span class="os-label os-num">{{ formatNum(currentHp) }} / {{ formatNum(totalHp) }} HP · {{ hpPct }}%</span>
       </div>
-      <div class="os-track" style="height: 16px;">
-        <div class="os-track__fill os-track__fill--danger" :style="{ width: hpPct + '%' }"></div>
-      </div>
+      <BossPhases
+        :current-hp="currentHp"
+        :total-hp="totalHp"
+        :defeated="currentHp <= 0"
+        tone="boss-phases__fill--danger"
+      />
       <!-- Your total damage -->
       <div class="flex items-center justify-center gap-2 pt-0.5">
         <Zap class="h-3.5 w-3.5 text-orange-400" />
         <span class="os-label os-label--muted">{{ i18n.t('battle_total_damage') }}</span>
         <span class="os-arena-damage os-num">{{ formatNum(personalDamage) }}</span>
       </div>
+      <p class="text-center text-xs font-medium text-muted">
+        <template v-if="personalDamage > 0">{{ i18n.t('boss_share', { pct: personalSharePct }) }}</template>
+        <template v-else>{{ i18n.t('boss_share_none') }}</template>
+      </p>
     </div>
   </div>
 </template>
@@ -62,6 +69,7 @@
 import { ref, computed } from 'vue';
 import { Trophy, Users, Zap } from 'lucide-vue-next';
 import { useI18nStore } from '@/stores/i18n';
+import BossPhases from '@/components/boss/BossPhases.vue';
 
 const props = defineProps({
   boss: { type: Object, default: null },
@@ -119,6 +127,14 @@ const playDamaged = () => {
 const currentHp = computed(() => Math.max(0, props.boss?.current_hp || 0));
 const totalHp = computed(() => Math.max(1, props.boss?.total_hp || 1));
 const hpPct = computed(() => Math.min(100, Math.max(0, Math.round((currentHp.value / totalHp.value) * 100))));
+
+// Qué parte del daño total del jefe has puesto tú (un decimal por debajo del 10 %).
+const personalSharePct = computed(() => {
+  if (!props.personalDamage) return '0';
+  const pct = (props.personalDamage / totalHp.value) * 100;
+  const text = pct < 10 ? pct.toFixed(1) : String(Math.round(pct));
+  return text.replace('.', i18n.locale === 'es' ? ',' : '.');
+});
 
 const formatNum = (n) => new Intl.NumberFormat('en-US').format(Math.round(n || 0));
 
