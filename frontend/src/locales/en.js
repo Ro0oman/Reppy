@@ -1657,5 +1657,14 @@ export default {
     goal_created: 'Guided mission created',
     goal_select_err: 'Plan could not be selected',
     goal_close: 'Close',
+    dock_shop: 'Shop',
+    dock_inventory: 'Inventory',
+    dock_train: 'Train',
+    dock_social: 'Social',
+    dock_profile: 'Profile',
+    dock_admin: 'Admin',
+    wheels_title: 'Wheels',
+    wheels_quick: '4-hour wheel',
+    wheels_ready: 'Ready to spin',
 };
 

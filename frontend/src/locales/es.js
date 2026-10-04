@@ -1718,5 +1718,14 @@ export default {
     goal_created: 'Misión guiada creada',
     goal_select_err: 'No se pudo elegir el plan',
     goal_close: 'Cerrar',
+    dock_shop: 'Tienda',
+    dock_inventory: 'Inventario',
+    dock_train: 'Entrenar',
+    dock_social: 'Social',
+    dock_profile: 'Perfil',
+    dock_admin: 'Admin',
+    wheels_title: 'Ruletas',
+    wheels_quick: 'Ruleta de 4 horas',
+    wheels_ready: 'Lista para girar',
 };
 
