@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { query } from './db.js';
 import { ensureUsername } from './utils/username.js';
+import { createNotification } from './utils/notifications.js';
 import { loginLimiter, signupLimiter, oauthLimiter } from './utils/rateLimiters.js';
 
 const router = express.Router();
@@ -47,6 +48,25 @@ const applyReferral = async (newUserId, referralCode) => {
     "INSERT INTO gem_transactions (user_id, amount, source, description) VALUES ($1, 50, 'referral_welcome', 'Bono de bienvenida por referral')",
     [newUserId]
   );
+  try {
+    // Quien invita y quien llega pasan a ser amigos, y el invitador se entera.
+    const friendRes = await query(
+      `INSERT INTO friendships (user_id_1, user_id_2)
+       SELECT $1::varchar, $2::varchar
+       WHERE NOT EXISTS (
+         SELECT 1 FROM friendships
+         WHERE (user_id_1 = $1 AND user_id_2 = $2) OR (user_id_1 = $2 AND user_id_2 = $1)
+       )
+       RETURNING id`,
+      [referrerId, newUserId]
+    );
+    if (friendRes.rowCount > 0) {
+      await createNotification(referrerId, 'FRIEND_ADDED', newUserId, 'se ha unido con tu invitación y ya sois amigos');
+    }
+  } catch (err) {
+    // La amistad es un extra: no debe tumbar el alta.
+    console.error('[referral] no se pudo crear la amistad:', err.message);
+  }
 };
 
 // Google Login
