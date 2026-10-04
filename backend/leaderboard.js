@@ -43,9 +43,9 @@ router.get('/global', async (req, res) => {
       FROM users u
       LEFT JOIN reps r ON u.id = r.user_id ${typeFilter} ${dateFilter}
       LEFT JOIN exercises e ON e.slug = r.exercise_type
-      LEFT JOIN cosmetics t ON u.equipped_title_id = t.id
-      LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
-      LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
+      LEFT JOIN items t ON u.equipped_title_id = t.id
+      LEFT JOIN items b ON u.equipped_border_id = b.id
+      LEFT JOIN items a ON u.equipped_avatar_id = a.id
       WHERE u.is_private = false
       GROUP BY u.id, u.name, u.avatar_url, u.reppy_coins, t.name, t.css_value, b.css_value, a.css_value, u.current_level
       HAVING COALESCE(${repsExpr}, 0) > 0
@@ -97,9 +97,9 @@ router.get('/friends', authenticate, async (req, res) => {
       FROM users u
       LEFT JOIN reps r ON u.id = r.user_id ${typeFilter} ${dateFilter}
       LEFT JOIN exercises e ON e.slug = r.exercise_type
-      LEFT JOIN cosmetics t ON u.equipped_title_id = t.id
-      LEFT JOIN cosmetics b ON u.equipped_border_id = b.id
-      LEFT JOIN cosmetics a ON u.equipped_avatar_id = a.id
+      LEFT JOIN items t ON u.equipped_title_id = t.id
+      LEFT JOIN items b ON u.equipped_border_id = b.id
+      LEFT JOIN items a ON u.equipped_avatar_id = a.id
       WHERE u.id = $1 OR u.id IN (
         SELECT user_id_1 FROM friendships WHERE user_id_2 = $1
         UNION
