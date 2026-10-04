@@ -88,6 +88,7 @@ router.post('/google', oauthLimiter, async (req, res) => {
 
     let userResult = await query('SELECT * FROM users WHERE id = $1', [sub]);
     let user = userResult.rows[0];
+    const isNewUser = !user;
 
     if (!user) {
       const refCode = generateReferralCode();
@@ -114,6 +115,8 @@ router.post('/google', oauthLimiter, async (req, res) => {
 
     res.json({
       token: sessionToken,
+      // Lo usa el cliente para medir el alta (evento `signup` de GA4) también con Google.
+      is_new_user: isNewUser,
       user: {
         id: user.id,
         name: user.name,

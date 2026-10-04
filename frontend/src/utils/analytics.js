@@ -52,7 +52,7 @@ export function trackDay2Return() {
 /**
  * Central funnel instrumentation via a single axios response interceptor —
  * catches these actions no matter which component triggers them:
- *   signup       → POST /auth/signup
+ *   signup       → POST /auth/signup, o POST /auth/google si crea cuenta (is_new_user)
  *   first_log    → first successful POST /reps (once per browser)
  *   spin         → POST /roulette/(daily-)spin | buy-and-spin
  *   push_enabled → POST /push/subscribe
@@ -67,6 +67,9 @@ export function initFunnelTracking() {
         if (method === 'post') {
           if (/\/auth\/signup$/.test(url)) {
             trackEvent('signup', { method: 'password' });
+          } else if (/\/auth\/google$/.test(url)) {
+            // El login y el alta con Google comparten endpoint: solo cuenta el alta.
+            if (response.data?.is_new_user) trackEvent('signup', { method: 'google' });
           } else if (/\/reps\/?$/.test(url)) {
             trackEventOnce('first_log');
           } else if (/\/roulette\/(daily-spin|spin|buy-and-spin)$/.test(url)) {
