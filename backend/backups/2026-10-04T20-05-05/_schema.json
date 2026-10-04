@@ -1,0 +1,7159 @@
+{
+ "columns": [
+  {
+   "table_name": "async_challenges",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('async_challenges_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "async_challenges",
+   "column_name": "challenger_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "async_challenges",
+   "column_name": "challenged_id",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "async_challenges",
+   "column_name": "goal_type",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": "'reps'::character varying",
+   "character_maximum_length": 20
+  },
+  {
+   "table_name": "async_challenges",
+   "column_name": "goal_value",
+   "ordinal_position": 5,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "100",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "async_challenges",
+   "column_name": "challenger_score",
+   "ordinal_position": 6,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "async_challenges",
+   "column_name": "challenged_score",
+   "ordinal_position": 7,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "async_challenges",
+   "column_name": "status",
+   "ordinal_position": 8,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": "'pending'::character varying",
+   "character_maximum_length": 20
+  },
+  {
+   "table_name": "async_challenges",
+   "column_name": "winner_id",
+   "ordinal_position": 9,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "async_challenges",
+   "column_name": "reward_coins",
+   "ordinal_position": 10,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "75",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "async_challenges",
+   "column_name": "created_at",
+   "ordinal_position": 11,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "NO",
+   "column_default": "now()",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "async_challenges",
+   "column_name": "expires_at",
+   "ordinal_position": 12,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "async_challenges",
+   "column_name": "resolved_at",
+   "ordinal_position": 13,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "async_challenges",
+   "column_name": "reward_gems",
+   "ordinal_position": 14,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "1",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('boss_fights_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "name",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "description",
+   "ordinal_position": 3,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "total_hp",
+   "ordinal_position": 4,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "current_hp",
+   "ordinal_position": 5,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "start_date",
+   "ordinal_position": 6,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "end_date",
+   "ordinal_position": 7,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "status",
+   "ordinal_position": 8,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'active'::character varying",
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "tier1_chest_unlocked",
+   "ordinal_position": 9,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "tier2_chest_unlocked",
+   "ordinal_position": 10,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "tier3_chest_unlocked",
+   "ordinal_position": 11,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "created_at",
+   "ordinal_position": 12,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "image_url",
+   "ordinal_position": 13,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "order_index",
+   "ordinal_position": 14,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "weakness_stat",
+   "ordinal_position": 15,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'str'::character varying",
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "is_legendary",
+   "ordinal_position": 16,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "is_epic",
+   "ordinal_position": 17,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "last_hit_user_id",
+   "ordinal_position": 18,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "boss_gif",
+   "ordinal_position": 19,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "boss_damaged",
+   "ordinal_position": 20,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_fights",
+   "column_name": "campaign_node_id",
+   "ordinal_position": 21,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_kill_posts",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('boss_kill_posts_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_kill_posts",
+   "column_name": "boss_fight_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_kill_posts",
+   "column_name": "boss_name",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "boss_kill_posts",
+   "column_name": "boss_image",
+   "ordinal_position": 4,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_kill_posts",
+   "column_name": "killer_user_id",
+   "ordinal_position": 5,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "boss_kill_posts",
+   "column_name": "killer_name",
+   "ordinal_position": 6,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "boss_kill_posts",
+   "column_name": "top3",
+   "ordinal_position": 7,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "YES",
+   "column_default": "'[]'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "boss_kill_posts",
+   "column_name": "created_at",
+   "ordinal_position": 8,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_edges",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('campaign_edges_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_edges",
+   "column_name": "from_node_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_edges",
+   "column_name": "to_node_id",
+   "ordinal_position": 3,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_edges",
+   "column_name": "kind",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'main'::character varying",
+   "character_maximum_length": 10
+  },
+  {
+   "table_name": "campaign_nodes",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('campaign_nodes_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_nodes",
+   "column_name": "zone_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_nodes",
+   "column_name": "slug",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 80
+  },
+  {
+   "table_name": "campaign_nodes",
+   "column_name": "type",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": "'combat'::character varying",
+   "character_maximum_length": 20
+  },
+  {
+   "table_name": "campaign_nodes",
+   "column_name": "enemy_type_id",
+   "ordinal_position": 5,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_nodes",
+   "column_name": "pack",
+   "ordinal_position": 6,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_nodes",
+   "column_name": "npc_id",
+   "ordinal_position": 7,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_nodes",
+   "column_name": "map_x",
+   "ordinal_position": 8,
+   "data_type": "real",
+   "udt_name": "float4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_nodes",
+   "column_name": "map_y",
+   "ordinal_position": 9,
+   "data_type": "real",
+   "udt_name": "float4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_nodes",
+   "column_name": "requires",
+   "ordinal_position": 10,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_nodes",
+   "column_name": "rewards",
+   "ordinal_position": 11,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_runs",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('campaign_runs_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_runs",
+   "column_name": "user_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "campaign_runs",
+   "column_name": "campaign_id",
+   "ordinal_position": 3,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_runs",
+   "column_name": "prestige_level",
+   "ordinal_position": 4,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_runs",
+   "column_name": "path",
+   "ordinal_position": 5,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 10
+  },
+  {
+   "table_name": "campaign_runs",
+   "column_name": "status",
+   "ordinal_position": 6,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'active'::character varying",
+   "character_maximum_length": 20
+  },
+  {
+   "table_name": "campaign_runs",
+   "column_name": "started_at",
+   "ordinal_position": 7,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_runs",
+   "column_name": "completed_at",
+   "ordinal_position": 8,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_zones",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('campaign_zones_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_zones",
+   "column_name": "campaign_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_zones",
+   "column_name": "slug",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 80
+  },
+  {
+   "table_name": "campaign_zones",
+   "column_name": "act",
+   "ordinal_position": 4,
+   "data_type": "smallint",
+   "udt_name": "int2",
+   "is_nullable": "YES",
+   "column_default": "1",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_zones",
+   "column_name": "name",
+   "ordinal_position": 5,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_zones",
+   "column_name": "theme",
+   "ordinal_position": 6,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "campaign_zones",
+   "column_name": "order_index",
+   "ordinal_position": 7,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_zones",
+   "column_name": "path_required",
+   "ordinal_position": 8,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 10
+  },
+  {
+   "table_name": "campaign_zones",
+   "column_name": "art",
+   "ordinal_position": 9,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaign_zones",
+   "column_name": "config",
+   "ordinal_position": 10,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaigns",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('campaigns_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaigns",
+   "column_name": "slug",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 80
+  },
+  {
+   "table_name": "campaigns",
+   "column_name": "name",
+   "ordinal_position": 3,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaigns",
+   "column_name": "description",
+   "ordinal_position": 4,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaigns",
+   "column_name": "status",
+   "ordinal_position": 5,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'draft'::character varying",
+   "character_maximum_length": 20
+  },
+  {
+   "table_name": "campaigns",
+   "column_name": "config",
+   "ordinal_position": 6,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaigns",
+   "column_name": "version",
+   "ordinal_position": 7,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "1",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "campaigns",
+   "column_name": "created_at",
+   "ordinal_position": 8,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "coin_transactions",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('coin_transactions_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "coin_transactions",
+   "column_name": "user_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "coin_transactions",
+   "column_name": "amount",
+   "ordinal_position": 3,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "coin_transactions",
+   "column_name": "source",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "coin_transactions",
+   "column_name": "description",
+   "ordinal_position": 5,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "coin_transactions",
+   "column_name": "created_at",
+   "ordinal_position": 6,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "cosmeticos",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('cosmeticos_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "cosmeticos",
+   "column_name": "name",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "cosmeticos",
+   "column_name": "description",
+   "ordinal_position": 3,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "cosmeticos",
+   "column_name": "type",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "cosmeticos",
+   "column_name": "rarity",
+   "ordinal_position": 5,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'common'::character varying",
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "cosmeticos",
+   "column_name": "price",
+   "ordinal_position": 6,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "cosmeticos",
+   "column_name": "css_value",
+   "ordinal_position": 7,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "cosmeticos",
+   "column_name": "image_url",
+   "ordinal_position": 8,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "cosmeticos",
+   "column_name": "created_at",
+   "ordinal_position": 9,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "cosmetics",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('cosmetics_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "cosmetics",
+   "column_name": "name",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "cosmetics",
+   "column_name": "description",
+   "ordinal_position": 3,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "cosmetics",
+   "column_name": "type",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "cosmetics",
+   "column_name": "price",
+   "ordinal_position": 5,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "cosmetics",
+   "column_name": "css_value",
+   "ordinal_position": 6,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "cosmetics",
+   "column_name": "created_at",
+   "ordinal_position": 7,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "cosmetics",
+   "column_name": "is_seasonal",
+   "ordinal_position": 8,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "cosmetics",
+   "column_name": "rarity",
+   "ordinal_position": 9,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'common'::character varying",
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "cosmetics",
+   "column_name": "bundle_items",
+   "ordinal_position": 10,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "cosmetics",
+   "column_name": "original_price",
+   "ordinal_position": 11,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "cosmetics",
+   "column_name": "price_gems",
+   "ordinal_position": 12,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "daily_shop_items",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('daily_shop_items_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "daily_shop_items",
+   "column_name": "item_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "daily_shop_items",
+   "column_name": "discounted_price",
+   "ordinal_position": 3,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "daily_shop_items",
+   "column_name": "discounted_gems",
+   "ordinal_position": 4,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "daily_shop_items",
+   "column_name": "is_seasonal_deal",
+   "ordinal_position": 5,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "daily_shop_items",
+   "column_name": "rotated_at",
+   "ordinal_position": 6,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "daily_shop_items",
+   "column_name": "user_id",
+   "ordinal_position": 7,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "daily_shop_items",
+   "column_name": "reward_type",
+   "ordinal_position": 8,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "daily_shop_items",
+   "column_name": "reward_amount",
+   "ordinal_position": 9,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "daily_shop_items",
+   "column_name": "is_claimed",
+   "ordinal_position": 10,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "daily_summaries",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('daily_summaries_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "daily_summaries",
+   "column_name": "user_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "daily_summaries",
+   "column_name": "date",
+   "ordinal_position": 3,
+   "data_type": "date",
+   "udt_name": "date",
+   "is_nullable": "NO",
+   "column_default": "CURRENT_DATE",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "daily_summaries",
+   "column_name": "title",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "daily_summaries",
+   "column_name": "description",
+   "ordinal_position": 5,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "daily_summaries",
+   "column_name": "created_at",
+   "ordinal_position": 6,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "enemy_types",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('enemy_types_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "enemy_types",
+   "column_name": "campaign_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "enemy_types",
+   "column_name": "slug",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 80
+  },
+  {
+   "table_name": "enemy_types",
+   "column_name": "family",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "enemy_types",
+   "column_name": "tier",
+   "ordinal_position": 5,
+   "data_type": "smallint",
+   "udt_name": "int2",
+   "is_nullable": "YES",
+   "column_default": "1",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "enemy_types",
+   "column_name": "name",
+   "ordinal_position": 6,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "enemy_types",
+   "column_name": "description",
+   "ordinal_position": 7,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "enemy_types",
+   "column_name": "base_hp",
+   "ordinal_position": 8,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "1000",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "enemy_types",
+   "column_name": "weakness_stat",
+   "ordinal_position": 9,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 10
+  },
+  {
+   "table_name": "enemy_types",
+   "column_name": "resist_stat",
+   "ordinal_position": 10,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 10
+  },
+  {
+   "table_name": "enemy_types",
+   "column_name": "scaling",
+   "ordinal_position": 11,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "enemy_types",
+   "column_name": "loot",
+   "ordinal_position": 12,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "enemy_types",
+   "column_name": "art",
+   "ordinal_position": 13,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "enemy_types",
+   "column_name": "created_at",
+   "ordinal_position": 14,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "event_participants",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('event_participants_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "event_participants",
+   "column_name": "boss_fight_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "event_participants",
+   "column_name": "user_id",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "event_participants",
+   "column_name": "damage_dealt",
+   "ordinal_position": 4,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "event_participants",
+   "column_name": "chests_claimed",
+   "ordinal_position": 5,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "event_participants",
+   "column_name": "joined_at",
+   "ordinal_position": 6,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "exercises",
+   "column_name": "slug",
+   "ordinal_position": 1,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 80
+  },
+  {
+   "table_name": "exercises",
+   "column_name": "title_key",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 120
+  },
+  {
+   "table_name": "exercises",
+   "column_name": "description_key",
+   "ordinal_position": 3,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "exercises",
+   "column_name": "technique_key",
+   "ordinal_position": 4,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "exercises",
+   "column_name": "unit",
+   "ordinal_position": 5,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'reps'::character varying",
+   "character_maximum_length": 20
+  },
+  {
+   "table_name": "exercises",
+   "column_name": "difficulty_multiplier",
+   "ordinal_position": 6,
+   "data_type": "numeric",
+   "udt_name": "numeric",
+   "is_nullable": "YES",
+   "column_default": "1.0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "exercises",
+   "column_name": "coin_multiplier",
+   "ordinal_position": 7,
+   "data_type": "numeric",
+   "udt_name": "numeric",
+   "is_nullable": "YES",
+   "column_default": "1.0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "exercises",
+   "column_name": "is_active",
+   "ordinal_position": 8,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "true",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "exercises",
+   "column_name": "image_url",
+   "ordinal_position": 9,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "exercises",
+   "column_name": "stat_type",
+   "ordinal_position": 10,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'end_xp'::character varying",
+   "character_maximum_length": 20
+  },
+  {
+   "table_name": "exercises",
+   "column_name": "primary_muscle_group",
+   "ordinal_position": 11,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "friendships",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('friendships_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "friendships",
+   "column_name": "user_id_1",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "friendships",
+   "column_name": "user_id_2",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "friendships",
+   "column_name": "status",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'accepted'::character varying",
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "friendships",
+   "column_name": "created_at",
+   "ordinal_position": 5,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "gem_transactions",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('gem_transactions_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "gem_transactions",
+   "column_name": "user_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "gem_transactions",
+   "column_name": "amount",
+   "ordinal_position": 3,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "gem_transactions",
+   "column_name": "source",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "gem_transactions",
+   "column_name": "description",
+   "ordinal_position": 5,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "gem_transactions",
+   "column_name": "created_at",
+   "ordinal_position": 6,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "hevy_exercise_map",
+   "column_name": "hevy_template_id",
+   "ordinal_position": 1,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 64
+  },
+  {
+   "table_name": "hevy_exercise_map",
+   "column_name": "reppy_exercise_type",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 80
+  },
+  {
+   "table_name": "hevy_exercise_map",
+   "column_name": "is_weighted",
+   "ordinal_position": 3,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "hevy_imported_workouts",
+   "column_name": "hevy_workout_id",
+   "ordinal_position": 1,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 64
+  },
+  {
+   "table_name": "hevy_imported_workouts",
+   "column_name": "user_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "hevy_imported_workouts",
+   "column_name": "imported_at",
+   "ordinal_position": 3,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "now()",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "hevy_imported_workouts",
+   "column_name": "workout_date",
+   "ordinal_position": 4,
+   "data_type": "date",
+   "udt_name": "date",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "hevy_imported_workouts",
+   "column_name": "volume_kg",
+   "ordinal_position": 5,
+   "data_type": "bigint",
+   "udt_name": "int8",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "hevy_imported_workouts",
+   "column_name": "counts",
+   "ordinal_position": 6,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "items",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('items_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "items",
+   "column_name": "name",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "items",
+   "column_name": "description",
+   "ordinal_position": 3,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "items",
+   "column_name": "type",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "items",
+   "column_name": "rarity",
+   "ordinal_position": 5,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'common'::character varying",
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "items",
+   "column_name": "stats",
+   "ordinal_position": 6,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "YES",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "items",
+   "column_name": "image_url",
+   "ordinal_position": 7,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "items",
+   "column_name": "css_value",
+   "ordinal_position": 8,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "items",
+   "column_name": "created_at",
+   "ordinal_position": 9,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "items",
+   "column_name": "price",
+   "ordinal_position": 10,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "items",
+   "column_name": "is_seasonal",
+   "ordinal_position": 11,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "items",
+   "column_name": "bundle_items",
+   "ordinal_position": 12,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "items",
+   "column_name": "svg_key",
+   "ordinal_position": 13,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "items",
+   "column_name": "original_price",
+   "ordinal_position": 14,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "items",
+   "column_name": "is_customizable",
+   "ordinal_position": 15,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "items",
+   "column_name": "price_gems",
+   "ordinal_position": 16,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "items",
+   "column_name": "is_exclusive",
+   "ordinal_position": 17,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "missions",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('missions_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "missions",
+   "column_name": "title_key",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 100
+  },
+  {
+   "table_name": "missions",
+   "column_name": "description_key",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 100
+  },
+  {
+   "table_name": "missions",
+   "column_name": "goal_type",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "missions",
+   "column_name": "goal_value",
+   "ordinal_position": 5,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "missions",
+   "column_name": "reward_xp",
+   "ordinal_position": 6,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "missions",
+   "column_name": "reward_gems",
+   "ordinal_position": 7,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "missions",
+   "column_name": "reward_coins",
+   "ordinal_position": 8,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "missions",
+   "column_name": "is_daily",
+   "ordinal_position": 9,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "true",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "missions",
+   "column_name": "created_at",
+   "ordinal_position": 10,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "missions",
+   "column_name": "is_active",
+   "ordinal_position": 11,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "true",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "missions",
+   "column_name": "tier",
+   "ordinal_position": 12,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "1",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "notifications",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('notifications_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "notifications",
+   "column_name": "user_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "notifications",
+   "column_name": "type",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "notifications",
+   "column_name": "actor_id",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "notifications",
+   "column_name": "content",
+   "ordinal_position": 5,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "notifications",
+   "column_name": "target_id",
+   "ordinal_position": 6,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "notifications",
+   "column_name": "is_read",
+   "ordinal_position": 7,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "notifications",
+   "column_name": "created_at",
+   "ordinal_position": 8,
+   "data_type": "timestamp without time zone",
+   "udt_name": "timestamp",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "notifications",
+   "column_name": "target_user_id",
+   "ordinal_position": 9,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "npc_quests",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('npc_quests_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "npc_quests",
+   "column_name": "npc_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "npc_quests",
+   "column_name": "slug",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 80
+  },
+  {
+   "table_name": "npc_quests",
+   "column_name": "chain_slug",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 80
+  },
+  {
+   "table_name": "npc_quests",
+   "column_name": "chain_step",
+   "ordinal_position": 5,
+   "data_type": "smallint",
+   "udt_name": "int2",
+   "is_nullable": "YES",
+   "column_default": "1",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "npc_quests",
+   "column_name": "name",
+   "ordinal_position": 6,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "npc_quests",
+   "column_name": "description",
+   "ordinal_position": 7,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "npc_quests",
+   "column_name": "objective",
+   "ordinal_position": 8,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "npc_quests",
+   "column_name": "time_limit_hours",
+   "ordinal_position": 9,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "npc_quests",
+   "column_name": "path_required",
+   "ordinal_position": 10,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 10
+  },
+  {
+   "table_name": "npc_quests",
+   "column_name": "rewards",
+   "ordinal_position": 11,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "npc_quests",
+   "column_name": "penalty",
+   "ordinal_position": 12,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "npc_quests",
+   "column_name": "requires_quest_slug",
+   "ordinal_position": 13,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 80
+  },
+  {
+   "table_name": "npcs",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('npcs_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "npcs",
+   "column_name": "campaign_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "npcs",
+   "column_name": "slug",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 80
+  },
+  {
+   "table_name": "npcs",
+   "column_name": "name",
+   "ordinal_position": 4,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "npcs",
+   "column_name": "faction",
+   "ordinal_position": 5,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'neutral'::character varying",
+   "character_maximum_length": 20
+  },
+  {
+   "table_name": "npcs",
+   "column_name": "art",
+   "ordinal_position": 6,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "npcs",
+   "column_name": "dialogue",
+   "ordinal_position": 7,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "NO",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "npcs",
+   "column_name": "created_at",
+   "ordinal_position": 8,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "push_subscriptions",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('push_subscriptions_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "push_subscriptions",
+   "column_name": "user_id",
+   "ordinal_position": 2,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "push_subscriptions",
+   "column_name": "subscription_json",
+   "ordinal_position": 3,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "push_subscriptions",
+   "column_name": "created_at",
+   "ordinal_position": 4,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "push_subscriptions",
+   "column_name": "last_used",
+   "ordinal_position": 5,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_events",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('pvp_events_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_events",
+   "column_name": "fight_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_events",
+   "column_name": "user_id",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "pvp_events",
+   "column_name": "type",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "pvp_events",
+   "column_name": "payload",
+   "ordinal_position": 5,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_events",
+   "column_name": "created_at",
+   "ordinal_position": 6,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('pvp_fights_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "challenger_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "challenged_id",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "status",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'pending'::character varying",
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "hp1",
+   "ordinal_position": 5,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "hp2",
+   "ordinal_position": 6,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "max_hp",
+   "ordinal_position": 7,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "5000",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "time_limit",
+   "ordinal_position": 8,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "60",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "battlefield",
+   "ordinal_position": 9,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": "'default'::character varying",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "allowed_exercises",
+   "ordinal_position": 10,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "YES",
+   "column_default": "'[\"pullups\", \"pushups\", \"dips\"]'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "winner_id",
+   "ordinal_position": 11,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "damage1",
+   "ordinal_position": 12,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "damage2",
+   "ordinal_position": 13,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "anticheat_enabled",
+   "ordinal_position": 14,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "true",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "created_at",
+   "ordinal_position": 15,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "started_at",
+   "ordinal_position": 16,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "ended_at",
+   "ordinal_position": 17,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "state",
+   "ordinal_position": 18,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "YES",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "seed",
+   "ordinal_position": 19,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "set_count1",
+   "ordinal_position": 20,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "pvp_fights",
+   "column_name": "set_count2",
+   "ordinal_position": 21,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "reps",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('reps_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "reps",
+   "column_name": "user_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "reps",
+   "column_name": "count",
+   "ordinal_position": 3,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "reps",
+   "column_name": "date",
+   "ordinal_position": 4,
+   "data_type": "date",
+   "udt_name": "date",
+   "is_nullable": "NO",
+   "column_default": "CURRENT_DATE",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "reps",
+   "column_name": "created_at",
+   "ordinal_position": 5,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "reps",
+   "column_name": "exercise_type",
+   "ordinal_position": 6,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'pullups'::character varying",
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "reps",
+   "column_name": "added_weight",
+   "ordinal_position": 7,
+   "data_type": "numeric",
+   "udt_name": "numeric",
+   "is_nullable": "YES",
+   "column_default": "0.0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "reps",
+   "column_name": "boss_damage_dealt",
+   "ordinal_position": 8,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "reps",
+   "column_name": "active_multiplier",
+   "ordinal_position": 9,
+   "data_type": "numeric",
+   "udt_name": "numeric",
+   "is_nullable": "YES",
+   "column_default": "1.0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "reps",
+   "column_name": "base_damage",
+   "ordinal_position": 10,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "reps",
+   "column_name": "gear_bonus",
+   "ordinal_position": 11,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "reps",
+   "column_name": "buff_bonus",
+   "ordinal_position": 12,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "reps",
+   "column_name": "boss_fight_id",
+   "ordinal_position": 13,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "reps",
+   "column_name": "is_crit",
+   "ordinal_position": 14,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "routine_exercises",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('routine_exercises_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "routine_exercises",
+   "column_name": "routine_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "routine_exercises",
+   "column_name": "exercise_id",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "routine_exercises",
+   "column_name": "display_order",
+   "ordinal_position": 4,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "routines",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('routines_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "routines",
+   "column_name": "user_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "routines",
+   "column_name": "name",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "routines",
+   "column_name": "description",
+   "ordinal_position": 4,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "routines",
+   "column_name": "created_at",
+   "ordinal_position": 5,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "social_xp_rewards",
+   "column_name": "user_id",
+   "ordinal_position": 1,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "social_xp_rewards",
+   "column_name": "summary_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "social_xp_rewards",
+   "column_name": "action_type",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "social_xp_rewards",
+   "column_name": "created_at",
+   "ordinal_position": 4,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "streak_freezes",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('streak_freezes_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "streak_freezes",
+   "column_name": "user_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "streak_freezes",
+   "column_name": "freeze_date",
+   "ordinal_position": 3,
+   "data_type": "date",
+   "udt_name": "date",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "streak_freezes",
+   "column_name": "spent_coins",
+   "ordinal_position": 4,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "250",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "streak_freezes",
+   "column_name": "created_at",
+   "ordinal_position": 5,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "streak_freezes",
+   "column_name": "is_rest_day",
+   "ordinal_position": 6,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "summary_comment_subscribers",
+   "column_name": "summary_id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "summary_comment_subscribers",
+   "column_name": "user_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "summary_comment_subscribers",
+   "column_name": "created_at",
+   "ordinal_position": 3,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "summary_interactions",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('summary_interactions_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "summary_interactions",
+   "column_name": "summary_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "summary_interactions",
+   "column_name": "user_id",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "summary_interactions",
+   "column_name": "type",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "summary_interactions",
+   "column_name": "content",
+   "ordinal_position": 5,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "summary_interactions",
+   "column_name": "created_at",
+   "ordinal_position": 6,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "training_plan_blocks",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('training_plan_blocks_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "training_plan_blocks",
+   "column_name": "plan_day_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "training_plan_blocks",
+   "column_name": "order_index",
+   "ordinal_position": 3,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "training_plan_blocks",
+   "column_name": "block_type",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 40
+  },
+  {
+   "table_name": "training_plan_blocks",
+   "column_name": "title",
+   "ordinal_position": 5,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 120
+  },
+  {
+   "table_name": "training_plan_blocks",
+   "column_name": "instructions",
+   "ordinal_position": 6,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "training_plan_blocks",
+   "column_name": "exercise_type",
+   "ordinal_position": 7,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "training_plan_blocks",
+   "column_name": "target_sets",
+   "ordinal_position": 8,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "1",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "training_plan_blocks",
+   "column_name": "target_reps",
+   "ordinal_position": 9,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "1",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "training_plan_blocks",
+   "column_name": "rest_seconds",
+   "ordinal_position": 10,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "60",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "training_plan_days",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('training_plan_days_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "training_plan_days",
+   "column_name": "plan_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "training_plan_days",
+   "column_name": "day_number",
+   "ordinal_position": 3,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "training_plan_days",
+   "column_name": "title_key",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 120
+  },
+  {
+   "table_name": "training_plan_days",
+   "column_name": "focus",
+   "ordinal_position": 5,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 80
+  },
+  {
+   "table_name": "training_plan_days",
+   "column_name": "estimated_minutes",
+   "ordinal_position": 6,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "12",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "training_plan_days",
+   "column_name": "reward_xp",
+   "ordinal_position": 7,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "100",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "training_plan_days",
+   "column_name": "reward_coins",
+   "ordinal_position": 8,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "50",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "training_plans",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('training_plans_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "training_plans",
+   "column_name": "slug",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 80
+  },
+  {
+   "table_name": "training_plans",
+   "column_name": "title_key",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 120
+  },
+  {
+   "table_name": "training_plans",
+   "column_name": "description_key",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 120
+  },
+  {
+   "table_name": "training_plans",
+   "column_name": "goal_type",
+   "ordinal_position": 5,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 80
+  },
+  {
+   "table_name": "training_plans",
+   "column_name": "duration_days",
+   "ordinal_position": 6,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "training_plans",
+   "column_name": "difficulty",
+   "ordinal_position": 7,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'beginner'::character varying",
+   "character_maximum_length": 40
+  },
+  {
+   "table_name": "training_plans",
+   "column_name": "is_active",
+   "ordinal_position": 8,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "true",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "training_plans",
+   "column_name": "owner_user_id",
+   "ordinal_position": 9,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "training_plans",
+   "column_name": "is_custom",
+   "ordinal_position": 10,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_active_plans",
+   "column_name": "user_id",
+   "ordinal_position": 1,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "user_active_plans",
+   "column_name": "plan_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_active_plans",
+   "column_name": "started_at",
+   "ordinal_position": 3,
+   "data_type": "date",
+   "udt_name": "date",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_DATE",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_active_plans",
+   "column_name": "current_day",
+   "ordinal_position": 4,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "1",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_active_plans",
+   "column_name": "days_per_week",
+   "ordinal_position": 5,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "3",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_active_plans",
+   "column_name": "baseline",
+   "ordinal_position": 6,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "YES",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_active_plans",
+   "column_name": "equipment",
+   "ordinal_position": 7,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "YES",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_active_plans",
+   "column_name": "status",
+   "ordinal_position": 8,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'active'::character varying",
+   "character_maximum_length": 30
+  },
+  {
+   "table_name": "user_active_plans",
+   "column_name": "last_completed_date",
+   "ordinal_position": 9,
+   "data_type": "date",
+   "udt_name": "date",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_active_plans",
+   "column_name": "last_completed_day",
+   "ordinal_position": 10,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_bestiary",
+   "column_name": "user_id",
+   "ordinal_position": 1,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "user_bestiary",
+   "column_name": "enemy_type_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_bestiary",
+   "column_name": "kills",
+   "ordinal_position": 3,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_bestiary",
+   "column_name": "first_kill_at",
+   "ordinal_position": 4,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_cosmeticos",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('user_cosmeticos_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_cosmeticos",
+   "column_name": "user_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "user_cosmeticos",
+   "column_name": "cosmetico_id",
+   "ordinal_position": 3,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_cosmeticos",
+   "column_name": "is_new",
+   "ordinal_position": 4,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "true",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_cosmeticos",
+   "column_name": "acquired_at",
+   "ordinal_position": 5,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_favorite_exercises",
+   "column_name": "user_id",
+   "ordinal_position": 1,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "user_favorite_exercises",
+   "column_name": "exercise_slug",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 80
+  },
+  {
+   "table_name": "user_favorite_exercises",
+   "column_name": "position",
+   "ordinal_position": 3,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_feature_seen",
+   "column_name": "user_id",
+   "ordinal_position": 1,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "user_feature_seen",
+   "column_name": "feature_key",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 64
+  },
+  {
+   "table_name": "user_feature_seen",
+   "column_name": "seen_at",
+   "ordinal_position": 3,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_inventory",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('user_inventory_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_inventory",
+   "column_name": "user_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "user_inventory",
+   "column_name": "cosmetic_id",
+   "ordinal_position": 3,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_inventory",
+   "column_name": "acquired_at",
+   "ordinal_position": 4,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_inventory",
+   "column_name": "is_new",
+   "ordinal_position": 5,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "true",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_inventory",
+   "column_name": "quantity",
+   "ordinal_position": 6,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "1",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_items",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('user_items_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_items",
+   "column_name": "user_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "user_items",
+   "column_name": "item_id",
+   "ordinal_position": 3,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_items",
+   "column_name": "is_equipped",
+   "ordinal_position": 4,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_items",
+   "column_name": "is_new",
+   "ordinal_position": 5,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "true",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_items",
+   "column_name": "quantity",
+   "ordinal_position": 6,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "1",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_items",
+   "column_name": "acquired_at",
+   "ordinal_position": 7,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_metrics",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('user_metrics_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_metrics",
+   "column_name": "user_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "user_metrics",
+   "column_name": "weight",
+   "ordinal_position": 3,
+   "data_type": "numeric",
+   "udt_name": "numeric",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_metrics",
+   "column_name": "body_fat",
+   "ordinal_position": 4,
+   "data_type": "numeric",
+   "udt_name": "numeric",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_metrics",
+   "column_name": "bone_mass",
+   "ordinal_position": 5,
+   "data_type": "numeric",
+   "udt_name": "numeric",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_metrics",
+   "column_name": "muscle_mass",
+   "ordinal_position": 6,
+   "data_type": "numeric",
+   "udt_name": "numeric",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_metrics",
+   "column_name": "date",
+   "ordinal_position": 7,
+   "data_type": "date",
+   "udt_name": "date",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_DATE",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_metrics",
+   "column_name": "created_at",
+   "ordinal_position": 8,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_missions",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('user_missions_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_missions",
+   "column_name": "user_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "user_missions",
+   "column_name": "mission_id",
+   "ordinal_position": 3,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_missions",
+   "column_name": "current_value",
+   "ordinal_position": 4,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_missions",
+   "column_name": "is_completed",
+   "ordinal_position": 5,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_missions",
+   "column_name": "is_claimed",
+   "ordinal_position": 6,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_missions",
+   "column_name": "last_updated",
+   "ordinal_position": 7,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_missions",
+   "column_name": "is_active",
+   "ordinal_position": 8,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "true",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_node_progress",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('user_node_progress_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_node_progress",
+   "column_name": "run_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_node_progress",
+   "column_name": "node_id",
+   "ordinal_position": 3,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_node_progress",
+   "column_name": "status",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'available'::character varying",
+   "character_maximum_length": 20
+  },
+  {
+   "table_name": "user_node_progress",
+   "column_name": "enemy_current_hp",
+   "ordinal_position": 5,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_node_progress",
+   "column_name": "enemy_total_hp",
+   "ordinal_position": 6,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_node_progress",
+   "column_name": "kills",
+   "ordinal_position": 7,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_node_progress",
+   "column_name": "cleared_at",
+   "ordinal_position": 8,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_npc_quests",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('user_npc_quests_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_npc_quests",
+   "column_name": "run_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_npc_quests",
+   "column_name": "quest_id",
+   "ordinal_position": 3,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_npc_quests",
+   "column_name": "status",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'offered'::character varying",
+   "character_maximum_length": 20
+  },
+  {
+   "table_name": "user_npc_quests",
+   "column_name": "current_value",
+   "ordinal_position": 5,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_npc_quests",
+   "column_name": "deadline_at",
+   "ordinal_position": 6,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_read_blogs",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('user_read_blogs_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "user_read_blogs",
+   "column_name": "user_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "user_read_blogs",
+   "column_name": "post_slug",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "user_read_blogs",
+   "column_name": "read_at",
+   "ordinal_position": 4,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "users",
+   "column_name": "name",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "users",
+   "column_name": "email",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "users",
+   "column_name": "avatar_url",
+   "ordinal_position": 4,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "total_reps",
+   "ordinal_position": 5,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "created_at",
+   "ordinal_position": 6,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "is_private",
+   "ordinal_position": 7,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "password_hash",
+   "ordinal_position": 8,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "users",
+   "column_name": "daily_goal",
+   "ordinal_position": 9,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "50",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "body_weight",
+   "ordinal_position": 10,
+   "data_type": "numeric",
+   "udt_name": "numeric",
+   "is_nullable": "YES",
+   "column_default": "75.0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "reppy_coins",
+   "ordinal_position": 11,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "str_xp",
+   "ordinal_position": 12,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "pwr_xp",
+   "ordinal_position": 13,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "end_xp",
+   "ordinal_position": 14,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "agi_xp",
+   "ordinal_position": 15,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "last_seen_version",
+   "ordinal_position": 16,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'1.0.0'::character varying",
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "users",
+   "column_name": "equipped_title_id",
+   "ordinal_position": 17,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "equipped_border_id",
+   "ordinal_position": 18,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "has_seen_easter_modal",
+   "ordinal_position": 19,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "last_spin_at",
+   "ordinal_position": 20,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "equipped_background_id",
+   "ordinal_position": 21,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "is_admin",
+   "ordinal_position": 22,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "daily_boss_damage",
+   "ordinal_position": 23,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "last_boss_damage_date",
+   "ordinal_position": 24,
+   "data_type": "date",
+   "udt_name": "date",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_DATE",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "equipped_avatar_id",
+   "ordinal_position": 25,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "boss_chests",
+   "ordinal_position": 26,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "1",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "theme",
+   "ordinal_position": 27,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'light'::character varying",
+   "character_maximum_length": 20
+  },
+  {
+   "table_name": "users",
+   "column_name": "current_level",
+   "ordinal_position": 28,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "1",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "level_chests_claimed",
+   "ordinal_position": 29,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "1",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "level_chests",
+   "ordinal_position": 30,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "total_xp",
+   "ordinal_position": 31,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "equipped_post_background_id",
+   "ordinal_position": 32,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "has_seen_damage_overhaul",
+   "ordinal_position": 33,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "dex_xp",
+   "ordinal_position": 34,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "vig_xp",
+   "ordinal_position": 35,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "int_xp",
+   "ordinal_position": 36,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "fth_xp",
+   "ordinal_position": 37,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "xp_into_level",
+   "ordinal_position": 38,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "damage_multiplier",
+   "ordinal_position": 39,
+   "data_type": "numeric",
+   "udt_name": "numeric",
+   "is_nullable": "YES",
+   "column_default": "1.0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "damage_multiplier_expiry",
+   "ordinal_position": 40,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "cha_xp",
+   "ordinal_position": 41,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "has_seen_avatar_overhaul",
+   "ordinal_position": 42,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "last_streak_reward_date",
+   "ordinal_position": 43,
+   "data_type": "date",
+   "udt_name": "date",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "equipped_head_id",
+   "ordinal_position": 44,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "equipped_weapon_id",
+   "ordinal_position": 45,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "equipped_armor_id",
+   "ordinal_position": 46,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "equipped_boots_id",
+   "ordinal_position": 47,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "has_seen_armory_update",
+   "ordinal_position": 48,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "dex_bonus",
+   "ordinal_position": 49,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "dex_bonus_expiry",
+   "ordinal_position": 50,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "legendary_chests",
+   "ordinal_position": 51,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "epic_chests",
+   "ordinal_position": 52,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "reppy_gems",
+   "ordinal_position": 53,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "last_daily_missions_refill",
+   "ordinal_position": 54,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "'1970-01-01 00:00:00+00'::timestamp with time zone",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "has_seen_rpg_release",
+   "ordinal_position": 55,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "daily_refreshes",
+   "ordinal_position": 56,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "last_refresh_at",
+   "ordinal_position": 57,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "rusty_chests",
+   "ordinal_position": 58,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "roulette_tickets_bought_today",
+   "ordinal_position": 59,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "last_roulette_ticket_bought_at",
+   "ordinal_position": 60,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "push_disabled",
+   "ordinal_position": 61,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "onboarding_mode",
+   "ordinal_position": 62,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 30
+  },
+  {
+   "table_name": "users",
+   "column_name": "goal_onboarding_completed",
+   "ordinal_position": 63,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "last_jackpot_week",
+   "ordinal_position": 64,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "referral_code",
+   "ordinal_position": 65,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 20
+  },
+  {
+   "table_name": "users",
+   "column_name": "referred_by",
+   "ordinal_position": 66,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "users",
+   "column_name": "referral_reward_given",
+   "ordinal_position": 67,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "username",
+   "ordinal_position": 68,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "users",
+   "column_name": "hevy_api_key",
+   "ordinal_position": 69,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "hevy_webhook_token",
+   "ordinal_position": 70,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "hevy_last_sync",
+   "ordinal_position": 71,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "hevy_volume_kg",
+   "ordinal_position": 72,
+   "data_type": "bigint",
+   "udt_name": "int8",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "stat_buffs",
+   "ordinal_position": 73,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "YES",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "last_daily_spin_at",
+   "ordinal_position": 74,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "skill_points",
+   "ordinal_position": 75,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "skill_points_claimed",
+   "ordinal_position": 76,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "1",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "skill_perks",
+   "ordinal_position": 77,
+   "data_type": "jsonb",
+   "udt_name": "jsonb",
+   "is_nullable": "YES",
+   "column_default": "'{}'::jsonb",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "ui_style",
+   "ordinal_position": 78,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'operative'::character varying",
+   "character_maximum_length": 20
+  },
+  {
+   "table_name": "users",
+   "column_name": "referral_reminder_sent",
+   "ordinal_position": 79,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "last_weekly_reto_week",
+   "ordinal_position": 80,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "token_version",
+   "ordinal_position": 81,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "users",
+   "column_name": "buff_bonus",
+   "ordinal_position": 82,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sessions",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('workout_sessions_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sessions",
+   "column_name": "user_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "workout_sessions",
+   "column_name": "plan_id",
+   "ordinal_position": 3,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sessions",
+   "column_name": "plan_day_id",
+   "ordinal_position": 4,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sessions",
+   "column_name": "status",
+   "ordinal_position": 5,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'started'::character varying",
+   "character_maximum_length": 30
+  },
+  {
+   "table_name": "workout_sessions",
+   "column_name": "total_reps",
+   "ordinal_position": 6,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sessions",
+   "column_name": "total_damage",
+   "ordinal_position": 7,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sessions",
+   "column_name": "reward_xp",
+   "ordinal_position": 8,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sessions",
+   "column_name": "reward_coins",
+   "ordinal_position": 9,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sessions",
+   "column_name": "completion_rate",
+   "ordinal_position": 10,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sessions",
+   "column_name": "started_at",
+   "ordinal_position": 11,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sessions",
+   "column_name": "completed_at",
+   "ordinal_position": 12,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_set_logs",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('workout_set_logs_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_set_logs",
+   "column_name": "session_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_set_logs",
+   "column_name": "block_id",
+   "ordinal_position": 3,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_set_logs",
+   "column_name": "set_index",
+   "ordinal_position": 4,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_set_logs",
+   "column_name": "exercise_type",
+   "ordinal_position": 5,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "workout_set_logs",
+   "column_name": "target_reps",
+   "ordinal_position": 6,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_set_logs",
+   "column_name": "actual_reps",
+   "ordinal_position": 7,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_set_logs",
+   "column_name": "completed",
+   "ordinal_position": 8,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "false",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sets",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('workout_sets_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sets",
+   "column_name": "workout_id",
+   "ordinal_position": 2,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sets",
+   "column_name": "exercise_id",
+   "ordinal_position": 3,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "workout_sets",
+   "column_name": "set_number",
+   "ordinal_position": 4,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sets",
+   "column_name": "weight",
+   "ordinal_position": 5,
+   "data_type": "numeric",
+   "udt_name": "numeric",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sets",
+   "column_name": "reps",
+   "ordinal_position": 6,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sets",
+   "column_name": "rpe",
+   "ordinal_position": 7,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sets",
+   "column_name": "rest_time_seconds",
+   "ordinal_position": 8,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sets",
+   "column_name": "is_completed",
+   "ordinal_position": 9,
+   "data_type": "boolean",
+   "udt_name": "bool",
+   "is_nullable": "YES",
+   "column_default": "true",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sets",
+   "column_name": "note",
+   "ordinal_position": 10,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workout_sets",
+   "column_name": "created_at",
+   "ordinal_position": 11,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workouts",
+   "column_name": "id",
+   "ordinal_position": 1,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "NO",
+   "column_default": "nextval('workouts_id_seq'::regclass)",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workouts",
+   "column_name": "user_id",
+   "ordinal_position": 2,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "workouts",
+   "column_name": "routine_id",
+   "ordinal_position": 3,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workouts",
+   "column_name": "name",
+   "ordinal_position": 4,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": 255
+  },
+  {
+   "table_name": "workouts",
+   "column_name": "status",
+   "ordinal_position": 5,
+   "data_type": "character varying",
+   "udt_name": "varchar",
+   "is_nullable": "YES",
+   "column_default": "'completed'::character varying",
+   "character_maximum_length": 50
+  },
+  {
+   "table_name": "workouts",
+   "column_name": "start_time",
+   "ordinal_position": 6,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": "CURRENT_TIMESTAMP",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workouts",
+   "column_name": "end_time",
+   "ordinal_position": 7,
+   "data_type": "timestamp with time zone",
+   "udt_name": "timestamptz",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workouts",
+   "column_name": "total_volume",
+   "ordinal_position": 8,
+   "data_type": "numeric",
+   "udt_name": "numeric",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workouts",
+   "column_name": "duration_seconds",
+   "ordinal_position": 9,
+   "data_type": "integer",
+   "udt_name": "int4",
+   "is_nullable": "YES",
+   "column_default": "0",
+   "character_maximum_length": null
+  },
+  {
+   "table_name": "workouts",
+   "column_name": "notes",
+   "ordinal_position": 10,
+   "data_type": "text",
+   "udt_name": "text",
+   "is_nullable": "YES",
+   "column_default": null,
+   "character_maximum_length": null
+  }
+ ],
+ "constraints": [
+  {
+   "table_name": "async_challenges",
+   "conname": "async_challenges_challenged_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (challenged_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "async_challenges",
+   "conname": "async_challenges_challenger_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (challenger_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "async_challenges",
+   "conname": "async_challenges_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "async_challenges",
+   "conname": "async_challenges_winner_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (winner_id) REFERENCES users(id)"
+  },
+  {
+   "table_name": "async_challenges",
+   "conname": "no_self_challenge_1780487576695",
+   "contype": "c",
+   "def": "CHECK (((challenger_id)::text <> (challenged_id)::text))"
+  },
+  {
+   "table_name": "boss_fights",
+   "conname": "boss_fights_campaign_node_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (campaign_node_id) REFERENCES campaign_nodes(id) ON DELETE SET NULL"
+  },
+  {
+   "table_name": "boss_fights",
+   "conname": "boss_fights_last_hit_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (last_hit_user_id) REFERENCES users(id) ON DELETE SET NULL"
+  },
+  {
+   "table_name": "boss_fights",
+   "conname": "boss_fights_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "boss_kill_posts",
+   "conname": "boss_kill_posts_boss_fight_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (boss_fight_id) REFERENCES boss_fights(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "boss_kill_posts",
+   "conname": "boss_kill_posts_boss_fight_id_key",
+   "contype": "u",
+   "def": "UNIQUE (boss_fight_id)"
+  },
+  {
+   "table_name": "boss_kill_posts",
+   "conname": "boss_kill_posts_killer_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (killer_user_id) REFERENCES users(id) ON DELETE SET NULL"
+  },
+  {
+   "table_name": "boss_kill_posts",
+   "conname": "boss_kill_posts_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "campaign_edges",
+   "conname": "campaign_edges_from_node_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (from_node_id) REFERENCES campaign_nodes(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "campaign_edges",
+   "conname": "campaign_edges_from_node_id_to_node_id_key",
+   "contype": "u",
+   "def": "UNIQUE (from_node_id, to_node_id)"
+  },
+  {
+   "table_name": "campaign_edges",
+   "conname": "campaign_edges_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "campaign_edges",
+   "conname": "campaign_edges_to_node_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (to_node_id) REFERENCES campaign_nodes(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "campaign_nodes",
+   "conname": "campaign_nodes_enemy_type_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (enemy_type_id) REFERENCES enemy_types(id) ON DELETE SET NULL"
+  },
+  {
+   "table_name": "campaign_nodes",
+   "conname": "campaign_nodes_npc_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (npc_id) REFERENCES npcs(id) ON DELETE SET NULL"
+  },
+  {
+   "table_name": "campaign_nodes",
+   "conname": "campaign_nodes_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "campaign_nodes",
+   "conname": "campaign_nodes_zone_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (zone_id) REFERENCES campaign_zones(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "campaign_nodes",
+   "conname": "campaign_nodes_zone_id_slug_key",
+   "contype": "u",
+   "def": "UNIQUE (zone_id, slug)"
+  },
+  {
+   "table_name": "campaign_runs",
+   "conname": "campaign_runs_campaign_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "campaign_runs",
+   "conname": "campaign_runs_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "campaign_runs",
+   "conname": "campaign_runs_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "campaign_zones",
+   "conname": "campaign_zones_campaign_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "campaign_zones",
+   "conname": "campaign_zones_campaign_id_slug_key",
+   "contype": "u",
+   "def": "UNIQUE (campaign_id, slug)"
+  },
+  {
+   "table_name": "campaign_zones",
+   "conname": "campaign_zones_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "campaigns",
+   "conname": "campaigns_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "campaigns",
+   "conname": "campaigns_slug_key",
+   "contype": "u",
+   "def": "UNIQUE (slug)"
+  },
+  {
+   "table_name": "coin_transactions",
+   "conname": "coin_transactions_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "coin_transactions",
+   "conname": "coin_transactions_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "cosmeticos",
+   "conname": "cosmeticos_name_key",
+   "contype": "u",
+   "def": "UNIQUE (name)"
+  },
+  {
+   "table_name": "cosmeticos",
+   "conname": "cosmeticos_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "cosmetics",
+   "conname": "cosmetics_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "cosmetics",
+   "conname": "unique_cosmetic_name",
+   "contype": "u",
+   "def": "UNIQUE (name)"
+  },
+  {
+   "table_name": "daily_shop_items",
+   "conname": "daily_shop_items_item_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "daily_shop_items",
+   "conname": "daily_shop_items_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "daily_shop_items",
+   "conname": "daily_shop_items_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "daily_summaries",
+   "conname": "daily_summaries_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "daily_summaries",
+   "conname": "daily_summaries_user_id_date_key",
+   "contype": "u",
+   "def": "UNIQUE (user_id, date)"
+  },
+  {
+   "table_name": "daily_summaries",
+   "conname": "daily_summaries_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "enemy_types",
+   "conname": "enemy_types_campaign_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "enemy_types",
+   "conname": "enemy_types_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "enemy_types",
+   "conname": "enemy_types_slug_key",
+   "contype": "u",
+   "def": "UNIQUE (slug)"
+  },
+  {
+   "table_name": "event_participants",
+   "conname": "event_participants_boss_fight_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (boss_fight_id) REFERENCES boss_fights(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "event_participants",
+   "conname": "event_participants_boss_fight_id_user_id_key",
+   "contype": "u",
+   "def": "UNIQUE (boss_fight_id, user_id)"
+  },
+  {
+   "table_name": "event_participants",
+   "conname": "event_participants_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "event_participants",
+   "conname": "event_participants_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "exercises",
+   "conname": "exercises_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (slug)"
+  },
+  {
+   "table_name": "friendships",
+   "conname": "friendships_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "friendships",
+   "conname": "friendships_user_id_1_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id_1) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "friendships",
+   "conname": "friendships_user_id_1_user_id_2_key",
+   "contype": "u",
+   "def": "UNIQUE (user_id_1, user_id_2)"
+  },
+  {
+   "table_name": "friendships",
+   "conname": "friendships_user_id_2_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id_2) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "gem_transactions",
+   "conname": "gem_transactions_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "gem_transactions",
+   "conname": "gem_transactions_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "hevy_exercise_map",
+   "conname": "hevy_exercise_map_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (hevy_template_id)"
+  },
+  {
+   "table_name": "hevy_imported_workouts",
+   "conname": "hevy_imported_workouts_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (hevy_workout_id)"
+  },
+  {
+   "table_name": "hevy_imported_workouts",
+   "conname": "hevy_imported_workouts_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "items",
+   "conname": "items_name_key",
+   "contype": "u",
+   "def": "UNIQUE (name)"
+  },
+  {
+   "table_name": "items",
+   "conname": "items_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "missions",
+   "conname": "missions_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "missions",
+   "conname": "missions_title_key_key",
+   "contype": "u",
+   "def": "UNIQUE (title_key)"
+  },
+  {
+   "table_name": "notifications",
+   "conname": "notifications_actor_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (actor_id) REFERENCES users(id) ON DELETE SET NULL"
+  },
+  {
+   "table_name": "notifications",
+   "conname": "notifications_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "notifications",
+   "conname": "notifications_target_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (target_user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "notifications",
+   "conname": "notifications_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "npc_quests",
+   "conname": "npc_quests_npc_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (npc_id) REFERENCES npcs(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "npc_quests",
+   "conname": "npc_quests_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "npc_quests",
+   "conname": "npc_quests_slug_key",
+   "contype": "u",
+   "def": "UNIQUE (slug)"
+  },
+  {
+   "table_name": "npcs",
+   "conname": "npcs_campaign_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "npcs",
+   "conname": "npcs_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "npcs",
+   "conname": "npcs_slug_key",
+   "contype": "u",
+   "def": "UNIQUE (slug)"
+  },
+  {
+   "table_name": "push_subscriptions",
+   "conname": "push_subscriptions_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "push_subscriptions",
+   "conname": "push_subscriptions_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "push_subscriptions",
+   "conname": "push_subscriptions_user_id_subscription_json_key",
+   "contype": "u",
+   "def": "UNIQUE (user_id, subscription_json)"
+  },
+  {
+   "table_name": "pvp_events",
+   "conname": "pvp_events_fight_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (fight_id) REFERENCES pvp_fights(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "pvp_events",
+   "conname": "pvp_events_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "pvp_events",
+   "conname": "pvp_events_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL"
+  },
+  {
+   "table_name": "pvp_fights",
+   "conname": "pvp_fights_challenged_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (challenged_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "pvp_fights",
+   "conname": "pvp_fights_challenger_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (challenger_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "pvp_fights",
+   "conname": "pvp_fights_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "pvp_fights",
+   "conname": "pvp_fights_winner_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (winner_id) REFERENCES users(id)"
+  },
+  {
+   "table_name": "reps",
+   "conname": "reps_boss_fight_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (boss_fight_id) REFERENCES boss_fights(id)"
+  },
+  {
+   "table_name": "reps",
+   "conname": "reps_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "reps",
+   "conname": "reps_user_id_date_exercise_type_key",
+   "contype": "u",
+   "def": "UNIQUE (user_id, date, exercise_type)"
+  },
+  {
+   "table_name": "reps",
+   "conname": "reps_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "routine_exercises",
+   "conname": "routine_exercises_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "routine_exercises",
+   "conname": "routine_exercises_routine_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (routine_id) REFERENCES routines(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "routines",
+   "conname": "routines_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "routines",
+   "conname": "routines_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "social_xp_rewards",
+   "conname": "social_xp_rewards_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (user_id, summary_id, action_type)"
+  },
+  {
+   "table_name": "social_xp_rewards",
+   "conname": "social_xp_rewards_summary_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (summary_id) REFERENCES daily_summaries(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "social_xp_rewards",
+   "conname": "social_xp_rewards_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "streak_freezes",
+   "conname": "streak_freezes_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "streak_freezes",
+   "conname": "streak_freezes_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "streak_freezes",
+   "conname": "streak_freezes_user_id_freeze_date_key",
+   "contype": "u",
+   "def": "UNIQUE (user_id, freeze_date)"
+  },
+  {
+   "table_name": "summary_comment_subscribers",
+   "conname": "summary_comment_subscribers_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (summary_id, user_id)"
+  },
+  {
+   "table_name": "summary_comment_subscribers",
+   "conname": "summary_comment_subscribers_summary_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (summary_id) REFERENCES daily_summaries(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "summary_comment_subscribers",
+   "conname": "summary_comment_subscribers_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "summary_interactions",
+   "conname": "summary_interactions_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "summary_interactions",
+   "conname": "summary_interactions_summary_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (summary_id) REFERENCES daily_summaries(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "summary_interactions",
+   "conname": "summary_interactions_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "training_plan_blocks",
+   "conname": "training_plan_blocks_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "training_plan_blocks",
+   "conname": "training_plan_blocks_plan_day_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (plan_day_id) REFERENCES training_plan_days(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "training_plan_days",
+   "conname": "training_plan_days_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "training_plan_days",
+   "conname": "training_plan_days_plan_id_day_number_key",
+   "contype": "u",
+   "def": "UNIQUE (plan_id, day_number)"
+  },
+  {
+   "table_name": "training_plan_days",
+   "conname": "training_plan_days_plan_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (plan_id) REFERENCES training_plans(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "training_plans",
+   "conname": "training_plans_owner_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (owner_user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "training_plans",
+   "conname": "training_plans_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "training_plans",
+   "conname": "training_plans_slug_key",
+   "contype": "u",
+   "def": "UNIQUE (slug)"
+  },
+  {
+   "table_name": "user_active_plans",
+   "conname": "user_active_plans_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (user_id)"
+  },
+  {
+   "table_name": "user_active_plans",
+   "conname": "user_active_plans_plan_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (plan_id) REFERENCES training_plans(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_active_plans",
+   "conname": "user_active_plans_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_bestiary",
+   "conname": "user_bestiary_enemy_type_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (enemy_type_id) REFERENCES enemy_types(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_bestiary",
+   "conname": "user_bestiary_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (user_id, enemy_type_id)"
+  },
+  {
+   "table_name": "user_bestiary",
+   "conname": "user_bestiary_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_cosmeticos",
+   "conname": "user_cosmeticos_cosmetico_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (cosmetico_id) REFERENCES cosmeticos(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_cosmeticos",
+   "conname": "user_cosmeticos_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "user_cosmeticos",
+   "conname": "user_cosmeticos_user_id_cosmetico_id_key",
+   "contype": "u",
+   "def": "UNIQUE (user_id, cosmetico_id)"
+  },
+  {
+   "table_name": "user_cosmeticos",
+   "conname": "user_cosmeticos_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_favorite_exercises",
+   "conname": "user_favorite_exercises_exercise_slug_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (exercise_slug) REFERENCES exercises(slug) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_favorite_exercises",
+   "conname": "user_favorite_exercises_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (user_id, exercise_slug)"
+  },
+  {
+   "table_name": "user_favorite_exercises",
+   "conname": "user_favorite_exercises_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_feature_seen",
+   "conname": "user_feature_seen_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (user_id, feature_key)"
+  },
+  {
+   "table_name": "user_feature_seen",
+   "conname": "user_feature_seen_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_inventory",
+   "conname": "user_inventory_cosmetic_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (cosmetic_id) REFERENCES cosmetics(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_inventory",
+   "conname": "user_inventory_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "user_inventory",
+   "conname": "user_inventory_user_id_cosmetic_id_key",
+   "contype": "u",
+   "def": "UNIQUE (user_id, cosmetic_id)"
+  },
+  {
+   "table_name": "user_inventory",
+   "conname": "user_inventory_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_items",
+   "conname": "user_items_item_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_items",
+   "conname": "user_items_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "user_items",
+   "conname": "user_items_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_items",
+   "conname": "user_items_user_id_item_id_key",
+   "contype": "u",
+   "def": "UNIQUE (user_id, item_id)"
+  },
+  {
+   "table_name": "user_metrics",
+   "conname": "user_metrics_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "user_metrics",
+   "conname": "user_metrics_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_missions",
+   "conname": "user_missions_mission_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (mission_id) REFERENCES missions(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_missions",
+   "conname": "user_missions_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "user_missions",
+   "conname": "user_missions_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_missions",
+   "conname": "user_missions_user_id_mission_id_key",
+   "contype": "u",
+   "def": "UNIQUE (user_id, mission_id)"
+  },
+  {
+   "table_name": "user_node_progress",
+   "conname": "user_node_progress_node_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (node_id) REFERENCES campaign_nodes(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_node_progress",
+   "conname": "user_node_progress_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "user_node_progress",
+   "conname": "user_node_progress_run_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (run_id) REFERENCES campaign_runs(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_node_progress",
+   "conname": "user_node_progress_run_id_node_id_key",
+   "contype": "u",
+   "def": "UNIQUE (run_id, node_id)"
+  },
+  {
+   "table_name": "user_npc_quests",
+   "conname": "user_npc_quests_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "user_npc_quests",
+   "conname": "user_npc_quests_quest_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (quest_id) REFERENCES npc_quests(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_npc_quests",
+   "conname": "user_npc_quests_run_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (run_id) REFERENCES campaign_runs(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_npc_quests",
+   "conname": "user_npc_quests_run_id_quest_id_key",
+   "contype": "u",
+   "def": "UNIQUE (run_id, quest_id)"
+  },
+  {
+   "table_name": "user_read_blogs",
+   "conname": "user_read_blogs_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "user_read_blogs",
+   "conname": "user_read_blogs_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "user_read_blogs",
+   "conname": "user_read_blogs_user_id_post_slug_key",
+   "contype": "u",
+   "def": "UNIQUE (user_id, post_slug)"
+  },
+  {
+   "table_name": "users",
+   "conname": "users_email_key",
+   "contype": "u",
+   "def": "UNIQUE (email)"
+  },
+  {
+   "table_name": "users",
+   "conname": "users_equipped_armor_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (equipped_armor_id) REFERENCES items(id) ON DELETE SET NULL"
+  },
+  {
+   "table_name": "users",
+   "conname": "users_equipped_boots_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (equipped_boots_id) REFERENCES items(id) ON DELETE SET NULL"
+  },
+  {
+   "table_name": "users",
+   "conname": "users_equipped_head_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (equipped_head_id) REFERENCES items(id) ON DELETE SET NULL"
+  },
+  {
+   "table_name": "users",
+   "conname": "users_equipped_weapon_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (equipped_weapon_id) REFERENCES items(id) ON DELETE SET NULL"
+  },
+  {
+   "table_name": "users",
+   "conname": "users_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "users",
+   "conname": "users_referred_by_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (referred_by) REFERENCES users(id)"
+  },
+  {
+   "table_name": "workout_sessions",
+   "conname": "workout_sessions_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "workout_sessions",
+   "conname": "workout_sessions_plan_day_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (plan_day_id) REFERENCES training_plan_days(id)"
+  },
+  {
+   "table_name": "workout_sessions",
+   "conname": "workout_sessions_plan_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (plan_id) REFERENCES training_plans(id)"
+  },
+  {
+   "table_name": "workout_sessions",
+   "conname": "workout_sessions_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "workout_set_logs",
+   "conname": "workout_set_logs_block_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (block_id) REFERENCES training_plan_blocks(id)"
+  },
+  {
+   "table_name": "workout_set_logs",
+   "conname": "workout_set_logs_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "workout_set_logs",
+   "conname": "workout_set_logs_session_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (session_id) REFERENCES workout_sessions(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "workout_sets",
+   "conname": "workout_sets_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "workout_sets",
+   "conname": "workout_sets_workout_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (workout_id) REFERENCES workouts(id) ON DELETE CASCADE"
+  },
+  {
+   "table_name": "workouts",
+   "conname": "workouts_pkey",
+   "contype": "p",
+   "def": "PRIMARY KEY (id)"
+  },
+  {
+   "table_name": "workouts",
+   "conname": "workouts_routine_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (routine_id) REFERENCES routines(id) ON DELETE SET NULL"
+  },
+  {
+   "table_name": "workouts",
+   "conname": "workouts_user_id_fkey",
+   "contype": "f",
+   "def": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+  }
+ ],
+ "indexes": [
+  {
+   "tablename": "async_challenges",
+   "indexname": "async_challenges_pkey",
+   "indexdef": "CREATE UNIQUE INDEX async_challenges_pkey ON public.async_challenges USING btree (id)"
+  },
+  {
+   "tablename": "async_challenges",
+   "indexname": "idx_async_challenges_challenged",
+   "indexdef": "CREATE INDEX idx_async_challenges_challenged ON public.async_challenges USING btree (challenged_id)"
+  },
+  {
+   "tablename": "async_challenges",
+   "indexname": "idx_async_challenges_challenger",
+   "indexdef": "CREATE INDEX idx_async_challenges_challenger ON public.async_challenges USING btree (challenger_id)"
+  },
+  {
+   "tablename": "async_challenges",
+   "indexname": "idx_async_challenges_status",
+   "indexdef": "CREATE INDEX idx_async_challenges_status ON public.async_challenges USING btree (status)"
+  },
+  {
+   "tablename": "boss_fights",
+   "indexname": "boss_fights_pkey",
+   "indexdef": "CREATE UNIQUE INDEX boss_fights_pkey ON public.boss_fights USING btree (id)"
+  },
+  {
+   "tablename": "boss_kill_posts",
+   "indexname": "boss_kill_posts_boss_fight_id_key",
+   "indexdef": "CREATE UNIQUE INDEX boss_kill_posts_boss_fight_id_key ON public.boss_kill_posts USING btree (boss_fight_id)"
+  },
+  {
+   "tablename": "boss_kill_posts",
+   "indexname": "boss_kill_posts_pkey",
+   "indexdef": "CREATE UNIQUE INDEX boss_kill_posts_pkey ON public.boss_kill_posts USING btree (id)"
+  },
+  {
+   "tablename": "boss_kill_posts",
+   "indexname": "idx_boss_kill_posts_created",
+   "indexdef": "CREATE INDEX idx_boss_kill_posts_created ON public.boss_kill_posts USING btree (created_at DESC)"
+  },
+  {
+   "tablename": "campaign_edges",
+   "indexname": "campaign_edges_from_node_id_to_node_id_key",
+   "indexdef": "CREATE UNIQUE INDEX campaign_edges_from_node_id_to_node_id_key ON public.campaign_edges USING btree (from_node_id, to_node_id)"
+  },
+  {
+   "tablename": "campaign_edges",
+   "indexname": "campaign_edges_pkey",
+   "indexdef": "CREATE UNIQUE INDEX campaign_edges_pkey ON public.campaign_edges USING btree (id)"
+  },
+  {
+   "tablename": "campaign_edges",
+   "indexname": "idx_campaign_edges_from",
+   "indexdef": "CREATE INDEX idx_campaign_edges_from ON public.campaign_edges USING btree (from_node_id)"
+  },
+  {
+   "tablename": "campaign_nodes",
+   "indexname": "campaign_nodes_pkey",
+   "indexdef": "CREATE UNIQUE INDEX campaign_nodes_pkey ON public.campaign_nodes USING btree (id)"
+  },
+  {
+   "tablename": "campaign_nodes",
+   "indexname": "campaign_nodes_zone_id_slug_key",
+   "indexdef": "CREATE UNIQUE INDEX campaign_nodes_zone_id_slug_key ON public.campaign_nodes USING btree (zone_id, slug)"
+  },
+  {
+   "tablename": "campaign_nodes",
+   "indexname": "idx_campaign_nodes_zone",
+   "indexdef": "CREATE INDEX idx_campaign_nodes_zone ON public.campaign_nodes USING btree (zone_id)"
+  },
+  {
+   "tablename": "campaign_runs",
+   "indexname": "campaign_runs_pkey",
+   "indexdef": "CREATE UNIQUE INDEX campaign_runs_pkey ON public.campaign_runs USING btree (id)"
+  },
+  {
+   "tablename": "campaign_runs",
+   "indexname": "idx_campaign_runs_active",
+   "indexdef": "CREATE UNIQUE INDEX idx_campaign_runs_active ON public.campaign_runs USING btree (user_id, campaign_id) WHERE ((status)::text = 'active'::text)"
+  },
+  {
+   "tablename": "campaign_zones",
+   "indexname": "campaign_zones_campaign_id_slug_key",
+   "indexdef": "CREATE UNIQUE INDEX campaign_zones_campaign_id_slug_key ON public.campaign_zones USING btree (campaign_id, slug)"
+  },
+  {
+   "tablename": "campaign_zones",
+   "indexname": "campaign_zones_pkey",
+   "indexdef": "CREATE UNIQUE INDEX campaign_zones_pkey ON public.campaign_zones USING btree (id)"
+  },
+  {
+   "tablename": "campaigns",
+   "indexname": "campaigns_pkey",
+   "indexdef": "CREATE UNIQUE INDEX campaigns_pkey ON public.campaigns USING btree (id)"
+  },
+  {
+   "tablename": "campaigns",
+   "indexname": "campaigns_slug_key",
+   "indexdef": "CREATE UNIQUE INDEX campaigns_slug_key ON public.campaigns USING btree (slug)"
+  },
+  {
+   "tablename": "coin_transactions",
+   "indexname": "coin_transactions_pkey",
+   "indexdef": "CREATE UNIQUE INDEX coin_transactions_pkey ON public.coin_transactions USING btree (id)"
+  },
+  {
+   "tablename": "coin_transactions",
+   "indexname": "idx_coin_trans_user",
+   "indexdef": "CREATE INDEX idx_coin_trans_user ON public.coin_transactions USING btree (user_id)"
+  },
+  {
+   "tablename": "cosmeticos",
+   "indexname": "cosmeticos_name_key",
+   "indexdef": "CREATE UNIQUE INDEX cosmeticos_name_key ON public.cosmeticos USING btree (name)"
+  },
+  {
+   "tablename": "cosmeticos",
+   "indexname": "cosmeticos_pkey",
+   "indexdef": "CREATE UNIQUE INDEX cosmeticos_pkey ON public.cosmeticos USING btree (id)"
+  },
+  {
+   "tablename": "cosmetics",
+   "indexname": "cosmetics_pkey",
+   "indexdef": "CREATE UNIQUE INDEX cosmetics_pkey ON public.cosmetics USING btree (id)"
+  },
+  {
+   "tablename": "cosmetics",
+   "indexname": "unique_cosmetic_name",
+   "indexdef": "CREATE UNIQUE INDEX unique_cosmetic_name ON public.cosmetics USING btree (name)"
+  },
+  {
+   "tablename": "daily_shop_items",
+   "indexname": "daily_shop_items_pkey",
+   "indexdef": "CREATE UNIQUE INDEX daily_shop_items_pkey ON public.daily_shop_items USING btree (id)"
+  },
+  {
+   "tablename": "daily_shop_items",
+   "indexname": "idx_daily_shop_rotated_at",
+   "indexdef": "CREATE INDEX idx_daily_shop_rotated_at ON public.daily_shop_items USING btree (rotated_at)"
+  },
+  {
+   "tablename": "daily_summaries",
+   "indexname": "daily_summaries_pkey",
+   "indexdef": "CREATE UNIQUE INDEX daily_summaries_pkey ON public.daily_summaries USING btree (id)"
+  },
+  {
+   "tablename": "daily_summaries",
+   "indexname": "daily_summaries_user_id_date_key",
+   "indexdef": "CREATE UNIQUE INDEX daily_summaries_user_id_date_key ON public.daily_summaries USING btree (user_id, date)"
+  },
+  {
+   "tablename": "daily_summaries",
+   "indexname": "idx_summaries_user_date",
+   "indexdef": "CREATE INDEX idx_summaries_user_date ON public.daily_summaries USING btree (user_id, date)"
+  },
+  {
+   "tablename": "enemy_types",
+   "indexname": "enemy_types_pkey",
+   "indexdef": "CREATE UNIQUE INDEX enemy_types_pkey ON public.enemy_types USING btree (id)"
+  },
+  {
+   "tablename": "enemy_types",
+   "indexname": "enemy_types_slug_key",
+   "indexdef": "CREATE UNIQUE INDEX enemy_types_slug_key ON public.enemy_types USING btree (slug)"
+  },
+  {
+   "tablename": "event_participants",
+   "indexname": "event_participants_boss_fight_id_user_id_key",
+   "indexdef": "CREATE UNIQUE INDEX event_participants_boss_fight_id_user_id_key ON public.event_participants USING btree (boss_fight_id, user_id)"
+  },
+  {
+   "tablename": "event_participants",
+   "indexname": "event_participants_pkey",
+   "indexdef": "CREATE UNIQUE INDEX event_participants_pkey ON public.event_participants USING btree (id)"
+  },
+  {
+   "tablename": "exercises",
+   "indexname": "exercises_pkey",
+   "indexdef": "CREATE UNIQUE INDEX exercises_pkey ON public.exercises USING btree (slug)"
+  },
+  {
+   "tablename": "friendships",
+   "indexname": "friendships_pkey",
+   "indexdef": "CREATE UNIQUE INDEX friendships_pkey ON public.friendships USING btree (id)"
+  },
+  {
+   "tablename": "friendships",
+   "indexname": "friendships_user_id_1_user_id_2_key",
+   "indexdef": "CREATE UNIQUE INDEX friendships_user_id_1_user_id_2_key ON public.friendships USING btree (user_id_1, user_id_2)"
+  },
+  {
+   "tablename": "friendships",
+   "indexname": "idx_friendships_users",
+   "indexdef": "CREATE INDEX idx_friendships_users ON public.friendships USING btree (user_id_1, user_id_2)"
+  },
+  {
+   "tablename": "gem_transactions",
+   "indexname": "gem_transactions_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gem_transactions_pkey ON public.gem_transactions USING btree (id)"
+  },
+  {
+   "tablename": "gem_transactions",
+   "indexname": "idx_gem_trans_user",
+   "indexdef": "CREATE INDEX idx_gem_trans_user ON public.gem_transactions USING btree (user_id)"
+  },
+  {
+   "tablename": "hevy_exercise_map",
+   "indexname": "hevy_exercise_map_pkey",
+   "indexdef": "CREATE UNIQUE INDEX hevy_exercise_map_pkey ON public.hevy_exercise_map USING btree (hevy_template_id)"
+  },
+  {
+   "tablename": "hevy_imported_workouts",
+   "indexname": "hevy_imported_workouts_pkey",
+   "indexdef": "CREATE UNIQUE INDEX hevy_imported_workouts_pkey ON public.hevy_imported_workouts USING btree (hevy_workout_id)"
+  },
+  {
+   "tablename": "hevy_imported_workouts",
+   "indexname": "idx_hevy_imported_user",
+   "indexdef": "CREATE INDEX idx_hevy_imported_user ON public.hevy_imported_workouts USING btree (user_id)"
+  },
+  {
+   "tablename": "items",
+   "indexname": "items_name_key",
+   "indexdef": "CREATE UNIQUE INDEX items_name_key ON public.items USING btree (name)"
+  },
+  {
+   "tablename": "items",
+   "indexname": "items_pkey",
+   "indexdef": "CREATE UNIQUE INDEX items_pkey ON public.items USING btree (id)"
+  },
+  {
+   "tablename": "missions",
+   "indexname": "missions_pkey",
+   "indexdef": "CREATE UNIQUE INDEX missions_pkey ON public.missions USING btree (id)"
+  },
+  {
+   "tablename": "missions",
+   "indexname": "missions_title_key_key",
+   "indexdef": "CREATE UNIQUE INDEX missions_title_key_key ON public.missions USING btree (title_key)"
+  },
+  {
+   "tablename": "notifications",
+   "indexname": "idx_notifications_user_created",
+   "indexdef": "CREATE INDEX idx_notifications_user_created ON public.notifications USING btree (user_id, created_at DESC)"
+  },
+  {
+   "tablename": "notifications",
+   "indexname": "idx_notifications_user_id_created",
+   "indexdef": "CREATE INDEX idx_notifications_user_id_created ON public.notifications USING btree (user_id, created_at DESC)"
+  },
+  {
+   "tablename": "notifications",
+   "indexname": "notifications_pkey",
+   "indexdef": "CREATE UNIQUE INDEX notifications_pkey ON public.notifications USING btree (id)"
+  },
+  {
+   "tablename": "npc_quests",
+   "indexname": "npc_quests_pkey",
+   "indexdef": "CREATE UNIQUE INDEX npc_quests_pkey ON public.npc_quests USING btree (id)"
+  },
+  {
+   "tablename": "npc_quests",
+   "indexname": "npc_quests_slug_key",
+   "indexdef": "CREATE UNIQUE INDEX npc_quests_slug_key ON public.npc_quests USING btree (slug)"
+  },
+  {
+   "tablename": "npcs",
+   "indexname": "npcs_pkey",
+   "indexdef": "CREATE UNIQUE INDEX npcs_pkey ON public.npcs USING btree (id)"
+  },
+  {
+   "tablename": "npcs",
+   "indexname": "npcs_slug_key",
+   "indexdef": "CREATE UNIQUE INDEX npcs_slug_key ON public.npcs USING btree (slug)"
+  },
+  {
+   "tablename": "push_subscriptions",
+   "indexname": "idx_push_subs_user",
+   "indexdef": "CREATE INDEX idx_push_subs_user ON public.push_subscriptions USING btree (user_id)"
+  },
+  {
+   "tablename": "push_subscriptions",
+   "indexname": "idx_push_user",
+   "indexdef": "CREATE INDEX idx_push_user ON public.push_subscriptions USING btree (user_id)"
+  },
+  {
+   "tablename": "push_subscriptions",
+   "indexname": "push_subscriptions_pkey",
+   "indexdef": "CREATE UNIQUE INDEX push_subscriptions_pkey ON public.push_subscriptions USING btree (id)"
+  },
+  {
+   "tablename": "push_subscriptions",
+   "indexname": "push_subscriptions_user_id_subscription_json_key",
+   "indexdef": "CREATE UNIQUE INDEX push_subscriptions_user_id_subscription_json_key ON public.push_subscriptions USING btree (user_id, subscription_json)"
+  },
+  {
+   "tablename": "pvp_events",
+   "indexname": "idx_pvp_events_fight",
+   "indexdef": "CREATE INDEX idx_pvp_events_fight ON public.pvp_events USING btree (fight_id, created_at DESC)"
+  },
+  {
+   "tablename": "pvp_events",
+   "indexname": "pvp_events_pkey",
+   "indexdef": "CREATE UNIQUE INDEX pvp_events_pkey ON public.pvp_events USING btree (id)"
+  },
+  {
+   "tablename": "pvp_fights",
+   "indexname": "idx_pvp_fights_active",
+   "indexdef": "CREATE INDEX idx_pvp_fights_active ON public.pvp_fights USING btree (status) WHERE ((status)::text = 'active'::text)"
+  },
+  {
+   "tablename": "pvp_fights",
+   "indexname": "idx_pvp_fights_status",
+   "indexdef": "CREATE INDEX idx_pvp_fights_status ON public.pvp_fights USING btree (status)"
+  },
+  {
+   "tablename": "pvp_fights",
+   "indexname": "pvp_fights_pkey",
+   "indexdef": "CREATE UNIQUE INDEX pvp_fights_pkey ON public.pvp_fights USING btree (id)"
+  },
+  {
+   "tablename": "reps",
+   "indexname": "idx_reps_user_date",
+   "indexdef": "CREATE INDEX idx_reps_user_date ON public.reps USING btree (user_id, date)"
+  },
+  {
+   "tablename": "reps",
+   "indexname": "idx_reps_user_id",
+   "indexdef": "CREATE INDEX idx_reps_user_id ON public.reps USING btree (user_id)"
+  },
+  {
+   "tablename": "reps",
+   "indexname": "reps_pkey",
+   "indexdef": "CREATE UNIQUE INDEX reps_pkey ON public.reps USING btree (id)"
+  },
+  {
+   "tablename": "reps",
+   "indexname": "reps_user_id_date_exercise_type_key",
+   "indexdef": "CREATE UNIQUE INDEX reps_user_id_date_exercise_type_key ON public.reps USING btree (user_id, date, exercise_type)"
+  },
+  {
+   "tablename": "routine_exercises",
+   "indexname": "routine_exercises_pkey",
+   "indexdef": "CREATE UNIQUE INDEX routine_exercises_pkey ON public.routine_exercises USING btree (id)"
+  },
+  {
+   "tablename": "routines",
+   "indexname": "routines_pkey",
+   "indexdef": "CREATE UNIQUE INDEX routines_pkey ON public.routines USING btree (id)"
+  },
+  {
+   "tablename": "social_xp_rewards",
+   "indexname": "social_xp_rewards_pkey",
+   "indexdef": "CREATE UNIQUE INDEX social_xp_rewards_pkey ON public.social_xp_rewards USING btree (user_id, summary_id, action_type)"
+  },
+  {
+   "tablename": "streak_freezes",
+   "indexname": "idx_streak_freezes_user_date",
+   "indexdef": "CREATE INDEX idx_streak_freezes_user_date ON public.streak_freezes USING btree (user_id, freeze_date)"
+  },
+  {
+   "tablename": "streak_freezes",
+   "indexname": "streak_freezes_pkey",
+   "indexdef": "CREATE UNIQUE INDEX streak_freezes_pkey ON public.streak_freezes USING btree (id)"
+  },
+  {
+   "tablename": "streak_freezes",
+   "indexname": "streak_freezes_user_id_freeze_date_key",
+   "indexdef": "CREATE UNIQUE INDEX streak_freezes_user_id_freeze_date_key ON public.streak_freezes USING btree (user_id, freeze_date)"
+  },
+  {
+   "tablename": "summary_comment_subscribers",
+   "indexname": "summary_comment_subscribers_pkey",
+   "indexdef": "CREATE UNIQUE INDEX summary_comment_subscribers_pkey ON public.summary_comment_subscribers USING btree (summary_id, user_id)"
+  },
+  {
+   "tablename": "summary_interactions",
+   "indexname": "idx_summary_interactions_summary_type",
+   "indexdef": "CREATE INDEX idx_summary_interactions_summary_type ON public.summary_interactions USING btree (summary_id, type)"
+  },
+  {
+   "tablename": "summary_interactions",
+   "indexname": "summary_interactions_pkey",
+   "indexdef": "CREATE UNIQUE INDEX summary_interactions_pkey ON public.summary_interactions USING btree (id)"
+  },
+  {
+   "tablename": "training_plan_blocks",
+   "indexname": "training_plan_blocks_pkey",
+   "indexdef": "CREATE UNIQUE INDEX training_plan_blocks_pkey ON public.training_plan_blocks USING btree (id)"
+  },
+  {
+   "tablename": "training_plan_days",
+   "indexname": "training_plan_days_pkey",
+   "indexdef": "CREATE UNIQUE INDEX training_plan_days_pkey ON public.training_plan_days USING btree (id)"
+  },
+  {
+   "tablename": "training_plan_days",
+   "indexname": "training_plan_days_plan_id_day_number_key",
+   "indexdef": "CREATE UNIQUE INDEX training_plan_days_plan_id_day_number_key ON public.training_plan_days USING btree (plan_id, day_number)"
+  },
+  {
+   "tablename": "training_plans",
+   "indexname": "idx_training_plans_owner",
+   "indexdef": "CREATE INDEX idx_training_plans_owner ON public.training_plans USING btree (owner_user_id)"
+  },
+  {
+   "tablename": "training_plans",
+   "indexname": "training_plans_pkey",
+   "indexdef": "CREATE UNIQUE INDEX training_plans_pkey ON public.training_plans USING btree (id)"
+  },
+  {
+   "tablename": "training_plans",
+   "indexname": "training_plans_slug_key",
+   "indexdef": "CREATE UNIQUE INDEX training_plans_slug_key ON public.training_plans USING btree (slug)"
+  },
+  {
+   "tablename": "user_active_plans",
+   "indexname": "user_active_plans_pkey",
+   "indexdef": "CREATE UNIQUE INDEX user_active_plans_pkey ON public.user_active_plans USING btree (user_id)"
+  },
+  {
+   "tablename": "user_bestiary",
+   "indexname": "user_bestiary_pkey",
+   "indexdef": "CREATE UNIQUE INDEX user_bestiary_pkey ON public.user_bestiary USING btree (user_id, enemy_type_id)"
+  },
+  {
+   "tablename": "user_cosmeticos",
+   "indexname": "user_cosmeticos_pkey",
+   "indexdef": "CREATE UNIQUE INDEX user_cosmeticos_pkey ON public.user_cosmeticos USING btree (id)"
+  },
+  {
+   "tablename": "user_cosmeticos",
+   "indexname": "user_cosmeticos_user_id_cosmetico_id_key",
+   "indexdef": "CREATE UNIQUE INDEX user_cosmeticos_user_id_cosmetico_id_key ON public.user_cosmeticos USING btree (user_id, cosmetico_id)"
+  },
+  {
+   "tablename": "user_favorite_exercises",
+   "indexname": "user_favorite_exercises_pkey",
+   "indexdef": "CREATE UNIQUE INDEX user_favorite_exercises_pkey ON public.user_favorite_exercises USING btree (user_id, exercise_slug)"
+  },
+  {
+   "tablename": "user_feature_seen",
+   "indexname": "user_feature_seen_pkey",
+   "indexdef": "CREATE UNIQUE INDEX user_feature_seen_pkey ON public.user_feature_seen USING btree (user_id, feature_key)"
+  },
+  {
+   "tablename": "user_inventory",
+   "indexname": "idx_inventory_user",
+   "indexdef": "CREATE INDEX idx_inventory_user ON public.user_inventory USING btree (user_id)"
+  },
+  {
+   "tablename": "user_inventory",
+   "indexname": "idx_user_inventory_user_id",
+   "indexdef": "CREATE INDEX idx_user_inventory_user_id ON public.user_inventory USING btree (user_id)"
+  },
+  {
+   "tablename": "user_inventory",
+   "indexname": "user_inventory_pkey",
+   "indexdef": "CREATE UNIQUE INDEX user_inventory_pkey ON public.user_inventory USING btree (id)"
+  },
+  {
+   "tablename": "user_inventory",
+   "indexname": "user_inventory_user_id_cosmetic_id_key",
+   "indexdef": "CREATE UNIQUE INDEX user_inventory_user_id_cosmetic_id_key ON public.user_inventory USING btree (user_id, cosmetic_id)"
+  },
+  {
+   "tablename": "user_items",
+   "indexname": "idx_user_items_user_id",
+   "indexdef": "CREATE INDEX idx_user_items_user_id ON public.user_items USING btree (user_id)"
+  },
+  {
+   "tablename": "user_items",
+   "indexname": "user_items_pkey",
+   "indexdef": "CREATE UNIQUE INDEX user_items_pkey ON public.user_items USING btree (id)"
+  },
+  {
+   "tablename": "user_items",
+   "indexname": "user_items_user_id_item_id_key",
+   "indexdef": "CREATE UNIQUE INDEX user_items_user_id_item_id_key ON public.user_items USING btree (user_id, item_id)"
+  },
+  {
+   "tablename": "user_metrics",
+   "indexname": "idx_user_metrics_user",
+   "indexdef": "CREATE INDEX idx_user_metrics_user ON public.user_metrics USING btree (user_id)"
+  },
+  {
+   "tablename": "user_metrics",
+   "indexname": "user_metrics_pkey",
+   "indexdef": "CREATE UNIQUE INDEX user_metrics_pkey ON public.user_metrics USING btree (id)"
+  },
+  {
+   "tablename": "user_missions",
+   "indexname": "idx_user_missions_user",
+   "indexdef": "CREATE INDEX idx_user_missions_user ON public.user_missions USING btree (user_id)"
+  },
+  {
+   "tablename": "user_missions",
+   "indexname": "user_missions_pkey",
+   "indexdef": "CREATE UNIQUE INDEX user_missions_pkey ON public.user_missions USING btree (id)"
+  },
+  {
+   "tablename": "user_missions",
+   "indexname": "user_missions_user_id_mission_id_key",
+   "indexdef": "CREATE UNIQUE INDEX user_missions_user_id_mission_id_key ON public.user_missions USING btree (user_id, mission_id)"
+  },
+  {
+   "tablename": "user_node_progress",
+   "indexname": "idx_user_node_progress_run",
+   "indexdef": "CREATE INDEX idx_user_node_progress_run ON public.user_node_progress USING btree (run_id)"
+  },
+  {
+   "tablename": "user_node_progress",
+   "indexname": "user_node_progress_pkey",
+   "indexdef": "CREATE UNIQUE INDEX user_node_progress_pkey ON public.user_node_progress USING btree (id)"
+  },
+  {
+   "tablename": "user_node_progress",
+   "indexname": "user_node_progress_run_id_node_id_key",
+   "indexdef": "CREATE UNIQUE INDEX user_node_progress_run_id_node_id_key ON public.user_node_progress USING btree (run_id, node_id)"
+  },
+  {
+   "tablename": "user_npc_quests",
+   "indexname": "idx_user_npc_quests_run",
+   "indexdef": "CREATE INDEX idx_user_npc_quests_run ON public.user_npc_quests USING btree (run_id)"
+  },
+  {
+   "tablename": "user_npc_quests",
+   "indexname": "user_npc_quests_pkey",
+   "indexdef": "CREATE UNIQUE INDEX user_npc_quests_pkey ON public.user_npc_quests USING btree (id)"
+  },
+  {
+   "tablename": "user_npc_quests",
+   "indexname": "user_npc_quests_run_id_quest_id_key",
+   "indexdef": "CREATE UNIQUE INDEX user_npc_quests_run_id_quest_id_key ON public.user_npc_quests USING btree (run_id, quest_id)"
+  },
+  {
+   "tablename": "user_read_blogs",
+   "indexname": "user_read_blogs_pkey",
+   "indexdef": "CREATE UNIQUE INDEX user_read_blogs_pkey ON public.user_read_blogs USING btree (id)"
+  },
+  {
+   "tablename": "user_read_blogs",
+   "indexname": "user_read_blogs_user_id_post_slug_key",
+   "indexdef": "CREATE UNIQUE INDEX user_read_blogs_user_id_post_slug_key ON public.user_read_blogs USING btree (user_id, post_slug)"
+  },
+  {
+   "tablename": "users",
+   "indexname": "idx_users_hevy_token",
+   "indexdef": "CREATE UNIQUE INDEX idx_users_hevy_token ON public.users USING btree (hevy_webhook_token) WHERE (hevy_webhook_token IS NOT NULL)"
+  },
+  {
+   "tablename": "users",
+   "indexname": "idx_users_referral_code",
+   "indexdef": "CREATE UNIQUE INDEX idx_users_referral_code ON public.users USING btree (referral_code) WHERE (referral_code IS NOT NULL)"
+  },
+  {
+   "tablename": "users",
+   "indexname": "idx_users_referred_by",
+   "indexdef": "CREATE INDEX idx_users_referred_by ON public.users USING btree (referred_by)"
+  },
+  {
+   "tablename": "users",
+   "indexname": "idx_users_total_reps",
+   "indexdef": "CREATE INDEX idx_users_total_reps ON public.users USING btree (total_reps DESC) WHERE (is_private = false)"
+  },
+  {
+   "tablename": "users",
+   "indexname": "idx_users_username",
+   "indexdef": "CREATE UNIQUE INDEX idx_users_username ON public.users USING btree (username) WHERE (username IS NOT NULL)"
+  },
+  {
+   "tablename": "users",
+   "indexname": "idx_users_username_unique",
+   "indexdef": "CREATE UNIQUE INDEX idx_users_username_unique ON public.users USING btree (lower((username)::text)) WHERE (username IS NOT NULL)"
+  },
+  {
+   "tablename": "users",
+   "indexname": "users_email_key",
+   "indexdef": "CREATE UNIQUE INDEX users_email_key ON public.users USING btree (email)"
+  },
+  {
+   "tablename": "users",
+   "indexname": "users_pkey",
+   "indexdef": "CREATE UNIQUE INDEX users_pkey ON public.users USING btree (id)"
+  },
+  {
+   "tablename": "workout_sessions",
+   "indexname": "workout_sessions_pkey",
+   "indexdef": "CREATE UNIQUE INDEX workout_sessions_pkey ON public.workout_sessions USING btree (id)"
+  },
+  {
+   "tablename": "workout_set_logs",
+   "indexname": "workout_set_logs_pkey",
+   "indexdef": "CREATE UNIQUE INDEX workout_set_logs_pkey ON public.workout_set_logs USING btree (id)"
+  },
+  {
+   "tablename": "workout_sets",
+   "indexname": "idx_workout_sets_workout",
+   "indexdef": "CREATE INDEX idx_workout_sets_workout ON public.workout_sets USING btree (workout_id)"
+  },
+  {
+   "tablename": "workout_sets",
+   "indexname": "workout_sets_pkey",
+   "indexdef": "CREATE UNIQUE INDEX workout_sets_pkey ON public.workout_sets USING btree (id)"
+  },
+  {
+   "tablename": "workouts",
+   "indexname": "idx_workouts_user",
+   "indexdef": "CREATE INDEX idx_workouts_user ON public.workouts USING btree (user_id)"
+  },
+  {
+   "tablename": "workouts",
+   "indexname": "workouts_pkey",
+   "indexdef": "CREATE UNIQUE INDEX workouts_pkey ON public.workouts USING btree (id)"
+  }
+ ],
+ "sequences": [
+  {
+   "sequencename": "async_challenges_id_seq",
+   "last_value": "8"
+  },
+  {
+   "sequencename": "boss_fights_id_seq",
+   "last_value": "15"
+  },
+  {
+   "sequencename": "boss_kill_posts_id_seq",
+   "last_value": "70"
+  },
+  {
+   "sequencename": "campaign_edges_id_seq",
+   "last_value": "139"
+  },
+  {
+   "sequencename": "campaign_nodes_id_seq",
+   "last_value": "154"
+  },
+  {
+   "sequencename": "campaign_runs_id_seq",
+   "last_value": "6"
+  },
+  {
+   "sequencename": "campaign_zones_id_seq",
+   "last_value": "33"
+  },
+  {
+   "sequencename": "campaigns_id_seq",
+   "last_value": "8"
+  },
+  {
+   "sequencename": "coin_transactions_id_seq",
+   "last_value": "311"
+  },
+  {
+   "sequencename": "cosmeticos_id_seq",
+   "last_value": "177"
+  },
+  {
+   "sequencename": "cosmetics_id_seq",
+   "last_value": "158"
+  },
+  {
+   "sequencename": "daily_shop_items_id_seq",
+   "last_value": "882"
+  },
+  {
+   "sequencename": "daily_summaries_id_seq",
+   "last_value": "298"
+  },
+  {
+   "sequencename": "enemy_types_id_seq",
+   "last_value": "126"
+  },
+  {
+   "sequencename": "event_participants_id_seq",
+   "last_value": "1815"
+  },
+  {
+   "sequencename": "friendships_id_seq",
+   "last_value": "14"
+  },
+  {
+   "sequencename": "gem_transactions_id_seq",
+   "last_value": "177"
+  },
+  {
+   "sequencename": "items_id_seq",
+   "last_value": "817"
+  },
+  {
+   "sequencename": "missions_id_seq",
+   "last_value": "253"
+  },
+  {
+   "sequencename": "notifications_id_seq",
+   "last_value": "1059"
+  },
+  {
+   "sequencename": "npc_quests_id_seq",
+   "last_value": "32"
+  },
+  {
+   "sequencename": "npcs_id_seq",
+   "last_value": "23"
+  },
+  {
+   "sequencename": "push_subscriptions_id_seq",
+   "last_value": "292"
+  },
+  {
+   "sequencename": "pvp_events_id_seq",
+   "last_value": "67"
+  },
+  {
+   "sequencename": "pvp_fights_id_seq",
+   "last_value": "22"
+  },
+  {
+   "sequencename": "reps_id_seq",
+   "last_value": "1975"
+  },
+  {
+   "sequencename": "routine_exercises_id_seq",
+   "last_value": null
+  },
+  {
+   "sequencename": "routines_id_seq",
+   "last_value": null
+  },
+  {
+   "sequencename": "streak_freezes_id_seq",
+   "last_value": "13"
+  },
+  {
+   "sequencename": "summary_interactions_id_seq",
+   "last_value": "3260"
+  },
+  {
+   "sequencename": "training_plan_blocks_id_seq",
+   "last_value": "37"
+  },
+  {
+   "sequencename": "training_plan_days_id_seq",
+   "last_value": "13"
+  },
+  {
+   "sequencename": "training_plans_id_seq",
+   "last_value": "5"
+  },
+  {
+   "sequencename": "user_cosmeticos_id_seq",
+   "last_value": "53"
+  },
+  {
+   "sequencename": "user_inventory_id_seq",
+   "last_value": "127"
+  },
+  {
+   "sequencename": "user_items_id_seq",
+   "last_value": "1695"
+  },
+  {
+   "sequencename": "user_metrics_id_seq",
+   "last_value": null
+  },
+  {
+   "sequencename": "user_missions_id_seq",
+   "last_value": "463"
+  },
+  {
+   "sequencename": "user_node_progress_id_seq",
+   "last_value": "14"
+  },
+  {
+   "sequencename": "user_npc_quests_id_seq",
+   "last_value": "7"
+  },
+  {
+   "sequencename": "user_read_blogs_id_seq",
+   "last_value": "68"
+  },
+  {
+   "sequencename": "workout_sessions_id_seq",
+   "last_value": "27"
+  },
+  {
+   "sequencename": "workout_set_logs_id_seq",
+   "last_value": "90"
+  },
+  {
+   "sequencename": "workout_sets_id_seq",
+   "last_value": null
+  },
+  {
+   "sequencename": "workouts_id_seq",
+   "last_value": null
+  }
+ ]
+}
