@@ -103,7 +103,7 @@ const props = defineProps({
   src: { type: String, default: null },
   borderCss: { type: String, default: '' },
   avatarCss: { type: String, default: '' },
-  size: { type: Number, default: 80 }
+  size: { type: Number, default: 40 }
 });
 
 const frameClass = computed(() => {
