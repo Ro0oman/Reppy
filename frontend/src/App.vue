@@ -731,10 +731,12 @@ const onStartAction = () => {
 const initializeApp = async () => {
   if (import.meta.env.SSR) return;
 
-  // Always init socket so anonymous users appear in presence-global too
-  socketStore.init();
-
   if (!authStore.isAuthenticated) return;
+
+  // Presence channels require an authenticated Pusher authorization request.
+  // Starting them for visitors sends `Bearer null`, which produces a 401 and
+  // used to surface as a technical error over the public landing.
+  socketStore.init();
 
   // These are throttled at the store level, but calling them here ensures initial load
   authStore.fetchProfile();
@@ -762,8 +764,6 @@ watch(() => authStore.isAuthenticated, (val) => {
     initializeApp();
   } else {
     socketStore.disconnect();
-    // Re-init as anonymous so they still see presence
-    socketStore.init();
   }
 }, { immediate: true });
 

@@ -14,7 +14,6 @@
 
 const MAX_LOGS = 200;
 let logs = [];
-let notificationStore = null;
 let isLogging = false;
 
 const addLog = (level, message) => {
@@ -59,8 +58,7 @@ const logAxiosError = (error) => {
   }
 };
 
-export const initLogger = (store, axios) => {
-  notificationStore = store;
+export const initLogger = (axios) => {
 
   if (axios) {
     axios.interceptors.response.use(
@@ -89,10 +87,11 @@ export const initLogger = (store, axios) => {
     if (isLogging) return;
     isLogging = true;
     try {
+      // Console errors are diagnostic signals, not necessarily user-visible
+      // failures (for example, a rejected optional realtime subscription).
+      // Keep them in the exportable buffer; product code decides when an error
+      // deserves a user-facing notification with actionable wording.
       addLog('ERROR', args.map(stringify).join(' '));
-      if (notificationStore) {
-        notificationStore.notify('Error detected. Click to copy logs for support.', 'error', 8000, true);
-      }
     } catch (e) {
       originalError.apply(console, ['Logger failed:', e]);
     } finally {
