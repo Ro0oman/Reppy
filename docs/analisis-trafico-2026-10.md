@@ -72,3 +72,31 @@ debe devolver una única canónica absoluta y autorreferenciada, y lo mismo en `
 2. Marcar `signup` y `first_log` como eventos clave y comprobarlos con DebugView.
 3. Sacar `sitemap-athletes.xml` del índice y arreglar `lastmod` (PR aparte, pequeña).
 4. E4/E5: indexación manual de 5–10 páginas y distribución; es lo único que moverá la cifra de visitas.
+
+## 8. Comprobado en las consolas (2026-10-04, con la sesión de Roman en Chrome)
+
+Solo lectura. No he cambiado ningún ajuste en Analytics, Search Console ni Bing.
+
+### Google Analytics (propiedad `romandev`, cuenta `a254797088`)
+- **Es la misma propiedad que el portfolio.** En «Vistas por título de página» salen juntos «Comunidad | Reppy», «Entrenar | Reppy» y «Roman Myziuk — Full Stack Web Developer». Confirma lo que ya se sospechaba por los dos `gtag('config')` de `index.html`: no hay propiedad solo para Reppy.
+- Últimos 7 días: **5 usuarios activos, 2 nuevos, 50 eventos, 0 eventos clave**; sesiones 11 «Direct» y 1 sin asignar; **ninguna** desde buscadores ni referidos. Países: España, Alemania, Singapur, EE. UU. (Ashburn y Singapur son casi seguro rastreadores).
+- No he podido abrir la lista de eventos (la interfaz de administración no cargó por enlace directo), así que **sigue sin comprobarse si `signup` o `first_log` llegan**; hay 0 eventos clave porque no están marcados como tales. Pendiente de Roman: *Administrar → Eventos*.
+
+### Search Console (`https://reppy.romandev.app/`)
+- **0 clics** en la búsqueda web. Indexación: **6 indexadas, 148 no indexadas**.
+- Motivos de las 148: *Descubierta, sin indexar* **122**; *Rastreada, sin indexar* **22**; *Duplicada, canónica distinta* 2; *Bloqueada por robots.txt* 1; *Página con redirección* 1.
+- Entre las 22 «rastreadas pero descartadas» están **la portada (`/`, `/es`, `/en`)**, `/es/social`, `/en/contador-dominadas`, `/es/contador-dominadas` y varios artículos del blog. Que Google rastree la portada y decida no indexarla es la señal de autoridad baja: no hay enlaces entrantes que justifiquen gastar presupuesto de rastreo.
+- Las 122 «descubiertas» son las que ni ha rastreado (sitemap de 151 URL).
+
+### Bing Webmaster
+- El enlace abierto era la propiedad **`reppy-weld.vercel.app`, el dominio viejo de Vercel** («usuario no autorizado»). Es normal que ahí no haya datos.
+- La propiedad correcta, **`reppy.romandev.app`, sí existe**: sitemap índice enviado el 26/07 y rastreado el 02/10 con éxito, **137 URL descubiertas**, 0 errores y 0 avisos. Bing no es el cuello de botella.
+
+### Conclusión
+Los tres cuadran con el diagnóstico anterior: **problema de autoridad y distribución, no técnico**. Lo único accionable en código ya está en #377 (evento `signup` de Google) y en las propuestas de la sección 4 (sacar los 36 perfiles de atleta del sitemap, arreglar `lastmod`). Lo que mueve la aguja es lo de E4/E5: enlaces entrantes y distribución.
+
+### Para Roman, en este orden
+1. Quitar el segundo `gtag('config')` y crear una propiedad GA4 solo para Reppy (sigue mezclado con el portfolio).
+2. En *Eventos*, comprobar si aparecen `signup` y `first_log` y marcarlos como clave.
+3. En Bing, quitar la propiedad vieja `reppy-weld.vercel.app` si ya no sirve.
+4. En Search Console, pedir indexación manual de las 5–10 mejores páginas, empezando por la guía de pike push-ups.
