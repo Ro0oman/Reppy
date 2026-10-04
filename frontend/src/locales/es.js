@@ -1683,5 +1683,10 @@ export default {
     onb_level_intermediate: 'Intermedio',
     onb_level_advanced: 'Avanzado',
     onb_level_goal: 'meta {n}',
+    friend_remove: 'Eliminar amigo',
+    friend_remove_confirm: '¿Dejar de ser amigo de {name}?',
+    friend_removed: 'Amigo eliminado',
+    friend_remove_failed: 'No se pudo eliminar al amigo',
+    dash_week_progress: 'esta semana',
 };
 

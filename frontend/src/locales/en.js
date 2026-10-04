@@ -1619,5 +1619,10 @@ export default {
     onb_level_intermediate: 'Intermediate',
     onb_level_advanced: 'Advanced',
     onb_level_goal: 'goal {n}',
+    friend_remove: 'Remove friend',
+    friend_remove_confirm: 'Stop being friends with {name}?',
+    friend_removed: 'Friend removed',
+    friend_remove_failed: 'Could not remove the friend',
+    dash_week_progress: 'this week',
 };
 

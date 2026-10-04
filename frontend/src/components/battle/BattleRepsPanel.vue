@@ -26,7 +26,7 @@
         :class="exerciseType === ex.id ? 'os-ex-tab--active' : ''">
         <span v-if="typeof ex.icon === 'string'" class="text-base leading-none">{{ ex.icon }}</span>
         <component v-else :is="ex.icon" class="h-4 w-4" />
-        <span class="w-full truncate text-[9px] font-bold leading-tight">{{ ex.label }}</span>
+        <span class="w-full truncate text-xs font-bold leading-tight">{{ ex.label }}</span>
       </button>
 
       <!-- Fill the last row so it never looks ragged; tapping edits favorites -->

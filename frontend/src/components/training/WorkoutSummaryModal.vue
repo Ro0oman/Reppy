@@ -29,22 +29,22 @@
             <div v-if="stats.reps" class="rounded-2xl border border-border bg-foreground/[0.03] p-3 text-center">
               <Flame class="mx-auto h-4 w-4 text-primary-500" />
               <p class="mt-1 text-lg font-black tabular-nums text-foreground">{{ stats.reps }}</p>
-              <p class="text-[9px] font-bold uppercase tracking-widest text-muted">{{ i18n.t('ui_reps') }}</p>
+              <p class="text-xs font-bold uppercase tracking-widest text-muted">{{ i18n.t('ui_reps') }}</p>
             </div>
             <div v-if="stats.seconds" class="rounded-2xl border border-border bg-foreground/[0.03] p-3 text-center">
               <Clock class="mx-auto h-4 w-4 text-primary-500" />
               <p class="mt-1 text-lg font-black tabular-nums text-foreground">{{ stats.seconds }}s</p>
-              <p class="text-[9px] font-bold uppercase tracking-widest text-muted">{{ i18n.locale === 'es' ? 'Tiempo' : 'Time' }}</p>
+              <p class="text-xs font-bold uppercase tracking-widest text-muted">{{ i18n.locale === 'es' ? 'Tiempo' : 'Time' }}</p>
             </div>
             <div v-if="stats.damage" class="rounded-2xl border border-border bg-foreground/[0.03] p-3 text-center">
               <Zap class="mx-auto h-4 w-4 text-primary-500" />
               <p class="mt-1 text-lg font-black tabular-nums text-primary-500">{{ stats.damage }}</p>
-              <p class="text-[9px] font-bold uppercase tracking-widest text-muted">{{ i18n.t('ui_dmg') }}</p>
+              <p class="text-xs font-bold uppercase tracking-widest text-muted">{{ i18n.t('ui_dmg') }}</p>
             </div>
             <div v-if="stats.coins" class="rounded-2xl border border-border bg-foreground/[0.03] p-3 text-center">
               <Coins class="mx-auto h-4 w-4 text-amber-400" />
               <p class="mt-1 text-lg font-black tabular-nums text-foreground">{{ stats.coins }}</p>
-              <p class="text-[9px] font-bold uppercase tracking-widest text-muted">RC</p>
+              <p class="text-xs font-bold uppercase tracking-widest text-muted">RC</p>
             </div>
           </div>
 

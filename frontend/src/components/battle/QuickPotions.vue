@@ -23,8 +23,8 @@
         <span class="flex h-8 w-8 items-center justify-center rounded-xl border" :class="accentClasses(p).box">
           <FlaskConical class="h-4 w-4" :class="accentClasses(p).icon" />
         </span>
-        <span class="w-full truncate text-center text-[9px] font-bold leading-tight text-white/80">{{ shortName(p.name) }}</span>
-        <span class="text-[9px] font-black text-orange-300">{{ effectLabel(p) }}<span v-if="durationLabel(p)" class="font-semibold text-white/40"> · {{ durationLabel(p) }}</span></span>
+        <span class="w-full truncate text-center text-xs font-bold leading-tight text-white/80">{{ shortName(p.name) }}</span>
+        <span class="text-xs font-black text-orange-300">{{ effectLabel(p) }}<span v-if="durationLabel(p)" class="font-semibold text-white/40"> · {{ durationLabel(p) }}</span></span>
       </button>
 
       <!-- Empty slots → shop, so the row never looks lopsided -->
@@ -32,7 +32,7 @@
         :to="{ name: 'shop', params: { lang: i18n.locale } }"
         class="flex flex-col items-center justify-center gap-1 rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-1.5 py-2 text-white/25 transition-all hover:border-orange-400/30 hover:text-orange-300/60">
         <Plus class="h-4 w-4" />
-        <span class="text-[8px] font-bold uppercase tracking-wide">{{ i18n.t('battle_get_potion') }}</span>
+        <span class="text-xs font-bold uppercase tracking-wide">{{ i18n.t('battle_get_potion') }}</span>
       </router-link>
     </div>
 
