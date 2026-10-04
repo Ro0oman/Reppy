@@ -73,7 +73,10 @@ router.post('/', authenticate, repsLimiter, async (req, res) => {
     const validFormat = typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date);
     const today = getLocalDateString();
     const yesterday = getLocalDateString(new Date(Date.now() - 24 * 60 * 60 * 1000));
-    if (!validFormat || (date !== today && date !== yesterday)) {
+    // Tolerancia de +1 día: el cliente envía su fecha local y el servidor puede
+    // ir una zona por detrás (p. ej. UTC) entre las 00:00 y las 02:00 en España.
+    const tomorrow = getLocalDateString(new Date(Date.now() + 24 * 60 * 60 * 1000));
+    if (!validFormat || (date !== today && date !== yesterday && date !== tomorrow)) {
       return res.status(400).json({ message: 'date solo puede ser hoy o ayer' });
     }
   }
