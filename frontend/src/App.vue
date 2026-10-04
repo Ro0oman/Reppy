@@ -31,7 +31,7 @@
           class="os-rail__dot" aria-hidden="true"></i>
       </router-link>
       <div class="os-rail__spacer"></div>
-      <router-link v-if="authStore.user?.role === 'admin'" :to="`/${i18n.locale}/admin`"
+      <router-link v-if="authStore.user?.is_admin" :to="`/${i18n.locale}/admin`"
         class="os-rail__item" title="Admin">
         <Shield class="w-5 h-5" />
         <span>ADMIN</span>
@@ -137,7 +137,7 @@
               class="absolute top-1.5 right-2 w-2 h-2 bg-primary-500 rounded-full border-2 border-surface shadow-[0_0_10px_hsl(var(--primary) / 0.5)]">
             </div>
           </router-link>
-          <router-link v-if="authStore.user?.role === 'admin'" :to="`/${i18n.locale}/admin`"
+          <router-link v-if="authStore.user?.is_admin" :to="`/${i18n.locale}/admin`"
             class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-blue-500 hover:bg-blue-500/10 transition-all font-industrial">
             {{ i18n.t('economy_admin') }}
           </router-link>

@@ -8,6 +8,14 @@ import { recalculateUserStats, getXPForLevel, augmentUserWithLevels } from './ut
 
 const router = express.Router();
 
+// Campos que nunca deben salir hacia el cliente (se guardan en localStorage).
+const SENSITIVE_USER_FIELDS = ['password_hash', 'hevy_api_key', 'hevy_webhook_token', 'token_version'];
+const toSafeUser = (row) => {
+  const safe = { ...row };
+  for (const f of SENSITIVE_USER_FIELDS) delete safe[f];
+  return safe;
+};
+
 // Get current user profile
 router.get('/me', authenticate, async (req, res) => {
   try {
@@ -48,7 +56,7 @@ router.get('/me', authenticate, async (req, res) => {
 
     // Calculate derived stats using augmented logic
     const user = {
-      ...augmentUserWithLevels(result.rows[0]),
+      ...augmentUserWithLevels(toSafeUser(result.rows[0])),
       read_blogs: readBlogs
     };
     
@@ -101,7 +109,7 @@ router.patch('/profile', authenticate, async (req, res) => {
       `UPDATE users SET ${updateFields.join(', ')} WHERE id = $${i} RETURNING *`,
       params
     );
-    res.json({ user: result.rows[0] });
+    res.json({ user: toSafeUser(result.rows[0]) });
   } catch (error) {
     console.error('Error updating profile:', error);
     res.status(500).json({ message: 'Error updating profile' });
@@ -149,7 +157,7 @@ const updateAvatar = async (req, res) => {
       'UPDATE users SET avatar_url = $1 WHERE id = $2 RETURNING *',
       [avatar_url, req.user.id]
     );
-    res.json({ user: result.rows[0] });
+    res.json({ user: toSafeUser(result.rows[0]) });
   } catch (error) {
     console.error('Error updating avatar:', error);
     res.status(500).json({ message: 'Error updating avatar' });

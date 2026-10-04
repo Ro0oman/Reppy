@@ -421,7 +421,7 @@ export function setupRouterGuards(router) {
       next({ name: 'dashboard', params: { lang: currentLang } })
     } else if (to.name === 'dashboard' && !isAuthenticated) {
       next()
-    } else if (to.meta.requiresAdmin && (!authStore.user || authStore.user.role !== 'admin')) {
+    } else if (to.meta.requiresAdmin && (!authStore.user || !authStore.user.is_admin)) {
       next({ name: 'dashboard', params: { lang: currentLang } })
     } else {
       next()
