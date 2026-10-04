@@ -4,9 +4,12 @@ import { useAuthStore } from './auth';
 import axios from 'axios';
 
 // Estilos de interfaz disponibles. 'operative' = Operative OS (rail +
-// telemetría + obsidiana); 'classic' = la vista previa al rediseño.
-// Añadir aquí futuros estilos (p. ej. 'ascend') y su etiqueta en el selector.
-export const UI_STYLES = ['operative', 'classic'];
+// telemetría + obsidiana); 'aurora' = piel «IA moderna» (cristal, malla de luz
+// y degradados) sobre la misma estructura. El estilo 'classic' se retiró en
+// oct 2026: quien lo tenía guardado pasa a 'aurora'.
+// Añadir aquí futuros estilos y su etiqueta en el selector.
+export const UI_STYLES = ['operative', 'aurora'];
+const normalizeStyle = (s) => (s === 'classic' ? 'aurora' : s);
 
 export const useThemeStore = defineStore('theme', () => {
   const authStore = useAuthStore();
@@ -17,10 +20,11 @@ export const useThemeStore = defineStore('theme', () => {
   // localStorage responde al instante; la BD (users.ui_style) lo sigue para
   // que la preferencia viaje entre dispositivos.
   const storedStyle = !import.meta.env.SSR && localStorage.getItem('reppy_ui_style');
-  const uiStyle = ref(UI_STYLES.includes(storedStyle) ? storedStyle : 'operative');
+  const uiStyle = ref(UI_STYLES.includes(normalizeStyle(storedStyle)) ? normalizeStyle(storedStyle) : 'operative');
 
   // Al llegar el perfil (login / otro dispositivo), la BD manda.
-  watch(() => authStore.user?.ui_style, (dbStyle) => {
+  watch(() => authStore.user?.ui_style, (rawDbStyle) => {
+    const dbStyle = normalizeStyle(rawDbStyle);
     if (dbStyle && UI_STYLES.includes(dbStyle) && uiStyle.value !== dbStyle) {
       uiStyle.value = dbStyle;
       if (!import.meta.env.SSR) localStorage.setItem('reppy_ui_style', dbStyle);
