@@ -35,14 +35,14 @@
               
               <div class="hidden md:flex flex-col text-left">
                 <span class="font-black text-[10px] uppercase tracking-[0.2em]" :class="activeTab === desc.key ? 'text-white' : 'text-white/40'">{{ i18nStore.t('codex_' + desc.key.toLowerCase() + '_name') }}</span>
-                <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5" :class="activeTab === desc.key ? desc.iconColor : 'text-white/20'">{{ desc.key }}</span>
+                <span class="text-xs font-bold uppercase tracking-widest mt-0.5" :class="activeTab === desc.key ? desc.iconColor : 'text-white/20'">{{ desc.key }}</span>
               </div>
             </button>
           </div>
           
           <!-- Bottom Status (Desktop Only) -->
           <div class="p-8 hidden md:block mt-auto border-t border-white/5">
-            <div class="flex items-center gap-3 text-muted/30 text-[8px] font-black uppercase tracking-widest">
+            <div class="flex items-center gap-3 text-muted/30 text-xs font-black uppercase tracking-widest">
               <Activity class="w-3 h-3" />
               SYSTEM CORE STABLE
             </div>
@@ -57,13 +57,13 @@
               <!-- Header & Stat Summary -->
               <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 md:gap-6">
                 <div class="space-y-1">
-                  <span class="text-[8px] font-black text-muted uppercase tracking-[0.4em]">{{ i18nStore.t('lb_level') }} {{ getStatLevel(activeTab) }}</span>
+                  <span class="text-xs font-black text-muted uppercase tracking-[0.4em]">{{ i18nStore.t('lb_level') }} {{ getStatLevel(activeTab) }}</span>
                   <h4 class="text-3xl sm:text-7xl font-black uppercase tracking-tighter italic leading-none" :class="activeDesc.iconColor">
                     {{ i18nStore.t('codex_' + activeDesc.key.toLowerCase() + '_name') }}
                   </h4>
                 </div>
                 <div class="flex flex-col items-start sm:items-end">
-                   <span class="text-[9px] font-black text-muted uppercase tracking-widest">{{ i18nStore.t('nav_progress') }}</span>
+                   <span class="text-xs font-black text-muted uppercase tracking-widest">{{ i18nStore.t('nav_progress') }}</span>
                    <p class="text-xl sm:text-3xl font-black text-foreground tabular-nums tracking-tighter">
                      {{ getStatXP(activeTab) }}<span class="text-muted/40 text-sm"> / {{ getStatXPMax(activeTab) }} XP</span>
                    </p>
@@ -87,10 +87,10 @@
                 
                 <!-- Earnings Protocol -->
                 <div class="bg-black/40 backdrop-blur-md border border-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 space-y-3 sm:space-y-4">
-                   <h5 class="text-[9px] sm:text-[10px] font-black text-white uppercase tracking-widest border-b border-white/5 pb-2 sm:pb-3">{{ i18nStore.t('codex_earnings_protocol') }}</h5>
+                   <h5 class="text-xs sm:text-[10px] font-black text-white uppercase tracking-widest border-b border-white/5 pb-2 sm:pb-3">{{ i18nStore.t('codex_earnings_protocol') }}</h5>
                    <div class="space-y-2 sm:space-y-3">
                       <div v-for="earning in getEarnings(activeTab)" :key="earning.label" class="flex justify-between items-center text-[10px] sm:text-[11px]">
-                         <span class="text-muted/60 uppercase font-bold text-[9px] sm:text-[11px]">{{ i18nStore.t(earning.label) }}</span>
+                         <span class="text-muted/60 uppercase font-bold text-xs sm:text-[11px]">{{ i18nStore.t(earning.label) }}</span>
                          <span class="font-black text-primary-500 tabular-nums">+{{ earning.value }} XP</span>
                       </div>
                    </div>

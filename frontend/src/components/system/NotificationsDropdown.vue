@@ -8,7 +8,7 @@
       <button 
         v-if="store.unreadCount > 0"
         @click="store.markAllAsRead" 
-        class="text-[9px] font-black text-primary-500 uppercase tracking-widest hover:text-primary-400 transition-colors"
+        class="text-xs font-black text-primary-500 uppercase tracking-widest hover:text-primary-400 transition-colors"
       >
         Limpiar todo
       </button>
@@ -23,7 +23,7 @@
         <div class="w-12 h-12 rounded-2xl bg-surface/5 flex items-center justify-center mx-auto">
           <PartyPopper class="w-6 h-6 text-muted/20" />
         </div>
-        <p class="text-[9px] font-black text-muted uppercase tracking-[0.4em]">Zero anomalies detected</p>
+        <p class="text-xs font-black text-muted uppercase tracking-[0.4em]">Zero anomalies detected</p>
       </div>
 
       <TransitionGroup name="list">
@@ -50,7 +50,7 @@
               <span v-if="notif.actor_name" class="font-black uppercase tracking-tight text-primary-500 mr-1">{{ notif.actor_name }}</span>
               {{ notif.content }}
             </p>
-            <p class="text-[9px] font-black text-muted uppercase tracking-widest opacity-40">{{ formatTime(notif.created_at) }}</p>
+            <p class="text-xs font-black text-muted uppercase tracking-widest opacity-40">{{ formatTime(notif.created_at) }}</p>
           </div>
         </div>
       </TransitionGroup>
@@ -61,7 +61,7 @@
       @click="handleRegistryClick" 
       class="w-full py-5 text-center bg-surface/5 hover:bg-surface/10 border-t border-border transition-all cursor-pointer group"
     >
-       <span class="text-[9px] font-black text-muted group-hover:text-primary-500 uppercase tracking-[0.3em] transition-colors">ACCEDER AL REGISTRO CENTRAL</span>
+       <span class="text-xs font-black text-muted group-hover:text-primary-500 uppercase tracking-[0.3em] transition-colors">ACCEDER AL REGISTRO CENTRAL</span>
     </button>
   </div>
 </template>

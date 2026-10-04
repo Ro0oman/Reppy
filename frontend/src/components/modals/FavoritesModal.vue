@@ -40,7 +40,7 @@
             <h4 class="text-sm font-black text-foreground uppercase tracking-wide leading-tight">
               {{ ex.title_key?.startsWith('ex_') ? i18n.t(ex.title_key) : ex.title_key }}
             </h4>
-            <p class="text-[9px] font-bold text-muted mt-0.5">
+            <p class="text-xs font-bold text-muted mt-0.5">
               {{ ex.description_key }}
             </p>
           </div>
@@ -70,7 +70,7 @@
           </h5>
           <div v-if="showForm" class="space-y-3">
             <div>
-              <label class="text-[9px] font-black text-muted uppercase tracking-wider block mb-1">Nombre</label>
+              <label class="text-xs font-black text-muted uppercase tracking-wider block mb-1">Nombre</label>
               <input
                 v-model="form.title"
                 type="text"
@@ -80,7 +80,7 @@
             </div>
             <div class="grid grid-cols-2 gap-2">
               <div>
-                <label class="text-[9px] font-black text-muted uppercase tracking-wider block mb-1">Unidad</label>
+                <label class="text-xs font-black text-muted uppercase tracking-wider block mb-1">Unidad</label>
                 <select
                   v-model="form.unit"
                   class="w-full bg-deep-abyss border border-white/10 rounded-xl px-2 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary-500"
@@ -90,7 +90,7 @@
                 </select>
               </div>
               <div>
-                <label class="text-[9px] font-black text-muted uppercase tracking-wider block mb-1">Dificultad</label>
+                <label class="text-xs font-black text-muted uppercase tracking-wider block mb-1">Dificultad</label>
                 <select
                   v-model.number="form.difficulty_multiplier"
                   class="w-full bg-deep-abyss border border-white/10 rounded-xl px-2 py-2 text-xs font-bold text-foreground focus:outline-none focus:border-primary-500"

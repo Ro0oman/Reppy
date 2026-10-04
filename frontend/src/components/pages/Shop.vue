@@ -92,13 +92,13 @@
                   class="w-full aspect-[4/3] bg-black/40 rounded-xl border border-white/5 relative overflow-hidden flex items-center justify-center mb-1.5 shadow-inner group-hover/item:border-white/10 transition-colors">
                   <!-- Rarity / Reward chip -->
                   <div
-                    class="absolute top-1.5 left-1.5 z-20 px-1.5 py-0.5 rounded-md border font-black text-[8px] tracking-widest uppercase"
+                    class="absolute top-1.5 left-1.5 z-20 px-1.5 py-0.5 rounded-md border font-black text-xs tracking-widest uppercase"
                     :class="[item.reward_type ? 'text-emerald-400 border-emerald-500/50 bg-emerald-500/20' : getRarityBadge(item).classes]">
                     {{ item.reward_type ? i18n.t('shop_free_reward') : getRarityBadge(item).label }}
                   </div>
                   <!-- Global Upgrade Badge -->
                   <div v-if="isUpgrade(item)"
-                    class="absolute top-1.5 right-1.5 z-20 px-1.5 py-0.5 bg-emerald-500 text-white text-[8px] font-black uppercase tracking-widest rounded-md shadow-lg animate-bounce-subtle">
+                    class="absolute top-1.5 right-1.5 z-20 px-1.5 py-0.5 bg-emerald-500 text-white text-xs font-black uppercase tracking-widest rounded-md shadow-lg animate-bounce-subtle">
                     {{ i18n.t('shop_upgrade_badge') || 'MEJORA' }}
                   </div>
 
@@ -132,10 +132,10 @@ rarityGlowClass(item.rarity)
               <div class="mt-auto p-2 pt-0 relative z-10">
                 <div v-if="item.owned" class="flex items-center justify-center gap-1.5 text-neon-lime py-2 rounded-lg bg-neon-lime/10 border border-neon-lime/20">
                   <CheckCircle2 class="w-3.5 h-3.5" />
-                  <span class="text-[9px] font-black uppercase tracking-widest">{{ i18n.t('btn_acquired') }}</span>
+                  <span class="text-xs font-black uppercase tracking-widest">{{ i18n.t('btn_acquired') }}</span>
                 </div>
                 <button v-else-if="item.reward_type" @click.stop="claimReward(item)"
-                  class="w-full py-2 bg-emerald-500 text-white rounded-lg text-[9px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-1.5 active:scale-95 transition-all shadow-lg shadow-emerald-500/30">
+                  class="w-full py-2 bg-emerald-500 text-white rounded-lg text-xs font-black uppercase tracking-[0.2em] flex items-center justify-center gap-1.5 active:scale-95 transition-all shadow-lg shadow-emerald-500/30">
                   {{ i18n.t('boss_claim_loot') }}
                   <Gift class="w-3.5 h-3.5" />
                 </button>
@@ -152,7 +152,7 @@ rarityGlowClass(item.rarity)
                     <span class="text-sm font-black tabular-nums">{{ item.discounted_gems || item.price_gems }}</span>
                   </div>
                 </button>
-                <div v-else class="w-full py-2 rounded-lg bg-foreground/5 border border-border text-muted text-[9px] font-black uppercase tracking-widest text-center">
+                <div v-else class="w-full py-2 rounded-lg bg-foreground/5 border border-border text-muted text-xs font-black uppercase tracking-widest text-center">
                   {{ i18n.locale === 'es' ? 'NO DISPONIBLE' : 'NOT AVAILABLE' }}
                 </div>
               </div>

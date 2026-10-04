@@ -66,7 +66,7 @@
           <template v-if="slot.item">
             <ItemIcon v-if="COMBAT_SLOT_TYPES.includes(slot.item.type)" :name="slot.item.svg_key" :type="slot.item.type" class-name="w-10 h-10 sm:w-12 sm:h-12 text-primary-400" />
             <component v-else :is="slot.icon" class="w-9 h-9 text-purple-400" />
-            <span class="text-[8px] font-black uppercase leading-tight line-clamp-2 w-full text-center text-foreground/90">{{ slot.item.name }}</span>
+            <span class="text-xs font-black uppercase leading-tight line-clamp-2 w-full text-center text-foreground/90">{{ slot.item.name }}</span>
             <Check class="absolute top-1 right-1 w-3 h-3 text-blue-400" />
           </template>
           <template v-else>
@@ -87,13 +87,13 @@
           <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-surface/10 border border-white/5">
             <div class="flex items-center gap-1.5 flex-1 min-w-0">
               <Sword class="w-3.5 h-3.5 text-primary-500 shrink-0" />
-              <span class="text-[9px] font-black text-muted uppercase tracking-widest truncate">{{ i18n.t('inv_total_power') }}</span>
+              <span class="text-xs font-black text-muted uppercase tracking-widest truncate">{{ i18n.t('inv_total_power') }}</span>
               <span class="text-sm font-bold text-foreground tabular-nums ml-auto" :class="{ 'animate-bump': recentlyEquipped }">{{ combatStats.minDamage }}-{{ combatStats.maxDamage }}</span>
             </div>
             <div class="w-px h-4 bg-white/10"></div>
             <div class="flex items-center gap-1.5 flex-1 min-w-0">
               <Activity class="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-              <span class="text-[9px] font-black text-muted uppercase tracking-widest truncate">{{ i18n.t('inv_crit_prob') }}</span>
+              <span class="text-xs font-black text-muted uppercase tracking-widest truncate">{{ i18n.t('inv_crit_prob') }}</span>
               <span class="text-sm font-bold text-emerald-400 tabular-nums ml-auto" :class="{ 'animate-bump': recentlyEquipped }">{{ combatStats.critChance }}%</span>
             </div>
           </div>
@@ -560,7 +560,7 @@
       <Transition name="modal-fade">
         <div v-if="dragState.active"
              class="fixed top-0 inset-x-0 z-[1900] px-3 pt-[calc(0.5rem+env(safe-area-inset-top))] pb-2 bg-background/95 backdrop-blur-xl border-b border-primary-500/20 shadow-2xl shadow-black/50">
-          <p class="text-center text-[9px] font-black uppercase tracking-[0.35em] text-primary-400 mb-2 animate-pulse">{{ i18n.t('inv_drag_hint') }}</p>
+          <p class="text-center text-xs font-black uppercase tracking-[0.35em] text-primary-400 mb-2 animate-pulse">{{ i18n.t('inv_drag_hint') }}</p>
           <div class="flex gap-2 justify-center max-w-md mx-auto">
             <div v-for="slot in equippedSummaryItems" :key="'drop-' + slot.type"
                  :data-slot-type="slot.type"

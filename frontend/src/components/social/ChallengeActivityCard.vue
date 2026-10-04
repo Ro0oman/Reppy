@@ -55,8 +55,8 @@
         <!-- Center -->
         <div class="flex flex-col items-center gap-1.5 shrink-0">
           <Swords class="w-6 h-6 text-white/30" />
-          <span class="text-[9px] font-black text-white/50 uppercase tracking-widest">{{ goalLabel }}</span>
-          <span class="text-[9px] text-white/40 font-semibold whitespace-nowrap">
+          <span class="text-xs font-black text-white/50 uppercase tracking-widest">{{ goalLabel }}</span>
+          <span class="text-xs text-white/40 font-semibold whitespace-nowrap">
             Objetivo: <span class="text-white/70 font-black">{{ c.goal_value.toLocaleString() }}</span>
           </span>
           <span v-if="c.status === 'finished' && !c.winner_id"
@@ -90,7 +90,7 @@
       <div class="space-y-2 bg-black/30 rounded-2xl px-4 py-3 backdrop-blur-sm">
         <!-- Challenger -->
         <div class="space-y-1">
-          <div class="flex justify-between text-[9px] font-black uppercase tracking-widest">
+          <div class="flex justify-between text-xs font-black uppercase tracking-widest">
             <span class="text-white/60">{{ c.challenger_name.split(' ')[0] }}</span>
             <span class="text-primary-400">{{ c.challenger_score }} / {{ c.goal_value }}</span>
           </div>
@@ -101,7 +101,7 @@
         </div>
         <!-- Challenged -->
         <div class="space-y-1">
-          <div class="flex justify-between text-[9px] font-black uppercase tracking-widest">
+          <div class="flex justify-between text-xs font-black uppercase tracking-widest">
             <span class="text-white/60">{{ c.challenged_name.split(' ')[0] }}</span>
             <span class="text-amber-400">{{ c.challenged_score }} / {{ c.goal_value }}</span>
           </div>
