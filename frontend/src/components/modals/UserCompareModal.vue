@@ -34,16 +34,16 @@
           <!-- My Stats Card -->
           <div class="space-y-6">
             <div class="flex flex-col items-center gap-4 text-center">
-              <span class="text-[9px] font-black text-muted uppercase tracking-[0.4em] opacity-40">PRIMARY_OPERATIVE</span>
+              <span class="text-xs font-black text-muted uppercase tracking-[0.4em] opacity-40">PRIMARY_OPERATIVE</span>
               <div class="relative">
                 <AvatarFrame :src="me.avatar_url" :border-css="me.border_css" :size="80" />
                 <div class="absolute -bottom-2 inset-x-0 flex justify-center">
-                   <div class="px-2 py-0.5 bg-black border border-white/10 rounded text-[9px] font-black text-white uppercase italic">YOU</div>
+                   <div class="px-2 py-0.5 bg-black border border-white/10 rounded text-xs font-black text-white uppercase italic">YOU</div>
                 </div>
               </div>
               <div>
                 <h3 class="text-lg font-black text-white uppercase tracking-tight">{{ me.name }}</h3>
-                <p class="text-[9px] font-bold text-primary-500 uppercase tracking-widest mt-1">{{ me.title_name || 'RECRUIT' }}</p>
+                <p class="text-xs font-bold text-primary-500 uppercase tracking-widest mt-1">{{ me.title_name || 'RECRUIT' }}</p>
               </div>
             </div>
 
@@ -60,13 +60,13 @@
           <!-- Target Stats Card -->
           <div class="space-y-6">
             <div class="flex flex-col items-center gap-4 text-center">
-              <span class="text-[9px] font-black text-primary-500 uppercase tracking-[0.4em]">TARGET_USER</span>
+              <span class="text-xs font-black text-primary-500 uppercase tracking-[0.4em]">TARGET_USER</span>
               <div class="relative">
                  <AvatarFrame :src="target.avatar_url" :border-css="target.border_css" :size="80" />
               </div>
               <div>
                 <h3 class="text-lg font-black text-white uppercase tracking-tight">{{ target.user_name || target.name }}</h3>
-                <p class="text-[9px] font-bold text-primary-500 uppercase tracking-widest mt-1">{{ target.title_name || 'RECRUIT' }}</p>
+                <p class="text-xs font-bold text-primary-500 uppercase tracking-widest mt-1">{{ target.title_name || 'RECRUIT' }}</p>
               </div>
             </div>
 
@@ -79,7 +79,7 @@
                   <span class="text-base font-black text-white tabular-nums">{{ stat.target }}</span>
                   <!-- Diff Indicator -->
                   <div v-if="stat.diff !== 0" 
-                       class="px-2 py-0.5 rounded text-[9px] font-black italic tabular-nums min-w-[32px] text-center"
+                       class="px-2 py-0.5 rounded text-xs font-black italic tabular-nums min-w-[32px] text-center"
                        :class="stat.diff > 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'">
                     {{ stat.diff > 0 ? '+' : '' }}{{ stat.diff }}
                   </div>
@@ -95,7 +95,7 @@
       <div class="px-6 md:px-8 py-4 md:py-6 bg-black/40 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 shrink-0">
         <div class="flex items-center gap-6">
            <div class="flex flex-col">
-              <span class="text-[8px] font-black text-muted uppercase tracking-widest mb-1">TOTAL_REPS</span>
+              <span class="text-xs font-black text-muted uppercase tracking-widest mb-1">TOTAL_REPS</span>
               <div class="flex items-baseline gap-2">
                  <span class="text-xl font-black text-white italic">{{ me.total_reps }}</span>
                  <span class="text-xs font-bold" :class="me.total_reps >= target.total_reps ? 'text-emerald-500' : 'text-red-500'">
@@ -105,7 +105,7 @@
            </div>
            <div class="w-px h-8 bg-white/5 mx-2"></div>
            <div class="flex flex-col">
-              <span class="text-[8px] font-black text-muted uppercase tracking-widest mb-1">GLOBAL_LEVEL</span>
+              <span class="text-xs font-black text-muted uppercase tracking-widest mb-1">GLOBAL_LEVEL</span>
               <div class="flex items-baseline gap-2">
                  <span class="text-xl font-black text-white italic">{{ me.current_level }}</span>
                  <span class="text-xs font-bold" :class="me.current_level >= target.current_level ? 'text-emerald-500' : 'text-red-500'">

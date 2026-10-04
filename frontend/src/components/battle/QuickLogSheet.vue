@@ -22,7 +22,7 @@
                 ? 'border-primary-500/50 bg-primary-500/15 text-primary-400'
                 : 'border-border bg-foreground/[0.04] text-muted'">
               <component :is="ex.icon" class="h-4 w-4" />
-              <span class="text-[9px] font-bold leading-tight">{{ ex.label }}</span>
+              <span class="text-xs font-bold leading-tight">{{ ex.label }}</span>
             </button>
           </div>
 

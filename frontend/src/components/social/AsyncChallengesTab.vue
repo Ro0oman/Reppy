@@ -28,7 +28,7 @@
         <div class="flex items-center gap-2">
           <div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.8)]"></div>
           <h3 class="text-[10px] font-black text-amber-500 uppercase tracking-[0.4em]">{{ i18n.locale === 'es' ? 'Retos recibidos' : 'Incoming challenges' }}</h3>
-          <span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-[8px] font-black text-amber-500 border border-amber-500/30">{{ pending.length }}</span>
+          <span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-xs font-black text-amber-500 border border-amber-500/30">{{ pending.length }}</span>
         </div>
         <div v-for="c in pending" :key="c.id" class="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-5 flex items-center justify-between gap-4">
           <div class="flex items-center gap-3">
@@ -66,7 +66,7 @@
             </div>
             <div class="flex flex-col items-center gap-1">
               <Swords class="w-5 h-5 text-primary-500" />
-              <span class="text-[8px] font-black text-muted uppercase tracking-widest">{{ goalLabel(c) }}</span>
+              <span class="text-xs font-black text-muted uppercase tracking-widest">{{ goalLabel(c) }}</span>
               <span class="text-[10px] font-black text-primary-500 font-mono">{{ countdown(c.expires_at) }}</span>
             </div>
             <div class="text-center">

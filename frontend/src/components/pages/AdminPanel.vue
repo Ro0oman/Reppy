@@ -81,9 +81,9 @@
           <div class="flex justify-between items-start mb-4">
             <div>
               <div class="flex items-center gap-2">
-                <span class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-white/5 rounded-full text-zinc-400 border border-white/10">{{ item.type }}</span>
-                <span class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border" :class="getRarityBadgeClass(item.rarity)">{{ item.rarity }}</span>
-                <span v-if="item.is_seasonal" class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-amber-500/10 rounded-full text-amber-500 border border-amber-500/20">TEMPORAL</span>
+                <span class="text-xs font-black uppercase tracking-widest px-2 py-0.5 bg-white/5 rounded-full text-zinc-400 border border-white/10">{{ item.type }}</span>
+                <span class="text-xs font-black uppercase tracking-widest px-2 py-0.5 rounded-full border" :class="getRarityBadgeClass(item.rarity)">{{ item.rarity }}</span>
+                <span v-if="item.is_seasonal" class="text-xs font-black uppercase tracking-widest px-2 py-0.5 bg-amber-500/10 rounded-full text-amber-500 border border-amber-500/20">TEMPORAL</span>
               </div>
               <h3 class="text-lg font-bold text-white mt-1">{{ item.name }}</h3>
             </div>
@@ -195,7 +195,7 @@
                 class="flex-1 bg-primary-500/70 rounded-t hover:bg-primary-500 transition-colors group relative"
                 :style="{ height: d.height + '%', minHeight: '4px' }"
               >
-                <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] text-white bg-zinc-800 px-1 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap">{{ d.day.slice(5) }}: {{ d.count }}</div>
+                <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs text-white bg-zinc-800 px-1 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap">{{ d.day.slice(5) }}: {{ d.count }}</div>
               </div>
             </div>
           </div>
@@ -208,7 +208,7 @@
                 class="flex-1 bg-blue-500/70 rounded-t hover:bg-blue-500 transition-colors group relative"
                 :style="{ height: d.height + '%', minHeight: '4px' }"
               >
-                <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] text-white bg-zinc-800 px-1 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap">{{ d.day.slice(5) }}: {{ d.count }}</div>
+                <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs text-white bg-zinc-800 px-1 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap">{{ d.day.slice(5) }}: {{ d.count }}</div>
               </div>
             </div>
           </div>

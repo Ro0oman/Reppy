@@ -34,7 +34,7 @@
                 <p class="text-sm font-bold text-white/90">{{ tName(q.name) }}</p>
                 <p class="mt-0.5 text-[12px] leading-snug text-white/50">{{ tName(q.description) }}</p>
               </div>
-              <span :class="['shrink-0 rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-wider', stateClass(q.state)]">
+              <span :class="['shrink-0 rounded-full px-2 py-0.5 text-xs font-black uppercase tracking-wider', stateClass(q.state)]">
                 {{ i18n.t('quest_state_' + q.state) }}
               </span>
             </div>
