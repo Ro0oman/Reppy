@@ -1041,7 +1041,11 @@ export default {
     dash_streak: 'Streak',
     dash_peak_volume: 'Peak Volume',
     dash_total_tonnage: 'Total Tonnage',
-    dash_history_title: 'Activity History',
+    dash_history_title: 'Activity History',
+    hist_title: 'Entry history',
+    hist_hint: 'Each row is the total for one exercise on one day. If you made a mistake, fix the number or delete it.',
+    hist_edit_label: 'Reps for that entry',
+    hist_show_more: 'Show {n} more',
     dash_tons_moved: 'TONS MOVED',
     dash_protocol_null: 'Registry Null',
 
