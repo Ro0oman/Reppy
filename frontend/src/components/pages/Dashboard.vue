@@ -146,7 +146,7 @@
             <span class="text-xl font-extrabold tabular-nums leading-none text-foreground">{{ streakStatus?.streak || 0 }}</span>
             <span class="mt-0.5 text-[10px] text-muted/70">{{ i18n.t('streak_days_unit') }}</span>
           </RadialProgress>
-          <span class="text-sm font-bold text-[hsl(var(--neon-violet))] tabular-nums">{{ weeklyBonusProgress }}/{{ weeklyBonusTarget }}</span>
+          <span class="text-sm font-bold text-[hsl(var(--neon-violet))] tabular-nums">{{ weeklyBonusProgress }}/{{ weeklyBonusTarget }} {{ i18n.t('dash_week_progress') }}</span>
         </div>
       </div>
     </section>
@@ -607,7 +607,7 @@
               <Activity aria-hidden="true" class="w-4 h-4 text-primary-500" />
               <div class="mt-3">
                 <div v-if="isLoading" class="h-7 w-16 bg-foreground/10 rounded-lg animate-pulse"></div>
-                <span v-else class="text-2xl font-bold text-foreground tabular-nums">{{ totalReps }}</span>
+                <span v-else class="text-2xl font-bold text-foreground tabular-nums">{{ overall ? overall.totalReps : totalReps }}</span>
                 <p class="text-xs text-muted/80 mt-0.5">{{ i18n.t('dash_total_reps') }}</p>
               </div>
             </div>
@@ -616,7 +616,7 @@
               <Trophy aria-hidden="true" class="w-4 h-4 text-primary-500" />
               <div class="mt-3">
                 <div v-if="isLoading" class="h-7 w-16 bg-foreground/10 rounded-lg animate-pulse"></div>
-                <span v-else class="text-2xl font-bold text-foreground tabular-nums">{{ ((stats.totalVolume || 0) / 1000).toFixed(1) }}</span>
+                <span v-else class="text-2xl font-bold text-foreground tabular-nums">{{ (((overall ? overall.totalVolume : stats.totalVolume) || 0) / 1000).toFixed(1) }}</span>
                 <p class="text-xs text-muted/80 mt-0.5">{{ i18n.t('dash_tons_moved') }}</p>
               </div>
             </div>
@@ -843,6 +843,8 @@ const route = useRoute();
 const reps = ref([]);
 const heatmapData = ref([]);
 const totalReps = ref(0);
+// Totales de todos los ejercicios (stats.overall); null hasta que llegan.
+const overall = ref(null);
 const activeExercise = ref('pullups');
 const editingId = ref(null);
 const editValue = ref(0);
@@ -1219,7 +1221,10 @@ const quickLogOptions = computed(() => [
   { id: 'legs', label: i18n.t('legs') },
 ]);
 
+// Reps de HOY sumando todos los ejercicios (la meta diaria es global). Mientras no
+// llega `overall` se cae al ejercicio seleccionado, como antes.
 const todayProgress = computed(() => {
+  if (overall.value) return overall.value.todayReps;
   const today = getLocalDateString();
   return reps.value
     .filter(r => getLocalDateString(r.date) === today)
@@ -1498,7 +1503,7 @@ const fetchExerciseData = async ({ silent = false } = {}) => {
     const [repsRes, heatmapRes, statsRes] = await Promise.all([
       axios.get('/api/reps', { params: { ...params, t } }),
       axios.get('/api/reps/heatmap', { params: { ...params, t } }),
-      axios.get('/api/reps/stats', { params: { ...params, t } }),
+      axios.get('/api/reps/stats', { params: { ...params, today: getLocalDateString(), t } }),
     ]);
 
     reps.value = repsRes.data;
@@ -1507,6 +1512,7 @@ const fetchExerciseData = async ({ silent = false } = {}) => {
     stats.streak = statsRes.data.streak;
     stats.dailyGoal = statsRes.data.dailyGoal || 50;
     stats.totalVolume = statsRes.data.totalVolume || 0;
+    overall.value = statsRes.data.overall || null;
     stats.combatPower = statsRes.data.combatPower || { total: 0, base: 0, gear: 0, buff: 0 };
     return statsRes;
   } finally {
