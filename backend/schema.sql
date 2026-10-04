@@ -857,3 +857,7 @@ ALTER TABLE reps ADD COLUMN IF NOT EXISTS buff_bonus INTEGER DEFAULT 0;
 -- cero; `GET /shop/daily` falla en una base recién creada. Cerrar esto exige un
 -- `pg_dump --schema-only` de producción y pegar aquí su DDL — trabajo que encaja
 -- con la Fase 2/3 de la migración de BD, no con este PR.
+
+-- Modal «VERSION 1.0.0 — RPG UPDATE»: existía en producción pero no en este esquema.
+-- Las cuentas nuevas nacen con true (auth.js) para no verlo.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_rpg_release BOOLEAN DEFAULT false;

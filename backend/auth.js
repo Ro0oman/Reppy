@@ -72,7 +72,7 @@ router.post('/google', oauthLimiter, async (req, res) => {
     if (!user) {
       const refCode = generateReferralCode();
       userResult = await query(
-        'INSERT INTO users (id, name, email, avatar_url, theme, referral_code) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+        'INSERT INTO users (id, name, email, avatar_url, theme, referral_code, has_seen_rpg_release) VALUES ($1, $2, $3, $4, $5, $6, true) RETURNING *',
         [sub, name, email, '/img/avatars/avatar_1.png', 'dark', refCode]
       );
       user = userResult.rows[0];
@@ -142,7 +142,7 @@ router.post('/signup', signupLimiter, async (req, res) => {
     const passwordHash = await bcrypt.hash(password, 10);
     const refCode = generateReferralCode();
     const result = await query(
-      'INSERT INTO users (id, name, email, password_hash, avatar_url, theme, referral_code) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      'INSERT INTO users (id, name, email, password_hash, avatar_url, theme, referral_code, has_seen_rpg_release) VALUES ($1, $2, $3, $4, $5, $6, $7, true) RETURNING *',
       [id, name, email, passwordHash, '/img/avatars/avatar_1.webp', 'dark', refCode]
     );
 
