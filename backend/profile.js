@@ -212,6 +212,13 @@ router.get('/:id', optionalAuthenticate, async (req, res) => {
     const finalTitleName = userRaw.title_name ? userRaw.title_name : dynamicTitle;
     const finalTitleCss = userRaw.title_name ? userRaw.title_css : '';
 
+    // Perfil público mínimo: peso, monedas y gemas solo los ve su dueño.
+    if (!isOwnProfile) {
+      delete userRaw.body_weight;
+      delete userRaw.reppy_coins;
+      delete userRaw.reppy_gems;
+    }
+
     // Create the augmented user object
     const finalUser = augmentUserWithLevels({
       ...userRaw,
