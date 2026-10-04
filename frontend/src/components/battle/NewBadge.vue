@@ -4,7 +4,7 @@
     class="inline-flex items-center gap-1 align-middle"
     :class="dotOnly
       ? ''
-      : 'rounded-full bg-rose-500 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-sm shadow-rose-500/40'"
+      : 'rounded-full bg-rose-500 px-1.5 py-0.5 text-xs font-black uppercase tracking-wider text-white shadow-sm shadow-rose-500/40'"
   >
     <span v-if="dotOnly" class="relative flex h-2.5 w-2.5">
       <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-500 opacity-70"></span>

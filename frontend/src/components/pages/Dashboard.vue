@@ -65,7 +65,7 @@
         </span>
         <span class="os-station__label">{{ st.label }}</span>
         <span v-if="st.count > 0"
-          class="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-black text-white ring-2 ring-background">
+          class="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-xs font-black text-white ring-2 ring-background">
           {{ st.count }}
         </span>
         <span v-else-if="st.dot"
@@ -138,7 +138,7 @@
             <span class="text-xs font-semibold text-muted">{{ i18n.t('dash_day_streak') }}</span>
             <span
               v-if="streakTier.label"
-              class="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-md bg-foreground/[0.06] text-muted"
+              class="text-xs font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-md bg-foreground/[0.06] text-muted"
             >{{ streakTier.label }}</span>
           </div>
           <RadialProgress :progress="streakRingPercent" :size="ringSize" :stroke-width="9" color="violet" glow gradient class="my-2">
@@ -346,7 +346,7 @@
         <span class="truncate text-sm font-bold text-foreground">{{ i18n.t(trainingStore.activePlan.titleKey) }}</span>
         <span
           v-if="trainingStore.isPlanPaused"
-          class="shrink-0 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-amber-400"
+          class="shrink-0 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-xs font-black uppercase tracking-widest text-amber-400"
         >{{ i18n.t('dash_plan_paused') }}</span>
       </div>
       <div class="flex flex-wrap gap-1.5">

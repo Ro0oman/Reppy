@@ -101,7 +101,7 @@
             <div class="shrink-0 w-10 h-10 rounded-xl flex flex-col items-center justify-center border transition-all"
                  :class="attr.tileBg">
               <span class="text-base leading-none">{{ attr.icon }}</span>
-              <span class="text-[8px] font-black tracking-wider leading-none mt-0.5"
+              <span class="text-xs font-black tracking-wider leading-none mt-0.5"
                     :class="attr.labelColor">{{ attr.key }}</span>
             </div>
             <!-- Level + bar -->

@@ -2,7 +2,7 @@
   <div v-if="activePotions.length > 0" class="space-y-3">
     <div class="flex items-center gap-2 px-2">
       <FlaskConical class="w-4 h-4 text-emerald-500" />
-      <h4 class="text-[9px] font-black text-muted/60 uppercase tracking-widest">{{ i18n.t('dash_active_effects') }}</h4>
+      <h4 class="text-xs font-black text-muted/60 uppercase tracking-widest">{{ i18n.t('dash_active_effects') }}</h4>
     </div>
     
     <div v-for="boost in activePotions" :key="boost.type" class="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-between group hover:bg-emerald-500/15 transition-all">
@@ -10,7 +10,7 @@
         <FlaskConical class="w-4 h-4 text-emerald-500 animate-bounce" />
         <div class="flex flex-col gap-0.5">
           <span class="text-[10px] font-black text-emerald-400 uppercase tracking-widest">{{ boost.label }}</span>
-          <span class="text-[9px] font-bold text-emerald-300">{{ boost.value }}</span>
+          <span class="text-xs font-bold text-emerald-300">{{ boost.value }}</span>
         </div>
       </div>
       <div class="flex items-center gap-2">

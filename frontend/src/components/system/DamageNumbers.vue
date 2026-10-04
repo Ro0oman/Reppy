@@ -13,7 +13,7 @@
         }"
       >
         <div class="damage-wrapper">
-          <span v-if="dmg.userName" class="damage-user text-[8px] uppercase font-black tracking-[0.2em] absolute -bottom-4 left-1/2 -translate-x-1/2 text-white/60 bg-black/40 px-1 rounded-sm backdrop-blur-sm">
+          <span v-if="dmg.userName" class="damage-user text-xs uppercase font-black tracking-[0.2em] absolute -bottom-4 left-1/2 -translate-x-1/2 text-white/60 bg-black/40 px-1 rounded-sm backdrop-blur-sm">
             {{ dmg.userName }}
           </span>
           <span class="damage-number font-black italic tracking-tighter">

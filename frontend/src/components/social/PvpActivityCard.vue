@@ -35,7 +35,7 @@
         </div>
         <div>
           <h3 class="text-xs font-black text-white uppercase italic tracking-[0.2em]">{{ activity.title }}</h3>
-          <p class="text-[9px] font-bold text-muted uppercase tracking-widest mt-0.5">
+          <p class="text-xs font-bold text-muted uppercase tracking-widest mt-0.5">
             {{ (activity.pvp_data?.status === 'active' && timeLeft > 0) ? 'COMBAT_PROTOCOL_RUNNING' : 'COMBAT_PROTOCOL_TERMINATED' }}
           </p>
 
@@ -97,7 +97,7 @@
     <div class="grid grid-cols-2 gap-4">
        <!-- HP P1 -->
        <div class="space-y-1.5">
-          <div class="flex justify-between text-[8px] font-bold text-muted uppercase">
+          <div class="flex justify-between text-xs font-bold text-muted uppercase">
              <span>{{ activity.pvp_data?.damage1 }} DMG</span>
              <span>{{ Math.round(activity.pvp_data?.hp1) }} HP</span>
           </div>
@@ -110,7 +110,7 @@
        </div>
        <!-- HP P2 -->
        <div class="space-y-1.5">
-          <div class="flex justify-between text-[8px] font-bold text-muted uppercase">
+          <div class="flex justify-between text-xs font-bold text-muted uppercase">
              <span>{{ Math.round(activity.pvp_data?.hp2) }} HP</span>
              <span>{{ activity.pvp_data?.damage2 }} DMG</span>
           </div>
@@ -128,7 +128,7 @@
        <div class="flex items-center gap-3">
           <div class="flex items-center gap-2">
              <div class="w-1.5 h-1.5 rounded-full" :class="(activity.pvp_data?.status === 'active' && timeLeft > 0) ? 'bg-emerald-500 animate-pulse' : 'bg-white/20'"></div>
-             <span class="text-[8px] font-bold text-muted uppercase tracking-[0.2em]">
+             <span class="text-xs font-bold text-muted uppercase tracking-[0.2em]">
                 {{ (activity.pvp_data?.status === 'active' && timeLeft > 0) ? 'LIVE_COMBAT_FEED' : 'COMBAT_FINISHED' }}
              </span>
           </div>
@@ -136,7 +136,7 @@
 
        <button 
          @click="$router.push({ name: 'pvp', params: { id: activity.pvp_data?.id } })"
-         class="px-5 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-2"
+         class="px-5 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl text-xs font-black uppercase tracking-[0.2em] transition-all flex items-center gap-2"
        >
          {{ activity.pvp_data?.status === 'active' ? 'ENTER_ARENA ⚔' : 'VIEW_REPORT 📊' }}
        </button>

@@ -48,19 +48,19 @@
           <div class="flex flex-wrap justify-center sm:justify-start gap-4 pt-3">
             <div class="text-center">
               <p class="text-2xl font-black tabular-nums text-foreground">{{ profile.stats.totalReps.toLocaleString() }}</p>
-              <p class="text-[9px] font-bold uppercase tracking-widest text-muted/70">{{ locale === 'es' ? 'Reps' : 'Reps' }}</p>
+              <p class="text-xs font-bold uppercase tracking-widest text-muted/70">{{ locale === 'es' ? 'Reps' : 'Reps' }}</p>
             </div>
             <div class="text-center">
               <p class="text-2xl font-black tabular-nums text-foreground">{{ profile.stats.streak }}</p>
-              <p class="text-[9px] font-bold uppercase tracking-widest text-muted/70">{{ locale === 'es' ? 'Racha' : 'Streak' }}</p>
+              <p class="text-xs font-bold uppercase tracking-widest text-muted/70">{{ locale === 'es' ? 'Racha' : 'Streak' }}</p>
             </div>
             <div class="text-center">
               <p class="text-2xl font-black tabular-nums text-foreground">{{ profile.user.current_level }}</p>
-              <p class="text-[9px] font-bold uppercase tracking-widest text-muted/70">{{ locale === 'es' ? 'Nivel' : 'Level' }}</p>
+              <p class="text-xs font-bold uppercase tracking-widest text-muted/70">{{ locale === 'es' ? 'Nivel' : 'Level' }}</p>
             </div>
             <div v-if="globalRank" class="text-center">
               <p class="text-2xl font-black tabular-nums text-amber-400">#{{ globalRank }}</p>
-              <p class="text-[9px] font-bold uppercase tracking-widest text-muted/70">{{ locale === 'es' ? 'Ranking' : 'Rank' }}</p>
+              <p class="text-xs font-bold uppercase tracking-widest text-muted/70">{{ locale === 'es' ? 'Ranking' : 'Rank' }}</p>
             </div>
           </div>
         </div>
@@ -83,13 +83,13 @@
       <!-- Star exercise + gear -->
       <section class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="rounded-2xl border border-amber-500/20 bg-amber-500/[0.05] p-4 space-y-2">
-          <p class="text-[9px] font-black tracking-widest uppercase text-amber-400/60">
+          <p class="text-xs font-black tracking-widest uppercase text-amber-400/60">
             {{ locale === 'es' ? 'Ejercicio favorito' : 'Favourite exercise' }}
           </p>
           <p class="text-xl font-black text-amber-300">{{ exerciseName(profile.stats.favExercise) }}</p>
         </div>
         <div v-if="profile.user.weapon_name" class="rounded-2xl border border-border/30 bg-surface/10 p-4 space-y-2">
-          <p class="text-[9px] font-black tracking-widest uppercase text-muted/70">
+          <p class="text-xs font-black tracking-widest uppercase text-muted/70">
             {{ locale === 'es' ? 'Arma equipada' : 'Equipped weapon' }}
           </p>
           <p class="text-sm font-bold text-foreground">🗡️ {{ profile.user.weapon_name }}</p>

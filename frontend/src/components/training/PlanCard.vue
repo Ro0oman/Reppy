@@ -11,13 +11,13 @@
       <p class="text-sm font-black leading-tight text-foreground">{{ title }}</p>
       <span
         v-if="active"
-        class="shrink-0 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-emerald-400"
+        class="shrink-0 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-xs font-black uppercase tracking-widest text-emerald-400"
       >
         {{ i18n.locale === 'es' ? 'Activo' : 'Active' }}
       </span>
       <span
         v-else-if="plan.isCustom"
-        class="shrink-0 rounded-full border border-primary-500/30 bg-primary-500/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-primary-500"
+        class="shrink-0 rounded-full border border-primary-500/30 bg-primary-500/10 px-2 py-0.5 text-xs font-black uppercase tracking-widest text-primary-500"
       >
         {{ i18n.locale === 'es' ? 'Propia' : 'Custom' }}
       </span>

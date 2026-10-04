@@ -33,7 +33,7 @@
            />
            <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
            <div class="absolute bottom-4 left-6">
-              <span class="text-[8px] font-black text-primary-500 uppercase tracking-[0.4em] block mb-1">FIELD_PREVIEW</span>
+              <span class="text-xs font-black text-primary-500 uppercase tracking-[0.4em] block mb-1">FIELD_PREVIEW</span>
               <span class="text-xs font-black text-white uppercase italic tracking-widest">{{ form.customBattlefield ? 'CUSTOM_ARENA' : form.battlefield }}</span>
            </div>
         </div>
@@ -71,7 +71,7 @@
                  placeholder="https://example.com/image.jpg"
                  class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-[10px] text-white font-mono outline-none focus:border-primary-500/50 transition-all"
                />
-               <p class="text-[9px] text-muted mt-2 uppercase tracking-widest">{{ i18n.t('pvp_custom_bg_desc') }}</p>
+               <p class="text-xs text-muted mt-2 uppercase tracking-widest">{{ i18n.t('pvp_custom_bg_desc') }}</p>
             </div>
           </Transition>
         </div>
@@ -136,7 +136,7 @@
                <span class="text-[10px] font-black uppercase italic">{{ i18n.t(ex) }}</span>
              </button>
           </div>
-          <p v-if="form.allowedExercises.length === 0" class="text-[9px] text-red-500 font-bold uppercase tracking-widest animate-pulse">Minimun 1 exercise required</p>
+          <p v-if="form.allowedExercises.length === 0" class="text-xs text-red-500 font-bold uppercase tracking-widest animate-pulse">Minimun 1 exercise required</p>
         </div>
 
         <!-- AntiCheat -->
@@ -147,7 +147,7 @@
               </div>
               <div>
                  <p class="text-xs font-black text-white uppercase italic tracking-tighter">{{ i18n.t('pvp_anticheat') }}</p>
-                 <p class="text-[9px] text-muted font-bold uppercase opacity-60">{{ i18n.t('pvp_anticheat_desc') }}</p>
+                 <p class="text-xs text-muted font-bold uppercase opacity-60">{{ i18n.t('pvp_anticheat_desc') }}</p>
               </div>
            </div>
            <button 

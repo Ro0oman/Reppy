@@ -13,7 +13,7 @@
         <div class="flex items-center gap-2">
           <div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.8)]"></div>
           <h3 class="text-[10px] font-black text-amber-500 uppercase tracking-[0.4em]">{{ i18n.t('pvp_incoming_challenges') }}</h3>
-          <span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-[8px] font-black text-amber-500 border border-amber-500/30">{{ pending.length }}</span>
+          <span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-xs font-black text-amber-500 border border-amber-500/30">{{ pending.length }}</span>
         </div>
         <div v-for="fight in pending" :key="fight.id" 
           class="bg-amber-500/5 border border-amber-500/20 rounded-3xl p-6 flex items-center justify-between gap-4 hover:bg-amber-500/10 transition-all">
@@ -23,7 +23,7 @@
             </div>
             <div>
               <p class="text-sm font-black text-white uppercase italic tracking-tighter">{{ fight.challenger_name }}</p>
-              <p class="text-[9px] text-muted uppercase tracking-widest font-bold">{{ i18n.t('pvp_challenge_received') }}</p>
+              <p class="text-xs text-muted uppercase tracking-widest font-bold">{{ i18n.t('pvp_challenge_received') }}</p>
               <div class="flex items-center gap-2 mt-1.5">
                 <span class="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[10px] text-muted font-black uppercase">{{ fight.battlefield }}</span>
                 <span class="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[10px] text-muted font-black uppercase">{{ fight.max_hp }} HP</span>
@@ -43,7 +43,7 @@
         <div class="flex items-center gap-2">
           <div class="w-2 h-2 rounded-full bg-primary-500 animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.8)]"></div>
           <h3 class="text-[10px] font-black text-primary-500 uppercase tracking-[0.4em]">{{ i18n.t('pvp_active_fights') }}</h3>
-          <span class="px-2 py-0.5 rounded-full bg-primary-500/20 text-[8px] font-black text-primary-500 border border-primary-500/30">{{ active.length }}</span>
+          <span class="px-2 py-0.5 rounded-full bg-primary-500/20 text-xs font-black text-primary-500 border border-primary-500/30">{{ active.length }}</span>
         </div>
         <div v-for="fight in active" :key="fight.id"
           @click="goToBattle(fight.id)"
@@ -56,7 +56,7 @@
               <p class="text-sm font-black text-white uppercase italic tracking-tighter">
                 {{ fight.challenger_name }} <span class="text-primary-500/60">vs</span> {{ fight.challenged_name }}
               </p>
-              <p class="text-[9px] text-muted uppercase tracking-widest font-bold mt-0.5">{{ fight.battlefield }}</p>
+              <p class="text-xs text-muted uppercase tracking-widest font-bold mt-0.5">{{ fight.battlefield }}</p>
               <div class="flex items-center gap-3 mt-2">
                 <div class="space-y-0.5">
                   <p class="text-[10px] text-muted uppercase tracking-widest">{{ fight.challenger_name }}</p>
@@ -74,7 +74,7 @@
             </div>
           </div>
           <div class="flex flex-col items-end gap-2">
-            <span class="px-3 py-1 bg-primary-500/20 border border-primary-500/40 rounded-full text-[8px] font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('pvp_live') }}</span>
+            <span class="px-3 py-1 bg-primary-500/20 border border-primary-500/40 rounded-full text-xs font-black text-primary-500 uppercase tracking-widest">{{ i18n.t('pvp_live') }}</span>
             <ChevronRight class="w-4 h-4 text-muted/30 group-hover:text-primary-500 transition-colors" />
           </div>
         </div>
@@ -85,7 +85,7 @@
         <div class="flex items-center gap-2">
           <div class="w-2 h-2 rounded-full bg-white/20"></div>
           <h3 class="text-[10px] font-black text-muted uppercase tracking-[0.4em]">{{ i18n.t('pvp_sent_challenges') }}</h3>
-          <span class="px-2 py-0.5 rounded-full bg-white/5 text-[8px] font-black text-muted border border-white/10">{{ sent.length }}</span>
+          <span class="px-2 py-0.5 rounded-full bg-white/5 text-xs font-black text-muted border border-white/10">{{ sent.length }}</span>
         </div>
         <div v-for="fight in sent" :key="fight.id"
           @click="goToBattle(fight.id)"
@@ -98,11 +98,11 @@
               <p class="text-sm font-black text-white/60 uppercase italic tracking-tighter">
                 {{ fight.challenged_name }}
               </p>
-              <p class="text-[9px] text-muted/40 uppercase tracking-widest font-bold mt-0.5">{{ fight.battlefield }}</p>
+              <p class="text-xs text-muted/40 uppercase tracking-widest font-bold mt-0.5">{{ fight.battlefield }}</p>
             </div>
           </div>
           <div class="flex flex-col items-end gap-2">
-            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[8px] font-black text-muted uppercase tracking-widest">{{ i18n.t('pvp_pending') }}</span>
+            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-black text-muted uppercase tracking-widest">{{ i18n.t('pvp_pending') }}</span>
             <ChevronRight class="w-4 h-4 text-muted/30 group-hover:text-primary-500 transition-colors" />
           </div>
         </div>
@@ -113,7 +113,7 @@
         class="py-16 text-center space-y-4 bg-white/[0.02] border border-dashed border-white/5 rounded-3xl">
         <Swords class="w-10 h-10 text-muted/20 mx-auto" />
         <p class="text-xs font-black text-muted uppercase tracking-widest">{{ i18n.t('pvp_no_fights') }}</p>
-        <p class="text-[9px] text-muted/50">{{ i18n.t('pvp_no_fights_desc') }}</p>
+        <p class="text-xs text-muted/50">{{ i18n.t('pvp_no_fights_desc') }}</p>
       </div>
 
       <!-- History -->
@@ -135,11 +135,11 @@
               <p class="text-xs font-black text-white uppercase italic tracking-tighter">
                 {{ fight.challenger_name }} <span class="text-muted/50">vs</span> {{ fight.challenged_name }}
               </p>
-              <p class="text-[8px] text-muted uppercase tracking-widest font-bold mt-0.5">{{ fight.battlefield }}</p>
+              <p class="text-xs text-muted uppercase tracking-widest font-bold mt-0.5">{{ fight.battlefield }}</p>
             </div>
           </div>
           <div class="text-right">
-            <p class="text-[8px] font-black uppercase tracking-widest"
+            <p class="text-xs font-black uppercase tracking-widest"
               :class="fight.winner_id === authStore.user?.id ? 'text-amber-500' : (fight.winner_id === null ? 'text-muted' : 'text-red-400')">
               {{ fight.winner_id === authStore.user?.id ? i18n.t('pvp_victory') : (fight.winner_id === null ? i18n.t('pvp_draw') : i18n.t('pvp_defeat')) }}
             </p>
