@@ -116,74 +116,6 @@
       </router-link>
     </nav>
 
-    <!-- Classic Navigation Bar (estilo original, pre-Operative OS) -->
-    <nav v-else-if="showChrome"
-      class="border-b border-border bg-surface/40 backdrop-blur-lg sticky top-0 z-50 transition-all">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
-        <router-link :to="`/${i18n.locale}/dashboard`" class="flex items-center gap-3 group cursor-pointer outline-none"
-          :title="i18n.t('nav_dashboard')">
-          <div
-            class="w-10 h-10 bg-primary-500 rounded-2xl flex items-center justify-center font-bold text-white shadow-xl shadow-primary-500/20 transition-transform group-hover:scale-110 group-focus:scale-110 group-focus:ring-2 group-focus:ring-primary-500/50 shrink-0">
-            R</div>
-          <span class="text-2xl font-bold tracking-tight text-foreground font-industrial hidden xs:block">Reppy<span
-              class="text-primary-500">.</span></span>
-        </router-link>
-
-        <div class="hidden lg:flex items-center gap-1">
-          <router-link v-for="nav in classicNavLinks" :key="nav.id"
-            :to="{ name: nav.id, params: { lang: i18n.locale, ...(nav.id === 'profile' ? { userId: authStore.user?.id } : {}) } }"
-            :title="i18n.t(nav.label) || nav.fallback"
-            class="px-4 py-2 rounded-2xl text-[13px] font-semibold transition-all relative group flex items-center gap-2.5"
-            :class="$route.name === nav.id ? 'text-foreground bg-primary-500/5' : 'text-muted hover:text-foreground hover:bg-surface/10'">
-            <component :is="nav.icon" class="w-4 h-4" :class="$route.name === nav.id ? 'text-primary-500' : ''" />
-            {{ i18n.t(nav.label) || nav.fallback }}
-            <div v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory)"
-              class="absolute top-1.5 right-2 w-2 h-2 bg-primary-500 rounded-full border-2 border-surface shadow-[0_0_10px_hsl(var(--primary) / 0.5)]">
-            </div>
-          </router-link>
-          <router-link v-if="authStore.user?.is_admin" :to="`/${i18n.locale}/admin`"
-            class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-blue-500 hover:bg-blue-500/10 transition-all font-industrial">
-            {{ i18n.t('economy_admin') }}
-          </router-link>
-        </div>
-
-        <div class="flex items-center gap-2 sm:gap-6">
-          <div class="flex items-center gap-1.5 sm:gap-4">
-            <button @click="showCoinsInfo = true" :title="i18n.t('economy_history_title')"
-              class="flex items-center gap-1.5 bg-surface/5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-full sm:rounded-xl border border-border hover:border-primary-500/30 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-primary-500/50">
-              <Coins class="w-3.5 h-3.5 text-primary-500" />
-              <span class="text-xs sm:text-sm font-bold text-foreground tabular-nums">{{ authStore.user?.reppy_coins || 0 }}</span>
-            </button>
-            <button @click="showCoinsInfo = true" :title="i18n.t('economy_gems')"
-              class="flex items-center gap-1.5 bg-blue-500/5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-full sm:rounded-xl border border-blue-500/20 hover:border-blue-500/40 cursor-pointer transition-all group focus:outline-none focus:ring-2 focus:ring-blue-500/50">
-              <Gem class="w-3.5 h-3.5 text-blue-500" />
-              <span class="text-xs sm:text-sm font-bold text-foreground tabular-nums">{{ authStore.user?.reppy_gems || 0 }}</span>
-            </button>
-            <div class="relative flex items-center">
-              <button @click="handleBellClick"
-                class="p-2 rounded-xl transition-all group relative border flex items-center justify-center min-w-[40px] min-h-[40px]"
-                :class="showNotifications ? 'bg-primary-500/10 border-primary-500/30 text-primary-500' : 'bg-surface/5 border-border hover:bg-surface/10'">
-                <Bell class="w-5 h-5 transition-colors"
-                  :class="showNotifications ? 'text-primary-500' : 'text-muted group-hover:text-primary-500'" />
-                <div v-if="notifStore.unreadCount > 0"
-                  class="absolute -top-1 -right-1 w-4 h-4 bg-primary-500 rounded-full border-2 border-surface flex items-center justify-center">
-                  <span class="text-[10px] font-bold text-white">{{ notifStore.unreadCount }}</span>
-                </div>
-              </button>
-              <div v-if="showNotifications"
-                class="absolute right-0 top-full mt-3 z-[150] animate-in slide-in-from-top-2 duration-200">
-                <NotificationsDropdown @close="showNotifications = false" />
-              </div>
-            </div>
-            <router-link :to="{ name: 'profile', params: { lang: i18n.locale, userId: authStore.user?.id } }"
-              class="flex items-center gap-1.5 bg-primary-500/10 px-2.5 py-1.5 rounded-xl border border-primary-500/20 hover:border-primary-500/40 transition-all min-h-[40px]">
-              <AvatarFrame :src="authStore.user?.avatar_url" :size="30" />
-            </router-link>
-          </div>
-        </div>
-      </div>
-    </nav>
-
     <!-- Public Navigation Bar -->
     <nav v-else-if="$route.name !== 'pvp' && $route.name !== 'login' && !$route.meta.immersive"
       class="border-b border-border bg-surface/40 backdrop-blur-lg sticky top-0 z-50 transition-all">
@@ -302,38 +234,6 @@
           <span v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory || badgesStore.inventory_new || badgesStore.chests_total > 0)"
             class="os-dock__dot" aria-hidden="true"></span>
           <span>{{ i18n.t(nav.label) }}</span>
-        </router-link>
-      </div>
-    </nav>
-
-    <!-- Mobile Bottom Dock (estilo original) -->
-    <nav v-else-if="authStore.isAuthenticated && $route.name !== 'pvp'"
-      class="lg:hidden fixed bottom-0 left-0 right-0 z-[60] border-t border-border bg-surface/90 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]">
-      <div class="grid grid-cols-5 items-center h-16 max-w-md mx-auto px-1">
-        <router-link v-for="nav in mobileNavLeft" :key="nav.id"
-          :to="getMobileNavTo(nav)"
-          class="flex flex-col items-center justify-center gap-1 h-full group transition-colors"
-          :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted hover:text-foreground'">
-          <component :is="nav.icon" class="w-[22px] h-[22px] transition-transform group-active:scale-90" />
-          <span class="text-xs font-bold tracking-tight">{{ i18n.t(nav.label) }}</span>
-        </router-link>
-        <div class="flex justify-center">
-          <router-link :to="{ name: 'battle', params: { lang: i18n.locale } }"
-            class="-mt-7 flex flex-col items-center gap-1 group" :title="i18n.t('nav_train')">
-            <span class="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-orange-500/40 ring-4 ring-background transition-transform group-active:scale-95">
-              <Swords class="w-7 h-7" stroke-width="2.5" />
-            </span>
-            <span class="text-xs font-black uppercase tracking-tight text-orange-500">{{ i18n.locale === 'es' ? 'Batalla' : 'Battle' }}</span>
-          </router-link>
-        </div>
-        <router-link v-for="nav in mobileNavRight" :key="nav.id"
-          :to="getMobileNavTo(nav)"
-          class="flex flex-col items-center justify-center gap-1 h-full group relative transition-colors"
-          :class="$route.name === nav.id ? 'text-primary-500' : 'text-muted hover:text-foreground'">
-          <component :is="nav.icon" class="w-[22px] h-[22px] transition-transform group-active:scale-90" />
-          <span v-if="nav.id === 'inventory' && (authStore.user?.boss_chests > 0 || authStore.user?.has_new_inventory || badgesStore.inventory_new || badgesStore.chests_total > 0)"
-            class="absolute top-2 right-[calc(50%-18px)] w-2 h-2 rounded-full bg-primary-500 ring-2 ring-surface"></span>
-          <span class="text-xs font-bold tracking-tight">{{ i18n.t(nav.label) }}</span>
         </router-link>
       </div>
     </nav>
@@ -563,16 +463,6 @@ const handleBellClick = () => {
     showNotifications.value = !showNotifications.value;
   }
 };
-
-// Navbar clásica (estilo original): mismos destinos que antes del rediseño.
-const classicNavLinks = computed(() => [
-  { id: 'social', label: 'nav_social', fallback: 'RANKINGS', icon: Users },
-  { id: 'dashboard', label: 'nav_dashboard', fallback: 'DASHBOARD', icon: LayoutDashboard },
-  { id: 'missions', label: 'nav_missions', fallback: 'MISSIONS', icon: Target },
-  { id: 'inventory', label: 'nav_inventory', fallback: 'GEAR', icon: Package },
-  { id: 'shop', label: 'nav_shop', fallback: 'ARMORY', icon: ShoppingBag },
-  { id: 'profile', label: 'nav_profile', fallback: 'PROFILE', icon: User },
-]);
 
 // Rail izquierdo: destinos núcleo con tag de telemetría (icono + label, nunca icono solo).
 const railLinks = computed(() => [
