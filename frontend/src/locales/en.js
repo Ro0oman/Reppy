@@ -2,7 +2,6 @@ export default {
     // Landing
     landing_title: 'Elite Training Platform',
     hero_eyebrow: 'Elite Training Platform',
-    hero_subtitle: 'The premium tracking platform for pull-up enthusiasts. Record reps, visualize progress, and dominate the rankings.',
     btn_start: 'Get Started',
     rpg_version_tag: 'RPG VERSION 1.0',
     rpg_version_title: 'THE RPG AWAKENING',
@@ -20,8 +19,6 @@ export default {
     feat_social_desc: 'Add friends, track their progress, and build your own inner circle of performance.',
     
     // Auth / Login
-    login_back: 'Back to Home',
-    login_google: 'Sign in with Google',
     session_expired: 'Your session has expired. Please log in again.',
     
     // Dashboard
@@ -32,8 +29,6 @@ export default {
     nav_profile: 'Profile',
     nav_codex: 'Codex',
     nav_blog: 'Blog',
-    audio_mute: 'Mute',
-    audio_unmute: 'Unmute',
     back_to_codex: 'Back to RPG Stats',
     nav_go_dashboard: 'Go to Dashboard',
 
@@ -471,7 +466,6 @@ export default {
     
     // Privacy
     privacy_settings: 'Privacy Settings',
-    private_profile: 'Private Profile',
     private_desc: 'Hide your profile from global rankings.',
     
     // Account Management
@@ -482,7 +476,6 @@ export default {
     email: 'Email',
     password: 'Password',
     name_placeholder: 'Full Name',
-    delete_account: 'Delete Account',
     delete_confirm_title: 'Unstoppable Deletion?',
     delete_confirm: 'Are you sure? This action is permanent.',
     change_avatar: 'Update Avatar',
@@ -542,7 +535,6 @@ export default {
     exercise_mastery_desc: 'HISTORICAL REPOSITORY OF EFFORT BY EXERCISE',
 
     // RPG Stats
-    codex_title: 'The Codex',
     codex_subtitle: 'Level up guide',
     codex_next_lv: 'NEXT LEVEL: +100 XP POINTS REQUIRED',
     codex_lv_up: 'Level Up:',
@@ -785,8 +777,6 @@ export default {
     // Blog List & 404
     blog_list_title: 'Guides & Training News',
     blog_list_subtitle: 'The latest calisthenics guides, mental routines, and Reppy community updates.',
-    pagination_next: 'Next Page',
-    pagination_prev: 'Previous Page',
     not_found_title: 'AREA RESTRICTED (404)',
     not_found_desc: 'The information you are looking for has been moved or deleted from the mainframe.',
     not_found_btn: 'RETURN TO SAFE ZONE',
@@ -858,7 +848,6 @@ export default {
     shop_premium_chests: 'PREMIUM CHESTS',
     shop_limited_offers: 'LIMITED OFFERS',
     shop_consumables: 'CONSUMABLES',
-    shop_refresh_market: 'REFRESH MARKET',
     shop_legendary_appeared: 'LEGENDARY ITEM APPEARED TODAY!',
     shop_free_reward: 'FREE REWARD',
     shop_elite_pack: 'ELITE_PACK',

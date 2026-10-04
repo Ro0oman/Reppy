@@ -453,8 +453,17 @@ export async function applyCampaignDamage(client, { user, effectiveCount, exerci
   const row = engRes.rows[0];
 
   // Shape the enemy like a boss for calculateDamage (weakness + execution use it).
-  // resist_stat is included so the exercise-match multiplier (opción B) can read
-  // it; the separate per-level resist below is unchanged.
+  // resist_stat is read there by the exercise-match multiplier (opción B): the
+  // LOGGED exercise's combat stat vs the enemy's resist → ×0.7.
+  //
+  // There used to be a second, per-LEVEL resist penalty right here (damage
+  // divided by up to 1.5 based on the player's level in the resisted stat). It
+  // was removed when opción B landed: the audit approved ×0.7 believing
+  // resist_stat was dead, which it wasn't, so the two stacked to ×0.47. Worse,
+  // the per-level one fired even when the player logged an exercise that did NOT
+  // touch the resist — punishing them for having leveled the stat at all, which
+  // is backwards for a fitness RPG. Resist now keys off what you TRAIN, not off
+  // what you've already built.
   const enemyAsBoss = {
     weakness_stat: row.weakness_stat,
     resist_stat: row.resist_stat,
@@ -463,13 +472,6 @@ export async function applyCampaignDamage(client, { user, effectiveCount, exerci
   };
   const dmg = calculateDamage(user, effectiveCount, exerciseType, enemyAsBoss, false, false, diffMult, addedWeight, exerciseStat);
   let damage = dmg.totalDamage;
-
-  // resist_stat: dampen damage if the player leans on the resisted stat. Small,
-  // bounded, and additive (enemies without resist_stat are unaffected).
-  if (row.resist_stat) {
-    const rLvl = Number(user[`${row.resist_stat}_lvl`]) || 1;
-    if (rLvl > 1) damage = Math.round(damage / (1 + Math.min(0.5, rLvl * 0.01)));
-  }
 
   // Dark-path curse: the Senda Oscura trades raw power (−25% campaign damage by
   // default) for higher reward variance. The multiplier lives in the campaign
