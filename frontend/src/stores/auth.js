@@ -80,6 +80,21 @@ export const useAuthStore = defineStore('auth', {
         throw error;
       }
     },
+    // Estado del onboarding en el servidor (users.onboarding_flags). Se aplica de
+    // inmediato en local y se persiste con PATCH; si falla, la UI sigue igual y el
+    // flag se reintenta la próxima vez que se pulse (no es crítico).
+    async setOnboardingFlag(key, value = true) {
+      if (this.user) {
+        this.user = { ...this.user, onboarding_flags: { ...(this.user.onboarding_flags || {}), [key]: value } };
+        try { localStorage.setItem('user', JSON.stringify(this.user)); } catch (_) {}
+      }
+      try {
+        await axios.patch('/api/users/onboarding', { key, value });
+      } catch (error) {
+        console.error('Saving onboarding flag failed:', error);
+      }
+    },
+
     async fetchProfile(force = false) {
       // 1. If already fetching, return the existing promise
       if (this.fetchPromise) return this.fetchPromise;

@@ -750,9 +750,9 @@
     />
     <QuickStartOnboardingModal
       :show="showQuickStartModal"
-      :locale="i18n.locale"
       @close="handleCloseQuickStartModal"
       @start="handleStartQuickStart"
+      @guide="handleQuickStartGuide"
     />
     <GoalOnboardingModal
       :show="showGoalOnboarding"
@@ -962,14 +962,26 @@ const maybeCelebrateFirstRep = async () => {
   } catch (_) {}
 };
 
+// El estado del onboarding vive en el servidor (users.onboarding_flags). Lo que ya
+// estuviera en localStorage de versiones anteriores cuenta como visto y se sube al
+// servidor la primera vez, para no volver a enseñar nada a quien ya lo vio.
+const onboardingFlag = (key) => authStore.user?.onboarding_flags?.[key] === true;
+const readOnboardingFlag = (key, legacyKey) => {
+  if (onboardingFlag(key)) return true;
+  if (typeof window !== 'undefined' && localStorage.getItem(legacyKey) === '1') {
+    authStore.setOnboardingFlag(key, true);
+    return true;
+  }
+  return false;
+};
+
 const hasSeenQuickStart = () => {
   if (typeof window === 'undefined') return true;
-  return localStorage.getItem(getQuickStartStorageKey()) === '1';
+  return readOnboardingFlag('quickstart_seen', getQuickStartStorageKey());
 };
 
 const markQuickStartSeen = () => {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(getQuickStartStorageKey(), '1');
+  authStore.setOnboardingFlag('quickstart_seen', true);
 };
 
 const shouldShowQuickStart = (totalRepsCount) => {
@@ -983,28 +995,28 @@ const shouldShowQuickStart = (totalRepsCount) => {
 
 const hasDismissedGoalOnboarding = () => {
   if (typeof window === 'undefined') return false;
-  return localStorage.getItem(getGoalOnboardingDismissedKey()) === '1';
+  return readOnboardingFlag('goal_dismissed', getGoalOnboardingDismissedKey());
 };
 
 const markGoalOnboardingDismissed = () => {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(getGoalOnboardingDismissedKey(), '1');
+  authStore.setOnboardingFlag('goal_dismissed', true);
 };
 
 const clearGoalOnboardingDismissed = () => {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(getGoalOnboardingDismissedKey());
+  authStore.setOnboardingFlag('goal_dismissed', false);
 };
 
 const dismissPlanPromo = () => {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(getPlanPromoDismissedKey(), '1');
+  authStore.setOnboardingFlag('plan_promo_dismissed', true);
   planPromoDismissed.value = true;
 };
 
 const clearPlanPromoDismissed = () => {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(getPlanPromoDismissedKey());
+  authStore.setOnboardingFlag('plan_promo_dismissed', false);
   planPromoDismissed.value = false;
 };
 
@@ -1174,6 +1186,16 @@ const handleStartQuickStart = async (payload = null) => {
   }
   await fetchData();
   await scrollToRepsInput();
+};
+
+// «Seguir una guía» desde el primer uso: se cierra la bienvenida y se abre el selector de planes.
+const handleQuickStartGuide = async () => {
+  markQuickStartSeen();
+  suppressRPGModal.value = true;
+  showRPGModal.value = false;
+  showQuickStartModal.value = false;
+  await authStore.fetchProfile(true).catch(() => {});
+  openPlanPicker();
 };
 
 const handleLogQueryIntent = async () => {
@@ -1568,6 +1590,7 @@ const fetchData = async ({ skipFetchMine = false } = {}) => {
 
     if (!quickStartEvaluated.value) {
       quickStartEvaluated.value = true;
+      await authStore.fetchProfile().catch(() => {});
       if (shouldShowQuickStart(statsRes.data.totalReps)) {
         // Log-first activation: pick exercise → log first set, immediate reward.
         showQuickStartModal.value = true;
@@ -1776,7 +1799,7 @@ onMounted(async () => {
   // it stays mounted; the heavier per-exercise data fills in below without
   // unmounting anything (static layout, progressive load).
   guidedTrainingStateLoaded.value = true;
-  planPromoDismissed.value = typeof window !== 'undefined' && localStorage.getItem(getPlanPromoDismissedKey()) === '1';
+  planPromoDismissed.value = typeof window !== 'undefined' && readOnboardingFlag('plan_promo_dismissed', getPlanPromoDismissedKey());
   // Onboarding-modal choice lives in a single place (fetchData → quickStart
   // evaluation), decided once on real data. Deciding here too — on a stale
   // totalReps of 0 — was the fragile bit that risked two modals stacking.

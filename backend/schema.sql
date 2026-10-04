@@ -868,3 +868,6 @@ CREATE INDEX IF NOT EXISTS idx_daily_shop_rotated_at ON daily_shop_items(rotated
 -- Modal «VERSION 1.0.0 — RPG UPDATE»: existía en producción pero no en este esquema.
 -- Las cuentas nuevas nacen con true (auth.js) para no verlo.
 ALTER TABLE users ADD COLUMN IF NOT EXISTS has_seen_rpg_release BOOLEAN DEFAULT false;
+
+-- Estado del onboarding en servidor: { quickstart_seen, goal_dismissed, plan_promo_dismissed }.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS onboarding_flags JSONB DEFAULT '{}'::jsonb;

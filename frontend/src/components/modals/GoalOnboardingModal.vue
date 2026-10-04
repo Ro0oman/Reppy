@@ -9,7 +9,7 @@
         <div class="w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-[1.5rem] border border-white/10 bg-deep-abyss shadow-2xl">
           <div class="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-white/10 bg-deep-abyss/95 px-4 py-4 backdrop-blur-xl sm:px-6">
             <div class="min-w-0">
-              <p class="text-xs font-black uppercase tracking-[0.24em] text-primary-500">Guided Training</p>
+              <p class="text-xs font-bold uppercase tracking-wide text-primary-500">{{ i18n.t('goal_kicker') }}</p>
               <h2 class="mt-1 text-xl font-black uppercase leading-tight tracking-tight text-foreground sm:text-2xl">
                 {{ i18n.t('onboarding_goal_title') }}
               </h2>
@@ -19,7 +19,7 @@
               class="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[0.04] text-muted transition hover:text-foreground"
               :disabled="loading"
               @click="dismissOnboarding"
-              aria-label="Cerrar"
+              :aria-label="i18n.t('goal_close')"
             >
               <X class="h-4 w-4" />
             </button>
@@ -64,7 +64,7 @@
                 @click="step = 'choice'"
               >
                 <ChevronLeft class="h-4 w-4" />
-                {{ i18n.locale === 'es' ? 'Volver' : 'Back' }}
+                {{ i18n.t('goal_back') }}
               </button>
 
               <div class="grid gap-3 sm:grid-cols-2">
@@ -96,13 +96,13 @@
               <div class="grid gap-3 sm:grid-cols-2">
                 <label class="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                   <span class="text-[10px] font-black uppercase tracking-widest text-muted">
-                    {{ i18n.locale === 'es' ? 'Dias por semana' : 'Days per week' }}
+                    {{ i18n.t('goal_days_per_week') }}
                   </span>
                   <input v-model.number="daysPerWeek" min="1" max="7" type="number" class="field mt-2" />
                 </label>
                 <label class="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                   <span class="text-sm font-black text-foreground">
-                    {{ i18n.locale === 'es' ? 'Tengo barra' : 'I have a pull-up bar' }}
+                    {{ i18n.t('goal_have_bar') }}
                   </span>
                   <input v-model="hasPullupBar" type="checkbox" class="h-5 w-5 accent-primary-500" />
                 </label>
@@ -115,7 +115,7 @@
                 @click="selectPlan"
               >
                 <Loader2 v-if="loading" class="h-4 w-4 animate-spin" />
-                <span v-else>{{ i18n.locale === 'es' ? 'Crear mi mision de hoy' : 'Create my mission today' }}</span>
+                <span v-else>{{ i18n.t('goal_create_cta') }}</span>
               </button>
             </div>
           </div>
@@ -166,10 +166,10 @@ const chooseFree = async () => {
   loading.value = true;
   try {
     await trainingStore.chooseFreeMode();
-    notificationStore.notify(i18n.locale === 'es' ? 'Modo libre activado' : 'Free mode enabled', 'success');
+    notificationStore.notify(i18n.t('goal_free_on'), 'success');
     emit('close', { reason: 'free_mode' });
   } catch (error) {
-    notificationStore.notify(i18n.locale === 'es' ? 'No se pudo guardar la preferencia' : 'Preference could not be saved', 'error');
+    notificationStore.notify(i18n.t('goal_free_err'), 'error');
   } finally {
     loading.value = false;
   }
@@ -195,11 +195,11 @@ const selectPlan = async () => {
         pullupBar: hasPullupBar.value,
       },
     });
-    notificationStore.notify(i18n.locale === 'es' ? 'Mision guiada creada' : 'Guided mission created', 'success');
+    notificationStore.notify(i18n.t('goal_created'), 'success');
     emit('selected');
     emit('close', { reason: 'selected_plan' });
   } catch (error) {
-    notificationStore.notify(i18n.locale === 'es' ? 'No se pudo elegir el plan' : 'Plan could not be selected', 'error');
+    notificationStore.notify(i18n.t('goal_select_err'), 'error');
   } finally {
     loading.value = false;
   }
