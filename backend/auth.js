@@ -73,7 +73,7 @@ router.post('/google', oauthLimiter, async (req, res) => {
       const refCode = generateReferralCode();
       userResult = await query(
         'INSERT INTO users (id, name, email, avatar_url, theme, referral_code) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-        [sub, name, email, '/img/avatars/avatar_1.png', 'dark', refCode]
+        [sub, name, email, '/img/avatars/avatar_1.webp', 'dark', refCode]
       );
       user = userResult.rows[0];
       const { referral_code: incomingRef } = req.body;
