@@ -6,6 +6,7 @@ import http from 'node:http';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { randomUUID } from 'node:crypto';
 import express from 'express';
 
 const URL_DB = process.env.DATABASE_URL || '';
@@ -13,6 +14,8 @@ const HAS_DB = /@(localhost|127\.0\.0\.1)[:/]/.test(URL_DB);
 const __dirname = dirname(fileURLToPath(import.meta.url));
 process.env.JWT_SECRET ||= 'test-secret';
 
+// Contraseña de prueba generada en cada ejecución (no hay secretos en el repo).
+const TEST_PASSWORD = `pw-${randomUUID()}`;
 let query, pool, server, base;
 const stamp = Date.now();
 const emailA = `fase0_a_${stamp}@test.local`;
@@ -53,9 +56,9 @@ after(async () => {
 
 test('B3: el registro valida nombre, email y contraseña con códigos ERR_*', { skip: !HAS_DB }, async () => {
   const cases = [
-    [{ name: '', email: emailA, password: 'longenough1' }, 'ERR_INVALID_NAME'],
-    [{ name: 'x'.repeat(51), email: emailA, password: 'longenough1' }, 'ERR_INVALID_NAME'],
-    [{ name: 'Ana', email: 'no-es-un-email', password: 'longenough1' }, 'ERR_INVALID_EMAIL'],
+    [{ name: '', email: emailA, password: TEST_PASSWORD }, 'ERR_INVALID_NAME'],
+    [{ name: 'x'.repeat(51), email: emailA, password: TEST_PASSWORD }, 'ERR_INVALID_NAME'],
+    [{ name: 'Ana', email: 'no-es-un-email', password: TEST_PASSWORD }, 'ERR_INVALID_EMAIL'],
     [{ name: 'Ana', email: emailA, password: 'corta' }, 'ERR_WEAK_PASSWORD'],
   ];
   for (const [body, code] of cases) {
@@ -68,7 +71,7 @@ test('B3: el registro valida nombre, email y contraseña con códigos ERR_*', { 
 
 test('B4: una cuenta nueva nace con has_seen_rpg_release = true', { skip: !HAS_DB }, async () => {
   for (const [name, email, set] of [['Ana', emailA, (t, i) => { tokenA = t; idA = i; }], ['Bea', emailB, (t, i) => { tokenB = t; idB = i; }]]) {
-    const res = await call('POST', '/auth/signup', { body: { name, email, password: 'longenough1' } });
+    const res = await call('POST', '/auth/signup', { body: { name, email, password: TEST_PASSWORD } });
     assert.equal(res.status, 200);
     const out = await res.json();
     set(out.token, out.user.id);
