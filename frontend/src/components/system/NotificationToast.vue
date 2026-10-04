@@ -25,7 +25,7 @@
           
           <div class="flex-1 min-w-0">
             <p class="text-[10px] font-black uppercase tracking-[0.2em] text-muted mb-0.5">
-              {{ store.type === 'error' ? 'Security Protocol' : 'Neural Sync' }}
+              {{ store.type === 'error' ? i18n.t('notif_title_error') : i18n.t('notif_title_ok') }}
             </p>
             <p class="text-[13px] font-black text-foreground leading-tight">
               {{ store.message }}

@@ -392,6 +392,8 @@ export default {
     // Notifications
     notif_anomalies: 'ANOMALÍAS DETECTADAS',
     notif_close: 'Cerrar Notificación',
+    notif_title_error: 'Error',
+    notif_title_ok: 'Hecho',
     notif_copy_logs: 'Copiar logs',
     notif_logs_copied: '¡Copiado!',
     notif_logs_copy_failed: 'No se pudo copiar',
