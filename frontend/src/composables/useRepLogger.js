@@ -73,8 +73,8 @@ export function useRepLogger() {
       // Deja en el log QUÉ se intentaba registrar; el status y el cuerpo de la
       // respuesta los añade aparte el interceptor de axios del logger.
       logError('logReps falló', { exerciseType, count: repsToSubmit, addedWeight }, error);
-      const msg = i18n.locale === 'es' ? 'No se pudieron registrar las reps' : 'Failed to log reps';
-      notificationStore.notify(msg, 'error');
+      const fallback = i18n.locale === 'es' ? 'No se pudieron registrar las reps' : 'Failed to log reps';
+      notificationStore.notify(error.response?.data?.message || fallback, 'error');
       return null;
     } finally {
       loading.value = false;

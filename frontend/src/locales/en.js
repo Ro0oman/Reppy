@@ -379,6 +379,8 @@ export default {
     // Notifications
     notif_anomalies: 'ANOMALIES DETECTED',
     notif_close: 'Close Notification',
+    notif_title_error: 'Error',
+    notif_title_ok: 'Done',
     notif_copy_logs: 'Copy logs',
     notif_logs_copied: 'Copied!',
     notif_logs_copy_failed: 'Copy failed',
