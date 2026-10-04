@@ -287,11 +287,15 @@
   border-color: var(--os-line);
 }
 
-/* Suelo tipográfico: las etiquetas de 8–10 px suben al tamaño «kicker» (11 px).
-   El texto informativo de 12 px o más no se toca. */
+/* Suelo tipográfico: el texto de 8–10 px sube a 12 px (--os-type-meta), que es el
+   mínimo para texto informativo. Las etiquetas decorativas en mayúsculas que quieran
+   11 px deben usar la clase propia .os-label, no un tamaño arbitrario. */
 .os-shell .text-\[8px\],
 .os-shell .text-\[9px\],
-.os-shell .text-\[10px\] { font-size: var(--os-type-kicker); line-height: 1.35; }
+.os-shell .text-\[10px\],
+.os-shell .text-\[11px\] { font-size: var(--os-type-meta); line-height: 1.35; }
+/* Etiquetas de las estaciones del panel: su CSS propio (scoped) fija 10 px. */
+.os-shell .os-station__label.os-station__label { font-size: var(--os-type-meta); }
 
 /* ── Animaciones ─────────────────────────────────────────── */
 

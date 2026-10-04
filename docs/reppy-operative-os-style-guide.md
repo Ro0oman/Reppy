@@ -330,7 +330,7 @@ Resumen de lo que ya rige en todas las vistas autenticadas (`.os-shell`, en `fro
 | Borde | `--os-line`; `--os-line-strong` al pasar el ratón. Los `border-white/*` y `border-border*` se remapean a `--os-line` |
 | Radio | `--os-radius` = 2 px en tarjetas, botones y campos; `--os-radius-sheet` = 8 px solo en sheets y modales; `rounded-full` solo en avatares y puntos de presencia |
 | Táctil | mínimo `--os-touch` = 44 px (botón principal y elementos interactivos nuevos) |
-| Texto | etiquetas 11–12 px (`--os-type-kicker`, `--os-type-meta`), cuerpo 14 px, títulos 20/28 px. Las clases `text-[8px]`, `text-[9px]` y `text-[10px]` se remapean a 11 px |
+| Texto | etiquetas 11–12 px (`--os-type-kicker`, `--os-type-meta`), cuerpo 14 px, títulos 20/28 px. Las clases `text-[8px]`, `text-[9px]`, `text-[10px]` y `text-[11px]` se remapean a 12 px (`--os-type-meta`) |
 | Relleno de tarjeta | `--os-pad-card` = 16 px |
 
 **Al escribir componentes nuevos:** usar `.os-panel`/`.card-stats` y las variables, no `rounded-2xl`, `border-white/10` ni tamaños de texto arbitrarios.
