@@ -45,7 +45,7 @@ export const createApp = ViteSSG(
       // Logger de diagnóstico. Se le pasa axios para que su interceptor registre
       // status y cuerpo de cada respuesta HTTP fallida: el console.error de los
       // catch solo deja el Error genérico, sin el mensaje real del backend.
-      initLogger(notificationStore, axios)
+      initLogger(axios)
 
       // GA4 funnel tracking (gtag loaded in index.html). Central axios
       // interceptor for signup/first_log/spin/push_enabled + day2_return.
