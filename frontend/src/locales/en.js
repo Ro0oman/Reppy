@@ -1614,5 +1614,10 @@ export default {
     landing_badge_top_name: 'Shadow · Rank 1',
     landing_badge_difficulty: 'Difficulty: elite',
     landing_badge_boss: 'Battle: Lady Maria',
+    onb_level_label: 'What is your level? (optional, sets your daily goal)',
+    onb_level_beginner: 'Beginner',
+    onb_level_intermediate: 'Intermediate',
+    onb_level_advanced: 'Advanced',
+    onb_level_goal: 'goal {n}',
 };
 
