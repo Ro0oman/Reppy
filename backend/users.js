@@ -97,7 +97,7 @@ router.patch('/profile', authenticate, async (req, res) => {
       updateFields.push(`theme = $${i++}`);
       params.push(theme);
     }
-    if (ui_style && ['operative', 'classic'].includes(ui_style)) {
+    if (ui_style && ['operative', 'aurora', 'classic'].includes(ui_style)) {
       updateFields.push(`ui_style = $${i++}`);
       params.push(ui_style);
     }

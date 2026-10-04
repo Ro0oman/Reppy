@@ -1,0 +1,245 @@
+/* ────────────────────────────────────────────────────────────
+   Reppy Aurora — piel «IA moderna» (sustituye al estilo clásico)
+   Se aplica con la clase .aurora-shell junto a .os-shell: reutiliza
+   la estructura (rail, telemetría, dock) y la re-viste redefiniendo
+   los tokens --os-* y los HSL que consumen Tailwind. Se carga DESPUÉS
+   de operative-os.css, por eso gana a igual especificidad.
+
+   Lenguaje visual: fondo casi negro con malla de luz (violeta, azul,
+   cian), superficies de cristal translúcido con borde de un píxel,
+   radios generosos, acentos en degradado y tipografía Inter.
+   ──────────────────────────────────────────────────────────── */
+
+.aurora-shell {
+  color-scheme: dark;
+
+  /* Tokens del sistema (los usan operative-os.css y App.vue) */
+  --os-void: #07070d;
+  --os-ink: #0a0a13;
+  --os-panel: rgba(255, 255, 255, 0.045);
+  --os-panel-raised: rgba(255, 255, 255, 0.075);
+  --os-line: rgba(255, 255, 255, 0.10);
+  --os-line-strong: rgba(255, 255, 255, 0.20);
+  --os-blue: #7c6cff;
+  --os-cyan: #6ee7f9;
+  --os-orange: #fb923c;
+  --os-success: #34d399;
+  --os-danger: #fb7185;
+  --os-text: #f4f4fb;
+  --os-muted: #9b9bb4;
+
+  --os-font-display: 'Inter Tight', Inter, 'Segoe UI', system-ui, sans-serif;
+  --os-font-body: Inter, 'Segoe UI', system-ui, sans-serif;
+  --os-font-mono: Inter, 'Segoe UI', system-ui, sans-serif;
+
+  --os-radius: 16px;
+  --os-radius-sheet: 24px;
+  --os-pad-card: 18px;
+  --aurora-gradient: linear-gradient(135deg, #8b5cf6 0%, #6366f1 45%, #22d3ee 100%);
+  --aurora-glow: 0 10px 40px -10px rgba(124, 108, 255, 0.55);
+
+  /* Tokens HSL de Tailwind */
+  --background: 240 33% 4%;
+  --surface: 240 22% 9%;
+  --card: 240 22% 9%;
+  --card-alpha: 0.6;
+  --foreground: 240 33% 97%;
+  --muted: 240 10% 66%;
+  --border: 240 12% 20%;
+  --border-alpha: 1;
+  --primary: 250 100% 71%;
+  --accent: 160 66% 52%;
+  --ring: 250 100% 71% / 0.45;
+  --white-to-gray: 240 33% 97%;
+  --neon: 187 92% 69%;
+  --neon-violet: 255 92% 70%;
+  --heatmap-bg: 240 33% 4%;
+  --heatmap-l0: 240 22% 12%;
+  --heatmap-l1: 255 55% 30%;
+  --heatmap-l2: 255 80% 50%;
+  --heatmap-l3: 252 100% 68%;
+  --heatmap-l4: 187 92% 69%;
+
+  font-family: var(--os-font-body);
+  background-color: var(--os-void);
+  /* Malla de luz: tres focos de color sobre negro, sin retícula */
+  background-image:
+    radial-gradient(60% 45% at 12% -5%, rgba(139, 92, 246, 0.30), transparent 62%),
+    radial-gradient(45% 38% at 92% 4%, rgba(34, 211, 238, 0.17), transparent 60%),
+    radial-gradient(70% 45% at 50% 108%, rgba(79, 70, 229, 0.16), transparent 65%);
+  background-size: 100% 100%;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+/* ── Forma: radios generosos (anula el aplanado de Operative OS) ── */
+.aurora-shell .rounded-3xl { border-radius: 24px !important; }
+.aurora-shell .rounded-2xl { border-radius: 18px !important; }
+.aurora-shell .rounded-xl { border-radius: 14px !important; }
+.aurora-shell .rounded-lg { border-radius: 12px !important; }
+.aurora-shell .rounded-md { border-radius: 10px !important; }
+.aurora-shell .rounded { border-radius: 8px !important; }
+
+/* ── Superficies de cristal ─────────────────────────────────── */
+.aurora-shell .os-panel,
+.aurora-shell .card-stats {
+  background: var(--os-panel);
+  border: 1px solid var(--os-line);
+  border-radius: var(--os-radius) !important;
+  padding: var(--os-pad-card);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 12px 32px -16px rgba(0, 0, 0, 0.7);
+}
+.aurora-shell .os-panel--raised { background: var(--os-panel-raised); border-color: var(--os-line-strong); }
+.aurora-shell .os-panel--cut { clip-path: none; }
+.aurora-shell .card-stats:hover,
+.aurora-shell .tap-card:hover {
+  border-color: var(--os-line-strong) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 16px 40px -16px rgba(124, 108, 255, 0.35);
+}
+
+/* ── Tipografía: sin mayúsculas condensadas ─────────────────── */
+.aurora-shell .os-display {
+  font-family: var(--os-font-display);
+  text-transform: none;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  font-weight: 700;
+}
+.aurora-shell .os-label {
+  font: 500 var(--os-type-meta) / 1.35 var(--os-font-body);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--os-muted);
+}
+.aurora-shell .os-label--muted { color: var(--os-muted); }
+
+/* ── Botones ────────────────────────────────────────────────── */
+.aurora-shell .os-command,
+.aurora-shell .btn-reppy {
+  border: 0;
+  border-radius: 14px;
+  background: var(--aurora-gradient);
+  color: #fff;
+  font: 600 1rem / 1 var(--os-font-body);
+  letter-spacing: 0;
+  text-transform: none;
+  box-shadow: var(--aurora-glow), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+.aurora-shell .os-command:hover:not(:disabled),
+.aurora-shell .btn-reppy:hover {
+  background: var(--aurora-gradient);
+  filter: brightness(1.1);
+  box-shadow: 0 14px 44px -10px rgba(124, 108, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+.aurora-shell .os-command--secondary {
+  background: var(--os-panel-raised);
+  border: 1px solid var(--os-line-strong);
+  box-shadow: none;
+  color: var(--os-text);
+}
+.aurora-shell .os-command--secondary:hover:not(:disabled) { background: rgba(255, 255, 255, 0.11); filter: none; box-shadow: none; }
+.aurora-shell .os-command--quiet { background: none; box-shadow: none; color: var(--os-cyan); }
+.aurora-shell .os-command--quiet:hover:not(:disabled) { background: none; box-shadow: none; filter: none; }
+.aurora-shell .os-command--danger { background: none; box-shadow: none; border: 1px solid var(--os-danger); color: var(--os-danger); }
+.aurora-shell .os-command:disabled { background: var(--os-panel-raised); color: var(--os-muted); box-shadow: none; }
+
+/* ── Barras: redondeadas y en degradado ─────────────────────── */
+.aurora-shell .os-track { height: 10px; background: rgba(255, 255, 255, 0.08); border-radius: 999px; clip-path: none; overflow: hidden; }
+.aurora-shell .os-track__fill {
+  border-radius: 999px;
+  background: var(--aurora-gradient);
+  box-shadow: 0 0 18px rgba(124, 108, 255, 0.65);
+}
+.aurora-shell .os-track__fill--danger { background: linear-gradient(90deg, #fb7185, #fb923c); box-shadow: 0 0 18px rgba(251, 113, 133, 0.5); }
+.aurora-shell .os-minibar { background: rgba(255, 255, 255, 0.10); border-radius: 999px; height: 5px; }
+.aurora-shell .os-minibar > i { background: var(--aurora-gradient); border-radius: 999px; }
+
+/* ── Shell: rail, telemetría, cabecera móvil y dock ─────────── */
+.aurora-shell .os-rail,
+.aurora-shell .os-telemetry {
+  background: rgba(10, 10, 19, 0.62);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+}
+.aurora-shell .os-rail__logo { background: var(--aurora-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.aurora-shell .os-rail__item {
+  margin: 2px 8px;
+  width: calc(100% - 16px);
+  border-left: 0;
+  border-radius: 14px;
+  font: 500 10px var(--os-font-body);
+  letter-spacing: 0;
+}
+.aurora-shell .os-rail__item--active {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.28), rgba(34, 211, 238, 0.14));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+.aurora-shell .os-telemetry__pilot { border-bottom-color: var(--os-line); }
+.aurora-shell .os-telemetry__streak { background: rgba(251, 146, 60, 0.10); border-left: 0; border-radius: 14px; border: 1px solid rgba(251, 146, 60, 0.28); }
+.aurora-shell .os-telemetry__streak b { color: #fdba74; font-weight: 700; }
+.aurora-shell .os-telemetry__streak span { color: #fdba74; opacity: 0.8; font-family: var(--os-font-body); letter-spacing: 0; }
+.aurora-shell .os-telemetry__strip,
+.aurora-shell .os-topstrip__chip {
+  border-radius: 12px;
+  background: var(--os-panel);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  font-family: var(--os-font-body);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.aurora-shell .os-telemetry__count,
+.aurora-shell .os-topstrip__count { border-radius: 999px; }
+.aurora-shell .os-telemetry__member { border-top-color: var(--os-line); }
+.aurora-shell .os-topstrip,
+.aurora-shell .os-dock {
+  background: rgba(10, 10, 19, 0.66);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+}
+.aurora-shell .os-topstrip__logo { border-radius: 10px; background: var(--aurora-gradient); }
+.aurora-shell .os-topstrip__word { letter-spacing: 0.04em; font-weight: 700; }
+.aurora-shell .os-dock__item { font: 500 10px var(--os-font-body); letter-spacing: 0; }
+.aurora-shell .os-dock__item--active { background: none; box-shadow: none; color: #fff; }
+.aurora-shell .os-dock__item--active svg { color: var(--os-cyan); filter: drop-shadow(0 0 8px rgba(110, 231, 249, 0.6)); }
+.aurora-shell .os-dock__combat {
+  border-radius: 20px;
+  border: 0;
+  background: var(--aurora-gradient);
+  box-shadow: var(--aurora-glow), 0 0 0 4px var(--os-void);
+}
+.aurora-shell .os-dock__combat-tag { font-family: var(--os-font-body); letter-spacing: 0; font-weight: 600; color: var(--os-text); }
+
+/* Marco de misión y estaciones: tienen estilos propios (scoped) con colores fijos,
+   por eso se duplica la clase para ganarles en especificidad. */
+.aurora-shell .os-mission.os-mission {
+  border: 1px solid var(--os-line);
+  border-radius: 24px;
+  clip-path: none;
+  background:
+    radial-gradient(80% 120% at 0% 0%, rgba(139, 92, 246, 0.22), transparent 60%),
+    radial-gradient(60% 100% at 100% 100%, rgba(34, 211, 238, 0.10), transparent 60%),
+    rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 24px 60px -28px rgba(124, 108, 255, 0.45);
+}
+.aurora-shell .os-mission.os-mission::before { height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent); }
+.aurora-shell .os-mission.os-mission .os-mission__subtitle { color: var(--os-muted); }
+.aurora-shell .os-mission.os-mission .os-mission__consequence {
+  font: 600 1.05rem var(--os-font-body);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.aurora-shell .os-mission.os-mission .os-mission__action {
+  background: rgba(10, 10, 19, 0.45);
+  border-left: 1px solid var(--os-line);
+}
+@media (max-width: 820px) {
+  .aurora-shell .os-mission.os-mission .os-mission__action { border-left: 0; border-top: 1px solid var(--os-line); }
+}
+.aurora-shell .os-station.os-station { border-radius: 18px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.aurora-shell .os-station__icon.os-station__icon { border-radius: 12px; color: var(--os-cyan); }
+.aurora-shell .os-station__label.os-station__label { font-family: var(--os-font-body); letter-spacing: 0; text-transform: none; font-size: 11px; }

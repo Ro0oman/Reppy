@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen selection:bg-primary-500/30 relative text-foreground transition-colors duration-500 overflow-x-hidden" :class="[
     authStore.user?.background_css ? 'bg-transparent' : 'bg-background',
-    { 'has-custom-bg': authStore.user?.background_css, 'os-shell': isOperative }
+    { 'has-custom-bg': authStore.user?.background_css, 'os-shell': isOperative, 'aurora-shell': isAurora }
   ]">
 
     <!-- Background System -->
@@ -560,7 +560,9 @@ const showNotifications = ref(false);
 const showQuickLog = ref(false);
 
 // Estilo de interfaz elegido por el usuario (perfil → ajustes).
-const isOperative = computed(() => themeStore.uiStyle === 'operative');
+// Aurora reutiliza el shell de Operative OS (rail, telemetría, dock) con otra piel.
+const isAurora = computed(() => themeStore.uiStyle === 'aurora');
+const isOperative = computed(() => themeStore.uiStyle === 'operative' || isAurora.value);
 
 // Rutas sin chrome (sin rails/navbar/footer). La batalla NO se oculta:
 // aunque su ruta sea inmersiva, conserva los headers de navegación.

@@ -167,7 +167,7 @@
 
 <script setup>
 import { ref, watch, onUnmounted } from 'vue';
-import { X, Sun, Moon, Monitor, LogOut, ChevronRight, Link2, Crosshair, LayoutTemplate } from 'lucide-vue-next';
+import { X, Sun, Moon, Monitor, LogOut, ChevronRight, Link2, Crosshair, Sparkles } from 'lucide-vue-next';
 import { useI18nStore } from '@/stores/i18n';
 import { useThemeStore } from '@/stores/theme';
 import { useAuthStore } from '@/stores/auth';
@@ -201,12 +201,12 @@ const uiStyles = [
       : 'Mission console: rails, telemetry and obsidian.',
   },
   {
-    id: 'classic',
-    icon: LayoutTemplate,
-    name: i18n.locale === 'es' ? 'Original' : 'Classic',
+    id: 'aurora',
+    icon: Sparkles,
+    name: 'Aurora',
     desc: i18n.locale === 'es'
-      ? 'La vista clásica previa al rediseño.'
-      : 'The classic pre-redesign look.',
+      ? 'Moderno y ligero: cristal, luz y degradados.'
+      : 'Modern and light: glass, glow and gradients.',
   },
 ];
 

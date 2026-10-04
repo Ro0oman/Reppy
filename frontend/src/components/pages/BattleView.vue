@@ -8,7 +8,7 @@
     <div class="mx-auto w-full max-w-md space-y-1.5 px-3 pb-20 pt-1.5 md:max-w-lg lg:max-w-5xl lg:space-y-3 lg:px-6 lg:pt-3">
       <!-- Top bar propio SOLO en estilo clásico: en Operative OS el shell de
            App.vue ya aporta identidad, monedas y navegación (evita doble header). -->
-      <RpgTopBar v-if="themeStore.uiStyle !== 'operative'" />
+      <RpgTopBar v-if="!['operative', 'aurora'].includes(themeStore.uiStyle)" />
 
       <!-- Campaign entry (NEW). Links to the data-driven RPG campaign map. -->
       <button type="button" @click="goCampaign"
