@@ -1678,5 +1678,6 @@ export default {
     landing_badge_top_name: 'Shadow · Rango 1',
     landing_badge_difficulty: 'Dificultad: élite',
     landing_badge_boss: 'Combate: Lady Maria',
+    dash_week_progress: 'esta semana',
 };
 
