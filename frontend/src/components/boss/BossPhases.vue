@@ -100,6 +100,7 @@ const gapToNextPhase = computed(() => {
 }
 .boss-phases__fill--rare { background: linear-gradient(90deg, #6366f1, #22d3ee); }
 .boss-phases__fill--epic { background: linear-gradient(90deg, #a855f7, #6366f1, #22d3ee); }
+.boss-phases__fill--danger { background: linear-gradient(90deg, #fb7185, #fb923c, #fbbf24); }
 .boss-phases__fill--legendary { background: linear-gradient(90deg, #d97706, #fbbf24, #fde68a); }
 .boss-phases__shimmer {
   position: absolute; inset: 0;
