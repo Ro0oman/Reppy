@@ -33,7 +33,12 @@ export const useThemeStore = defineStore('theme', () => {
   const storedStyle = !import.meta.env.SSR && localStorage.getItem('reppy_ui_style');
   // Vibe es el estilo por defecto (oct 2026); los demás se eligen en Ajustes.
   const uiStyle = ref(UI_STYLES.includes(normalizeStyle(storedStyle)) ? normalizeStyle(storedStyle) : 'vibe');
-  watch(uiStyle, (s) => { if (s === 'vibe') ensureVibeFont(); }, { immediate: true });
+  watch(uiStyle, (s) => {
+    if (s === 'vibe') ensureVibeFont();
+    // Los modales que se teletransportan al <body> quedan fuera del shell; con este
+    // atributo pueden optar a los tokens de la piel (clase .vibe-modal).
+    if (!import.meta.env.SSR) document.documentElement.setAttribute('data-ui-style', s);
+  }, { immediate: true });
 
   // Al llegar el perfil (login / otro dispositivo), la BD manda.
   watch(() => authStore.user?.ui_style, (rawDbStyle) => {

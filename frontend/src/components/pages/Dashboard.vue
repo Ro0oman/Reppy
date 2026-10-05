@@ -554,7 +554,7 @@
 
         <LivePresence class="mb-2" />
 
-        <BossHealth ref="bossHealthRef" />
+        <BossHealth ref="bossHealthRef" to-battle />
       </div>
 
       <!-- Metrics -->

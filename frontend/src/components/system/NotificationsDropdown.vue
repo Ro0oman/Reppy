@@ -3,7 +3,7 @@
     <div class="px-6 py-5 border-b border-border/40 flex items-center justify-between bg-foreground/[0.02]">
       <div class="flex items-center gap-3">
         <Bell class="w-4 h-4 text-primary-500" />
-        <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-foreground">NOTIFICATIONS.LOG</h3>
+        <h3 class="text-sm font-semibold text-foreground">{{ i18n.t('notif_dropdown_title') }}</h3>
       </div>
       <button 
         v-if="store.unreadCount > 0"
@@ -61,7 +61,7 @@
       @click="handleRegistryClick" 
       class="w-full py-5 text-center bg-surface/5 hover:bg-surface/10 border-t border-border transition-all cursor-pointer group"
     >
-       <span class="text-xs font-black text-muted group-hover:text-primary-500 uppercase tracking-[0.3em] transition-colors">ACCEDER AL REGISTRO CENTRAL</span>
+       <span class="text-sm font-semibold text-muted group-hover:text-primary-500 transition-colors">{{ i18n.t('notif_dropdown_all') }}</span>
     </button>
   </div>
 </template>

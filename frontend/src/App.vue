@@ -58,28 +58,32 @@
 
       <div v-if="shellStreak > 0" class="os-telemetry__streak">
         <b class="os-num">{{ shellStreak }} {{ shellStreak === 1 ? (i18n.locale === 'es' ? 'DÍA' : 'DAY') : (i18n.locale === 'es' ? 'DÍAS' : 'DAYS') }}</b>
-        <span>STREAK INTEGRITY</span>
+        <span>{{ i18n.t('shell_streak_label') }}</span>
       </div>
 
       <div class="os-label" style="margin-top: 4px;">{{ i18n.locale === 'es' ? 'Recursos' : 'Resources' }}</div>
       <button @click="showCoinsInfo = true" class="os-telemetry__strip" :title="i18n.t('economy_history_title')">
-        <span class="flex items-center gap-2"><Coins class="w-3.5 h-3.5 text-amber-400" />REPPY COINS</span>
+        <span class="flex items-center gap-2"><Coins class="w-3.5 h-3.5 text-amber-400" />{{ i18n.t('shell_coins') }}</span>
         <b class="os-num">{{ authStore.user?.reppy_coins || 0 }} RC</b>
       </button>
       <button @click="showCoinsInfo = true" class="os-telemetry__strip" :title="i18n.t('economy_gems')">
-        <span class="flex items-center gap-2"><Gem class="w-3.5 h-3.5" style="color: var(--os-cyan)" />GEMS</span>
+        <span class="flex items-center gap-2"><Gem class="w-3.5 h-3.5" style="color: var(--os-cyan)" />{{ i18n.t('shell_gems') }}</span>
         <b class="os-num">{{ authStore.user?.reppy_gems || 0 }}</b>
       </button>
       <WheelsMenu v-if="authStore.isAuthenticated" :quick-cooldown="quickCooldown" :daily-cooldown="dailyCooldown"
         variant="strip" button-class="os-telemetry__strip w-full relative" />
       <div class="relative">
         <button @click="handleBellClick" class="os-telemetry__strip w-full">
-          <span class="flex items-center gap-2"><Bell class="w-3.5 h-3.5" />{{ i18n.locale === 'es' ? 'AVISOS' : 'ALERTS' }}</span>
+          <span class="flex items-center gap-2"><Bell class="w-3.5 h-3.5" />{{ i18n.t('notif_dropdown_title') }}</span>
           <b v-if="notifStore.unreadCount > 0" class="os-telemetry__count os-num">{{ notifStore.unreadCount }}</b>
         </button>
-        <div v-if="showNotifications" class="absolute right-0 top-full mt-2 z-[150]">
-          <NotificationsDropdown @close="showNotifications = false" />
-        </div>
+        <!-- Al <body>: el rail tiene backdrop-filter, que convierte al rail en el
+             contenedor de los elementos fixed y recortaba el desplegable. -->
+        <Teleport to="body">
+          <div v-if="showNotifications" class="vibe-modal fixed top-16 right-[288px] z-[150] bg-transparent">
+            <NotificationsDropdown @close="showNotifications = false" />
+          </div>
+        </Teleport>
       </div>
 
       <template v-if="squadActive.length">

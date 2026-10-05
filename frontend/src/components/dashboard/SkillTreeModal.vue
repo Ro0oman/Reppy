@@ -7,7 +7,7 @@
         @click.self="store.closeModal()"
       >
        <!-- Bounded dialog: full-screen on mobile, centered card on desktop -->
-       <div class="relative flex flex-col w-full h-full sm:h-[86vh] sm:max-h-[880px] sm:max-w-3xl bg-card sm:rounded-3xl sm:border sm:border-border/60 overflow-hidden shadow-2xl">
+       <div class="vibe-modal st-modal relative flex flex-col w-full h-full sm:h-[86vh] sm:max-h-[880px] sm:max-w-3xl bg-card sm:rounded-3xl sm:border sm:border-border/60 overflow-hidden shadow-2xl">
         <!-- Header -->
         <header class="shrink-0 flex items-center justify-between gap-3 px-4 pt-[calc(env(safe-area-inset-top)+12px)] sm:pt-4 pb-3 border-b border-border/40">
           <div class="flex items-center gap-2 min-w-0">
@@ -164,10 +164,11 @@ const activeIndex = ref(0);
 const selectedId = ref(null);
 
 const BRANCH_META = {
-  war:    { icon: Sword,         labelKey: 'branch_war',    color: 'hsl(var(--neon))' },
-  gold:   { icon: Coins,         labelKey: 'branch_gold',   color: 'hsl(45 92% 58%)' },
-  vigor:  { icon: FlaskConical,  labelKey: 'branch_vigor',  color: 'hsl(var(--neon-violet))' },
-  wisdom: { icon: GraduationCap, labelKey: 'branch_wisdom', color: 'hsl(190 90% 58%)' },
+  // Cada piel puede redefinir el color de rama con --st-<rama> (Vibe lo hace).
+  war:    { icon: Sword,         labelKey: 'branch_war',    color: 'var(--st-war, hsl(var(--neon)))' },
+  gold:   { icon: Coins,         labelKey: 'branch_gold',   color: 'var(--st-gold, hsl(45 92% 58%))' },
+  vigor:  { icon: FlaskConical,  labelKey: 'branch_vigor',  color: 'var(--st-vigor, hsl(var(--neon-violet)))' },
+  wisdom: { icon: GraduationCap, labelKey: 'branch_wisdom', color: 'var(--st-wisdom, hsl(190 90% 58%))' },
 };
 
 const PERK_META = {
@@ -248,7 +249,7 @@ const canUpgradeSelected = computed(
 
 function nodeStyle(perk, color) {
   if (perk.rank > 0) {
-    return { borderColor: color, background: 'hsl(var(--foreground) / 0.04)', boxShadow: `0 0 16px -4px ${color}` };
+    return { borderColor: color, background: 'hsl(var(--foreground) / 0.04)', boxShadow: `var(--st-node-glow, 0 0 16px -4px ${color})` };
   }
   return { borderColor: 'hsl(var(--border))', background: 'hsl(var(--foreground) / 0.02)' };
 }
