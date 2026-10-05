@@ -31,7 +31,8 @@ export const useThemeStore = defineStore('theme', () => {
   // localStorage responde al instante; la BD (users.ui_style) lo sigue para
   // que la preferencia viaje entre dispositivos.
   const storedStyle = !import.meta.env.SSR && localStorage.getItem('reppy_ui_style');
-  const uiStyle = ref(UI_STYLES.includes(normalizeStyle(storedStyle)) ? normalizeStyle(storedStyle) : 'operative');
+  // Vibe es el estilo por defecto (oct 2026); los demás se eligen en Ajustes.
+  const uiStyle = ref(UI_STYLES.includes(normalizeStyle(storedStyle)) ? normalizeStyle(storedStyle) : 'vibe');
   watch(uiStyle, (s) => { if (s === 'vibe') ensureVibeFont(); }, { immediate: true });
 
   // Al llegar el perfil (login / otro dispositivo), la BD manda.

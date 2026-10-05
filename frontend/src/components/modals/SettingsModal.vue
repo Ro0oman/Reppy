@@ -193,6 +193,14 @@ const saving = ref(false);
 // + su id en UI_STYLES (stores/theme.js) + su chrome en App.vue.
 const uiStyles = [
   {
+    id: 'vibe',
+    icon: Leaf,
+    name: 'Vibe',
+    desc: i18n.locale === 'es'
+      ? 'Clara y editorial: crema, verde bosque y terracota.'
+      : 'Light and editorial: cream, forest green and terracotta.',
+  },
+  {
     id: 'operative',
     icon: Crosshair,
     name: 'Operative OS',
@@ -207,14 +215,6 @@ const uiStyles = [
     desc: i18n.locale === 'es'
       ? 'Moderno y ligero: cristal, luz y degradados.'
       : 'Modern and light: glass, glow and gradients.',
-  },
-  {
-    id: 'vibe',
-    icon: Leaf,
-    name: 'Vibe',
-    desc: i18n.locale === 'es'
-      ? 'Clara y editorial: crema, verde bosque y terracota.'
-      : 'Light and editorial: cream, forest green and terracotta.',
   },
 ];
 
