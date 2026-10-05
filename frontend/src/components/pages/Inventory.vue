@@ -7,8 +7,11 @@
           <h1 class="text-2xl md:text-4xl font-bold text-foreground tracking-tighter leading-none">
             {{ i18n.t('inv_title') }}
           </h1>
-          <p class="text-[10px] font-black text-muted uppercase tracking-[0.25em]">
-            {{ totalInventoryItems }} {{ i18n.t('shop_stock') }}
+          <p class="text-xs font-semibold text-muted">
+            {{ i18n.t('inv_items_count', { n: totalInventoryItems }) }}<template v-if="collection">
+              · {{ collection.missing > 0
+                ? i18n.t('inv_collection_missing', { n: collection.missing, total: collection.total })
+                : i18n.t('inv_collection_complete') }}</template>
           </p>
         </div>
         <div class="flex items-center gap-2">
@@ -1140,9 +1143,18 @@ const closeChestModal = async () => {
   await authStore.fetchProfile();
 };
 
+// Cuántos objetos distintos faltan por conseguir (sin consumibles ni lotes).
+const collection = ref(null);
+const fetchCollection = async () => {
+  try {
+    const { data } = await axios.get('/api/users/inventory/collection');
+    collection.value = data;
+  } catch (_) { collection.value = null; }
+};
+
 const fetchInventory = async () => {
   try {
-    await shopStore.fetchInventory(true);
+    await Promise.all([shopStore.fetchInventory(true), fetchCollection()]);
   } catch (err) { console.error('Inventory sync error:', err); }
 };
 
