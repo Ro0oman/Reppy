@@ -2,6 +2,9 @@
   <div class="os-dashboard max-w-7xl mx-auto w-full px-4 space-y-4 sm:space-y-6 pt-2 sm:pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700"
     :class="'pb-24'">
 
+    <!-- Piel Vibe: saludo en serif + energía de hoy, antes del marco de misión -->
+    <VibeGreeting v-if="themeStore.uiStyle === 'vibe'" />
+
     <!-- ✦ MISSION FRAME — el boss/batalla actual es la misión dominante ✦ -->
     <OsMissionFrame
       variant="boss"
@@ -77,15 +80,18 @@
     <!-- Streak at-risk alert (retention: keep the freeze CTA prominent) -->
     <div
       v-if="streakStatus && streakStatus.isAtRisk && !streakStatus.frozenToday"
-      class="flex items-center gap-3 rounded-2xl border border-amber-500/40 bg-amber-500/[0.08] px-4 py-3"
+      class="flex flex-wrap items-center gap-3 rounded-2xl border border-amber-500/40 bg-amber-500/[0.08] px-4 py-3"
     >
       <Snowflake class="h-5 w-5 text-amber-400 shrink-0" aria-hidden="true" />
-      <p class="flex-1 min-w-0 text-xs font-medium text-amber-300">{{ streakStateLabel }}</p>
+      <p class="flex-1 min-w-[12rem] text-xs font-medium text-amber-300">{{ streakStateLabel }}</p>
+      <!-- Los botones bajan a su propia fila en móvil: antes dejaban el texto en una
+           columna de una palabra por línea. -->
+      <div class="flex w-full sm:w-auto gap-2">
       <!-- Free weekly rest day: preferred CTA when still available this week. -->
       <button
         v-if="streakStatus.restDayWeeklyLimit && streakStatus.restDaysThisWeek < streakStatus.restDayWeeklyLimit"
         type="button"
-        class="shrink-0 rounded-xl border border-emerald-500/50 bg-emerald-500/15 text-emerald-200 px-3 py-2 text-xs font-semibold disabled:opacity-40 active:scale-95 transition-transform"
+        class="flex-1 sm:flex-none rounded-xl border border-emerald-500/50 bg-emerald-500/15 text-emerald-200 px-3 py-2 text-xs font-semibold disabled:opacity-40 active:scale-95 transition-transform"
         :disabled="!streakStatus.canUseRestDay || usingRestDay"
         @click="useRestDay"
       >
@@ -93,12 +99,13 @@
       </button>
       <button
         type="button"
-        class="shrink-0 rounded-xl border border-amber-500/50 bg-amber-500/15 text-amber-200 px-3 py-2 text-xs font-semibold disabled:opacity-40 active:scale-95 transition-transform"
+        class="flex-1 sm:flex-none rounded-xl border border-amber-500/50 bg-amber-500/15 text-amber-200 px-3 py-2 text-xs font-semibold disabled:opacity-40 active:scale-95 transition-transform"
         :disabled="!streakStatus.canFreeze || freezingStreak"
         @click="freezeStreak"
       >
         {{ freezeButtonLabel }}
       </button>
+      </div>
     </div>
 
     <!-- Routines / quick-log placeholder: reserves the space of the guided-plan
@@ -645,6 +652,8 @@ import WeeklyShareCard from '@/components/modals/WeeklyShareCard.vue';
 import SkillTreeModal from '@/components/dashboard/SkillTreeModal.vue';
 import NewBadge from '@/components/battle/NewBadge.vue';
 import OsMissionFrame from '@/components/os/OsMissionFrame.vue';
+import VibeGreeting from '@/components/dashboard/VibeGreeting.vue';
+import { useThemeStore } from '@/stores/theme';
 import { getLocalDateString } from '@/utils/dateUtils.js';
 import { buildActiveBoosts } from '@/utils/activeBuffs';
 
@@ -655,6 +664,7 @@ const trainingStore = useTrainingStore();
 const bossStore = useBossStore();
 const skillTreeStore = useSkillTreeStore();
 const badgesStore = useBadgesStore();
+const themeStore = useThemeStore();
 
 // Camp "stations": quick access to the RPG-loop destinations that are NOT in the
 // bottom nav. Counts come from the shared badges store (fetched in App init).

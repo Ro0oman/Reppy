@@ -157,14 +157,14 @@
 .aurora-shell .os-minibar > i { background: var(--aurora-gradient); border-radius: 999px; }
 
 /* ── Shell: rail, telemetría, cabecera móvil y dock ─────────── */
-.aurora-shell .os-rail,
-.aurora-shell .os-telemetry {
+.aurora-shell.aurora-shell .os-rail,
+.aurora-shell.aurora-shell .os-telemetry {
   background: rgba(10, 10, 19, 0.62);
   backdrop-filter: blur(24px) saturate(150%);
   -webkit-backdrop-filter: blur(24px) saturate(150%);
 }
-.aurora-shell .os-rail__logo { background: var(--aurora-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.aurora-shell .os-rail__item {
+.aurora-shell.aurora-shell .os-rail__logo { background: var(--aurora-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.aurora-shell.aurora-shell .os-rail__item {
   margin: 2px 8px;
   width: calc(100% - 16px);
   border-left: 0;
@@ -172,16 +172,16 @@
   font: 500 10px var(--os-font-body);
   letter-spacing: 0;
 }
-.aurora-shell .os-rail__item--active {
+.aurora-shell.aurora-shell .os-rail__item--active {
   background: linear-gradient(135deg, rgba(139, 92, 246, 0.28), rgba(34, 211, 238, 0.14));
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
-.aurora-shell .os-telemetry__pilot { border-bottom-color: var(--os-line); }
-.aurora-shell .os-telemetry__streak { background: rgba(251, 146, 60, 0.10); border-left: 0; border-radius: 14px; border: 1px solid rgba(251, 146, 60, 0.28); }
-.aurora-shell .os-telemetry__streak b { color: #fdba74; font-weight: 700; }
-.aurora-shell .os-telemetry__streak span { color: #fdba74; opacity: 0.8; font-family: var(--os-font-body); letter-spacing: 0; }
-.aurora-shell .os-telemetry__strip,
-.aurora-shell .os-topstrip__chip {
+.aurora-shell.aurora-shell .os-telemetry__pilot { border-bottom-color: var(--os-line); }
+.aurora-shell.aurora-shell .os-telemetry__streak { background: rgba(251, 146, 60, 0.10); border-left: 0; border-radius: 14px; border: 1px solid rgba(251, 146, 60, 0.28); }
+.aurora-shell.aurora-shell .os-telemetry__streak b { color: #fdba74; font-weight: 700; }
+.aurora-shell.aurora-shell .os-telemetry__streak span { color: #fdba74; opacity: 0.8; font-family: var(--os-font-body); letter-spacing: 0; }
+.aurora-shell.aurora-shell .os-telemetry__strip,
+.aurora-shell.aurora-shell .os-topstrip__chip {
   border-radius: 12px;
   background: var(--os-panel);
   backdrop-filter: blur(14px);
@@ -190,27 +190,27 @@
   letter-spacing: 0;
   text-transform: none;
 }
-.aurora-shell .os-telemetry__count,
-.aurora-shell .os-topstrip__count { border-radius: 999px; }
-.aurora-shell .os-telemetry__member { border-top-color: var(--os-line); }
-.aurora-shell .os-topstrip,
-.aurora-shell .os-dock {
+.aurora-shell.aurora-shell .os-telemetry__count,
+.aurora-shell.aurora-shell .os-topstrip__count { border-radius: 999px; }
+.aurora-shell.aurora-shell .os-telemetry__member { border-top-color: var(--os-line); }
+.aurora-shell.aurora-shell .os-topstrip,
+.aurora-shell.aurora-shell .os-dock {
   background: rgba(10, 10, 19, 0.66);
   backdrop-filter: blur(22px) saturate(150%);
   -webkit-backdrop-filter: blur(22px) saturate(150%);
 }
-.aurora-shell .os-topstrip__logo { border-radius: 10px; background: var(--aurora-gradient); }
-.aurora-shell .os-topstrip__word { letter-spacing: 0.04em; font-weight: 700; }
-.aurora-shell .os-dock__item { font: 500 10px var(--os-font-body); letter-spacing: 0; }
-.aurora-shell .os-dock__item--active { background: none; box-shadow: none; color: #fff; }
-.aurora-shell .os-dock__item--active svg { color: var(--os-cyan); filter: drop-shadow(0 0 8px rgba(110, 231, 249, 0.6)); }
-.aurora-shell .os-dock__combat {
+.aurora-shell.aurora-shell .os-topstrip__logo { border-radius: 10px; background: var(--aurora-gradient); }
+.aurora-shell.aurora-shell .os-topstrip__word { letter-spacing: 0.04em; font-weight: 700; }
+.aurora-shell.aurora-shell .os-dock__item { font: 500 10px var(--os-font-body); letter-spacing: 0; }
+.aurora-shell.aurora-shell .os-dock__item--active { background: none; box-shadow: none; color: #fff; }
+.aurora-shell.aurora-shell .os-dock__item--active svg { color: var(--os-cyan); filter: drop-shadow(0 0 8px rgba(110, 231, 249, 0.6)); }
+.aurora-shell.aurora-shell .os-dock__combat {
   border-radius: 20px;
   border: 0;
   background: var(--aurora-gradient);
   box-shadow: var(--aurora-glow), 0 0 0 4px var(--os-void);
 }
-.aurora-shell .os-dock__combat-tag { font-family: var(--os-font-body); letter-spacing: 0; font-weight: 600; color: var(--os-text); }
+.aurora-shell.aurora-shell .os-dock__combat-tag { font-family: var(--os-font-body); letter-spacing: 0; font-weight: 600; color: var(--os-text); }
 
 /* Marco de misión y estaciones: tienen estilos propios (scoped) con colores fijos,
    por eso se duplica la clase para ganarles en especificidad. */

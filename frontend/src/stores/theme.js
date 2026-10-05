@@ -8,7 +8,18 @@ import axios from 'axios';
 // y degradados) sobre la misma estructura. El estilo 'classic' se retiró en
 // oct 2026: quien lo tenía guardado pasa a 'aurora'.
 // Añadir aquí futuros estilos y su etiqueta en el selector.
-export const UI_STYLES = ['operative', 'aurora'];
+export const UI_STYLES = ['operative', 'aurora', 'vibe'];
+
+// La serif de Vibe (Fraunces) solo se descarga si alguien usa esa piel.
+const VIBE_FONT_ID = 'reppy-vibe-font';
+const ensureVibeFont = () => {
+  if (import.meta.env.SSR || document.getElementById(VIBE_FONT_ID)) return;
+  const link = document.createElement('link');
+  link.id = VIBE_FONT_ID;
+  link.rel = 'stylesheet';
+  link.href = 'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,400&display=swap';
+  document.head.appendChild(link);
+};
 const normalizeStyle = (s) => (s === 'classic' ? 'aurora' : s);
 
 export const useThemeStore = defineStore('theme', () => {
@@ -20,7 +31,9 @@ export const useThemeStore = defineStore('theme', () => {
   // localStorage responde al instante; la BD (users.ui_style) lo sigue para
   // que la preferencia viaje entre dispositivos.
   const storedStyle = !import.meta.env.SSR && localStorage.getItem('reppy_ui_style');
-  const uiStyle = ref(UI_STYLES.includes(normalizeStyle(storedStyle)) ? normalizeStyle(storedStyle) : 'operative');
+  // Vibe es el estilo por defecto (oct 2026); los demás se eligen en Ajustes.
+  const uiStyle = ref(UI_STYLES.includes(normalizeStyle(storedStyle)) ? normalizeStyle(storedStyle) : 'vibe');
+  watch(uiStyle, (s) => { if (s === 'vibe') ensureVibeFont(); }, { immediate: true });
 
   // Al llegar el perfil (login / otro dispositivo), la BD manda.
   watch(() => authStore.user?.ui_style, (rawDbStyle) => {

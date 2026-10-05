@@ -31,7 +31,7 @@
             :class="mode === 'login' ? 'text-foreground' : 'text-muted hover:text-foreground'"
           >
             <span v-if="mode === 'login'" class="absolute inset-0 bg-surface border border-border/40 rounded-xl shadow-sm"></span>
-            {{ i18n.t('login_title') }}
+            <span class="relative">{{ i18n.t('login_title') }}</span>
           </button>
           <button 
             @click="mode = 'signup'" 
@@ -39,7 +39,7 @@
             :class="mode === 'signup' ? 'text-foreground' : 'text-muted hover:text-foreground'"
           >
             <span v-if="mode === 'signup'" class="absolute inset-0 bg-surface border border-border/40 rounded-xl shadow-sm"></span>
-            {{ i18n.t('login_btn_register') }}
+            <span class="relative">{{ i18n.t('login_btn_register') }}</span>
           </button>
         </div>
 

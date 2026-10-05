@@ -77,7 +77,7 @@
 
       <div class="relative z-10 mt-4 grid items-start grid-cols-[86px_minmax(0,1fr)] sm:grid-cols-[120px_minmax(0,1fr)] lg:grid-cols-[220px_minmax(0,1fr)] gap-3 sm:gap-4">
         <div class="self-start h-fit">
-          <div class="w-full aspect-square rounded-xl sm:rounded-2xl overflow-hidden border border-border bg-black/30 ring-2 ring-offset-2 ring-offset-transparent" :class="theme.ring">
+          <div class="boss-portrait w-full aspect-square rounded-xl sm:rounded-2xl overflow-hidden border border-border bg-black/30 ring-2 ring-offset-2 ring-offset-transparent" :class="theme.ring">
             <img
               v-if="boss.image_url"
               :src="boss.image_url"

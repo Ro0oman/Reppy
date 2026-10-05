@@ -923,3 +923,27 @@ CREATE TABLE IF NOT EXISTS summary_comment_subscribers (
 -- cosmeticos, user_cosmeticos, routines, routine_exercises, workouts, workout_sets,
 -- user_metrics) no las consulta ningún código vivo (comprobado con grep del 2026-10-05):
 -- son legado y no se reconstruyen.
+
+-- =====================================================================
+-- Migraciones de datos de una sola vez
+-- =====================================================================
+-- Este fichero se ejecuta en CADA arranque, así que un UPDATE suelto se
+-- repetiría siempre. Las migraciones de datos se registran aquí por id y
+-- solo se aplican la primera vez.
+CREATE TABLE IF NOT EXISTS app_migrations (
+    id VARCHAR(100) PRIMARY KEY,
+    applied_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Oct 2026: Vibe pasa a ser el estilo por defecto para todos (decisión de Roman).
+-- 'operative' era el valor por defecto de la columna, así que casi nadie lo
+-- eligió a propósito; quien quiera otro estilo lo cambia en Ajustes y, como la
+-- migración no se repite, su elección se respeta.
+ALTER TABLE users ALTER COLUMN ui_style SET DEFAULT 'vibe';
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM app_migrations WHERE id = '2026-10-vibe-por-defecto') THEN
+    UPDATE users SET ui_style = 'vibe' WHERE ui_style IS NULL OR ui_style IN ('operative', 'classic');
+    INSERT INTO app_migrations (id) VALUES ('2026-10-vibe-por-defecto');
+  END IF;
+END $$;

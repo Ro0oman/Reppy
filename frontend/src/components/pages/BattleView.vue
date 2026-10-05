@@ -1,5 +1,5 @@
 <template>
-  <div class="relative min-h-screen">
+  <div class="battle-view relative min-h-screen">
     <!-- Dungeon background -->
     <div class="bg-dungeon fixed inset-0 -z-10">
       <span class="ember" v-for="n in 14" :key="n" :style="emberStyle(n)"></span>

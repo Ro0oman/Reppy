@@ -1,0 +1,355 @@
+/* ────────────────────────────────────────────────────────────
+   Reppy Vibe — piel clara y editorial (oct 2026)
+   Se aplica con .vibe-shell junto a .os-shell: reutiliza la estructura
+   del shell (rail, telemetría, dock) y la re-viste redefiniendo los
+   tokens --os-* y los HSL de Tailwind. Se carga DESPUÉS de
+   operative-os.css y aurora.css.
+
+   Lenguaje: fondo crema, tarjetas blancas con borde fino, UNA tarjeta
+   protagonista en verde bosque, terracota para la acción y el esfuerzo,
+   índigo solo para el progreso del día. Serif (Fraunces) para títulos
+   y números grandes; sans para todo lo demás. Nada de neón ni cristal.
+   ──────────────────────────────────────────────────────────── */
+
+.vibe-shell {
+  color-scheme: light;
+
+  --vibe-cream: #F4F2EC;
+  --vibe-forest: #13201A;
+  --vibe-forest-2: #1B2C23;
+  --vibe-forest-line: #2F4236;
+  --vibe-sage: #9AA89D;
+  --vibe-terracotta: #C4532E;
+  --vibe-terracotta-hover: #AE4625;
+  --vibe-indigo: #3D3BB8;
+  --vibe-sand: #ECEAE3;
+  --vibe-serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+
+  /* Tokens del sistema (los usan operative-os.css y App.vue) */
+  --os-void: var(--vibe-cream);
+  --os-ink: #EDEAE1;
+  --os-panel: #FFFFFF;
+  --os-panel-raised: #FAF8F3;
+  --os-line: #E3E0D6;
+  --os-line-strong: #CFCBBE;
+  --os-blue: var(--vibe-terracotta);
+  --os-cyan: var(--vibe-indigo);
+  --os-orange: var(--vibe-terracotta);
+  --os-success: #2F7D4F;
+  --os-danger: #B3261E;
+  --os-text: var(--vibe-forest);
+  --os-muted: #6F786F;
+
+  --os-font-display: var(--vibe-serif);
+  --os-font-body: Inter, 'Segoe UI', system-ui, sans-serif;
+  --os-font-mono: Inter, 'Segoe UI', system-ui, sans-serif;
+  --os-radius: 16px;
+  --os-radius-sheet: 24px;
+  --os-pad-card: 16px;
+
+  /* Tokens HSL de Tailwind */
+  --background: 45 24% 94%;
+  --surface: 0 0% 100%;
+  --card: 0 0% 100%;
+  --card-alpha: 1;
+  --foreground: 150 26% 10%;
+  --muted: 120 4% 45%;
+  --border: 45 16% 86%;
+  --border-alpha: 1;
+  --primary: 15 62% 47%;
+  --accent: 145 45% 34%;
+  --ring: 15 62% 47% / 0.35;
+  --white-to-gray: 150 26% 10%;
+  --neon: 241 51% 48%;
+  --neon-violet: 241 51% 48%;
+  --heatmap-bg: 45 24% 94%;
+  --heatmap-l0: 45 16% 88%;
+  --heatmap-l1: 140 22% 76%;
+  --heatmap-l2: 142 26% 56%;
+  --heatmap-l3: 148 32% 36%;
+  --heatmap-l4: 150 40% 18%;
+
+  color: var(--os-text);
+  font-family: var(--os-font-body);
+  background-color: var(--vibe-cream);
+  background-image: none;
+}
+
+/* ── Forma: radios moderados (anula el aplanado de Operative OS) ── */
+.vibe-shell .rounded-3xl { border-radius: 20px !important; }
+.vibe-shell .rounded-2xl { border-radius: 16px !important; }
+.vibe-shell .rounded-xl { border-radius: 12px !important; }
+.vibe-shell .rounded-lg { border-radius: 10px !important; }
+.vibe-shell .rounded-md { border-radius: 8px !important; }
+.vibe-shell .rounded { border-radius: 6px !important; }
+
+/* ── Superficies: blancas, borde fino, sin blur ni sombra ── */
+.vibe-shell .os-panel,
+.vibe-shell .card-stats {
+  background: #FFFFFF;
+  border: 1px solid var(--os-line);
+  border-radius: var(--os-radius) !important;
+  padding: var(--os-pad-card);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+.vibe-shell .card-stats:hover,
+.vibe-shell .tap-card:hover {
+  border-color: var(--os-line-strong) !important;
+  box-shadow: none;
+}
+
+/* ── Tipografía ─────────────────────────────────────────── */
+.vibe-shell .os-display {
+  font-family: var(--vibe-serif);
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+.vibe-shell .os-label,
+.vibe-shell .os-label--muted {
+  font: 500 var(--os-type-meta) / 1.35 var(--os-font-body);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--os-muted);
+}
+.vibe-shell .os-num { font-family: var(--os-font-body); font-variant-numeric: tabular-nums; letter-spacing: 0; }
+
+/* ── Botones ────────────────────────────────────────────── */
+.vibe-shell .os-command,
+.vibe-shell .btn-reppy {
+  border: 0;
+  border-radius: 12px;
+  background: var(--vibe-terracotta);
+  color: #fff;
+  font: 500 0.95rem / 1 var(--os-font-body);
+  letter-spacing: 0;
+  text-transform: none;
+  box-shadow: none;
+}
+.vibe-shell .os-command:hover:not(:disabled),
+.vibe-shell .btn-reppy:hover {
+  background: var(--vibe-terracotta-hover);
+  box-shadow: none;
+  transform: none;
+  filter: none;
+}
+.vibe-shell .os-command--secondary {
+  background: #FFFFFF;
+  border: 1px solid var(--os-line-strong);
+  color: var(--vibe-forest);
+}
+.vibe-shell .os-command--secondary:hover:not(:disabled) { background: var(--os-panel-raised); }
+.vibe-shell .os-command--quiet { background: none; color: var(--vibe-forest); text-decoration: underline; text-underline-offset: 3px; }
+.vibe-shell .os-command--quiet:hover:not(:disabled) { background: none; }
+.vibe-shell .os-command--danger { background: none; border: 1px solid var(--os-danger); color: var(--os-danger); }
+.vibe-shell .os-command:disabled { background: var(--vibe-sand); color: var(--os-muted); }
+
+/* ── Barras ─────────────────────────────────────────────── */
+.vibe-shell .os-track { height: 8px; background: var(--vibe-sand); border-radius: 99px; clip-path: none; overflow: hidden; }
+.vibe-shell .os-track__fill { border-radius: 99px; background: var(--vibe-indigo); box-shadow: none; }
+.vibe-shell .os-track__fill--danger { background: var(--vibe-terracotta); box-shadow: none; }
+.vibe-shell .os-minibar { background: var(--vibe-sand); border-radius: 99px; height: 5px; }
+.vibe-shell .os-minibar > i { background: var(--vibe-indigo); border-radius: 99px; }
+
+/* ── Shell: rail, telemetría, cabecera móvil y dock ─────── */
+.vibe-shell.vibe-shell .os-rail,
+.vibe-shell.vibe-shell .os-telemetry,
+.vibe-shell.vibe-shell .os-topstrip,
+.vibe-shell.vibe-shell .os-dock {
+  background: rgba(244, 242, 236, 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-color: var(--os-line);
+}
+.vibe-shell.vibe-shell .os-rail__logo { color: var(--vibe-forest); font-family: var(--vibe-serif); }
+.vibe-shell.vibe-shell .os-rail__item {
+  margin: 2px 8px;
+  width: calc(100% - 16px);
+  border-left: 0;
+  border-radius: 12px;
+  font: 500 11px var(--os-font-body);
+  letter-spacing: 0;
+  color: var(--os-muted);
+}
+.vibe-shell.vibe-shell .os-rail__item:hover { color: var(--vibe-forest); }
+.vibe-shell.vibe-shell .os-rail__item--active { background: var(--vibe-forest); color: var(--vibe-cream); }
+.vibe-shell.vibe-shell .os-rail__dot,
+.vibe-shell.vibe-shell .os-dock__dot { background: var(--vibe-terracotta); box-shadow: none; }
+.vibe-shell.vibe-shell .os-telemetry__pilot { border-bottom-color: var(--os-line); }
+.vibe-shell.vibe-shell .os-telemetry__pilot small { color: var(--os-muted); font-family: var(--os-font-body); letter-spacing: 0; }
+.vibe-shell.vibe-shell .os-telemetry__streak { background: #FBEDE7; border: 1px solid #F0CDBF; border-left: 1px solid #F0CDBF; border-radius: 12px; }
+.vibe-shell.vibe-shell .os-telemetry__streak b { color: var(--vibe-terracotta); font-family: var(--vibe-serif); font-weight: 500; }
+.vibe-shell.vibe-shell .os-telemetry__streak span { color: #8a4a33; font-family: var(--os-font-body); letter-spacing: 0; }
+.vibe-shell.vibe-shell .os-telemetry__strip,
+.vibe-shell.vibe-shell .os-topstrip__chip {
+  background: #FFFFFF;
+  border: 1px solid var(--os-line);
+  border-radius: 10px;
+  color: var(--vibe-forest);
+  font-family: var(--os-font-body);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.vibe-shell.vibe-shell .os-telemetry__strip b { color: var(--vibe-forest); }
+.vibe-shell.vibe-shell .os-telemetry__member { border-top-color: var(--os-line); color: var(--vibe-forest); }
+.vibe-shell.vibe-shell .os-telemetry__count,
+.vibe-shell.vibe-shell .os-topstrip__count { border-radius: 99px; background: var(--vibe-terracotta); }
+.vibe-shell.vibe-shell .os-topstrip__logo { border-radius: 10px; background: var(--vibe-forest); color: var(--vibe-cream); font-family: var(--vibe-serif); }
+.vibe-shell.vibe-shell .os-topstrip__word { font-family: var(--vibe-serif); letter-spacing: 0; font-weight: 500; color: var(--vibe-forest); }
+.vibe-shell.vibe-shell .os-dock__item { font: 500 11px var(--os-font-body); letter-spacing: 0; color: var(--os-muted); }
+.vibe-shell.vibe-shell .os-dock__item--active { background: none; box-shadow: none; color: var(--vibe-forest); }
+.vibe-shell.vibe-shell .os-dock__combat {
+  border: 0;
+  border-radius: 16px;
+  background: var(--vibe-forest);
+  color: var(--vibe-cream);
+  box-shadow: 0 0 0 4px var(--vibe-cream);
+}
+.vibe-shell.vibe-shell .os-dock__combat-tag { font: 500 11px var(--os-font-body); letter-spacing: 0; color: var(--vibe-forest); }
+
+/* ── Marco de misión: la tarjeta protagonista, en verde bosque ──
+   Tiene estilos propios (scoped) con colores fijos: se duplica la clase. */
+.vibe-shell .os-mission.os-mission {
+  background: var(--vibe-forest);
+  color: var(--vibe-cream);
+  border: 0;
+  border-radius: 20px;
+  clip-path: none;
+  box-shadow: none;
+}
+.vibe-shell .os-mission.os-mission::before { display: none; }
+.vibe-shell .os-mission.os-mission .os-display { color: var(--vibe-cream); }
+.vibe-shell .os-mission.os-mission .os-label,
+.vibe-shell .os-mission.os-mission .os-mission__subtitle { color: var(--vibe-sage); }
+.vibe-shell .os-mission.os-mission .os-mission__consequence {
+  font: 500 1.1rem var(--os-font-body);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--vibe-cream);
+}
+.vibe-shell .os-mission.os-mission .os-mission__action {
+  background: var(--vibe-forest-2);
+  border-left: 1px solid var(--vibe-forest-line);
+}
+@media (max-width: 820px) {
+  .vibe-shell .os-mission.os-mission .os-mission__action { border-left: 0; border-top: 1px solid var(--vibe-forest-line); }
+}
+.vibe-shell .os-mission.os-mission .os-command--secondary {
+  background: transparent;
+  border: 1px solid var(--vibe-forest-line);
+  color: var(--vibe-cream);
+}
+.vibe-shell .os-mission.os-mission .os-command--quiet { color: var(--vibe-cream); }
+.vibe-shell .os-mission.os-mission .os-track { background: var(--vibe-forest-line); }
+.vibe-shell .os-mission.os-mission .os-track__fill { background: var(--vibe-terracotta); }
+.vibe-shell .os-boss-glyph { display: none; }
+
+/* Estaciones del panel */
+.vibe-shell .os-station.os-station { background: #FFFFFF; border: 1px solid var(--os-line); border-radius: 16px; }
+.vibe-shell .os-station__icon.os-station__icon { background: var(--vibe-cream); border: 0; border-radius: 12px; color: var(--vibe-forest); }
+.vibe-shell .os-station__label.os-station__label { font: 500 12px var(--os-font-body); letter-spacing: 0; text-transform: none; color: var(--os-muted); }
+
+/* ── Jefes: imagen a dos tintas (bosque sobre terracota) ──
+   Las imágenes y vídeos de jefe se pasan a escala de grises y se
+   multiplican sobre terracota: todas quedan coherentes con la paleta
+   sin dibujar nada nuevo. */
+.vibe-shell .boss-portrait { background: var(--vibe-terracotta) !important; border-color: transparent !important; }
+.vibe-shell .boss-portrait img,
+.vibe-shell .os-arena img,
+.vibe-shell .os-arena video {
+  filter: grayscale(1) contrast(1.25) brightness(0.92);
+  mix-blend-mode: multiply;
+}
+.vibe-shell .os-arena { background: var(--vibe-terracotta); border-color: transparent; border-radius: 20px; box-shadow: none; }
+.vibe-shell .boss-silhouette { filter: brightness(0) opacity(0.85); }
+
+/* Cifra de reps del día dentro del marco verde: el índigo no se lee sobre bosque. */
+.vibe-shell .os-mission.os-mission .os-mission__consequence .os-num {
+  color: var(--vibe-cream) !important;
+  font-family: var(--vibe-serif) !important;
+  font-weight: 500;
+}
+.vibe-shell.vibe-shell .os-dock__combat { outline: 0; }
+
+/* ── Tonos claros de color sobre crema ──────────────────────
+   Muchos textos usan text-*-200/300/400, elegidos para fondo oscuro:
+   sobre crema no se leen. En Vibe se oscurecen, salvo dentro de las
+   «islas» oscuras (marco de misión y arena del jefe). */
+:where(.vibe-shell) :is(.text-amber-200, .text-amber-300, .text-amber-400, .text-yellow-400):not(.os-mission *, .os-arena *, .battle-view *) { color: #8A5A00; }
+:where(.vibe-shell) :is(.text-emerald-200, .text-emerald-300, .text-emerald-400, .text-green-400):not(.os-mission *, .os-arena *, .battle-view *) { color: #1E6B45; }
+:where(.vibe-shell) :is(.text-blue-200, .text-blue-300, .text-blue-400):not(.os-mission *, .os-arena *, .battle-view *) { color: #2B4CB3; }
+:where(.vibe-shell) :is(.text-cyan-200, .text-cyan-300, .text-cyan-400):not(.os-mission *, .os-arena *, .battle-view *) { color: #0E6A7A; }
+:where(.vibe-shell) :is(.text-red-200, .text-red-300, .text-red-400, .text-rose-300, .text-rose-400):not(.os-mission *, .os-arena *, .battle-view *) { color: #B3261E; }
+:where(.vibe-shell) :is(.text-purple-300, .text-purple-400):not(.os-mission *, .os-arena *, .battle-view *) { color: #5B3FB0; }
+:where(.vibe-shell) :is(.text-orange-300, .text-orange-400):not(.os-mission *, .os-arena *, .battle-view *) { color: #A8471F; }
+:where(.vibe-shell) .fill-amber-300:not(.os-mission *, .os-arena *, .battle-view *) { fill: #C08A1E; }
+
+/* ── Velos negros translúcidos sobre crema ──────────────────
+   bg-black/20…/40 oscurecen sobre fondo oscuro, pero sobre crema
+   dejan paneles grises y sucios. Fuera de las islas oscuras (y de
+   los modales, que van a pantalla completa) pasan a blanco con borde. */
+:where(.vibe-shell) :is(.bg-black\/20, .bg-black\/25, .bg-black\/30):not(.os-arena *, .os-mission *, .battle-view *, .fixed, .fixed *) {
+  background-color: #FFFFFF;
+  border-color: var(--os-line);
+}
+
+/* ── Fases del jefe en la paleta Vibe ── */
+.vibe-shell .boss-phases__fill.boss-phases__fill { background: var(--vibe-forest); }
+.vibe-shell .boss-phases__seg--active .boss-phases__fill.boss-phases__fill { background: var(--vibe-terracotta); }
+.vibe-shell .boss-phases__seg.boss-phases__seg { background: var(--vibe-sand); border-color: var(--os-line); }
+.vibe-shell .boss-phases__seg--active.boss-phases__seg--active { border-color: var(--vibe-terracotta); box-shadow: none; }
+.vibe-shell .boss-phases__tick--on.boss-phases__tick--on { color: var(--vibe-forest); }
+.vibe-shell .boss-phases__shimmer { display: none; }
+.vibe-shell .boss-portrait.boss-portrait { --tw-ring-color: var(--vibe-forest); }
+/* En la arena (isla oscura) la fase activa sigue en terracota y el resto en crema. */
+.vibe-shell .os-arena .boss-phases__fill.boss-phases__fill { background: var(--vibe-cream); }
+.vibe-shell .os-arena .boss-phases__seg--active .boss-phases__fill.boss-phases__fill { background: var(--vibe-terracotta); }
+.vibe-shell .os-arena .boss-phases__seg.boss-phases__seg { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.18); }
+.vibe-shell .os-arena .boss-phases__tick--on.boss-phases__tick--on,
+.vibe-shell .os-arena .boss-phases__status { color: var(--vibe-cream); }
+
+/* ── Islas oscuras ──────────────────────────────────────────
+   La batalla es una vista inmersiva pensada en oscuro, y la arena del
+   jefe también. En Vibe se convierten en «islas» verde bosque: dentro
+   de ellas los tokens vuelven a ser oscuros, como la ficha del jefe de
+   la maqueta, y el resto de la app sigue en crema. */
+.vibe-shell :is(.battle-view, .os-arena) {
+  --os-void: var(--vibe-forest);
+  --os-ink: var(--vibe-forest);
+  --os-panel: var(--vibe-forest-2);
+  --os-panel-raised: #22362B;
+  --os-line: var(--vibe-forest-line);
+  --os-line-strong: #3E5546;
+  --os-text: var(--vibe-cream);
+  --os-muted: var(--vibe-sage);
+  --os-cyan: #E8825F;
+  --background: 150 26% 10%;
+  --surface: 148 24% 14%;
+  --card: 148 24% 14%;
+  --foreground: 45 24% 94%;
+  --muted: 135 8% 64%;
+  --border: 145 17% 22%;
+  color: var(--vibe-cream);
+}
+.vibe-shell .bg-dungeon { background: var(--vibe-forest) !important; }
+.vibe-shell .bg-dungeon .ember { display: none; }
+.vibe-shell .battle-view .card-stats,
+.vibe-shell .battle-view .os-panel { background: var(--vibe-forest-2); border-color: var(--vibe-forest-line); }
+.vibe-shell .battle-view { background: var(--vibe-forest); }
+/* Franja de vida de la arena: su fondo usa una clase que Tailwind no genera
+   (var + opacidad), así que era transparente y dejaba ver la terracota. */
+.vibe-shell .os-arena > div:last-child { background: var(--vibe-forest); }
+
+/* Iconos de cofres y objetos: son imágenes blancas pensadas para fondo oscuro.
+   Sobre crema pasan a silueta verde bosque (salvo en las islas oscuras). */
+:where(.vibe-shell) :is(img[alt^="chest-"], img[src^="/game-icons/"], img[src^="/assets/chests/"]):not(.battle-view *, .os-arena *, .os-mission *) {
+  filter: brightness(0);
+  opacity: 0.8;
+}
+
+/* Botones de compra (verde esmeralda en el resto de pieles) → verde bosque. */
+:where(.vibe-shell) button.bg-emerald-500:not(.battle-view *) { background-color: var(--vibe-forest); box-shadow: none; }
+:where(.vibe-shell) button.bg-emerald-500:not(.battle-view *):hover { background-color: var(--vibe-forest-2); }

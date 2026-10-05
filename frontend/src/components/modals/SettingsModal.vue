@@ -167,7 +167,7 @@
 
 <script setup>
 import { ref, watch, onUnmounted } from 'vue';
-import { X, Sun, Moon, Monitor, LogOut, ChevronRight, Link2, Crosshair, Sparkles } from 'lucide-vue-next';
+import { X, Sun, Moon, Monitor, LogOut, ChevronRight, Link2, Crosshair, Sparkles, Leaf } from 'lucide-vue-next';
 import { useI18nStore } from '@/stores/i18n';
 import { useThemeStore } from '@/stores/theme';
 import { useAuthStore } from '@/stores/auth';
@@ -192,6 +192,14 @@ const saving = ref(false);
 // Estilos de interfaz seleccionables. Para añadir uno futuro: entrada aquí
 // + su id en UI_STYLES (stores/theme.js) + su chrome en App.vue.
 const uiStyles = [
+  {
+    id: 'vibe',
+    icon: Leaf,
+    name: 'Vibe',
+    desc: i18n.locale === 'es'
+      ? 'Clara y editorial: crema, verde bosque y terracota.'
+      : 'Light and editorial: cream, forest green and terracotta.',
+  },
   {
     id: 'operative',
     icon: Crosshair,
