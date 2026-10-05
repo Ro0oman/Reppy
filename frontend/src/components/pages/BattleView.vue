@@ -9,7 +9,7 @@
 
       <!-- Campaign entry (NEW). Links to the data-driven RPG campaign map. -->
       <button type="button" @click="goCampaign"
-        class="relative flex w-full items-center justify-between gap-2 rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-900/40 to-orange-900/30 px-4 py-2.5 text-left transition-all active:scale-[0.99] hover:border-amber-400/50">
+        class="battle-campaign relative flex w-full items-center justify-between gap-2 rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-900/40 to-orange-900/30 px-4 py-2.5 text-left transition-all active:scale-[0.99] hover:border-amber-400/50">
         <span class="flex items-center gap-2">
           <Map class="h-4 w-4 text-amber-300" />
           <span class="text-sm font-black uppercase tracking-wide text-amber-100">{{ i18n.t('campaign_title') }}</span>

@@ -7,7 +7,12 @@
   <div v-else-if="boss" class="space-y-5">
     <section
       class="relative overflow-hidden rounded-2xl border bg-surface/20 p-4 sm:p-6 max-h-[78dvh] sm:max-h-none overflow-y-auto sm:overflow-visible no-scrollbar"
-      :class="theme.border"
+      :class="[theme.border, toBattle ? 'boss-card--link cursor-pointer transition-colors' : '']"
+      :role="toBattle ? 'link' : undefined"
+      :tabindex="toBattle ? 0 : undefined"
+      :aria-label="toBattle ? i18nStore.t('boss_go_battle_aria', { name: boss.name }) : undefined"
+      @click="toBattle && goToBattle()"
+      @keydown.enter="toBattle && goToBattle()"
     >
       <div class="absolute inset-0 pointer-events-none opacity-30" :class="theme.aura"></div>
       <img
@@ -52,21 +57,21 @@
         <div class="flex items-center gap-2">
           <button
             v-if="authStore.isAuthenticated"
-            @click="showHistory = true"
+            @click.stop="showHistory = true"
             class="w-9 h-9 rounded-xl border border-border bg-foreground/[0.04] hover:bg-foreground/[0.08] text-muted hover:text-foreground transition-colors flex items-center justify-center"
             :title="i18nStore.t('battle_history')"
           >
             <History class="w-4 h-4" />
           </button>
           <button
-            @click="showCodex = true"
+            @click.stop="showCodex = true"
             class="w-9 h-9 rounded-xl border border-primary-500/20 bg-primary-500/10 hover:bg-primary-500/20 text-primary-400 transition-colors flex items-center justify-center"
             :title="i18nStore.t('boss_how_damage')"
           >
             <BookMarkedIcon class="w-4 h-4" />
           </button>
           <button
-            @click="showHelp = true"
+            @click.stop="showHelp = true"
             class="w-9 h-9 rounded-xl border border-border bg-foreground/[0.04] hover:bg-foreground/[0.08] text-muted hover:text-foreground transition-colors flex items-center justify-center"
             :title="i18nStore.t('boss_battle_manual')"
           >
@@ -159,7 +164,7 @@
         <div class="mt-4">
           <button
             v-if="canClaim"
-            @click="claim"
+            @click.stop="claim"
             :disabled="claiming"
             class="w-full sm:w-auto px-6 py-3 rounded-xl font-bold uppercase tracking-wide text-sm border transition-all"
             :class="theme.claimButton"
@@ -187,6 +192,10 @@
             {{ isEs ? 'Falta' : 'Left' }} {{ formatNumber(boss.current_hp) }} HP
           </div>
         </div>
+      </div>
+      <div v-if="toBattle" class="relative z-10 mt-4 flex items-center justify-end gap-1.5 text-sm font-semibold text-primary-500">
+        {{ i18nStore.t('boss_go_battle') }}
+        <ChevronRight class="w-4 h-4" aria-hidden="true" />
       </div>
     </section>
 
@@ -252,6 +261,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
 import { useBossStore } from '@/stores/boss';
@@ -266,6 +276,7 @@ import {
   Sparkles,
   Lock as LockIcon,
   BookMarked as BookMarkedIcon,
+  ChevronRight,
 } from 'lucide-vue-next';
 import { formatNumber } from '@/utils/numberUtils';
 import confetti from 'canvas-confetti';
@@ -273,6 +284,11 @@ import BossHistoryModal from '@/components/boss/BossHistoryModal.vue';
 import CodexModal from '@/components/modals/CodexModal.vue';
 import BossPhases from '@/components/boss/BossPhases.vue';
 
+// toBattle: en el panel, toda la tarjeta lleva a la batalla (en la landing no).
+const props = defineProps({
+  toBattle: { type: Boolean, default: false },
+});
+const router = useRouter();
 const authStore = useAuthStore();
 const bossStore = useBossStore();
 const i18nStore = useI18nStore();
@@ -434,6 +450,10 @@ const claim = async () => {
 onMounted(() => {
   fetchBoss();
 });
+
+const goToBattle = () => {
+  router.push({ name: 'battle', params: { lang: i18nStore.locale } });
+};
 
 defineExpose({ refresh: () => fetchBoss() });
 </script>

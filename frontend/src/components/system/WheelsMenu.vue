@@ -1,6 +1,6 @@
 <template>
   <div class="relative">
-    <button type="button" @click="open = !open" :class="buttonClass"
+    <button type="button" @click="open = !open" :class="[buttonClass, variant === 'strip' ? 'wheels-strip' : 'wheels-chip']"
       :aria-label="i18n.t('wheels_title')" :aria-expanded="open" :title="i18n.t('wheels_title')">
       <Dices class="w-4 h-4" style="color: var(--os-cyan)" />
       <span v-if="variant === 'strip'" class="flex-1 text-left">{{ i18n.t('wheels_title') }}</span>
@@ -57,6 +57,36 @@ const choose = (w) => {
 </script>
 
 <style scoped>
+/* Base propia: las clases os-telemetry__strip / os-topstrip__chip se definen con
+   estilos scoped de App.vue, que no llegan a este componente (salía «Ruletas»
+   enorme y centrado en el rail). Las pieles siguen pudiendo re-vestirlas. */
+.wheels-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 10px;
+  border: 1px solid var(--os-line);
+  border-radius: 2px;
+  background: var(--os-panel);
+  color: var(--os-muted);
+  font: 500 10px var(--os-font-mono);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.wheels-strip:hover { border-color: var(--os-line-strong); color: var(--os-text); }
+.wheels-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 36px;
+  padding: 0 9px;
+  border: 1px solid var(--os-line);
+  border-radius: 2px;
+  background: var(--os-panel);
+  color: var(--os-text);
+}
 .wheels-dot {
   position: absolute; top: 4px; right: 4px; width: 8px; height: 8px;
   border-radius: 9999px; background: var(--os-cyan, #22d3ee);

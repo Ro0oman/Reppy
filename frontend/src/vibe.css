@@ -11,7 +11,8 @@
    y números grandes; sans para todo lo demás. Nada de neón ni cristal.
    ──────────────────────────────────────────────────────────── */
 
-.vibe-shell {
+.vibe-shell,
+html[data-ui-style="vibe"] .vibe-modal {
   color-scheme: light;
 
   --vibe-cream: #F4F2EC;
@@ -71,9 +72,8 @@
 
   color: var(--os-text);
   font-family: var(--os-font-body);
-  background-color: var(--vibe-cream);
-  background-image: none;
 }
+.vibe-shell { background-color: var(--vibe-cream); background-image: none; }
 
 /* ── Forma: radios moderados (anula el aplanado de Operative OS) ── */
 .vibe-shell .rounded-3xl { border-radius: 20px !important; }
@@ -353,3 +353,105 @@
 /* Botones de compra (verde esmeralda en el resto de pieles) → verde bosque. */
 :where(.vibe-shell) button.bg-emerald-500:not(.battle-view *) { background-color: var(--vibe-forest); box-shadow: none; }
 :where(.vibe-shell) button.bg-emerald-500:not(.battle-view *):hover { background-color: var(--vibe-forest-2); }
+
+/* ═══ Pulido Vibe (oct 2026) ═══════════════════════════════════════ */
+
+/* ── Senda del Boss (modal en <body>, opta con .vibe-modal) ──
+   Colores de rama de la paleta, sin brillo neón. */
+html[data-ui-style="vibe"] .vibe-modal {
+  --st-war: #C4532E;
+  --st-gold: #A8720F;
+  --st-vigor: #2F7D4F;
+  --st-wisdom: #3D3BB8;
+  --st-node-glow: none;
+  background: var(--vibe-cream);
+  color: var(--vibe-forest);
+}
+html[data-ui-style="vibe"] .vibe-modal .glow-neon { box-shadow: none; text-shadow: none; }
+html[data-ui-style="vibe"] .st-modal h2,
+html[data-ui-style="vibe"] .st-modal h3 { font-family: var(--vibe-serif); font-weight: 500; letter-spacing: -0.01em; }
+html[data-ui-style="vibe"] .st-modal h2 { font-size: 1.25rem; }
+html[data-ui-style="vibe"] .st-modal .bg-card\/95 { background: #FFFFFF; }
+
+/* ── Tarjeta del jefe en el panel: clicable hacia la batalla ── */
+.vibe-shell .boss-card--link:hover { border-color: var(--vibe-terracotta) !important; }
+.vibe-shell .boss-card--link .text-primary-500 { color: var(--vibe-terracotta); }
+
+/* ── Batalla (isla verde): bordes y detalles coherentes ──
+   Paneles redondeados en el mismo verde, un solo color de borde, etiquetas
+   en frase normal, selección y acción en terracota. */
+.vibe-shell .battle-view .os-player.os-player,
+.vibe-shell .battle-view .os-input-panel.os-input-panel {
+  background: var(--vibe-forest-2);
+  border: 1px solid var(--vibe-forest-line);
+  border-radius: 18px;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.vibe-shell .battle-view .os-player-lvl.os-player-lvl { border-radius: 99px; background: var(--vibe-terracotta); font: 600 10px var(--os-font-body); letter-spacing: 0; box-shadow: 0 0 0 2px var(--vibe-forest-2); }
+.vibe-shell .battle-view .os-player-name.os-player-name { font: 500 1.1rem var(--vibe-serif); letter-spacing: -0.01em; text-transform: none; color: var(--vibe-cream); }
+.vibe-shell .battle-view .os-player-xp.os-player-xp { font: 500 12px var(--os-font-body); letter-spacing: 0; color: var(--vibe-sage); }
+.vibe-shell .battle-view .os-player-shortcut.os-player-shortcut { border-radius: 12px; background: var(--vibe-forest); border-color: var(--vibe-forest-line); color: var(--vibe-sage); }
+.vibe-shell .battle-view .os-player-shortcut.os-player-shortcut:hover { color: var(--vibe-cream); }
+/* Las etiquetas no cabían en 44 px (salían pegadas): solo icono, con título. */
+.vibe-shell .battle-view .os-player-shortcut .text-xs { display: none; }
+.vibe-shell .battle-view .os-player-badge.os-player-badge { border-radius: 99px; background: var(--vibe-terracotta); font: 600 10px var(--os-font-body); box-shadow: 0 0 0 2px var(--vibe-forest-2); }
+
+.vibe-shell .battle-view .os-streak-chip.os-streak-chip { border-radius: 99px; border-color: rgba(196, 83, 46, 0.45); background: rgba(196, 83, 46, 0.14); color: #F0A07F; font: 500 12px var(--os-font-body); letter-spacing: 0; }
+.vibe-shell .battle-view .os-edit-chip.os-edit-chip { border-radius: 99px; background: transparent; border-color: var(--vibe-forest-line); color: var(--vibe-sage); font: 500 12px var(--os-font-body); letter-spacing: 0; text-transform: none; }
+.vibe-shell .battle-view .os-ex-tab.os-ex-tab { border-radius: 12px; background: var(--vibe-forest); border-color: var(--vibe-forest-line); color: var(--vibe-sage); }
+.vibe-shell .battle-view .os-ex-tab.os-ex-tab:hover { color: var(--vibe-cream); }
+.vibe-shell .battle-view .os-ex-tab--active.os-ex-tab--active { background: var(--vibe-terracotta); border-color: var(--vibe-terracotta); color: #FFFFFF; }
+.vibe-shell .battle-view .os-ex-tab--empty.os-ex-tab--empty { background: transparent; color: rgba(154, 168, 157, 0.5); }
+.vibe-shell .battle-view .os-stepper.os-stepper { border-radius: 12px; border-color: var(--vibe-forest-line); color: var(--vibe-cream); }
+.vibe-shell .battle-view .os-stepper--inc.os-stepper--inc { border-color: var(--vibe-forest-line); color: var(--vibe-cream); }
+.vibe-shell .battle-view .os-qty.os-qty { border-radius: 12px; border-color: var(--vibe-forest-line); background: var(--vibe-forest); color: var(--vibe-cream); font-family: var(--vibe-serif); font-weight: 500; }
+.vibe-shell .battle-view .os-qty.os-qty:focus { border-color: var(--vibe-terracotta); }
+.vibe-shell .battle-view .os-quick.os-quick { border-radius: 12px; background: var(--vibe-forest); border-color: var(--vibe-forest-line); color: var(--vibe-cream); font: 500 14px var(--os-font-body); }
+
+/* Acceso rápido (pociones) */
+.vibe-shell .battle-view h3.uppercase { text-transform: none; letter-spacing: 0; font-weight: 500; font-size: 13px; color: var(--vibe-cream); }
+.vibe-shell .battle-view :is(.border-white\/10, .border-white\/5) { border-color: var(--vibe-forest-line); }
+.vibe-shell .battle-view .bg-black\/30 { background-color: var(--vibe-forest-2); backdrop-filter: none; }
+.vibe-shell .battle-view .border-dashed { border-color: var(--vibe-forest-line); }
+.vibe-shell .battle-view .text-primary-400 { color: #F0A07F; }
+
+/* Banner de campaña: sin degradado ámbar */
+.vibe-shell .battle-view .battle-campaign.battle-campaign { background: var(--vibe-forest-2); border-color: var(--vibe-forest-line); border-radius: 16px; }
+.vibe-shell .battle-view .battle-campaign .text-amber-100 { color: var(--vibe-cream); text-transform: none; letter-spacing: 0; font-weight: 500; }
+.vibe-shell .battle-view .battle-campaign .text-amber-300 { color: #E8825F; }
+
+/* Arena: chips y nombre */
+.vibe-shell .os-arena .os-arena-chip.os-arena-chip { border-radius: 99px; background: rgba(19, 32, 26, 0.72); border-color: rgba(255, 255, 255, 0.14); color: var(--vibe-cream); font: 500 12px var(--os-font-body); letter-spacing: 0; text-transform: none; }
+.vibe-shell .os-arena .os-arena-name.os-arena-name { font: 500 1.7rem / 1 var(--vibe-serif); letter-spacing: -0.01em; text-transform: none; color: var(--vibe-cream); }
+.vibe-shell .os-arena .os-arena-damage.os-arena-damage { font-family: var(--vibe-serif); color: #F0A07F; }
+
+/* ── Feed: publicaciones con fondo cosmético ──
+   El cosmético fuerza texto blanco y espera base negra; en Vibe es una isla
+   verde bosque (como la batalla) para que se lea. */
+.vibe-shell .has-custom-bg.has-custom-bg { background: var(--vibe-forest) !important; border-color: var(--vibe-forest-line) !important; }
+
+/* ── Tienda e inventario ──
+   Velos negros más densos (/40…/60) sobre crema daban losetas grises: pasan
+   a arena. Los botones amarillos de compra pasan a terracota. */
+:where(.vibe-shell) :is(.bg-black\/40, .bg-black\/50, .bg-black\/60):not(.os-arena *, .os-mission *, .battle-view *, .fixed, .fixed *, .has-custom-bg *) {
+  background-color: var(--vibe-sand);
+  border-color: var(--os-line);
+}
+:where(.vibe-shell) .bg-yellow-500:not(.battle-view *) { background-color: var(--vibe-terracotta); color: #FFFFFF; box-shadow: none; }
+:where(.vibe-shell) .bg-yellow-500:not(.battle-view *):hover { background-color: var(--vibe-terracotta-hover); }
+
+/* Bordes «border-border/NN»: Tailwind no aplica la opacidad sobre el token y
+   dejaba líneas negras (desplegable de avisos). */
+:where(.vibe-shell) [class*="border-border/"] { border-color: var(--os-line); }
+
+/* La arena tiene radio 2px en su estilo propio (scoped): se duplica la clase. */
+.vibe-shell .os-arena.os-arena { border-radius: 20px; overflow: hidden; }
+
+/* Nodos de la Senda: sobre crema, los bloqueados al 45 %% casi desaparecían. */
+html[data-ui-style="vibe"] .st-modal .h-16.w-16.border-2 { background: #FFFFFF !important; }
+html[data-ui-style="vibe"] .st-modal .opacity-45 { opacity: 0.72; }
+
+/* Envoltorio del desplegable de avisos (teletransportado): sin fondo propio. */
+html[data-ui-style="vibe"] .vibe-modal.bg-transparent { background: transparent; }
+html[data-ui-style="vibe"] .vibe-modal [class*="border-border/"] { border-color: var(--os-line); }
