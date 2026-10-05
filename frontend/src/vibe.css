@@ -316,7 +316,7 @@ html[data-ui-style="vibe"] .vibe-modal {
    jefe también. En Vibe se convierten en «islas» verde bosque: dentro
    de ellas los tokens vuelven a ser oscuros, como la ficha del jefe de
    la maqueta, y el resto de la app sigue en crema. */
-.vibe-shell :is(.battle-view, .os-arena) {
+.vibe-shell :is(.battle-view, .os-arena, .os-mission) {
   --os-void: var(--vibe-forest);
   --os-ink: var(--vibe-forest);
   --os-panel: var(--vibe-forest-2);
