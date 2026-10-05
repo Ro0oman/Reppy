@@ -223,6 +223,29 @@ router.patch('/seen-rpg-release', authenticate, async (req, res) => {
 });
 
 // Get user inventory (all items owned)
+// Progreso de colección: objetos distintos que tienes frente a los que existen.
+// No cuenta consumibles ni lotes (se gastan o se abren) y los exclusivos solo
+// suman al total si ya los tienes, porque no se pueden conseguir de otra forma.
+router.get('/inventory/collection', authenticate, async (req, res) => {
+  try {
+    const result = await query(
+      `SELECT COUNT(*) FILTER (WHERE owned.item_id IS NOT NULL)::int AS owned,
+              COUNT(*)::int AS total
+       FROM items i
+       LEFT JOIN (SELECT DISTINCT item_id FROM user_items WHERE user_id = $1) owned
+         ON owned.item_id = i.id
+       WHERE i.type NOT IN ('consumable', 'bundle')
+         AND (i.is_exclusive IS NOT TRUE OR owned.item_id IS NOT NULL)`,
+      [req.user.id]
+    );
+    const { owned, total } = result.rows[0];
+    res.json({ owned, total, missing: Math.max(0, total - owned) });
+  } catch (error) {
+    console.error('Error fetching collection progress:', error);
+    res.status(500).json({ message: 'Error al calcular la colección' });
+  }
+});
+
 router.get('/inventory', authenticate, async (req, res) => {
   try {
     const result = await query(
