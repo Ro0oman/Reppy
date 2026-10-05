@@ -654,6 +654,7 @@ import NewBadge from '@/components/battle/NewBadge.vue';
 import OsMissionFrame from '@/components/os/OsMissionFrame.vue';
 import VibeGreeting from '@/components/dashboard/VibeGreeting.vue';
 import { useThemeStore } from '@/stores/theme';
+import { useEnergyStore } from '@/stores/energy';
 import { getLocalDateString } from '@/utils/dateUtils.js';
 import { buildActiveBoosts } from '@/utils/activeBuffs';
 
@@ -687,6 +688,23 @@ const totalReps = ref(0);
 // Totales de todos los ejercicios (stats.overall); null hasta que llegan.
 const overall = ref(null);
 const activeExercise = ref('pullups');
+// «Tu energía hoy» (Vibe): con energía baja se preselecciona un ejercicio más suave.
+// Solo si el usuario no había cambiado el ejercicio; al subir la energía se deshace.
+const energyStore = useEnergyStore();
+let exerciseFromEnergy = false;
+watch(() => energyStore.profile.exercise, (suggested) => {
+  if (suggested && activeExercise.value === 'pullups') {
+    activeExercise.value = suggested;
+    exerciseFromEnergy = true;
+  } else if (!suggested && exerciseFromEnergy) {
+    activeExercise.value = 'pullups';
+    exerciseFromEnergy = false;
+  }
+}, { immediate: true });
+// Si el usuario elige otro ejercicio a mano, la energía deja de tocarlo.
+watch(activeExercise, (ex) => {
+  if (ex !== energyStore.profile.exercise) exerciseFromEnergy = false;
+});
 const bossHealthRef = ref(null);
 const bossHealthSection = ref(null);
 const isLoading = ref(false);

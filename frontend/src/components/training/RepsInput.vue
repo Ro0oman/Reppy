@@ -92,12 +92,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { Zap, Check, Sword, Plus, Minus } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';
 import { useRepLogger } from '@/composables/useRepLogger';
 import { estimateDamage } from '@/utils/damageCalculator';
+import { useEnergyStore } from '@/stores/energy';
 
 const { loading, logReps } = useRepLogger();
 const authStore = useAuthStore();
@@ -110,9 +111,13 @@ const props = defineProps({
 
 const i18n = useI18nStore();
 const emit = defineEmits(['updated']);
-const selectedReps = ref(10);
+// Cantidades sugeridas y cantidad inicial según «tu energía hoy» (Vibe);
+// fuera de Vibe es el perfil 'mid', idéntico al comportamiento de siempre.
+const energyStore = useEnergyStore();
+const selectedReps = ref(energyStore.profile.defaultReps);
 const addedWeight = ref(null);
-const quickPresets = [1, 5, 10, 20];
+const quickPresets = computed(() => energyStore.profile.presets);
+watch(() => energyStore.effective, () => { selectedReps.value = energyStore.profile.defaultReps; });
 
 const isEs = computed(() => i18n.locale !== 'en');
 
