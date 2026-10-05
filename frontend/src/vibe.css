@@ -455,3 +455,24 @@ html[data-ui-style="vibe"] .st-modal .opacity-45 { opacity: 0.72; }
 /* Envoltorio del desplegable de avisos (teletransportado): sin fondo propio. */
 html[data-ui-style="vibe"] .vibe-modal.bg-transparent { background: transparent; }
 html[data-ui-style="vibe"] .vibe-modal [class*="border-border/"] { border-color: var(--os-line); }
+
+/* ── Modales que optan con .vibe-modal: botón, bordes y títulos ──
+   Pensados para base negra: bordes white/10 invisibles sobre crema y títulos
+   en mayúsculas. */
+html[data-ui-style="vibe"] .vibe-modal .btn-reppy {
+  border: 0;
+  border-radius: 12px;
+  background: var(--vibe-terracotta);
+  color: #fff;
+  font: 500 0.95rem / 1 var(--os-font-body);
+  letter-spacing: 0;
+  text-transform: none;
+  box-shadow: none;
+}
+html[data-ui-style="vibe"] .vibe-modal .btn-reppy:hover:not(:disabled) { background: var(--vibe-terracotta-hover); transform: none; filter: none; }
+html[data-ui-style="vibe"] .vibe-modal :is(.border-white\/10, .border-white\/5) { border-color: var(--os-line); }
+html[data-ui-style="vibe"] .vibe-modal h2.uppercase {
+  font: 500 1.6rem / 1.15 var(--vibe-serif);
+  letter-spacing: -0.01em;
+  text-transform: none;
+}
