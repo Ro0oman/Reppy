@@ -24,9 +24,10 @@
 
 <script setup>
 // Cabecera de la piel Vibe: saludo en serif + «tu energía hoy».
-// La energía solo cambia el texto de sugerencia (no toca reglas, daño ni economía)
-// y se recuerda durante el día en este dispositivo.
-import { computed, ref } from 'vue';
+// La energía cambia la sugerencia y ajusta el registro rápido (stores/energy.js);
+// no toca reglas, daño ni economía.
+import { computed } from 'vue';
+import { useEnergyStore } from '@/stores/energy';
 import { useAuthStore } from '@/stores/auth';
 import { useI18nStore } from '@/stores/i18n';
 import { useTrainingStore } from '@/stores/training';
@@ -42,15 +43,9 @@ const options = [
   { id: 'high', key: 'vibe_energy_high' },
 ];
 
-const todayKey = () => `reppy_vibe_energy:${new Date().toDateString()}`;
-const readEnergy = () => {
-  try { return localStorage.getItem(todayKey()) || 'mid'; } catch (_) { return 'mid'; }
-};
-const energy = ref(typeof window === 'undefined' ? 'mid' : readEnergy());
-const setEnergy = (id) => {
-  energy.value = id;
-  try { localStorage.setItem(todayKey(), id); } catch (_) {}
-};
+const energyStore = useEnergyStore();
+const energy = computed(() => energyStore.energy);
+const setEnergy = (id) => energyStore.setEnergy(id);
 
 const greeting = computed(() => {
   const h = new Date().getHours();
