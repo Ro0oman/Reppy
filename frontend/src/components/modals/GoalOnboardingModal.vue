@@ -6,7 +6,7 @@
         class="cursor-pointer fixed inset-0 z-[120] flex items-center justify-center bg-black/70 backdrop-blur-md px-3 py-4"
         @click.self="dismissOnboarding"
       >
-        <div class="w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-[1.5rem] border border-white/10 bg-deep-abyss shadow-2xl">
+        <div class="vibe-modal w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-[1.5rem] border border-white/10 bg-deep-abyss shadow-2xl">
           <div class="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-white/10 bg-deep-abyss/95 px-4 py-4 backdrop-blur-xl sm:px-6">
             <div class="min-w-0">
               <p class="text-xs font-bold uppercase tracking-wide text-primary-500">{{ i18n.t('goal_kicker') }}</p>
@@ -210,16 +210,16 @@ const selectPlan = async () => {
 .field {
   width: 100%;
   border-radius: 0.9rem;
-  border: 1px solid rgb(255 255 255 / 0.1);
-  background: rgb(255 255 255 / 0.05);
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--foreground) / 0.04);
   padding: 0.75rem 0.9rem;
-  color: var(--color-foreground, #fff);
+  color: hsl(var(--foreground));
   font-weight: 900;
   outline: none;
 }
 
 .field:focus {
-  border-color: rgb(255 69 0 / 0.6);
+  border-color: hsl(var(--primary) / 0.6);
 }
 
 .fade-enter-active,
