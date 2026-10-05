@@ -167,7 +167,7 @@
 
 <script setup>
 import { ref, watch, onUnmounted } from 'vue';
-import { X, Sun, Moon, Monitor, LogOut, ChevronRight, Link2, Crosshair, Sparkles } from 'lucide-vue-next';
+import { X, Sun, Moon, Monitor, LogOut, ChevronRight, Link2, Crosshair, Sparkles, Leaf } from 'lucide-vue-next';
 import { useI18nStore } from '@/stores/i18n';
 import { useThemeStore } from '@/stores/theme';
 import { useAuthStore } from '@/stores/auth';
@@ -207,6 +207,14 @@ const uiStyles = [
     desc: i18n.locale === 'es'
       ? 'Moderno y ligero: cristal, luz y degradados.'
       : 'Modern and light: glass, glow and gradients.',
+  },
+  {
+    id: 'vibe',
+    icon: Leaf,
+    name: 'Vibe',
+    desc: i18n.locale === 'es'
+      ? 'Clara y editorial: crema, verde bosque y terracota.'
+      : 'Light and editorial: cream, forest green and terracotta.',
   },
 ];
 
