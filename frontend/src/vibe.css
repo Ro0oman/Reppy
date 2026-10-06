@@ -429,12 +429,12 @@ html[data-ui-style="vibe"] .st-modal .bg-card\/95 { background: #FFFFFF; }
 /* ── Feed: publicaciones con fondo cosmético ──
    El cosmético fuerza texto blanco y espera base negra; en Vibe es una isla
    verde bosque (como la batalla) para que se lea. */
-.vibe-shell .has-custom-bg.has-custom-bg { background: var(--vibe-forest) !important; border-color: var(--vibe-forest-line) !important; }
+.vibe-shell .social-card.has-custom-bg.has-custom-bg { background: var(--vibe-forest) !important; border-color: var(--vibe-forest-line) !important; }
 
 /* ── Tienda e inventario ──
    Velos negros más densos (/40…/60) sobre crema daban losetas grises: pasan
    a arena. Los botones amarillos de compra pasan a terracota. */
-:where(.vibe-shell) :is(.bg-black\/40, .bg-black\/50, .bg-black\/60):not(.os-arena *, .os-mission *, .battle-view *, .fixed, .fixed *, .has-custom-bg *) {
+:where(.vibe-shell) :is(.bg-black\/40, .bg-black\/50, .bg-black\/60):not(.os-arena *, .os-mission *, .battle-view *, .fixed, .fixed *, .social-card.has-custom-bg *) {
   background-color: var(--vibe-sand);
   border-color: var(--os-line);
 }
