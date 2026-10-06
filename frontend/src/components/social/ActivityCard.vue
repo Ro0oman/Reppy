@@ -820,22 +820,25 @@ onMounted(() => {
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: hsla(var(--muted) / 0.1); border-radius: 10px; }
 
-.has-custom-bg {
+/* Acotado a .social-card: App.vue también pone `has-custom-bg` en el contenedor
+   raíz cuando el perfil tiene fondo, y sin esto el texto de TODAS las tarjetas
+   del feed se volvía blanco sobre fondo claro. */
+.social-card.has-custom-bg {
   background: rgba(0, 0, 0, 0.9) !important;
   color: white !important;
 }
 
-.has-custom-bg .text-foreground,
-.has-custom-bg [class*="text-foreground/"] {
+.social-card.has-custom-bg .text-foreground,
+.social-card.has-custom-bg [class*="text-foreground/"] {
   color: white !important;
 }
 
-.has-custom-bg .text-muted,
-.has-custom-bg [class*="text-muted/"] {
+.social-card.has-custom-bg .text-muted,
+.social-card.has-custom-bg [class*="text-muted/"] {
   color: rgba(255, 255, 255, 0.6) !important;
 }
 
-.has-custom-bg .text-primary-500 {
+.social-card.has-custom-bg .text-primary-500 {
   color: hsl(var(--primary)) !important;
 }
 </style>
