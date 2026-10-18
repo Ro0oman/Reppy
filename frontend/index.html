@@ -141,12 +141,14 @@
     <!-- ═══════════════════════════════════════════════════════════════
          GOOGLE ANALYTICS
     ═══════════════════════════════════════════════════════════════ -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TJ4SF4KS8R"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3SL67W0LS6"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-TJ4SF4KS8R');
+      // SPA: el page_view lo envía el router (ver trackPageview en utils/analytics.js),
+      // así cada cambio de ruta cuenta como vista sin duplicar la carga inicial.
+      gtag('config', 'G-3SL67W0LS6', { send_page_view: false });
     </script>
 
     <!-- ═══════════════════════════════════════════════════════════════

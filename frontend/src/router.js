@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from './stores/auth'
 import { useI18nStore } from './stores/i18n'
+import { trackPageview } from './utils/analytics'
 
 // Lazy load components to optimize the landing performance
 const Landing = () => import('./components/pages/Landing.vue')
@@ -426,6 +427,12 @@ export function setupRouterGuards(router) {
       next()
     }
   })
+
+  // GA4: una vista por navegación (incluida la primera). El tag de index.html va con
+  // `send_page_view: false`, así que sin esto la SPA solo mediría la carga inicial.
+  router.afterEach((to) => {
+    trackPageview(to.fullPath);
+  });
 
   // Handle dynamic import failures (chunk loading errors)
   router.onError((error) => {
