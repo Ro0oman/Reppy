@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 /**
- * GA4 funnel events. gtag is loaded globally in index.html (G-TJ4SF4KS8R),
+ * GA4 funnel events. gtag is loaded globally in index.html (G-3SL67W0LS6),
  * so this just wraps window.gtag defensively (SSR-safe, no-op if gtag absent).
  */
 export function trackEvent(name, params = {}) {
@@ -85,4 +85,22 @@ export function initFunnelTracking() {
     },
     (error) => Promise.reject(error)
   );
+}
+
+/**
+ * Pageview de SPA. El tag de index.html se configura con `send_page_view: false`,
+ * así que cada vista (incluida la primera) la manda el router en su `afterEach`.
+ */
+export function trackPageview(path, title) {
+  if (typeof window === 'undefined') return;
+  if (typeof window.gtag !== 'function') return;
+  try {
+    window.gtag('event', 'page_view', {
+      page_path: path,
+      page_location: window.location.href,
+      page_title: title || document.title
+    });
+  } catch (e) {
+    /* analytics must never break navigation */
+  }
 }
