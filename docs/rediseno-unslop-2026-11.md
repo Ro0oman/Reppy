@@ -89,7 +89,17 @@ terracota y crema; Roman ve violeta y obsidiana. No hay una cara de Reppy.
 
 ---
 
-## 2. Dirección (pendiente de tu OK)
+## 2. Dirección
+
+> **Cambio 2026-11-03:** tras la PR 1 Roman lo veía «igual» y pidió rollo souls. La dirección
+> pasa de «tiza y hierro» a **«ceniza y brasa»**: fantasía oscura de mazmorra. Neutros de piedra y
+> ceniza cálidos (oscuro como modo principal, claro = pergamino), acento brasa de hoguera
+> (`#d9822b` oscuro / `#a85a17` claro), oro viejo (`--os-gold`) solo para títulos y marcos,
+> Cormorant Garamond 600 para h1/h2 y nombre del jefe, esquinas casi rectas (4/6/8 px), paneles
+> con marco doble, viñeta de niebla en los bordes y movimiento más lento (600 ms). Es un estilo
+> de género, no copia de ningún juego: nada de logos, fuentes ni frases de Dark Souls.
+> El resto de esta sección queda como historia de la primera propuesta.
+
 
 - **Producto.** Un contador de repeticiones de calistenia que convierte cada serie en daño a un
   jefe compartido, XP y botín, para gente que entrena con su peso y quiere no fallar días.

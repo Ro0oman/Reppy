@@ -1,7 +1,7 @@
 /* ────────────────────────────────────────────────────────────
    Reppy — clases del shell y componentes os (nov 2026)
    Los colores viven en tokens.css; aquí solo se consumen.
-   Historia: nació como «Operative OS» (obsidiana, radios rectos,
+   Tema actual: «ceniza y brasa» (fantasía oscura). Historia: nació como «Operative OS» (obsidiana, radios rectos,
    mayúsculas). Desde el tema único se quedan los nombres de clase
    para no tocar las vistas, pero con caja de frase, radios
    anidados y sin brillos.
@@ -12,7 +12,23 @@
 .os-shell {
   color: var(--os-text);
   background-color: var(--os-void);
+  /* Niebla: los bordes de la pantalla se oscurecen, como al fondo de una cripta */
+  background-image: radial-gradient(ellipse 120% 80% at 50% 0%, transparent 40%, rgba(0, 0, 0, 0.35) 100%);
+  background-attachment: fixed;
   font-family: var(--os-font-body);
+}
+
+html:not(.dark) .os-shell {
+  background-image: radial-gradient(ellipse 120% 80% at 50% 0%, transparent 45%, rgba(80, 55, 20, 0.12) 100%);
+}
+
+/* Títulos en serif: el tono de crónica antigua sin tocar cada vista */
+.os-shell :is(h1, h2) {
+  font-family: var(--os-font-display);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  font-style: normal;
 }
 
 /* ── Superficies ─────────────────────────────────────────── */
@@ -25,8 +41,10 @@
 
 .os-panel {
   background: var(--os-panel);
-  border: 1px solid var(--os-line);
+  border: 1px solid var(--os-line-strong);
   border-radius: var(--os-radius-card);
+  /* Marco doble: una segunda línea por dentro, como el borde de un menú forjado */
+  box-shadow: inset 0 0 0 3px var(--os-panel), inset 0 0 0 4px var(--os-line);
 }
 
 .os-panel--raised {
@@ -38,9 +56,10 @@
 
 .os-display {
   font-family: var(--os-font-display);
-  font-weight: 500;
-  letter-spacing: -0.02em;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   line-height: 1.05;
+  color: var(--os-gold);
 }
 
 .os-label {
@@ -72,9 +91,9 @@
   background: var(--os-blue);
   color: #fff;
   cursor: pointer;
-  font: 500 0.9375rem / 1 var(--os-font-body);
-  letter-spacing: 0;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  font: 600 0.9375rem / 1 var(--os-font-body);
+  letter-spacing: 0.01em;
+  box-shadow: inset 0 1px 0 rgba(255, 230, 190, 0.22), inset 0 -2px 0 rgba(0, 0, 0, 0.25);
   transition: background-color var(--os-dur-fast) var(--os-ease), transform var(--os-dur-fast) var(--os-ease);
 }
 
@@ -125,15 +144,16 @@
 
 .os-track {
   height: 8px;
-  background: var(--os-panel-raised);
-  border-radius: 4px;
+  background: var(--os-ink);
+  border: 1px solid var(--os-line-strong);
+  border-radius: 1px;
   overflow: hidden;
 }
 
 .os-track__fill {
   height: 100%;
-  background: var(--os-blue);
-  border-radius: 4px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--os-blue) 80%, #fff) 0%, var(--os-blue) 45%, color-mix(in srgb, var(--os-blue) 70%, #000) 100%);
+  border-radius: 0;
   transition: width var(--os-dur-enter) var(--os-ease);
 }
 
@@ -150,13 +170,13 @@
 
 .os-shell .card-stats {
   background: var(--os-panel);
-  border: 1px solid var(--os-line);
+  border: 1px solid var(--os-line-strong);
   border-radius: var(--os-radius-card);
   padding: var(--os-pad-card);
-  box-shadow: none;
+  box-shadow: inset 0 0 0 3px var(--os-panel), inset 0 0 0 4px var(--os-line);
   backdrop-filter: none;
 }
-.os-shell .card-stats:hover { border-color: var(--os-line-strong); box-shadow: none; }
+.os-shell .card-stats:hover { border-color: color-mix(in srgb, var(--os-gold) 45%, transparent); }
 .os-shell .tap-card:hover { border-color: var(--os-line-strong) !important; }
 
 .os-shell .btn-reppy {
