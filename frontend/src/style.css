@@ -6,8 +6,7 @@
 @import "./cosmetics.css";
 @import "./athletic-tech.css";
 @import "./operative-os.css";
-@import "./aurora.css";
-@import "./vibe.css";
+@import "./tokens.css";
 
 html, body {
   overflow-x: hidden;

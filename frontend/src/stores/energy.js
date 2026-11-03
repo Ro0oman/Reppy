@@ -1,10 +1,8 @@
 import { defineStore } from 'pinia';
-import { useThemeStore } from './theme';
 
-// «Tu energía hoy» (piel Vibe). Ajusta el registro rápido: cantidades sugeridas,
+// «Tu energía hoy» (cabecera del panel). Ajusta el registro rápido: cantidades sugeridas,
 // cantidad inicial y, con energía baja, un ejercicio más suave preseleccionado.
 // No toca reglas, daño ni economía. Se recuerda durante el día en el dispositivo.
-// Fuera de Vibe (donde no hay selector) siempre vale 'mid' = comportamiento de siempre.
 export const ENERGY_PROFILES = {
   low: { presets: [1, 3, 5, 10], defaultReps: 5, exercise: 'pushups' },
   mid: { presets: [1, 5, 10, 20], defaultReps: 10, exercise: null },
@@ -26,8 +24,7 @@ export const useEnergyStore = defineStore('energy', {
   state: () => ({ energy: readStored() }),
   getters: {
     effective(state) {
-      const theme = useThemeStore();
-      return theme.uiStyle === 'vibe' ? state.energy : 'mid';
+      return state.energy;
     },
     profile() {
       return ENERGY_PROFILES[this.effective];
