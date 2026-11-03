@@ -3,65 +3,14 @@ import { ref, watch } from 'vue';
 import { useAuthStore } from './auth';
 import axios from 'axios';
 
-// Estilos de interfaz disponibles. 'operative' = Operative OS (rail +
-// telemetría + obsidiana); 'aurora' = piel «IA moderna» (cristal, malla de luz
-// y degradados) sobre la misma estructura. El estilo 'classic' se retiró en
-// oct 2026: quien lo tenía guardado pasa a 'aurora'.
-// Añadir aquí futuros estilos y su etiqueta en el selector.
-export const UI_STYLES = ['operative', 'aurora', 'vibe'];
-
-// La serif de Vibe (Fraunces) solo se descarga si alguien usa esa piel.
-const VIBE_FONT_ID = 'reppy-vibe-font';
-const ensureVibeFont = () => {
-  if (import.meta.env.SSR || document.getElementById(VIBE_FONT_ID)) return;
-  const link = document.createElement('link');
-  link.id = VIBE_FONT_ID;
-  link.rel = 'stylesheet';
-  link.href = 'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,400&display=swap';
-  document.head.appendChild(link);
-};
-const normalizeStyle = (s) => (s === 'classic' ? 'aurora' : s);
+// Las pieles de interfaz (Operative, Aurora, Vibe) se retiraron en nov 2026:
+// hay un tema único con modo claro/oscuro (tokens.css). users.ui_style
+// sigue en BD pero ya no se lee.
 
 export const useThemeStore = defineStore('theme', () => {
   const authStore = useAuthStore();
   // Default to 'dark' if no preference is found
   const theme = ref((!import.meta.env.SSR && localStorage.getItem('reppy_theme')) || 'dark');
-
-  // Estilo de interfaz (skin estructural, independiente de dark/light).
-  // localStorage responde al instante; la BD (users.ui_style) lo sigue para
-  // que la preferencia viaje entre dispositivos.
-  const storedStyle = !import.meta.env.SSR && localStorage.getItem('reppy_ui_style');
-  // Vibe es el estilo por defecto (oct 2026); los demás se eligen en Ajustes.
-  const uiStyle = ref(UI_STYLES.includes(normalizeStyle(storedStyle)) ? normalizeStyle(storedStyle) : 'vibe');
-  watch(uiStyle, (s) => {
-    if (s === 'vibe') ensureVibeFont();
-    // Los modales que se teletransportan al <body> quedan fuera del shell; con este
-    // atributo pueden optar a los tokens de la piel (clase .vibe-modal).
-    if (!import.meta.env.SSR) document.documentElement.setAttribute('data-ui-style', s);
-  }, { immediate: true });
-
-  // Al llegar el perfil (login / otro dispositivo), la BD manda.
-  watch(() => authStore.user?.ui_style, (rawDbStyle) => {
-    const dbStyle = normalizeStyle(rawDbStyle);
-    if (dbStyle && UI_STYLES.includes(dbStyle) && uiStyle.value !== dbStyle) {
-      uiStyle.value = dbStyle;
-      if (!import.meta.env.SSR) localStorage.setItem('reppy_ui_style', dbStyle);
-    }
-  });
-
-  const setUiStyle = async (style) => {
-    if (!UI_STYLES.includes(style)) return;
-    uiStyle.value = style;
-    if (!import.meta.env.SSR) localStorage.setItem('reppy_ui_style', style);
-    if (authStore.isAuthenticated) {
-      try {
-        await axios.patch('/api/users/profile', { ui_style: style });
-        if (authStore.user) authStore.user.ui_style = style;
-      } catch (error) {
-        console.error('Failed to sync ui_style to DB:', error);
-      }
-    }
-  };
 
   // Sync with DB if user theme changes (e.g., on login)
   watch(() => authStore.user?.theme, (newDbTheme) => {
@@ -128,8 +77,6 @@ export const useThemeStore = defineStore('theme', () => {
   return {
     theme,
     setTheme,
-    uiStyle,
-    setUiStyle,
     init
   };
 });

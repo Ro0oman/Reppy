@@ -1,94 +1,19 @@
 /* ────────────────────────────────────────────────────────────
-   Reppy Operative OS — tokens y clases de intención
-   Guía: docs/reppy-operative-os-style-guide.md
-   Se carga DESPUÉS de athletic-tech.css: complementa, no sustituye.
-   Los colores de señal se reservan para significado:
-   azul = acción/sistema activo · cian = lectura/telemetría ·
-   naranja = urgencia/racha · verde = confirmación/presencia.
+   Reppy — clases del shell y componentes os (nov 2026)
+   Los colores viven en tokens.css; aquí solo se consumen.
+   Historia: nació como «Operative OS» (obsidiana, radios rectos,
+   mayúsculas). Desde el tema único se quedan los nombres de clase
+   para no tocar las vistas, pero con caja de frase, radios
+   anidados y sin brillos.
    ──────────────────────────────────────────────────────────── */
 
-:root {
-  --os-void: #05070b;
-  --os-ink: #080c13;
-  --os-panel: #0d131e;
-  --os-panel-raised: #121c2b;
-  --os-line: #27364d;
-  --os-line-strong: #415675;
-  --os-blue: #1b68ff;
-  --os-cyan: #61d9ff;
-  --os-orange: #ff6a32;
-  --os-success: #45e991;
-  --os-danger: #ff4d61;
-  --os-text: #f3f6fb;
-  --os-muted: #8995aa;
-  --os-ease: cubic-bezier(.2, .8, .2, 1);
-
-  --os-font-display: 'Barlow Condensed', 'Arial Narrow', 'Inter Tight', Arial, sans-serif;
-  --os-font-body: Inter, 'Segoe UI', system-ui, sans-serif;
-  --os-font-mono: 'DM Mono', ui-monospace, 'JetBrains Mono', Consolas, monospace;
-
-  --os-type-kicker: 0.6875rem;
-  --os-type-meta: 0.75rem;
-  --os-type-body: 0.875rem;
-  --os-type-title: 1.25rem;
-  --os-type-section: 1.75rem;
-  --os-type-display: clamp(2.75rem, 6vw, 5.5rem);
-}
-
-/* ── Shell autenticado: remap del tema viejo ─────────────────
-   .os-shell se aplica al root de App.vue cuando hay sesión.
-   Redefine los tokens HSL que consumen Tailwind y athletic-tech
-   para que TODAS las vistas autenticadas rendericen en Operative
-   OS sin reescribir cada utilidad:
-   - fondo/superficies → obsidiana (void/ink/panel)
-   - --neon (teal) → cian de telemetría
-   - --neon-violet (morado gaming) → azul de sistema (mata los
-     degradados arcoíris: de morado→azul pasan a azul→azul/cian)
-   - heatmap → escala azul/cian sobre obsidiana
-   ──────────────────────────────────────────────────────────── */
+/* ── Shell (raíz de App.vue) ─────────────────────────────── */
 
 .os-shell {
-  color-scheme: dark;
-  --background: 222 38% 3%;        /* --os-void */
-  --surface: 219 40% 8%;           /* --os-panel */
-  --card: 219 40% 8%;
-  --card-alpha: 0.92;
-  --foreground: 217 50% 97%;       /* --os-text */
-  --muted: 218 16% 60%;            /* --os-muted */
-  --border: 216 33% 23%;           /* --os-line */
-  --border-alpha: 1;
-  --primary: 220 100% 55%;         /* --os-blue */
-  --accent: 145 79% 59%;           /* --os-success */
-  --ring: 220 100% 55% / 0.4;
-  --white-to-gray: 217 50% 97%;
-  --neon: 194 100% 69%;            /* --os-cyan */
-  --neon-violet: 220 100% 55%;     /* violeta → azul de sistema */
-  --heatmap-bg: 222 38% 3%;
-  --heatmap-l0: 219 40% 10%;
-  --heatmap-l1: 219 63% 28%;
-  --heatmap-l2: 220 100% 45%;
-  --heatmap-l3: 220 100% 55%;
-  --heatmap-l4: 194 100% 69%;
   color: var(--os-text);
-  /* Obsidiana + retícula tenue en un solo fondo (sin pseudo-elementos,
-     para no interferir con los rails fixed ni los modales). */
   background-color: var(--os-void);
-  background-image:
-    linear-gradient(rgba(16, 28, 48, 0.35) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(16, 28, 48, 0.35) 1px, transparent 1px),
-    radial-gradient(ellipse at 50% 0%, rgba(20, 38, 74, 0.5) 0%, transparent 55%);
-  background-size: 88px 88px, 88px 88px, 100% 900px;
-  background-attachment: fixed, fixed, scroll;
-  background-repeat: repeat, repeat, no-repeat;
+  font-family: var(--os-font-body);
 }
-
-/* Geometría técnica global: radios 0-4px en vistas autenticadas.
-   rounded-full se conserva (avatares, puntos de presencia). */
-.os-shell .rounded-3xl,
-.os-shell .rounded-2xl,
-.os-shell .rounded-xl,
-.os-shell .rounded-lg { border-radius: 2px; }
-.os-shell .rounded-md, .os-shell .rounded { border-radius: 2px; }
 
 /* ── Superficies ─────────────────────────────────────────── */
 
@@ -98,18 +23,10 @@
   font-family: var(--os-font-body);
 }
 
-/* retícula tenue solo para fondos grandes e inmersivos */
-.os-ground--grid {
-  background-image:
-    linear-gradient(#101c30 1px, transparent 1px),
-    linear-gradient(90deg, #101c30 1px, transparent 1px);
-  background-size: 88px 88px;
-}
-
 .os-panel {
   background: var(--os-panel);
   border: 1px solid var(--os-line);
-  border-radius: 2px;
+  border-radius: var(--os-radius-card);
 }
 
 .os-panel--raised {
@@ -117,184 +34,153 @@
   border-color: var(--os-line-strong);
 }
 
-/* corte sutil en una esquina para paneles importantes */
-.os-panel--cut {
-  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
-}
-
 /* ── Tipografía ──────────────────────────────────────────── */
 
 .os-display {
   font-family: var(--os-font-display);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  line-height: 0.9;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
 }
 
 .os-label {
-  color: var(--os-cyan);
-  font: 500 var(--os-type-kicker) / 1.3 var(--os-font-mono);
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
+  color: var(--os-muted);
+  font: 400 var(--os-type-meta) / 1.35 var(--os-font-body);
+  letter-spacing: 0;
 }
 
 .os-label--muted { color: var(--os-muted); }
 .os-label--orange { color: var(--os-orange); }
 
-.os-num { font-variant-numeric: tabular-nums; }
+.os-num {
+  font-family: var(--os-font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
 
-/* ── Command button ──────────────────────────────────────── */
+/* ── Botón de acción ─────────────────────────────────────── */
 
 .os-command {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  min-height: 52px;
-  padding: 0 24px;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 20px;
   border: 0;
-  border-radius: 2px;
+  border-radius: var(--os-radius);
   background: var(--os-blue);
   color: #fff;
   cursor: pointer;
-  font: 700 1.2rem / 1 var(--os-font-display);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  box-shadow: 0 8px 24px rgba(22, 79, 199, 0.38);
-  transition: transform 0.15s var(--os-ease), box-shadow 0.15s var(--os-ease), background 0.15s var(--os-ease);
+  font: 500 0.9375rem / 1 var(--os-font-body);
+  letter-spacing: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transition: background-color var(--os-dur-fast) var(--os-ease), transform var(--os-dur-fast) var(--os-ease);
 }
 
-.os-command:hover:not(:disabled) {
-  transform: translateY(-2px);
-  background: #2f78ff;
-  box-shadow: 0 12px 28px rgba(22, 79, 199, 0.5);
-}
+.os-command:hover:not(:disabled) { background: color-mix(in srgb, var(--os-blue) 88%, #000); }
+.os-command:active:not(:disabled) { transform: scale(0.98); }
 
 .os-command--secondary {
   background: var(--os-panel-raised);
-  border: 1px solid var(--os-line-strong);
+  border: 1px solid var(--os-line);
   color: var(--os-text);
   box-shadow: none;
-  font-size: 1rem;
   min-height: 44px;
 }
 
-.os-command--secondary:hover:not(:disabled) { background: #182740; box-shadow: none; }
+.os-command--secondary:hover:not(:disabled) { background: var(--os-panel); border-color: var(--os-line-strong); }
 
 .os-command--quiet {
   background: none;
   box-shadow: none;
-  color: var(--os-cyan);
-  font-size: 0.9rem;
+  color: var(--os-text);
   min-height: 44px;
-  padding: 0 10px;
+  padding: 0 8px;
+  text-decoration: underline;
+  text-decoration-color: var(--os-line-strong);
+  text-underline-offset: 4px;
 }
 
-.os-command--quiet:hover:not(:disabled) { background: none; box-shadow: none; transform: none; text-decoration: underline; }
+.os-command--quiet:hover:not(:disabled) { background: none; text-decoration-color: currentColor; }
 
 .os-command--danger {
   background: none;
   border: 1px solid var(--os-danger);
   color: var(--os-danger);
   box-shadow: none;
-  font-size: 1rem;
   min-height: 44px;
 }
 
-.os-command--danger:hover:not(:disabled) { background: rgba(255, 77, 97, 0.1); box-shadow: none; }
+.os-command--danger:hover:not(:disabled) { background: color-mix(in srgb, var(--os-danger) 10%, transparent); }
 
 .os-command:disabled {
   background: var(--os-panel-raised);
   color: var(--os-muted);
   box-shadow: none;
   cursor: not-allowed;
-  transform: none;
 }
 
-/* ── Barras / tracks ─────────────────────────────────────── */
+/* ── Barras ──────────────────────────────────────────────── */
 
 .os-track {
-  height: 13px;
-  background: #232e42;
-  clip-path: polygon(0 0, 100% 0, calc(100% - 9px) 100%, 0 100%);
+  height: 8px;
+  background: var(--os-panel-raised);
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .os-track__fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--os-blue), var(--os-cyan));
-  box-shadow: 0 0 16px rgba(27, 104, 255, 0.7);
-  transition: width 0.35s var(--os-ease);
+  background: var(--os-blue);
+  border-radius: 4px;
+  transition: width var(--os-dur-enter) var(--os-ease);
 }
 
-.os-track__fill--danger {
-  background: linear-gradient(90deg, var(--os-danger), var(--os-orange));
-  box-shadow: 0 0 16px rgba(255, 77, 97, 0.5);
-}
+.os-track__fill--danger { background: var(--os-danger); }
 
-.os-minibar { height: 4px; background: #27364b; border-radius: 1px; }
-.os-minibar > i { display: block; height: 100%; background: #2780ff; border-radius: 1px; transition: width 0.35s var(--os-ease); }
+.os-minibar { height: 4px; background: var(--os-panel-raised); border-radius: 2px; }
+.os-minibar > i { display: block; height: 100%; background: var(--os-blue); border-radius: 2px; transition: width var(--os-dur-enter) var(--os-ease); }
 
-/* ── Sistema único (fase 4 del rediseño, oct 2026) ───────────
-   Una sola superficie, un solo borde, un solo radio y un suelo de
-   tamaño de texto para TODAS las vistas autenticadas. Se aplica como
-   remapeo sobre .os-shell (igual que los tokens de arriba) para no
-   reescribir cientos de utilidades de Tailwind de golpe.
-   Límite conocido: los modales y sheets que se teletransportan al
-   <body> quedan fuera de .os-shell y conservan su estilo.
+/* ── Sistema único para las vistas autenticadas ──────────────
+   Se aplica como remapeo sobre .os-shell para no reescribir cientos
+   de utilidades de Tailwind de golpe. Cada vista lo irá haciendo
+   innecesario en su PR de limpieza.
    ──────────────────────────────────────────────────────────── */
 
-:root {
-  --os-radius: 2px;          /* tarjetas, botones, campos */
-  --os-radius-sheet: 8px;    /* sheets y modales (los define cada componente) */
-  --os-touch: 44px;          /* alto táctil mínimo */
-  --os-pad-card: 16px;
-}
-
-/* Tarjetas: misma superficie y mismo borde que .os-panel */
 .os-shell .card-stats {
   background: var(--os-panel);
   border: 1px solid var(--os-line);
-  border-radius: var(--os-radius);
+  border-radius: var(--os-radius-card);
   padding: var(--os-pad-card);
   box-shadow: none;
   backdrop-filter: none;
 }
-.os-shell .card-stats:hover {
-  border-color: var(--os-line-strong);
-  box-shadow: none;
-}
+.os-shell .card-stats:hover { border-color: var(--os-line-strong); box-shadow: none; }
 .os-shell .tap-card:hover { border-color: var(--os-line-strong) !important; }
 
-/* Botón principal y campos: radio recto y alto táctil */
 .os-shell .btn-reppy {
   border-radius: var(--os-radius);
   min-height: var(--os-touch);
   box-shadow: none;
-  border-color: var(--os-line-strong);
+  border-color: transparent;
 }
 .os-shell .input-tactical { border-radius: var(--os-radius); }
 
-/* Un solo color de borde: los blancos translúcidos y los border-border
-   conviven con los azules de señal; aquí pasan a la línea del sistema. */
+/* Un solo color de borde */
 .os-shell .border-white\/5,
 .os-shell .border-white\/10,
 .os-shell .border-white\/15,
 .os-shell .border-white\/20,
-.os-shell .border-border,
-.os-shell .border-border\/40,
-.os-shell .border-border\/60 {
+.os-shell .border-border {
   border-color: var(--os-line);
 }
 
-/* Suelo tipográfico: el texto de 8–10 px sube a 12 px (--os-type-meta), que es el
-   mínimo para texto informativo. Las etiquetas decorativas en mayúsculas que quieran
-   11 px deben usar la clase propia .os-label, no un tamaño arbitrario. */
+/* Suelo tipográfico: el texto de 8–11 px sube a 12 px. */
 .os-shell .text-\[8px\],
 .os-shell .text-\[9px\],
 .os-shell .text-\[10px\],
 .os-shell .text-\[11px\] { font-size: var(--os-type-meta); line-height: 1.35; }
-/* Etiquetas de las estaciones del panel: su CSS propio (scoped) fija 10 px. */
 .os-shell .os-station__label.os-station__label { font-size: var(--os-type-meta); }
 
 /* ── Animaciones ─────────────────────────────────────────── */

@@ -3,7 +3,7 @@
     :class="'pb-24'">
 
     <!-- Piel Vibe: saludo en serif + energía de hoy, antes del marco de misión -->
-    <VibeGreeting v-if="themeStore.uiStyle === 'vibe'" />
+    <VibeGreeting />
 
     <!-- ✦ MISSION FRAME — el boss/batalla actual es la misión dominante ✦ -->
     <OsMissionFrame
@@ -653,7 +653,6 @@ import SkillTreeModal from '@/components/dashboard/SkillTreeModal.vue';
 import NewBadge from '@/components/battle/NewBadge.vue';
 import OsMissionFrame from '@/components/os/OsMissionFrame.vue';
 import VibeGreeting from '@/components/dashboard/VibeGreeting.vue';
-import { useThemeStore } from '@/stores/theme';
 import { useEnergyStore } from '@/stores/energy';
 import { getLocalDateString } from '@/utils/dateUtils.js';
 import { buildActiveBoosts } from '@/utils/activeBuffs';
@@ -665,7 +664,6 @@ const trainingStore = useTrainingStore();
 const bossStore = useBossStore();
 const skillTreeStore = useSkillTreeStore();
 const badgesStore = useBadgesStore();
-const themeStore = useThemeStore();
 
 // Camp "stations": quick access to the RPG-loop destinations that are NOT in the
 // bottom nav. Counts come from the shared badges store (fetched in App init).
@@ -1692,24 +1690,13 @@ watch(
   transform: translateY(10px);
 }
 
-/* ── Operative OS scope ─────────────────────────────────────
-   Geometría técnica (radio 0-4px) y bordes --os-line para toda
-   la vista, sin reescribir cada utilidad Tailwind del template. */
-.os-dashboard :deep(.rounded-3xl),
-.os-dashboard :deep(.rounded-2xl),
-.os-dashboard :deep(.rounded-xl),
-.os-dashboard :deep(.rounded-lg) {
-  border-radius: 2px;
-}
-.os-dashboard :deep(.card-stats) { border-radius: 2px; }
-
-/* Números grandes en display condensada: solo los que deciden */
+/* Números grandes: mono tabular, peso 500 (tema único, nov 2026) */
 .os-dashboard :deep(.text-3xl.font-bold.tabular-nums),
 .os-dashboard :deep(.text-2xl.font-bold.tabular-nums),
 .os-dashboard :deep(.text-4xl.font-bold.tabular-nums) {
-  font-family: var(--os-font-display);
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-family: var(--os-font-mono);
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
 /* Glifo del boss en el mission frame (decorativo, desaparece en móvil) */

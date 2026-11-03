@@ -32,9 +32,10 @@ module.exports = {
       },
       borderRadius: {
         '2xl': '1rem',
-        '3xl': '1.5rem',
-        '4xl': '2rem',
-        '5xl': '2.5rem',
+        // Tema único: nada pasa de 20px (paneles); tarjetas 12–16.
+        '3xl': '1.25rem',
+        '4xl': '1.25rem',
+        '5xl': '1.25rem',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

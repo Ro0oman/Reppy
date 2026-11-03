@@ -1,0 +1,188 @@
+/* ────────────────────────────────────────────────────────────
+   Reppy — tokens únicos «tiza y hierro» (nov 2026)
+   Propuesta: docs/rediseno-unslop-2026-11.md
+
+   Un solo tema con modo claro y oscuro. Sustituye a las pieles
+   Operative, Aurora y Vibe: aquí viven TODOS los colores, y los
+   ficheros de clases (athletic-tech.css, operative-os.css) solo
+   los consumen.
+
+   - Neutros: rampa graphite, casi gris. La app no se tiñe.
+   - Acento: terracota, solo para acción principal, selección y
+     la cifra que importa. Más claro en oscuro para que se lea.
+   - Semánticos: verde = completado, rojo = peligro,
+     ámbar = racha en riesgo / urgencia.
+   - El color rico se reserva para el jefe (imagen y barra de vida).
+
+   Se definen en :root/.dark (no en .os-shell) para que los modales
+   teletransportados al <body> también los hereden. Va sin @layer
+   para ganar a los valores base de athletic-tech.css.
+   ──────────────────────────────────────────────────────────── */
+
+:root {
+  color-scheme: light;
+
+  /* HSL que consume Tailwind (bg-background, text-muted, …) */
+  --background: 0 0% 98%;          /* #fafafa */
+  --surface: 0 0% 100%;
+  --card: 0 0% 100%;
+  --card-alpha: 1;
+  --foreground: 0 0% 9%;           /* #171717 */
+  --muted: 0 0% 40%;               /* #666 — secundario y meta */
+  --border: 0 0% 90%;
+  --border-alpha: 1;
+  --primary: 15 63% 45%;           /* #b94d2a terracota */
+  --accent: 142 76% 36%;           /* #16a34a verde completado */
+  --ring: 15 63% 45% / 0.35;
+  --white-to-gray: 0 0% 9%;
+
+  /* Restos de pieles anteriores: ya no tienen color propio.
+     --neon (antes teal) pasa a tinta neutra; --neon-violet al acento. */
+  --neon: 0 0% 9%;
+  --neon-violet: 15 63% 45%;
+
+  /* Heatmap: escalones neutros que acaban en terracota */
+  --heatmap-bg: 0 0% 100%;
+  --heatmap-l0: 0 0% 93%;
+  --heatmap-l1: 15 50% 86%;
+  --heatmap-l2: 15 55% 72%;
+  --heatmap-l3: 15 60% 57%;
+  --heatmap-l4: 15 63% 45%;
+
+  /* Tokens del shell (App.vue y components/os) */
+  --os-void: #fafafa;              /* fondo de página */
+  --os-ink: #f4f4f5;               /* rails y zonas más profundas */
+  --os-panel: #ffffff;             /* tarjeta */
+  --os-panel-raised: #f4f4f5;      /* fila activa, campo */
+  --os-line: rgba(23, 23, 23, 0.08);
+  --os-line-strong: rgba(23, 23, 23, 0.16);
+  --os-blue: #b94d2a;              /* acción (el nombre se conserva) */
+  --os-cyan: #525252;              /* lectura / telemetría, ahora neutra */
+  --os-orange: #a8650f;            /* urgencia, racha en riesgo */
+  --os-success: #16a34a;
+  --os-danger: #dc2626;
+  --os-text: #171717;
+  --os-muted: #737373;
+
+  --os-font-display: Inter, 'Segoe UI', system-ui, sans-serif;
+  --os-font-body: Inter, 'Segoe UI', system-ui, sans-serif;
+  --os-font-mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+
+  --os-type-kicker: 0.75rem;
+  --os-type-meta: 0.75rem;
+  --os-type-body: 0.875rem;
+  --os-type-title: 1.25rem;
+  --os-type-section: 1.75rem;
+  --os-type-display: clamp(2.25rem, 5vw, 3.5rem);
+
+  /* Forma y ritmo */
+  --os-radius: 10px;               /* botones, campos */
+  --os-radius-card: 14px;          /* tarjetas */
+  --os-radius-sheet: 20px;         /* sheets y modales */
+  --os-touch: 44px;
+  --os-pad-card: 20px;
+
+  /* Movimiento: una curva, pocas duraciones */
+  --os-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --os-dur-fast: 150ms;
+  --os-dur-enter: 400ms;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --background: 240 3% 8%;         /* #141415 */
+  --surface: 240 4% 10%;           /* #19191b */
+  --card: 240 4% 10%;
+  --card-alpha: 1;
+  --foreground: 0 0% 93%;          /* #ededed */
+  --muted: 240 3% 64%;             /* #a1a1a6 */
+  --border: 240 3% 17%;
+  --border-alpha: 1;
+  --primary: 15 62% 51%;           /* #cf5a33 */
+  --accent: 151 49% 53%;           /* #4cc38a */
+  --ring: 15 62% 51% / 0.45;
+  --white-to-gray: 0 0% 93%;
+
+  --neon: 0 0% 93%;
+  --neon-violet: 15 62% 51%;
+
+  --heatmap-bg: 240 3% 8%;
+  --heatmap-l0: 240 3% 13%;
+  --heatmap-l1: 15 22% 22%;
+  --heatmap-l2: 15 35% 32%;
+  --heatmap-l3: 15 50% 42%;
+  --heatmap-l4: 15 62% 51%;
+
+  --os-void: #141415;
+  --os-ink: #0f0f10;
+  --os-panel: #19191b;
+  --os-panel-raised: #232325;
+  --os-line: rgba(237, 237, 237, 0.08);
+  --os-line-strong: rgba(237, 237, 237, 0.16);
+  --os-blue: #cf5a33;
+  --os-cyan: #a1a1a6;
+  --os-orange: #e5a13a;
+  --os-success: #4cc38a;
+  --os-danger: #e5484d;
+  --os-text: #ededed;
+  --os-muted: #85858b;
+}
+
+/* ── Islas oscuras en modo claro ───────────────────────────────
+   La batalla, la arena del jefe, el marco de misión del panel y las
+   publicaciones con fondo cosmético están pensadas en oscuro: en modo
+   claro conservan los tokens oscuros. Son el «momento» de la pantalla. */
+html:not(.dark) :is(.battle-view, .os-arena, .os-mission, .social-card.has-custom-bg) {
+  color-scheme: dark;
+  --background: 240 3% 8%;
+  --surface: 240 4% 10%;
+  --card: 240 4% 10%;
+  --foreground: 0 0% 93%;
+  --muted: 240 3% 64%;
+  --border: 240 3% 17%;
+  --primary: 15 62% 51%;
+  --os-void: #141415;
+  --os-ink: #0f0f10;
+  --os-panel: #19191b;
+  --os-panel-raised: #232325;
+  --os-line: rgba(237, 237, 237, 0.08);
+  --os-line-strong: rgba(237, 237, 237, 0.16);
+  --os-blue: #cf5a33;
+  --os-cyan: #a1a1a6;
+  --os-orange: #e5a13a;
+  --os-text: #ededed;
+  --os-muted: #85858b;
+  color: var(--os-text);
+}
+
+/* ── Modo claro: componentes escritos para fondo oscuro ────────
+   Heredado del pulido de Vibe. Muchas utilidades se eligieron para
+   fondo negro y sobre claro no se leen. Fuera de las islas oscuras
+   se corrigen aquí, hasta que cada vista se limpie en su PR. */
+:where(html:not(.dark)) :is(.text-amber-200, .text-amber-300, .text-amber-400, .text-yellow-400):not(.battle-view *, .os-arena *, .os-mission *) { color: #8a5a00; }
+:where(html:not(.dark)) :is(.text-emerald-200, .text-emerald-300, .text-emerald-400, .text-green-400):not(.battle-view *, .os-arena *, .os-mission *) { color: #1e6b45; }
+:where(html:not(.dark)) :is(.text-blue-200, .text-blue-300, .text-blue-400):not(.battle-view *, .os-arena *, .os-mission *) { color: #2b4cb3; }
+:where(html:not(.dark)) :is(.text-cyan-200, .text-cyan-300, .text-cyan-400):not(.battle-view *, .os-arena *, .os-mission *) { color: #0e6a7a; }
+:where(html:not(.dark)) :is(.text-red-200, .text-red-300, .text-red-400, .text-rose-300, .text-rose-400):not(.battle-view *, .os-arena *, .os-mission *) { color: #b3261e; }
+:where(html:not(.dark)) :is(.text-purple-300, .text-purple-400):not(.battle-view *, .os-arena *, .os-mission *) { color: #5b3fb0; }
+:where(html:not(.dark)) :is(.text-orange-300, .text-orange-400):not(.battle-view *, .os-arena *, .os-mission *) { color: #a8471f; }
+
+/* Velos negros translúcidos: sobre claro dejan losetas grises y sucias. */
+:where(html:not(.dark)) :is(.bg-black\/20, .bg-black\/25, .bg-black\/30):not(.battle-view *, .os-arena *, .os-mission *, .fixed, .fixed *) {
+  background-color: var(--os-panel);
+  border-color: var(--os-line);
+}
+:where(html:not(.dark)) :is(.bg-black\/40, .bg-black\/50, .bg-black\/60):not(.battle-view *, .os-arena *, .os-mission *, .fixed, .fixed *, .social-card.has-custom-bg *) {
+  background-color: var(--os-panel-raised);
+  border-color: var(--os-line);
+}
+
+/* Iconos de cofres y objetos: imágenes blancas para fondo oscuro. */
+:where(html:not(.dark)) :is(img[alt^="chest-"], img[src^="/game-icons/"], img[src^="/assets/chests/"]):not(.battle-view *, .os-arena *, .os-mission *) {
+  filter: brightness(0);
+  opacity: 0.8;
+}
+
+/* «border-border/NN»: Tailwind no aplica la opacidad sobre el token. */
+[class*="border-border/"] { border-color: var(--os-line); }

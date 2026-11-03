@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-// Cabecera de la piel Vibe: saludo en serif + «tu energía hoy».
+// Cabecera del panel: saludo + «tu energía hoy».
 // La energía cambia la sugerencia y ajusta el registro rápido (stores/energy.js);
 // no toca reglas, daño ni economía.
 import { computed } from 'vue';
@@ -63,31 +63,33 @@ const subtitle = computed(() => {
 </script>
 
 <style scoped>
-.vibe-greeting { display: grid; gap: 14px; padding-top: 4px; }
+.vibe-greeting { display: grid; gap: 12px; padding-top: 4px; }
 .vibe-greeting__title {
-  font-family: var(--vibe-serif, Georgia, serif);
-  font-size: clamp(1.7rem, 5vw, 2.3rem);
+  font-family: var(--os-font-display);
+  font-weight: 500;
+  font-size: clamp(1.75rem, 5vw, 2.25rem);
   line-height: 1.1;
   letter-spacing: -0.02em;
-  color: var(--vibe-forest, #13201A);
+  color: var(--os-text);
   margin: 0;
 }
-.vibe-greeting__sub { font-style: italic; color: #8B938C; }
-.vibe-greeting__energy-label { font-size: 12px; color: var(--os-muted, #6F786F); margin: 0 0 6px; }
+.vibe-greeting__sub { color: var(--os-muted); }
+.vibe-greeting__energy-label { font-size: 12px; color: var(--os-muted); margin: 0 0 8px; }
 .vibe-greeting__segmented {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  border: 1px solid var(--os-line, #E3E0D6);
+  border: 1px solid var(--os-line);
   border-radius: 12px;
-  padding: 3px;
+  padding: 4px;
   max-width: 420px;
 }
 .vibe-greeting__segmented button {
   min-height: 40px;
-  border-radius: 9px;
+  border-radius: 8px;
   font-size: 14px;
-  color: var(--os-muted, #6F786F);
-  transition: background-color 0.15s ease, color 0.15s ease;
+  color: var(--os-muted);
+  transition: background-color var(--os-dur-fast) var(--os-ease), color var(--os-dur-fast) var(--os-ease);
 }
-.vibe-greeting__segmented button.is-on { background: var(--vibe-forest, #13201A); color: var(--vibe-cream, #F4F2EC); }
+.vibe-greeting__segmented button:hover { color: var(--os-text); }
+.vibe-greeting__segmented button.is-on { background: var(--os-panel-raised); color: var(--os-text); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08); }
 </style>
