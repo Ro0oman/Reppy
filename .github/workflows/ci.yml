@@ -71,3 +71,6 @@ jobs:
         run: |
           npm run sync-blog
           npx vite-ssg build
+      - name: nginx routes (200 / 301 / 404, sin soft 404)
+        working-directory: frontend
+        run: bash scripts/test-nginx-routes.sh
