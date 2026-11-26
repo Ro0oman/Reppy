@@ -3,68 +3,7 @@
 @import "tailwindcss/utilities";
 
 @layer base {
-  :root {
-    /* ────────────────────────────────────────────────────────────
-       Reppy Design System — Clean Athletic (v3)
-       Single source of brand truth: Electric Blue + Emerald accent.
-       Hardcoded orange glows were unified to hsl(var(--primary)) so
-       solid fills and glows finally match the brand.
-       ──────────────────────────────────────────────────────────── */
-    --primary: 215 92% 56%;        /* Reppy Electric Blue */
-    --accent: 152 62% 43%;         /* Emerald — success / positive */
-
-    /* Light Theme (Clean Studio) - Default */
-    --background: 30 20% 98%;      /* Warm paper */
-    --surface: 0 0% 100%;          /* Pure White */
-    --card: 0 0% 100%;
-    --card-alpha: 0.85;
-    --foreground: 240 10% 12%;     /* Near-black ink */
-    --muted: 240 5% 42%;           /* Accessible slate */
-    --border: 240 8% 90%;          /* Hairline */
-    --ring: 215 92% 56% / 0.25;
-
-    --white-to-gray: 240 10% 20%;
-
-    /* Redesign accents (Gemini mockups) — neon glow palette (light fallback) */
-    --neon: 168 70% 40%;
-    --neon-violet: 255 70% 62%;
-
-    /* Heatmap Levels (Light - Azure) */
-    --heatmap-bg: 0 0% 100%;
-    --heatmap-l0: 240 8% 95%;
-    --heatmap-l1: 213 96% 90%;
-    --heatmap-l2: 214 95% 78%;
-    --heatmap-l3: 215 92% 56%;
-    --heatmap-l4: 221 83% 45%;
-  }
-
-  .dark {
-    /* Dark Theme (Obsidian) — default for most users */
-    --background: 240 8% 5%;       /* #0C0C0E */
-    --surface: 240 7% 8%;          /* #131315 */
-    --card: 240 7% 10%;            /* #18181B */
-    --card-alpha: 0.8;
-    --foreground: 0 0% 98%;        /* Crisp white */
-    --muted: 240 5% 64%;           /* Soft metal gray */
-    --border: 240 6% 16%;          /* #28282C */
-    --border-alpha: 1;
-    --ring: 215 92% 56% / 0.4;
-
-    /* Redesign accents (Gemini mockups) — local neon glow palette.
-       Layered on top of --primary/--accent; not a brand replacement. */
-    --neon: 168 76% 52%;           /* Teal / mint — daily goal rings, tree icon */
-    --neon-violet: 255 92% 76%;    /* Violet — day-streak rings, milestones */
-
-    /* Heatmap Levels (Dark - Azure) */
-    --heatmap-bg: 240 8% 5%;
-    --heatmap-l0: 240 6% 12%;
-    --heatmap-l1: 213 70% 24%;
-    --heatmap-l2: 214 85% 36%;
-    --heatmap-l3: 215 92% 50%;
-    --heatmap-l4: 213 95% 60%;
-
-    --white-to-gray: 0 0% 100%;
-  }
+  /* Los colores viven en tokens.css (tema único, nov 2026). */
 
   *, *::before, *::after {
     margin: 0;
@@ -83,11 +22,6 @@
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
 
-    /* Clean Athletic background: one calm warm glow from the top. */
-    background-image:
-      radial-gradient(120% 75% at 50% -10%, hsla(var(--primary) / 0.06) 0%, transparent 60%);
-    background-attachment: fixed;
-    background-repeat: no-repeat;
   }
 
   #app {
@@ -114,13 +48,10 @@
 
   /* ─── Neon glow (redesign) ──────────────────────────────────────────────
      Soft outer glow for cards/icons in the refreshed dashboard. */
-  .glow-neon {
-    box-shadow: 0 0 0 1px hsla(var(--neon) / 0.25),
-                0 0 24px -4px hsla(var(--neon) / 0.45);
-  }
+  /* Tema único: los brillos se quedan en un hairline. */
+  .glow-neon,
   .glow-violet {
-    box-shadow: 0 0 0 1px hsla(var(--neon-violet) / 0.25),
-                0 0 24px -4px hsla(var(--neon-violet) / 0.45);
+    box-shadow: 0 0 0 1px var(--os-line);
   }
   .text-neon { color: hsl(var(--neon)); }
   .text-neon-violet { color: hsl(var(--neon-violet)); }
@@ -186,10 +117,10 @@
     border-radius: 14px;
     padding: 0.8rem 1.6rem;
     color: white;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    font-family: 'Inter Tight', sans-serif;
-    box-shadow: 0 6px 16px -8px hsla(var(--primary) / 0.5);
+    font-weight: 500;
+    letter-spacing: 0;
+    font-family: Inter, sans-serif;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
     transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
     display: inline-flex;
     align-items: center;
@@ -199,8 +130,7 @@
   }
 
   .btn-reppy:hover {
-    background: hsl(var(--primary) / 0.92);
-    box-shadow: 0 10px 22px -10px hsla(var(--primary) / 0.55);
+    background: hsl(var(--primary) / 0.9);
   }
 
   .btn-reppy:active {
@@ -319,12 +249,7 @@
 
   /* NEW: Social Hub Premium Utilities */
   .bg-mesh {
-    background-color: hsla(var(--background) / 0.8);
-    background-image: 
-      radial-gradient(at 0% 0%, hsla(var(--primary) / 0.15) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, hsla(var(--accent) / 0.1) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, hsla(var(--primary) / 0.05) 0px, transparent 50%),
-      radial-gradient(at 0% 100%, hsla(var(--accent) / 0.05) 0px, transparent 50%);
+    background-color: hsl(var(--background));
   }
 
   .bg-grid-white {
@@ -343,9 +268,7 @@
     100% { transform: translateY(100%); }
   }
 
-  .text-neon {
-    text-shadow: 0 0 10px hsla(var(--primary) / 0.5), 0 0 20px hsla(var(--primary) / 0.3);
-  }
+  .text-neon { text-shadow: none; }
 
   .animate-ticker {
     animation: ticker 30s linear infinite;
@@ -388,9 +311,7 @@
     z-index: 0;
   }
 
-  .tab-indicator-neon {
-    box-shadow: 0 0 15px hsla(var(--primary) / 0.8), 0 0 5px hsla(var(--primary) / 0.4);
-  }
+  .tab-indicator-neon { box-shadow: none; }
 
   .tabular-nums {
     font-variant-numeric: tabular-nums;
@@ -413,10 +334,7 @@
   position: absolute;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, hsl(var(--primary) / 0.1) 0%, transparent 70%);
-  border-radius: 50%;
-  filter: blur(100px);
-  animation: float 25s infinite alternate ease-in-out;
+  display: none; /* tema único: sin manchas de color de fondo */
 }
 
 @keyframes float {

@@ -7,7 +7,7 @@
         @click.self="store.closeModal()"
       >
        <!-- Bounded dialog: full-screen on mobile, centered card on desktop -->
-       <div class="vibe-modal st-modal relative flex flex-col w-full h-full sm:h-[86vh] sm:max-h-[880px] sm:max-w-3xl bg-card sm:rounded-3xl sm:border sm:border-border/60 overflow-hidden shadow-2xl">
+       <div class="st-modal relative flex flex-col w-full h-full sm:h-[86vh] sm:max-h-[880px] sm:max-w-3xl bg-card sm:rounded-3xl sm:border sm:border-border/60 overflow-hidden shadow-2xl">
         <!-- Header -->
         <header class="shrink-0 flex items-center justify-between gap-3 px-4 pt-[calc(env(safe-area-inset-top)+12px)] sm:pt-4 pb-3 border-b border-border/40">
           <div class="flex items-center gap-2 min-w-0">

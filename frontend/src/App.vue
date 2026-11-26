@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen selection:bg-primary-500/30 relative text-foreground transition-colors duration-500 overflow-x-hidden" :class="[
     authStore.user?.background_css ? 'bg-transparent' : 'bg-background',
-    { 'has-custom-bg': authStore.user?.background_css, 'os-shell': isOperative, 'aurora-shell': isAurora, 'vibe-shell': isVibe }
+    { 'has-custom-bg': authStore.user?.background_css, 'os-shell': true }
   ]">
 
     <!-- Background System -->
@@ -19,7 +19,7 @@
          Sustituye a la navbar superior en vistas autenticadas. -->
 
     <!-- Left rail: navegación por iconos, un único destino activo -->
-    <nav v-if="showChrome && isOperative" class="os-rail hidden lg:flex" :aria-label="i18n.t('nav_dashboard')">
+    <nav v-if="showChrome" class="os-rail hidden lg:flex" :aria-label="i18n.t('nav_dashboard')">
       <router-link :to="`/${i18n.locale}/dashboard`" class="os-rail__logo" title="Reppy">R</router-link>
       <router-link v-for="nav in railLinks" :key="nav.id"
         :to="{ name: nav.id, params: { lang: i18n.locale, ...(nav.id === 'profile' ? { userId: authStore.user?.id } : {}) } }"
@@ -45,7 +45,7 @@
     </nav>
 
     <!-- Right telemetry rail: piloto, racha, economía, squad en vivo -->
-    <aside v-if="showChrome && isOperative" class="os-telemetry hidden xl:flex">
+    <aside v-if="showChrome" class="os-telemetry hidden xl:flex">
       <router-link :to="{ name: 'profile', params: { lang: i18n.locale, userId: authStore.user?.id } }"
         class="os-telemetry__pilot">
         <AvatarFrame :src="authStore.user?.avatar_url" :size="42" />
@@ -80,7 +80,7 @@
         <!-- Al <body>: el rail tiene backdrop-filter, que convierte al rail en el
              contenedor de los elementos fixed y recortaba el desplegable. -->
         <Teleport to="body">
-          <div v-if="showNotifications" class="vibe-modal fixed top-16 right-[288px] z-[150] bg-transparent">
+          <div v-if="showNotifications" class="fixed top-16 right-[288px] z-[150] bg-transparent">
             <NotificationsDropdown @close="showNotifications = false" />
           </div>
         </Teleport>
@@ -98,7 +98,7 @@
     </aside>
 
     <!-- Mobile top strip: identidad + economía + avisos -->
-    <nav v-if="showChrome && isOperative" class="os-topstrip lg:hidden sticky top-0 z-50">
+    <nav v-if="showChrome" class="os-topstrip lg:hidden sticky top-0 z-50">
       <router-link :to="`/${i18n.locale}/dashboard`" class="os-topstrip__logo">R</router-link>
       <span class="os-topstrip__word">REPPY</span>
       <div class="flex-1"></div>
@@ -175,7 +175,7 @@
     <!-- Main Operational View -->
     <main :class="['flex-1 flex flex-col min-w-0 overflow-x-hidden',
       chromeless ? 'p-0' : 'pt-4 pb-20',
-      (showChrome && isOperative) ? 'lg:pl-[76px] xl:pr-[276px]' : '']">
+      showChrome ? 'lg:pl-[76px] xl:pr-[276px]' : '']">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" @start="onStartAction" @viewProfile="openProfile" />
@@ -184,7 +184,7 @@
     </main>
 
     <footer v-if="!chromeless" class="mt-auto py-12 pb-24 md:pb-12 border-t border-border/5"
-      :class="(showChrome && isOperative) ? 'lg:pl-[76px] xl:pr-[276px]' : ''">
+      :class="showChrome ? 'lg:pl-[76px] xl:pr-[276px]' : ''">
       <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 text-muted/40">
         <span class="text-[10px] font-medium tracking-wider">{{ i18n.t('economy_reppy_core') }}</span>
         <div class="flex items-center gap-6">
@@ -208,7 +208,7 @@
     </footer>
 
     <!-- Mobile Bottom Dock — 4 destinos + COMBAT central elevado (Operative OS) -->
-    <nav v-if="authStore.isAuthenticated && $route.name !== 'pvp' && isOperative"
+    <nav v-if="authStore.isAuthenticated && $route.name !== 'pvp'"
       class="os-dock lg:hidden fixed bottom-0 left-0 right-0 z-[60] pb-[env(safe-area-inset-bottom)]">
       <div class="grid grid-cols-5 items-center h-16 max-w-md mx-auto px-1">
         <!-- Left items -->
@@ -411,12 +411,6 @@ const showCoinsInfo = ref(false);
 const showNotifications = ref(false);
 const showQuickLog = ref(false);
 
-// Estilo de interfaz elegido por el usuario (perfil → ajustes).
-// Aurora reutiliza el shell de Operative OS (rail, telemetría, dock) con otra piel.
-const isAurora = computed(() => themeStore.uiStyle === 'aurora');
-// Vibe también reutiliza el shell (rail, telemetría, dock) con su propia piel clara.
-const isVibe = computed(() => themeStore.uiStyle === 'vibe');
-const isOperative = computed(() => themeStore.uiStyle === 'operative' || isAurora.value || isVibe.value);
 
 // Rutas sin chrome (sin rails/navbar/footer). La batalla NO se oculta:
 // aunque su ruta sea inmersiva, conserva los headers de navegación.
@@ -673,7 +667,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 2px;
   padding: 18px 0;
-  background: rgba(8, 12, 19, 0.94);
+  background: var(--os-ink);
   border-right: 1px solid var(--os-line);
   backdrop-filter: blur(10px);
 }
@@ -700,8 +694,8 @@ onUnmounted(() => {
 }
 .os-rail__item:hover { color: var(--os-text); }
 .os-rail__item--active {
-  color: #fff;
-  background: #12274d;
+  color: var(--os-text);
+  background: var(--os-panel-raised);
   border-left-color: var(--os-cyan);
 }
 .os-rail__dot {
@@ -724,7 +718,7 @@ onUnmounted(() => {
   flex-direction: column;
   gap: 10px;
   padding: 22px 18px;
-  background: rgba(8, 12, 19, 0.94);
+  background: var(--os-ink);
   border-left: 1px solid var(--os-line);
   backdrop-filter: blur(10px);
   overflow-y: auto;
@@ -733,7 +727,7 @@ onUnmounted(() => {
   display: flex;
   gap: 12px;
   align-items: center;
-  border-bottom: 1px solid #233147;
+  border-bottom: 1px solid var(--os-line);
   padding-bottom: 16px;
   text-decoration: none;
   color: var(--os-text);
@@ -746,20 +740,20 @@ onUnmounted(() => {
 }
 .os-telemetry__streak {
   padding: 12px 14px;
-  background: #1a1410;
+  background: color-mix(in srgb, var(--os-orange) 10%, var(--os-panel));
   border-left: 3px solid var(--os-orange);
-  border-radius: 2px;
+  border-radius: 8px;
 }
 .os-telemetry__streak b {
   font: 700 1.7rem / 0.85 var(--os-font-display);
-  color: #ff8a4d;
+  color: var(--os-orange);
   display: block;
 }
 .os-telemetry__streak span {
   display: block;
   font: 500 9px var(--os-font-mono);
   letter-spacing: 1px;
-  color: #d9ae97;
+  color: var(--os-muted);
   margin-top: 6px;
 }
 .os-telemetry__strip {
@@ -770,7 +764,7 @@ onUnmounted(() => {
   min-height: 42px;
   padding: 0 10px;
   border: 1px solid var(--os-line);
-  border-radius: 2px;
+  border-radius: 8px;
   background: var(--os-panel);
   color: var(--os-muted);
   font: 500 10px var(--os-font-mono);
@@ -784,7 +778,7 @@ onUnmounted(() => {
 .os-telemetry__count {
   background: var(--os-danger);
   color: #fff;
-  border-radius: 2px;
+  border-radius: 8px;
   padding: 2px 6px;
   font-weight: 700;
 }
@@ -793,7 +787,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 9px;
   min-height: 38px;
-  border-top: 1px solid #202c3e;
+  border-top: 1px solid var(--os-line);
   font-size: 0.72rem;
   color: var(--os-text);
   text-decoration: none;
@@ -818,7 +812,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: rgba(8, 12, 19, 0.94);
+  background: var(--os-ink);
   border-bottom: 1px solid var(--os-line);
   backdrop-filter: blur(10px);
 }
@@ -827,7 +821,7 @@ onUnmounted(() => {
   display: grid; place-items: center;
   background: var(--os-blue);
   color: #fff;
-  border-radius: 2px;
+  border-radius: 8px;
   font: 800 1.1rem var(--os-font-display);
   text-decoration: none;
 }
@@ -843,7 +837,7 @@ onUnmounted(() => {
   min-height: 36px;
   padding: 0 9px;
   border: 1px solid var(--os-line);
-  border-radius: 2px;
+  border-radius: 8px;
   background: var(--os-panel);
   color: var(--os-text);
   font: 500 11px var(--os-font-mono);
@@ -853,14 +847,14 @@ onUnmounted(() => {
   top: -4px; right: -4px;
   background: var(--os-danger);
   color: #fff;
-  border-radius: 2px;
+  border-radius: 8px;
   padding: 1px 4px;
   font: 700 9px var(--os-font-mono);
 }
 
 /* Dock inferior móvil */
 .os-dock {
-  background: rgba(8, 12, 19, 0.96);
+  background: var(--os-ink);
   border-top: 1px solid var(--os-line);
   backdrop-filter: blur(12px);
 }
@@ -880,7 +874,7 @@ onUnmounted(() => {
 .os-dock__item--active {
   color: var(--os-cyan);
   box-shadow: inset 0 2px 0 var(--os-cyan);
-  background: #0e1a30;
+  background: var(--os-panel-raised);
 }
 .os-dock__dot {
   position: absolute;
@@ -895,9 +889,9 @@ onUnmounted(() => {
   display: grid; place-items: center;
   background: var(--os-blue);
   color: #fff;
-  border-radius: 2px;
-  border: 1px solid #4a8aff;
-  box-shadow: 0 8px 24px rgba(22, 79, 199, 0.5), 0 0 0 4px var(--os-void);
+  border-radius: 8px;
+  border: 1px solid transparent;
+  box-shadow: 0 0 0 4px var(--os-void);
 }
 .os-dock__combat-tag {
   font: 700 9px var(--os-font-mono);
@@ -909,7 +903,7 @@ onUnmounted(() => {
 .os-float-tip {
   background: var(--os-panel-raised);
   border: 1px solid var(--os-line-strong);
-  border-radius: 2px;
+  border-radius: 8px;
   color: var(--os-text);
   font: 500 11px var(--os-font-mono);
   letter-spacing: 0.5px;
@@ -920,9 +914,9 @@ onUnmounted(() => {
 .os-float-btn {
   position: relative;
   padding: 16px;
-  background: rgba(8, 13, 21, 0.92);
+  background: var(--os-panel);
   border: 1px solid var(--os-line);
-  border-radius: 2px;
+  border-radius: 8px;
   transition: border-color 0.15s var(--os-ease), transform 0.15s var(--os-ease);
 }
 .os-float-btn--ready { border-color: var(--os-line-strong); }
@@ -945,9 +939,9 @@ onUnmounted(() => {
   align-items: center;
   gap: 7px;
   padding: 8px 11px;
-  background: rgba(8, 13, 21, 0.94);
+  background: var(--os-panel);
   border: 1px solid var(--os-line);
-  border-radius: 2px;
+  border-radius: 8px;
   color: var(--os-text);
   font: 500 11px var(--os-font-mono);
   letter-spacing: 0.5px;
